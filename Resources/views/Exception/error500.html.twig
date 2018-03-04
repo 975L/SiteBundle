@@ -1,0 +1,29 @@
+{# Defines specific variables #}
+{% set title = 'Err500' %}
+
+{% block content %}
+    <div class="container">
+{# Alert #}
+        <div class="alert alert-danger text-center">
+{# Title #}
+            <h2>
+                <span class="fas fa-thumbs-down"></span> Err500
+            </h2>
+{# Message #}
+            <p>
+                <span class="lead"><strong>Ooops...</strong></span><br />
+                {{ 'text.err500'|trans({}, 'site') }}<br />
+            </p>
+        </div>
+{# Image #}
+        {% if errImages.err500 is defined %}
+            <p class="text-center">
+                <img src="{{ errImages.err500 }}" class="img-responsive" alt="err500" /><br />
+            </p>
+        {% endif %}
+{# Contact #}
+        <p class="text-center">
+            <a href="{{ path('contactform_display') ~ '?' ~ { 's': 'Err500-' ~ app.request.uri }|url_encode }}" class="btn btn-info btn-lg" rel="nofollow">{{ 'text.point_error'|trans({}, 'commons') }}</a>
+        </p>
+    </div>
+{% endblock %}

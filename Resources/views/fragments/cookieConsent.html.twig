@@ -1,0 +1,30 @@
+{% spaceless %}
+{# https://cookieconsent.insites.com #}
+{{ inc_lib('cookieconsent', 'js', '3.*') }}
+<script type="text/javascript">
+    window.addEventListener('load', function(){
+        window.cookieconsent.initialise({
+            'palette': {
+                'popup': {
+                    'background': '#a7a7a7'
+                },
+                'button': {
+                    'background': '#f1d600'
+                }
+            },
+            'content': {
+                'message': '{{ cookieConsent.message }}',
+                {% if cookieConsent.dismiss is defined %}
+                    'dismiss': '{{ cookieConsent.dismiss }}',
+                {% endif %}
+                {% if cookieConsent.link is defined %}
+                    'link': '{{ cookieConsent.link }}',
+                {% endif %}
+                {% if cookieConsent.href is defined %}
+                    'href': '{{ cookieConsent.href }}'
+                {% endif %}
+            }
+        })
+    });
+</script>
+{% endspaceless %}
