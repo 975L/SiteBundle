@@ -5,7 +5,8 @@ SiteBundle does the following:
 - Defines a layout used to display the web pages,
 - Variables are used to display data linked to website, name, etc.,
 - Allows to add Matomo javascript by just set url and id,
-- Allows to add CookieConsent by just adding the cookies page,
+- Allows to add CookieConsent by just adding its data,
+- Allows to have templates to override TwigBundle/Exception templates.
 
 [Site Bundle dedicated web page](https://975l.com/en/pages/site-bundle).
 
@@ -17,7 +18,6 @@ Step 1: Download the Bundle
 Use [Composer](https://getcomposer.org) to install the library
 ```bash
     composer require c975L/site-bundle
-},
 ```
 
 Step 2: Enable the Bundle
@@ -40,11 +40,11 @@ class AppKernel extends Kernel
 
 Step 3: install assets to web folder
 ------------------------------------
-Install images by running
+Install assets by running
 ```bash
 php bin/console assets:install --symlink
 ```
-It will copy content of folder `Resources/public/` to your web folder. These files are used in the `layout.html.twig`.
+It will create a link from folder `Resources/public/` in your web folder. These files are used in the `layout.html.twig`.
 
 How to use
 ----------
@@ -66,7 +66,7 @@ SiteBundle also use the following variables which are page-based, meaning that t
 {% set title = 'YOUR_PAGE_TITLE' %}
 {% set description = 'YOUR_PAGE_DESCRIPTION' %}
 ```
-Note: If you use c975L/PageEdit the variables are already passed to `layout.html.twig`.
+Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the variables are already passed to `layout.html.twig`.
 
 Matomo javascript
 -----------------
@@ -92,7 +92,7 @@ You can easily add a call to CookieConsent by adding the following in your `app/
         'href': 'YOUR_COOKIES_POLICY_LINK'
     }
 %}
-{# or use the texts define in SiteBundle #}
+{# or use the texts defined in SiteBundle #}
 {%
     set cookieConsent = {
         'message': 'text.cookies_banner'|trans({}, 'site'),
