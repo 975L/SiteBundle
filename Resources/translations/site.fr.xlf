@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="site.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>label.made_by</source>
+                <target>Site web réalisé par </target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>text.cookies_banner</source>
+                <target>En poursuivant ma navigation sur ce site, j'accepte l’utilisation de Cookies pour réaliser des statistiques de visites, ainsi que l'identification de session.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>text.cookies_policy</source>
+                <target>Utilisation des cookies</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>text.err</source>
+                <target>Nous avons détecté une erreur :-( Nous vous prions de nous en excuser.</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>text.err401</source>
+                <target>Je ne peux pas accéder à cette ressource car l'accès est restreint et nécessite une identification.</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>text.err403</source>
+                <target>Je ne peux pas accéder à cette ressource car l'accès est restreint.</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>text.err404</source>
+                <target>La page que je demande n'est pas disponible. Merci de vérifier le lien dans la barre d'adresse.</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>text.err410</source>
+                <target>La page que je demande n'existe plus.</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>text.err500</source>
+                <target>Nous avons détecté une erreur interne :-( Nous vous prions de nous en excuser.</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>text.cookizes_dismiss</source>
+                <target>OK</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

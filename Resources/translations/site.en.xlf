@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="site.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>label.made_by</source>
+                <target>Website made by </target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>text.cookies_banner</source>
+                <target>By continuing my visit to this site, I accept the use of cookies to make statistics of visits, and the session ID.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>text.cookies_policy</source>
+                <target>Cookies Policy</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>text.err</source>
+                <target>We have detected an error :-( We ask you to excuse us.</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>text.err401</source>
+                <target>I can not access this resource because access is restricted and requires identification.</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>text.err403</source>
+                <target>I can not access this resource because access is restricted.</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>text.err404</source>
+                <target>The page I request is not available. Please check the link in the address bar.</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>text.err410</source>
+                <target>The page I requested does not exist anymore.</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>text.err500</source>
+                <target>We have detected an internal error :-( We ask you to excuse us.</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>text.cookies_dismiss</source>
+                <target>OK</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
