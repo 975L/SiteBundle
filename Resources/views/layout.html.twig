@@ -14,12 +14,19 @@
     {% set pageTitle = pageTitle ~ ' - ' ~ site %}
 {% endif %}
 
+{# Display #}
+{% if display is not defined %}
+    {% set display = 'html' %}
+{% endif %}
+
 {% spaceless %}
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="{{ app.request.locale }}"> <!--<![endif]-->
+{% if display == 'html' %}
+    <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+    <!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+    <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+    <!--[if gt IE 8]><!--> <html class="no-js" lang="{{ app.request.locale }}"> <!--<![endif]-->
+{% endif %}
 {# Head #}
     <head>
         {% block head %}
@@ -28,31 +35,46 @@
                 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
                 <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
                 <meta name="format-detection" content="telephone=no" />
-                <meta name="robots" content="index, follow" />
+{# Display for html #}
+                {% if display == 'html' %}
+                    <meta name="robots" content="index, follow" />
 {# Author #}
-                {% if author is defined %}
-                    <meta name="author" content="{{ author }}" />
-                {% endif %}
-                {% if description is defined and description is not empty %}
+                    {% if author is defined %}
+                        <meta name="author" content="{{ author }}" />
+                    {% endif %}
+                    {% if description is defined and description is not empty %}
 {# meta:description #}
-                    <meta name="description" content="{{ description }}" />
+                        <meta name="description" content="{{ description }}" />
 {# og:description #}
-                    <meta property="og:description" content="{{ description }}" />
-                {% endif %}
+                        <meta property="og:description" content="{{ description }}" />
+                    {% endif %}
 {# og:title #}
-                {% if title is defined %}
-                    <meta property="og:title" content="{{ title }}" />
-                {% endif %}
+                    {% if title is defined %}
+                        <meta property="og:title" content="{{ title }}" />
+                    {% endif %}
 {# og:type #}
-                <meta property="og:type" content="website" />
+                    <meta property="og:type" content="website" />
 {# og:image #}
-                {% if logo is defined %}
-                    <meta property="og:image" content="{{ logo }}" />
-                {% endif %}
+                    {% if logo is defined %}
+                        <meta property="og:image" content="{{ logo }}" />
+                    {% endif %}
 {# og:url #}
-                <meta property="og:url" content="{{ app.request.uri }}" />
+                    <meta property="og:url" content="{{ app.request.uri }}" />
 {# link:canonical #}
-                <link rel="canonical" href="{{ app.request.uri }}" />
+                    <link rel="canonical" href="{{ app.request.uri }}" />
+{# link:favicon #}
+                    {% if favicon is defined%}
+                        <link rel="icon" type="image/x-icon" href="{{ favicon }}" />
+                    {% endif %}
+{# link:apple-touch-icon #}
+                    {% if appleTouchIcon is defined%}
+                        <link rel="apple-touch-icon" href="{{ appleTouchIcon }}" />
+                        <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}" />
+                    {% endif %}
+{# link:hreflang #}
+                    <link rel="alternate" hreflang="{{ app.request.locale }}" />
+{# End display for html #}
+                {% endif %}
 {# link:copyright #}
                 {% if copyright is defined %}
                     <link rel="copyright" title="{{ copyright }}" />
@@ -61,44 +83,44 @@
                 {% if pageTitle is defined%}
                     <title>{{ pageTitle }}</title>
                 {% endif %}
-{# link:favicon #}
-                {% if favicon is defined%}
-                    <link rel="icon" type="image/x-icon" href="{{ favicon }}" />
-                {% endif %}
-{# link:apple-touch-icon #}
-                {% if appleTouchIcon is defined%}
-                    <link rel="apple-touch-icon" href="{{ appleTouchIcon }}" />
-                    <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}" />
-                {% endif %}
 {# base #}
                 <base />
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
-                {{ inc_lib('bootstrap', 'css', '3.*') }}
-                {{ inc_lib('cookieconsent', 'css', '3.*') }}
-                {{ inc_lib('fontawesome', 'css', '5.*') }}
-                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/c975lsite/css/styles.min.css') }}" />
+                {% if display == 'pdf' %}
+                    {{ inc_content('bootstrap', 'css', '3.*') }}
+                    {{ inc_content(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
+                {% else %}
+                    {{ inc_lib('bootstrap', 'css', '3.*') }}
+                    {{ inc_lib('cookieconsent', 'css', '3.*') }}
+                    {{ inc_lib('fontawesome', 'css', '5.*') }}
+                    {{ inc_lib(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
+                {% endif %}
             {% endblock %}
         {% endblock %}
     </head>
 {# Body #}
     <body id="up">
         {% block body %}
-            <!--[if lt IE 8]>
-                <p class="chromeframe">You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser to improve your experience.</p>
-            <![endif]-->
+            {% if display == 'html' %}
+                <!--[if lt IE 8]>
+                    <p class="chromeframe">You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser to improve your experience.</p>
+                <![endif]-->
 {# backTop bookmark #}
-            <a href="#" class="backTop"></a>
+                <a href="#" class="backTop"></a>
+            {% endif %}
 {# Header #}
             {% block header %}
 {# Navigation #}
-                {% block navigation %}
-                {% endblock %}
+                {% if display == 'html' %}
+                    {% block navigation %}
+                    {% endblock %}
+                {% endif %}
 {# Logo print only #}
                 {% block logoPrintOnly %}
-                    <div class="container-fluid text-center visible-print-block">
-                        {% if site is defined or logo is defined %}
+                    {% if site is defined or logo is defined %}
+                        <div class="container-fluid text-center visible-print-block">
                             <h1>
                                 {% if logo is defined %}
                                     <img src="{{ logo }}" height="100" alt="logo" />
@@ -107,8 +129,8 @@
                                     {{ site }}
                                 {% endif %}
                             </h1>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endif %}
                 {% endblock %}
             {% endblock %}
 {# Title #}
@@ -120,43 +142,59 @@
                     {% endif %}
                 {% endblock %}
 {# Flashes #}
-                {% block flashes %}
-                    {% for label, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                {{ message|raw|nl2br }}
-                            </div>
+                {% if display == 'html' %}
+                    {% block flashes %}
+                        {% for label, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    {{ message|raw|nl2br }}
+                                </div>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                {% endblock %}
+                    {% endblock %}
+                {% endif %}
+{# Container #}
+                {% block container %}
 {# Content #}
-                {% block content %}
+                    {% block content %}
+                    {% endblock %}
                 {% endblock %}
 {# Share #}
-            {% block share %}
-            {% endblock %}
-{# pullDown bookmark #}
-            <a href="#" class="pullDown"></a>
+            {% if display == 'html' %}
+                {% block share %}
+                {% endblock %}
+            {% endif %}
+{# NavigationBottom #}
+            {% if display == 'html' %}
+                {% block navigationBottom %}
+                {% endblock %}
+            {% endif %}
 {# Footer #}
             {% block footer %}
             {% endblock %}
+{# Display for html #}
+            {% if display == 'html' %}
+{# pullDown bookmark #}
+                <a href="#" class="pullDown"></a>
 {# Javascript #}
-            {% block javascripts %}
-                {{ inc_lib('jquery', 'js', '3.*') }}
-                {{ inc_lib('bootstrap', 'js', '3.*') }}
-                <script defer type="text/javascript" src="{{ asset('bundles/c975lsite/js/functions.min.js') }}"></script>
+                {% block javascripts %}
+                    {{ inc_lib('jquery', 'js', '3.*') }}
+                    {{ inc_lib('bootstrap', 'js', '3.*') }}
+                    {{ inc_lib(absolute_url(asset('bundles/c975lsite/js/functions.min.js')), 'local') }}
 {# CookieConsent #}
-                {% if cookieConsent.message is defined %}
-                    {{ include('@c975LSite/fragments/cookieConsent.html.twig') }}
-                {% endif %}
+                    {% if cookieConsent.message is defined %}
+                        {{ include('@c975LSite/fragments/cookieConsent.html.twig') }}
+                    {% endif %}
 {# Matomo #}
-                {% if matomo is defined %}
-                    {{ include('@c975LSite/fragments/matomo.html.twig') }}
-                {% endif %}
-            {% endblock %}
+                    {% if matomo is defined %}
+                        {{ include('@c975LSite/fragments/matomo.html.twig') }}
+                    {% endif %}
+                {% endblock %}
+{# End display for html #}
+            {% endif %}
         {% endblock %}
     </body>
 </html>

@@ -41,6 +41,19 @@ h2 {
     font-size: 3em;
 }
 
+.bigger {
+    font-size: 130%;
+}
+
+.white {
+    color: #FFFFFF;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+
 /* ADJUSTEMENTS */
 .container {
     padding: 2em;
@@ -54,6 +67,10 @@ h2 {
 
 ul.navbar-btn {
     margin-right: 1em !important;
+}
+
+li {
+    display : list-item;
 }
 
 .navbar-right {
@@ -157,10 +174,6 @@ a:hover.pullDown {
     background-color: #FB6B6B;
 }
 
-.white {
-    color: #FFFFFF;
-}
-
 
 /* SCREENS */
 @media only screen
@@ -168,6 +181,18 @@ a:hover.pullDown {
     label.radio-inline,
     ul.inline li {
         display: block;
+    }
+
+    h1 {
+        font-size: 125%;
+    }
+
+    h2 {
+        font-size: 115%;
+    }
+
+    h3 {
+        font-size: 105%;
     }
 }
 
@@ -209,6 +234,29 @@ a:hover.pullDown {
 
 /* PRINT */
 @media print {
+    * {
+        font-size: 95%;
+    }
+
+    h1,
+    h2,
+    h3,
+    .lead {
+        letter-spacing: 0px !important;
+    }
+
+    h1 {
+        font-size: 150%;
+    }
+
+    h2 {
+        font-size: 140%;
+    }
+
+    h3 {
+        font-size: 130%;
+    }
+
     .container,
     .container-fluid {
         width: 100%;

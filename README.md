@@ -48,7 +48,7 @@ It will create a link from folder `Resources/public/` in your web folder. These 
 
 How to use
 ----------
-You need to create a file named `layout.html.twig` in your `app/Resources/views/` that extend `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
+You **must** create a file named `layout.html.twig` in your `app/Resources/views/` that extend `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
 
 SiteBundle use the following variables to display information through the template.
 You need to set them in your `app/Resources/views/layout.html.twig`. Simply copy/paste them and set the right data. If you don't set them, they will simply not be used.
@@ -67,6 +67,42 @@ SiteBundle also use the following variables which are page-based, meaning that t
 {% set description = 'YOUR_PAGE_DESCRIPTION' %}
 ```
 Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the variables are already passed to `layout.html.twig`.
+
+Overide a block
+---------------
+
+You can overide any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`:
+```twig
+{# Container #}
+{% block container %}
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
+```
+Have a look at `/Resources/views/layout.html.twig`, to see all available blocks.
+
+Disable a block
+---------------
+To disable a block, simply add the following in your `app/Resources/views/layout.html.twig`:
+```twig
+{% block share %}
+{% endblock %}
+```
+Have a look at `/Resources/views/layout.html.twig`, to see all available blocks.
+
+Use the display variable
+------------------------
+In your `app/Resources/views/layout.html.twig` you can use the following to include (or not) templates:
+```twig
+{% if display == 'pdf' %}
+    {% include 'header-pdf.html.twig' %}
+{% else %}
+    {% include 'header.html.twig' %}
+{% endif %}
+```
+if `display` is not defined, hten it's define to `html`.
 
 Matomo javascript
 -----------------
@@ -174,12 +210,3 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
     <script defer type="text/javascript" src="YOUR_JAVASCRIPT_FILE"></script>
 {% endblock %}
 ```
-
-Disable a block
----------------
-To disable a block, simply add the following  in your `app/Resources/views/layout.html.twig`:
-```twig
-{% block share %}
-{% endblock %}
-```
-Have a look at `/Resources/views/layout.html.twig`, to see all available blocks.
