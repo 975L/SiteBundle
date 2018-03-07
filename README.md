@@ -51,7 +51,7 @@ How to use
 You **must** create a file named `layout.html.twig` in your `app/Resources/views/` that extend `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
 
 SiteBundle use the following variables to display information through the template.
-You need to set them in your `app/Resources/views/layout.html.twig`. Simply copy/paste them and set the right data. If you don't set them, they will simply not be used.
+You need to set them in your `app/Resources/views/layout.html.twig`. Simply copy/paste them and set the right data. If you don't set them, they will be ignored.
 ```twig
 {% set site = 'YOUR_SITE_NAME' %}
 {% set author = 'THE_AUTHOR' %}
@@ -81,7 +81,7 @@ You can overide any block in the template, to do so, simply add the following in
     </div>
 {% endblock %}
 ```
-Have a look at `/Resources/views/layout.html.twig`, to see all available blocks.
+Have a look at `Resources/views/layout.html.twig`, to see all available blocks.
 
 Disable a block
 ---------------
@@ -90,7 +90,7 @@ To disable a block, simply add the following in your `app/Resources/views/layout
 {% block share %}
 {% endblock %}
 ```
-Have a look at `/Resources/views/layout.html.twig`, to see all available blocks.
+Have a look at `Resources/views/layout.html.twig`, to see all available blocks.
 
 Use the display variable
 ------------------------
@@ -197,16 +197,15 @@ To add stylesheets, simply add the following  in your `app/Resources/views/layou
 ```twig
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" type="text/css" href="YOUR_STYLESHEET" />
+    {{ inc_lib(absolute_url(asset('YOUR_STYLESHEET.css')), 'local') }}
 {% endblock %}
 ```
-
 Add javascripts
 ---------------
 To add javascripts, simply add the following  in your `app/Resources/views/layout.html.twig`:
 ```twig
 {% block javascripts %}
     {{ parent() }}
-    <script defer type="text/javascript" src="YOUR_JAVASCRIPT_FILE"></script>
+    {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
 {% endblock %}
 ```

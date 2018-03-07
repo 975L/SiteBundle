@@ -1,5 +1,11 @@
 # Changelog
 
+v1.2.2
+------
+- Added Twitter cards (07/03/2018)
+- Corrected indentation in `layout.html.twig` (07/03/2018)
+- Changed `README.md` to use `inc_content()` (07/03/2018)
+
 v1.2.1
 ------
 - Corrected `layout.html.twig` for ` if display` to check if it's not pdf instead of checking 'html' as display can take other values (07/03/2018)
