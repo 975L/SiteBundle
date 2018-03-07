@@ -38,50 +38,50 @@
 {# Display for html #}
                 {% if display != 'pdf' %}
                     <meta name="robots" content="index, follow" />
+{# Twitter card #}
+                    <meta name="twitter:card" content="summary">
 {# Author #}
                     {% if author is defined %}
                         <meta name="author" content="{{ author }}" />
                     {% endif %}
+{# Description #}
                     {% if description is defined and description is not empty %}
-{# meta:description #}
                         <meta name="description" content="{{ description }}" />
-{# og:description #}
-                        <meta property="og:description" content="{{ description }}" />
+                        <meta property="og:description" content="{{ description|slice(0,150) }}" />
+                        <meta name="twitter:description" content="{{ description|slice(0,200) }}">
                     {% endif %}
-{# og:title #}
-                    {% if title is defined %}
-                        <meta property="og:title" content="{{ title }}" />
+{# Title #}
+                    {% if pageTitle is defined %}
+                        <title>{{ pageTitle }}</title>
+                        <meta property="og:title" content="{{ pageTitle }}" />
+                        <meta name="twitter:title" content="{{ pageTitle }}">
                     {% endif %}
-{# og:type #}
+{# Type #}
                     <meta property="og:type" content="website" />
-{# og:image #}
+{# Image #}
                     {% if logo is defined %}
                         <meta property="og:image" content="{{ logo }}" />
+                        <meta name="twitter:image" content="{{ logo }}">
                     {% endif %}
-{# og:url #}
+{# Url #}
                     <meta property="og:url" content="{{ app.request.uri }}" />
-{# link:canonical #}
                     <link rel="canonical" href="{{ app.request.uri }}" />
-{# link:favicon #}
+{# Favicon #}
                     {% if favicon is defined%}
                         <link rel="icon" type="image/x-icon" href="{{ favicon }}" />
                     {% endif %}
-{# link:apple-touch-icon #}
+{# Apple-touch-icon #}
                     {% if appleTouchIcon is defined%}
                         <link rel="apple-touch-icon" href="{{ appleTouchIcon }}" />
                         <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}" />
                     {% endif %}
-{# link:hreflang #}
+{# hreflang #}
                     <link rel="alternate" hreflang="{{ app.request.locale }}" />
 {# End display for html #}
                 {% endif %}
-{# link:copyright #}
+{# Copyright #}
                 {% if copyright is defined %}
                     <link rel="copyright" title="{{ copyright }}" />
-                {% endif %}
-{# title #}
-                {% if pageTitle is defined%}
-                    <title>{{ pageTitle }}</title>
                 {% endif %}
 {# base #}
                 <base />
@@ -134,34 +134,34 @@
                 {% endblock %}
             {% endblock %}
 {# Title #}
-                {% block title %}
-                    {% if title is defined %}
-                        <h1>
-                            {{ title }}
-                        </h1>
-                    {% endif %}
-                {% endblock %}
-{# Flashes #}
-                {% if display != 'pdf' %}
-                    {% block flashes %}
-                        {% for label, messages in app.flashes %}
-                            {% for message in messages %}
-                                <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                    {{ message|raw|nl2br }}
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                    {% endblock %}
+            {% block title %}
+                {% if title is defined %}
+                    <h1>
+                        {{ title }}
+                    </h1>
                 {% endif %}
-{# Container #}
-                {% block container %}
-{# Content #}
-                    {% block content %}
-                    {% endblock %}
+            {% endblock %}
+{# Flashes #}
+            {% if display != 'pdf' %}
+                {% block flashes %}
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                {{ message|raw|nl2br }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
                 {% endblock %}
+            {% endif %}
+{# Container #}
+            {% block container %}
+{# Content #}
+                {% block content %}
+                {% endblock %}
+            {% endblock %}
 {# Share #}
             {% if display != 'pdf' %}
                 {% block share %}
