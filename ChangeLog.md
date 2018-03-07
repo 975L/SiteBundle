@@ -1,5 +1,9 @@
 # Changelog
 
+v1.2.1
+------
+- Corrected `layout.html.twig` for ` if display` to check if it's not pdf instead of checking 'html' as display can take other values (07/03/2018)
+
 v1.2
 ----
 - Moved pullDown bookmark after footer (05/03/2018)

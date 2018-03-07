@@ -36,7 +36,7 @@
                 <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
                 <meta name="format-detection" content="telephone=no" />
 {# Display for html #}
-                {% if display == 'html' %}
+                {% if display != 'pdf' %}
                     <meta name="robots" content="index, follow" />
 {# Author #}
                     {% if author is defined %}
@@ -103,7 +103,7 @@
 {# Body #}
     <body id="up">
         {% block body %}
-            {% if display == 'html' %}
+            {% if display != 'pdf' %}
                 <!--[if lt IE 8]>
                     <p class="chromeframe">You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser to improve your experience.</p>
                 <![endif]-->
@@ -113,7 +113,7 @@
 {# Header #}
             {% block header %}
 {# Navigation #}
-                {% if display == 'html' %}
+                {% if display != 'pdf' %}
                     {% block navigation %}
                     {% endblock %}
                 {% endif %}
@@ -142,7 +142,7 @@
                     {% endif %}
                 {% endblock %}
 {# Flashes #}
-                {% if display == 'html' %}
+                {% if display != 'pdf' %}
                     {% block flashes %}
                         {% for label, messages in app.flashes %}
                             {% for message in messages %}
@@ -163,12 +163,12 @@
                     {% endblock %}
                 {% endblock %}
 {# Share #}
-            {% if display == 'html' %}
+            {% if display != 'pdf' %}
                 {% block share %}
                 {% endblock %}
             {% endif %}
 {# NavigationBottom #}
-            {% if display == 'html' %}
+            {% if display != 'pdf' %}
                 {% block navigationBottom %}
                 {% endblock %}
             {% endif %}
@@ -176,7 +176,7 @@
             {% block footer %}
             {% endblock %}
 {# Display for html #}
-            {% if display == 'html' %}
+            {% if display != 'pdf' %}
 {# pullDown bookmark #}
                 <a href="#" class="pullDown"></a>
 {# Javascript #}
