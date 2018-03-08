@@ -11,7 +11,7 @@
                 <target>Al continuar mi visita a este sitio, acepto el uso de cookies para realizar estadísticas de visitas, y el ID de sesión.</target>
             </trans-unit>
             <trans-unit id="3">
-                <source>text.cookies_policy</source>
+                <source>label.cookies_policy</source>
                 <target>Política de cookies</target>
             </trans-unit>
             <trans-unit id="4">
@@ -41,6 +41,46 @@
             <trans-unit id="10">
                 <source>text.cookies_dismiss</source>
                 <target>OK</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.latest_update</source>
+                <target>Ultima actualización</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.copyright</source>
+                <target>Derechos de autor</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.legal_notice</source>
+                <target>Aviso Legal</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.point_error</source>
+                <target>Señalo el error</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.page_deleted</source>
+                <target>Página suprimida</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.privacy_policy</source>
+                <target>Política de privacidad</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.publication_rights</source>
+                <target>Derechos de publicación</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.terms_of_sales</source>
+                <target>Condiciones generales de venta</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.terms_of_use</source>
+                <target>Términos de uso</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>text.only_french</source>
+                <target>Este texto sólo está disponible en francés</target>
             </trans-unit>
         </body>
     </file>

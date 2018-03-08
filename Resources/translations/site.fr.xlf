@@ -11,7 +11,7 @@
                 <target>En poursuivant ma navigation sur ce site, j'accepte l’utilisation de Cookies pour réaliser des statistiques de visites, ainsi que l'identification de session.</target>
             </trans-unit>
             <trans-unit id="3">
-                <source>text.cookies_policy</source>
+                <source>label.cookies_policy</source>
                 <target>Utilisation des cookies</target>
             </trans-unit>
             <trans-unit id="4">
@@ -39,8 +39,48 @@
                 <target>Nous avons détecté une erreur interne :-( Nous vous prions de nous en excuser.</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>text.cookizes_dismiss</source>
+                <source>text.cookies_dismiss</source>
                 <target>OK</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.latest_update</source>
+                <target>Dernière mise à jour</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.copyright</source>
+                <target>Copyright</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.legal_notice</source>
+                <target>Mentions légales</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.point_error</source>
+                <target>Je signale l'erreur</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.page_deleted</source>
+                <target>Page supprimée</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.privacy_policy</source>
+                <target>Règles de confidentialité</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.publication_rights</source>
+                <target>Droits de publication</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.terms_of_sales</source>
+                <target>Conditions générales de vente (CGV)</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.terms_of_use</source>
+                <target>Conditions générales d'utilisation (CGU)</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>text.only_french</source>
+                <target>Ce texte est seulement disponible en français</target>
             </trans-unit>
         </body>
     </file>

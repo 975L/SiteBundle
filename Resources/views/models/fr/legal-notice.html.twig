@@ -1,0 +1,72 @@
+{% trans_default_domain 'site' %}
+{#
+Variables used in this template and that must be define in your calling template
+site
+latestUpdate
+director
+directorLocation
+email
+phone
+producer
+#}
+
+{% block alertFrench %}
+    {% if app.request.locale != 'fr' %}
+        <p class="alert alert-info text-center">
+            {{ 'text.only_french'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block latestUpdate %}
+    <p class="text-center">
+        <strong>
+            {{ 'label.latest_update'|trans }} : {{ latestUpdate|localizeddate('long', 'none', '') }}
+        </strong>
+    </p>
+{% endblock %}
+
+{% block access %}
+    <h2>Accès au site Internet</h2>
+    <p class="text-justify">
+        Nous vous rappelons les caractéristiques et les limites du réseau Internet et déclinons toute responsabilité liée aux conséquences de votre connexion à ce réseau via <strong>{{ site }}</strong>.<br />
+        Plus particulièrement, nous ne saurions être tenus responsables de tout dommage, matériel ou immatériel causé à vos équipements informatiques et aux données qui y sont stockées, ni des conséquences pouvant en découler sur votre activité personnelle, professionnelle ou commerciale.<br />
+        Nous ne saurions davantage être tenus responsables au cas où vous ne pourriez pas parvenir à vous connecter à <strong>{{ site }}</strong> du fait de tout défaut technique ou de tout problème lié notamment à l'encombrement du réseau.
+    </p>
+{% endblock %}
+
+{% block edition %}
+    <h2>Édition</h2>
+    <p class="text-justify">
+        Le directeur de la publication est <strong>{{ director }}</strong> domicilié/e en <strong>{{ directorLocation }}</strong>.
+    </p>
+{% endblock %}
+
+{% block contact %}
+    <h2>Contact</h2>
+    <p class="text-justify">
+        Vous pouvez nous contacter par l'un des moyens suivants :
+        <ul>
+            <li>formulaire de contact</li>
+            <li>{{ email }}</li>
+            <li>par téléphone {{ phone }}</li>
+        </ul>
+    </p>
+{% endblock %}
+
+{% block production %}
+    <h2>Réalisation</h2>
+    <p class="text-justify">
+        Ce site est réalisé par {{ producer|raw }}.
+    </p>
+{% endblock %}
+
+{% block hosting %}
+    <h2>Hébergement site Internet</h2>
+    <p class="text-justify">
+        Ce site Internet est hébergé par
+    </p>
+    {% block hostingProvider %}
+        {# Override this block to give address of your hosting company or simply add it after the `include()` in the template call #}
+    {% endblock %}
+{% endblock %}

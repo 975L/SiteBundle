@@ -1,5 +1,13 @@
 # Changelog
 
+v1.3
+----
+- Added print styles for bootsrapt alerts (08/03/2018)
+- Changed size for print logo (08/03/2018)
+- Updated `README.md` (08/03/2018)
+- Corrected translations for error pages (08/03/2018)
+- Added models for Terms of use, Terms of sales, etc. (08/03/2018)
+
 v1.2.2
 ------
 - Added Twitter cards (07/03/2018)
