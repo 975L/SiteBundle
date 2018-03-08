@@ -11,7 +11,7 @@
                 <target>By continuing my visit to this site, I accept the use of cookies to make statistics of visits, and the session ID.</target>
             </trans-unit>
             <trans-unit id="3">
-                <source>text.cookies_policy</source>
+                <source>label.cookies_policy</source>
                 <target>Cookies Policy</target>
             </trans-unit>
             <trans-unit id="4">
@@ -41,6 +41,46 @@
             <trans-unit id="10">
                 <source>text.cookies_dismiss</source>
                 <target>OK</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.latest_update</source>
+                <target>Latest update</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.copyright</source>
+                <target>Copyright</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.legal_notice</source>
+                <target>Legal notice</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.point_error</source>
+                <target>I point out the error</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.page_deleted</source>
+                <target>Page deleted</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.privacy_policy</source>
+                <target>Privacy policy</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.publication_rights</source>
+                <target>Publication rights</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.terms_of_sales</source>
+                <target>Terms of sales</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.terms_of_use</source>
+                <target>Terms of use</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>text.only_french</source>
+                <target>This text is only available in french</target>
             </trans-unit>
         </body>
     </file>

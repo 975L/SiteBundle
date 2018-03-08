@@ -1,0 +1,44 @@
+{% trans_default_domain 'site' %}
+
+{#
+Variables used in this template and that must be define in your calling template
+#}
+
+{# Alert text only in french #}
+{% block alertFrench %}
+    {% if app.request.locale != 'fr' %}
+        <p class="alert alert-info text-center">
+            {{ 'text.only_french'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block object %}
+    <p class="text-justify">
+        Les cookies sont des fichiers texte placés sur votre ordinateur, pour aider le site internet à analyser l'utilisation du site par ses utilisateurs. Les données générées par les cookies concernant votre utilisation du site (y compris votre adresse IP qui sera tronquée) seront transmises et stockées sur nos serveurs. Nous utiliserons cette information dans le but d'évaluer votre utilisation du site, de compiler des rapports sur l'activité du site à notre destination et de fournir d'autres services relatifs à l'activité du site et à l'utilisation d'Internet.
+    </p>
+    <p class="text-justify">
+        Nous sommes susceptibles de communiquer ces données à des tiers en cas d'obligation légale. Nous ne recouperons pas votre adresse IP avec toute autre donnée détenue. En utilisant ce site internet, vous consentez expressément au traitement de vos données nominatives par nous-mêmes dans les conditions et pour les finalités décrites ci-dessus.
+    </p>
+    <p class="text-justify">
+        Vous pouvez désactiver l'utilisation de cookies en sélectionnant les paramètres appropriés de votre navigateur. <strong>Cependant, une telle désactivation pourrait empêcher l'utilisation de certaines fonctionnalités de ce site Internet.</strong>
+    </p>
+    <p class="text-justify">
+        Pour plus d'informations et si vous avez un doute ou besoin d'une précision, n'hésitez pas à nous contacter.
+    </p>
+    <p class="text-justify">
+        Pour aller plus loin, ce que dit la loi en France : <a href="http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi">http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi</a>
+    </p>
+    <p class="text-justify">
+        Comprendre pourquoi <a href="https://silktide.com/why-the-cookie-law-is-total-clownshoes">la politique de bannières d'acceptation des cookies est une clownerie (anglais)</a>
+    </p>
+{% endblock %}
+
+{% block siteUse %}
+    <p class="text-justify">
+        Ce site utilise :
+    </p>
+    {% block siteUseContent %}
+        {# Override this block to list the cookies used by your site or simply add the list after the `include()` in the template call #}
+    {% endblock %}
+{% endblock %}

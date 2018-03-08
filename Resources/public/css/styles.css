@@ -241,7 +241,7 @@ a:hover.pullDown {
     h2,
     h3,
     .lead {
-        letter-spacing: 0px !important;
+        letter-spacing: inherit !important;
     }
 
     h1 {
@@ -260,5 +260,14 @@ a:hover.pullDown {
     .container-fluid {
         width: 100%;
         background-color: #fff;
+    }
+
+    .alert-info {
+        background-color: #d9edf7 !important;
+    }
+
+    .alert-danger {
+        color: #b64450 !important;
+        background-color: #f2dede !important;
     }
 }

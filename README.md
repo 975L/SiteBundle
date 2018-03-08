@@ -6,7 +6,8 @@ SiteBundle does the following:
 - Variables are used to display data linked to website, name, etc.,
 - Allows to add Matomo javascript by just set url and id,
 - Allows to add CookieConsent by just adding its data,
-- Allows to have templates to override TwigBundle/Exception templates.
+- Allows to have templates to override TwigBundle/Exception templates,
+- Allows to use pre-defined Terms of use, Terms of sales, etc.
 
 [Site Bundle dedicated web page](https://975l.com/en/pages/site-bundle).
 
@@ -71,14 +72,10 @@ Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the va
 Overide a block
 ---------------
 
-You can overide any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`:
+You can overide any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`, you can still use the `{{ parent() }}` Twig function:
 ```twig
-{# Container #}
-{% block container %}
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+{% block share %}
+    {# YOUR_OWN_TEXT #}
 {% endblock %}
 ```
 Have a look at `Resources/views/layout.html.twig`, to see all available blocks.
@@ -131,9 +128,9 @@ You can easily add a call to CookieConsent by adding the following in your `app/
 {# or use the texts defined in SiteBundle #}
 {%
     set cookieConsent = {
-        'message': 'text.cookies_banner'|trans({}, 'site'),
-        'dismiss': 'text.cookies_dismiss'|trans({}, 'site'),
-        'link': 'text.cookies_policy'|trans({}, 'site'),
+        'message': 'text.cookies_banner'|trans,
+        'dismiss': 'text.cookies_dismiss'|trans,
+        'link': 'label.cookies_policy'|trans,
         'href': 'YOUR_COOKIES_POLICY_LINK'
     }
 %}
@@ -209,3 +206,66 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
     {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
 {% endblock %}
 ```
+Use pred-defined models
+-----------------------
+There are two ways to use the pre-defined models for Terms of use, Terms of sales, etc.:
+
+You want to use the whole file, place this code in your template:
+```twig
+{% extends 'YOUR_LAYOUT.html.twig' %}
+
+{% trans_default_domain 'site' %}
+{# Title value is made of 'label.' + name of page, replacing "-" by "_" #}
+{# i.e. page ''terms-of-sales' gives title = 'label.terms_of_sales' #}
+{% set title = 'label.terms_of_sales'|trans %}
+
+{% block content %}
+    {# set the defined data (indicated at the top of the template file) before including #}
+    {% set latestUpdate = '2018-03-08' %}
+
+    {% include '@c975LSite/models/terms-of-sales.html.twig' %}
+
+    {# You can your own data at the end #}
+    <h2>Achat de crédits</h2>
+    <p class="text-justify">
+        L’achat de crédits ...
+    </p>
+{% endblock %}
+```
+
+You want to select the displayed blocks, place this code in your template. **Note** that you have to specify the language in the `embed` function:
+```twig
+{% extends 'YOUR_LAYOUT.html.twig' %}
+
+{% trans_default_domain 'site' %}
+{% set title = 'label.terms_of_sales'|trans %}
+
+{% block content %}
+    {# set the defined data (indicated at the top of the template file) before including #}
+    {% set latestUpdate = '2018-03-08' %}
+
+    {% embed '@c975LSite/models/fr/terms-of-sales.html.twig' %}
+        {# Then you can disable block #}
+        {% block acceptation %}
+        {% endblock %}
+
+        {# Or append information to it #}
+        {% block acceptation %}
+            {{ parent() }}
+            Your added content
+        {% endblock %}
+
+        {# Or replace content #}
+        {% block acceptation %}
+            Your replacing content
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+```
+
+Check `Resources/models` for models available.
+
+**Feel free to update them and/or add translations**, simply create the corresponding language folder if not existing.
+
+By convention files are named using "-" and the english name.
