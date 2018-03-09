@@ -1,0 +1,117 @@
+{% trans_default_domain 'site' %}
+
+{% set updateDate = '2018-03-09' %}
+{#
+Variables used in this template and that must be define in your calling template
+site
+latestUpdate
+#}
+
+{% block alertFrench %}
+    {% if app.request.locale != 'fr' %}
+        <p class="alert alert-info text-center">
+            {{ 'text.only_french'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}
+
+{% block latestUpdate %}
+    <p class="text-center">
+        <strong>
+            {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}
+        </strong>
+    </p>
+{% endblock %}
+
+{% block personalData %}
+    <h2>Données personnelles</h2>
+    <p class="text-justify">
+        Afin de respecter la protection de votre vie privée et des données personnelles que vous nous confiez volontairement, nous nous engageons à NE PAS divulguer ces informations à d'autres sociétés et/ou organisations à des fins d'utilisations par celles-ci, sans votre accord.
+    </p>
+{% endblock %}
+
+{% block emailAddresses %}
+    <h2>Adresses email</h2>
+    <p class="text-justify">
+        Nous ne diffusons pas les adresses emails que vous prenez le soin de nous laisser. Elles sont uniquement utilisées pour communiquer avec vous et constituent l'identifiant de connexion au site web.
+    </p>
+{% endblock %}
+
+{% block account %}
+    <h2>Compte</h2>
+    <p class="text-justify">
+        Votre compte sur <strong>{{ site }}</strong> contiendra au minimum une adresse email valide et un mot de passe personnel. Les informations de votre compte sont protégées par les lois de protection des données applicables dans le pays qui nous héberge.<br />
+        Les informations enregistrées sont réservées à l'usage de <strong>{{ site }}</strong> et NE sont PAS communiquées à des tiers.
+    </p>
+{% endblock %}
+
+{% block policy %}
+    <h2>Politique sur les mots de passe</h2>
+    <p class="text-justify">
+        Votre mot de passe est crypté <strong>(cryptage à sens unique qui fait qu'il ne peut pas être décrypté)</strong> afin qu'il soit sécurisé. Cependant, il est recommandé de ne pas utiliser le même mot de passe sur plusieurs sites Internet différents. Votre mot de passe est le moyen d'accès à votre compte sur <strong>{{ site }}</strong>, veuillez le conservez précieusement. En aucun cas une personne affiliée à nos services ou à une tierce partie ne peut vous demander légitimement votre mot de passe.<br />
+        Si vous oubliez le mot de passe de votre compte, vous pouvez utiliser la fonction « Mot de passe oublié », cette procédure vous demandera de spécifier votre adresse e-mail et vous permettra de pouvoir saisir un nouveau mot de passe, afin que vous puissiez reprendre votre compte sur <strong>{{ site }}</strong>.
+    </p>
+{% endblock %}
+
+{% block rules %}
+    <h2>Règlement</h2>
+    <p class="text-justify">
+        Le présent règlement sur les règles de confidentialité décrit la manière dont nous traitons vos informations à caractère personnel. Nous collectons, utilisons et partageons des données à caractère personnel afin de permettre à <strong>{{ site }}</strong> de fonctionner correctement et de protéger celui-ci. En d'autres termes, nous sommes le « responsable du traitement » de vos données personnelles. Le présent règlement est applicable à compter du jour de sa publication.
+    </p>
+{% endblock %}
+
+{% block modification %}
+    <h3>Modification</h3>
+    <p class="text-justify">
+        Nous nous réservons la possibilité de modifier, tout ou partie, et à tout moment, ce présent réglement. Vous êtes invités à le consulter régulièrement pour prendre connaissance des changements apportés. Il est applicable au moment de sa publication.
+    </p>
+{% endblock %}
+
+{% block collection %}
+    <h3>Collecte</h3>
+    <p class="text-justify">
+        Les informations mises en ligne sur <strong>{{ site }}</strong> sont accessibles au public. Nos serveurs et nos prestataires de services se trouvent dans l'espace Européen. Ainsi, si vous souhaitez nous fournir des informations personnelles, vous acceptez que celles-ci soit transférées, traitées et stockées dans l'espace Européen.
+    </p>
+    <p class="text-justify">
+        Nous collectons et stockons les données personnelles suivantes :
+    </p>
+    <ul>
+        <li>adresse e-mail</li>
+        <li>données de connexion, statistiques relatives à la consultation des pages, au trafic à destination et provenant de <strong>{{ site }}</strong></li>
+        <li>autres informations, notamment l'adresse IP de l'utilisateur et les informations standards du log serveur</li>
+    </ul>
+{% endblock %}
+
+{% block use %}
+    <h3>Utilisation</h3>
+    <p class="text-justify">
+        Nous utilisons les informations personnelles des utilisateurs afin de :
+    </p>
+    <ul>
+        <li>fournir nos services</li>
+        <li>résoudre les différends et identifier les problèmes</li>
+        <li>encourager des transactions sûres et appliquer nos règlements</li>
+        <li>tirer profit de l'expérience de nos utilisateurs, mesurer l'intérêt porté à nos services et informer les utilisateurs au sujet de nos services et de leur mise à jour</li>
+    </ul>
+{% endblock %}
+
+{% block communication %}
+    <h3>Communication</h3>
+    <p class="text-justify">
+        <strong>Nous ne vendons pas ni ne louons</strong> vos informations personnelles à des tiers, mais nous pouvons être amenés à communiquer des informations personnelles pour satisfaire à des obligations légales, appliquer nos règlements, répondre aux réclamations, ou protéger les droits ou les biens de toute personne ou assurer sa sécurité.
+    </p>
+{% endblock %}
+
+{% block security %}
+    <h3>Sécurité</h3>
+    <p class="text-justify">
+        Nous utilisons un grand nombre d'outils techniques et organisationnels pour assurer la protection de vos données personnelles contre les accès ou la communication non autorisés. Toutefois, comme vous le savez sans doute, il n'existe pas de protection parfaite. Nous n'offrons donc aucune garantie à cet égard.
+    </p>
+{% endblock %}
+
+{% block archiving %}
+    <h3>Archivage</h3>
+    <p class="text-justify">
+        Les données supprimées sont archivées, mais non accessibles au public, pour la durée légale de un an. Elles sont ensuite définitivement supprimées.
+    </p>
+{% endblock %}

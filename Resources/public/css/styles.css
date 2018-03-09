@@ -45,7 +45,35 @@ h2 {
 }
 
 .white {
-    color: #FFFFFF;
+    color: #ffffff;
+}
+
+.blue {
+    color: blue;
+}
+
+.green {
+    color: green;
+}
+
+.grey {
+    color: grey;
+}
+
+.maroon {
+    color: maroon;
+}
+
+.orange {
+    color: #E56717;
+}
+
+.purple {
+    color: purple;
+}
+
+.red {
+    color: red;
 }
 
 .text-underline {
@@ -259,7 +287,7 @@ a:hover.pullDown {
     .container,
     .container-fluid {
         width: 100%;
-        background-color: #fff;
+        background-color: #ffffff;
     }
 
     .alert-info {

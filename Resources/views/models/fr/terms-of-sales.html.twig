@@ -1,5 +1,6 @@
 {% trans_default_domain 'site' %}
 
+{% set updateDate = '2018-03-08' %}
 {#
 Variables used in this template and that must be define in your calling template
 site
@@ -16,7 +17,7 @@ site
 {% block latestUpdate %}
     <p class="text-center">
         <strong>
-            {{ 'label.latest_update'|trans }} : {{ latestUpdate|localizeddate('long', 'none', '') }}
+            {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}
         </strong>
     </p>
 {% endblock %}
