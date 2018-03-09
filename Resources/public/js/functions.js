@@ -48,7 +48,7 @@ $(document).ready(function() {
 //Creates the backTop & pullDown buttons - http://html-tuts.com/back-to-top-button-jquery/
     var amountScrolled = 300;
     $(window).scroll(function() {
-        if ( $(window).scrollTop() > amountScrolled ) {
+        if ($(window).scrollTop() > amountScrolled) {
             $('a.backTop')
                 .fadeIn('slow');
         } else {
@@ -68,7 +68,7 @@ $(document).ready(function() {
 //pullDown
     $('a.pullDown').click(function() {
         $('html, body').animate({
-            scrollTop: $('#pullDown').offset().top - 50
+            scrollTop: $('a.pullDown').offset().top - 50
         }, 'slow');
         return false;
     });

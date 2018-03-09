@@ -1,5 +1,13 @@
 # Changelog
 
+v1.3.1
+------
+- Added color named styles (09/03/2018)
+- Added default value for copyright (09/03/2018)
+- Added model for Privacy policy (09/03/2018)
+- Added a test to display the more accurate latest update between the models files and the date provided by the site (09/03/2018)
+- Corrected pullDown javascript function (09/03/2018)
+
 v1.3
 ----
 - Added print styles for bootsrapt alerts (08/03/2018)
