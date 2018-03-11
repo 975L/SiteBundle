@@ -211,7 +211,7 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
     {{ parent() }}
     {# Using c975L/IncludeLibraryBundle #}
     {# With url #}
-    {{ inc_lib('SUPPORTED_LIBRARY', 'js', 'SUPPORTED_VERSION_SELECTOF') }}
+    {{ inc_lib('SUPPORTED_LIBRARY', 'js', 'SUPPORTED_VERSION_SELECTOR') }}
     {# Local file #}
     {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
     
