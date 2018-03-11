@@ -69,10 +69,10 @@ SiteBundle also use the following variables which are page-based, meaning that t
 ```
 Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the variables are already passed to `layout.html.twig`.
 
-Overide a block
----------------
+Override a block
+----------------
 
-You can overide any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`, you can still use the `{{ parent() }}` Twig function:
+You can override any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`, you can still use the `{{ parent() }}` Twig function:
 ```twig
 {% block share %}
     {# YOUR_OWN_TEXT #}
@@ -138,7 +138,7 @@ You can easily add a call to CookieConsent by adding the following in your `app/
 
 Error pages
 -----------
-You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`.
+You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`, but if you want to use the pre-defined error templates, do the following:
 
 The types of error covered by SiteBundle are:
 - error
@@ -194,7 +194,13 @@ To add stylesheets, simply add the following  in your `app/Resources/views/layou
 ```twig
 {% block stylesheets %}
     {{ parent() }}
+    {# Using c975L/IncludeLibraryBundle #}
+    {# With url #}
+    {{ inc_lib('SUPPORTED_LIBRARY', 'css', 'SUPPORTED_VERSION_SELECTOR') }}
+    {# Local file #}
     {{ inc_lib(absolute_url(asset('YOUR_STYLESHEET.css')), 'local') }}
+    
+    {# Of course you can provide the full "link" html data #}
 {% endblock %}
 ```
 Add javascripts
@@ -203,12 +209,21 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
 ```twig
 {% block javascripts %}
     {{ parent() }}
+    {# Using c975L/IncludeLibraryBundle #}
+    {# With url #}
+    {{ inc_lib('SUPPORTED_LIBRARY', 'js', 'SUPPORTED_VERSION_SELECTOF') }}
+    {# Local file #}
     {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
+    
+   {# Of course you can provide the full "script" html data #}
 {% endblock %}
 ```
-Use pred-defined models
------------------------
+Use pre-defined models
+======================
 There are two ways to use the pre-defined models for Terms of use, Terms of sales, etc.:
+
+Use whole file
+--------------
 
 You want to use the whole file, place this code in your template:
 ```twig
@@ -232,6 +247,8 @@ You want to use the whole file, place this code in your template:
     </p>
 {% endblock %}
 ```
+Select blocks
+-------------
 
 You want to select the displayed blocks, place this code in your template. **Note** that you have to specify the language in the `embed` function:
 ```twig
@@ -244,6 +261,7 @@ You want to select the displayed blocks, place this code in your template. **Not
     {# set the defined data (indicated at the top of the template file) before including #}
     {% set latestUpdate = '2018-03-08' %}
 
+    {# As you embed the file, you have to specify the language #}
     {% embed '@c975LSite/models/fr/terms-of-sales.html.twig' %}
         {# Then you can disable block #}
         {% block acceptation %}
