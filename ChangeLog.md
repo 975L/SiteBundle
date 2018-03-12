@@ -1,5 +1,10 @@
 # Changelog
 
+v1.4
+----
+- Suppressed "div.container" in error pages (12/03/2018)
+- Added country level folder for models (12/03/2018)
+
 v1.3.1
 ------
 - Added color named styles (09/03/2018)

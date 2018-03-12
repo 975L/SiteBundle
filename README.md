@@ -199,7 +199,7 @@ To add stylesheets, simply add the following  in your `app/Resources/views/layou
     {{ inc_lib('SUPPORTED_LIBRARY', 'css', 'SUPPORTED_VERSION_SELECTOR') }}
     {# Local file #}
     {{ inc_lib(absolute_url(asset('YOUR_STYLESHEET.css')), 'local') }}
-    
+
     {# Of course you can provide the full "link" html data #}
 {% endblock %}
 ```
@@ -214,16 +214,16 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
     {{ inc_lib('SUPPORTED_LIBRARY', 'js', 'SUPPORTED_VERSION_SELECTOR') }}
     {# Local file #}
     {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
-    
+
    {# Of course you can provide the full "script" html data #}
 {% endblock %}
 ```
 Use pre-defined models
 ======================
-There are two ways to use the pre-defined models for Terms of use, Terms of sales, etc.:
+There are two ways to use the pre-defined models, `include` or `embed`, both are based on country an language: `{% include '@c975LSite/models/COUNTRY/LANGUAGE/terms-of-sales.html.twig' %}`. You can see an example below for `Terms of sale` for `France` in `fr` (french).
 
-Use whole file
---------------
+Use whole file (include)
+------------------------
 
 You want to use the whole file, place this code in your template:
 ```twig
@@ -231,14 +231,14 @@ You want to use the whole file, place this code in your template:
 
 {% trans_default_domain 'site' %}
 {# Title value is made of 'label.' + name of page, replacing "-" by "_" #}
-{# i.e. page ''terms-of-sales' gives title = 'label.terms_of_sales' #}
+{# i.e. page 'terms-of-sales' gives title = 'label.terms_of_sales' #}
 {% set title = 'label.terms_of_sales'|trans %}
 
 {% block content %}
     {# set the defined data (indicated at the top of the template file) before including #}
     {% set latestUpdate = '2018-03-08' %}
 
-    {% include '@c975LSite/models/terms-of-sales.html.twig' %}
+    {% include '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
 
     {# You can your own data at the end #}
     <h2>Achat de crédits</h2>
@@ -247,8 +247,9 @@ You want to use the whole file, place this code in your template:
     </p>
 {% endblock %}
 ```
-Select blocks
--------------
+
+Select blocks (embed)
+---------------------
 
 You want to select the displayed blocks, place this code in your template. **Note** that you have to specify the language in the `embed` function:
 ```twig
@@ -261,8 +262,7 @@ You want to select the displayed blocks, place this code in your template. **Not
     {# set the defined data (indicated at the top of the template file) before including #}
     {% set latestUpdate = '2018-03-08' %}
 
-    {# As you embed the file, you have to specify the language #}
-    {% embed '@c975LSite/models/fr/terms-of-sales.html.twig' %}
+    {% embed '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
         {# Then you can disable block #}
         {% block acceptation %}
         {% endblock %}
@@ -282,8 +282,15 @@ You want to select the displayed blocks, place this code in your template. **Not
 
 ```
 
-Check `Resources/models` for models available.
+Available models
+----------------
+You can find below a table containing all the models available per country and language. **Feel free to update them, add translations or countries.** By convention files are named using "-" with the english name.
 
-**Feel free to update them and/or add translations**, simply create the corresponding language folder if not existing.
-
-By convention files are named using "-" and the english name.
+| Model | France |
+|---|---|
+| Cookies | fr |
+| Copyright | fr |
+| Legal notice | fr |
+| Privacy policy | fr |
+| Tems of sales | fr |
+| Tems of use | fr |
