@@ -1,5 +1,9 @@
 # Changelog
 
+v1.4.1
+------
+- Re-added the possibility to call default language at country level, as it's useful for multilingual sites (12/03/2018)
+
 v1.4
 ----
 - Suppressed "div.container" in error pages (12/03/2018)
