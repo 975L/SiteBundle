@@ -222,6 +222,8 @@ Use pre-defined models
 ======================
 There are two ways to use the pre-defined models, `include` or `embed`, both are based on country an language: `{% include '@c975LSite/models/COUNTRY/LANGUAGE/terms-of-sales.html.twig' %}`. You can see an example below for `Terms of sale` for `France` in `fr` (french).
 
+If you have a **multlingual website** you can call by ommitting the language `{% include '@c975LSite/models/COUNTRY/terms-of-sales.html.twig' %}`, SiteBundle will check if your current language is available and will display it, or will display the default language if not.
+
 Use whole file (include)
 ------------------------
 
