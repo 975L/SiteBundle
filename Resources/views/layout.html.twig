@@ -110,8 +110,9 @@
                 <!--[if lt IE 8]>
                     <p class="chromeframe">You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser to improve your experience.</p>
                 <![endif]-->
-{# backTop bookmark #}
+{# backTop/pullDown bookmarks #}
                 <a href="#" class="backTop"></a>
+                <a href="#" class="pullDown"></a>
             {% endif %}
 {# Header #}
             {% block header %}
@@ -180,8 +181,6 @@
             {% endblock %}
 {# Display for html #}
             {% if display != 'pdf' %}
-{# pullDown bookmark #}
-                <a href="#" class="pullDown"></a>
 {# Javascript #}
                 {% block javascripts %}
                     {{ inc_lib('jquery', 'js', '3.*') }}
