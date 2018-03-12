@@ -1,5 +1,9 @@
 # Changelog
 
+v1.4.3
+------
+- Changed scroll value for pullDown (12/03/2018)
+
 v1.4.2
 ------
 - Corrected error410 page (12/03/2018)

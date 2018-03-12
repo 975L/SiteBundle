@@ -68,7 +68,7 @@ $(document).ready(function() {
 //pullDown
     $('a.pullDown').click(function() {
         $('html, body').animate({
-            scrollTop: $('a.pullDown').offset().top - 50
+            scrollTop: $(document).height()
         }, 'slow');
         return false;
     });
