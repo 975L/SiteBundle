@@ -218,6 +218,8 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
    {# Of course you can provide the full "script" html data #}
 {% endblock %}
 ```
+
+
 Use pre-defined models
 ======================
 There are two ways to use the pre-defined models, `include` or `embed`, both are based on country an language: `{% include '@c975LSite/models/COUNTRY/LANGUAGE/terms-of-sales.html.twig' %}`. You can see an example below for `Terms of sale` for `France` in `fr` (french).
@@ -296,3 +298,5 @@ You can find below a table containing all the models available per country and l
 | Privacy policy | fr |
 | Tems of sales | fr |
 | Tems of use | fr |
+
+To facilitate reading, models are also available in Markdown format. If you do a modification, you can use Command `php bin/console models:twig2md` to convert Twig models templates to their Markdown equivalent.
