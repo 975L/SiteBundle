@@ -1,5 +1,10 @@
 # Changelog
 
+v1.5
+----
+- Added `models:twig2md` Command to convert templates to Markdown to make their reading easier on Github (13/03/2018)
+- Added Markdown format for pre-defined models (13/03/2018)
+
 v1.4.3
 ------
 - Changed scroll value for pullDown (12/03/2018)

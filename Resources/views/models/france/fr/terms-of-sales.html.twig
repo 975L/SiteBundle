@@ -3,7 +3,8 @@
 {% set updateDate = '2018-03-08' %}
 {#
 Variables used in this template and that must be define in your calling template
-site
+
+- site
 #}
 
 {% block alertFrench %}
@@ -16,9 +17,7 @@ site
 
 {% block latestUpdate %}
     <p class="text-center">
-        <strong>
-            {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}
-        </strong>
+        {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}
     </p>
 {% endblock %}
 
