@@ -105,6 +105,11 @@
     </head>
 {# Body #}
     <body id="up">
+{# jQuery #}
+        {% block jquery %}
+            {{ inc_lib('jquery', 'js', '3.*') }}
+        {% endblock %}
+{# Block body #}
         {% block body %}
             {% if display != 'pdf' %}
                 <!--[if lt IE 8]>
