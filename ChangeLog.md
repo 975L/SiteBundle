@@ -1,5 +1,9 @@
 # Changelog
 
+v1.5.1
+------
+- Moved jQuery call into its proper block at the top of body, in order that it's loaded before any other jQuery function call (13/03/2018)
+
 v1.5
 ----
 - Added `models:twig2md` Command to convert templates to Markdown to make their reading easier on Github (13/03/2018)
