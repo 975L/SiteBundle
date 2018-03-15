@@ -136,6 +136,14 @@ You can easily add a call to CookieConsent by adding the following in your `app/
 %}
 ```
 
+Alternate languages
+-------------------
+You can define the meta `<link rel="alternate" hreflang="YOUR_LANGUAGE" href="URL_WITH_ALTERNATE_LANGUAGE" />` by setting a `languagesAlt` array in your `app/Resources/views/layout.html.twig`
+```twig
+{% set languagesAlt  = ['en', 'fr', 'es'] %}
+```
+It will replace the current language by the ones set in `languagesAlt` using the following scheme `https://example.com/LANGUAGE/pages/XXX`.
+
 Error pages
 -----------
 You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`, but if you want to use the pre-defined error templates, do the following:

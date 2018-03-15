@@ -1,5 +1,12 @@
 # Changelog
 
+v1.5.2
+------
+- Added `hreflang` meta for multiples languages (15/03/2018)
+- Added full example of layout in `README.md` (15/03/2018)
+- Added css styles (15/03/2018)
+- Added DependencyInjection to discover services (15/03/2018)
+
 v1.5.1
 ------
 - Moved jQuery call into its proper block at the top of body, in order that it's loaded before any other jQuery function call (13/03/2018)

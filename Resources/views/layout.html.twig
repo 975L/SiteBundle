@@ -79,7 +79,20 @@
                         <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}" />
                     {% endif %}
 {# hreflang #}
-                    <link rel="alternate" hreflang="{{ app.request.locale }}" />
+                    {% if languagesAlt is defined %}
+                        {% for languageAlt in languagesAlt %}
+                            {% if app.request.uri ends with '/' ~ app.request.locale %}
+                                {% set sourceLanguage = '/' ~ app.request.locale %}
+                                {% set targetLanguage = '/' ~ languageAlt %}
+                            {% else %}
+                                {% set sourceLanguage = '/' ~ app.request.locale ~ '/' %}
+                                {% set targetLanguage = '/' ~ languageAlt ~ '/' %}
+                            {% endif %}
+                            <link rel="alternate" hreflang="{{ languageAlt }}" href="{{ app.request.uri|replace({(sourceLanguage): targetLanguage}) }}" />
+                        {% endfor %}
+                    {% else %}
+                        <link rel="alternate" hreflang="{{ app.request.locale }}" />
+                    {% endif %}
 {# End display for html #}
                 {% endif %}
 {# Copyright #}

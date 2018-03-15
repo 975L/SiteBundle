@@ -44,9 +44,6 @@ h2 {
     font-size: 130%;
 }
 
-.white {
-    color: #ffffff;
-}
 
 .blue {
     color: blue;
@@ -68,12 +65,20 @@ h2 {
     color: #E56717;
 }
 
+.pink {
+    color: #FF4081;
+}
+
 .purple {
     color: purple;
 }
 
 .red {
     color: red;
+}
+
+.white {
+    color: #ffffff;
 }
 
 .text-underline {
