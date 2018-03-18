@@ -227,6 +227,102 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
 {% endblock %}
 ```
 
+Full layout example
+===================
+You can use this full layout example as a basis for your project:
+```twig
+{% extends '@c975LSite/layout.html.twig' %}
+
+{% set site = 'YOUR_SITE_NAME' %}
+{% set author = 'THE_AUTHOR' %}
+{% set firstOnlineDate = 'YYYY-MM-DD' %}
+{% set logo = absolute_url(asset('images/og-image.png')) %}
+{% set favicon = absolute_url(asset('favicon.ico')) %}
+{% set appleTouchIcon = absolute_url(asset('apple-touch-icon.png')) %}
+{% set languagesAlt  = ['en', 'fr', 'es'] %}
+{%
+    set matomo = {
+        'id': YOUR_MATOMO_ID,
+        'url': 'YOUR_MATOMO_URL'
+    }
+%}
+{%
+    set cookieConsent = {
+        'message': 'text.cookies_banner'|trans,
+        'dismiss': 'text.cookies_dismiss'|trans,
+        'link': 'label.cookies_policy'|trans,
+        'href': 'YOUR_COOKIES_POLICY_LINK'
+    }
+%}
+{%
+    set errImages = {
+        'err': asset('PATH_TO_YOUR_IMAGE_FOR_ERR'),
+        'err401': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_401'),
+        'err403': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_403'),
+        'err404': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_404'),
+        'err410': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_410'),
+        'err500': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_500'),
+    }
+%}
+
+{# Meta #}
+{% block meta %}
+    {{ parent() }}
+{# Facebook app_id #}
+    <meta property="fb:app_id" content="YOUR_FACEBOOK_APP_ID" />
+{% endblock %}
+
+{# Css #}
+{% block stylesheets %}
+    {{ parent() }}
+    {% if display == 'pdf' %}
+        {{ inc_content(absolute_url(asset('css/styles.min.css')), 'local') }}
+    {% else %}
+        {{ inc_font('Wendy One') }}
+        {{ inc_lib(absolute_url(asset('css/styles.min.css')), 'local') }}
+    {% endif %}
+{% endblock %}
+
+{# Navigation #}
+{% block navigation %}
+    {{ include('navbar.html.twig') }}
+{% endblock %}
+
+{# Title #}
+{% block title %}
+    {% if app.request.get('_route') != null %}
+        <h1>
+            {{ title }}
+        </h1>
+    {% endif %}
+{% endblock %}
+
+{# Container #}
+{% block container %}
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{# Share #}
+{% block share %}
+    {# YOUR SHARING TOOL  #}
+{% endblock %}
+
+{# Footer #}
+{% block footer %}
+    {{ include('footer.html.twig') }}
+{% endblock %}
+
+{# Javascript #}
+{% block javascripts %}
+    {{ parent() }}
+    {% if display == 'html' %}
+        {{ inc_lib(absolute_url(asset('js/functions.min.js')), 'local') }}
+    {% endif %}
+{% endblock %}
+```
 
 Use pre-defined models
 ======================
