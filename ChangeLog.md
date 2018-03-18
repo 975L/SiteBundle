@@ -1,5 +1,12 @@
 # Changelog
 
+v1.5.3
+------
+- Corrected block `acceptation` in Terms of use (18/03/2018)
+- Added empty block `payingServices` to Terms of use to allow override (18/03/2018)
+- Added empty block `services` to Terms of sales to allow override (18/03/2018)
+- Added full layout example to `README.md` (18/03/2018)
+
 v1.5.2
 ------
 - Added `hreflang` meta for multiples languages (15/03/2018)
