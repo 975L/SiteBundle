@@ -1,5 +1,9 @@
 # Changelog
 
+v1.5.3.1
+--------
+- Suppressed second call of jQuery (19/03/2018)
+
 v1.5.3
 ------
 - Corrected block `acceptation` in Terms of use (18/03/2018)
