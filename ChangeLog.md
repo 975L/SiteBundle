@@ -1,5 +1,9 @@
 # Changelog
 
+v1.5.4
+------
+- Added condition `display == html` to load jQuery in `layout.html.twig` (21/03/2018)
+
 v1.5.3.1
 --------
 - Suppressed second call of jQuery (19/03/2018)
