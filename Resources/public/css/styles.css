@@ -303,4 +303,8 @@ a:hover.pullDown {
         color: #b64450 !important;
         background-color: #f2dede !important;
     }
+
+    a[href]:after {
+        content: none;
+    }
 }

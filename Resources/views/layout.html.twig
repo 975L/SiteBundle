@@ -144,7 +144,11 @@
 {# Logo print only #}
                 {% block logoPrintOnly %}
                     {% if site is defined or logo is defined %}
-                        <div class="container-fluid text-center visible-print-block">
+                        {% if display == 'pdf' %}
+                            <div class="container-fluid text-center">
+                        {% else %}
+                            <div class="container-fluid text-center visible-print-block">
+                        {% endif %}
                             <h1>
                                 {% if logo is defined %}
                                     <img src="{{ logo }}" height="80" alt="logo" />
