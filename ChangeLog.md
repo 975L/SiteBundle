@@ -1,5 +1,10 @@
 # Changelog
 
+v1.5.4.1
+--------
+- Added condition `display == pdf` for block `logoPrintOnly` in `layout.html.twig` (21/03/2018)
+- Added removing of displaying url in print format in `styles.css` (22/03/2018)
+
 v1.5.4
 ------
 - Added condition `display == html` to load jQuery in `layout.html.twig` (21/03/2018)
