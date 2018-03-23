@@ -1,5 +1,10 @@
 # Changelog
 
+v1.6
+----
+- Changed the format of `languagesAlt` to be re-used for `navbarLanguagesDropdownMenu.html.twig` [BC-Break] (23/03/2018)
+- Added fragment `navbarLanguagesDropdownMenu.html.twig` (23/03/2018)
+
 v1.5.4.1
 --------
 - Added condition `display == pdf` for block `logoPrintOnly` in `layout.html.twig` (21/03/2018)

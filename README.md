@@ -140,9 +140,17 @@ Alternate languages
 -------------------
 You can define the meta `<link rel="alternate" hreflang="YOUR_LANGUAGE" href="URL_WITH_ALTERNATE_LANGUAGE" />` by setting a `languagesAlt` array in your `app/Resources/views/layout.html.twig`
 ```twig
-{% set languagesAlt  = ['en', 'fr', 'es'] %}
+{%
+set languagesAlt = {
+    en: { title: 'English' },
+    fr: { title: 'Français' },
+    es: { title: 'Español' }
+    }
+%}
 ```
 It will replace the current language by the ones set in `languagesAlt` using the following scheme `https://example.com/LANGUAGE/pages/XXX`.
+
+Having this array set, you can also use `navbarLanguagesDropdownMenu.html.twig` in your navbar to display a dropdown menu to select available languages.
 
 Error pages
 -----------
@@ -239,7 +247,13 @@ You can use this full layout example as a basis for your project:
 {% set logo = absolute_url(asset('images/og-image.png')) %}
 {% set favicon = absolute_url(asset('favicon.ico')) %}
 {% set appleTouchIcon = absolute_url(asset('apple-touch-icon.png')) %}
-{% set languagesAlt  = ['en', 'fr', 'es'] %}
+{%
+set languagesAlt = {
+    en: { title: 'English' },
+    fr: { title: 'Français' },
+    es: { title: 'Español' }
+    }
+%}
 {%
     set matomo = {
         'id': YOUR_MATOMO_ID,
