@@ -80,7 +80,7 @@
                     {% endif %}
 {# hreflang #}
                     {% if languagesAlt is defined %}
-                        {% for languageAlt in languagesAlt %}
+                        {% for languageAlt, item in languagesAlt %}
                             {% if app.request.uri ends with '/' ~ app.request.locale %}
                                 {% set sourceLanguage = '/' ~ app.request.locale %}
                                 {% set targetLanguage = '/' ~ languageAlt %}
