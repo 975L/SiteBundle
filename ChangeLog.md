@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.1
+------
+- Corrected copyright date display to set only one year if firstOnlineDate == current year (03/04/2018)
+
 v1.6
 ----
 - Changed the format of `languagesAlt` to be re-used for `navbarLanguagesDropdownMenu.html.twig` [BC-Break] (23/03/2018)
