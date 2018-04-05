@@ -1,5 +1,10 @@
 # Changelog
 
+v1.6.2
+------
+- Added javascript function `nl2br()` to remove carriage returns (04/04/2018)
+- Added ogImage variable to separate from logo (05/04/2018)]
+
 v1.6.1
 ------
 - Corrected copyright date display to set only one year if firstOnlineDate == current year (03/04/2018)

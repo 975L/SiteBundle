@@ -152,6 +152,13 @@ It will replace the current language by the ones set in `languagesAlt` using the
 
 Having this array set, you can also use `navbarLanguagesDropdownMenu.html.twig` in your navbar to display a dropdown menu to select available languages.
 
+ogImage
+-------
+You can define an ogImage to use on page basis, with the following code:
+```twig
+{% set ogImage = absolute_url(asset('PATH_TO_YOUR_IMAGE')) %}
+```
+
 Error pages
 -----------
 You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`, but if you want to use the pre-defined error templates, do the following:
