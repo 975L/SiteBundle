@@ -38,6 +38,11 @@ function externalLinks()
         }
     };
 
+//Replaces carriage returns by <br>
+function nl2br(str) {
+    return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br />' + '$2');
+}
+
 //Document.ready
 $(document).ready(function() {
 //Adds padding to window with anchors - https://github.com/twbs/bootstrap/issues/1768

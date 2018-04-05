@@ -13,6 +13,12 @@
     {% set copyright = copyright ~ ': ' ~ site %}
 {% endif %}
 
+{# ogImage #}
+{% if ogImage is not defined and logo is defined %}
+    {% set ogImage = logo %}
+{% endif %}
+
+
 {# pageTitle #}
 {% if title is defined %}
     {% set pageTitle = title %}
@@ -66,9 +72,9 @@
 {# Type #}
                     <meta property="og:type" content="website" />
 {# Image #}
-                    {% if logo is defined %}
-                        <meta property="og:image" content="{{ logo }}" />
-                        <meta name="twitter:image" content="{{ logo }}">
+                    {% if ogImage is defined %}
+                        <meta property="og:image" content="{{ ogImage }}" />
+                        <meta name="twitter:image" content="{{ ogImage }}">
                     {% endif %}
 {# Url #}
                     <meta property="og:url" content="{{ app.request.uri }}" />

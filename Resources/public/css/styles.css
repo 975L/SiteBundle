@@ -44,9 +44,12 @@ h2 {
     font-size: 130%;
 }
 
-
 .blue {
     color: blue;
+}
+
+.darkgrey {
+    color: #585858;
 }
 
 .green {
