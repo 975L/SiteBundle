@@ -22,8 +22,4 @@
             <img src="{{ errImages.err404 }}" class="img-responsive" alt="err404" /><br />
         </p>
     {% endif %}
-{# Contact #}
-    <p class="text-center">
-        <a href="{{ path('contactform_display') ~ '?' ~ { 's': 'Err404-' ~ app.request.uri }|url_encode }}" class="btn btn-info btn-lg" rel="nofollow">{{ 'label.point_error'|trans }}</a>
-    </p>
 {% endblock %}

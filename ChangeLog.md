@@ -1,5 +1,10 @@
 # Changelog
 
+v1.6.3
+------
+- Corrected text for err410 (14/04/2018)
+- Suppressed contact link in error templates as c975L/ContactFormBundle may not be installed (14/04/2018)
+
 v1.6.2
 ------
 - Added javascript function `nl2br()` to remove carriage returns (04/04/2018)
