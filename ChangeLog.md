@@ -1,5 +1,10 @@
 # Changelog
 
+v1.6.4
+------
+- Set on one line matomo code (28/04/2018)
+- Added condition for ogImage != null for display (02/05/2018)
+
 v1.6.3
 ------
 - Corrected text for err410 (14/04/2018)

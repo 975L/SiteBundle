@@ -14,7 +14,7 @@
 {% endif %}
 
 {# ogImage #}
-{% if ogImage is not defined and logo is defined %}
+{% if (ogImage is not defined or ogImage == null) and logo is defined %}
     {% set ogImage = logo %}
 {% endif %}
 
