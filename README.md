@@ -181,19 +181,7 @@ In each file copy/paste the following code:
     {% include('@c975LSite/Exception/error404.html.twig') %}
 {% endblock %}
 
-{% block meta %}
-{% endblock %}
-
-{% block logoPrintOnly %}
-{% endblock %}
-
-{% block flashes %}
-{% endblock %}
-
 {% block share %}
-{% endblock %}
-
-{% block javascripts %}
 {% endblock %}
 ```
 
