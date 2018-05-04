@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.4.1
+--------
+- Removed in `README.md` blocks to disable for error pages as if they are removed we lose some functionalities (04/05/2018)
+
 v1.6.4
 ------
 - Set on one line matomo code (28/04/2018)
