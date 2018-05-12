@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.5.2
+--------
+- Corrected `services.yml` (13/05/2018)
+
 v1.6.5.1
 --------
 - Corrected missing file for auto-discovery of services (12/05/2018)
