@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class c975LUserExtension extends Extension
+class c975LSiteExtension extends Extension
 {
     /**
      * {@inheritdoc}
