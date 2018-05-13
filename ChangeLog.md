@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.5.3
+--------
+- Corrrected input outline (13/05/2018)
+
 v1.6.5.2
 --------
 - Corrected `services.yml` (13/05/2018)
