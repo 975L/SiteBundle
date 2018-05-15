@@ -1,5 +1,10 @@
 # Changelog
 
+v1.6.5.4
+--------
+- Corrected some styles (15/05/2018)
+- Added tyles for "toolbar" (15/05/2018)
+
 v1.6.5.3
 --------
 - Corrrected input outline (13/05/2018)
