@@ -135,6 +135,8 @@ div .btn-padding {
     margin-top: 3em;
 }
 
+p,
+li,
 button,
 button.btn,
 a,
@@ -262,25 +264,32 @@ a:hover.pullDown {
     background-color: #FB6B6B;
 }
 
+.toolbar {
+    margin-bottom: 2em;
+}
 
 /* SCREENS */
 @media only screen
     and (max-width: 360px) {
     label.radio-inline,
     ul.inline li {
-        display: block;
+        display: block !important;
     }
 
     h1 {
-        font-size: 125%;
+        font-size: 125% !important;
     }
 
     h2 {
-        font-size: 115%;
+        font-size: 115% !important;
     }
 
     h3 {
-        font-size: 105%;
+        font-size: 105% !important;
+    }
+
+    .toolbar {
+        margin-bottom: 1em !important;
     }
 }
 
@@ -291,31 +300,56 @@ a:hover.pullDown {
     }
 
     h1 {
-        font-size: 135%;
+        font-size: 115% !important;
     }
 
     h2 {
-        font-size: 125%;
+        font-size: 110% !important;
     }
 
     h3 {
-        font-size: 115%;
+        font-size: 105% !important;
     }
+
+    .toolbar {
+        margin-bottom: 1.2em !important;
+    }
+
+    .toolbar .btn {
+        padding: 0.3em 0.5em !important;
+    }
+
 }
 
 @media only screen
     and (max-width: 767px) {
     body {
-        padding-top: 0;
+        padding-top: 0 !important;
+    }
+
+    h1 {
+        font-size: 135% !important;
+    }
+
+    h2 {
+        font-size: 125% !important;
+    }
+
+    h3 {
+        font-size: 115% !important;
     }
 
     .navbar-fixed-top {
-        position: static;
-        margin: 0;
+        position: static !important;
+        margin: 0 !important;
     }
 
     ul.navbar-btn {
         margin-right: 1em !important;
+    }
+
+    .toolbar {
+        margin-bottom: 1.5em !important;
     }
 }
 
@@ -323,7 +357,7 @@ a:hover.pullDown {
 /* PRINT */
 @media print {
     * {
-        font-size: 95%;
+        font-size: 95% !important;
     }
 
     h1,
@@ -334,21 +368,21 @@ a:hover.pullDown {
     }
 
     h1 {
-        font-size: 150%;
+        font-size: 150% !important;
     }
 
     h2 {
-        font-size: 140%;
+        font-size: 140% !important;
     }
 
     h3 {
-        font-size: 130%;
+        font-size: 130% !important;
     }
 
     .container,
     .container-fluid {
-        width: 100%;
-        background-color: #ffffff;
+        width: 100% !important;
+        background-color: #ffffff !important;
     }
 
     .alert-info {
@@ -361,6 +395,6 @@ a:hover.pullDown {
     }
 
     a[href]:after {
-        content: none;
+        content: none !important;
     }
 }
