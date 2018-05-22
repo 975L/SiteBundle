@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.5.5
+--------
+- Removed required in composer.json (22/05/2018)
+
 v1.6.5.4
 --------
 - Corrected some styles (15/05/2018)
