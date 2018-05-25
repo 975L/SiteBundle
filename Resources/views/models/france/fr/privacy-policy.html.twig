@@ -1,11 +1,12 @@
 {% trans_default_domain 'site' %}
 
-{% set updateDate = '2018-03-09' %}
+{% set updateDate = '2018-05-25' %}
 {#
 Variables used in this template and that must be define in your calling template
 
-- site
-- latestUpdate
+- site : name of site
+- latestUpdate : latest update on your side 'YYYY-MM-DD'
+- dpo : name of dpo
 #}
 
 {% block alertFrench %}
@@ -22,10 +23,19 @@ Variables used in this template and that must be define in your calling template
     </p>
 {% endblock %}
 
+{% block information %}
+    <p class="text-center">
+        Les Règles de confidentialité font partie intégrante des Conditions générales d'utilisation (CGU) de <strong>{{ site }}</strong>.
+    </p>
+{% endblock %}
+
 {% block personalData %}
     <h2>Données personnelles</h2>
     <p class="text-justify">
-        Afin de respecter la protection de votre vie privée et des données personnelles que vous nous confiez volontairement, nous nous engageons à NE PAS divulguer ces informations à d'autres sociétés et/ou organisations à des fins d'utilisations par celles-ci, sans votre accord.
+        Vous pouvez, globalement, naviguer sur <strong>{{ site }}</strong> sans nous dire qui vous êtes. En naviguant sur <strong>{{ site }}</strong>, votre navigateur transmet automatiquement diverses données qui permettent d'assurer le suivi technique de navigation. Certaines informations sont analysées à des fins purement statistiques, puis effacées.
+    </p>
+    <p class="text-justify">
+        Afin de respecter la protection de votre vie privée et des données personnelles que vous nous confiez volontairement et de votre propre initiative (par exemple lors de la création d'un compte d'utilisateur), nous nous engageons à NE PAS divulguer ces informations à d'autres sociétés et/ou organisations à des fins d'utilisations par celles-ci, sans votre accord.
     </p>
 {% endblock %}
 
@@ -52,6 +62,24 @@ Variables used in this template and that must be define in your calling template
     </p>
 {% endblock %}
 
+{% block rights %}
+    <h2>Vos droits</h2>
+    <p class="text-justify">
+        Conformément à la réglementation en vigueur les utilisateurs de <strong>{{ site }}</strong> disposent des droits suivants :
+    </p>
+    <ul>
+        <li>droit d'accès, de rectification, de mise à jour, de complétude, de verrouillage ou de suppression de vos données;</li>
+        <li>droit de retirer à tout moment un consentement ;</li>
+        <li>droit à la limitation du traitement de vos données ;</li>
+        <li>droit d'opposition aux traitement de vos données personnelles ;</li>
+        <li>droit de réclamation auprès d'une autorité de contrôle ;</li>
+        <li>droit à la portabilité des données fournies.</li>
+    </ul>
+    <p class="text-justify">
+        Si vous souhaitez savoir comment <strong>{{ site }}</strong> utilise vos données personnelles, demander à les rectifier ou s'opposer à un traitement vous pouvez nous contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
+    </p>
+{% endblock %}
+
 {% block rules %}
     <h2>Règlement</h2>
     <p class="text-justify">
@@ -60,14 +88,14 @@ Variables used in this template and that must be define in your calling template
 {% endblock %}
 
 {% block modification %}
-    <h3>Modification</h3>
+    <h3>Modification du réglement</h3>
     <p class="text-justify">
         Nous nous réservons la possibilité de modifier, tout ou partie, et à tout moment, ce présent réglement. Vous êtes invités à le consulter régulièrement pour prendre connaissance des changements apportés. Il est applicable au moment de sa publication.
     </p>
 {% endblock %}
 
 {% block collection %}
-    <h3>Collecte</h3>
+    <h3>Collecte des données</h3>
     <p class="text-justify">
         Les informations mises en ligne sur <strong>{{ site }}</strong> sont accessibles au public. Nos serveurs et nos prestataires de services se trouvent dans l'espace Européen. Ainsi, si vous souhaitez nous fournir des informations personnelles, vous acceptez que celles-ci soit transférées, traitées et stockées dans l'espace Européen.
     </p>
@@ -82,7 +110,7 @@ Variables used in this template and that must be define in your calling template
 {% endblock %}
 
 {% block use %}
-    <h3>Utilisation</h3>
+    <h3>Utilisation des données</h3>
     <p class="text-justify">
         Nous utilisons les informations personnelles des utilisateurs afin de :
     </p>
@@ -95,22 +123,61 @@ Variables used in this template and that must be define in your calling template
 {% endblock %}
 
 {% block communication %}
-    <h3>Communication</h3>
+    <h3>Communication des données</h3>
     <p class="text-justify">
-        <strong>Nous ne vendons pas ni ne louons</strong> vos informations personnelles à des tiers, mais nous pouvons être amenés à communiquer des informations personnelles pour satisfaire à des obligations légales, appliquer nos règlements, répondre aux réclamations, ou protéger les droits ou les biens de toute personne ou assurer sa sécurité.
+        <strong>Nous ne vendons pas ni ne louons vos informations personnelles à des tiers</strong>, mais nous pouvons être amenés à communiquer des informations personnelles pour satisfaire à des obligations légales, appliquer nos règlements, répondre aux réclamations, ou protéger les droits ou les biens de toute personne ou assurer sa sécurité.
+    </p>
+{% endblock %}
+
+{% block retention %}
+    <h3>Conservation des données</h3>
+    <p class="text-justify">
+        Nous conservons vos données personelles uniquement le temps nécessaire pour les finalités poursuivies, conformément aux prescriptions légales.
+    </p>
+{% endblock %}
+
+{% block logs %}
+    <h3>Fichiers de logs</h3>
+    <p class="text-justify">
+        À chaque consultation de <strong>{{ site }}</strong>, notre système enregistre, dans nos fichiers de logs et de manière automatisée, des données et informations sur le système informatique de l'ordinateur consultant. Les données suivantes sont collectées :
+    </p>
+    <ul>
+        <li>informations concernant le type de navigateur, la langue de celui-ci et la version utilisée ;</li>
+        <li>système d'exploitation de l'utilisateur ;</li>
+        <li>fournisseur de services Internet de l'utilisateur ;</li>
+        <li>adresse IP de l'utilisateur ;</li>
+        <li>dDate et heure/fuseau horaire de l'accès ;</li>
+        <li>contenu de la demande ;</li>
+        <li>statut d'accès/code de statut http ;</li>
+        <li>pages web à partir desquelles le système de l'utilisateur a accédé à notre site web ;</li>
+        <li>pages web consultées par le système de l'utilisateur par l'intermédiaire de notre site web ;</li>
+        <li>quantité de données transmise ;</li>
+    </ul>
+    <p class="text-justify">
+        En cas d'anomalie lors de la consultation d'une page, nous consignons l'identifiant, l'adresse IP, la demande http concernée et les données nécessaires à l'analyse et à la suppression de l'anomalie.
     </p>
 {% endblock %}
 
 {% block security %}
-    <h3>Sécurité</h3>
+    <h3>Sécurité des données</h3>
     <p class="text-justify">
-        Nous utilisons un grand nombre d'outils techniques et organisationnels pour assurer la protection de vos données personnelles contre les accès ou la communication non autorisés. Toutefois, comme vous le savez sans doute, il n'existe pas de protection parfaite. Nous n'offrons donc aucune garantie à cet égard.
+        Nous utilisons un grand nombre d'outils techniques et organisationnels généralement reconnus, pour assurer la protection de vos données personnelles contre les accès ou la communication non autorisés. Toutefois, comme vous le savez sans doute, il n'existe pas de protection parfaite. Nous n'offrons donc aucune garantie à cet égard.
+    </p>
+    <p>
+        La sécurité des données personnelles est aussi l'affaire des utilisateurs qui s'engagent à conserver la confidentialité de leur identifiant et de leur mot de passe. Les utilisateurs s'engagent également à ne pas partager leur compte.
     </p>
 {% endblock %}
 
 {% block archiving %}
-    <h3>Archivage</h3>
+    <h3>Archivage des données</h3>
     <p class="text-justify">
         Les données supprimées sont archivées, mais non accessibles au public, pour la durée légale de un an. Elles sont ensuite définitivement supprimées.
+    </p>
+{% endblock %}
+
+{% block dpo %}
+    <h3>Data Protection Officer (DPO)</h3>
+    <p class="text-justify">
+        Le responsable du traitement et de la protection des données est <strong>{{ dpo }}</strong>. Vous pouvez le contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
     </p>
 {% endblock %}
