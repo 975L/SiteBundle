@@ -1,5 +1,9 @@
 # Changelog
 
+v1.6.7.1
+--------
+- Removed viewport values that prevent users from resizing documents (10/06/2018)
+
 v1.6.7
 ------
 - Removed old IE versions warnings (27/05/2018)
