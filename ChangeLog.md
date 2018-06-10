@@ -1,5 +1,13 @@
 # Changelog
 
+v1.6.7
+------
+- Removed old IE versions warnings (27/05/2018)
+- Corrected meta copyright (27/05/2018)
+- Re-ordered css form largest to smallest screen size and removed `!important` (06/06/2018)
+- Added language declaration in openinng html (10/06/2018)
+- Corrected base balise (10/06/2018)
+
 v1.6.6
 ------
 - Updated privacy-policy linked to GDPR (25/05/2018)
@@ -11,7 +19,7 @@ v1.6.5.5
 v1.6.5.4
 --------
 - Corrected some styles (15/05/2018)
-- Added tyles for "toolbar" (15/05/2018)
+- Added styles for "toolbar" (15/05/2018)
 
 v1.6.5.3
 --------

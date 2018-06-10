@@ -18,7 +18,6 @@
     {% set ogImage = logo %}
 {% endif %}
 
-
 {# pageTitle #}
 {% if title is defined %}
     {% set pageTitle = title %}
@@ -34,12 +33,7 @@
 
 {% spaceless %}
 <!DOCTYPE html>
-{% if display == 'html' %}
-    <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-    <!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-    <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-    <!--[if gt IE 8]><!--> <html class="no-js" lang="{{ app.request.locale }}"> <!--<![endif]-->
-{% endif %}
+<html lang="{{ app.request.locale }}">
 {# Head #}
     <head>
         {% block head %}
@@ -56,6 +50,10 @@
 {# Author #}
                     {% if author is defined %}
                         <meta name="author" content="{{ author }}" />
+                    {% endif %}
+{# Copyright #}
+                    {% if copyright is defined %}
+                        <meta name="copyright" content="{{ copyright }}" />
                     {% endif %}
 {# Description #}
                     {% if description is defined and description is not empty %}
@@ -105,12 +103,8 @@
                     {% endif %}
 {# End display for html #}
                 {% endif %}
-{# Copyright #}
-                {% if copyright is defined %}
-                    <link rel="copyright" title="{{ copyright }}" />
-                {% endif %}
 {# base #}
-                <base />
+                <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
@@ -137,9 +131,6 @@
 {# Block body #}
         {% block body %}
             {% if display != 'pdf' %}
-                <!--[if lt IE 8]>
-                    <p class="chromeframe">You are using an outdated browser. Please <a href="http://browsehappy.com/">upgrade your browser to improve your experience.</p>
-                <![endif]-->
 {# backTop/pullDown bookmarks #}
                 <a href="#" class="backTop"></a>
                 <a href="#" class="pullDown"></a>
