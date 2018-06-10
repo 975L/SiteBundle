@@ -98,11 +98,11 @@ h2 {
 
 .navbar-right,
 .navbar-btn {
-    margin-right: 1em !important;
+    margin-right: 1em;
 }
 
 ul.navbar-btn {
-    margin-right: 1em !important;
+    margin-right: 1em;
 }
 
 li {
@@ -115,7 +115,7 @@ li {
 }
 
 ul.dropdown-menu > li {
-    font-family: inherit !important;
+    font-family: inherit;
 }
 
 .alert-warning {
@@ -220,7 +220,7 @@ input[type=text]:focus {
 
 /* ADDONS */
 ul.inline {
-    padding: 0 !important;
+    padding: 0;
 }
 
 ul.inline li {
@@ -270,26 +270,34 @@ a:hover.pullDown {
 
 /* SCREENS */
 @media only screen
-    and (max-width: 360px) {
-    label.radio-inline,
-    ul.inline li {
-        display: block !important;
+    and (max-width: 767px) {
+    body {
+        padding-top: 0;
     }
 
     h1 {
-        font-size: 125% !important;
+        font-size: 135%;
     }
 
     h2 {
-        font-size: 115% !important;
+        font-size: 125%;
     }
 
     h3 {
-        font-size: 105% !important;
+        font-size: 115%;
+    }
+
+    .navbar-fixed-top {
+        position: static;
+        margin: 0 ;
+    }
+
+    ul.navbar-btn {
+        margin-right: 1em;
     }
 
     .toolbar {
-        margin-bottom: 1em !important;
+        margin-bottom: 1.5em;
     }
 }
 
@@ -300,56 +308,47 @@ a:hover.pullDown {
     }
 
     h1 {
-        font-size: 115% !important;
+        font-size: 115%;
     }
 
     h2 {
-        font-size: 110% !important;
+        font-size: 110%;
     }
 
     h3 {
-        font-size: 105% !important;
+        font-size: 105%;
     }
 
     .toolbar {
-        margin-bottom: 1.2em !important;
+        margin-bottom: 1.2em;
     }
 
     .toolbar .btn {
-        padding: 0.3em 0.5em !important;
+        padding: 0.3em 0.5em;
     }
-
 }
 
 @media only screen
-    and (max-width: 767px) {
-    body {
-        padding-top: 0 !important;
+    and (max-width: 360px) {
+    label.radio-inline,
+    ul.inline li {
+        display: block;
     }
 
     h1 {
-        font-size: 135% !important;
+        font-size: 125%;
     }
 
     h2 {
-        font-size: 125% !important;
+        font-size: 115%;
     }
 
     h3 {
-        font-size: 115% !important;
-    }
-
-    .navbar-fixed-top {
-        position: static !important;
-        margin: 0 !important;
-    }
-
-    ul.navbar-btn {
-        margin-right: 1em !important;
+        font-size: 105%;
     }
 
     .toolbar {
-        margin-bottom: 1.5em !important;
+        margin-bottom: 1em;
     }
 }
 
@@ -357,44 +356,44 @@ a:hover.pullDown {
 /* PRINT */
 @media print {
     * {
-        font-size: 95% !important;
+        font-size: 95%;
     }
 
     h1,
     h2,
     h3,
     .lead {
-        letter-spacing: inherit !important;
+        letter-spacing: inherit;
     }
 
     h1 {
-        font-size: 150% !important;
+        font-size: 150%;
     }
 
     h2 {
-        font-size: 140% !important;
+        font-size: 140%;
     }
 
     h3 {
-        font-size: 130% !important;
+        font-size: 130%;
     }
 
     .container,
     .container-fluid {
-        width: 100% !important;
-        background-color: #ffffff !important;
+        width: 100%;
+        background-color: #ffffff;
     }
 
     .alert-info {
-        background-color: #d9edf7 !important;
+        background-color: #d9edf7;
     }
 
     .alert-danger {
-        color: #b64450 !important;
-        background-color: #f2dede !important;
+        color: #b64450;
+        background-color: #f2dede;
     }
 
     a[href]:after {
-        content: none !important;
+        content: none;
     }
 }

@@ -80,7 +80,7 @@ Nous conservons vos données personelles uniquement le temps nécessaire pour le
 - système d'exploitation de l'utilisateur ;
 - fournisseur de services Internet de l'utilisateur ;
 - adresse IP de l'utilisateur ;
-- dDate et heure/fuseau horaire de l'accès ;
+- date et heure/fuseau horaire de l'accès ;
 - contenu de la demande ;
 - statut d'accès/code de statut http ;
 - pages web à partir desquelles le système de l'utilisateur a accédé à notre site web ;
@@ -102,4 +102,3 @@ Les données supprimées sont archivées, mais non accessibles au public, pour l
 ### Data Protection Officer (DPO)
 
 Le responsable du traitement et de la protection des données est **{{ dpo }}**. Vous pouvez le contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
-
