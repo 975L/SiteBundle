@@ -1,5 +1,11 @@
 # Changelog
 
+v1.6.7.2
+--------
+- Removed chrome value for "X-UA-Compatible" (03/07/2018)
+- Added href value for alternate language when only one (03/07/2018)
+- Suppressed 'type="text/javascript"' as unneeded (03/07/2018)
+
 v1.6.7.1
 --------
 - Removed viewport values that prevent users from resizing documents (10/06/2018)
