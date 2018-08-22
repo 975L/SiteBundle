@@ -1,5 +1,12 @@
 # Changelog
 
+v1.6.7.3
+--------
+- Added meta "og:site_name" (19/08/2018)
+- Added link to BuyMeCoffee (22/08/2018)
+- Added link to apidoc (22/08/2018)
+- Added documentation (22/08/2018)
+
 v1.6.7.2
 --------
 - Removed chrome value for "X-UA-Compatible" (03/07/2018)

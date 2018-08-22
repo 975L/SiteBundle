@@ -45,6 +45,10 @@
 {# Display for html #}
                 {% if display != 'pdf' %}
                     <meta name="robots" content="index, follow" />
+{# Site #}
+                    {% if site is defined %}
+                        <meta property="og:site_name" content="{{ site }}">
+                    {% endif %}
 {# Twitter card #}
                     <meta name="twitter:card" content="summary">
 {# Author #}
@@ -103,7 +107,7 @@
                     {% endif %}
 {# End display for html #}
                 {% endif %}
-{# base #}
+{# Base #}
                 <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
             {% endblock %}
 {# Stylesheets #}
