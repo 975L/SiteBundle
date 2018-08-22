@@ -17,6 +17,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * Console command to convert the Twig models template to their Markdown format with 'models:twig2md'
+ * @author Laurent Marquet <laurent.marquet@laposte.net>
+ * @copyright 2018 975L <contact@975l.com>
+ */
 class Twig2MdCommand extends ContainerAwareCommand
 {
     protected function configure()

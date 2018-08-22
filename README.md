@@ -9,7 +9,9 @@ SiteBundle does the following:
 - Allows to have templates to override TwigBundle/Exception templates,
 - Allows to use pre-defined Terms of use, Terms of sales, etc.
 
-[Site Bundle dedicated web page](https://975l.com/en/pages/site-bundle).
+[SiteBundle dedicated web page](https://975l.com/en/pages/site-bundle).
+
+[SiteBundle API documentation](https://975l.com/apidoc/c975L/SiteBundle.html).
 
 Bundle installation
 ===================
@@ -413,3 +415,5 @@ You can find below a table containing all the models available per country and l
 | Tems of use | fr |
 
 To facilitate reading, models are also available in Markdown format. If you do a modification, you can use Command `php bin/console models:twig2md` to convert Twig models templates to their Markdown equivalent.
+
+**If this project help you to reduce time to develop, you can [buy me a coffee](https://www.buymeacoffee.com/LaurentMarquet) :)**
