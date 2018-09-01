@@ -1,5 +1,7 @@
 # Changelog
 
+- Updated composer.json (01/09/2018)
+
 v1.6.7.3
 --------
 - Added meta "og:site_name" (19/08/2018)
