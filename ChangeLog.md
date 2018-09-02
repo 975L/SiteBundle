@@ -7,6 +7,8 @@
 - Added `bundle.yaml` (02/09/2018)
 - Made use of c975L/ConfigBundle (02/09/2018)
 - Added `UPGRADE.md` (02/09/2018)
+- Added Controller + Voter for Routes `site_config` + `dashboard_config` (02/09/2018)
+
 
 v1.x
 ====
