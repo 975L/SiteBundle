@@ -1,4 +1,4 @@
-c975LEmail:
+c975LSite:
     roleNeeded:
         type: string
         required: true
