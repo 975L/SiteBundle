@@ -1,3 +1,9 @@
+c975LEmail:
+    roleNeeded:
+        type: string
+        required: true
+        default: ROLE_ADMIN
+        info: "User's role needed to enable access to data linked to SiteBundle: i.e. ROLE_ADMIN (default)"
 c975LCommon:
     site:
         type: string
