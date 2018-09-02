@@ -1,3 +1,23 @@
+{# Gets data from parameters set via c975L/ConfigBundle #}
+{% if config('c975LCommon.site') != null %}
+    {% set site = config('c975LCommon.site') %}
+{% endif %}
+{% if config('c975LCommon.author') != null %}
+    {% set author = config('c975LCommon.author') %}
+{% endif %}
+{% if config('c975LCommon.firstOnlineDate') != null %}
+    {% set firstOnlineDate = config('c975LCommon.firstOnlineDate') %}
+{% endif %}
+{% if config('c975LCommon.logo') != null %}
+    {% set logo = absolute_url(asset(config('c975LCommon.logo'))) %}
+{% endif %}
+{% if config('c975LCommon.favicon') != null %}
+    {% set favicon = absolute_url(asset(config('c975LCommon.favicon'))) %}
+{% endif %}
+{% if config('c975LCommon.appleTouchIcon') != null %}
+    {% set appleTouchIcon = absolute_url(asset(config('c975LCommon.appleTouchIcon'))) %}
+{% endif %}
+
 {# Copyright #}
 {% if firstOnlineDate is defined %}
     {% if firstOnlineDate|date('Y') == 'now'|date('Y') %}
