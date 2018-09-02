@@ -22,12 +22,6 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('c975_l_site');
-
-        $rootNode
-            ->children()
-            ->end()
-        ;
 
         return $treeBuilder;
     }
