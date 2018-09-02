@@ -41,7 +41,29 @@ class AppKernel extends Kernel
 }
 ```
 
-Step 3: install assets to web folder
+Step 3: Configure the Bundle
+----------------------------
+v2.0+ of c975LSiteBundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage configuration parameters. Use the Route "/site/config" with the proper user role to modify them.
+
+**Upgrading from v1.x? Check [UPGRADE.md](UPGRADE.md).**
+
+Step 4: Enable the Routes
+-------------------------
+Then, enable the routes by adding them to the `app/config/routing.yml` file of your project:
+
+```yml
+c975_l_site:
+    resource: "@c975LSiteBundle/Controller/"
+    type: annotation
+    prefix: /
+    #Multilingual website use the following
+    #prefix: /{_locale}
+    #defaults:   { _locale: '%locale%' }
+    #requirements:
+    #    _locale: en|fr|es
+```
+
+Step 5: install assets to web folder
 ------------------------------------
 Install assets by running
 ```bash
@@ -51,20 +73,9 @@ It will create a link from folder `Resources/public/` in your web folder. These 
 
 How to use
 ----------
-You **must** create a file named `layout.html.twig` in your `app/Resources/views/` that extend `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
+You **must** create a file named `layout.html.twig` in your `app/Resources/views/` that extends `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
 
-SiteBundle use the following variables to display information through the template.
-You need to set them in your `app/Resources/views/layout.html.twig`. Simply copy/paste them and set the right data. If you don't set them, they will be ignored.
-```twig
-{% set site = 'YOUR_SITE_NAME' %}
-{% set author = 'THE_AUTHOR' %}
-{% set firstOnlineDate = 'YYYY-MM-DD' %}
-{% set logo = absolute_url(asset('images/og-image.png')) %}
-{% set favicon = absolute_url(asset('favicon.ico')) %}
-{% set appleTouchIcon = absolute_url(asset('apple-touch-icon.png')) %}
-```
-
-SiteBundle also use the following variables which are page-based, meaning that they change for each page. If you want to use them, simply declare them on each page that extend your `app/Resources/views/layout.html.twig`.
+SiteBundle use the following variables which are page-based, meaning that they change for each page. If you want to use them, simply declare them on each page that extend your `app/Resources/views/layout.html.twig`.
 ```twig
 {% set title = 'YOUR_PAGE_TITLE' %}
 {% set description = 'YOUR_PAGE_DESCRIPTION' %}
@@ -73,10 +84,10 @@ Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the va
 
 Override a block
 ----------------
-
-You can override any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`, you can still use the `{{ parent() }}` Twig function:
+You can override any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`:
 ```twig
 {% block share %}
+    {# You can also use {{ parent() }} #}
     {# YOUR_OWN_TEXT #}
 {% endblock %}
 ```
@@ -174,12 +185,12 @@ The types of error covered by SiteBundle are:
 - error500
 
 In each file copy/paste the following code:
-**Take care to modify the error code in the included template name, i.e. "404" given here**
 
 ```twig
 {% extends 'layout.html.twig' %}
 
 {% block content %}
+    {# Take care to modify the error code in the included template name, i.e. "404" given here #}
     {% include('@c975LSite/Exception/error404.html.twig') %}
 {% endblock %}
 
@@ -216,6 +227,7 @@ To add stylesheets, simply add the following  in your `app/Resources/views/layou
     {# Of course you can provide the full "link" html data #}
 {% endblock %}
 ```
+
 Add javascripts
 ---------------
 To add javascripts, simply add the following  in your `app/Resources/views/layout.html.twig`:
@@ -238,12 +250,6 @@ You can use this full layout example as a basis for your project:
 ```twig
 {% extends '@c975LSite/layout.html.twig' %}
 
-{% set site = 'YOUR_SITE_NAME' %}
-{% set author = 'THE_AUTHOR' %}
-{% set firstOnlineDate = 'YYYY-MM-DD' %}
-{% set logo = absolute_url(asset('images/og-image.png')) %}
-{% set favicon = absolute_url(asset('favicon.ico')) %}
-{% set appleTouchIcon = absolute_url(asset('apple-touch-icon.png')) %}
 {%
 set languagesAlt = {
     en: { title: 'English' },
