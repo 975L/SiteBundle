@@ -29,8 +29,5 @@ class c975LSiteExtension extends Extension
             new FileLocator(__DIR__.'/../Resources/config')
         );
         $loader->load('services.yml');
-
-        $configuration = new Configuration();
-        $processedConfig = $this->processConfiguration($configuration, $configs);
     }
 }
