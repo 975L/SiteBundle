@@ -41,7 +41,29 @@ class AppKernel extends Kernel
 }
 ```
 
-Step 3: install assets to web folder
+Step 3: Configure the Bundle
+----------------------------
+v2.0+ of c975LSiteBundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage configuration parameters. Use the Route "/site/config" with the proper user role to modify them.
+
+**Upgrading from v1.x? Check [UPGRADE.md](UPGRADE.md).**
+
+Step 4: Enable the Routes
+-------------------------
+Then, enable the routes by adding them to the `app/config/routing.yml` file of your project:
+
+```yml
+c975_l_site:
+    resource: "@c975LSiteBundle/Controller/"
+    type: annotation
+    prefix: /
+    #Multilingual website use the following
+    #prefix: /{_locale}
+    #defaults:   { _locale: '%locale%' }
+    #requirements:
+    #    _locale: en|fr|es
+```
+
+Step 5: install assets to web folder
 ------------------------------------
 Install assets by running
 ```bash
