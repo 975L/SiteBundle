@@ -6,3 +6,9 @@ services:
 
     c975L\SiteBundle\Command\:
         resource: '../../Command/*'
+
+    c975L\SiteBundle\Controller\:
+        resource: '../../Controller/*'
+
+    c975L\SiteBundle\Security\:
+        resource: '../../Security/*'

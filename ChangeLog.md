@@ -1,5 +1,21 @@
 # Changelog
 
+v2.0
+----
+- Created branch 1.x (02/09/2018)
+- Updated composer.json (01/09/2018)
+- Removed common data from layout that will be set via c975L/ConfigBundle (02/09/2018)
+- Updated `README.md` (02/09/2018)
+- Added `bundle.yaml` (02/09/2018)
+- Made use of c975L/ConfigBundle (02/09/2018)
+- Added `UPGRADE.md` (02/09/2018)
+- Added Controller + Voter for Routes `site_config` + `dashboard_config` (02/09/2018)
+- Cleaned Configuration class (02/09/2018)
+
+
+v1.x
+====
+
 v1.6.7.3
 --------
 - Added meta "og:site_name" (19/08/2018)
