@@ -1,5 +1,7 @@
 # Changelog
 
+- Corrected `UPGRADE.md` for `php bin/console config:create` (03/12/2018)
+
 v2.0
 ----
 - Created branch 1.x (02/09/2018)
