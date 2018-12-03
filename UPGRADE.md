@@ -11,5 +11,5 @@ When upgrading from v1.x to v2.x you should(must) do the following if they apply
     - {% set logo = absolute_url(asset('images/og-image.png')) %}
     - {% set favicon = absolute_url(asset('favicon.ico')) %}
     - {% set appleTouchIcon = absolute_url(asset('apple-touch-icon.png')) %}
-- Before the first use of parameters, you **MUST** use the console command `php bin/console config:create-first-use c975l/site-bundle c975LSite` to create the config files with default data. **Using this command later will reset the config to default data**
+- Before the first use of parameters, you **MUST** use the console command `php bin/console config:create` to create the config files with default data.
 - You have to enable the Routes in `app/config/routing.yml`, see README.md
