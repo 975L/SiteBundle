@@ -7,8 +7,7 @@
  */
 
 //h5bp - Avoids console's errors
-function htmlBoilerPlate()
-    {
+function htmlBoilerPlate() {
     if (!(window.console && console.log))
         {
         (function()
@@ -23,11 +22,10 @@ function htmlBoilerPlate()
                 }
             }());
         }
-    };
+};
 
 //Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems - http://articles.sitepoint.com/article/standards-compliant-world/3
-function externalLinks()
-    {
+function externalLinks() {
     if (!document.getElementsByTagName) return;
     var anchors = document.getElementsByTagName('a');
     var cptAnchors = anchors.length;
@@ -36,12 +34,12 @@ function externalLinks()
         var anchor = anchors[i];
         if (anchor.getAttribute('href') && anchor.getAttribute('rel') == 'external') anchor.target = '_blank';
         }
-    };
+};
 
 //Replaces carriage returns by <br>
 function nl2br(str) {
     return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br />' + '$2');
-}
+};
 
 //Document.ready
 $(document).ready(function() {
