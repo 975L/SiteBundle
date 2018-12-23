@@ -10,11 +10,10 @@
  */
 namespace c975L\SiteBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -22,7 +21,7 @@ use Symfony\Component\Finder\Finder;
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2018 975L <contact@975l.com>
  */
-class Twig2MdCommand extends ContainerAwareCommand
+class Twig2MdCommand extends Command
 {
     protected function configure()
     {

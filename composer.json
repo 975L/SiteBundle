@@ -18,12 +18,16 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
+        "php": "^7",
         "c975l/config-bundle": "^2",
+        "c975l/includelibrary-bundle": "^1",
         "c975l/services-bundle": "^1",
-        "c975l/includelibrary-bundle": "^1"
+        "symfony/form": "^4.2",
+        "symfony/framework-bundle": "^4.2",
+        "symfony/security": "^4.2"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "c975L\\SiteBundle\\": ""
@@ -36,5 +40,9 @@
         "email": "contact@975l.com",
         "source": "https://github.com/975L/SiteBundle",
         "issues": "https://github.com/975L/SiteBundle/issues"
+    },
+    "require-dev": {
+        "rector/rector": "^0.3.30",
+        "symplify/easy-coding-standard": "^5.2"
     }
 }

@@ -9,15 +9,13 @@
 
 namespace c975L\SiteBundle\Controller;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 
 /**
  * Main Controller class
@@ -27,6 +25,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 class SiteController extends Controller
 {
 //DASHBOARD
+
     /**
      * Displays the dashboard
      * @return Response
@@ -44,6 +43,7 @@ class SiteController extends Controller
     }
 
 //CONFIG
+
     /**
      * Displays the configuration
      * @return Response
