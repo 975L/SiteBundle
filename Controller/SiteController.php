@@ -10,9 +10,8 @@
 namespace c975L\SiteBundle\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -22,7 +21,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2018 975L <contact@975l.com>
  */
-class SiteController extends Controller
+class SiteController extends AbstractController
 {
 //DASHBOARD
 
@@ -32,8 +31,8 @@ class SiteController extends Controller
      * @throws AccessDeniedException
      *
      * @Route("/site/dashboard",
-     *      name="site_dashboard")
-     * @Method({"GET", "HEAD"})
+     *    name="site_dashboard",
+     *    methods={"HEAD", "GET"})
      */
     public function dashboard(Request $request)
     {
@@ -50,8 +49,8 @@ class SiteController extends Controller
      * @throws AccessDeniedException
      *
      * @Route("/site/config",
-     *      name="site_config")
-     * @Method({"GET", "HEAD", "POST"})
+     *    name="site_config",
+     *    methods={"HEAD", "GET", "POST"})
      */
     public function config(Request $request, ConfigServiceInterface $configService)
     {
