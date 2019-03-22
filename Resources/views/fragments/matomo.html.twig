@@ -1,4 +1,4 @@
-{% spaceless %}
+{% filter spaceless %}
 {# https://matomo.org/ #}
 <script>
     var _paq = _paq || [];
@@ -17,4 +17,4 @@
         <img src="{{ matomo.url }}/piwik.php?idsite={{ matomo.id }}" style="border:0;" alt="" />
     </p>
 </noscript>
-{% endspaceless %}
+{% endfilter %}

@@ -49,7 +49,7 @@ v2.0+ of c975LSiteBundle uses [c975L/ConfigBundle](https://github.com/975L/Confi
 
 Step 4: Enable the Routes
 -------------------------
-Then, enable the routes by adding them to the `app/config/routing.yml` file of your project:
+Then, enable the routes by adding them to the `config/routes.yaml` file of your project:
 
 ```yml
 c975_l_site:
