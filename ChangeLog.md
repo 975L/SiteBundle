@@ -1,5 +1,10 @@
 # Changelog
 
+v2.0.4
+------
+- Corrected README.md (19/03/2019)
+- Made use of Twig filter spaceless instead of spaceless tag (22/03/2019)
+
 v2.0.3
 ------
 - Removed deprecations for @Method (13/02/2019)
