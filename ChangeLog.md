@@ -1,5 +1,9 @@
 # Changelog
 
+v2.0.4.1
+--------
+- Changed Github's author reference url (08/04/2019)
+
 v2.0.4
 ------
 - Corrected README.md (19/03/2019)
