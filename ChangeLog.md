@@ -1,5 +1,9 @@
 # Changelog
 
+v2.1.1
+------
+- Removed forgotten call for bootstrap js (03/06/2019)
+
 v2.1
 ----
 - Suppressed inclusion of bootstrap 3 by default in `layout.html.twig` (03/06/2019)
