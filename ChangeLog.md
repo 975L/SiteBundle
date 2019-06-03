@@ -1,5 +1,9 @@
 # Changelog
 
+v2.1
+----
+- Suppressed inclusion of bootstrap 3 by default in `layout.html.twig` (03/06/2019)
+
 v2.0.4.1
 --------
 - Changed Github's author reference url (08/04/2019)
