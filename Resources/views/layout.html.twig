@@ -231,7 +231,6 @@
             {% if display != 'pdf' %}
 {# Javascript #}
                 {% block javascripts %}
-                    {{ inc_lib('bootstrap', 'js', '3.*') }}
                     {{ inc_lib(absolute_url(asset('bundles/c975lsite/js/functions.min.js')), 'local') }}
 {# CookieConsent #}
                     {% if cookieConsent.message is defined %}
