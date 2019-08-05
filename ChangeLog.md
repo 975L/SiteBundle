@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2
+----
+- Made use of apply spaceless (05/08/2019)
+
 v2.1.1.1
 --------
 - Forgotten to save layout.html.twig ;-) (03/06/2019)

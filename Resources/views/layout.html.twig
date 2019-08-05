@@ -51,7 +51,7 @@
     {% set display = 'html' %}
 {% endif %}
 
-{% filter spaceless %}
+{% apply spaceless %}
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
 {# Head #}
@@ -246,4 +246,4 @@
         {% endblock %}
     </body>
 </html>
-{% endfilter %}
+{% endapply %}

@@ -1,4 +1,4 @@
-{% filter spaceless %}
+{% apply spaceless %}
 {# https://cookieconsent.insites.com #}
 {{ inc_lib('cookieconsent', 'js', '3.*') }}
 <script>
@@ -27,4 +27,4 @@
         })
     });
 </script>
-{% endfilter %}
+{% endapply %}
