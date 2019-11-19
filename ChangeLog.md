@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2.1
+------
+- Added animations for inputs (18/11/2019)
+
 v2.2
 ----
 - Made use of apply spaceless (05/08/2019)
