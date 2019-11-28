@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2.2
+------
+- Resized images to decrease downloaded size (28/11/2019)
+
 v2.2.1
 ------
 - Added animations for inputs (18/11/2019)
