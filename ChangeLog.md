@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2.2.1
+--------
+- Added attributs title (19/01/2020)
+
 v2.2.2
 ------
 - Resized images to decrease downloaded size (28/11/2019)
