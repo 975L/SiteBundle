@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2.3
+------
+- Removed composer.lock from Git (19/02/2020)
+
 v2.2.2.1
 --------
 - Added attributs title (19/01/2020)
