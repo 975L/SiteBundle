@@ -1,5 +1,9 @@
 # Changelog
 
+v2.2.4
+------
+- Suppressed transform on form field hover as quite annoying (19/02/2020)
+
 v2.2.3
 ------
 - Removed composer.lock from Git (19/02/2020)

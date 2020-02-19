@@ -185,7 +185,6 @@ input[type=text] {
     border-radius: 0;
     outline: none;
     box-shadow: none;
-    transition: transform 400ms ease-in-out;
 }
 
 input[type=date]:hover,
@@ -202,7 +201,6 @@ input[type=password]:hover,
 input[type=text]:hover {
     border: 1px solid #4d4d4d;
     border-bottom: 2px solid #4d4d4d;
-    transform: scale(0.98, 1.1);
     box-shadow: 0 0 10px #4d4d4d;
 }
 
@@ -220,7 +218,6 @@ input[type=password]:focus,
 input[type=text]:focus {
     border: 1px solid #008000;
     border-bottom: 2px solid #008000;
-    transform: scale(0.98, 1.1);
     box-shadow: 0 0 10px #008000;
 }
 
