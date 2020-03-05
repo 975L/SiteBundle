@@ -33,7 +33,7 @@ class SiteController extends AbstractController
      *    name="site_dashboard",
      *    methods={"HEAD", "GET"})
      */
-    public function dashboard(Request $request)
+    public function dashboard()
     {
         $this->denyAccessUnlessGranted('c975LSite-dashboard', null);
 
@@ -67,9 +67,11 @@ class SiteController extends AbstractController
         }
 
         //Renders the config form
-        return $this->render('@c975LConfig/forms/config.html.twig', array(
-            'form' => $form->createView(),
-            'toolbar' => '@c975LSite',
-        ));
+        return $this->render(
+            '@c975LConfig/forms/config.html.twig',
+            array(
+                'form' => $form->createView(),
+                'toolbar' => '@c975LSite',
+            ));
     }
 }
