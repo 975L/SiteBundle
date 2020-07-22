@@ -1,6 +1,5 @@
 # SiteBundle
 
-
 SiteBundle does the following:
 
 - Defines a layout used to display the web pages,
@@ -15,7 +14,6 @@ SiteBundle does the following:
 [SiteBundle API documentation](https://975l.com/apidoc/c975L/SiteBundle.html).
 
 ## Bundle installation
-
 
 ### Step 1: Download the Bundle
 
@@ -396,7 +394,6 @@ You want to use the whole file, place this code in your template:
 ```
 
 ### Select blocks (embed)
-
 
 You want to select the displayed blocks, place this code in your template. **Note** that you have to specify the language in the `embed` function:
 
