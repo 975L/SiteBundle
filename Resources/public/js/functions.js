@@ -23,12 +23,16 @@ function htmlBoilerPlate() {
 
 //Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems - http://articles.sitepoint.com/article/standards-compliant-world/3
 function externalLinks() {
-    if (!document.getElementsByTagName) return;
+    if (!document.getElementsByTagName) {
+        return;
+    }
     var anchors = document.getElementsByTagName("a");
     var cptAnchors = anchors.length;
     for(var i = 0; i < cptAnchors; i++) {
         var anchor = anchors[i];
-        if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") anchor.target = "_blank";
+        if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") {
+            anchor.target = "_blank";
+        }
     }
 }
 
@@ -40,8 +44,10 @@ function nl2br(str) {
 //Document.ready
 $(document).ready(function() {
 //Adds padding to window with anchors - https://github.com/twbs/bootstrap/issues/1768
-    var shiftWindow = function() { scrollBy(0, -120) };
-    if (location.hash) shiftWindow();
+    var shiftWindow = function() { scrollBy(0, -120); };
+    if (location.hash) {
+        shiftWindow();
+    }
     window.addEventListener("hashchange", shiftWindow);
 
 //Creates the backTop & pullDown buttons - http://html-tuts.com/back-to-top-button-jquery/

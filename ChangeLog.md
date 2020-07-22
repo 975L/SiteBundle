@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.2
+
+- Updated Matomo script (22/07/2020)
+
 ## v2.4.1
 
 - Cosmetic changes due to Codacy review (05/03/2020)
