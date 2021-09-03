@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.5
+
+- Removed versions constraints in composer (03/09/2021)
+
 ## v2.4.2
 
 - Updated Matomo script (22/07/2020)
