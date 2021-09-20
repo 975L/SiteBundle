@@ -18,7 +18,7 @@ Variables used in this template and that must be define in your calling template
 
 {% block latestUpdate %}
     <p class="text-center">
-        {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}
+        {{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
     </p>
 {% endblock %}
 

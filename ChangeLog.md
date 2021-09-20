@@ -1,5 +1,14 @@
 # Changelog
 
+
+## v3.0
+
+- Changed `localizeddate` to `format_datetime` (20/09/2021)
+
+Upgrading from v2.x? **Check UPGRADE.md**
+
+## v2.x
+
 ## v2.5
 
 - Removed versions constraints in composer (03/09/2021)
