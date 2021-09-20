@@ -77,7 +77,7 @@ class Twig2MdCommand extends Command
                 '</ol>',
                 '</li>',
                 '{% endblock %}',
-                "{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|localizeddate('long', 'none', '') }}",
+                "{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}",
                 "{{ 'text.only_french'|trans }}",
             );
             $markdown = str_replace($suppress, '', $markdown);
