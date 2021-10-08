@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.1
+
+- Added return for console Command (08/10/2021)
 
 ## v3.0
 
