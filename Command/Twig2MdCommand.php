@@ -121,5 +121,7 @@ class Twig2MdCommand extends Command
 
         //Output data
         $io->success('All Twig files converted!');
+
+        return Command::SUCCESS;
     }
 }
