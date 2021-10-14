@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Console command to convert the Twig models template to their Markdown format with 'models:twig2md'
@@ -122,6 +123,10 @@ class Twig2MdCommand extends Command
         //Output data
         $io->success('All Twig files converted!');
 
-        return Command::SUCCESS;
+        if ('5' === substr(Kernel::VERSION, 0, 1)) {
+            return Command::SUCCESS;
+        }
+
+        return 0;
     }
 }
