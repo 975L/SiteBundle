@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.3
+
+- Added fragment hostedBy (02/03/2022)
+
 ## v3.0.2
 
 - Corrected Command return for SF 4 (14/10/2021)
