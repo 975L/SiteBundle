@@ -4,7 +4,7 @@
         <body>
             <trans-unit id="1">
                 <source>label.made_by</source>
-                <target>Sitio web hecho por </target>
+                <target>Hecho por</target>
             </trans-unit>
             <trans-unit id="2">
                 <source>text.cookies_banner</source>
