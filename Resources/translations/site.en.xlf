@@ -82,6 +82,10 @@
                 <source>text.only_french</source>
                 <target>This text is only available in french</target>
             </trans-unit>
+            <trans-unit id="21">
+                <source>label.hosted_by</source>
+                <target>Hosted by</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

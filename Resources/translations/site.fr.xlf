@@ -82,6 +82,10 @@
                 <source>text.only_french</source>
                 <target>Ce texte est seulement disponible en français</target>
             </trans-unit>
+            <trans-unit id="21">
+                <source>label.hosted_by</source>
+                <target>Hébergé par</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
