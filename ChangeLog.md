@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.4
+
+- Modified fragments (02/03/2022)
+
 ## v3.0.3
 
 - Added fragment hostedBy (02/03/2022)
