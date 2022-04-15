@@ -88,6 +88,7 @@
 {# Title #}
                     {% if pageTitle is defined %}
                         <title>{{ pageTitle }}</title>
+                        <meta name="title" content="{{ pageTitle }}">
                         <meta property="og:title" content="{{ pageTitle }}" />
                         <meta name="twitter:title" content="{{ pageTitle }}">
                     {% endif %}
@@ -100,6 +101,7 @@
                     {% endif %}
 {# Url #}
                     <meta property="og:url" content="{{ app.request.uri }}" />
+                    <meta property="twitter:url" content="{{ app.request.uri }}">
                     <link rel="canonical" href="{{ app.request.uri }}" />
 {# Favicon #}
                     {% if favicon is defined%}
