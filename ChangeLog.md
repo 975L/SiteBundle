@@ -1,5 +1,10 @@
 # Changelog
 
+
+## v3.0.5
+
+- Added meta data (15/04/2022)
+
 ## v3.0.4
 
 - Modified fragments (02/03/2022)
