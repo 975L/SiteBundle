@@ -1,6 +1,15 @@
 # Changelog
 
 
+## v3.2
+
+- Added return type for Voter (24/07/2022)
+- Changed composer versions constraints (24/07/2022)
+
+## v3.1
+
+- Added semantic balises (03/06/2022)
+
 ## v3.0.5
 
 - Added meta data (15/04/2022)

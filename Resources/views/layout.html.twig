@@ -162,73 +162,81 @@
             {% endif %}
 {# Header #}
             {% block header %}
+                <header>
 {# Navigation #}
-                {% if display != 'pdf' %}
-                    {% block navigation %}
-                    {% endblock %}
-                {% endif %}
-{# Logo print only #}
-                {% block logoPrintOnly %}
-                    {% if site is defined or logo is defined %}
-                        {% if display == 'pdf' %}
-                            <div class="container-fluid text-center">
-                        {% else %}
-                            <div class="container-fluid text-center visible-print-block">
-                        {% endif %}
-                            <h1>
-                                {% if logo is defined %}
-                                    <img src="{{ logo }}" height="80" alt="logo" title="logo" />
-                                {% endif %}
-                                {% if site is defined %}
-                                    {{ site }}
-                                {% endif %}
-                            </h1>
-                        </div>
+                    {% if display != 'pdf' %}
+                        {% block navigation %}
+                        {% endblock %}
                     {% endif %}
-                {% endblock %}
+    {# Logo print only #}
+                    {% block logoPrintOnly %}
+                        {% if site is defined or logo is defined %}
+                            {% if display == 'pdf' %}
+                                <div class="container-fluid text-center">
+                            {% else %}
+                                <div class="container-fluid text-center visible-print-block">
+                            {% endif %}
+                                <h1>
+                                    {% if logo is defined %}
+                                        <img src="{{ logo }}" height="80" alt="logo" title="logo" />
+                                    {% endif %}
+                                    {% if site is defined %}
+                                        {{ site }}
+                                    {% endif %}
+                                </h1>
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </header>
             {% endblock %}
 {# Title #}
-            {% block title %}
-                {% if title is defined %}
-                    <h1>
-                        {{ title }}
-                    </h1>
-                {% endif %}
-            {% endblock %}
+            {% block main %}
+                <main>
+                    {% block title %}
+                        {% if title is defined %}
+                            <h1>
+                                {{ title }}
+                            </h1>
+                        {% endif %}
+                    {% endblock %}
 {# Flashes #}
-            {% if display != 'pdf' %}
-                {% block flashes %}
-                    {% for label, messages in app.flashes %}
-                        {% for message in messages %}
-                            <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
-                                <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                {{ message|raw|nl2br }}
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-                {% endblock %}
-            {% endif %}
+                    {% if display != 'pdf' %}
+                        {% block flashes %}
+                            {% for label, messages in app.flashes %}
+                                {% for message in messages %}
+                                    <div class="flash alert alert-{{ label }} alert-dismissible text-center lead fade in" role="alert">
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        {{ message|raw|nl2br }}
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endblock %}
+                    {% endif %}
 {# Container #}
-            {% block container %}
+                    {% block container %}
 {# Content #}
-                {% block content %}
-                {% endblock %}
-            {% endblock %}
+                        {% block content %}
+                        {% endblock %}
+                    {% endblock %}
 {# Share #}
-            {% if display != 'pdf' %}
-                {% block share %}
-                {% endblock %}
-            {% endif %}
+                    {% if display != 'pdf' %}
+                        {% block share %}
+                        {% endblock %}
+                    {% endif %}
 {# NavigationBottom #}
-            {% if display != 'pdf' %}
-                {% block navigationBottom %}
-                {% endblock %}
-            {% endif %}
-{# Footer #}
-            {% block footer %}
+                    {% if display != 'pdf' %}
+                        {% block navigationBottom %}
+                        {% endblock %}
+                    {% endif %}
+                </main>
             {% endblock %}
+{# Footer #}
+            <footer>
+                {% block footer %}
+                {% endblock %}
+            </footer>
 {# Display for html #}
             {% if display != 'pdf' %}
 {# Javascript #}

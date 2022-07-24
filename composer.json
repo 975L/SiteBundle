@@ -19,17 +19,13 @@
     ],
     "require": {
         "php": "*",
-        "c975l/config-bundle": "^2",
-        "c975l/includelibrary-bundle": "^1",
-        "c975l/services-bundle": "^1",
+        "c975l/config-bundle": "*",
+        "c975l/includelibrary-bundle": "*",
+        "c975l/services-bundle": "*",
         "symfony/form": "*",
-        "symfony/framework-bundle": "*",
-        "symfony/security": "*"
+        "symfony/framework-bundle": "*"
     },
     "require-dev": {
-        "phpstan/phpstan": "*",
-        "phpunit/phpunit": "*",
-        "rector/rector": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
