@@ -69,9 +69,6 @@ class SiteController extends AbstractController
         //Renders the config form
         return $this->render(
             '@c975LConfig/forms/config.html.twig',
-            array(
-                'form' => $form->createView(),
-                'toolbar' => '@c975LSite',
-            ));
+            ['form' => $form->createView(), 'toolbar' => '@c975LSite']);
     }
 }
