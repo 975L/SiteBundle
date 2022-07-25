@@ -41,9 +41,7 @@ class Twig2MdCommand extends Command
         $finder = new Finder();
 
         //Defines paths
-        $folders = array(
-            '/france/fr',
-        );
+        $folders = ['/france/fr'];
 
         //Gets files
         foreach ($folders as $folder) {
@@ -64,27 +62,11 @@ class Twig2MdCommand extends Command
             $markdown = file_get_contents($file->getPathname());
 
             //Deletes unsused tags
-            $suppress = array(
-                '</h1>',
-                '</h2>',
-                '</h3>',
-                '</h4>',
-                '</h5>',
-                '</h6>',
-                '</p>',
-                '<ul>',
-                '</ul>',
-                '<ol>',
-                '</ol>',
-                '</li>',
-                '{% endblock %}',
-                "{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}",
-                "{{ 'text.only_french'|trans }}",
-            );
+            $suppress = ['</h1>', '</h2>', '</h3>', '</h4>', '</h5>', '</h6>', '</p>', '<ul>', '</ul>', '<ol>', '</ol>', '</li>', '{% endblock %}', "{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}", "{{ 'text.only_french'|trans }}"];
             $markdown = str_replace($suppress, '', $markdown);
 
             //Replaces formatting
-            $markdown = str_replace(array('<strong>', '</strong>'), '**', $markdown);
+            $markdown = str_replace(['<strong>', '</strong>'], '**', $markdown);
             $markdown = str_replace('<li>', '- ', $markdown);
             $markdown = str_replace('<h1>', '# ', $markdown);
             $markdown = str_replace('<h2>', '## ', $markdown);
@@ -96,7 +78,7 @@ class Twig2MdCommand extends Command
 
             //Deletes spaces
             $markdown = str_replace('    ', '', $markdown);
-            $markdown = str_replace(array('  ', '  ', '  ', '  '), ' ', $markdown);
+            $markdown = str_replace(['  ', '  ', '  ', '  '], ' ', $markdown);
 
             //Deletes blocks
             $markdown = preg_replace('/{%(.*)%}/', '', $markdown);
@@ -123,7 +105,7 @@ class Twig2MdCommand extends Command
         //Output data
         $io->success('All Twig files converted!');
 
-        if ('5' === substr(Kernel::VERSION, 0, 1)) {
+        if (str_starts_with(Kernel::VERSION, '5')) {
             return Command::SUCCESS;
         }
 

@@ -1,8 +1,12 @@
 # UPGRADE
 
+## v3.x > v4.x
+
+Changed compatibility to PHP 8
+
 ## v2.x > v3.x
 
-Nothung special yet, just changed `localizeddate` to `format_datetime`.
+Changed `localizeddate` to `format_datetime`.
 
 ## v1.x > v2.x
 

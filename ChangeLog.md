@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0
+
+- Changed compatibility to PHP 8(25/07/2022)
 
 ## v3.2
 
