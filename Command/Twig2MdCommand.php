@@ -31,7 +31,7 @@ class Twig2MdCommand extends Command
             ->setDescription('Convert c975L/SiteBundle twig models templates to markdown format');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //Defines console output
         $io = new SymfonyStyle($input, $output);
