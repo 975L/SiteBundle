@@ -9,8 +9,8 @@
 
 namespace c975L\SiteBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class c975LSiteBundle extends Bundle
+class c975LSiteBundle extends AbstractBundle
 {
 }
