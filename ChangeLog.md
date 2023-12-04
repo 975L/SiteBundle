@@ -1,8 +1,16 @@
 # Changelog
 
-## v4.0.1
+## v5.0
+
+- Changed routes to attribute (04/12/2023)
+
+## v4.0.2
 
 - Added TreeBuilder return type (29/05/2023)
+
+## v4.0.1
+
+- Version not tagged (29/05/2023)
 
 ## v4.0
 

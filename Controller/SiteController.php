@@ -28,12 +28,13 @@ class SiteController extends AbstractController
      * Displays the dashboard
      * @return Response
      * @throws AccessDeniedException
-     *
-     * @Route("/site/dashboard",
-     *    name="site_dashboard",
-     *    methods={"HEAD", "GET"})
      */
-    public function dashboard()
+    #[Route(
+        '/site/dashboard',
+        name: 'site_dashboard',
+        methods: ['GET']
+    )]
+    public function dashboard(): Response
     {
         $this->denyAccessUnlessGranted('c975LSite-dashboard', null);
 
@@ -45,12 +46,13 @@ class SiteController extends AbstractController
      * Displays the configuration
      * @return Response
      * @throws AccessDeniedException
-     *
-     * @Route("/site/config",
-     *    name="site_config",
-     *    methods={"HEAD", "GET", "POST"})
      */
-    public function config(Request $request, ConfigServiceInterface $configService)
+    #[Route(
+        '/site/config',
+        name: 'site_config',
+        methods: ['GET', 'POST']
+    )]
+    public function config(Request $request, ConfigServiceInterface $configService): Response
     {
         $this->denyAccessUnlessGranted('c975LSite-config', null);
 
