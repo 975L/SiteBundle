@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.0.1
+
+- Changed to AbstractBundle (04/12/2023)
+
 ## v5.0
 
 - Changed routes to attribute (04/12/2023)
