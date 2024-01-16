@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.0
+
+- Changed to new recomended bundle SF 7 structure (16/01/2024)
+
+Upgrading from v5.x? **Check UPGRADE.md**
+
 ## v5.0.1
 
 - Changed to AbstractBundle (04/12/2023)
@@ -7,6 +13,8 @@
 ## v5.0
 
 - Changed routes to attribute (04/12/2023)
+
+Upgrading from v4.x? **Check UPGRADE.md**
 
 ## v4.0.2
 
@@ -19,6 +27,8 @@
 ## v4.0
 
 - Changed compatibility to PHP 8(25/07/2022)
+
+Upgrading from v3.x? **Check UPGRADE.md**
 
 ## v3.2
 

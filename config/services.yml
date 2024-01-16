@@ -5,10 +5,10 @@ services:
         public: true
 
     c975L\SiteBundle\Command\:
-        resource: '../../Command/*'
+        resource: '../src/Command/*'
 
     c975L\SiteBundle\Controller\:
-        resource: '../../Controller/*'
+        resource: '../src/Controller/*'
 
     c975L\SiteBundle\Security\:
-        resource: '../../Security/*'
+        resource: '../src/Security/*'
