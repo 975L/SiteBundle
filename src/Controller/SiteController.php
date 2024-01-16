@@ -36,7 +36,7 @@ class SiteController extends AbstractController
     )]
     public function dashboard(): Response
     {
-        $this->denyAccessUnlessGranted('c975LSite-dashboard', null);
+        //$this->denyAccessUnlessGranted('c975LSite-dashboard', null);
 
         return $this->render('@c975LSite/pages/dashboard.html.twig');
     }

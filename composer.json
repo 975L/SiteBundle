@@ -31,7 +31,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "c975L\\SiteBundle\\": ""
+            "c975L\\SiteBundle\\": "src/"
         }
     },
     "config": {
