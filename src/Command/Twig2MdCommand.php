@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class Twig2MdCommand extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('models:twig2md')

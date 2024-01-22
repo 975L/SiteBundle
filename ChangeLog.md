@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.0.1
+
+- Cosemtic changes (22/01/2024)
+
 ## v6.0
 
 - Changed to new recomended bundle SF 7 structure (16/01/2024)
