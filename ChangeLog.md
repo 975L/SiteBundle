@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.1
+
+- Supressed load of libraries by default (24/01/2024)
+
 ## v6.0.1
 
 - Cosemtic changes (22/01/2024)
