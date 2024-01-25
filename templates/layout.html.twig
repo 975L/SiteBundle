@@ -135,11 +135,8 @@
 {# Stylesheets #}
             {% block stylesheets %}
                 {% if display == 'pdf' %}
-                    {{ inc_content('bootstrap', 'css', '3.*') }}
                     {{ inc_content(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
                 {% else %}
-                    {{ inc_lib('cookieconsent', 'css', '3.*') }}
-                    {{ inc_lib('fontawesome', 'css', '5.*') }}
                     {{ inc_lib(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
                 {% endif %}
             {% endblock %}
@@ -149,9 +146,6 @@
     <body id="up">
 {# jQuery #}
         {% block jquery %}
-            {% if display == 'html' %}
-                {{ inc_lib('jquery', 'js', '3.*') }}
-            {% endif %}
         {% endblock %}
 {# Block body #}
         {% block body %}
