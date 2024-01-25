@@ -74,7 +74,7 @@ class Twig2MdCommand extends Command
             $markdown = str_replace('<h4>', '#### ', $markdown);
             $markdown = str_replace('<h5>', '##### ', $markdown);
             $markdown = str_replace('<h6>', '###### ', $markdown);
-            $markdown = str_replace('<br />', "\n\n", $markdown);
+            $markdown = str_replace('<br>', "\n\n", $markdown);
 
             //Deletes spaces
             $markdown = str_replace('    ', '', $markdown);

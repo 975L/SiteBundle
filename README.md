@@ -163,7 +163,7 @@ You can easily add a call to CookieConsent by adding the following in your `app/
 
 ### Alternate languages
 
-You can define the meta `<link rel="alternate" hreflang="YOUR_LANGUAGE" href="URL_WITH_ALTERNATE_LANGUAGE" />` by setting a `languagesAlt` array in your `app/Resources/views/layout.html.twig`
+You can define the meta `<link rel="alternate" hreflang="YOUR_LANGUAGE" href="URL_WITH_ALTERNATE_LANGUAGE">` by setting a `languagesAlt` array in your `app/Resources/views/layout.html.twig`
 
 ```twig
 {%
@@ -306,7 +306,7 @@ set languagesAlt = {
 {% block meta %}
     {{ parent() }}
 {# Facebook app_id #}
-    <meta property="fb:app_id" content="YOUR_FACEBOOK_APP_ID" />
+    <meta property="fb:app_id" content="YOUR_FACEBOOK_APP_ID">
 {% endblock %}
 
 {# Css #}
