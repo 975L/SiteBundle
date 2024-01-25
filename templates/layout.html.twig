@@ -39,11 +39,15 @@
 {% endif %}
 
 {# pageTitle #}
-{% if title is defined %}
+{% if title is defined and title != '' %}
     {% set pageTitle = title %}
 {% endif %}
-{% if site is defined and pageTitle is defined %}
-    {% set pageTitle = pageTitle ~ ' - ' ~ site %}
+{% if site is defined %}
+    {% if pageTitle is defined %}
+        {% set pageTitle = pageTitle ~ ' - ' ~ site %}
+    {% else %}
+        {% set pageTitle = site %}
+    {% endif %}
 {% endif %}
 
 {# Display #}

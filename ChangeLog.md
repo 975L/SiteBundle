@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.1.1
+
+- Added possibility to have only site as page title in case title is set to '' (25/01/2024)
+
 ## v6.1
 
 - Supressed load of libraries by default (24/01/2024)
