@@ -12,14 +12,14 @@
         </h2>
 {# Message #}
         <p>
-            <span class="lead"><strong>Ooops...</strong></span><br />
-            {{ 'text.err'|trans }}<br />
+            <span class="lead"><strong>Ooops...</strong></span><br>
+            {{ 'text.err'|trans }}<br>
         </p>
     </div>
 {# Image #}
     {% if errImages.err is defined %}
         <p class="text-center">
-            <img src="{{ errImages.err }}" class="img-responsive" alt="err" /><br />
+            <img src="{{ errImages.err }}" class="img-responsive" alt="err"><br>
         </p>
     {% endif %}
 {% endblock %}
