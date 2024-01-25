@@ -191,7 +191,7 @@
             {% block main %}
                 <main>
                     {% block title %}
-                        {% if title is defined %}
+                        {% if title is defined and title != '' %}
                             <h1>
                                 {{ title }}
                             </h1>
@@ -231,10 +231,8 @@
                 </main>
             {% endblock %}
 {# Footer #}
-            <footer>
-                {% block footer %}
-                {% endblock %}
-            </footer>
+            {% block footer %}
+            {% endblock %}
 {# Display for html #}
             {% if display != 'pdf' %}
 {# Javascript #}
