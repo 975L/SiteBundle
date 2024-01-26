@@ -187,6 +187,17 @@ You can define an ogImage to use on page basis, with the following code:
 {% set ogImage = absolute_url(asset('PATH_TO_YOUR_IMAGE')) %}
 ```
 
+### Animations
+
+Thre's a css file in `public/css/` that you can link to to use some animations
+
+```twig
+<link rel="stylesheet" href="bundles/c975lsite/css/animations.min.css">
+{# or  using c975L/IncludeLibrary #}
+{{ inc_lib(absolute_url(asset('bundles/c975lsite/css/animations.min.css')), 'local') }}
+
+```
+
 ### Error pages
 
 You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`, but if you want to use the pre-defined error templates, do the following:
