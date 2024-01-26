@@ -1,0 +1,77 @@
+/*
+ * (c) 2024: 975L <contact@975l.com>
+ * (c) 2024: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+/* Bounces */
+@keyframes bounceHorizontal {
+    25% {
+        transform: translateX(0.25rem);
+    }
+    75% {
+        transform: translateX(-0.25rem);
+    }
+}
+@keyframes bounceVertical {
+    25% {
+        transform: translateY(0.25rem);
+    }
+    75% {
+        transform: translateY(-0.25rem);
+    }
+}
+
+/* Rotations horizontal */
+@keyframes rotateX5deg {
+    25% {
+        transform: rotateX(5deg);
+    }
+    75% {
+        transform: rotateX(-5deg);
+    }
+}
+@keyframes rotateX10deg {
+    25% {
+        transform: rotateX(10deg);
+    }
+    75% {
+        transform: rotateX(-10deg);
+    }
+}
+@keyframes rotateX15deg {
+    25% {
+        transform: rotateX(15deg);
+    }
+    75% {
+        transform: rotateX(-15deg);
+    }
+}
+
+/* Rotations vertical */
+@keyframes rotateY5deg {
+    25% {
+        transform: rotateY(5deg);
+    }
+    75% {
+        transform: rotateY(-5deg);
+    }
+}
+@keyframes rotateY10deg {
+    25% {
+        transform: rotateY(10deg);
+    }
+    75% {
+        transform: rotateY(-10deg);
+    }
+}
+@keyframes rotateY15deg {
+    25% {
+        transform: rotateY(15deg);
+    }
+    75% {
+        transform: rotateY(-15deg);
+    }
+}

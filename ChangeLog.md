@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3
+
+- Added some animations (26/01/2024)
+
 ## v6.2.1
 
 - Suppressed little things (25/01/2024)
