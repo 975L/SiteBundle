@@ -185,7 +185,7 @@ input[type=week],
 input[type=password],
 input[type=text] {
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     border-bottom: 2px solid #bfbfbf;
     border-radius: 0;
     outline: none;
@@ -221,9 +221,9 @@ input[type=url]:focus,
 input[type=week]:focus,
 input[type=password]:focus,
 input[type=text]:focus {
-    border: 1px solid #008000;
-    border-bottom: 2px solid #008000;
-    box-shadow: 0 0 10px #008000;
+    border: 1px solid rgb(211, 155, 15);
+    border-bottom: 2px solid rgb(211, 155, 15);
+    box-shadow: 0 0 10px rgb(211, 155, 15);
 }
 
 /* ADDONS */
