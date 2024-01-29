@@ -221,9 +221,9 @@ input[type=url]:focus,
 input[type=week]:focus,
 input[type=password]:focus,
 input[type=text]:focus {
-    border: 1px solid rgb(211, 155, 15);
-    border-bottom: 2px solid rgb(211, 155, 15);
-    box-shadow: 0 0 10px rgb(211, 155, 15);
+    border: 1px solid rgb(24, 115, 200);
+    border-bottom: 2px solid rgb(24, 115, 200);
+    box-shadow: 0 0 10px 2px rgb(66, 130, 189);
 }
 
 /* ADDONS */

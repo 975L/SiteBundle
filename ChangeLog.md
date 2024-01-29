@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.3.2
+
+- Changed input focus color to be less "agressive" (29/01/2024)
+
 ## v6.3.1
 
 - Removed movement (due to border) on input focus and changed its color (29/01/2024)
