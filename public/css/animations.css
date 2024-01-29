@@ -15,6 +15,7 @@
         transform: translateX(-0.25rem);
     }
 }
+
 @keyframes bounceVertical {
     25% {
         transform: translateY(0.25rem);
@@ -33,6 +34,7 @@
         transform: rotateX(-5deg);
     }
 }
+
 @keyframes rotateX10deg {
     25% {
         transform: rotateX(10deg);
@@ -41,6 +43,7 @@
         transform: rotateX(-10deg);
     }
 }
+
 @keyframes rotateX15deg {
     25% {
         transform: rotateX(15deg);
@@ -59,6 +62,7 @@
         transform: rotateY(-5deg);
     }
 }
+
 @keyframes rotateY10deg {
     25% {
         transform: rotateY(10deg);
@@ -67,6 +71,7 @@
         transform: rotateY(-10deg);
     }
 }
+
 @keyframes rotateY15deg {
     25% {
         transform: rotateY(15deg);
