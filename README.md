@@ -189,10 +189,11 @@ You can define an ogImage to use on page basis, with the following code:
 
 ### Animations
 
-Thre's a css file in `public/css/` that you can link to to use some animations
+There's a css file in `public/css/` that you can link to to use some animations
 
 ```twig
 <link rel="stylesheet" href="bundles/c975lsite/css/animations.min.css">
+
 {# or  using c975L/IncludeLibrary #}
 {{ inc_lib(absolute_url(asset('bundles/c975lsite/css/animations.min.css')), 'local') }}
 

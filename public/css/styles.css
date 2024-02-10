@@ -6,13 +6,31 @@
  * with this source code in the file LICENSE.
  */
 
-/* TOC */
-/* TYPOGRAPHY */
-/* ADJUSTEMENTS */
-/* ADDONS */
-/* FORMS */
-/* SCREENS */
-/* PRINT */
+ :root {
+    --white: #ffffff;
+    --black: #000000;
+    --link-color: #0d6efd;
+    --alert-info-background: #d9edf7;
+    --alert-danger-color: #b64450;
+    --alert-danger-background: #f2dede;
+    --back-pull-background-color: #bababa;
+    --back-pull-background-color-hover: lightgreen;
+    --button-background-primary: rgb(52, 44, 205);
+    --button-background-primary-light: rgb(52, 44, 205, 0.5);
+    --button-background-primary-dark: rgb(52, 44, 205, 0.9);
+    --button-background-secondary: rgb(200, 106, 38);
+    --button-background-secondary-light: rgb(200, 106, 38, 0.5);
+    --button-background-secondary-dark: rgb(200, 106, 38, 0.9);
+    --button-color: #ffffff;
+    --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
+    --required-color: black;
+    --label-color: grey;
+    --input-border-color: #4d4d4d;
+    --input-border-bottom-color: #bfbfbf;
+    --input-shadow-color: #4d4d4d;
+    --input-focus-border-color: rgb(24, 115, 200);
+    --input-focus-shadow-color: rgb(66, 130, 189);
+}
 
 *,
 *::before,
@@ -20,16 +38,20 @@
   box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 /* TYPOGRAPHY */
 * {
-    color: #000000;
+    color: var(--black);
 }
 
 h1,
 h2,
 h3,
 .lead {
-    color: #000000;
+    color: var(--black);
 }
 
 header h1 {
@@ -50,6 +72,20 @@ h2 {
     font-size: 130%;
 }
 
+.text-center {
+    text-align: center;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* COLORS */
 .blue {
     color: blue;
 }
@@ -89,11 +125,6 @@ h2 {
 .white {
     color: #ffffff;
 }
-
-.text-underline {
-    text-decoration: underline;
-}
-
 
 /* ADJUSTEMENTS */
 .container {
@@ -140,6 +171,14 @@ div .btn-padding {
     margin-top: 3em;
 }
 
+a,
+a:visited,
+a:hover,
+a:visited:hover {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+
 p,
 li,
 button,
@@ -155,11 +194,11 @@ a.btn {
 }
 
 .control-label {
-    color: grey;
+    color: var(--label-color);
 }
 
 .control-label.required {
-    color: black;
+    color: var(--required-color);
 }
 
 .control-label.required:after {
@@ -186,7 +225,7 @@ input[type=password],
 input[type=text] {
     background: transparent;
     border: 1px solid transparent;
-    border-bottom: 2px solid #bfbfbf;
+    border-bottom: 2px solid var(--input-border-bottom-color);;
     border-radius: 0;
     outline: none;
     box-shadow: none;
@@ -204,9 +243,9 @@ input[type=url]:hover,
 input[type=week]:hover,
 input[type=password]:hover,
 input[type=text]:hover {
-    border: 1px solid #4d4d4d;
-    border-bottom: 2px solid #4d4d4d;
-    box-shadow: 0 0 10px #4d4d4d;
+    border: 1px solid var(--input-border-color);
+    border-bottom: 2px solid var(--input-border-color);
+    box-shadow: 0 0 10px 2px var(--input-shadow-color);
 }
 
 input[type=date]:focus,
@@ -221,9 +260,37 @@ input[type=url]:focus,
 input[type=week]:focus,
 input[type=password]:focus,
 input[type=text]:focus {
-    border: 1px solid rgb(24, 115, 200);
-    border-bottom: 2px solid rgb(24, 115, 200);
-    box-shadow: 0 0 10px 2px rgb(66, 130, 189);
+    border: 1px solid var(--input-focus-border-color);
+    border-bottom: 2px solid var(--input-focus-border-color);
+    box-shadow: 0 0 10px 2px var(--input-focus-shadow-color);
+}
+
+/* BUTTONS */
+.btn,
+.btn:hover {
+    border-radius: 5px;
+    object-fit: cover;
+    box-shadow: var(--button-box-shadow);
+    padding: 0.7rem 1.2rem;
+    margin: 0.5rem;
+    text-decoration: none;
+    color: var(--button-color);
+}
+
+.btn-primary {
+    background-color: var(--button-background-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--button-background-primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--button-background-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--button-background-secondary-dark);
 }
 
 /* ADDONS */
@@ -256,25 +323,31 @@ a.backTop {
 
 a.backTop {
     right: 25px;
-    background: #BABABA url('../images/up-arrow.png') no-repeat center 40%;
+    background: var(--back-pull-background-color) url('../images/up-arrow.png') no-repeat center 40%;
 }
 
 a.pullDown {
     left: 25px;
-    background: #BABABA url('../images/down-arrow.png') no-repeat center 40%;
+    background: var(--back-pull-background-color) url('../images/down-arrow.png') no-repeat center 40%;
 }
 
-a:hover.backTop {
-    background-color: lightgreen;
-}
-
+a:hover.backTop,
 a:hover.pullDown {
-    background-color: #FB6B6B;
+    background-color: var(--back-pull-background-color-hover);
 }
 
 .toolbar {
     margin-bottom: 2em;
 }
+
+.fade-in {
+    animation: fadeIn 1s forwards;
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
 
 /* SCREENS */
 @media only screen
@@ -399,16 +472,16 @@ a:hover.pullDown {
     .container,
     .container-fluid {
         width: 100%;
-        background-color: #ffffff;
+        background-color: var(--white);
     }
 
     .alert-info {
-        background-color: #d9edf7;
+        background-color: var(--alert-info-background);
     }
 
     .alert-danger {
-        color: #b64450;
-        background-color: #f2dede;
+        color: var(--alert-danger-color);
+        background-color: var(--alert-danger-background);
     }
 
     a[href]:after {

@@ -6,75 +6,81 @@
  * with this source code in the file LICENSE.
  */
 
-//h5bp - Avoids console$s errors
+document.addEventListener("DOMContentLoaded", function () {
+    htmlBoilerPlate();
+    externalLinks();
+});
+
+window.addEventListener('scroll', function () {
+    backTopButton();
+    pullDownButton();
+});
+
+// h5bp - Avoids console errors
 function htmlBoilerPlate() {
     if (!(window.console && console.log)) {
-        (function() {
-            var noop = function(){};
-            var methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"];
-            var length = methods.length;
-            var console = window.console = {};
-            while(length--) {
+        (function () {
+            let noop = function () { };
+            let methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"];
+            let length = methods.length;
+            let console = window.console = {};
+            while (length--) {
                 console[methods[length]] = noop;
             }
         }());
     }
 }
 
-//Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems - http://articles.sitepoint.com/article/standards-compliant-world/3
+// Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems - http://articles.sitepoint.com/article/standards-compliant-world/3
 function externalLinks() {
     if (!document.getElementsByTagName) {
         return;
     }
-    var anchors = document.getElementsByTagName("a");
-    var cptAnchors = anchors.length;
-    for(var i = 0; i < cptAnchors; i++) {
-        var anchor = anchors[i];
+    let anchors = document.getElementsByTagName("a");
+    let cptAnchors = anchors.length;
+    for (let i = 0; i < cptAnchors; i++) {
+        let anchor = anchors[i];
         if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") {
             anchor.target = "_blank";
         }
     }
 }
 
-//Replaces carriage returns by <br>
+// Replaces carriage returns by <br>
 function nl2br(str) {
     return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "$1" + "<br>" + "$2");
 }
 
-//Document.ready
-$(document).ready(function() {
-//Adds padding to window with anchors - https://github.com/twbs/bootstrap/issues/1768
-    var shiftWindow = function() { scrollBy(0, -120); };
-    if (location.hash) {
-        shiftWindow();
-    }
-    window.addEventListener("hashchange", shiftWindow);
+// Displays/Hides the backTop button
+function backTopButton() {
+    const amountScrolled = 300;
+    let backTop = document.querySelector('a.backTop');
 
-//Creates the backTop & pullDown buttons - http://html-tuts.com/back-to-top-button-jquery/
-    var amountScrolled = 300;
-    $(window).scroll(function() {
-        if ($(window).scrollTop() > amountScrolled) {
-            $("a.backTop")
-                .fadeIn("slow");
-        } else {
-            $("a.backTop")
-                .fadeOut("slow");
-            $("a.pullDown")
-                .fadeIn("slow");
-        }
-    });
-//backTop
-    $("a.backTop").click(function() {
-        $("html, body").animate({
-            scrollTop: 0
-        }, "slow");
-        return false;
-    });
-//pullDown
-    $("a.pullDown").click(function() {
-        $("html, body").animate({
-            scrollTop: $(document).height()
-        }, "slow");
-        return false;
-    });
-});
+    // Displays the backTop button
+    if (backTop && window.scrollY > amountScrolled) {
+        backTop.style.display = "block";
+        backTop.classList.remove('fade-out');
+        backTop.classList.add('fade-in');
+    // Hides the backTop button
+    } else {
+        backTop.classList.remove('fade-in');
+        backTop.classList.add('fade-out');
+    }
+}
+
+// Displays/Hides the pullDown button
+function pullDownButton() {
+    const amountScrolled = 300;
+    let pullDown = document.querySelector('a.pullDown');
+
+    // Displays the pullDown button
+    if (pullDown && window.scrollY + window.innerHeight + amountScrolled < document.body.scrollHeight) {
+        pullDown.style.display = "block";
+        pullDown.classList.remove('fade-out');
+        pullDown.classList.add('fade-in');
+    // Hides the pullDown button
+    } else {
+        pullDown.classList.remove('fade-in');
+        pullDown.classList.add('fade-out');
+    }
+}

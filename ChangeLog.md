@@ -1,9 +1,12 @@
 # Changelog
 
+## v6.4
+
+- Removed use of jQuery (10/02/2024)
+
 ## v6.3.3
 
 - Changed flash messages (30/01/2024)
-
 
 ## v6.3.2
 
