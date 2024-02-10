@@ -147,7 +147,7 @@
         {% endblock %}
     </head>
 {# Body #}
-    <body id="up">
+    <body id="top">
 {# jQuery #}
         {% block jquery %}
         {% endblock %}
@@ -155,8 +155,8 @@
         {% block body %}
             {% if display != 'pdf' %}
 {# backTop/pullDown bookmarks #}
-                <a href="#" class="backTop"></a>
-                <a href="#" class="pullDown"></a>
+                <a href="#top" class="backTop"></a>
+                <a href="#bottom" class="pullDown"></a>
             {% endif %}
 {# Header #}
             {% block header %}
@@ -248,6 +248,7 @@
 {# End display for html #}
             {% endif %}
         {% endblock %}
+        <span id="bottom"></span>
     </body>
 </html>
 {% endapply %}
