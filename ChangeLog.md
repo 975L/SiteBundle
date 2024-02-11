@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.4.2
+
+- Codacy corrections (11/02/2024)
+
 ## 6.4.1
 
 - Added styles for forms (11/02/2024)
