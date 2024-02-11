@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.4.1
+
+- Added styles for forms (11/02/2024)
+- Removed flash messages dismiss (11/02/2024)
+
 ## v6.4
 
 - Removed use of jQuery (10/02/2024)
