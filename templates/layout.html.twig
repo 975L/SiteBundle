@@ -202,8 +202,7 @@
                         {% block flashes %}
                             {% for label, messages in app.flashes %}
                                 {% for message in messages %}
-                                    <div class="flash alert alert-{{ label }} alert-dismissible text-center fade show" role="alert">
-                                        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
+                                    <div class="flash alert alert-{{ label }} text-center" role="alert">
                                         {{ message|raw|nl2br }}
                                     </div>
                                 {% endfor %}
