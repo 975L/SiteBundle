@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.4.3
+
+- Added images sizes in frgaments (12/02/2024)
+- Added error images by default (12/02/2024)
+- Added cookieconsent message by default (12/02/2024)
+
 ## 6.4.2
 
 - Codacy corrections (11/02/2024)
