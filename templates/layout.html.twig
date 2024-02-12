@@ -38,6 +38,32 @@
     {% set ogImage = logo %}
 {% endif %}
 
+{# Defines error images if not defined #}
+{% if errImages is not defined %}
+    {%
+        set errImages = {
+            'err': asset('bundles/c975lsite/images/err.webp'),
+            'err401': asset('bundles/c975lsite/images/err401.webp'),
+            'err403': asset('bundles/c975lsite/images/err403.webp'),
+            'err404': asset('bundles/c975lsite/images/err404.webp'),
+            'err410': asset('bundles/c975lsite/images/err410.webp'),
+            'err500': asset('bundles/c975lsite/images/err500.webp'),
+        }
+    %}
+{% endif %}
+
+{# Cookie consent #}
+{% if cookieConsent is not defined %}
+    {%
+        set cookieConsent = {
+            'message': 'text.cookies_banner'|trans({}, 'site'),
+            'dismiss': 'text.cookies_dismiss'|trans({}, 'site'),
+            'link': 'label.cookies_policy'|trans({}, 'site'),
+            'href': path('pageedit_display', { 'page': 'cookies' })
+        }
+    %}
+{% endif %}
+
 {# pageTitle #}
 {% if title is defined and title != '' %}
     {% set pageTitle = title %}
