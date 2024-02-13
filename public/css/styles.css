@@ -17,9 +17,9 @@
     --back-pull-background-color: #bababa;
     --back-pull-background-color-hover: lightgreen;
     --form-input-color: #555;
-    --button-background-primary: rgb(52, 44, 205);
-    --button-background-primary-light: rgb(52, 44, 205, 0.5);
-    --button-background-primary-dark: rgb(52, 44, 205, 0.9);
+    --button-background-primary: rgb(11, 55, 178);
+    --button-background-primary-light: rgb(11, 55, 78, 0.5);
+    --button-background-primary-dark: rgb(11, 55, 78, 0.9);
     --button-background-secondary: rgb(200, 106, 38);
     --button-background-secondary-light: rgb(200, 106, 38, 0.5);
     --button-background-secondary-dark: rgb(200, 106, 38, 0.9);
@@ -92,6 +92,34 @@ h2 {
     list-style: none;
     padding-left: 0;
 }
+
+/* CONTAINERS */
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.container .jumbotron,
+.container-fluid .jumbotron {
+    padding-right: 15px;
+    padding-left: 15px;
+    border-radius: 6px;
+}
+
 
 /* COLORS */
 .blue {
@@ -197,8 +225,30 @@ a.btn {
     word-wrap: break-word;
 }
 
+img {
+    overflow-clip-margin: content-box;
+    overflow: clip;
+}
+
 .img-responsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
     margin: 0 auto;
+}
+
+.img-rounded {
+    border-radius: 50px;
+}
+
+.img-shadow {
+    box-shadow: 0 0 10px 2px var(--input-shadow-color);
+}
+
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .control-label {
