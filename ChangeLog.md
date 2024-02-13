@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.4.4
+
+- Added img/container styles (13/02/2024)
+
 ## 6.4.3
 
 - Added images sizes in frgaments (12/02/2024)
