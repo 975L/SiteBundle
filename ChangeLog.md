@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.5.1
+
+- Added missing svg (15/02/2024)
+
 ## 6.5
 
 - Changed error images and templates (15/02/2024)
