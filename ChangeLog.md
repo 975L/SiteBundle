@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.5.2
+
+- Removed use of errorImages array (15/02/2024)
+
 ## 6.5.1
 
 - Added missing svg (15/02/2024)
