@@ -226,21 +226,6 @@ In each file copy/paste the following code:
 {% endblock %}
 ```
 
-If you want to display pictures in those error pages, simply add the following array in your `app/Resources/views/layout.html.twig`:
-
-```twig
-{%
-    set errImages = {
-        'err': asset('PATH_TO_YOUR_IMAGE_FOR_ERR'),
-        'err401': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_401'),
-        'err403': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_403'),
-        'err404': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_404'),
-        'err410': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_410'),
-        'err500': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_500'),
-    }
-%}
-```
-
 ### Add stylesheets
 
 To add stylesheets, simply add the following  in your `app/Resources/views/layout.html.twig`:
@@ -301,16 +286,6 @@ set languagesAlt = {
         'dismiss': 'text.cookies_dismiss'|trans,
         'link': 'label.cookies_policy'|trans,
         'href': 'YOUR_COOKIES_POLICY_LINK'
-    }
-%}
-{%
-    set errImages = {
-        'err': asset('PATH_TO_YOUR_IMAGE_FOR_ERR'),
-        'err401': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_401'),
-        'err403': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_403'),
-        'err404': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_404'),
-        'err410': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_410'),
-        'err500': asset('PATH_TO_YOUR_IMAGE_FOR_ERR_500'),
     }
 %}
 
