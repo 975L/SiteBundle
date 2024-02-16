@@ -167,8 +167,8 @@
         {% block body %}
             {% if display != 'pdf' %}
 {# backTop/pullDown bookmarks #}
-                <a href="#top" class="backTop"></a>
-                <a href="#bottom" class="pullDown"></a>
+                <a href="{{ app.request.uri }}#top" class="backTop"></a>
+                <a href="{{ app.request.uri }}#bottom" class="pullDown"></a>
             {% endif %}
 {# Header #}
             {% block header %}
