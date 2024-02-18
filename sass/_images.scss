@@ -1,0 +1,26 @@
+/* IMAGES */
+img {
+    overflow-clip-margin: content-box;
+    overflow: clip;
+}
+
+.img-responsive {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.img-rounded {
+    border-radius: 25px;
+}
+
+.img-thumbnail {
+    border: 1px solid grey;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.img-shadow {
+    box-shadow: 0 0 10px 2px var(--input-shadow-color);
+}

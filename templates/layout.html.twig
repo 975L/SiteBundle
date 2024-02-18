@@ -30,7 +30,7 @@
     {% set copyright = '© ' ~  'now'|date('Y') %}
 {% endif %}
 {% if site is defined %}
-    {% set copyright = copyright ~ ': ' ~ site %}
+    {% set copyright = copyright ~ ' : ' ~ site %}
 {% endif %}
 
 {# ogImage #}

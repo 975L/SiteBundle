@@ -1,0 +1,57 @@
+/* BUTTONS */
+p,
+li,
+button,
+button.btn,
+a,
+a.btn {
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+a.btn,
+a.btn:visited,
+a.btn:hover,
+a.btn:visited:hover {
+    color: var(--button-link-color);
+    text-decoration: none;
+}
+
+.btn,
+.btn:hover {
+    border-radius: 5px;
+    object-fit: cover;
+    box-shadow: var(--button-box-shadow);
+    padding: 0.7rem 1.2rem;
+    margin: 2em auto;
+    text-decoration: none;
+    color: var(--button-color);
+}
+
+.btn-primary {
+    background-color: var(--button-background-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--button-background-primary-dark);
+}
+
+.btn-secondary {
+    background-color: var(--button-background-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--button-background-secondary-dark);
+}
+
+p:has(.btn) {
+    margin: 2em auto 2em auto;
+}
+
+div .btn {
+    margin: 1em 0;
+}
+
+div .btn-padding {
+    margin-top: 3em;
+}

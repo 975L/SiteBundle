@@ -1,0 +1,22 @@
+/* CARDS */
+.card {
+    margin: 1em auto;
+    width: min(90vw, 400px);
+    border: 1px solid var(--input-border-color);
+    border-radius: 10px;
+}
+
+.card-header,
+h2.card-header {
+    background-color: var(--primary);
+    color: var(--white);
+    border-bottom: 1px solid var(--input-border-color);
+    padding: 0.5em 1em;
+    margin: 0;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+}
+
+.card-body {
+    padding: 1em;
+}

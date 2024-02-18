@@ -1,0 +1,45 @@
+/* PRINT */
+@page {
+    size: A4;
+    margin: 0;
+}
+@media print {
+    * {
+        font-size: 95%;
+    }
+
+    html,
+    body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    h1,
+    h2,
+    h3,
+    .lead {
+        letter-spacing: inherit;
+    }
+
+    h1 {
+        font-size: 150%;
+    }
+
+    h2 {
+        font-size: 140%;
+    }
+
+    h3 {
+        font-size: 130%;
+    }
+
+    .container,
+    .container-fluid {
+        width: 100%;
+        background-color: var(--white);
+    }
+
+    a[href]:after {
+        content: none;
+    }
+}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.6
+
+- Added card styles (18/02/2024)
+- Moved css to mobile first (18/02/2024)
+- Moved css to sass (18/02/2024)
+
 ## 6.5.3
 
 - Corrected backTop and pullDown butons (16/02/2024)
