@@ -3,12 +3,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-left: 0;
     list-style: none;
     border-radius: 0.25rem;
     border: 1px solid var(--primary);
     margin: 20px auto;
-    list-style: none;
     padding: 0;
 }
 
@@ -29,15 +27,15 @@
     margin: 0;
 }
 
-.pagination li a,
 .pagination-next a,
-.pagination-previous a {
+.pagination-previous a,
+.pagination li a {
     text-decoration: none;
 }
 
-.pagination li a:hover,
 .pagination-next a:hover,
-.pagination-previous a:hover {
+.pagination-previous a:hover,
+.pagination li a:hover {
     text-decoration: underline;
 }
 
