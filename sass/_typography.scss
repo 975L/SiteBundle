@@ -1,0 +1,47 @@
+/* TYPOGRAPHY */
+* {
+    font-family: var(--font-family-body);
+    color: var(--black);
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--font-family-title);
+    color: var(--primary);
+    font-weight: normal;
+    text-align: center;
+    margin: 1.5em auto 0.5em auto;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+h2 {
+    font-size: 2em;
+}
+
+.lead {
+    font-family: var(--font-family-title);
+    color: var(--black);
+    font-weight: normal;
+}
+
+.bigger {
+    font-size: 130%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.text-muted {
+    color: var(--label-color);
+    font-style: italic;
+    font-size: 0.9rem
+}

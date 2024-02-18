@@ -1,0 +1,146 @@
+/* FORMS */
+form {
+    width: min(70vw, 1000px);
+    margin: 0 auto 1em auto;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+label {
+    display: block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--black);
+}
+
+label.required::after {
+    content: "*";
+}
+
+input {
+    margin-bottom: 1em;
+}
+
+input[type="date"],
+input[type="datetime-local"],
+input[type="email"],
+input[type="month"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="week"],
+input[type="password"],
+input[type="text"] {
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: 2px solid var(--input-border-bottom-color);;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    color: var(--form-input-color);
+}
+
+input[type="text"] {
+    writing-mode: horizontal-tb !important;
+    padding-block: 1px;
+    padding-inline: 2px;
+}
+
+button[type="submit"],
+input[type="submit"] {
+    width: 100%;
+    border: none;
+}
+
+form div div:has(input[type="radio"]),
+form div div:has(input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left;
+}
+
+form div div:has(input[type="radio"]) label,
+form div div:has(input[type="checkbox"]) label {
+    font-weight: normal;
+    margin-left: 2px;
+}
+
+textarea {
+    margin-bottom: 1em;
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    background: transparent;
+    border: 1px solid var(--input-border-bottom-color);
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    color: var(--form-input-color);
+}
+
+textarea:hover,
+input[type="date"]:hover,
+input[type="datetime-local"]:hover,
+input[type="email"]:hover,
+input[type="month"]:hover,
+input[type="number"]:hover,
+input[type="search"]:hover,
+input[type="tel"]:hover,
+input[type="time"]:hover,
+input[type="url"]:hover,
+input[type="week"]:hover,
+input[type="password"]:hover,
+input[type="text"]:hover {
+    border: 1px solid var(--input-border-color);
+    border-bottom: 2px solid var(--input-border-color);
+    box-shadow: 0 0 10px 2px var(--input-shadow-color);
+}
+
+textarea:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+input[type="email"]:focus,
+input[type="month"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="time"]:focus,
+input[type="url"]:focus,
+input[type="week"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    border: 1px solid var(--input-focus-border-color);
+    border-bottom: 2px solid var(--input-focus-border-color);
+    box-shadow: 0 0 10px 2px var(--input-focus-shadow-color);
+    color: var(--black);
+}
+
+.control-label {
+    color: var(--label-color);
+}
+
+.control-label.required {
+    color: var(--required-color);
+}
+
+.control-label.required:after {
+    content: "*";
+}

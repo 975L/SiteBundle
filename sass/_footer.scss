@@ -1,0 +1,19 @@
+/* FOOTER */
+footer {
+    background-color: var(--primary);
+    border-top: solid grey 2px;
+    margin-top: 3em;
+    padding: 2em 0 6em 0;
+}
+
+footer a,
+footer a:visited {
+    color: var(--white);
+    text-decoration: none;
+}
+
+footer a:hover,
+footer a:visited:hover {
+    color: var(--white);
+    text-decoration: underline;
+}

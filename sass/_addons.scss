@@ -1,0 +1,45 @@
+/* ADDONS */
+.external {
+    padding:0 13px 0 0;
+    background: url('../images/external.png') no-repeat scroll center right;
+}
+
+a.pullDown,
+a.backTop {
+    display: none;
+    width: 60px;
+    height: 60px;
+    text-indent: -9999px;
+    position: fixed;
+    z-index: 999;
+    bottom: 25px;
+    border-radius: 30px;
+    opacity: 0.6;
+}
+
+a.backTop {
+    right: 25px;
+    background: var(--back-pull-background-color) url('../images/up-arrow.png') no-repeat center 40%;
+}
+
+a.pullDown {
+    left: 25px;
+    background: var(--back-pull-background-color) url('../images/down-arrow.png') no-repeat center 40%;
+}
+
+a:hover.backTop,
+a:hover.pullDown {
+    background-color: var(--back-pull-background-color-hover);
+}
+
+.toolbar {
+    margin-bottom: 2em;
+}
+
+.fade-in {
+    animation: fadeIn 1s forwards;
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+}
