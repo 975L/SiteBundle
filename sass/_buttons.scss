@@ -17,6 +17,14 @@ a.btn:visited:hover {
     text-decoration: none;
 }
 
+div .btn {
+    margin: 1em 0;
+}
+
+div .btn-padding {
+    margin-top: 3em;
+}
+
 .btn,
 .btn:hover {
     border-radius: 5px;
@@ -46,12 +54,4 @@ a.btn:visited:hover {
 
 p:has(.btn) {
     margin: 2em auto 2em auto;
-}
-
-div .btn {
-    margin: 1em 0;
-}
-
-div .btn-padding {
-    margin-top: 3em;
 }

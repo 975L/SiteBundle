@@ -3,6 +3,7 @@
     size: A4;
     margin: 0;
 }
+
 @media print {
     * {
         font-size: 95%;
@@ -39,7 +40,7 @@
         background-color: var(--white);
     }
 
-    a[href]:after {
+    a[href]::after {
         content: none;
     }
 }

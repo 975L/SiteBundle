@@ -141,6 +141,6 @@ input[type="text"]:focus {
     color: var(--required-color);
 }
 
-.control-label.required:after {
+.control-label.required::after {
     content: "*";
 }

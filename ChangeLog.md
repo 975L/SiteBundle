@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.6.1
+
+- Codacy corrections (18/02/2024)
+
 ## 6.6
 
 - Added card styles (18/02/2024)
