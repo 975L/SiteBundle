@@ -334,6 +334,7 @@ template {
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
   --button-color: #fff;
   --button-link-color: #fff;
+  --card-background: #fff;
   --disabled: grey;
   --font-family-title: "Sans Serif";
   --font-family-body: "Sans Serif";
@@ -631,11 +632,19 @@ p:has(.btn) {
 }
 
 /* CARDS */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
 .card {
   margin: 1em auto;
-  width: min(90vw, 400px);
+  width: clamp(300px, 400px, 90vw);
   border: 1px solid var(--input-border-color);
   border-radius: 10px;
+  background-color: var(--card-background);
 }
 
 .card-header,
@@ -651,6 +660,11 @@ h2.card-header {
 
 .card-body {
   padding: 1em;
+}
+
+.card-body img {
+  width: 100%;
+  height: auto;
 }
 
 /* FORMS */
