@@ -1,9 +1,17 @@
 /* CARDS */
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
 .card {
     margin: 1em auto;
-    width: min(90vw, 400px);
+    width: clamp(300px, 400px, 90vw);
     border: 1px solid var(--input-border-color);
     border-radius: 10px;
+    background-color: var(--card-background);
 }
 
 .card-header,
@@ -20,3 +28,8 @@ h2.card-header {
 .card-body {
     padding: 1em;
 }
+
+.card-body img {
+    width: 100%;
+    height: auto;
+  }
