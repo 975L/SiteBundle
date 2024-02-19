@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.6.2
+
+- Re-ordered css (19/02/2024)
+
 ## 6.6.1
 
 - Codacy corrections (18/02/2024)
