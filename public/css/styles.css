@@ -477,18 +477,18 @@ h2 {
   margin-left: -15px;
 }
 
-.container .jumbotron,
-.container-fluid .jumbotron {
-  padding-right: 15px;
-  padding-left: 15px;
-  border-radius: 6px;
-}
-
 .jumbotron {
   border-color: var(--primary);
   border-style: solid;
   border-width: 6px;
   border-radius: 25px;
+}
+
+.container .jumbotron,
+.container-fluid .jumbotron {
+  padding-right: 15px;
+  padding-left: 15px;
+  border-radius: 6px;
 }
 
 /* ALIGNMENTS */
@@ -832,16 +832,16 @@ h1 a {
   color: var(--primary);
 }
 
+h1 a:active,
+a:hover h1 a:hover {
+  text-decoration: underline;
+}
+
 a,
 a:visited,
 a:hover,
 a:visited:hover {
   color: var(--link-color);
-  text-decoration: underline;
-}
-
-h1 a:active,
-a:hover h1 a:hover {
   text-decoration: underline;
 }
 
