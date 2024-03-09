@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.6.5
+
+- Added classes (09/03/2024)
+
 ## 6.6.4
 
 - Added card styles (19/02/2024)
