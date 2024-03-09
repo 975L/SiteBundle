@@ -21,6 +21,10 @@ img {
     padding: 5px;
 }
 
+.img-circle {
+    border-radius: 50%;
+  }
+
 .img-shadow {
     box-shadow: 0 0 10px 2px var(--input-shadow-color);
 }
