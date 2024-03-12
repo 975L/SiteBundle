@@ -408,6 +408,10 @@ body {
   margin: 0 auto;
 }
 
+.box-shadow {
+  box-shadow: var(--box-shadow);
+}
+
 /* TYPOGRAPHY */
 * {
   font-family: var(--font-family-body);

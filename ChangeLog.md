@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.6.5.2
+
+- Added class box-shadow (12/03/2024)
+
 ## 6.6.5.1
 
 - Changed class img-rounded (11/03/2024)
