@@ -1,70 +1,74 @@
 # Changelog
 
-## 6.6.5.2
+## v6.6.6
+
+- Updated Command file (31/03/2024)
+
+## v6.6.5.2
 
 - Added class box-shadow (12/03/2024)
 
-## 6.6.5.1
+## v6.6.5.1
 
 - Changed class img-rounded (11/03/2024)
 
-## 6.6.5
+## v6.6.5
 
 - Added classes (09/03/2024)
 
-## 6.6.4
+## v6.6.4
 
 - Added card styles (19/02/2024)
 
-## 6.6.3
+## v6.6.3
 
 - Changed lead css (19/02/2024)
 
-## 6.6.2
+## v6.6.2
 
 - Re-ordered css (19/02/2024)
 
-## 6.6.1
+## v6.6.1
 
 - Codacy corrections (18/02/2024)
 
-## 6.6
+## v6.6
 
 - Added card styles (18/02/2024)
 - Moved css to mobile first (18/02/2024)
 - Moved css to sass (18/02/2024)
 
-## 6.5.3
+## v6.5.3
 
 - Corrected backTop and pullDown butons (16/02/2024)
 
-## 6.5.2
+## v6.5.2
 
 - Removed use of errorImages array (15/02/2024)
 
-## 6.5.1
+## v6.5.1
 
 - Added missing svg (15/02/2024)
 
-## 6.5
+## v6.5
 
 - Changed error images and templates (15/02/2024)
 
-## 6.4.4
+## v6.4.4
 
 - Added img/container styles (13/02/2024)
 
-## 6.4.3
+## v6.4.3
 
 - Added images sizes in frgaments (12/02/2024)
 - Added error images by default (12/02/2024)
 - Added cookieconsent message by default (12/02/2024)
 
-## 6.4.2
+## v6.4.2
 
 - Codacy corrections (11/02/2024)
 
-## 6.4.1
+## v6.4.1
 
 - Added styles for forms (11/02/2024)
 - Removed flash messages dismiss (11/02/2024)

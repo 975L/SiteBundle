@@ -10,27 +10,25 @@
  */
 namespace c975L\SiteBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Console command to convert the Twig models template to their Markdown format with 'models:twig2md'
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2018 975L <contact@975l.com>
  */
+#[AsCommand(
+    name: 'models:twig2md',
+    description: 'Convert c975L/SiteBundle twig models templates to markdown format'
+)]
 class Twig2MdCommand extends Command
 {
-    protected function configure(): void
-    {
-        $this
-            ->setName('models:twig2md')
-            ->setDescription('Convert c975L/SiteBundle twig models templates to markdown format');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //Defines console output
@@ -109,6 +107,6 @@ class Twig2MdCommand extends Command
             return Command::SUCCESS;
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
