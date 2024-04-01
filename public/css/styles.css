@@ -412,6 +412,10 @@ body {
   box-shadow: var(--box-shadow);
 }
 
+.brand {
+  color: var(--primary);
+}
+
 /* TYPOGRAPHY */
 * {
   font-family: var(--font-family-body);
@@ -613,6 +617,7 @@ div .btn-padding {
   margin: 2em auto;
   text-decoration: none;
   color: var(--button-color);
+  font-family: var(--font-family-title);
 }
 
 .btn-primary {
@@ -852,6 +857,29 @@ img {
 
 .img-shadow {
   box-shadow: 0 0 10px 2px var(--input-shadow-color);
+}
+
+.img-300,
+.img-500 {
+  width: 90vw;
+  height: auto;
+  margin: 0 auto;
+}
+
+.img-300 {
+  max-width: 300px;
+}
+
+.img-500 {
+  max-width: 500px;
+}
+
+iframe {
+  width: 95vw;
+  max-width: 400px;
+  aspect-ratio: 560/315;
+  border-radius: 10px;
+  margin: 0.5em auto 0.5em auto;
 }
 
 a,
