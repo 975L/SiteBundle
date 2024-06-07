@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.6.8
+
+- Added styles (0706/2024)
+
 ## v6.6.7
 
 - Added styles (01/04/2024)

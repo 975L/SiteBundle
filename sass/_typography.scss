@@ -29,12 +29,26 @@ h2 {
     font-weight: bold;
 }
 
+.big,
 .bigger {
     font-size: 130%;
 }
 
+.small,
+.smaller {
+    font-size: 90%;
+}
+
 .text-center {
     text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
 }
 
 .text-underline {
@@ -45,4 +59,12 @@ h2 {
     color: var(--label-color);
     font-style: italic;
     font-size: 0.9rem
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold {
+    font-style: bold;
 }
