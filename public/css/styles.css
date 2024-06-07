@@ -447,12 +447,26 @@ h2 {
   font-weight: bold;
 }
 
+.big,
 .bigger {
   font-size: 130%;
 }
 
+.small,
+.smaller {
+  font-size: 90%;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-underline {
@@ -463,6 +477,14 @@ h2 {
   color: var(--label-color);
   font-style: italic;
   font-size: 0.9rem;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.bold {
+  font-style: bold;
 }
 
 /* CONTAINERS */
@@ -608,9 +630,9 @@ div .btn-padding {
   margin-top: 3em;
 }
 
-.btn,
-.btn:hover {
+.btn {
   border-radius: 5px;
+  border: none;
   object-fit: cover;
   box-shadow: var(--button-box-shadow);
   padding: 0.7rem 1.2rem;
@@ -618,6 +640,7 @@ div .btn-padding {
   text-decoration: none;
   color: var(--button-color);
   font-family: var(--font-family-title);
+  cursor: pointer;
 }
 
 .btn-primary {

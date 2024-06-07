@@ -25,9 +25,9 @@ div .btn-padding {
     margin-top: 3em;
 }
 
-.btn,
-.btn:hover {
+.btn {
     border-radius: 5px;
+    border: none;
     object-fit: cover;
     box-shadow: var(--button-box-shadow);
     padding: 0.7rem 1.2rem;
@@ -35,6 +35,7 @@ div .btn-padding {
     text-decoration: none;
     color: var(--button-color);
     font-family: var(--font-family-title);
+    cursor: pointer;
 }
 
 .btn-primary {
