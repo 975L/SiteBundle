@@ -604,32 +604,6 @@ a:hover.pullDown {
 }
 
 /* BUTTONS */
-p,
-li,
-button,
-button.btn,
-a,
-a.btn {
-  white-space: normal;
-  word-wrap: break-word;
-}
-
-a.btn,
-a.btn:visited,
-a.btn:hover,
-a.btn:visited:hover {
-  color: var(--button-link-color);
-  text-decoration: none;
-}
-
-div .btn {
-  margin: 1em 0;
-}
-
-div .btn-padding {
-  margin-top: 3em;
-}
-
 .btn {
   border-radius: 5px;
   border: none;
@@ -662,6 +636,32 @@ div .btn-padding {
 .btn-small {
   font-size: 1.2rem;
   padding: 0.5rem 1rem;
+}
+
+p,
+li,
+button,
+button.btn,
+a,
+a.btn {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+a.btn,
+a.btn:visited,
+a.btn:hover,
+a.btn:visited:hover {
+  color: var(--button-link-color);
+  text-decoration: none;
+}
+
+div .btn {
+  margin: 1em 0;
+}
+
+div .btn-padding {
+  margin-top: 3em;
 }
 
 p:has(.btn) {
