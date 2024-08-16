@@ -8,7 +8,7 @@
     <div class="alert alert-danger text-center">
 {# Title #}
         <h2>
-            <img src="{{ absolute_url(asset('bundles/c975lsite/images/thumbs-down.svg')) }}" class="img img-responsive" alt="Thumbs down" width="48"> Err500
+            <img src="{{ absolute_url(asset('bundles/c975lsite/images/thumbs-down.svg')) }}" class="img img-responsive" alt="Thumbs down" width="48" loading="lazy"> Err500
         </h2>
 {# Message #}
         <p>
@@ -18,6 +18,6 @@
     </div>
 {# Image #}
     <p class="text-center">
-        <img src="{{ absolute_url(asset('bundles/c975lsite/images/error-' ~ random(1,6) ~ '.webp')) }}" class="img img-responsive img-rounded" alt="error">
+        <img src="{{ absolute_url(asset('bundles/c975lsite/images/error-' ~ random(1,6) ~ '.webp')) }}" class="img img-responsive img-rounded" alt="error" loading="lazy">
     </p>
 {% endblock %}

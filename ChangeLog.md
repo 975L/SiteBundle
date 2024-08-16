@@ -1,8 +1,12 @@
 # Changelog
 
+## v6.6.9
+
+- Added  loading="lazy" (16/08/2024)
+
 ## v6.6.8
 
-- Added styles (0706/2024)
+- Added styles (07/06/2024)
 
 ## v6.6.7
 
