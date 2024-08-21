@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.6.10
+
+- Added margin for footer elements (21/08/2024)
+
 ## v6.6.9
 
 - Added  loading="lazy" (16/08/2024)
