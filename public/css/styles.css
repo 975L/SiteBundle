@@ -1023,6 +1023,11 @@ footer a:visited:hover {
   text-decoration: underline;
 }
 
+footer li {
+  margin: 10px;
+  font-size: 1.15em;
+}
+
 /* SCREENS */
 /* @media only screen
     and (min-width: 360px) {
