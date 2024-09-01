@@ -457,6 +457,10 @@ h2 {
   font-size: 90%;
 }
 
+.text {
+  max-width: 800px;
+}
+
 .text-center {
   text-align: center;
 }
