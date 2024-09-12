@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.6.13
+
+- Suppressed title attributes that were not accessibility compliant (12/09/2024)
+
 ## v6.6.12
 
 - Added style (01/09/2024)
