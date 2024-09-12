@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.7
+
+- Suppressed spaceless filter as it's deprecated (12/09/2024)
+
 ## v6.6.13
 
 - Suppressed title attributes that were not accessibility compliant (12/09/2024)

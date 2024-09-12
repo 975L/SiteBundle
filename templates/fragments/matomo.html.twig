@@ -1,4 +1,3 @@
-{% apply spaceless %}
 {# https://matomo.org/ #}
 <script>
     var _paq = window._paq = window._paq || [];
@@ -12,9 +11,4 @@
         g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
     })();
 </script>
-<noscript>
-    <p>
-        <img src="{{ matomo.url }}/piwik.php?idsite={{ matomo.id }}" style="border:0;" alt="" loading="lazy">
-    </p>
-</noscript>
-{% endapply %}
+<noscript><img src="{{ matomo.url }}/piwik.php?idsite={{ matomo.id }}" style="border:0;" alt="" loading="lazy"></noscript>
