@@ -459,6 +459,7 @@ h2 {
 
 .text {
   max-width: 800px;
+  margin: 0 auto;
 }
 
 .text-center {
