@@ -23,31 +23,13 @@ Use [Composer](https://getcomposer.org) to install the library
     composer require c975L/site-bundle
 ```
 
-### Step 2: Enable the Bundle
-
-Then, enable the bundles by adding them to the list of registered bundles in the `app/AppKernel.php` file of your project:
-
-```php
-<?php
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = [
-            // ...
-            new c975L\SiteBundle\c975LSiteBundle(),
-        ];
-    }
-}
-```
-
-### Step 3: Configure the Bundle
+### Step 2: Configure the Bundle
 
 v2.0+ of c975LSiteBundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage configuration parameters. Use the Route "/site/config" with the proper user role to modify them.
 
 Upgrading from v1.x? **Check UPGRADE.md**
 
-### Step 4: Enable the Routes
+### Step 3: Enable the Routes
 
 Then, enable the routes by adding them to the `config/routes.yaml` file of your project:
 
@@ -63,7 +45,7 @@ c975_l_site:
     #    _locale: en|fr|es
 ```
 
-### Step 5: install assets to web folder
+### Step 4: install assets to web folder
 
 Install assets by running
 
@@ -430,3 +412,23 @@ You can find below a table containing all the models available per country and l
 To facilitate reading, models are also available in Markdown format. If you do a modification, you can use Command `php bin/console models:twig2md` to convert Twig models templates to their Markdown equivalent.
 
 If this project **help you to reduce time to develop**, you can sponsor me via the "Sponsor" button at the top :)
+
+### AssetController
+
+You can use this route to serve an asset file, by using the following code in your Twig template: `{{ path('asset_file', {'file': 'your/path/your_file.ext[.ext2]'}) }}`.
+
+file name can contain uppercase, lowercase, accented letters, "-", "_", "/", "\", only spaces are not allowed. You can also use 2 file extensions.
+
+This will be helpful if you want to give access to your assets to registered users. You simply need to add `- { path: ^/your/path, roles: ROLE_USER }` to `config/packages/security.yaml` > `access_control`part. And you can add an http basic authentication on the asset folder itself.
+
+### DownloadController
+
+You can use this route to force the download of an asset file, by using the following code in your Twig template: `{{ path('download_file', {'file': 'your/path/your_file.ext[.ext2]'}) }}`.
+
+file name can contain uppercase, lowercase, accented letters, "-", "_", "/", "\", only spaces are not allowed. You can also use 2 file extensions.
+
+This will be helpful in case of text files like json or whatever.nt to give access to your assets to registered users. You can also protect your route by adding `- { path: ^/your/path, roles: ROLE_USER }` to `config/packages/security.yaml` > `access_control`part. And you can add an http basic authentication on the download folder itself.
+
+### Twig Components
+
+Some Twig components are available, check `templates/components` to see and them and their use.
