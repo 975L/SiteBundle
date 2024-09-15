@@ -1,5 +1,14 @@
 # Changelog
 
+## v6.8
+
+- Added AssetController (15/09/2024)
+- Added DownloadController (15/09/2024)
+- Modified README (15/09/2024)
+- Added require `symfony/ux-twig-component": "*"` (15/09/2024)
+- Added styles (15/09/2024)
+- Added Twig components (15/09/2024)
+
 ## v6.7.1
 
 - Added style (13/09/2024)

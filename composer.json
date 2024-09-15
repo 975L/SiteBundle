@@ -23,7 +23,8 @@
         "c975l/includelibrary-bundle": "*",
         "c975l/services-bundle": "*",
         "symfony/form": "*",
-        "symfony/framework-bundle": "*"
+        "symfony/framework-bundle": "*",
+        "symfony/ux-twig-component": "*"
     },
     "require-dev": {
     },

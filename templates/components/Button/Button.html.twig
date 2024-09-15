@@ -1,0 +1,13 @@
+{% set type = type | default('primary') %}
+{% set target = target | default('') %}
+{% set lock = lock | default('false') %}
+<p class="text-center">
+    <a href="{{ url }}" target="{{ target }}" aria-role="button">
+        <button class="btn btn-{{ type }}">
+            {% if lock == "true" %}
+                <twig:c975LSite:Image:Icon src="bundles/c975lsite/images/lock.svg" w="14" h="16" c="white"/>
+            {% endif %}
+            {{ label }}
+        </button>
+    </a>
+</p>

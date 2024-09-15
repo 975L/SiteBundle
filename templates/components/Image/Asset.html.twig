@@ -1,0 +1,5 @@
+{% set c = c | default('') %}
+{% set alt = alt | default('') %}
+<p>
+    <img src="{{ path('asset_file', {'file': file}) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+</p>
