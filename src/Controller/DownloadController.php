@@ -29,6 +29,8 @@ class DownloadController extends AbstractController
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             basename($file)
         );
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
 
         return $response;
     }

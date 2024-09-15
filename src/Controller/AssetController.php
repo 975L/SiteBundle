@@ -29,6 +29,8 @@ class AssetController extends AbstractController
             ResponseHeaderBag::DISPOSITION_INLINE,
             basename($file)
         );
+        $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('must-revalidate', true);
 
         return $response;
     }
