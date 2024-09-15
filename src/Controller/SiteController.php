@@ -38,7 +38,7 @@ class SiteController extends AbstractController
     {
         //$this->denyAccessUnlessGranted('c975LSite-dashboard', null);
 
-        return $this->render('@c975LSite/pages/dashboard.html.twig');
+        return $this->render('@c975LSite/pages/dashboard.html.twig')->setMaxAge(3600);
     }
 
 //CONFIG
@@ -71,6 +71,7 @@ class SiteController extends AbstractController
         //Renders the config form
         return $this->render(
             '@c975LConfig/forms/config.html.twig',
-            ['form' => $form->createView(), 'toolbar' => '@c975LSite']);
+            ['form' => $form->createView(), 'toolbar' => '@c975LSite']
+        )->setMaxAge(3600);
     }
 }

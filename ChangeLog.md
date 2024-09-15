@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.9
+
+- Added ->setMaxAge(3600) to controllers (15/09/2024)
+
 ## v6.8
 
 - Added AssetController (15/09/2024)
