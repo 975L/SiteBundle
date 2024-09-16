@@ -1,0 +1,8 @@
+{# <twig:c975LSite:Image:Link label="Your label" src="your-path/file.ext" url="yourdomain.ext" w="width" h="height" target=""/> #}
+{% set c = c | default('') %}
+{% set alt = alt | default('') %}
+{% set label = label | default('') %}
+{% set target = target | default('') %}
+<p>
+    <a href="{{ url }}" target="{{ target }}"><img src="{{asset(src) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}">{% if label != '' %}<br>{{ label }}{% endif %}</a>
+</p>

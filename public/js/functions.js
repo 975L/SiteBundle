@@ -84,3 +84,65 @@ function pullDownButton() {
         pullDown.classList.add('fade-out');
     }
 }
+
+// Slider function
+function slider(slider) {
+    var slideIndex = 1;
+    const arrowLeft = document.querySelector(`#${slider} .arrow-left`);
+    const arrowRight = document.querySelector(`#${slider} .arrow-right`);
+
+    // Displays slide
+    function displaySlide(number) {
+        let index = slideIndex;
+
+        // Suppress slides ands dots classes
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+            dots[i].classList.remove("active");
+        }
+
+        // Gets back to first slide
+        if (number > slides.length) {
+            index = 1;
+        }
+        // Gets back to last slide
+        if (number !== null && number < 1) {
+            index = slides.length;
+        }
+
+        // Displays slide and dot
+        slides[index - 1].style.display = "block";
+        dots[index - 1].classList.add("active");
+
+        slideIndex = index;
+    }
+
+    // Displays slider if arrows exists
+    if (null !== arrowLeft && null !== arrowRight) {
+        var slides = document.querySelectorAll(`#${slider} .slider-img`);
+        var dots = document.querySelectorAll(`#${slider} .slider-dot`);
+        displaySlide(slideIndex);
+
+        // EventListener for previous slide, <
+        arrowLeft.addEventListener("click", () => {
+            displaySlide(slideIndex -= 1);
+        });
+        // EventListener for next slide, >
+        arrowRight.addEventListener("click", () => {
+            displaySlide(slideIndex += 1);
+        });
+        // EventListener for next slide, click on slide
+        slides.forEach((slide) => {
+            slide.addEventListener("click", () => {
+                displaySlide(slideIndex += 1);
+            });
+        });
+        // EventListener for click on dot
+        dots.forEach((dot) => {
+            dot.addEventListener("click", () => {
+                slideIndex = Number(dot.getAttribute("dataset-number"));
+                displaySlide(slideIndex);
+            });
+        });
+    }
+}

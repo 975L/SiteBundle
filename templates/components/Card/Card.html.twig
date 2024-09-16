@@ -1,5 +1,11 @@
+{# <twig:c975LSite:Card:Card id="id" title="Title" icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"> #}
+{% set icon = icon | default('') %}
 <div class="card box-shadow" id="{{ id }}">
-    <h2 class="card-header">{{ title }}</h2>
+    {% if icon != "" %}
+        <h2 class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" c="{{ icon[1] }}" w="{{ icon[2] }}" h="{{ icon[3] }}"/> {{ title }}</h2>
+    {% else %}
+        <h2 class="card-header">{{ title }}</h2>
+    {% endif %}
     <div class="card-body text-center">
         {% block content %}{% endblock %}
     </div>

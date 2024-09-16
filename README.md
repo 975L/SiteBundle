@@ -431,4 +431,4 @@ This will be helpful in case of text files like json or whatever.nt to give acce
 
 ### Twig Components
 
-Some Twig components are available, check `templates/components` to see and them and their use.
+Some Twig components are available, check `templates/components` to see them. An example of use is in each component file.
