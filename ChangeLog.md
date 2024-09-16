@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.9.2
+
+- Corrections identified by Codacy (16/09/2024)
+
 ## v6.9.1
 
 - Added examples of use for Twig components intemplates (15/09/2024)
