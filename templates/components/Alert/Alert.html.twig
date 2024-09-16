@@ -1,3 +1,8 @@
+{#
+<twig:c975LSite:Alert:Alert type="info">
+    Your content
+</twig:c975LSite:Alert:Alert>
+#}
 {% set type = type | default('info') %}
 <div class="alert alert-{{ type }} text-center">
     <twig:c975LSite:Image:Icon src="bundles/c975lsite/images/alert-{{ type }}.svg" w="16" h="16"/>

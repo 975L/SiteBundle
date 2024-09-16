@@ -1,0 +1,14 @@
+{# <twig:c975LSite:Slider:Slider slides="{{ slides }}" id="id"/> #}
+<div id="{{ id }}" class="slider">
+    {% for slide in slides %}
+        <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="lazy">
+    {% endfor %}
+    <div class="slider-dots">
+        {% for slide in slides %}
+            <span class="slider-dot" dataset-number="{{ loop.index }}"></span>
+        {% endfor %}
+    </div>
+    <p class="arrow arrow-left"><img src="{{ asset('bundles/c975lsite/images/angle-left.svg') }}" alt="left angle" class="angle" width="32" loading="lazy"></p>
+    <p class="arrow arrow-right"><img src="{{ asset('bundles/c975lsite/images/angle-right.svg') }}" alt="right angle" class="angle" width="32" loading="lazy"></p>
+</div>
+<script>document.addEventListener('DOMContentLoaded', function() { slider('{{ id }}'); });</script>

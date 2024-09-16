@@ -1,8 +1,10 @@
+{# <twig:c975LSite:Button:Button label="Label" url="{{ path('your_route') }}" target="_blank" lock="true" download="true"/> #}
 {% set type = type | default('primary') %}
 {% set target = target | default('') %}
-{% set lock = lock | default('false') %}
+{% set lock = lock | default(false) %}
+{% set download = download | default(false) %}
 <p class="text-center">
-    <a href="{{ url }}" target="{{ target }}" aria-role="button">
+    <a href="{{ url }}" target="{{ target }}" role="button" {% if download == true %}download{% endif %}>
         <button class="btn btn-{{ type }}">
             {% if lock == "true" %}
                 <twig:c975LSite:Image:Icon src="bundles/c975lsite/images/lock.svg" w="14" h="16" c="white"/>
