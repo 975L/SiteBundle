@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     externalLinks();
 });
 
-window.addEventListener('scroll', () => {
+window.addEventListener("scroll", () => {
     backTopButton();
     pullDownButton();
 });
@@ -27,7 +27,7 @@ function htmlBoilerPlate() {
                 "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"
             ];
             const console = window.console = {};
-            methods.forEach(method => {
+            methods.forEach((method) => {
                 console[method] = noop;
             });
         }());
@@ -40,7 +40,7 @@ function externalLinks() {
         return;
     }
     const anchors = document.getElementsByTagName("a");
-    Array.from(anchors).forEach(anchor => {
+    Array.from(anchors).forEach((anchor) => {
         if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") {
             anchor.target = "_blank";
         }
@@ -55,18 +55,18 @@ function nl2br(str) {
 // Displays/Hides the backTop button
 function backTopButton() {
     const amountScrolled = 300;
-    const backTop = document.querySelector('a.backTop');
+    const backTop = document.querySelector("a.backTop");
 
     if (backTop) {
         // Displays the backTop button
         if (window.scrollY > amountScrolled) {
             backTop.style.display = "block";
-            backTop.classList.remove('fade-out');
-            backTop.classList.add('fade-in');
+            backTop.classList.remove("fade-out");
+            backTop.classList.add("fade-in");
         // Hides the backTop button
         } else {
-            backTop.classList.remove('fade-in');
-            backTop.classList.add('fade-out');
+            backTop.classList.remove("fade-in");
+            backTop.classList.add("fade-out");
         }
     }
 }
@@ -74,18 +74,18 @@ function backTopButton() {
 // Displays/Hides the pullDown button
 function pullDownButton() {
     const amountScrolled = 300;
-    const pullDown = document.querySelector('a.pullDown');
+    const pullDown = document.querySelector("a.pullDown");
 
     if (pullDown) {
         // Displays the pullDown button
         if (window.scrollY + window.innerHeight + amountScrolled < document.body.scrollHeight) {
             pullDown.style.display = "block";
-            pullDown.classList.remove('fade-out');
-            pullDown.classList.add('fade-in');
+            pullDown.classList.remove("fade-out");
+            pullDown.classList.add("fade-in");
         // Hides the pullDown button
         } else {
-            pullDown.classList.remove('fade-in');
-            pullDown.classList.add('fade-out');
+            pullDown.classList.remove("fade-in");
+            pullDown.classList.add("fade-out");
         }
     }
 }
@@ -103,8 +103,8 @@ function slider(slider) {
         let index = number;
 
         // Suppress slides ands dots classes
-        slides.forEach(slide => slide.style.display = "none");
-        dots.forEach(dot => dot.classList.remove("active"));
+        slides.forEach((slide) => slide.style.display = "none");
+        dots.forEach((dot) => dot.classList.remove("active"));
 
         // Gets back to first slide
         if (number > slides.length) {
@@ -132,15 +132,13 @@ function slider(slider) {
         arrowRight.addEventListener("click", () => {
             displaySlide(slider, slideIndex += 1);
         });
-
         // EventListener for next slide, click on slide
         const slides = document.querySelectorAll(`#${slider} .slider-img`);
-        slides.forEach(slide => {
+        slides.forEach((slide) => {
             slide.addEventListener("click", () => {
                 displaySlide(slider, slideIndex += 1);
             });
         });
-
         // EventListener for click on dot
         const dots = document.querySelectorAll(`#${slider} .slider-dot`);
         dots.forEach((dot) => {
