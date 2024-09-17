@@ -6,12 +6,12 @@
  * with this source code in the file LICENSE.
  */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
     htmlBoilerPlate();
     externalLinks();
 });
 
-window.addEventListener('scroll', function () {
+window.addEventListener('scroll', () => {
     backTopButton();
     pullDownButton();
 });
@@ -20,130 +20,133 @@ window.addEventListener('scroll', function () {
 function htmlBoilerPlate() {
     if (!(window.console && console.log)) {
         (function () {
-            let noop = function () { };
-            let methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"];
-            let length = methods.length;
-            let console = window.console = {};
-            while (length--) {
-                console[methods[length]] = noop;
-            }
+            const noop = () => {};
+            const methods = [
+                "assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group",
+                "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd",
+                "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"
+            ];
+            const console = window.console = {};
+            methods.forEach(method => {
+                console[method] = noop;
+            });
         }());
     }
 }
 
-// Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems - http://articles.sitepoint.com/article/standards-compliant-world/3
+// Replaces attributes rel="external" by target="_blank" in the links to avoid W3C validation problems
 function externalLinks() {
     if (!document.getElementsByTagName) {
         return;
     }
-    let anchors = document.getElementsByTagName("a");
-    let cptAnchors = anchors.length;
-    for (let i = 0; i < cptAnchors; i++) {
-        let anchor = anchors[i];
+    const anchors = document.getElementsByTagName("a");
+    Array.from(anchors).forEach(anchor => {
         if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") {
             anchor.target = "_blank";
         }
-    }
+    });
 }
 
 // Replaces carriage returns by <br>
 function nl2br(str) {
-    return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "$1" + "<br>" + "$2");
+    return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "$1<br>$2");
 }
 
 // Displays/Hides the backTop button
 function backTopButton() {
     const amountScrolled = 300;
-    let backTop = document.querySelector('a.backTop');
+    const backTop = document.querySelector('a.backTop');
 
-    // Displays the backTop button
-    if (backTop && window.scrollY > amountScrolled) {
-        backTop.style.display = "block";
-        backTop.classList.remove('fade-out');
-        backTop.classList.add('fade-in');
-    // Hides the backTop button
-    } else {
-        backTop.classList.remove('fade-in');
-        backTop.classList.add('fade-out');
+    if (backTop) {
+        // Displays the backTop button
+        if (window.scrollY > amountScrolled) {
+            backTop.style.display = "block";
+            backTop.classList.remove('fade-out');
+            backTop.classList.add('fade-in');
+        // Hides the backTop button
+        } else {
+            backTop.classList.remove('fade-in');
+            backTop.classList.add('fade-out');
+        }
     }
 }
 
 // Displays/Hides the pullDown button
 function pullDownButton() {
     const amountScrolled = 300;
-    let pullDown = document.querySelector('a.pullDown');
+    const pullDown = document.querySelector('a.pullDown');
 
-    // Displays the pullDown button
-    if (pullDown && window.scrollY + window.innerHeight + amountScrolled < document.body.scrollHeight) {
-        pullDown.style.display = "block";
-        pullDown.classList.remove('fade-out');
-        pullDown.classList.add('fade-in');
-    // Hides the pullDown button
-    } else {
-        pullDown.classList.remove('fade-in');
-        pullDown.classList.add('fade-out');
+    if (pullDown) {
+        // Displays the pullDown button
+        if (window.scrollY + window.innerHeight + amountScrolled < document.body.scrollHeight) {
+            pullDown.style.display = "block";
+            pullDown.classList.remove('fade-out');
+            pullDown.classList.add('fade-in');
+        // Hides the pullDown button
+        } else {
+            pullDown.classList.remove('fade-in');
+            pullDown.classList.add('fade-out');
+        }
     }
 }
 
 // Slider function
 function slider(slider) {
-    var slideIndex = 1;
+    let slideIndex = 1;
+
     const arrowLeft = document.querySelector(`#${slider} .arrow-left`);
     const arrowRight = document.querySelector(`#${slider} .arrow-right`);
 
-    // Displays slider if arrows exists
-    if (null !== arrowLeft && null !== arrowRight) {
-        var slides = document.querySelectorAll(`#${slider} .slider-img`);
-        var dots = document.querySelectorAll(`#${slider} .slider-dot`);
-        displaySlide(slideIndex);
+    function displaySlide(slider, number) {
+        const slides = document.querySelectorAll(`#${slider} .slider-img`);
+        const dots = document.querySelectorAll(`#${slider} .slider-dot`);
+        let index = number;
+
+        // Suppress slides ands dots classes
+        slides.forEach(slide => slide.style.display = "none");
+        dots.forEach(dot => dot.classList.remove("active"));
+
+        // Gets back to first slide
+        if (number > slides.length) {
+            index = 1;
+        }
+        // Gets back to last slide
+        if (number < 1) {
+            index = slides.length;
+        }
+
+        slides[index - 1].style.display = "block";
+        dots[index - 1].classList.add("active");
+
+        slideIndex = index;
+    }
+
+    if (arrowLeft && arrowRight) {
+        displaySlide(slider, slideIndex);
 
         // EventListener for previous slide, <
         arrowLeft.addEventListener("click", () => {
-            displaySlide(slideIndex -= 1);
+            displaySlide(slider, slideIndex -= 1);
         });
         // EventListener for next slide, >
         arrowRight.addEventListener("click", () => {
-            displaySlide(slideIndex += 1);
+            displaySlide(slider, slideIndex += 1);
         });
+
         // EventListener for next slide, click on slide
-        slides.forEach((slide) => {
+        const slides = document.querySelectorAll(`#${slider} .slider-img`);
+        slides.forEach(slide => {
             slide.addEventListener("click", () => {
-                displaySlide(slideIndex += 1);
+                displaySlide(slider, slideIndex += 1);
             });
         });
+
         // EventListener for click on dot
+        const dots = document.querySelectorAll(`#${slider} .slider-dot`);
         dots.forEach((dot) => {
             dot.addEventListener("click", () => {
-                slideIndex = Number(dot.getAttribute("dataset-number"));
-                displaySlide(slideIndex);
+                displaySlide(slider, Number(dot.getAttribute("dataset-number")));
             });
         });
-
-        // Displays slide
-        function displaySlide(number) {
-            let index = slideIndex;
-
-            // Suppress slides ands dots classes
-            for (let i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-                dots[i].classList.remove("active");
-            }
-
-            // Gets back to first slide
-            if (number > slides.length) {
-                index = 1;
-            }
-            // Gets back to last slide
-            if (number !== null && number < 1) {
-                index = slides.length;
-            }
-
-            // Displays slide and dot
-            slides[index - 1].style.display = "block";
-            dots[index - 1].classList.add("active");
-
-            slideIndex = index;
-        }
     }
-
 }
