@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.9.3
+
+- Re-factorisation of javascript functions (17/09/2024)
+
 ## v6.9.2
 
 - Corrections identified by Codacy (16/09/2024)
