@@ -1,9 +1,12 @@
-{# <twig:c975LSite:Button:Button label="Label" url="{{ path('your_route') }}" target="_blank" lock="true" download="true"/> #}
+{# <twig:c975LSite:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [lock="false"] [download="false"] [inline="false"]/> #}
 {% set type = type | default('primary') %}
 {% set target = target | default('') %}
 {% set lock = lock | default(false) %}
+{% set inline = inline | default(false) %}
 {% set download = download | default(false) %}
-<p class="text-center">
+{% if inline == false %}
+    <p class="text-center">
+{% endif %}
     <a href="{{ url }}" target="{{ target }}" role="button" {% if download == true %}download{% endif %}>
         <button class="btn btn-{{ type }}">
             {% if lock == "true" %}
@@ -12,4 +15,6 @@
             {{ label }}
         </button>
     </a>
-</p>
+{% if inline == false %}
+    </p>
+{% endif %}
