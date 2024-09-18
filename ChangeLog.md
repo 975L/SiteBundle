@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.9.5
+
+- Added styles (18/09/2024)
+- Added possibility of inline buttons (18/09/2024)
+- Modified examples of component to indicate optional between [] (18/09/2024)
+
 ## v6.9.4
 
 - Suppressed functions-old.js (17/09/2024)

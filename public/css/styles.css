@@ -537,6 +537,10 @@ h2 {
   gap: 1em 2em;
 }
 
+.flex-start {
+  align-items: flex-start;
+}
+
 /* ADDONS */
 .external {
   padding: 0 13px 0 0;
