@@ -155,6 +155,9 @@
                     {{ inc_lib(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
                 {% endif %}
             {% endblock %}
+{# Preconnect #}
+            {% block preconnect %}
+            {% endblock %}
         {% endblock %}
     </head>
 {# Body #}
