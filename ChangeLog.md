@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.9.5.2
+
+- Added missing loading="lazy" (24/09/2024)
+
 ## v6.9.5.1
 
 - Corrected use example of Card component (24/09/2024)

@@ -2,5 +2,5 @@
 {% set c = c | default('') %}
 {% set alt = alt | default('') %}
 <p>
-    <img src="{{ asset(src) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}">
+    <img src="{{ asset(src) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}" loading="lazy">
 </p>
