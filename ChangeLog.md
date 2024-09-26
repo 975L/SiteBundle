@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.10.1
+
+- Corrected example of use for components (26/09/2024)
+
 ## v6.10
 
 - Removed abbreviation for components [BC Break] (26/09/2024)
