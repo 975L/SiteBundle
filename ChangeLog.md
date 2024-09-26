@@ -1,5 +1,14 @@
 # Changelog
 
+## v6.10
+
+- Removed abbreviation for components [BC Break] (26/09/2024)
+- Added class to Card component (26/09/2024)
+- Added animations (26/09/2024)
+- Used SASS for animations (26/09/2024)
+- Put in place the use of prefers-reduced-motion (26/09/2024)
+- Added dataAnimation for Card component (26/09/2024)
+
 ## v6.9.6.1
 
 - Forgot the block... (24/09/2024)
