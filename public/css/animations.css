@@ -1,82 +1,187 @@
 /*
- * (c) 2024: 975L <contact@975l.com>
- * (c) 2024: Laurent Marquet <laurent.marquet@laposte.net>
+ * (c) 2018: 975L <contact@975l.com>
+ * (c) 2018: Laurent Marquet <laurent.marquet@laposte.net>
  *
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-
 /* Bounces */
 @keyframes bounceHorizontal {
-    25% {
-        transform: translateX(0.25rem);
-    }
-    75% {
-        transform: translateX(-0.25rem);
-    }
+  25% {
+    transform: translateX(0.25rem);
+  }
+  75% {
+    transform: translateX(-0.25rem);
+  }
+}
+@keyframes bounceVertical {
+  25% {
+    transform: translateY(0.25rem);
+  }
+  75% {
+    transform: translateY(-0.25rem);
+  }
+}
+/* Rotations horizontal */
+@keyframes rotateX5deg {
+  25% {
+    transform: rotateX(5deg);
+  }
+  75% {
+    transform: rotateX(-5deg);
+  }
+}
+@keyframes rotateX10deg {
+  25% {
+    transform: rotateX(10deg);
+  }
+  75% {
+    transform: rotateX(-10deg);
+  }
+}
+@keyframes rotateX15deg {
+  25% {
+    transform: rotateX(15deg);
+  }
+  75% {
+    transform: rotateX(-15deg);
+  }
+}
+/* Rotations vertical */
+@keyframes rotateY5deg {
+  25% {
+    transform: rotateY(5deg);
+  }
+  75% {
+    transform: rotateY(-5deg);
+  }
+}
+@keyframes rotateY10deg {
+  25% {
+    transform: rotateY(10deg);
+  }
+  75% {
+    transform: rotateY(-10deg);
+  }
+}
+@keyframes rotateY15deg {
+  25% {
+    transform: rotateY(15deg);
+  }
+  75% {
+    transform: rotateY(-15deg);
+  }
+}
+/* Slides */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+/* Fades */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeInBottom {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes fadeInTop {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+/* Bounces */
+.animation.bounce-horizontal {
+  animation: bounceHorizontal 0.5s infinite ease-in-out;
 }
 
-@keyframes bounceVertical {
-    25% {
-        transform: translateY(0.25rem);
-    }
-    75% {
-        transform: translateY(-0.25rem);
-    }
+.animation.bounce-vertical {
+  animation: bounceVertical 0.5s infinite ease-in-out;
 }
 
 /* Rotations horizontal */
-@keyframes rotateX5deg {
-    25% {
-        transform: rotateX(5deg);
-    }
-    75% {
-        transform: rotateX(-5deg);
-    }
+.animation.rotate-x5deg {
+  animation: rotateX5deg 0.5s infinite ease-in-out;
 }
 
-@keyframes rotateX10deg {
-    25% {
-        transform: rotateX(10deg);
-    }
-    75% {
-        transform: rotateX(-10deg);
-    }
+.animation.rotate-x10deg {
+  animation: rotateX10deg 0.5s infinite ease-in-out;
 }
 
-@keyframes rotateX15deg {
-    25% {
-        transform: rotateX(15deg);
-    }
-    75% {
-        transform: rotateX(-15deg);
-    }
+.animation.rotate-x15deg {
+  animation: rotateX15deg 0.5s infinite ease-in-out;
 }
 
 /* Rotations vertical */
-@keyframes rotateY5deg {
-    25% {
-        transform: rotateY(5deg);
-    }
-    75% {
-        transform: rotateY(-5deg);
-    }
+.animation.rotate-y5deg {
+  animation: rotateY5deg 0.5s infinite ease-in-out;
 }
 
-@keyframes rotateY10deg {
-    25% {
-        transform: rotateY(10deg);
-    }
-    75% {
-        transform: rotateY(-10deg);
-    }
+.animation.rotate-y10deg {
+  animation: rotateY10deg 0.5s infinite ease-in-out;
 }
 
-@keyframes rotateY15deg {
-    25% {
-        transform: rotateY(15deg);
-    }
-    75% {
-        transform: rotateY(-15deg);
-    }
+.animation.rotate-y15deg {
+  animation: rotateY15deg 0.5s infinite ease-in-out;
 }
+
+/* Slides */
+.animation.slide-in-left {
+  animation: slideInFromLeft 0.5s ease-out;
+}
+
+.animation.slide-in-right {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+/* Fades */
+.animation.fade-in {
+  animation: fadeIn 1s ease-in-out both;
+}
+
+.animation.fade-in-bottom {
+  animation: fadeInBottom 1s ease-in-out both;
+}
+
+.animation.fade-in-top {
+  animation: fadeInTop 1s ease-in-out both;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animation {
+    animation: none;
+  }
+}/*# sourceMappingURL=animations.css.map */

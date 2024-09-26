@@ -4,9 +4,11 @@
 </twig:c975LSite:Card:Card>
 #}
 {% set icon = icon | default('') %}
-<div class="card box-shadow" id="{{ id }}">
+{% set class = class | default('') %}
+{% set dataAnimation = dataAnimation | default('') %}
+<div class="card box-shadow {{ class }}" id="{{ id }}" data-animation="{{ dataAnimation }}">
     {% if icon != "" %}
-        <h2 class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" c="{{ icon[1] }}" w="{{ icon[2] }}" h="{{ icon[3] }}"/> {{ title }}</h2>
+        <h2 class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</h2>
     {% else %}
         <h2 class="card-header">{{ title }}</h2>
     {% endif %}

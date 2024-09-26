@@ -9,6 +9,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     htmlBoilerPlate();
     externalLinks();
+    animateOnScroll();
 });
 
 window.addEventListener("scroll", () => {
@@ -148,3 +149,32 @@ function slider(slider) {
         });
     }
 }
+
+// Checks if element is in viewport
+function isElementInViewport(element, offset) {
+    if (null !== element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top < (window.innerHeight || document.documentElement.clientHeight) - offset &&
+            rect.bottom >= 0
+        );
+    }
+}
+
+// Animates on scroll
+function animateOnScroll() {
+    var elements = document.querySelectorAll('.scroll');
+
+    function onScroll() {
+        elements.forEach(element => {
+            if (isElementInViewport(element, 200)) {
+                const animationClass = element.getAttribute('data-animation');
+                element.classList.remove('hidden');
+                element.classList.add(animationClass);
+            }
+        });
+    }
+
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+};

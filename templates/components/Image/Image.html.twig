@@ -1,6 +1,6 @@
 {# <twig:c975LSite:Image:Image src="your-path/file.ext" [c="your-css-classes"] [alt=""] w="width" h="height"/> #}
-{% set c = c | default('') %}
+{% set class = class | default('') %}
 {% set alt = alt | default('') %}
 <p>
-    <img src="{{ asset(src) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}" loading="lazy">
+    <img src="{{ asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
 </p>

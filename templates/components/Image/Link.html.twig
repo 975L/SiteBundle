@@ -1,8 +1,8 @@
 {# <twig:c975LSite:Image:Link [label=""] src="your-path/file.ext" url="yourdomain.ext" [c="your-css-classes"] [alt=""] w="width" h="height" [target=""]/> #}
-{% set c = c | default('') %}
+{% set class = class | default('') %}
 {% set alt = alt | default('') %}
 {% set label = label | default('') %}
 {% set target = target | default('') %}
 <p>
-    <a href="{{ url }}" target="{{ target }}"><img src="{{asset(src) }}" class="img img-responsive {{ c }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}" loading="lazy">{% if label != '' %}<br>{{ label }}{% endif %}</a>
+    <a href="{{ url }}" target="{{ target }}"><img src="{{asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">{% if label != '' %}<br>{{ label }}{% endif %}</a>
 </p>

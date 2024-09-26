@@ -416,6 +416,10 @@ body {
   color: var(--primary);
 }
 
+.hidden {
+  visibility: hidden;
+}
+
 /* TYPOGRAPHY */
 * {
   font-family: var(--font-family-body);
