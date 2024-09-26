@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.11
+
+- Removed lock from button and added icon [BC Break] (26/09/2024)
+- Corrected slider style (26/09/2024)
+- Modified Slider to display arrows and dots only for more than one item (26/09/2024)
+- Added --button-secondary-color (26/09/2024)
+- Added _tables.scss (26/09/2024)
+
 ## v6.10.1
 
 - Corrected example of use for components (26/09/2024)

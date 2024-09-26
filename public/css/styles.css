@@ -333,6 +333,7 @@ template {
   --button-background-secondary-light: rgb(200, 106, 38, 0.5);
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
   --button-color: #fff;
+  --button-secondary-color: #fff;
   --button-link-color: #fff;
   --card-background: #fff;
   --disabled: grey;
@@ -640,6 +641,7 @@ a:hover.pullDown {
 
 .btn-secondary {
   background-color: var(--button-background-secondary);
+  color: var(--button-secondary-color);
 }
 
 .btn-secondary:hover {
@@ -895,6 +897,12 @@ img {
   border-radius: 50%;
 }
 
+.img-square {
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+}
+
 .img-shadow {
   box-shadow: 0 0 10px 2px var(--input-shadow-color);
 }
@@ -969,6 +977,44 @@ ul.dropdown-menu > li {
   list-style-image: none;
 }
 
+table {
+  width: auto;
+  border-collapse: collapse;
+  border-spacing: 10px;
+  margin: 0 auto 1em auto;
+  background-color: transparent;
+}
+
+th {
+  padding: 0.5em 1em;
+  text-align: center;
+  border-bottom: 5px solid var(--primary);
+  font-weight: normal;
+  font-family: var(--font-family-title);
+  font-size: 1.5em;
+}
+
+tr {
+  border-bottom: 1px solid var(--primary);
+}
+
+td {
+  text-align: center;
+  font-family: var(--font-family-body);
+  padding: 10px;
+}
+
+tfoot tr {
+  border-top: 5px solid var(--primary);
+  border-bottom: none;
+}
+
+tfoot td {
+  font-weight: normal;
+  font-family: var(--font-family-title);
+  font-size: 1.5em;
+}
+
 nav h1 a,
 nav h1 a:hover {
   color: var(--primary);
@@ -980,16 +1026,16 @@ nav h1 a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: auto;
   max-height: 80vh;
   aspect-ratio: 210/297;
   position: relative;
-  margin-bottom: 50px;
+  margin: 0 auto 50px auto;
 }
 
 .slider-img {
   position: absolute;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   object-position: center;
   cursor: pointer;

@@ -1,16 +1,17 @@
 {# <twig:c975LSite:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [lock="false"] [download="false"] [inline="false"]/> #}
 {% set type = type | default('primary') %}
 {% set target = target | default('') %}
-{% set lock = lock | default(false) %}
 {% set inline = inline | default(false) %}
 {% set download = download | default(false) %}
+{% set icon = icon | default('') %}
+{% set icon = icon | default('') %}
 {% if inline == false %}
     <p class="text-center">
 {% endif %}
     <a href="{{ url }}" target="{{ target }}" role="button" {% if download == true %}download{% endif %}>
         <button class="btn btn-{{ type }}">
-            {% if lock == "true" %}
-                <twig:c975LSite:Image:Icon src="bundles/c975lsite/images/lock.svg" width="14" height="16" class="white"/>
+            {% if icon != "" %}
+                <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
             {% endif %}
             {{ label }}
         </button>
