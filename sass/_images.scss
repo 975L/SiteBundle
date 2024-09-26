@@ -23,7 +23,13 @@ img {
 
 .img-circle {
     border-radius: 50%;
-  }
+}
+
+.img-square {
+    height: 100px;
+    width: 100px;
+    object-fit: cover;
+}
 
 .img-shadow {
     box-shadow: 0 0 10px 2px var(--input-shadow-color);
