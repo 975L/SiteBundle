@@ -2,13 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     connect() {
-        this.animateOnScroll = this.animateOnScroll.bind(this)
-        window.addEventListener('scroll', this.animateOnScroll)
+        this.animateOnScroll = this.animateOnScroll.bind(this);
+        window.addEventListener("scroll", this.animateOnScroll);
         this.animateOnScroll();
     }
 
     disconnect() {
-        window.removeEventListener('scroll', this.animateOnScroll)
+        window.removeEventListener("scroll", this.animateOnScroll);
     }
 
     // Checks if element is in viewport
@@ -20,17 +20,17 @@ export default class extends Controller {
                 rect.bottom >= 0
             );
         }
-        return false
+        return false;
     }
 
     // Animates on scroll
     animateOnScroll() {
-        var elements = document.querySelectorAll('.scroll');
-        elements.forEach(element => {
+        var elements = document.querySelectorAll(".scroll");
+        elements.forEach((element) => {
             if (this.isElementInViewport(element, 200)) {
-                const animationClass = element.getAttribute('data-animation')
-                element.classList.remove('hidden')
-                element.classList.add(animationClass)
+                const animationClass = element.getAttribute("data-animation");
+                element.classList.remove("hidden");
+                element.classList.add(animationClass);
             }
         })
     }
