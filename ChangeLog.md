@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.12.1
+
+- Converted some fragments to Componenets (29/09/2024)
+- Added width and height on images as optional (29/09/2024)
+
 ## v6.12
 
 - Added {{ importmap('app') }} for asset-mapper (29/09/2024)
