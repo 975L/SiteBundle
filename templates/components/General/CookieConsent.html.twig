@@ -1,0 +1,13 @@
+{# <twig:c975LSite:General:CookieConsent/> #}
+<div data-controller="cookie-consent"
+     data-message="{{ 'text.cookies_banner'|trans({}, 'site') }}"
+     {% if cookieConsent.dismiss is defined %}
+         data-dismiss="{{ 'text.cookies_dismiss'|trans({}, 'site') }}"
+     {% endif %}
+     {% if cookieConsent.link is defined %}
+         data-link="{{ 'label.cookies_policy'|trans({}, 'site') }}"
+     {% endif %}
+     {% if cookieConsent.href is defined %}
+         data-href="{{ path('pageedit_display', { 'page': 'cookies' }) }}"
+     {% endif %}>
+</div>

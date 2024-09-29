@@ -38,18 +38,6 @@
     {% set ogImage = logo %}
 {% endif %}
 
-{# Cookie consent #}
-{% if cookieConsent is not defined %}
-    {%
-        set cookieConsent = {
-            'message': 'text.cookies_banner'|trans({}, 'site'),
-            'dismiss': 'text.cookies_dismiss'|trans({}, 'site'),
-            'link': 'label.cookies_policy'|trans({}, 'site'),
-            'href': path('pageedit_display', { 'page': 'cookies' })
-        }
-    %}
-{% endif %}
-
 {# pageTitle #}
 {% if title is defined and title != '' %}
     {% set pageTitle = title %}
@@ -162,17 +150,8 @@
             {% if display != 'pdf' %}
                 {% block javascripts %}
                     {% block importmap %}
-                        {{ importmap('app') }}
+                        {{ importmap('app', {'nonce': csp_nonce('script')}) }}
                     {% endblock %}
-                    {# {{ inc_lib(absolute_url(asset('bundles/c975lsite/js/functions.min.js')), 'local') }} #}
-{# CookieConsent #}
-                    {% if cookieConsent.message is defined %}
-                        {{ include('@c975LSite/fragments/cookieConsent.html.twig') }}
-                    {% endif %}
-{# Matomo #}
-                    {% if matomo is defined %}
-                        {{ include('@c975LSite/fragments/matomo.html.twig') }}
-                    {% endif %}
                 {% endblock %}
 {# End display for html #}
             {% endif %}
