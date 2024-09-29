@@ -158,6 +158,24 @@
 {# Preconnect #}
             {% block preconnect %}
             {% endblock %}
+{# Javascript #}
+            {% if display != 'pdf' %}
+                {% block javascripts %}
+                    {% block importmap %}
+                        {{ importmap('app') }}
+                    {% endblock %}
+                    {# {{ inc_lib(absolute_url(asset('bundles/c975lsite/js/functions.min.js')), 'local') }} #}
+{# CookieConsent #}
+                    {% if cookieConsent.message is defined %}
+                        {{ include('@c975LSite/fragments/cookieConsent.html.twig') }}
+                    {% endif %}
+{# Matomo #}
+                    {% if matomo is defined %}
+                        {{ include('@c975LSite/fragments/matomo.html.twig') }}
+                    {% endif %}
+                {% endblock %}
+{# End display for html #}
+            {% endif %}
         {% endblock %}
     </head>
 {# Body #}
@@ -244,23 +262,9 @@
 {# Footer #}
             {% block footer %}
             {% endblock %}
-{# Display for html #}
-            {% if display != 'pdf' %}
-{# Javascript #}
-                {% block javascripts %}
-                    {{ inc_lib(absolute_url(asset('bundles/c975lsite/js/functions.min.js')), 'local') }}
-{# CookieConsent #}
-                    {% if cookieConsent.message is defined %}
-                        {{ include('@c975LSite/fragments/cookieConsent.html.twig') }}
-                    {% endif %}
-{# Matomo #}
-                    {% if matomo is defined %}
-                        {{ include('@c975LSite/fragments/matomo.html.twig') }}
-                    {% endif %}
-                {% endblock %}
-{# End display for html #}
-            {% endif %}
         {% endblock %}
         <span id="bottom"></span>
+{# Loads basic javascript functions #}
+        <twig:c975LSite:Stimulus:Controller controllers="{{ ['basic'] }}"/>
     </body>
 </html>

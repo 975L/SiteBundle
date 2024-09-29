@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.12
+
+- Added {{ importmap('app') }} for asset-mapper (29/09/2024)
+- Moved block javascript to head (29/09/2024)
+- Converted javascripts to Stimulus controllers [BC-Break] (29/09/2024)
+- Added Component Stimulus:Controller (29/09/2024)
+- Added confetti animation (29/09/2024)
+
 ## v6.11
 
 - Removed lock from button and added icon [BC Break] (26/09/2024)
