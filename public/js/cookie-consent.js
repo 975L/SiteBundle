@@ -1,16 +1,16 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     connect() {
         document.addEventListener("DOMContentLoaded", this.onDomContentLoaded.bind(this));
-        window.addEventListener('load', () => {
+        window.addEventListener("load", () => {
             window.cookieconsent.initialise({
                 palette: {
                     popup: {
-                        background: '#a7a7a7'
+                        background: "#a7a7a7"
                     },
                     button: {
-                        background: '#f1d600'
+                        background: "#f1d600"
                     }
                 },
                 content: {
@@ -19,7 +19,7 @@ export default class extends Controller {
                     link: this.element.dataset.link || undefined,
                     href: this.element.dataset.href || undefined
                 }
-            })
+            });
         })
     }
 
