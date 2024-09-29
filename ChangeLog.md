@@ -1,12 +1,16 @@
 # Changelog
 
+## v6.12.4
+
+- Corrections from Codacy (29/09/2024)
+
 ## v6.12.3
 
 - Converted Matomo and CookieConsent to components (29/09/2024)
 
 ## v6.12.2
 
-- Correction from Codacy (29/09/2024)
+- Corrections from Codacy (29/09/2024)
 
 ## v6.12.1
 
