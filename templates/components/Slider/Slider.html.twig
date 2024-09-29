@@ -1,5 +1,5 @@
 {# <twig:c975LSite:Slider:Slider slides="{{ slides }}" id="id"/> #}
-<div id="{{ id }}" class="slider">
+<div id="{{ id }}" class="slider" data-controller="slider" data-slider-id="{{ id }}">
     {% for slide in slides %}
         <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="lazy">
     {% endfor %}
@@ -13,4 +13,3 @@
         <p class="arrow arrow-right"><img src="{{ asset('bundles/c975lsite/images/angle-right.svg') }}" alt="right angle" class="angle" width="32" loading="lazy"></p>
     {% endif %}
 </div>
-<script>document.addEventListener('DOMContentLoaded', function() { slider('{{ id }}'); });</script>
