@@ -1,8 +1,21 @@
-{# <twig:c975LSite:Image:Link [label=""] src="your-path/file.ext" url="yourdomain.ext" [class="your-css-classes"] [alt=""] width="width" height="height" [target=""]/> #}
+{# <twig:c975LSite:Image:Link [label=""] src="your-path/file.ext" url="yourdomain.ext" [class="your-css-classes"] [alt=""] [width="width"] [height="height"] [target=""] [above="true"]/> #}
 {% set class = class | default('') %}
 {% set alt = alt | default('') %}
 {% set label = label | default('') %}
 {% set target = target | default('') %}
-<p>
-    <a href="{{ url }}" target="{{ target }}"><img src="{{asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">{% if label != '' %}<br>{{ label }}{% endif %}</a>
+{% set width = width | default('auto') %}
+{% set height = height | default('auto') %}
+{% set above = above | default(false) %}
+<p class="text-center">
+    <a href="{{ url }}" target="{{ target }}">
+        {% if above and label != '' %}
+            {{ label }}
+            <br>
+        {% endif %}
+        <img src="{{asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
+        {% if false == above and label != '' %}
+            <br>
+            {{ label }}
+        {% endif %}
+    </a>
 </p>

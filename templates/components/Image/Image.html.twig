@@ -1,6 +1,8 @@
-{# <twig:c975LSite:Image:Image src="your-path/file.ext" [class="your-css-classes"] [alt=""] width="width" height="height"/> #}
+{# <twig:c975LSite:Image:Image src="your-path/file.ext" [class="your-css-classes"] [alt=""] [width="width"] [height="height"]/> #}
 {% set class = class | default('') %}
 {% set alt = alt | default('') %}
-<p>
+{% set width = width | default('auto') %}
+{% set height = height | default('auto') %}
+<p class="text-center">
     <img src="{{ asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
 </p>
