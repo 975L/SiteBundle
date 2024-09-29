@@ -1,0 +1,6 @@
+{# <twig:c975LSite:General:Matomo url="https://..." id="X"/> #}
+<div data-controller="matomo" data-matomo-url="{{ url }}" data-matomo-id="{{ id }}">
+    <noscript>
+        <img src="{{ url }}/piwik.php?idsite={{ id }}" style="border:0;" alt="" loading="lazy">
+    </noscript>
+</div>
