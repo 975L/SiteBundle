@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.12.2
+
+- Correction from Codacy (29/09/2024)
+
 ## v6.12.1
 
 - Converted some fragments to Componenets (29/09/2024)
