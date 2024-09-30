@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.12.7
+
+- Corrected Button component (30/09/2024)
+
 ## v6.12.6
 
 - Suppressed first slash of fileif present (30/09/2024)
