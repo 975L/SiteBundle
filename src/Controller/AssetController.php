@@ -18,6 +18,9 @@ class AssetController extends AbstractController
     )]
     public function assetFile(string $file): Response
     {
+        if ('/' === substr($file, 0, 1)) {
+            $file = substr($file, 1);
+        }
         $filePath = $this->getParameter('kernel.project_dir') . '/public/' . $file;
 
         if (!file_exists($filePath)) {
