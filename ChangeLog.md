@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.12.5
+
+- Modified requirement for AssetController file (30/09/2024)
+
 ## v6.12.4
 
 - Corrections from Codacy (29/09/2024)

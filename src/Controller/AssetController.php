@@ -12,7 +12,7 @@ class AssetController extends AbstractController
 {
     #[Route(
         '/asset/{file}',
-        requirements: ['file' => '[\p{L}0-9\-\_\/]+.[a-z]{1,5}.[a-z]*'],
+        requirements: ['file' => '^.*$'],
         name: 'asset_file',
         methods: ['GET']
     )]
