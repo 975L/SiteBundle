@@ -1,9 +1,8 @@
-{# <twig:c975LSite:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [lock="false"] [download="false"] [inline="false"]/> #}
+{# <twig:c975LSite:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [icon="path-to-icon.ext"] [download="false"] [inline="false"]/> #}
 {% set type = type | default('primary') %}
 {% set target = target | default('') %}
 {% set inline = inline | default(false) %}
 {% set download = download | default(false) %}
-{% set icon = icon | default('') %}
 {% set icon = icon | default('') %}
 {% if inline == false %}
     <p class="text-center">
