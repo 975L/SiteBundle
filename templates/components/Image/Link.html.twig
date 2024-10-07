@@ -7,7 +7,7 @@
 {% set height = height | default('auto') %}
 {% set above = above | default(false) %}
 <p class="text-center">
-    <a href="{{ url }}" target="{{ target }}">
+    <a href="{{ url }}" target="{{ target }}" aria-label="{{ label }}">
         {% if above and label != '' %}
             {{ label }}
             <br>
