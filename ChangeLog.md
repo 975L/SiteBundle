@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.12.9
+
+- Corrected slider that was not initialized on first load (10/10/2024)
+
 ## v6.12.8
 
 - Added aria-label="{{ label }}" to Image:Link (07/10/2024)
