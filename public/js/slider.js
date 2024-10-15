@@ -70,7 +70,7 @@ export default class extends Controller {
         }
 
         // Ensure the slider is initialized on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener("DOMContentLoaded", () => {
             displaySlide(slider, slideIndex);
         });
     }
