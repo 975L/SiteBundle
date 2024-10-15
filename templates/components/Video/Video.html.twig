@@ -1,0 +1,8 @@
+{# <twig:c975LSite:Video:Video src="your-path/file.ext" type"video/mp4" [class="your-css-classes"] [alt=""] [width="width"] [height="height"]/> #}
+{% set class = class | default('') %}
+{% set alt = alt | default('') %}
+{% set width = width | default('auto') %}
+{% set height = height | default('auto') %}
+<video controls class="img img-responsive {{ class }}" width="{{ width }}" height="{{ height }}">
+    <source src="{{ src }}" type="{{ type }}">
+</video>
