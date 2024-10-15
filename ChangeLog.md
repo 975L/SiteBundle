@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.13
+
+- Added span to Image componenet to be able to select label (15/10/2024)
+- Added Video componenet (15/10/2024)
+
 ## v6.12.10
 
 - Corrected components to make them re-usable (15/10/2024)
