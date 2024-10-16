@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.14
+
+- Removed text-center from Card component (15/10/2024)
+
 ## v6.13
 
 - Added span to Image componenet to be able to select label (15/10/2024)
