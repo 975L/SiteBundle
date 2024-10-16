@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.14.2
+
+- Version due to conflict (16/10/2024)
+
 ## v6.14.1
 
 - Added default value for aria-label in componenet Image:Link (16/10/2024)
