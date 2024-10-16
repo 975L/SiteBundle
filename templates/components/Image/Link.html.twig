@@ -6,8 +6,9 @@
 {% set width = width | default('auto') %}
 {% set height = height | default('auto') %}
 {% set above = above | default(false) %}
+{% set ariaLabel = label | default('image') %}
 <p class="text-center">
-    <a href="{{ url }}" target="{{ target }}" aria-label="{{ label }}">
+    <a href="{{ url }}" target="{{ target }}" aria-label="{{ ariaLabel }}">
         {% if above and label != '' %}
             <span>{{ label }}</span>
             <br>
