@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.13.2
+
+- Removed text-center from Card component (15/10/2024)
+
 ## v6.13.1
 
 - Added a default value for aria-label in Componenet Image:Link (16/10/2024)
