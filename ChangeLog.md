@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.14.3
+
+- Modified Video component (22/10/2024)
+
 ## v6.14.2
 
 - Version due to conflict (16/10/2024)
