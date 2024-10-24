@@ -5,7 +5,9 @@
 {% set height = height | default('auto') %}
 {% set poster = poster | default('') %}
 {% set autoplay = autoplay | default(false) %}
-<video controls class="img img-responsive {{ class }}" {% if poster != '' %} poster="{{ poster }}" {% endif %} {% if autoplay %} autoplay {% endif %} width="{{ width }}" height="{{ height }}">
+{% set muted = muted | default(false) %}
+{% set loop = loop | default(false) %}
+<video controls class="img img-responsive {{ class }}" {% if poster != '' %} poster="{{ poster }}" {% endif %} {% if autoplay %} autoplay {% endif %} {% if muted %} muted {% endif %} {% if loop %} loop {% endif %} width="{{ width }}" height="{{ height }}">
     <source src="{{ src }}" type="{{ type }}">
     <p>
         Your browser does not support HTML5 video. Here is a link <a href="{{ src }}">to download it</a>.
