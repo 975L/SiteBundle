@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.14.3.1
+
+- Corrected example of Video component (24/10/2024)
+
 ## v6.14.3
 
 - Modified Video component (22/10/2024)
