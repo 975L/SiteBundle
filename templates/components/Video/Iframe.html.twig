@@ -1,0 +1,5 @@
+{# <twig:c975LSite:Video:Iframe src="your-url" [class="your-css-classes"] [width="width"] [height="height"]/> #}
+{% set class = class | default('') %}
+{% set width = width | default('auto') %}
+{% set height = height | default('auto') %}
+<iframe class="img img-responsive {{ class }}" src="{{ src }}" title="Video player" frameborder="0" allowfullscreen width="{{ width }}" height="{{ height }}" loading="lazy"></iframe>

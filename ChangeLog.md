@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.14.4
+
+- Added Video:Iframe component (24/10/2024)
+- Added attributes loop and muted to Video component (24/10/2024)
+
 ## v6.14.3.1
 
 - Corrected example of Video component (24/10/2024)
