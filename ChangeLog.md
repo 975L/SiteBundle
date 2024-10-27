@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.15
+
+- Added an Audio component (27/10/2024)
+
 ## v6.14.4
 
 - Added Video:Iframe component (24/10/2024)
