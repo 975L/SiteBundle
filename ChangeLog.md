@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.15.1
+
+- Added style for c975L/ContactFormBundle honeypot (26/11/2024)
+
 ## v6.15
 
 - Added an Audio component (27/10/2024)

@@ -1,3 +1,8 @@
+/**
+ * Slider Controller
+ * @author Laurent Marquet <laurent.marquet@laposte.net>
+ * @copyright 2024 975L <contact@975l.com>
+ */
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
