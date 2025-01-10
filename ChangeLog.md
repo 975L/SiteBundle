@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.15.2
+
+- Added parameter c975LCommon.url (10/01/2025)
+
 ## v6.15.1
 
 - Added style for c975L/ContactFormBundle honeypot (26/11/2024)
