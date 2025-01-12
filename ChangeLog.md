@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.16.1
+
+- Modified styles for slider (12/01/2025)
+
 ## v6.16
 
 - Modified Slider to authorize credits per image (12/01/2025)

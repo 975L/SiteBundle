@@ -25,10 +25,11 @@
 
 .slider-credits {
     position: absolute;
+    width: 100%;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    background-color: white;
+    background-color: lightgray;
     color: black;
     padding: 5px;
     border-radius: 3px;
