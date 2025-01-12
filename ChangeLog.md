@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.16
+
+- Modified Slider to authorize credits per image (12/01/2025)
+
 ## v6.15.2
 
 - Added parameter c975LCommon.url (10/01/2025)

@@ -24,7 +24,7 @@ export default class extends Controller {
         const arrowRight = document.querySelector(`#${slider} .arrow-right`);
 
         function displaySlide(slider, number) {
-            const slides = document.querySelectorAll(`#${slider} .slider-img`);
+            const slides = document.querySelectorAll(`#${slider} .slider-item`);
             const dots = document.querySelectorAll(`#${slider} .slider-dot`);
             let index = number;
 
