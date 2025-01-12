@@ -1,7 +1,12 @@
 {# <twig:c975LSite:Slider:Slider slides="{{ slides }}" id="id"/> #}
 <div id="{{ id }}" class="slider" data-controller="slider" data-slider-id="{{ id }}">
     {% for slide in slides %}
-        <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="lazy">
+        <div class="slider-item">
+            <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="lazy">
+            {% if slide.credits is defined and slide.credits != "" %}
+                <p class="slider-credits">Credits : {{ slide.credits }}</p>
+            {% endif %}
+        </div>
     {% endfor %}
     {% if slides|length > 1 %}
         <div class="slider-dots">

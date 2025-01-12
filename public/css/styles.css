@@ -1033,12 +1033,30 @@ nav h1 a:hover {
   margin: 0 auto 50px auto;
 }
 
+.slider-item {
+  position: relative;
+  display: inline-block;
+}
+
 .slider-img {
-  position: absolute;
+  position: relative;
   height: auto;
   object-fit: cover;
   object-position: center;
   cursor: pointer;
+}
+
+.slider-credits {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  color: black;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 14px;
+  font-style: italic;
 }
 
 .slider .arrow {
