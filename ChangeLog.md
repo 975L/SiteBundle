@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.16.4
+
+- Corrected button (26/01/2025)
+
 ## v6.16.3
 
 - Added css for blockquote (26/01/2025)
