@@ -73,3 +73,10 @@ h2 {
 .bold {
     font-style: bold;
 }
+
+blockquote {
+    margin: 2em;
+    padding: 0.5em;
+    text-align: left;
+    border-left: 10px solid var(--primary);
+}
