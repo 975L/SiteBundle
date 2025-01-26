@@ -497,6 +497,13 @@ h2 {
   font-style: bold;
 }
 
+blockquote {
+  margin: 2em;
+  padding: 0.5em;
+  text-align: left;
+  border-left: 10px solid var(--primary);
+}
+
 /* CONTAINERS */
 .container {
   padding: 2em;
