@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.16.5
+
+- Modified button secondary colors for better contrast (27/01/2025)
+
 ## v6.16.4.1
 
 - Corrected button to avoid leading _ when inline button (26/01/2025)
