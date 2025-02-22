@@ -4,5 +4,5 @@
 {% set width = width | default('auto') %}
 {% set height = height | default('auto') %}
 <p class="text-center">
-    <img src="{{ asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
+    <img src="{{ absolute_url(asset(src)) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
 </p>

@@ -2,4 +2,4 @@
 {% set class = class | default('') %}
 {% set width = width | default('auto') %}
 {% set height = height | default('auto') %}
-<img src="{{ asset(src) }}" alt="" class="icon {{ class }}" width="{{ width }}" height="{{ height }}" loading="lazy">
+<img src="{{ absolute_url(asset(src)) }}" alt="" class="icon {{ class }}" width="{{ width }}" height="{{ height }}" loading="lazy">
