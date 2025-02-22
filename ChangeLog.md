@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.16.6
+
+- Made use of absolute_url for Images Components (22/02/2025)
+
 ## v6.16.5
 
 - Modified button secondary colors for better contrast (27/01/2025)

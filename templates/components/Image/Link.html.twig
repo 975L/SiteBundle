@@ -13,7 +13,7 @@
             <span>{{ label }}</span>
             <br>
         {% endif %}
-        <img src="{{asset(src) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
+        <img src="{{ absolute_url(asset(src)) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
         {% if false == above and label != '' %}
             <br>
             <span>{{ label }}</span>
