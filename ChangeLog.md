@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.17
+
+- Removed use of `c975L/ServicesBundle` and include its service inside this bundle (09/03/2025)
+- Removed use of `c975L/IncludeLibraryBundle` (09/03/2025)
+
 ## v6.16.6
 
 - Made use of absolute_url for Images Components (22/02/2025)
