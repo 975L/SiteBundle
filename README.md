@@ -173,10 +173,6 @@ There's a css file in `public/css/` that you can link to to use some animations
 
 ```twig
 <link rel="stylesheet" href="bundles/c975lsite/css/animations.min.css">
-
-{# or  using c975L/IncludeLibrary #}
-{{ inc_lib(absolute_url(asset('bundles/c975lsite/css/animations.min.css')), 'local') }}
-
 ```
 
 ### Error pages
@@ -213,12 +209,6 @@ To add stylesheets, simply add the following  in your `app/Resources/views/layou
 ```twig
 {% block stylesheets %}
     {{ parent() }}
-    {# Using c975L/IncludeLibraryBundle #}
-    {# With url #}
-    {{ inc_lib('SUPPORTED_LIBRARY', 'css', 'SUPPORTED_VERSION_SELECTOR') }}
-    {# Local file #}
-    {{ inc_lib(absolute_url(asset('YOUR_STYLESHEET.css')), 'local') }}
-
     {# Of course you can provide the full "link" html data #}
 {% endblock %}
 ```
@@ -230,12 +220,6 @@ To add javascripts, simply add the following  in your `app/Resources/views/layou
 ```twig
 {% block javascripts %}
     {{ parent() }}
-    {# Using c975L/IncludeLibraryBundle #}
-    {# With url #}
-    {{ inc_lib('SUPPORTED_LIBRARY', 'js', 'SUPPORTED_VERSION_SELECTOR') }}
-    {# Local file #}
-    {{ inc_lib(absolute_url(asset('YOUR_JAVASCRIPT_FILE.js')), 'local') }}
-
    {# Of course you can provide the full "script" html data #}
 {% endblock %}
 ```
@@ -279,12 +263,6 @@ set languagesAlt = {
 {# Css #}
 {% block stylesheets %}
     {{ parent() }}
-    {% if display == 'pdf' %}
-        {{ inc_content(absolute_url(asset('css/styles.min.css')), 'local') }}
-    {% else %}
-        {{ inc_font('Wendy One') }}
-        {{ inc_lib(absolute_url(asset('css/styles.min.css')), 'local') }}
-    {% endif %}
 {% endblock %}
 
 {# Navigation #}
@@ -322,9 +300,6 @@ set languagesAlt = {
 {# Javascript #}
 {% block javascripts %}
     {{ parent() }}
-    {% if display == 'html' %}
-        {{ inc_lib(absolute_url(asset('js/functions.min.js')), 'local') }}
-    {% endif %}
 {% endblock %}
 ```
 

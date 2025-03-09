@@ -137,11 +137,7 @@
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
-                {% if display == 'pdf' %}
-                    {{ inc_content(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
-                {% else %}
-                    {{ inc_lib(absolute_url(asset('bundles/c975lsite/css/styles.min.css')), 'local') }}
-                {% endif %}
+                <link rel="stylesheet" href="{{ absolute_url(asset('bundles/c975lsite/css/styles.min.css')) }}">
             {% endblock %}
 {# Preconnect #}
             {% block preconnect %}
