@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.3
+
+- Removed s from Service (09/03/2025)
+
 ## v6.17.2
 
 - Corrected autowire (09/03/2025)
