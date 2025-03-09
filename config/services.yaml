@@ -12,3 +12,9 @@ services:
 
     c975L\SiteBundle\Security\:
         resource: '../src/Security/*'
+
+    c975L\SiteBundle\Services\:
+        resource: '../src/Services/*'
+
+    c975L\SiteBundle\Twig\:
+        resource: '../src/Twig/*'
