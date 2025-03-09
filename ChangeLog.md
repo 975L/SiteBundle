@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.1
+
+- Corrected namespace (09/03/2025)
+
 ## v6.17
 
 - Removed use of `c975L/ServicesBundle` and include its service inside this bundle (09/03/2025)

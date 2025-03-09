@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ServicesBundle\Service;
+namespace c975L\SiteBundle\Service;
 
 /**
  * Interface to be called for DI for ServicePdfInterface related services

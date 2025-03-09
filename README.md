@@ -437,7 +437,7 @@ Some Twig components are available, check `templates/components` to see them. An
 If you want to resize an image, you can do the following:
 
 ```php
-use c975L\ServicesBundle\Service\ServiceImageInterface;
+use c975L\SiteBundle\Service\ServiceImageInterface;
 
 class YourClass
 {
@@ -458,7 +458,7 @@ class YourClass
 If you want to create a flash message, you can do the following:
 
 ```php
-use c975L\ServicesBundle\Service\ServiceToolsInterface;
+use c975L\SiteBundle\Service\ServiceToolsInterface;
 
 class YourClass
 {

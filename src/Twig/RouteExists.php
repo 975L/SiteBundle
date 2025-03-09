@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ServicesBundle\Twig;
+namespace c975L\SiteBundle\Twig;
 
 use Symfony\Component\Routing\RouterInterface;
 use Twig\Extension\AbstractExtension;
