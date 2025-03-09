@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ServicesBundle\Service;
+namespace c975L\SiteBundle\Service;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;

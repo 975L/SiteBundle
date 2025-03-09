@@ -7,7 +7,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace c975L\ServicesBundle\Twig;
+namespace c975L\SiteBundle\Twig;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Twig\Extension\AbstractExtension;
