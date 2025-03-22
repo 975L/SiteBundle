@@ -86,6 +86,22 @@
                 <source>label.hosted_by</source>
                 <target>Alojado por</target>
             </trans-unit>
+            <trans-unit id="22">
+                <source>label.accept_tos</source>
+                <target><![CDATA[Acepto los <a href="%tosUrl%">Términos de venta</a>]]></target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.mandatory_field</source>
+                <target>* Campo obligatorio</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.terms_of_sales_filename</source>
+                <target>Términos de Venta</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>text.gdpr</source>
+                <target>Acepto que este sitio web almacena los datos enviados para que pueda responder a mi solicitud</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

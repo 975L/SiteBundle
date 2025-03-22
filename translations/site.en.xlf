@@ -86,6 +86,22 @@
                 <source>label.hosted_by</source>
                 <target>Hosted by</target>
             </trans-unit>
+            <trans-unit id="22">
+                <source>label.accept_tos</source>
+                <target><![CDATA[I agree with <a href="%tosUrl%">Terms of sales</a>]]></target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.mandatory_field</source>
+                <target>* Mandatory field</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.terms_of_sales_filename</source>
+                <target>TermsOfSales</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>text.gdpr</source>
+                <target>I agree that this website stores the submitted data so that it can answer my request</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

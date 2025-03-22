@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.5
+
+- Added missing translations from fusion of c975L/ServicesBundle (22/03/2025)
+
 ## v6.17.4
 
 - Corrected template call of inc_content (09/03/2025)
