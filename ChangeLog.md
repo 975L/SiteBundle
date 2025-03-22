@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.5.1
+
+- Removed background color for btn-small class (22/03/2025)
+
 ## v6.17.5
 
 - Added missing translations from fusion of c975L/ServicesBundle (22/03/2025)
