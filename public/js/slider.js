@@ -22,25 +22,12 @@ export default class extends Controller {
         const arrowRight = document.querySelector(`#${sliderId} .arrow-right`);
 
         // Check if arrows exist
-        if (!arrowLeft || !arrowRight) return;
+        if (!arrowLeft || !arrowRight) {
+            return;
+        }
 
-        // Define displaySlide as a method bound to the instance
-        const displaySlide = (id, number) => {
-            const slides = document.querySelectorAll(`#${id} .slider-item`);
-            const dots = document.querySelectorAll(`#${id} .slider-dot`);
-
-            if (slides.length === 0 || dots.length === 0) return;
-
-            let index = number;
-
-            // Handle index boundaries
-            if (number > slides.length) {
-                index = 1;
-            }
-            if (number < 1) {
-                index = slides.length;
-            }
-
+        // Handle showing/hiding slides
+        const updateSlideDisplay = (slides, dots, index) => {
             // Hide all slides and deactivate all dots
             slides.forEach(slide => slide.style.display = "none");
             dots.forEach(dot => dot.classList.remove("active"));
@@ -48,7 +35,24 @@ export default class extends Controller {
             // Display the active slide and activate the corresponding dot
             slides[index - 1].style.display = "block";
             dots[index - 1].classList.add("active");
+        };
 
+        // Define displaySlide as a method bound to the instance
+        const displaySlide = (id, number) => {
+            const slides = document.querySelectorAll(`#${id} .slider-item`);
+            const dots = document.querySelectorAll(`#${id} .slider-dot`);
+
+            if (slides.length === 0 || dots.length === 0) {
+                return;
+            }
+
+            // Calculate correct index within bounds
+            const index = this.calculateIndex(number, slides.length);
+
+            // Update display
+            updateSlideDisplay(slides, dots, index);
+
+            // Update controller state
             this.slideIndex = index;
         };
 
@@ -66,9 +70,9 @@ export default class extends Controller {
         });
 
         // EventListener for next slide, click on slide
-        const slidesImg = document.querySelectorAll(`#${sliderId} .slider-img`);
-        slidesImg.forEach((slideImg) => {
-            slideImg.addEventListener("click", () => {
+        const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
+        slides.forEach((slide) => {
+            slide.addEventListener("click", () => {
                 displaySlide(sliderId, ++this.slideIndex);
             });
         });
@@ -80,5 +84,16 @@ export default class extends Controller {
                 displaySlide(sliderId, Number(dot.getAttribute("data-number")));
             });
         });
+    }
+
+    // Helper method to calculate valid index
+    calculateIndex(number, length) {
+        if (number > length) {
+            return 1;
+        }
+        if (number < 1) {
+            return length;
+        }
+        return number;
     }
 }
