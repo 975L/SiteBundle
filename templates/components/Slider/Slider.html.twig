@@ -12,7 +12,7 @@
         {% if slides|length > 1 %}
             <div class="slider-dots">
                 {% for slide in slides %}
-                    <span class="slider-dot" dataset-number="{{ loop.index }}"></span>
+                    <span class="slider-dot" data-number="{{ loop.index }}"></span>
                 {% endfor %}
             </div>
             <p class="arrow arrow-left"><img src="{{ asset('bundles/c975lsite/images/angle-left.svg') }}" alt="left angle" class="angle" width="32" loading="lazy"></p>
