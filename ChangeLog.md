@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.7
+
+- Added .btn-large (27/03/2025)
+
 ## v6.17.6.1
 
 - Codacy corrections (26/03/2025)
