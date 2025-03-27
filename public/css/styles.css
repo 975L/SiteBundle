@@ -660,6 +660,10 @@ a:hover.pullDown {
   padding: 0.5rem 1rem;
 }
 
+.btn-large {
+  width: 100%;
+}
+
 p,
 li,
 button,
