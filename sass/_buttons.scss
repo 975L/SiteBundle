@@ -12,11 +12,13 @@
     cursor: pointer;
 }
 
-.btn-primary {
+.btn-primary;
+.btn-small {
     background-color: var(--button-background-primary);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-small:hover {
     background-color: var(--button-background-primary-dark);
 }
 
