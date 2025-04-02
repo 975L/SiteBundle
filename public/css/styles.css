@@ -638,11 +638,13 @@ a:hover.pullDown {
   cursor: pointer;
 }
 
-.btn-primary {
+.btn-primary,
+.btn-small {
   background-color: var(--button-background-primary);
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-small:hover {
   background-color: var(--button-background-primary-dark);
 }
 
@@ -656,13 +658,16 @@ a:hover.pullDown {
 }
 
 .btn-small {
-  background-color: var(--button-background-primary);
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
 }
 
 .btn-large {
   width: 100%;
+}
+
+.btn-grey {
+  background-color: lightgrey;
 }
 
 p,
