@@ -1,8 +1,12 @@
 # Changelog
 
+## v6.17.8
+
+- Added .btn-grey (02/04/2025)
+
 ## v6.17.7.1
 
-- Corrected background color fot btn-small (31/03/2025)
+- Corrected background color for .btn-small (31/03/2025)
 
 ## v6.17.7
 
