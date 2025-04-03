@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.9
+
+- Added translations (03/04/2025)
+
 ## v6.17.8.1
 
 - Corrected css error (02/04/2025)

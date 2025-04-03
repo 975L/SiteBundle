@@ -88,7 +88,7 @@
             </trans-unit>
             <trans-unit id="22">
                 <source>label.accept_tos</source>
-                <target><![CDATA[J'accepte les <a href="%tosUrl%">Conditions générales de vente</a>]]></target>
+                <target><![CDATA[J'accepte les <a href="%tosUrl%" target="_blank">Conditions générales de vente (CGV)</a>]]></target>
             </trans-unit>
             <trans-unit id="23">
                 <source>label.mandatory_field</source>
@@ -101,6 +101,10 @@
             <trans-unit id="25">
                 <source>text.gdpr</source>
                 <target>Je consens que ce site Web stocke les données soumises afin qu'il puisse répondre à ma demande</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>label.accept_tou</source>
+                <target><![CDATA[J'accepte les <a href="%touUrl%" target="_blank">Conditions générales d'utilisation (CGU)</a>]]></target>
             </trans-unit>
         </body>
     </file>
