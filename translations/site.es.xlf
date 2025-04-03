@@ -102,7 +102,7 @@
                 <source>text.gdpr</source>
                 <target>Acepto que este sitio web almacena los datos enviados para que pueda responder a mi solicitud</target>
             </trans-unit>
-            <trans-unit id="22">
+            <trans-unit id="26">
                 <source>label.accept_tou</source>
                 <target><![CDATA[Acepto los <a href="%touUrl%" target="_blank">Términos de uso (TDU)</a>]]></target>
             </trans-unit>
