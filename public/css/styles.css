@@ -1045,7 +1045,6 @@ nav h1 a:hover {
   justify-content: center;
   width: auto;
   max-height: 80vh;
-  aspect-ratio: 210/297;
   position: relative;
   margin: 0 auto 50px auto;
 }

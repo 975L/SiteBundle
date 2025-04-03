@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.9.2
+
+- Removed slider aspect-ratio (03/04/2025)
+
 ## v6.17.9.1
 
 - Corrected xlf file (03/04/2025)
