@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.9.3
+
+- Added max-width to slider (03/04/2025)
+
 ## v6.17.9.2
 
 - Removed slider aspect-ratio (03/04/2025)
