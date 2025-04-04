@@ -670,6 +670,27 @@ a:hover.pullDown {
   background-color: lightgrey;
 }
 
+button:disabled,
+.btn:disabled,
+button[disabled],
+.btn[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: #e2e6ea;
+  border-color: #dae0e5;
+  color: #6c757d;
+  box-shadow: none;
+}
+
+button:disabled:hover,
+.btn:disabled:hover,
+button[disabled]:hover,
+.btn[disabled]:hover {
+  transform: none;
+  transition: none;
+}
+
 p,
 li,
 button,
@@ -937,6 +958,11 @@ img {
 
 .img-500 {
   max-width: 500px;
+}
+
+img.icon {
+  width: 24px;
+  height: 24px;
 }
 
 iframe {
