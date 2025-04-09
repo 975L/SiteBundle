@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.17.11
+
+- Added progress bar (09/04/2025)
+
 ## v6.17.10
 
 - Added styles (04/04/2025)

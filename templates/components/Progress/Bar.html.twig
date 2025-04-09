@@ -1,0 +1,9 @@
+{# <twig:c975LSite:Progress:Bar progressPercent="{{ progressPercent }}" [text="true"]/> #}
+{% set text = text | default('true') %}
+<div class="progress-container">
+    <div class="progress-bar" style="width: {{ progressPercent }}%">
+        {% if "true" == text %}
+            <span class="progress-text">{{ progressPercent }}%</span>
+        {% endif %}
+    </div>
+</div>
