@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.2
+
+- Added missing require twig/cssinliner-extra (25/04/2025)
+
 ## v6.18.1
 
 - Codacy corrections (25/04/2025)
@@ -7,7 +11,7 @@
 ## v6.18
 
 - Added level for title Card (10/04/2025)
-- Added img-white cllss (10/04/2025)
+- Added img-white class (10/04/2025)
 - Added email templates froms c975LEmailBundle abandonned (25/04/2025)
 
 ## v6.17.11

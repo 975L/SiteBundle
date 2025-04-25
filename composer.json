@@ -20,6 +20,7 @@
     "require": {
         "php": ">=8.0",
         "c975l/config-bundle": "*",
+        "twig/cssinliner-extra": "*",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/ux-twig-component": "*"
