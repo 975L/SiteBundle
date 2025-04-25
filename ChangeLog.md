@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.1
+
+- Codacy corrections (25/04/2025)
+
 ## v6.18
 
 - Added level for title Card (10/04/2025)
