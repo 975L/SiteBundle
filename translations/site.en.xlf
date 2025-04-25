@@ -106,6 +106,28 @@
                 <source>label.accept_tou</source>
                 <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of use (TOU)</a>]]></target>
             </trans-unit>
+            <trans-unit id="27">
+                <source>text.email_sent_by</source>
+                <target><![CDATA[This email was sent to you by <strong>%site%</strong>.]]></target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.hello</source>
+                <target>Hello</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>text.thanks_confidence</source>
+                <target><![CDATA[Thank you for your confidence!
+                        We remain at your disposal for any request.]]></target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>text.no_spam</source>
+                <target>We Advise you to save our email Address in your Address book so that our emails are not classified as spam.></target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>text.regards_team</source>
+                <target><![CDATA[Regards,
+                        The <strong>%site%</strong> Team]]></target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
