@@ -1,16 +1,17 @@
 {#
-<twig:c975LSite:Card:Card id="id" title="Title" [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"]>
+<twig:c975LSite:Card:Card id="id" title="Title" [level="h2"] [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"]>
     Your content
 </twig:c975LSite:Card:Card>
 #}
 {% set icon = icon | default('') %}
 {% set class = class | default('') %}
+{% set level = level | default('h2') %}
 {% set dataAnimation = dataAnimation | default('') %}
 <div class="card box-shadow {{ class }}" id="{{ id }}" data-animation="{{ dataAnimation }}">
     {% if icon != "" %}
-        <h2 class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</h2>
+        <{{ level }} class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</{{ level }}>
     {% else %}
-        <h2 class="card-header">{{ title }}</h2>
+        <{{ level }} class="card-header">{{ title }}</{{ level }}>
     {% endif %}
     <div class="card-body">
         {% block content %}{% endblock %}

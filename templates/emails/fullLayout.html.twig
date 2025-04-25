@@ -1,0 +1,120 @@
+{% trans_default_domain 'site' %}
+
+{# Gets data from parameters set via c975L/ConfigBundle #}
+{% set site = config('c975LCommon.site') %}
+{% set author = config('c975LCommon.author') %}
+{% set firstOnlineDate = config('c975LCommon.firstOnlineDate') %}
+{% set logo = config('c975LCommon.url') ~ "/" ~ asset(config('c975LCommon.logo')) %}
+
+{# Copyright #}
+{% if firstOnlineDate is defined %}
+    {% set copyright = '© ' ~ firstOnlineDate|date('Y') ~ ' - ' ~  'now'|date('Y') %}
+{% endif %}
+{% if copyright is not defined %}
+    {% set copyright = '© ' ~  'now'|date('Y') %}
+{% endif %}
+{% if site is defined %}
+    {% set copyright = copyright ~ ': ' ~ site %}
+{% endif %}
+
+{% apply inline_css %}
+<!DOCTYPE html>
+    {# Head #}
+    <head>
+        {% block head %}
+            {% block meta %}
+                <meta charset="utf-8" />
+                <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+                <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
+                <meta name="format-detection" content="telephone=no" />
+                {# Author #}
+                {% if author is defined %}
+                    <meta name="author" content="{{ author }}" />
+                {% endif %}
+                {# Copyright #}
+                {% if copyright is defined %}
+                    <link rel="copyright" title="{{ copyright }}" />
+                {% endif %}
+            {% endblock %}
+            {# Stylesheets #}
+            {% block stylesheets %}
+                <style>
+                    {% include('@c975LSite/emails/styles.min.css') %}
+                </style>
+            {% endblock %}
+        {% endblock %}
+    </head>
+    {# Body #}
+    <body>
+        {% block body %}
+            {# Header #}
+            {% block header %}
+                {# No Spam info #}
+                {% block noSpam %}
+                    <p class="text-center text-muted small">
+                        {{ 'text.no_spam'|trans }}
+                        <br />
+                    </p>
+                {% endblock %}
+                {# Logo #}
+                {% block logo %}
+                    <h1 class="text-center">
+                        {% if logo is defined %}
+                            <img src="{{ logo }}" height="50" alt="logo" />
+                            <br />
+                        {% endif %}
+                        {% if site is defined %}
+                            {{ site }}
+                        {% endif %}
+                    </h1>
+                {% endblock %}
+            {% endblock %}
+            {# Container #}
+            {% block container %}
+                {# Content #}
+                {% block content %}
+                    {# Hello #}
+                    {% block hello %}
+                        <p>
+                            {{ 'label.hello'|trans }},
+                            <br />
+                        </p>
+                    {% endblock %}
+                    {% block email_content %}
+                    {% endblock %}
+                {% endblock %}
+            {% endblock %}
+            {# Footer #}
+            {% block footer %}
+                <hr />
+                {# Thanks confidence #}
+                <p>
+                    {{ 'text.thanks_confidence'|trans|nl2br }}
+                    <br />
+                    <br />
+                    {% if site is defined %}
+                        {{ 'text.regards_team'|trans({'%site%': site})|raw|nl2br }}
+                        <br />
+                    {% endif %}
+                </p>
+                {# User's footer #}
+                {% include '@c975LSite/emails/footer.html.twig' %}
+                {# Email sent by #}
+                {% if site is defined %}
+                    <p class="text-muted text-center">
+                        {{ 'text.email_sent_by'|trans({'%site%': site})|raw }}
+                    </p>
+                {% endif %}
+                {# Copyright #}
+                {% if copyright is defined %}
+                    <div class="text-center">
+                        <ul class="inline">
+                            <li>{{ copyright }}</li>
+                        </ul>
+                    </div>
+                {% endif %}
+            {% endblock %}
+        {% endblock %}
+    </body>
+</html>
+{% endapply %}

@@ -106,6 +106,28 @@
                 <source>label.accept_tou</source>
                 <target><![CDATA[J'accepte les <a href="%touUrl%" target="_blank">Conditions générales d'utilisation (CGU)</a>]]></target>
             </trans-unit>
+            <trans-unit id="27">
+                <source>text.email_sent_by</source>
+                <target><![CDATA[Cet email vous a été envoyé par <strong>%site%</strong>.]]></target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.hello</source>
+                <target>Bonjour</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>text.thanks_confidence</source>
+                <target><![CDATA[Merci pour votre confiance !
+                        Nous restons à votre disposition pour la moindre demande.]]></target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>text.no_spam</source>
+                <target>Nous conseillons d'enregistrer notre adresse email dans votre carnet d'adresses afin que nos emails ne soient pas classés spam.</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>text.regards_team</source>
+                <target><![CDATA[Cordialement,
+                        L'équipe <strong>%site%</strong>]]></target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

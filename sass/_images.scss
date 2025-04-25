@@ -54,3 +54,7 @@ img.icon {
     width: 24px;
     height: 24px;
 }
+
+img.white {
+    filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
+}
