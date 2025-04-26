@@ -6,6 +6,10 @@ table {
     background-color: transparent;
 }
 
+table.border {
+    border: 2px solid var(--primary);
+}
+
 th {
     padding: 0.5em 1em;
     text-align: center;

@@ -10,6 +10,7 @@
     color: var(--button-color);
     font-family: var(--font-family-title);
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .btn-primary,
@@ -31,6 +32,7 @@
     background-color: var(--button-background-secondary-dark);
 }
 
+/* SIZES */
 .btn-small {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
@@ -44,6 +46,7 @@
     background-color: lightgrey;
 }
 
+/* OTHER */
 button:disabled,
 .btn:disabled,
 button[disabled],

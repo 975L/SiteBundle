@@ -1,5 +1,3 @@
-/* IMPORTANT: If modified, place a copy in templates/emails as used by emails */
-
 :root {
     --alert-danger-color: #b64450;
     --alert-danger-background: #f2dede;
@@ -22,19 +20,19 @@
     --button-secondary-color: #000;
     --button-link-color: #fff;
     --card-background: #fff;
-    --disabled: #808080;
+    --disabled: grey;
     --font-family-title: "Sans Serif";
     --font-family-body: "Sans Serif";
     --form-input-color: #555;
     --font-title-weight: normal;
     --font-body-weight: normal;
-    --label-color: #808080;
+    --label-color: grey;
     --link-color: #0d6efd;
     --input-border-bottom-color: #bfbfbf;
     --input-border-color: #4d4d4d;
     --input-focus-border-color: rgb(24, 115, 200);
     --input-focus-shadow-color: rgb(66, 130, 189);
     --input-shadow-color: #4d4d4d;
-    --required-color: #000;
+    --required-color: black;
     --white: #fff;
 }

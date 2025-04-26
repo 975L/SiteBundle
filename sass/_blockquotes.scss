@@ -1,0 +1,49 @@
+/* BLOCKQUOTES */
+blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 17.5px;
+    border-left: 5px solid #eee;
+}
+
+blockquote footer,
+blockquote small,
+blockquote .small {
+    display: block;
+    font-size: 80%;
+    line-height: 1.42857143;
+    color: #777;
+}
+
+blockquote footer::before,
+blockquote small::before,
+blockquote .small::before {
+    content: '\2014 \00A0';
+}
+
+.blockquote-reverse,
+blockquote.pull-right {
+    padding-right: 15px;
+    padding-left: 0;
+    border-right: 5px solid #eee;
+    border-left: 0;
+    text-align: right;
+}
+
+.blockquote-reverse footer::before,
+blockquote.pull-right footer::before,
+.blockquote-reverse small::before,
+blockquote.pull-right small::before,
+.blockquote-reverse .small::before,
+blockquote.pull-right .small::before {
+    content: '';
+}
+
+.blockquote-reverse footer::after,
+blockquote.pull-right footer::after,
+.blockquote-reverse small::after,
+blockquote.pull-right small::after,
+.blockquote-reverse .small::after,
+blockquote.pull-right .small::after {
+    content: '\00A0 \2014';
+}
