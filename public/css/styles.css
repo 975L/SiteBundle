@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
  * (c) 2018: 975L <contact@975l.com>
  * (c) 2018: Laurent Marquet <laurent.marquet@laposte.net>
@@ -314,6 +315,7 @@ template {
   display: none;
 }
 
+/* IMPORTANT: If modified, place a copy in templates/emails as used by emails */
 :root {
   --alert-danger-color: #b64450;
   --alert-danger-background: #f2dede;
@@ -321,7 +323,7 @@ template {
   --alert-success-background: #d0e9c6;
   --alert-warning-background: #f9dba7;
   --back-pull-background-color: #bababa;
-  --back-pull-background-color-hover: lightgreen;
+  --back-pull-background-color-hover: #90ee90;
   --black: #000;
   --body-max-width: 1440px;
   --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -336,26 +338,30 @@ template {
   --button-secondary-color: #000;
   --button-link-color: #fff;
   --card-background: #fff;
-  --disabled: grey;
+  --disabled: #808080;
   --font-family-title: "Sans Serif";
   --font-family-body: "Sans Serif";
   --form-input-color: #555;
   --font-title-weight: normal;
   --font-body-weight: normal;
-  --label-color: grey;
+  --label-color: #808080;
   --link-color: #0d6efd;
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;
   --input-focus-border-color: rgb(24, 115, 200);
   --input-focus-shadow-color: rgb(66, 130, 189);
   --input-shadow-color: #4d4d4d;
-  --required-color: black;
+  --required-color: #000;
   --white: #fff;
 }
 
 /* COLORS */
 .blue {
-  color: blue;
+  color: #0000ff;
+}
+
+.lightgrey {
+  color: #d3d3d3;
 }
 
 .darkgrey {
@@ -363,35 +369,35 @@ template {
 }
 
 .green {
-  color: green;
+  color: #008000;
 }
 
 .grey {
-  color: grey;
+  color: #808080;
 }
 
 .maroon {
-  color: maroon;
+  color: #800000;
 }
 
 .orange {
-  color: #E56717;
+  color: #e56717;
 }
 
 .pink {
-  color: #FF4081;
+  color: #ff4081;
 }
 
 .purple {
-  color: purple;
+  color: #800080;
 }
 
 .red {
-  color: red;
+  color: #ff0000;
 }
 
 .white {
-  color: #fff;
+  color: #ffffff;
 }
 
 *,
@@ -624,6 +630,56 @@ a:hover.pullDown {
   background-color: var(--alert-warning-background);
 }
 
+/* BLOCKQUOTES */
+blockquote {
+  padding: 10px 20px;
+  margin: 0 0 20px;
+  font-size: 17.5px;
+  border-left: 5px solid #eee;
+}
+
+blockquote footer,
+blockquote small,
+blockquote .small {
+  display: block;
+  font-size: 80%;
+  line-height: 1.42857143;
+  color: #777;
+}
+
+blockquote footer::before,
+blockquote small::before,
+blockquote .small::before {
+  content: "— ";
+}
+
+.blockquote-reverse,
+blockquote.pull-right {
+  padding-right: 15px;
+  padding-left: 0;
+  border-right: 5px solid #eee;
+  border-left: 0;
+  text-align: right;
+}
+
+.blockquote-reverse footer::before,
+blockquote.pull-right footer::before,
+.blockquote-reverse small::before,
+blockquote.pull-right small::before,
+.blockquote-reverse .small::before,
+blockquote.pull-right .small::before {
+  content: "";
+}
+
+.blockquote-reverse footer::after,
+blockquote.pull-right footer::after,
+.blockquote-reverse small::after,
+blockquote.pull-right small::after,
+.blockquote-reverse .small::after,
+blockquote.pull-right .small::after {
+  content: " —";
+}
+
 /* BUTTONS */
 .btn {
   border-radius: 5px;
@@ -636,6 +692,7 @@ a:hover.pullDown {
   color: var(--button-color);
   font-family: var(--font-family-title);
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .btn-primary,
@@ -657,6 +714,7 @@ a:hover.pullDown {
   background-color: var(--button-background-secondary-dark);
 }
 
+/* SIZES */
 .btn-small {
   font-size: 0.9rem;
   padding: 0.5rem 1rem;
@@ -670,6 +728,7 @@ a:hover.pullDown {
   background-color: lightgrey;
 }
 
+/* OTHER */
 button:disabled,
 .btn:disabled,
 button[disabled],
@@ -965,6 +1024,10 @@ img.icon {
   height: 24px;
 }
 
+img.white {
+  filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
+}
+
 iframe {
   width: 95vw;
   max-width: 400px;
@@ -1061,6 +1124,10 @@ table {
   border-spacing: 10px;
   margin: 0 auto 1em auto;
   background-color: transparent;
+}
+
+table.border {
+  border: 2px solid var(--primary);
 }
 
 th {
@@ -1285,8 +1352,15 @@ label[for=contact_form_username],
   h1,
   h2,
   h3,
-  .lead {
+  .lead,
+  blockquote {
     letter-spacing: inherit;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: inherit;
+    page-break-after: avoid;
   }
   h1 {
     font-size: 150%;

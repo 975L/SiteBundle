@@ -18,8 +18,16 @@
     h1,
     h2,
     h3,
-    .lead {
+    .lead,
+    blockquote {
         letter-spacing: inherit;
+    }
+
+    h1,
+    h2,
+    h3 {
+        letter-spacing: inherit;
+        page-break-after: avoid;
     }
 
     h1 {

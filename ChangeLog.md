@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.18.3
+
+- Added styles (26/04/2025)
+- Added emails.scss (26/04/2025)
+- Added user variables/typography for emails (26/04/2025)
+
 ## v6.18.2
 
 - Added missing require twig/cssinliner-extra (25/04/2025)
