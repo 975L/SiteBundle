@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.4
+
+- Codacy corrections (23/05/2025)
+
 ## v6.18.3
 
 - Added styles (26/04/2025)
