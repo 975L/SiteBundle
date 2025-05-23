@@ -357,7 +357,7 @@ template {
 
 /* COLORS */
 .blue {
-  color: #0000ff;
+  color: #00f;
 }
 
 .lightgrey {
@@ -393,11 +393,11 @@ template {
 }
 
 .red {
-  color: #ff0000;
+  color: #f00;
 }
 
 .white {
-  color: #ffffff;
+  color: #fff;
 }
 
 *,
@@ -695,6 +695,15 @@ blockquote.pull-right .small::after {
   touch-action: manipulation;
 }
 
+.btn-small {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-large {
+  width: 100%;
+}
+
 .btn-primary,
 .btn-small {
   background-color: var(--button-background-primary);
@@ -714,21 +723,19 @@ blockquote.pull-right .small::after {
   background-color: var(--button-background-secondary-dark);
 }
 
-/* SIZES */
-.btn-small {
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-}
-
-.btn-large {
-  width: 100%;
-}
-
 .btn-grey {
   background-color: lightgrey;
 }
 
 /* OTHER */
+div .btn {
+  margin: 1em 0;
+}
+
+div .btn-padding {
+  margin-top: 3em;
+}
+
 button:disabled,
 .btn:disabled,
 button[disabled],
@@ -766,14 +773,6 @@ a.btn:hover,
 a.btn:visited:hover {
   color: var(--button-link-color);
   text-decoration: none;
-}
-
-div .btn {
-  margin: 1em 0;
-}
-
-div .btn-padding {
-  margin-top: 3em;
 }
 
 p:has(.btn) {
