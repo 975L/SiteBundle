@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.5
+
+- Added easiest way to override images in error pages (25/05/2025)
+
 ## v6.18.4
 
 - Codacy corrections (23/05/2025)

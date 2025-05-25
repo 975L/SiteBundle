@@ -4,20 +4,23 @@
 {% set title = 'Err403' %}
 
 {% block content %}
-{# Alert #}
+    {# Alert #}
     <div class="alert alert-danger text-center">
-{# Title #}
+        {# Title #}
         <h2>
             <img src="{{ absolute_url(asset('bundles/c975lsite/images/thumbs-down.svg')) }}" class="img img-responsive" alt="Thumbs down" width="48"> Err403
         </h2>
-{# Message #}
+        {# Message #}
         <p>
             <span class="lead"><strong>Ooops...</strong></span><br>
             {{ 'text.err403'|trans }}<br>
         </p>
     </div>
-{# Image #}
+    {# Image #}
+    {% if image is not defined %}
+        {% set image = 'bundles/c975lsite/images/error-' ~ random(1,6) ~ '.webp' %}
+    {% endif %}
     <p class="text-center">
-        <img src="{{ absolute_url(asset('bundles/c975lsite/images/error-' ~ random(1,6) ~ '.webp')) }}" class="img img-responsive img-rounded" alt="error">
+        <img src="{{ absolute_url(asset(image)) }}" class="img img-responsive img-rounded" alt="error" loading="lazy">
     </p>
 {% endblock %}
