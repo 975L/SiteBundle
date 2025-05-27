@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.18.6
+
+- Corrected.bold (27/05/2025)
+- Added .primary .secondary (27/05/2025)
+
 ## v6.18.5
 
 - Added easiest way to override images in error pages (25/05/2025)

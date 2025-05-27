@@ -6,6 +6,14 @@
  * with this source code in the file LICENSE.
  */
 /* COLORS */
+.primary {
+  color: var(--primary);
+}
+
+.secondary {
+  color: var(--secondary);
+}
+
 .blue {
   color: #00f;
 }
@@ -150,7 +158,7 @@ h2 {
 }
 
 .bold {
-  font-style: bold;
+  font-weight: bold;
 }
 
 blockquote {

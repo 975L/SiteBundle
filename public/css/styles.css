@@ -356,6 +356,14 @@ template {
 }
 
 /* COLORS */
+.primary {
+  color: var(--primary);
+}
+
+.secondary {
+  color: var(--secondary);
+}
+
 .blue {
   color: #00f;
 }
@@ -500,7 +508,7 @@ h2 {
 }
 
 .bold {
-  font-style: bold;
+  font-weight: bold;
 }
 
 blockquote {
