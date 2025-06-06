@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19
+
+- Updated legal notice model (06/06/2025)
+
 ## v6.18.7.2
 
 - Modified styles (06/06/2025)
