@@ -5,7 +5,7 @@
     object-fit: cover;
     box-shadow: var(--button-box-shadow);
     padding: 0.7rem 1.2rem;
-    margin: 2em auto;
+    margin: 1em auto;
     text-decoration: none;
     color: var(--button-color);
     font-family: var(--font-family-title);
@@ -95,7 +95,7 @@ a.btn:visited:hover {
 }
 
 p:has(.btn) {
-    margin: 2em auto;
+    margin: 1em auto;
 }
 
 button.btn {

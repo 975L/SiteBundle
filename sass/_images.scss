@@ -55,6 +55,11 @@ img.icon {
     height: 24px;
 }
 
+img.icon-big {
+    width: 48px;
+    height: 48px;
+}
+
 img.white {
     filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
 }

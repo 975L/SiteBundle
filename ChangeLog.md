@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.7
+
+- Modified styles (06/06/2025)
+
 ## v6.18.6
 
 - Corrected.bold (27/05/2025)
