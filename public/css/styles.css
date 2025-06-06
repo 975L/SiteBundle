@@ -560,7 +560,7 @@ blockquote {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 1em 2em;
+  gap: 1em;
 }
 
 .flex-start {
@@ -695,7 +695,7 @@ blockquote.pull-right .small::after {
   object-fit: cover;
   box-shadow: var(--button-box-shadow);
   padding: 0.7rem 1.2rem;
-  margin: 2em auto;
+  margin: 1em auto;
   text-decoration: none;
   color: var(--button-color);
   font-family: var(--font-family-title);
@@ -784,7 +784,7 @@ a.btn:visited:hover {
 }
 
 p:has(.btn) {
-  margin: 2em auto;
+  margin: 1em auto;
 }
 
 button.btn {
@@ -1031,6 +1031,11 @@ img.icon {
   height: 24px;
 }
 
+img.icon-big {
+  width: 48px;
+  height: 48px;
+}
+
 img.white {
   filter: invert(99%) sepia(16%) saturate(3%) hue-rotate(50deg) brightness(103%) contrast(100%);
 }
@@ -1171,6 +1176,11 @@ nav h1 a,
 nav h1 a:hover {
   color: var(--primary);
   font-family: var(--font-family-title);
+}
+
+nav img {
+  height: 50px;
+  width: auto;
 }
 
 .slider {
