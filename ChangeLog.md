@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.18.7.1
+
+- Corrected navbar img for screen > 768px (06/06/2025)
+
 ## v6.18.7
 
 - Modified styles (06/06/2025)

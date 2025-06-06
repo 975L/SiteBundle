@@ -1338,9 +1338,12 @@ footer li {
 /* @media only screen
     and (min-width: 480px) {
 } */
-/* @media only screen
-    and (min-width: 768px) {
-} */
+@media only screen and (min-width: 768px) {
+  nav img {
+    height: 100px;
+    width: auto;
+  }
+}
 /* @media only screen
     and (min-width: 992px) {
 } */
