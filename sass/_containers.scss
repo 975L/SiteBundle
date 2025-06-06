@@ -1,11 +1,7 @@
 /* CONTAINERS */
 .container {
-    padding: 2em;
-    margin-bottom: 1.5em;
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 0 auto 1.5em auto;
+    padding: 0 15px 1em 15px;
 }
 
 .container-fluid {
@@ -34,3 +30,6 @@
     border-radius: 6px;
 }
 
+section {
+    margin: 1em auto;
+}

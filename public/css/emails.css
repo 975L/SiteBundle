@@ -93,12 +93,15 @@ body {
 
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-family-title);
   color: var(--primary);
   font-weight: var(--font-title-weight);
   text-align: center;
-  margin: 1.5em auto 0.5em auto;
+  margin: 0.5em auto 0.5em auto;
 }
 
 h1 {
@@ -107,6 +110,22 @@ h1 {
 
 h2 {
   font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.2rem;
+}
+
+h5 {
+  font-size: 1.1rem;
+}
+
+h6 {
+  font-size: 1.05rem;
 }
 
 .lead {
@@ -170,12 +189,8 @@ blockquote {
 
 /* CONTAINERS */
 .container {
-  padding: 2em;
-  margin-bottom: 1.5em;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
+  margin: 0 auto 1.5em auto;
+  padding: 0 15px 1em 15px;
 }
 
 .container-fluid {
@@ -202,6 +217,10 @@ blockquote {
   padding-right: 15px;
   padding-left: 15px;
   border-radius: 6px;
+}
+
+section {
+  margin: 1em auto;
 }
 
 /* ALIGNMENTS */

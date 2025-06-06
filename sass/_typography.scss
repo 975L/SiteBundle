@@ -6,12 +6,15 @@
 
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-family-title);
     color: var(--primary);
     font-weight: var(--font-title-weight);
     text-align: center;
-    margin: 1.5em auto 0.5em auto;
+    margin: 0.5em auto 0.5em auto;
 }
 
 h1 {
@@ -20,6 +23,22 @@ h1 {
 
 h2 {
     font-size: 2em;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+h4 {
+    font-size: 1.2rem;
+}
+
+h5 {
+    font-size: 1.1rem;
+}
+
+h6 {
+    font-size: 1.05rem;
 }
 
 .lead {
