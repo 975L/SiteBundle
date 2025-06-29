@@ -3,9 +3,12 @@
     <div id="{{ id }}" class="slider" data-controller="slider" data-slider-id="{{ id }}">
         {% for slide in slides %}
             <div class="slider-item">
-                <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="lazy">
+                <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="{{ loop.first ? 'eager' : 'lazy' }}">
                 {% if slide.credits is defined and slide.credits != "" %}
                     <p class="slider-credits">Credits : {{ slide.credits }}</p>
+                {% endif %}
+                {% if slide.rightsReserved is defined and slide.rightsReserved == "true" %}
+                    <p class="slider-rights-reserved">{{ 'label.all_rights_reserved'|trans({}, 'site') }}</p>
                 {% endif %}
             </div>
         {% endfor %}
@@ -15,8 +18,8 @@
                     <span class="slider-dot" data-number="{{ loop.index }}"></span>
                 {% endfor %}
             </div>
-            <p class="arrow arrow-left"><img src="{{ asset('bundles/c975lsite/images/angle-left.svg') }}" alt="left angle" class="angle" width="32" loading="lazy"></p>
-            <p class="arrow arrow-right"><img src="{{ asset('bundles/c975lsite/images/angle-right.svg') }}" alt="right angle" class="angle" width="32" loading="lazy"></p>
+            <p class="arrow arrow-left"><img src="{{ asset('bundles/c975lsite/images/angle-left.svg') }}" alt="left angle" class="angle" width="32"></p>
+            <p class="arrow arrow-right"><img src="{{ asset('bundles/c975lsite/images/angle-right.svg') }}" alt="right angle" class="angle" width="32"></p>
         {% endif %}
     </div>
 {% endif %}

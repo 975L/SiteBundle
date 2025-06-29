@@ -128,6 +128,10 @@
                 <target><![CDATA[Saludos,
                         El equipo de <strong>%site%</strong>]]></target>
             </trans-unit>
+            <trans-unit id="32">
+                <source>label.all_rights_reserved</source>
+                <target>© Reservados todos los derechos</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
