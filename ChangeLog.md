@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.19.1
+
+- Added possibility to have rights reserved display for each slide in Slider component (29/06/2025)
+- Added pre-load for slider images (29/06/2025)
+
 ## v6.19
 
 - Updated legal notice model (06/06/2025)

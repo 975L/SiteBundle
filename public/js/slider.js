@@ -10,10 +10,34 @@ export default class extends Controller {
         // Initialize directly when the controller connects
         const sliderId = this.element.dataset.sliderId;
         if (sliderId) {
+            this.preloadSliderImages(sliderId);
             this.initializeSlider(sliderId);
         }
     }
 
+    // preloadSliderImages
+    preloadSliderImages(sliderId) {
+        const slides = document.querySelectorAll(`#${sliderId} .slider-item img`);
+
+        slides.forEach((img, index) => {
+            if (index === 0) {
+                // Première image : chargement immédiat
+                img.loading = 'eager';
+            } else {
+                // Autres images : préchargement en arrière-plan
+                const preloadImg = new Image();
+                preloadImg.src = img.src;
+
+                // Une fois préchargée, on peut retirer le lazy loading
+                preloadImg.onload = () => {
+                    img.loading = 'eager';
+                    img.classList.add('preloaded');
+                };
+            }
+        });
+    }
+
+    // initializeSlider
     initializeSlider(sliderId) {
         // Define slideIndex in the controller instance for better scope
         this.slideIndex = 1;
