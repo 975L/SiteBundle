@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19.2
+
+- Added raw filter to label to allow html (01/08/2025)
+
 ## v6.19.1
 
 - Added possibility to have rights reserved display for each slide in Slider component (29/06/2025)
