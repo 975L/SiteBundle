@@ -10,13 +10,13 @@
 <p class="text-center">
     <a href="{{ url }}" target="{{ target }}" aria-label="{{ ariaLabel }}">
         {% if above and label != '' %}
-            <span>{{ label }}</span>
+            <span>{{ label|raw }}</span>
             <br>
         {% endif %}
         <img src="{{ absolute_url(asset(src)) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
         {% if false == above and label != '' %}
             <br>
-            <span>{{ label }}</span>
+            <span>{{ label|raw }}</span>
         {% endif %}
     </a>
 </p>
