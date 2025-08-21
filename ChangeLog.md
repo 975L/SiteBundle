@@ -1,5 +1,9 @@
 # Changelog
 
+## 6.19.3
+
+- Added a locale variable to be able to change it at the main level template (21/08/2025)
+
 ## v6.19.2
 
 - Added raw filter to label to allow html (01/08/2025)
