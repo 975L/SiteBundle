@@ -55,8 +55,13 @@
     {% set display = 'html' %}
 {% endif %}
 
+{# Locale #}
+{% if locale is not defined %}
+    {% set locale = app.request.locale %}
+{% endif %}
+
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ locale }}">
 {# Head #}
     <head>
         {% block head %}
@@ -118,17 +123,17 @@
 {# hreflang #}
                     {% if languagesAlt is defined %}
                         {% for languageAlt, item in languagesAlt %}
-                            {% if app.request.uri ends with '/' ~ app.request.locale %}
-                                {% set sourceLanguage = '/' ~ app.request.locale %}
+                            {% if app.request.uri ends with '/' ~ locale %}
+                                {% set sourceLanguage = '/' ~ locale %}
                                 {% set targetLanguage = '/' ~ languageAlt %}
                             {% else %}
-                                {% set sourceLanguage = '/' ~ app.request.locale ~ '/' %}
+                                {% set sourceLanguage = '/' ~ locale ~ '/' %}
                                 {% set targetLanguage = '/' ~ languageAlt ~ '/' %}
                             {% endif %}
                             <link rel="alternate" hreflang="{{ languageAlt }}" href="{{ app.request.uri|replace({(sourceLanguage): targetLanguage}) }}">
                         {% endfor %}
                     {% else %}
-                        <link rel="alternate" hreflang="{{ app.request.locale }}" href="{{ app.request.uri }}">
+                        <link rel="alternate" hreflang="{{ locale }}" href="{{ app.request.uri }}">
                     {% endif %}
 {# End display for html #}
                 {% endif %}
