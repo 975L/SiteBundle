@@ -1,8 +1,19 @@
-{# <twig:c975LSite:Image:Image src="your-path/file.ext" [class="your-css-classes"] [alt=""] [width="width"] [height="height"]/> #}
+{# <twig:c975LSite:Image:Image [label=""] src="your-path/file.ext" [class="your-css-classes"] [alt=""] [width="width"] [height="height"] [above="true"]/> #}
 {% set class = class | default('') %}
 {% set alt = alt | default('') %}
 {% set width = width | default('auto') %}
 {% set height = height | default('auto') %}
+{% set above = above | default(false) %}
+{% set label = label | default('') %}
+{% set ariaLabel = label | default('image') %}
 <p class="text-center">
+    {% if above and label != '' %}
+        <span>{{ label|raw }}</span>
+        <br>
+    {% endif %}
     <img src="{{ absolute_url(asset(src)) }}" class="img img-responsive {{ class }}" alt="{{ alt }}" width="{{ width }}" height="{{ height }}" loading="lazy">
+    {% if false == above and label != '' %}
+        <br>
+        <span>{{ label|raw }}</span>
+    {% endif %}
 </p>

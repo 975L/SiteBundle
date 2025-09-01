@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19.4
+
+- Added label possibility on image components (01/09/2025)
+
 ## 6.19.3
 
 - Added a locale variable to be able to change it at the main level template (21/08/2025)
