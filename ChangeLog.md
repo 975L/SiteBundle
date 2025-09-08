@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19.5
+
+- Added raw to button to allw html content (08/09/2025)
+
 ## v6.19.4
 
 - Added label possibility on image components (01/09/2025)
