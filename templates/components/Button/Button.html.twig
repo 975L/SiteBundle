@@ -12,7 +12,7 @@
             {% if icon != "" %}
                 <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
             {% endif %}
-            {{ label }}
+            {{ label|raw }}
         </button></a>
 {% if inline == false %}
     </p>
