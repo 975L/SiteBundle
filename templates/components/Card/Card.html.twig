@@ -1,13 +1,14 @@
 {#
-<twig:c975LSite:Card:Card id="id" title="Title" [level="h2"] [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"]>
+<twig:c975LSite:Card:Card id="id" title="Title" [level="h2"] [icon="{{ ['your-path/file.ext', 'your-css-classes', width, height] }}"] [level="h2"] [lang="{{ language }}"]>
     Your content
 </twig:c975LSite:Card:Card>
 #}
 {% set icon = icon | default('') %}
 {% set class = class | default('') %}
 {% set level = level | default('h2') %}
+{% set lang = lang | default('') %}
 {% set dataAnimation = dataAnimation | default('') %}
-<div class="card box-shadow {{ class }}" id="{{ id }}" data-animation="{{ dataAnimation }}">
+<div class="card box-shadow {{ class }}" id="{{ id }}" data-animation="{{ dataAnimation }}" {% if lang %}lang="{{ lang }}"{% endif %}>
     {% if icon != "" %}
         <{{ level }} class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</{{ level }}>
     {% else %}

@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19.6
+
+- Added lang attribute for Card (12/09/2025)
+
 ## v6.19.5
 
 - Added raw to button to allw html content (08/09/2025)
