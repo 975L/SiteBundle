@@ -35,11 +35,36 @@ img {
     box-shadow: 0 0 10px 2px var(--input-shadow-color);
 }
 
+.img-100,
+.img-125,
+.img-150,
+.img-200,
+.img-250,
 .img-300,
 .img-500 {
     width: 90vw;
     height: auto;
     margin: 0 auto;
+}
+
+.img-100 {
+    max-width: 100px;
+}
+
+.img-125 {
+    max-width: 125px;
+}
+
+.img-150 {
+    max-width: 150px;
+}
+
+.img-200 {
+    max-width: 200px;
+}
+
+.img-250 {
+    max-width: 250px;
 }
 
 .img-300 {
