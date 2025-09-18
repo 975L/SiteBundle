@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.19.7
+
+- Added width/height styles (17/09/2025)
+- Added sizes for img (17/09/2025)
+
 ## v6.19.6
 
 - Added lang attribute for Card (12/09/2025)
