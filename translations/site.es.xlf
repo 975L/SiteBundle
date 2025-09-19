@@ -132,6 +132,18 @@
                 <source>label.all_rights_reserved</source>
                 <target>© Reservados todos los derechos</target>
             </trans-unit>
+            <trans-unit id="33">
+                <source>label.audio_not_supported</source>
+                <target>Su navegador no soporta la etiqueta de audio.</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.video_not_supported</source>
+                <target>Su navegador no soporta la etiqueta de vídeo.</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>label.download</source>
+                <target>Descargar</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

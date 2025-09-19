@@ -1,7 +1,5 @@
 {# <twig:c975LSite:Audio:Audio src="your-path/file.ext" type="audio/mpeg"/> #}
 <audio controls>
     <source src="{{ src }}" type="{{ type }}">
-    <p>
-        Your browser does not support HTML5 audio. Here is a link <a href="{{ src }}">to download it</a>.
-    </p>
+    <p>{{ 'label.audio_not_supported'|trans({}, "site") }} <a href="{{ src }}">{{ 'label.download'|trans({}, "site") }}</a></p>
 </audio>
