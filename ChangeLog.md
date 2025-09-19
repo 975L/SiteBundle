@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.19.8
+
+- Added translations (19/09/2025)
+
 ## v6.19.7
 
 - Added width/height styles (17/09/2025)
