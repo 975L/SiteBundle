@@ -146,7 +146,7 @@ h6 {
 }
 
 .text {
-  max-width: 800px;
+  max-width: 90vw;
   margin: 0 auto;
 }
 
@@ -572,4 +572,24 @@ footer a:visited:hover {
 footer li {
   margin: 10px;
   font-size: 1.15em;
-}/*# sourceMappingURL=emails.css.map */
+}
+
+/* SCREENS */
+/* @media only screen
+    and (min-width: 360px) {
+} */
+/* @media only screen
+    and (min-width: 480px) {
+} */
+@media only screen and (min-width: 768px) {
+  nav img {
+    height: 100px;
+    width: auto;
+  }
+  .text {
+    max-width: 800px;
+  }
+}
+/* @media only screen
+    and (min-width: 992px) {
+} *//*# sourceMappingURL=emails.css.map */
