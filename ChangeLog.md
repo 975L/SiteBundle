@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.20
+
+- Replaced Symfony\Component\Routing\Annotation\Route by Symfony\Component\Routing\Attribute\Route (09/10/2025)
+
 ## v6.19.9
 
 - Added_media.scss to emails.scss (09/10/2025)
