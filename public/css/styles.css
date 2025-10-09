@@ -496,7 +496,7 @@ h6 {
 }
 
 .text {
-  max-width: 800px;
+  max-width: 90vw;
   margin: 0 auto;
 }
 
@@ -1447,6 +1447,9 @@ footer li {
   nav img {
     height: 100px;
     width: auto;
+  }
+  .text {
+    max-width: 800px;
   }
 }
 /* @media only screen

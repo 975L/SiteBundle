@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.19.9
+
+- Added_media.scss to emails.scss (09/10/2025)
+- Modified .texxt style (09/10/2025)
+
 ## v6.19.8
 
 - Added translations (19/09/2025)
