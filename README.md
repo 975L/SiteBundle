@@ -64,7 +64,9 @@ SiteBundle use the following variables which are page-based, meaning that they c
 {% set description = 'YOUR_PAGE_DESCRIPTION' %}
 ```
 
-Note: If you use [c975L/PageEdit](https://github.com/975L/PageEditBundle) the variables are already passed to `layout.html.twig`.
+## Display Pages
+
+Transferred from c975L/PageEditBundle, you can display pages, from Twig templates taht are located in `templates/pages` using the Route `page_display`. You can also redirect pages by adding a `pages/redirected/redirect.html.twig`, where `redirect` is the slug of the page you want to redirect and th file itself contains the slug of the redirection. In the same way if you create a `pages/deleted/delete.html.twig`, where `delete` is the slug of the deleted page, a GoneException will be thrown.
 
 ### Override a block
 
@@ -405,7 +407,6 @@ This will be helpful in case of text files like json or whatever.nt to give acce
 ### Twig Components
 
 Some Twig components are available, check `templates/components` to see them. An example of use is in each component file.
-
 
 ### Resize image
 
