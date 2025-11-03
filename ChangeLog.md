@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.21
+
+- Removed use of dashoard and  tools as not really used (03/11/2025)
+- Removed display of config as not used (03/11/2025)
+- Transferred the display of Pages from PageEdit (03/11/2025)
+
 ## v6.20
 
 - Replaced Symfony\Component\Routing\Annotation\Route by Symfony\Component\Routing\Attribute\Route (09/10/2025)
