@@ -669,10 +669,6 @@ a:hover.pullDown {
   background-color: var(--back-pull-background-color-hover);
 }
 
-.toolbar {
-  margin-bottom: 2em;
-}
-
 .fade-in {
   animation: fadeIn 1s forwards;
 }
@@ -1311,7 +1307,7 @@ nav img {
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: var(--primary);
+  background-color: var(--primary-light);
   color: #fff;
   padding: 5px;
   font-size: 14px;
@@ -1320,11 +1316,12 @@ nav img {
 }
 
 .slider-credits {
-  bottom: 25px;
+  bottom: -14px;
+  border-radius: 0 0 15px 15px;
 }
 
 .slider-rights-reserved {
-  bottom: 0;
+  bottom: 12px;
 }
 
 .slider .arrow {

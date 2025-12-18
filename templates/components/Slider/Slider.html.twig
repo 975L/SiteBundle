@@ -4,11 +4,11 @@
         {% for slide in slides %}
             <div class="slider-item">
                 <img src="{{ asset(slide) }}" alt="" class="slider-img img img-responsive img-rounded box-shadow" loading="{{ loop.first ? 'eager' : 'lazy' }}">
-                {% if slide.credits is defined and slide.credits != "" %}
-                    <p class="slider-credits">Credits : {{ slide.credits }}</p>
-                {% endif %}
                 {% if slide.rightsReserved is defined and slide.rightsReserved == "true" %}
                     <p class="slider-rights-reserved">{{ 'label.all_rights_reserved'|trans({}, 'site') }}</p>
+                {% endif %}
+                {% if slide.credits is defined and slide.credits != "" %}
+                    <p class="slider-credits">Credits : {{ slide.credits }}</p>
                 {% endif %}
             </div>
         {% endfor %}

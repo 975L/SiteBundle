@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.22
+
+- Made use of primary-light for slider credits (18/12/2025)
+- Inversion of credits/reserved rights for Slider (18/12/2025)
+- Changed bottom values for Slider credits (18/12/2025)
+
 ## v6.21
 
 - Removed use of dashoard and  tools as not really used (03/11/2025)
