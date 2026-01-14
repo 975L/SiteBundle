@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.22.3
+
+- Added striptags for meta description (14/01/2026)
+- Corrected Cookie consent data-controller name (14/01/2026)
+
 ## v6.22.2
 
 - Removed Security autowire (14/01/2026)
