@@ -1,7 +1,11 @@
 label[for=contact_form_username],
-#contact_form_username {
+#contact_form_username,
+.sr-only {
     position: absolute;
-    top: -1000px;
-    left: -1000px;
-    display: none
+    top: -2576px;
+    left: -4587px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
 }
