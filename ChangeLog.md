@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.22.2
+
+- Removed Security autowire (14/01/2026)
+
 ## v6.22.1
 
 - Removed Voter as not used anymore (14/01/2026)
