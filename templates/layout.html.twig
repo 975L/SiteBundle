@@ -89,9 +89,9 @@
                     {% endif %}
 {# Description #}
                     {% if description is defined and description is not empty %}
-                        <meta name="description" content="{{ description }}">
-                        <meta property="og:description" content="{{ description|slice(0,150) }}">
-                        <meta name="twitter:description" content="{{ description|slice(0,200) }}">
+                        <meta name="description" content="{{ description|striptags }}">
+                        <meta property="og:description" content="{{ description|striptags|slice(0,150) }}">
+                        <meta name="twitter:description" content="{{ description|striptags|slice(0,200) }}">
                     {% endif %}
 {# Title #}
                     {% if pageTitle is defined %}
