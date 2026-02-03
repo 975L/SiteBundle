@@ -1321,7 +1321,8 @@ nav img {
 }
 
 .slider-rights-reserved {
-  bottom: 12px;
+  top: -14px;
+  border-radius: 15px 15px 0 0;
 }
 
 .slider .arrow {
