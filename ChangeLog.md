@@ -1,5 +1,13 @@
 # Changelog
 
+## v6.22.5
+
+- Modified .slider-rights-reserved to appear at top of the image (03/02/2026)
+
+## v6.22.4
+
+- Added and modified styles for Contact form Honeypot (14/01/2026)
+
 ## v6.22.3
 
 - Added striptags for meta description (14/01/2026)
