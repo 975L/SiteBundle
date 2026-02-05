@@ -351,6 +351,7 @@ template {
   --input-focus-border-color: rgb(24, 115, 200);
   --input-focus-shadow-color: rgb(66, 130, 189);
   --input-shadow-color: #4d4d4d;
+  --readmore-lines: 5;
   --required-color: #000;
   --white: #fff;
 }
@@ -1267,13 +1268,15 @@ tfoot td {
 
 .readmore-content {
   display: -webkit-box;
-  -webkit-line-clamp: 5; /* Number of lines to display */
+  line-clamp: var(--readmore-lines);
+  -webkit-line-clamp: var(--readmore-lines);
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .readmore-toggle:checked ~ .readmore-content {
   display: block;
+  line-clamp: unset;
   -webkit-line-clamp: unset;
 }
 
