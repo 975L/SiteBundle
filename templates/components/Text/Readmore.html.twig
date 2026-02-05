@@ -1,0 +1,16 @@
+{#
+{% set text %}
+    Magna voluptate esse nostrud pariatur nisi commodo sint quis laboris laborum duis. Fugiat eu Lorem cillum ullamco ad mollit exercitation amet minim. Nulla proident magna aliqua elit aute labore. Ad laborum nostrud laboris deserunt anim aute duis laboris enim duis Lorem.
+    <br>
+    Magna voluptate esse nostrud pariatur nisi commodo sint quis laboris laborum duis. Fugiat eu Lorem cillum ullamco ad mollit exercitation amet minim. Nulla proident magna aliqua elit aute labore. Ad laborum nostrud laboris deserunt anim aute duis laboris enim duis Lorem.
+{% endset %}
+<section class="xxx">
+    <twig:c975LSite:Text:Readmore text="{{ text }}" "id="{{ id }}"/>
+</section>
+#}
+<input type="checkbox" id="readmore-toggle-{{ id }}" class="readmore-toggle" hidden>
+<div class="readmore-content">{{ text|raw }}</div>
+<label for="readmore-toggle-{{ id }}" class="readmore-toggle-label">
+    <span class="read-more">{{ 'label.readmore'|trans({}, 'site') }}</span>
+    <span class="read-less">{{ 'label.readless'|trans({}, 'site') }}</span>
+</label>
