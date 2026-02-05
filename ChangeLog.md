@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.22.6
+
+- Added component Text:Readmore (05/02/2026)
+
 ## v6.22.5
 
 - Modified .slider-rights-reserved to appear at top of the image (03/02/2026)

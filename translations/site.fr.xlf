@@ -144,6 +144,14 @@
                 <source>label.download</source>
                 <target>Télécharger</target>
             </trans-unit>
+            <trans-unit id="36">
+                <source>label.readmore</source>
+                <target>Lire la suite...</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.readless</source>
+                <target>Lire moins</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

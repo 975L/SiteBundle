@@ -1,0 +1,39 @@
+.readmore-toggle {
+    display: none;
+}
+
+.readmore-content {
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Number of lines to display */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.readmore-toggle:checked ~ .readmore-content {
+    display: block;
+    -webkit-line-clamp: unset;
+}
+
+.read-less {
+    display: none;
+}
+
+.readmore-toggle:checked ~ .readmore-toggle-label .read-more {
+    display: none;
+}
+
+.readmore-toggle:checked ~ .readmore-toggle-label .read-less {
+    display: inline;
+}
+
+.readmore-toggle-label {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.readmore-toggle-label:hover {
+    color: #0056b3;
+}
