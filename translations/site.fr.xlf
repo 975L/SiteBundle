@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff version="1.2"
+    xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="site.en.xlf">
         <body>
             <trans-unit id="1">
@@ -151,6 +152,10 @@
             <trans-unit id="37">
                 <source>label.readless</source>
                 <target>Lire moins</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.menu_toggle</source>
+                <target>Ouvrir/Fermer le menu</target>
             </trans-unit>
         </body>
     </file>

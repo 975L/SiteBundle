@@ -1,0 +1,11 @@
+{# <twig:c975LSite:Menu:MenuItem label="Label" url="/path" [icon="icon.svg"]> #}
+{% set currentPath = app.request.pathinfo %}
+{% set isActive = (url == currentPath) or (url != '/' and currentPath starts with url) %}
+<li class="menu-item {{ isActive ? 'active' : '' }}">
+    <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
+        {% if icon is defined and icon != '' %}
+            <img src="{{ asset(icon) }}" alt="" class="menu-icon" width="20" height="20" loading="lazy">
+        {% endif %}
+        <span class="menu-label">{{ label }}</span>
+    </a>
+</li>

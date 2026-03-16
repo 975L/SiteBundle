@@ -1,0 +1,31 @@
+{# <twig:c975LSite:Menu:Menu items="{{ items }}" [logo="path/to/logo.svg"] [siteName="Site Name"]> #}
+<nav class="menu" data-controller="menu">
+    <div class="menu-header">
+        {% if logo is defined %}
+            <a href="{{ path('page_home') }}" class="menu-logo">
+                <img src="{{ asset(logo) }}" alt="{{ siteName|default('Logo') }}" width="40" height="40" loading="eager">
+            </a>
+        {% endif %}
+
+        {% if siteName is defined %}
+            <span class="menu-site-name">{{ siteName }}</span>
+        {% endif %}
+
+        <button class="menu-toggle"
+                data-action="click->menu#toggle"
+                aria-label="{{ 'menu.toggle'|trans({}, 'site') }}"
+                aria-expanded="false">
+            <span class="menu-toggle-icon"></span>
+        </button>
+    </div>
+
+    <ul class="menu-items" data-menu-target="items">
+        {% for item in items %}
+            <twig:c975LSite:Menu:MenuItem
+                label="{{ item.label }}"
+                url="{{ item.url }}"
+                icon="{{ item.icon|default('') }}"
+            />
+        {% endfor %}
+    </ul>
+</nav>

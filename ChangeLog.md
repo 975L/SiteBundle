@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.23
+
+- Added Menu and MenuItem (16/03/2026)
+- Added classLabel for some components (16/03/2026)
+- Moved default components value inside the code (16/03/2026)
+
 ## v6.22.6.1
 
 - Added line-clamp as a css variable to be able to modify it easily (05/02/2026)

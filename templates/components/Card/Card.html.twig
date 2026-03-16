@@ -4,15 +4,11 @@
 </twig:c975LSite:Card:Card>
 #}
 {% set icon = icon | default('') %}
-{% set class = class | default('') %}
-{% set level = level | default('h2') %}
-{% set lang = lang | default('') %}
-{% set dataAnimation = dataAnimation | default('') %}
-<div class="card box-shadow {{ class }}" id="{{ id }}" data-animation="{{ dataAnimation }}" {% if lang %}lang="{{ lang }}"{% endif %}>
+<div class="card box-shadow {{ class|default('') }}" id="{{ id }}" data-animation="{{ dataAnimation|default('') }}" {% if lang %}lang="{{ lang|default('') }}"{% endif %}>
     {% if icon != "" %}
-        <{{ level }} class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</{{ level }}>
+        <{{ level|default('h2') }} class="card-header"><twig:c975LSite:Image:Icon src="{{ icon[0] }}" class="{{ icon[1] }}" width="{{ icon[2] }}" height="{{ icon[3] }}"/> {{ title }}</{{ level|default('h2') }}>
     {% else %}
-        <{{ level }} class="card-header">{{ title }}</{{ level }}>
+        <{{ level|default('h2') }} class="card-header">{{ title }}</{{ level|default('h2') }}>
     {% endif %}
     <div class="card-body">
         {% block content %}{% endblock %}

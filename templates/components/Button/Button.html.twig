@@ -1,14 +1,12 @@
 {# <twig:c975LSite:Button:Button [type="primary"] label="Label" url="{{ path('your_route') }}" [target=""] [icon="path-to-icon.ext"] [download="false"] [inline="false"]/> #}
-{% set type = type | default('primary') %}
-{% set target = target | default('') %}
 {% set inline = inline | default(false) %}
 {% set download = download | default(false) %}
 {% set icon = icon | default('') %}
 {% if inline == false %}
     <p class="text-center">
 {% endif %}
-    <a href="{{ url }}" target="{{ target }}" role="button" {% if download == true %}download{% endif %}>
-        <button class="btn btn-{{ type }}">
+    <a href="{{ url }}" target="{{ target|default('') }}" role="button" {% if download == true %}download{% endif %}>
+        <button class="btn btn-{{ type|default('primary') }}">
             {% if icon != "" %}
                 <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
             {% endif %}
