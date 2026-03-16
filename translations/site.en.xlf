@@ -152,6 +152,10 @@
                 <source>label.readless</source>
                 <target>Read less</target>
             </trans-unit>
+            <trans-unit id="38">
+                <source>label.menu_toggle</source>
+                <target>Open/Close the menu</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -49,7 +49,7 @@ En cas de litige, la procédure à suivre sera la suivante :
 
 ## Loi applicable - Attribution de compétence
 
-Les présentes CGU sont soumises à la loi Française. Tout litige relatif à l'interprétation et à l'exécution de ces conditions sera de la compétence exclusive des tribunaux français et plus particulièrement de ceux localisés dans le départment Français du siège de l'entreprise éditrice de **{{ site }}**, que ce soit pour les utilisateurs/trices professionnel/les ou particuliers.
+Les présentes CGV sont soumises à la loi Française. Tout litige relatif à l'interprétation et à l'exécution de ces conditions sera de la compétence exclusive des tribunaux français et plus particulièrement de ceux localisés dans le départment Français du siège de l'entreprise éditrice de **{{ site }}**, que ce soit pour les utilisateurs/trices professionnel/les ou particuliers.
 
 ## Divers
 
