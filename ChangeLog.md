@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.23.1
+
+- Corrected errors (16/03/2026)
+
 ## v6.23
 
 - Added Menu and MenuItem (16/03/2026)
