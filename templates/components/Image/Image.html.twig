@@ -1,6 +1,7 @@
 {# <twig:c975LSite:Image:Image [label=""] src="your-path/file.ext" [class="your-css-classes"] [classLabel="your-class-label"] [alt=""] [width="width"] [height="height"] [above="true"]/> #}
 {% set above = above | default(false) %}
 {% set label = label | default('') %}
+{% set imgResponsive = "" %}
 {% if height is not defined and width is not defined %}
     {% set imgResponsive = "img-responsive" %}
 {% endif %}
