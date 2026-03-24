@@ -157,6 +157,18 @@
                 <source>label.menu_toggle</source>
                 <target>Ouvrir/Fermer le menu</target>
             </trans-unit>
+            <trans-unit id="39">
+                <source>label.phone</source>
+                <target>Téléphone</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.opening_hours</source>
+                <target>Horaires d'ouverture</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>menu.toggle</source>
+                <target>Ouvrir/Fermer le menu</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
