@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.24
+
+- Added component RichSnippet (24/03/2026)
+
 ## v6.23.1
 
 - Corrected errors (16/03/2026)

@@ -409,6 +409,7 @@ template {
   color: #fff;
 }
 
+/* GENERAL */
 *,
 *::before,
 *::after {
@@ -1661,6 +1662,38 @@ footer li {
 /* @media only screen
     and (min-width: 992px) {
 } */
+/* SNIPPET */
+.rich-snippet {
+  border: 1px solid var(--secondary-dark);
+  border-radius: 6px;
+  padding: 1.2em 1.5em;
+  margin: 1em 0;
+  font-size: 1em;
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+.rich-snippet span[itemprop=name] {
+  font-size: 1.2em;
+  color: var(--primary);
+  font-family: var(--font-family-title);
+}
+.rich-snippet span[itemprop=description] {
+  font-style: italic;
+  color: var(--primary);
+}
+.rich-snippet span[itemprop=image] {
+  color: var(--primary);
+  font-size: 0.95em;
+}
+.rich-snippet div[itemprop=address] {
+  color: var(--primary);
+}
+.rich-snippet span[itemprop=openingHours],
+.rich-snippet span[itemprop=telephone] {
+  color: var(--primary);
+}
+
 label[for=contact_form_username],
 #contact_form_username,
 .sr-only {

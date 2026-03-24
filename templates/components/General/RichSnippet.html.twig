@@ -1,0 +1,33 @@
+{#
+    <twig:c975LSite:General:RichSnippet
+        itemscope="https://schema.org/XXX"
+        name=""
+        description=""
+        openingHours=""
+        image="images/og-image.svg"
+        [priceRange=""]
+        [addressStreetAddress=""]
+        [addressAddressLocality=""]
+        [addressPostalCode=""]
+        [addressAddressCountryCode=""]
+        [addressAddressCountryName=""]
+        [telephone=""]
+    />
+#}
+{% trans_default_domain 'site' %}
+<div itemscope itemtype="{{ itemscope }}" class="rich-snippet">
+    <span itemprop="name">{{ name }}</span><br>
+    <img src="{{ asset(image) }}" alt="{{ name }}" height="50" width="auto"><br>
+    <span itemprop="image" class="hidden">{{ absolute_url(asset(image)) }}</span><br>
+    <span itemprop="description">{{ description }}</span><br>
+    <span>{{ 'label.opening_hours'|trans }} : <span itemprop="openingHours">{{ openingHours }}</span></span><br>
+    <span itemprop="priceRange" class="hidden">{{ priceRange|default('') }}</span><br>
+    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+        <span itemprop="streetAddress">{{ addressStreetAddress|default('') }}</span><br>
+        <span itemprop="postalCode">{{ addressPostalCode|default('') }}</span>
+        <span itemprop="addressLocality">{{ addressAddressLocality|default('') }}</span><br>
+        <span itemprop="addressCountry" class="hidden">{{ addressAddressCountryCode|default('') }}</span>
+        <span>{{ addressAddressCountryName|default('') }}</span>
+    </div>
+    <span>{{ 'label.phone'|trans }} : <span itemprop="telephone">{{ telephone }}</span></span>
+</div>
