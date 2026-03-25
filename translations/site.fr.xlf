@@ -169,6 +169,14 @@
                 <source>menu.toggle</source>
                 <target>Ouvrir/Fermer le menu</target>
             </trans-unit>
+            <trans-unit id="42">
+                <source>label.price_range</source>
+                <target>Plage de prix</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.address</source>
+                <target>Adresse</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

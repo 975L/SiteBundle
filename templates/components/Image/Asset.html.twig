@@ -1,18 +1,11 @@
-{# <twig:c975LSite:Image:Asset [label=""] file="your-path/file.ext" [class="your-css-classes"] [classLabel="your-css-classes-label"] [alt=""] [width="width"] [height="height"] [above="true"]/> #}
-{% set above = above | default(false) %}
-{% set label = label | default('') %}
-{% set imgResponsive = "" %}
-{% if height is not defined and width is not defined %}
-    {% set imgResponsive = "img-responsive" %}
-{% endif %}
-<p class="text-center">
-    {% if above and label != '' %}
-        <span class="{{ classLabel|default('') }}">{{ label|raw }}</span>
-        <br>
-    {% endif %}
-    <img src="{{ absolute_url(asset(src)) }}" class="img {{ imgResponsive }} {{ class|default('') }}" alt="{{ alt|default('') }}" width="{{ width|default('auto') }}" height="{{ height|default('auto') }}" loading="lazy">
-    {% if false == above and label != '' %}
-        <br>
-        <span class="{{ classLabel|default('') }}">{{ label|raw }}</span>
-    {% endif %}
-</p>
+{# Kept for retrocompatibility, use <twig:c975LSite:Image:Image> instead #}
+<twig:c975LSite:Image:Image
+    label="{{ label }}"
+    src="{{ src }}"
+    class="{{ class }}"
+    classLabel="{{ classLabel }}"
+    alt="{{ alt }}"
+    width="{{ width }}"
+    height="{{ height }}"
+    above="{{ above }}"
+/>

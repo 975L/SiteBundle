@@ -168,6 +168,14 @@
                 <source>menu.toggle</source>
                 <target>Abrir/Cerrar el menú</target>
             </trans-unit>
+            <trans-unit id="42">
+                <source>label.price_range</source>
+                <target>Rango de precios</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.address</source>
+                <target>Dirección</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.24.1
+
+- Modified burger menu (25/03/2026)
+- Added if to RichSnippet component (25/03/2026)
+- Removed width="auto" for iImages components (25/03/2026)
+- Added Section component (25/03/2026)
+
 ## v6.24
 
 - Added component RichSnippet (24/03/2026)

@@ -1,14 +1,18 @@
 /* SNIPPET */
 .rich-snippet {
-    // background: var(--secondary-light);
-    border: 1px solid var(--secondary-dark);
-    border-radius: 6px;
+    border: 5px solid var(--primary);
+    border-radius: 10px;
     padding: 1.2em 1.5em;
-    margin: 1em 0;
+    margin: 2em 0;
     font-size: 1em;
     color: var(--text-primary);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--box-shadow);
     text-align: center;
+
+    span[itemprop] {
+        color: var(--primary);
+        font-size: 1.1em;
+    }
 
     span[itemprop="name"] {
         font-size: 1.2em;
@@ -18,20 +22,6 @@
 
     span[itemprop="description"] {
         font-style: italic;
-        color: var(--primary);
-    }
-
-    span[itemprop="image"] {
-        color: var(--primary);
-        font-size: 0.95em;
-    }
-
-    div[itemprop="address"] {
-        color: var(--primary);
-    }
-
-    span[itemprop="openingHours"],
-    span[itemprop="telephone"] {
         color: var(--primary);
     }
 }

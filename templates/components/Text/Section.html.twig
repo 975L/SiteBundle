@@ -1,0 +1,8 @@
+{# <twig:c975LSite:Text:Section title="{{ title }}" slug="{{ slug }}" content="{{ content }}" [image="{{ image }}"]/> #}
+<section class="text-section" id="{{ slug }}">
+    <h2>{{ title }}</h2>
+    {% if image is defined %}
+        <twig:c975LSite:Image:Image src="{{ image }}" class="img-rounded img-responsive"/>
+    {% endif %}
+    {{ content|raw }}
+</section>

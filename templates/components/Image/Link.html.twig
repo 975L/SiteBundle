@@ -1,20 +1,20 @@
 {# <twig:c975LSite:Image:Link [label=""] src="your-path/file.ext" url="yourdomain.ext" [class="your-css-classes"] [classLabel="your-css-classes-label"] [alt=""] [width="width"] [height="height"] [target=""] [above="true"]/> #}
-{% set label = label | default('') %}
+{% set label = label | default("") %}
 {% set above = above | default(false) %}
 {% set imgResponsive = "" %}
 {% if height is not defined and width is not defined %}
     {% set imgResponsive = "img-responsive" %}
 {% endif %}
 <p class="text-center">
-    <a href="{{ url }}" target="{{ target|default('') }}" aria-label="{{ ariaLabel|default('image') }}">
+    <a href="{{ url }}" target="{{ target|default("") }}" aria-label="{{ ariaLabel|default('image') }}">
         {% if above and label != '' %}
-            <span class="{{ classLabel|default('') }}">{{ label|raw }}</span>
+            <span class="{{ classLabel|default("") }}">{{ label|raw }}</span>
             <br>
         {% endif %}
-        <img src="{{ absolute_url(asset(src)) }}" class="img {{ imgResponsive }} {{ class|default('') }}" alt="{{ alt|default('') }}" width="{{ width|default('auto') }}" height="{{ height|default('auto') }}" loading="lazy">
+        <img src="{{ absolute_url(asset(src)) }}" class="img {{ imgResponsive }} {{ class|default("") }}" alt="{{ alt|default("") }}" {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %} loading="lazy">
         {% if false == above and label != '' %}
             <br>
-            <span class="{{ classLabel|default('') }}">{{ label|raw }}</span>
+            <span class="{{ classLabel|default("") }}">{{ label|raw }}</span>
         {% endif %}
     </a>
 </p>
