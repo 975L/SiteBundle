@@ -16,11 +16,24 @@ export default class extends Controller {
         // Close menu on escape key
         this.boundHandleEscape = this.handleEscape.bind(this);
         document.addEventListener("keydown", this.boundHandleEscape);
+
+        // Close menu when clicking on a menu link
+        this.boundHandleMenuLinkClick = this.handleMenuLinkClick.bind(this);
+        this.menuLinkElements = this.element.querySelectorAll(".menu-link");
+        this.menuLinkElements.forEach(link => {
+            link.addEventListener("click", this.boundHandleMenuLinkClick);
+        });
     }
 
     disconnect() {
         document.removeEventListener("click", this.boundHandleClickOutside);
         document.removeEventListener("keydown", this.boundHandleEscape);
+        // Remove menu link click listeners
+        if (this.menuLinkElements) {
+            this.menuLinkElements.forEach(link => {
+                link.removeEventListener("click", this.boundHandleMenuLinkClick);
+            });
+        }
     }
 
     toggle(event) {
@@ -62,6 +75,13 @@ export default class extends Controller {
             if (button.getAttribute("aria-expanded") === "true") {
                 this.close(button);
             }
+        }
+    }
+
+    handleMenuLinkClick(event) {
+        const button = this.element.querySelector(".menu-toggle");
+        if (button.getAttribute("aria-expanded") === "true") {
+            this.close(button);
         }
     }
 }

@@ -1297,13 +1297,17 @@ tfoot td {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  background: transparent;
+  width: 3em;
+  height: 3em;
   border: none;
   cursor: pointer;
   padding: 0;
   z-index: 10;
+  position: fixed;
+  right: 10px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  margin: 10px;
 }
 .menu-toggle:focus {
   outline: 2px solid var(--primary);
@@ -1314,38 +1318,8 @@ tfoot td {
   position: relative;
   display: block;
   width: 2rem;
-  height: 0.25rem;
-  background-color: var(--black);
   border-radius: 10px;
   transition: all 0.3s linear;
-}
-.menu-toggle-icon::before, .menu-toggle-icon::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  width: 2rem;
-  height: 0.25rem;
-  background-color: var(--black);
-  border-radius: 10px;
-  transition: all 0.3s linear;
-}
-.menu-toggle-icon::before {
-  top: -0.5rem;
-}
-.menu-toggle-icon::after {
-  bottom: -0.5rem;
-}
-
-.menu-toggle.active .menu-toggle-icon {
-  background-color: transparent;
-}
-.menu-toggle.active .menu-toggle-icon::before {
-  top: 0;
-  transform: rotate(45deg);
-}
-.menu-toggle.active .menu-toggle-icon::after {
-  bottom: 0;
-  transform: rotate(-45deg);
 }
 
 .menu-items {
@@ -1354,9 +1328,9 @@ tfoot td {
   padding: 0;
   display: none;
   flex-direction: column;
-  background-color: var(--white);
-  position: absolute;
-  top: 100%;
+  background-color: var(--primary);
+  position: fixed;
+  top: 65px;
   left: 0;
   right: 0;
   width: 100%;
@@ -1393,7 +1367,9 @@ tfoot td {
 }
 
 .menu-label {
+  font-family: var(--font-family-title);
   font-size: 1rem;
+  color: var(--white);
 }
 
 @media screen and (min-width: 768px) {
@@ -1664,14 +1640,18 @@ footer li {
 } */
 /* SNIPPET */
 .rich-snippet {
-  border: 1px solid var(--secondary-dark);
-  border-radius: 6px;
+  border: 5px solid var(--primary);
+  border-radius: 10px;
   padding: 1.2em 1.5em;
-  margin: 1em 0;
+  margin: 2em 0;
   font-size: 1em;
   color: var(--text-primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--box-shadow);
   text-align: center;
+}
+.rich-snippet span[itemprop] {
+  color: var(--primary);
+  font-size: 1.1em;
 }
 .rich-snippet span[itemprop=name] {
   font-size: 1.2em;
@@ -1680,17 +1660,6 @@ footer li {
 }
 .rich-snippet span[itemprop=description] {
   font-style: italic;
-  color: var(--primary);
-}
-.rich-snippet span[itemprop=image] {
-  color: var(--primary);
-  font-size: 0.95em;
-}
-.rich-snippet div[itemprop=address] {
-  color: var(--primary);
-}
-.rich-snippet span[itemprop=openingHours],
-.rich-snippet span[itemprop=telephone] {
   color: var(--primary);
 }
 

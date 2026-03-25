@@ -168,6 +168,14 @@
                 <source>menu.toggle</source>
                 <target>Open/Close the menu</target>
             </trans-unit>
+            <trans-unit id="42">
+                <source>label.price_range</source>
+                <target>Price range</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.address</source>
+                <target>Address</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

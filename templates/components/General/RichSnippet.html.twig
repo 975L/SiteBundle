@@ -3,8 +3,8 @@
         itemscope="https://schema.org/XXX"
         name=""
         description=""
-        openingHours=""
-        image="images/og-image.svg"
+        [openingHours=""]
+        [image="images/og-image.svg"]
         [priceRange=""]
         [addressStreetAddress=""]
         [addressAddressLocality=""]
@@ -16,18 +16,40 @@
 #}
 {% trans_default_domain 'site' %}
 <div itemscope itemtype="{{ itemscope }}" class="rich-snippet">
-    <span itemprop="name">{{ name }}</span><br>
-    <img src="{{ asset(image) }}" alt="{{ name }}" height="50" width="auto"><br>
-    <span itemprop="image" class="hidden">{{ absolute_url(asset(image)) }}</span><br>
+    <span itemprop="name">{{ name }}</span><br><br>
+    {% if image is defined %}
+        <img src="{{ asset(image) }}" alt="{{ name }}" height="50"><br>
+        <span itemprop="image" class="sr-only">{{ absolute_url(asset(image)) }}</span>
+    {% endif %}
     <span itemprop="description">{{ description }}</span><br>
-    <span>{{ 'label.opening_hours'|trans }} : <span itemprop="openingHours">{{ openingHours }}</span></span><br>
-    <span itemprop="priceRange" class="hidden">{{ priceRange|default('') }}</span><br>
-    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-        <span itemprop="streetAddress">{{ addressStreetAddress|default('') }}</span><br>
-        <span itemprop="postalCode">{{ addressPostalCode|default('') }}</span>
-        <span itemprop="addressLocality">{{ addressAddressLocality|default('') }}</span><br>
-        <span itemprop="addressCountry" class="hidden">{{ addressAddressCountryCode|default('') }}</span>
-        <span>{{ addressAddressCountryName|default('') }}</span>
-    </div>
-    <span>{{ 'label.phone'|trans }} : <span itemprop="telephone">{{ telephone }}</span></span>
+    {% if openingHours is defined %}
+        <br><span>{{ 'label.opening_hours'|trans }}<br><span itemprop="openingHours">{{ openingHours }}</span></span><br>
+    {% endif %}
+    {% if priceRange is defined %}
+        <br><span>{{ 'label.price_range'|trans }} : <span itemprop="priceRange">{{ priceRange }}</span></span><br>
+    {% endif %}
+    {% if addressStreetAddress is defined or addressPostalCode is defined or addressAddressLocality is defined or addressAddressCountryCode is defined or addressAddressCountryName is defined %}
+        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+            <br><span>{{ 'label.address'|trans }}</span><br>
+            {% if addressStreetAddress is defined %}
+                <span itemprop="streetAddress">{{ addressStreetAddress }}</span><br>
+            {% endif %}
+            {% if addressPostalCode is defined %}
+                <span itemprop="postalCode">{{ addressPostalCode }}</span>
+            {% endif %}
+            {% if addressAddressLocality is defined %}
+                <span itemprop="addressLocality">{{ addressAddressLocality }}</span><br>
+            {% endif %}
+            {% if addressAddressCountryName is defined %}
+                <span>{{ addressAddressCountryName }}</span>
+            {% endif %}
+            {% if addressAddressCountryCode is defined %}
+                <span itemprop="addressCountry" class="sr-only">{{ addressAddressCountryCode }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+    {% if telephone is defined %}
+        <br>
+        <span>{{ 'label.phone'|trans }} : <span itemprop="telephone">{{ telephone }}</span></span>
+    {% endif %}
 </div>

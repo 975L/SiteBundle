@@ -30,18 +30,21 @@
     margin-left: 0.5rem;
 }
 
-// Burger toggle button
 .menu-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    background: transparent;
+    width: 3em;
+    height: 3em;
     border: none;
     cursor: pointer;
     padding: 0;
     z-index: 10;
+    position: fixed;
+    right: 10px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    margin: 10px;
 
     &:focus {
         outline: 2px solid var(--primary);
@@ -53,45 +56,8 @@
     position: relative;
     display: block;
     width: 2rem;
-    height: 0.25rem;
-    background-color: var(--black);
     border-radius: 10px;
     transition: all 0.3s linear;
-
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        width: 2rem;
-        height: 0.25rem;
-        background-color: var(--black);
-        border-radius: 10px;
-        transition: all 0.3s linear;
-    }
-
-    &::before {
-        top: -0.5rem;
-    }
-
-    &::after {
-        bottom: -0.5rem;
-    }
-}
-
-// Active state for burger icon
-.menu-toggle.active .menu-toggle-icon {
-    background-color: transparent;
-
-    &::before {
-        top: 0;
-        transform: rotate(45deg);
-    }
-
-    &::after {
-        bottom: 0;
-        transform: rotate(-45deg);
-    }
 }
 
 // Menu items
@@ -101,9 +67,9 @@
     padding: 0;
     display: none;
     flex-direction: column;
-    background-color: var(--white);
-    position: absolute;
-    top: 100%;
+    background-color: var(--primary);
+    position: fixed;
+    top: 65px;
     left: 0;
     right: 0;
     width: 100%;
@@ -144,7 +110,9 @@
 }
 
 .menu-label {
+    font-family: var(--font-family-title);
     font-size: 1rem;
+    color: var(--white);
 }
 
 // Desktop styles

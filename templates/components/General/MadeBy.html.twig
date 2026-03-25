@@ -1,2 +1,12 @@
-{# <twig:c975LSite:General:MadeBy url="https://..." logo="https://..." ["class"="your-class"] ["classLabel"="your-class-label"] ["height"="auto"] [width="auto"] /> #}
-<twig:c975LSite:Image:Link label="{{ 'label.made_by'|trans({}, 'site') }}" src="{{ logo }}" url="{{ url }}" target="_blank" above="true" class="{{ class|default('') }}" classLabel="{{ classLabel|default('') }}" height="{{ height|default("auto") }}" width="{{ width|default("auto") }}"/>
+{# <twig:c975LSite:General:MadeBy url="https://..." logo="https://..." ["class"="your-class"] ["classLabel"="your-class-label"] ["height"=""] [width=""] /> #}
+<twig:c975LSite:Image:Link
+    label="{{ 'label.made_by'|trans({}, 'site') }}"
+    src="{{ logo }}"
+    url="{{ url }}"
+    target="_blank"
+    above="true"
+    class="{{ class|default("") }}"
+    classLabel="{{ classLabel|default("") }}"
+    width="{{ width|default("") }}"
+    height="{{ height|default("") }}"
+/>
