@@ -5,13 +5,12 @@
 {% if inline == false %}
     <p class="text-center">
 {% endif %}
-    <a href="{{ url }}" target="{{ target|default("") }}" role="button" {% if download == true %}download{% endif %}>
-        <button class="btn btn-{{ type|default('primary') }}">
-            {% if icon != "" %}
-                <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
-            {% endif %}
-            {{ label|raw }}
-        </button></a>
+    <a href="{{ url }}" {% if target is defined and target != "" %}target="{{ target }}" {% endif %} role="button" {% if download == true %}download{% endif %} class="btn btn-{{ type|default('primary') }}">
+        {% if icon != "" %}
+            <twig:c975LSite:Image:Icon src="{{ icon }}" width="16" height="16" class="white"/>
+        {% endif %}
+        {{ label|raw }}
+    </a>
 {% if inline == false %}
     </p>
 {% endif %}

@@ -6,7 +6,7 @@
     {% set imgResponsive = "img-responsive" %}
 {% endif %}
 <p class="text-center">
-    <a href="{{ url }}" target="{{ target|default("") }}" aria-label="{{ ariaLabel|default('image') }}">
+    <a href="{{ url }}" {% if target is defined and target != "" %}target="{{ target }}" {% endif %}  aria-label="{{ ariaLabel|default('image') }}">
         {% if above and label != '' %}
             <span class="{{ classLabel|default("") }}">{{ label|raw }}</span>
             <br>

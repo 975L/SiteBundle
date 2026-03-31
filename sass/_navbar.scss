@@ -1,9 +1,10 @@
-nav h1 {
+nav {
     margin-top: 20px;
+    text-align: center;
 }
 
-nav h1 a,
-nav h1 a:hover {
+nav a,
+nav a:hover {
     color: var(--primary);
     font-family: var(--font-family-title);
 }

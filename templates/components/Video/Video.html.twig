@@ -3,7 +3,7 @@
 {% set autoplay = autoplay | default(false) %}
 {% set muted = muted | default(false) %}
 {% set loop = loop | default(false) %}
-<video controls class="img img-responsive {{ class|default("") }}" {% if poster != '' %} poster="{{ poster }}" {% endif %} {% if autoplay %} autoplay {% endif %} {% if muted %} muted {% endif %} {% if loop %} loop {% endif %} width="{{ width|default("auto") }}" height="{{ height|default("auto") }}">
+<video controls class="img img-responsive {{ class|default("") }}" {% if poster != '' %} poster="{{ poster }}" {% endif %} {% if autoplay %} autoplay {% endif %} {% if muted %} muted {% endif %} {% if loop %} loop {% endif %}  {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %}>
     <source src="{{ src }}" type="{{ type }}">
     <p>{{ 'label.video_not_supported'|trans({}, "site") }} <a href="{{ src }}">{{ 'label.download'|trans({}, "site") }}</a></p>
 </video>

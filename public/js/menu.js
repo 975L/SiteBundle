@@ -20,7 +20,7 @@ export default class extends Controller {
         // Close menu when clicking on a menu link
         this.boundHandleMenuLinkClick = this.handleMenuLinkClick.bind(this);
         this.menuLinkElements = this.element.querySelectorAll(".menu-link");
-        this.menuLinkElements.forEach(link => {
+        this.menuLinkElements.forEach((link) => {
             link.addEventListener("click", this.boundHandleMenuLinkClick);
         });
     }
@@ -30,7 +30,7 @@ export default class extends Controller {
         document.removeEventListener("keydown", this.boundHandleEscape);
         // Remove menu link click listeners
         if (this.menuLinkElements) {
-            this.menuLinkElements.forEach(link => {
+            this.menuLinkElements.forEach((link) => {
                 link.removeEventListener("click", this.boundHandleMenuLinkClick);
             });
         }
