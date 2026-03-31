@@ -1,10 +1,18 @@
 # Changelog
 
+## v6.25
+
+- Removed h1 from navbar as not recommended (31/03/2026)
+- Added Twig Extension Nl2br to avoid use of <br /> (31/03/2026)
+- Removed button element as descendant of a element (31/03/2026)
+- Removed width="auto" for Video components (25/03/2026)
+- Corrected html in models (31/03/2026)
+
 ## v6.24.1
 
 - Modified burger menu (25/03/2026)
 - Added if to RichSnippet component (25/03/2026)
-- Removed width="auto" for iImages components (25/03/2026)
+- Removed width="auto" for Images components (25/03/2026)
 - Added Section component (25/03/2026)
 
 ## v6.24

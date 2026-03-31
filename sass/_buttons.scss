@@ -91,6 +91,9 @@ a.btn:hover,
 a.btn:visited:hover {
     color: var(--button-link-color);
     text-decoration: none;
+    display: block;
+    margin: 0 auto;
+    max-width: 300px;
 }
 
 p:has(.btn) {

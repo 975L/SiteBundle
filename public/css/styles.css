@@ -465,25 +465,25 @@ h2 {
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.3em;
 }
 
 h4 {
-  font-size: 1.2rem;
+  font-size: 1.2em;
 }
 
 h5 {
-  font-size: 1.1rem;
+  font-size: 1.1em;
 }
 
 h6 {
-  font-size: 1.05rem;
+  font-size: 1.05em;
 }
 
 .lead {
   font-family: var(--font-family-title);
   color: var(--black);
-  font-size: 1.25rem;
+  font-size: 1.25em;
   font-weight: bold;
 }
 
@@ -682,7 +682,7 @@ a:hover.pullDown {
 /* ALERTS */
 .alert {
   padding: 1em;
-  margin-bottom: 1em;
+  margin: 1em;
   border: 1px solid transparent;
   border-radius: 5px;
 }
@@ -847,6 +847,9 @@ a.btn:hover,
 a.btn:visited:hover {
   color: var(--button-link-color);
   text-decoration: none;
+  display: block;
+  margin: 0 auto;
+  max-width: 300px;
 }
 
 p:has(.btn) {
@@ -860,6 +863,8 @@ button.btn {
 /* CARDS */
 .cards {
   display: flex;
+  flex-direction: row;
+  align-items: flex-start;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
@@ -1446,12 +1451,13 @@ tfoot td {
   color: #0056b3;
 }
 
-nav h1 {
+nav {
   margin-top: 20px;
+  text-align: center;
 }
 
-nav h1 a,
-nav h1 a:hover {
+nav a,
+nav a:hover {
   color: var(--primary);
   font-family: var(--font-family-title);
 }
