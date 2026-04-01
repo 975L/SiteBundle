@@ -9,6 +9,12 @@ nav a:hover {
     font-family: var(--font-family-title);
 }
 
+nav p {
+    font-size: 3em;
+    font-family: var(--font-family-title);
+    color: var(--primary);
+}
+
 nav img {
     height: 50px;
     width: auto;

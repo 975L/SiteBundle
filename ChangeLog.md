@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.25.1
+
+- Suppressed W3C css validator errors (01/04/2026)
+
 ## v6.25
 
 - Removed h1 from navbar as not recommended (31/03/2026)
