@@ -4,7 +4,6 @@
 
 .readmore-content {
     display: -webkit-box;
-    line-clamp: var(--readmore-lines);
     -webkit-line-clamp: var(--readmore-lines);
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -12,7 +11,6 @@
 
 .readmore-toggle:checked ~ .readmore-content {
     display: block;
-    line-clamp: unset;
     -webkit-line-clamp: unset;
 }
 

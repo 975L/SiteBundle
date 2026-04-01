@@ -394,7 +394,6 @@ button.btn {
 
 /* IMAGES */
 img {
-  overflow-clip-margin: content-box;
   overflow: clip;
 }
 
