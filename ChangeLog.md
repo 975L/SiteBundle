@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.25.2.1
+
+- Replaced single quotes by double quotes (02/04/2026)
+
 ## v6.25.2
 
 - Added toggle password (02/04/2026)
