@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.25.2
+
+- Added toggle password (02/04/2026)
+- Added fpaswword validation (02/04/2026)
+- Added javascript translations (02/04/2026)
+- Added touUrl config (02/04/2026)
+
 ## v6.25.1
 
 - Suppressed W3C css validator errors (01/04/2026)

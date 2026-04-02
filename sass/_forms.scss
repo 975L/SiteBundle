@@ -144,3 +144,47 @@ input[type="text"]:focus {
 .control-label.required::after {
     content: "*";
 }
+
+.has-toggle {
+    position: relative;
+}
+
+.has-toggle input[type="password"],
+.has-toggle input[type="text"] {
+    padding-right: 40px;
+}
+
+.has-toggle .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 40px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+input.error {
+    border-color: red;
+    background-color: #ffe6e6;
+    border-width: 3px;
+}
+
+input.success {
+    border-color: green;
+    background-color: #e6ffe6;
+    border-width: 3px;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
