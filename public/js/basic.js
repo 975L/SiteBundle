@@ -4,6 +4,7 @@
  * @copyright 2024 975L <contact@975l.com>
  */
 import { Controller } from "@hotwired/stimulus";
+import Handlers from "./handlers.js";
 
 export default class extends Controller {
     connect() {
@@ -17,6 +18,9 @@ export default class extends Controller {
     onDomContentLoaded() {
         this.htmlBoilerPlate();
         this.externalLinks();
+        this.togglePasswordVisibility();
+        this.validatePasswordFormat();
+        this.validatePassword();
     }
 
     // h5bp - Avoids console errors
@@ -33,7 +37,7 @@ export default class extends Controller {
                 methods.forEach((method) => {
                     console[method] = noop;
                 });
-            }());
+            })();
         }
     }
 
@@ -90,6 +94,104 @@ export default class extends Controller {
                 pullDown.classList.remove("fade-in");
                 pullDown.classList.add("fade-out");
             }
+        }
+    }
+
+    // Displays/Hides the password in the password fields
+    togglePasswordVisibility() {
+        let passwordInputs = document.querySelectorAll('input[type="password"]');
+        passwordInputs.forEach((passwordInput) => {
+            if (!passwordInput) return;
+
+            const parent = passwordInput.parentNode;
+            // mark parent so CSS can add input padding and position the toggle
+            if (!parent.classList.contains('has-toggle')) {
+                parent.classList.add('has-toggle');
+                if (getComputedStyle(parent).position === 'static') {
+                    parent.style.position = 'relative';
+                }
+
+                // Defines toggle
+                let toggle = document.createElement('span');
+                toggle.classList.add('toggle-password');
+
+                // Adds image
+                let image = document.createElement('img');
+                image.src = '/bundles/c975lsite/images/eye.svg';
+                toggle.appendChild(image);
+
+                // Append toggle to parent so it stays positioned even if an error node is inserted
+                parent.appendChild(toggle);
+
+                // Handles the click on the toggle
+                toggle.addEventListener('click', function () {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        passwordInput.setAttribute('autocomplete', 'off');
+                        image.src = '/bundles/c975lsite/images/eye-slash.svg';
+                    } else {
+                        passwordInput.type = 'password';
+                        passwordInput.setAttribute('autocomplete', 'current-password');
+                        image.src = '/bundles/c975lsite/images/eye.svg';
+                    }
+                });
+            }
+        });
+    }
+
+    // Checks the password format before submitting the form
+    validatePasswordFormat() {
+        let passwordInput = document.getElementById("registration_form_plainPassword");
+        let pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        let submitButton = document.querySelector("input[type='submit']") ? document.querySelector("input[type='submit']") : document.querySelector("button[type='submit']");
+
+        if (passwordInput) {
+            passwordInput.addEventListener("blur", function () {
+                if (!pattern.test(passwordInput.value)) {
+                    passwordInput.classList.add("error");
+                    passwordInput.parentNode.querySelector("#password_format_error")?.remove();
+
+                    let errorMessage = document.createElement("p");
+                    errorMessage.id = "password_format_error";
+                    errorMessage.classList.add("error-message");
+                    errorMessage.textContent = Handlers.translate("form.registration.password.error");
+                    passwordInput.parentNode.insertBefore(errorMessage, passwordInput.nextSibling);
+                    submitButton.disabled = true;
+                } else {
+                    passwordInput.classList.remove("error");
+                    passwordInput.classList.add("success");
+                    passwordInput.parentNode.querySelector("#password_format_error")?.remove();
+                    submitButton.disabled = false;
+                }
+            });
+        }
+    }
+
+    // Checks the password confirmation before submitting the form
+    validatePassword() {
+        let passwordInput = document.getElementById("registration_form_plainPassword");
+        let confirmPasswordInput = document.getElementById("registration_form_confirmPassword");
+        let submitButton = document.querySelector("input[type='submit']") ? document.querySelector("input[type='submit']") : document.querySelector("button[type='submit']");
+
+        if (passwordInput && confirmPasswordInput) {
+            confirmPasswordInput.addEventListener("blur", function () {
+                if (passwordInput.value !== confirmPasswordInput.value) {
+                    confirmPasswordInput.classList.add("error");
+                    confirmPasswordInput.parentNode.querySelector("#password_confirmation_error")?.remove();
+
+                    let errorMessage = document.createElement("p");
+                    errorMessage.id = "password_confirmation_error";
+                    errorMessage.classList.add("error-message");
+                    errorMessage.textContent = Handlers.translate("form.registration.password.confirmation.error");
+                    confirmPasswordInput.parentNode.insertBefore(errorMessage, confirmPasswordInput.nextSibling);
+                    submitButton.disabled = true;
+                } else {
+                    confirmPasswordInput.classList.remove("error");
+                    confirmPasswordInput.classList.add("success");
+                    confirmPasswordInput.parentNode.querySelector("#password_confirmation_error")?.remove();
+                    submitButton.disabled = false;
+                }
+            });
         }
     }
 }

@@ -42,3 +42,8 @@ c975LCommon:
         required: false
         default: null
         info: "url of the website i.e. https://example.com"
+    touUrl:
+        type: string
+        required: false
+        default: null
+        info: "Url for terms of use, i.e. https://example.com/terms-of-use"
