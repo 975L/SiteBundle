@@ -101,38 +101,40 @@ export default class extends Controller {
     togglePasswordVisibility() {
         let passwordInputs = document.querySelectorAll('input[type="password"]');
         passwordInputs.forEach((passwordInput) => {
-            if (!passwordInput) return;
+            if (!passwordInput) {
+                return;
+            }
 
             const parent = passwordInput.parentNode;
             // mark parent so CSS can add input padding and position the toggle
-            if (!parent.classList.contains('has-toggle')) {
-                parent.classList.add('has-toggle');
-                if (getComputedStyle(parent).position === 'static') {
-                    parent.style.position = 'relative';
+            if (!parent.classList.contains("has-toggle")) {
+                parent.classList.add("has-toggle");
+                if (getComputedStyle(parent).position === "static") {
+                    parent.style.position = "relative";
                 }
 
                 // Defines toggle
-                let toggle = document.createElement('span');
-                toggle.classList.add('toggle-password');
+                let toggle = document.createElement("span");
+                toggle.classList.add("toggle-password");
 
                 // Adds image
-                let image = document.createElement('img');
-                image.src = '/bundles/c975lsite/images/eye.svg';
+                let image = document.createElement("img");
+                image.src = "/bundles/c975lsite/images/eye.svg";
                 toggle.appendChild(image);
 
                 // Append toggle to parent so it stays positioned even if an error node is inserted
                 parent.appendChild(toggle);
 
                 // Handles the click on the toggle
-                toggle.addEventListener('click', function () {
-                    if (passwordInput.type === 'password') {
-                        passwordInput.type = 'text';
-                        passwordInput.setAttribute('autocomplete', 'off');
-                        image.src = '/bundles/c975lsite/images/eye-slash.svg';
+                toggle.addEventListener("click", function () {
+                    if (passwordInput.type === "password") {
+                        passwordInput.type = "text";
+                        passwordInput.setAttribute("autocomplete", "off");
+                        image.src = "/bundles/c975lsite/images/eye-slash.svg";
                     } else {
-                        passwordInput.type = 'password';
-                        passwordInput.setAttribute('autocomplete', 'current-password');
-                        image.src = '/bundles/c975lsite/images/eye.svg';
+                        passwordInput.type = "password";
+                        passwordInput.setAttribute("autocomplete", "current-password");
+                        image.src = "/bundles/c975lsite/images/eye.svg";
                     }
                 });
             }
@@ -143,7 +145,7 @@ export default class extends Controller {
     validatePasswordFormat() {
         let passwordInput = document.getElementById("registration_form_plainPassword");
         let pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-        let submitButton = document.querySelector("input[type='submit']") ? document.querySelector("input[type='submit']") : document.querySelector("button[type='submit']");
+        let submitButton = document.querySelector('input[type="submit"]') ? document.querySelector('input[type="submit"]') : document.querySelector('button[type="submit"]');
 
         if (passwordInput) {
             passwordInput.addEventListener("blur", function () {
@@ -171,7 +173,7 @@ export default class extends Controller {
     validatePassword() {
         let passwordInput = document.getElementById("registration_form_plainPassword");
         let confirmPasswordInput = document.getElementById("registration_form_confirmPassword");
-        let submitButton = document.querySelector("input[type='submit']") ? document.querySelector("input[type='submit']") : document.querySelector("button[type='submit']");
+        let submitButton = document.querySelector('input[type="submit"]') ? document.querySelector('input[type="submit"]') : document.querySelector('button[type="submit"]');
 
         if (passwordInput && confirmPasswordInput) {
             confirmPasswordInput.addEventListener("blur", function () {
