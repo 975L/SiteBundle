@@ -8,13 +8,13 @@
 <p class="text-center">
     <a href="{{ url }}" {% if target is defined and target != "" %}target="{{ target }}" {% endif %}  aria-label="{{ ariaLabel|default('image') }}">
         {% if above and label != '' %}
-            <span class="{{ classLabel|default("") }}">{{ label|raw }}</span>
+            <span class="img-above {{ classLabel|default("") }}">{{ label|raw }}</span>
             <br>
         {% endif %}
         <img src="{{ absolute_url(asset(src)) }}" class="img {{ imgResponsive }} {{ class|default("") }}" alt="{{ alt|default("") }}" {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %} loading="lazy">
         {% if false == above and label != '' %}
             <br>
-            <span class="{{ classLabel|default("") }}">{{ label|raw }}</span>
+            <span class="img-below {{ classLabel|default("") }}">{{ label|raw }}</span>
         {% endif %}
     </a>
 </p>
