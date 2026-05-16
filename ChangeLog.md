@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.25.3.1
+
+- Corrected javascript copyrights (16/05/2026)
+
 ## v6.25.3
 
 - Added img-below + img-above css classes (04/05/2026)
