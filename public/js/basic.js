@@ -10,19 +10,18 @@ import Handlers from "./handlers.js";
 
 export default class extends Controller {
     connect() {
-        document.addEventListener("DOMContentLoaded", this.onDomContentLoaded.bind(this));
-        window.addEventListener("scroll", () => {
-            this.backTopButton();
-            this.pullDownButton();
-        });
-    }
-
-    onDomContentLoaded() {
+        // Execute immediately for Turbo compatibility
         this.htmlBoilerPlate();
         this.externalLinks();
         this.togglePasswordVisibility();
         this.validatePasswordFormat();
         this.validatePassword();
+
+        // Also listen for scroll events
+        window.addEventListener("scroll", () => {
+            this.backTopButton();
+            this.pullDownButton();
+        });
     }
 
     // h5bp - Avoids console errors

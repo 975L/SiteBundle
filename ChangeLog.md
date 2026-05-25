@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.25.4
+
+- Fixed toggle password visibility with Turbo compatibility (25/05/2026)
+
 ## v6.25.3.1
 
 - Corrected javascript copyrights (16/05/2026)
@@ -15,7 +19,7 @@
 ## v6.25.2
 
 - Added toggle password (02/04/2026)
-- Added fpaswword validation (02/04/2026)
+- Added password validation (02/04/2026)
 - Added javascript translations (02/04/2026)
 - Added touUrl config (02/04/2026)
 
