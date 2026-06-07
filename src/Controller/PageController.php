@@ -9,19 +9,25 @@
 
 namespace c975L\SiteBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use c975L\SiteBundle\Service\PageServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+use Symfony\Component\Routing\Attribute\Route;
 /**
  * Main Site Controller class
  * @author Laurent Marquet <laurent.marquet@laposte.net>
- * @copyright 2025 975L <contact@975l.com>
+ * @copyright 2026 975L <contact@975l.com>
  */
 class PageController extends AbstractController
 {
+
+    public function __construct(
+        private readonly PageServiceInterface $pageService
+    ) {
+    }
+
 //HOME
     /**
      * Redirects to page_home
@@ -54,7 +60,7 @@ class PageController extends AbstractController
     public function home()
     {
         return $this->render(
-            'pages/home.html.twig',
+            'pages/home.html.twig', ['pages' => $this->pageService->findAll()],
         )->setMaxAge(3600);
     }
 
@@ -92,12 +98,21 @@ class PageController extends AbstractController
             return $this->render(
                 'pages/' . $page
             )->setMaxAge(3600);
-        //Redirected
+        // Redirected
         } elseif (is_file($pageFolder . 'pages/redirected/' . $page)) {
             return $this->redirectToRoute('page_display', ['page' => trim(file_get_contents($pageFolder . 'pages/redirected/' . $page))]);
-        //Deleted
+        // Deleted
         } elseif (is_file($pageFolder . 'pages/deleted/' . $page)) {
             throw new GoneHttpException();
+        // Page in ORM
+        } else {
+            $pageObject = $this->pageService->findOneBySlug($page);
+            if ($pageObject) {
+                return $this->render(
+                        '@c975LSite/pages/page.html.twig',
+                        ['page' => $pageObject]
+                    )->setMaxAge(3600);
+            }
         }
 
         throw $this->createNotFoundException();

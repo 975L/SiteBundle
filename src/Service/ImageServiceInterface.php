@@ -10,11 +10,11 @@
 namespace c975L\SiteBundle\Service;
 
 /**
- * Interface to be called for DI for ServiceImageInterface related services
+ * Interface to be called for DI for ImageServiceInterface related services
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2018 975L <contact@975l.com>
  */
-interface ServiceImageInterface
+interface ImageServiceInterface
 {
     /**
      * Deletes image file

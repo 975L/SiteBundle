@@ -1,0 +1,6 @@
+<article class="site-article" id="{{ article.slug }}">
+    <h2>{{ article.title }}</h2>
+    <twig:c975LSite:Slider:Slider slides="{{ article.medias }}" id="article-{{ article.slug }}" duration="3500"/>
+    {{ article.description|raw|nl2br }}
+    {{ article.detail|raw|nl2br }}
+</article>

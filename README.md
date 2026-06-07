@@ -68,6 +68,27 @@ SiteBundle use the following variables which are page-based, meaning that they c
 
 Transferred from c975L/PageEditBundle, you can display pages, from Twig templates taht are located in `templates/pages` using the Route `page_display`. You can also redirect pages by adding a `pages/redirected/redirect.html.twig`, where `redirect` is the slug of the page you want to redirect and th file itself contains the slug of the redirection. In the same way if you create a `pages/deleted/delete.html.twig`, where `delete` is the slug of the deleted page, a GoneException will be thrown.
 
+### Pages in database
+
+You can use the `Page` entity to create pages in database, these pages will be displayed with the `page_display` route. You can also use the `Article` entity to create articles linked to a page, these articles will be displayed in the page template.
+
+To upload images, you need to use the `VichUploaderBundle` and to create a mapping named `site_articles` with the following configuration:
+
+```yaml
+# config/packages/vich_uploader.yaml
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        site_articles:
+            uri_prefix: /medias/site
+            upload_destination: '%kernel.project_dir%/public/medias/site'
+            namer: c975L\SiteBundle\Namer\SiteMediaNamer
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+```
+
 ### Override a block
 
 You can override any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`:
@@ -413,13 +434,13 @@ Some Twig components are available, check `templates/components` to see them. An
 If you want to resize an image, you can do the following:
 
 ```php
-use c975L\SiteBundle\Service\ServiceImageInterface;
+use c975L\SiteBundle\Service\ImageServiceInterface;
 
 class YourClass
 {
     private $imageService;
 
-    public yourMethod(ServiceImageInterface $imageService)
+    public yourMethod(ImageServiceInterface $imageService)
     {
         //Do your stuff...
 
@@ -434,13 +455,13 @@ class YourClass
 If you want to create a flash message, you can do the following:
 
 ```php
-use c975L\SiteBundle\Service\ServiceToolsInterface;
+use c975L\SiteBundle\Service\ToolsServiceInterface;
 
 class YourClass
 {
     private $toolsService;
 
-    public yourMethod(ServiceToolsInterface $toolsService)
+    public yourMethod(ToolsServiceInterface $toolsService)
     {
         //Do your stuff...
 
@@ -449,6 +470,10 @@ class YourClass
     }
 }
 ```
+
+## Useful Commands
+
+Run this Command `php bin/console site:media:delete` once a day to remove physical ProdutItemMedia not deleted when the ProductItem is deleted.
 
 ## `.sh` scripts
 

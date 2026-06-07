@@ -146,7 +146,8 @@ h6 {
   font-size: 90%;
 }
 
-.text {
+.text,
+.site-article {
   max-width: 90vw;
   margin: 0 auto;
 }
@@ -188,6 +189,16 @@ blockquote {
   border-left: 10px solid var(--primary);
 }
 
+.site-article > div {
+  margin-top: 1em;
+}
+
+@media only screen and (min-width: 768px) {
+  .text,
+  .site-article {
+    max-width: 800px;
+  }
+}
 /* CONTAINERS */
 .container {
   margin: 0 auto 1.5em auto;
@@ -580,24 +591,4 @@ footer a:visited:hover {
 footer li {
   margin: 10px;
   font-size: 1.15em;
-}
-
-/* SCREENS */
-/* @media only screen
-    and (min-width: 360px) {
-} */
-/* @media only screen
-    and (min-width: 480px) {
-} */
-@media only screen and (min-width: 768px) {
-  nav img {
-    height: 100px;
-    width: auto;
-  }
-  .text {
-    max-width: 800px;
-  }
-}
-/* @media only screen
-    and (min-width: 992px) {
-} *//*# sourceMappingURL=emails.css.map */
+}/*# sourceMappingURL=emails.css.map */

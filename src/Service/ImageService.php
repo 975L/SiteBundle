@@ -14,11 +14,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
 /**
- * Services related to ServiceImageInterface
+ * Services related to ImageServiceInterface
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2017 975L <contact@975l.com>
  */
-class ServiceImage implements ServiceImageInterface
+class ImageService implements ImageServiceInterface
 {
     public function __construct(
         /**

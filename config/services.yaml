@@ -10,6 +10,15 @@ services:
     c975L\SiteBundle\Controller\:
         resource: '../src/Controller/*'
 
+    c975L\SiteBundle\Listener\:
+        resource: '../src/Listener/*'
+
+    c975L\SiteBundle\Namer\:
+        resource: '../src/Namer/*'
+
+    c975L\SiteBundle\Repository\:
+        resource: '../src/Repository/*'
+
     c975L\SiteBundle\Service\:
         resource: '../src/Service/*'
 

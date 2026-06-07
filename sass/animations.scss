@@ -5,6 +5,6 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-@import '_animations.scss';
-@import '_animations-classes.scss';
-@import '_animations-media.scss';
+@use '_animations.scss';
+@use '_animations-classes.scss';
+@use '_animations-media.scss';
