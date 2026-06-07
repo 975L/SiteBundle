@@ -20,10 +20,14 @@
     "require": {
         "php": ">=8.0",
         "c975l/config-bundle": "*",
+        "doctrine/orm": "*",
+        "easycorp/easyadmin-bundle": "*",
+        "imagine/imagine": "*",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/ux-twig-component": "*",
-        "twig/cssinliner-extra": "*"
+        "twig/cssinliner-extra": "*",
+        "vich/uploader-bundle": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

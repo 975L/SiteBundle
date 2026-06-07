@@ -36,8 +36,10 @@ export default class extends Controller {
         elements.forEach((element) => {
             if (this.isElementInViewport(element, 200)) {
                 const animationClass = element.getAttribute("data-animation");
-                element.classList.remove("hidden");
-                element.classList.add(animationClass);
+                if (animationClass) {
+                    element.classList.remove("hidden");
+                    element.classList.add(animationClass);
+                }
             }
         })
     }

@@ -58,7 +58,8 @@ h6 {
     font-size: 90%;
 }
 
-.text {
+.text,
+.site-article {
   max-width: 90vw;
   margin: 0 auto;
 }
@@ -98,4 +99,16 @@ blockquote {
     padding: 0.5em;
     text-align: left;
     border-left: 10px solid var(--primary);
+}
+
+.site-article > div {
+    margin-top: 1em;
+}
+
+
+@media only screen and (min-width: 768px) {
+    .text,
+    .site-article {
+        max-width: 800px;
+    }
 }

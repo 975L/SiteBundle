@@ -1,5 +1,12 @@
 # Changelog
 
+## v6.26
+
+- Renamed/deleted services (06/06/2026)
+- Added Pages/Articles management (06/06/2026) [Needs db migration]
+- Added automatic slider (06/06/2026)
+- Added WAI compatibility for slider (06/06/2026)
+
 ## v6.25.4
 
 - Fixed toggle password visibility with Turbo compatibility (25/05/2026)

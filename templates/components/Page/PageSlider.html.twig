@@ -1,0 +1,12 @@
+{% set slides = [] %}
+{% for article in page.articles %}
+    {% if article.medias %}
+        {% set slides = slides|merge([{
+            'image': article.medias.first,
+            'title': article.title,
+            'text': article.description,
+            'url': path('page_display', {'page': page.slug}) ~ '#' ~ article.slug
+        }]) %}
+    {% endif %}
+{% endfor %}
+<twig:c975LSite:Slider:Slider slides="{{ slides }}" id="slider-{{ page.slug }}" duration="{{ 3500 }}"/>

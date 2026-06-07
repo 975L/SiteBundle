@@ -176,6 +176,126 @@
                 <source>label.address</source>
                 <target>Address</target>
             </trans-unit>
+            <trans-unit id="44">
+                <source>label.title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>label.slug</source>
+                <target>Slug</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>label.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>label.dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>label.management</source>
+                <target>Management</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>label.page</source>
+                <target>Page</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>label.pages</source>
+                <target>Pages</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>label.signout</source>
+                <target>Sign out</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>label.user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>label.article</source>
+                <target>Article</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>label.articles</source>
+                <target>Articles</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>label.image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>label.detail</source>
+                <target>Detail</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>label.creation</source>
+                <target>Creation</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>label.modification</source>
+                <target>Modification</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>label.position_help</source>
+                <target>Display order in page (1 = first, use increments of 5 to facilitate future modifications)</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>text.no_articles</source>
+                <target>No articles available.</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>label.back_to_list</source>
+                <target>Back to list</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>label.previous_slide</source>
+                <target>Previous slide</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>label.next_slide</source>
+                <target>Next slide</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>label.stop_animation</source>
+                <target>Stop animation</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>label.start_animation</source>
+                <target>Start animation</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>label.slide_navigation</source>
+                <target>Slide navigation</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>label.slide</source>
+                <target>Slide</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>label.current</source>
+                <target>current</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>label.item_of</source>
+                <target>Item %current% of %total%</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.pages_gallery</source>
+                <target>Pages gallery</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>label.is_published</source>
+                <target>Is published</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>label.management_interface</source>
+                <target>Management interface</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
