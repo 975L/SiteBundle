@@ -16,6 +16,7 @@ export default class extends Controller {
             this.createLiveRegion(sliderId);
             this.preloadSliderImages(sliderId);
             this.initializeSlider(sliderId);
+            this.resizeSlider(sliderId);
             this.setupAccessibility(sliderId);
             this.startAutoPlay(sliderId);
         }
@@ -151,7 +152,6 @@ export default class extends Controller {
         const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
         slides.forEach((slide) => {
             slide.addEventListener("click", () => {
-                console.log(1111111111111111);
                 this.displaySlide(sliderId, ++this.slideIndex, "next");
             });
         });
@@ -164,6 +164,41 @@ export default class extends Controller {
                 const direction = targetSlide > this.slideIndex ? "next" : "prev";
                 this.displaySlide(sliderId, targetSlide, direction);
             });
+        });
+    }
+
+    // resizeSlider
+    resizeSlider(sliderId) {
+        const slider = document.querySelector(`#${sliderId}`);
+        const slides = document.querySelectorAll(`#${sliderId} .slider-item`);
+
+        if (slides.length === 0) {
+            return;
+        }
+
+        // Gets img height and width to set slider height
+        slides.forEach((slide) => {
+            const img = slide.querySelector("img");
+            if (img && img.clientHeight > slider.clientHeight) {
+                slider.style.height = `${img.clientHeight}px`;
+            }
+        });
+
+        // Recalculates height in case of resizing the window, waits that resize is finished to avoid multiple calculations
+        let resizeTimeout = 1000;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                const slide = Array.from(slides).find((slide) => slide.style.display === "block");
+                const img = slide.querySelector("img");
+                if (img) {
+                    if (img.clientHeight > slider.clientHeight) {
+                        slider.style.height = `${img.clientHeight}px`;
+                    } else {
+                        slider.style.height = "";
+                    }
+                }
+            }, resizeTimeout);
         });
     }
 
@@ -180,33 +215,11 @@ export default class extends Controller {
         const index = this.calculateIndex(number, slides.length);
 
         // Find current active slide
-        const currentSlide = Array.from(slides).find(slide => slide.style.display === "block");
+        const currentSlide = Array.from(slides).find((slide) => slide.style.display === "block");
         const newSlide = slides[index - 1];
 
-        // Gets img height and width to set slider height
-        const img = newSlide.querySelector("img");
-        if (img) {
-            const slider = document.querySelector(`#${sliderId}`);
-            if (img.clientHeight > slider.clientHeight) {
-                slider.style.height = `${img.clientHeight}px`;
-            }
-        }
-
-        // Recalculates above in case of resizing the window
-        window.addEventListener("resize", () => {
-            const img = newSlide.querySelector("img");
-            if (img) {
-                const slider = document.querySelector(`#${sliderId}`);
-                if (img.clientHeight > slider.clientHeight) {
-                    slider.style.height = `${img.clientHeight}px`;
-                } else {
-                    slider.style.height = "";
-                }
-            }
-        });
-
         // Remove animation classes
-        slides.forEach(slide => {
+        slides.forEach((slide) => {
             slide.classList.remove("slide-in-right", "slide-in-left", "slide-out-right", "slide-out-left");
         });
 

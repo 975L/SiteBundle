@@ -1,5 +1,10 @@
 # Changelog
 
+## v6.26.1
+
+- Added maintenance mode (11/06/2026)
+- Corrected script for slider auto size (11/06/2026)
+
 ## v6.26
 
 - Renamed/deleted services (06/06/2026)

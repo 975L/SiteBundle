@@ -429,6 +429,10 @@ This will be helpful in case of text files like json or whatever.nt to give acce
 
 Some Twig components are available, check `templates/components` to see them. An example of use is in each component file.
 
+### Maintenance mode
+
+You can activate the maintenance mode by setting `MAINTENANCE_MODE` environment variable to `true`. You also need to set a secret token with `MAINTENANCE_TOKEN` environment variable, to allow access to the website for users having the token, via URL parameter `?t=YOUR_TOKEN` or via session if they have already accessed the website with the token.
+
 ### Resize image
 
 If you want to resize an image, you can do the following:
