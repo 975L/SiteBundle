@@ -296,6 +296,14 @@
                 <source>label.management_interface</source>
                 <target>Management interface</target>
             </trans-unit>
+            <trans-unit id="74">
+                <source>label.maintenance</source>
+                <target>Maintenance</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.maintenance_message</source>
+                <target>We are working to provide you with a better experience. Please come back soon!</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

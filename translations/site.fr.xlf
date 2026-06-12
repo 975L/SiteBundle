@@ -297,6 +297,15 @@
                 <source>label.management_interface</source>
                 <target>Interface de gestion</target>
             </trans-unit>
+            <trans-unit id="74">
+                <source>label.maintenance</source>
+                <target>Maintenance</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.maintenance_message</source>
+                <target>Nous travaillons pour vous offrir une meilleure expérience. Revenez bientôt !</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>
