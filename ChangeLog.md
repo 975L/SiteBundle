@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.26.2
+
+- Added missing services.yaml file (12/06/2026)
+
 ## v6.26.1
 
 - Added maintenance mode (11/06/2026)
