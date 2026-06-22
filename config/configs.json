@@ -27,7 +27,7 @@
         "label": "Site Favicon",
         "slug": "site-favicon",
         "sensitive": false,
-        "value": null,
+        "value": "favicon.ico",
         "kind": "text",
         "description": "Path for the favicon to be display: i.e. favicon.ico (Default: null)"
     },
@@ -35,7 +35,7 @@
         "label": "Site Apple Touch Icon",
         "slug": "site-apple-touch-icon",
         "sensitive": false,
-        "value": null,
+        "value": "apple-touch-icon.png",
         "kind": "text",
         "description": "Path for the appleTouchIcon to be display: i.e. apple-touch-icon.png (Default: null)"
     },
