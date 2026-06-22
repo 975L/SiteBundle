@@ -21,11 +21,9 @@ Use [Composer](https://getcomposer.org) to install the library
     composer require c975L/site-bundle
 ```
 
-### Configure the Bundle
+### Load config values
 
-v2.0+ of c975LSiteBundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage configuration parameters. Use  its dashoard Route to modify them.
-
-Upgrading from v1.x? **Check UPGRADE.md**
+This bundles relies on [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage its configuration values. So, you have to install it and then load the default data using `php bin/console c975l:config:load 'vendor/c975l/site-bundle/config/configs.json'` to add data in the database, then use the dashboard route of ConfigBundle to set values for the keys.
 
 ### Enable the Routes
 

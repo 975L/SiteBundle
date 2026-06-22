@@ -10,9 +10,6 @@ services:
     c975L\SiteBundle\Controller\:
         resource: '../src/Controller/*'
 
-    c975L\SiteBundle\DataFixtures\:
-        resource: '../src/DataFixtures/*'
-
     c975L\SiteBundle\Listener\:
         resource: '../src/Listener/*'
 
