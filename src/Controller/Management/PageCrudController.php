@@ -11,23 +11,30 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\SiteBundle\Entity\Page;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 #[IsGranted('ROLE_ADMIN')]
 class PageCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly Security $security,
+    ) {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Page::class;
@@ -91,5 +98,34 @@ class PageCrudController extends AbstractCrudController
             ->add('slug')
             ->add('creation')
         ;
+    }
+
+    // New page
+    public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
+    {
+        $page->setCreation(new \DateTime());
+        $page->setModification(new \DateTime());
+        $this->setUser($page);
+
+        parent::persistEntity($entityManager, $page);
+    }
+
+    // Updated page - Invalidate cache
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $page): void
+    {
+        $page->setModification(new \DateTime());
+        $this->setUser($page);
+
+        parent::updateEntity($entityManager, $page);
+    }
+
+
+    // Defines the user for the page
+    private function setUser(Page $page): void
+    {
+        $user = $this->security->getUser();
+        if (null !== $user) {
+            $page->setUser($user);
+        }
     }
 }

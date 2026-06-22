@@ -10,15 +10,14 @@ services:
     c975L\SiteBundle\Controller\:
         resource: '../src/Controller/*'
 
+    c975L\SiteBundle\DataFixtures\:
+        resource: '../src/DataFixtures/*'
+
     c975L\SiteBundle\Listener\:
         resource: '../src/Listener/*'
 
-    c975L\SiteBundle\Listener\MaintenanceListener:
-        arguments:
-            $maintenanceMode: '%env(bool:default::MAINTENANCE_MODE)%'
-            $secretToken: '%env(default::MAINTENANCE_TOKEN)%'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, priority: 10 }
+    c975L\SiteBundle\Management\:
+        resource: '../src/Management/*'
 
     c975L\SiteBundle\Namer\:
         resource: '../src/Namer/*'

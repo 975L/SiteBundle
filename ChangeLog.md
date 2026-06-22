@@ -1,5 +1,14 @@
 # Changelog
 
+## v6.27
+
+- Added time for maintenance access (15/06/2026)
+- Added join for article medias (18/06/2026)
+- Corrected Sitemap command to include pages in database (18/06/2026)
+- Moved Listener logic to CrudControllers (18/06/2026)
+- Removed twitter meta data (20/06/2026)
+- Removed MaintenanceListener (moved to c975L/ConfigBundle) (22/06/2026)
+
 ## v6.26.2
 
 - Added missing services.yaml file (12/06/2026)

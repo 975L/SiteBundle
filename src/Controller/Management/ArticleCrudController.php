@@ -11,6 +11,7 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\SiteBundle\Entity\Article;
 use c975L\SiteBundle\Form\ArticleMediaType;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -26,11 +27,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 class ArticleCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private readonly Security $security,
+    ) {
+    }
+
+
     public static function getEntityFqcn(): string
     {
         return Article::class;
@@ -107,5 +115,33 @@ class ArticleCrudController extends AbstractCrudController
         return $filters
             ->add('title')
         ;
+    }
+
+    // New article
+    public function persistEntity(EntityManagerInterface $entityManager, mixed $article): void
+    {
+        $article->setCreation(new \DateTime());
+        $article->setModification(new \DateTime());
+        $this->setUser($article);
+
+        parent::persistEntity($entityManager, $article);
+    }
+
+    // Updated article - Invalidate cache
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $article): void
+    {
+        $article->setModification(new \DateTime());
+        $this->setUser($article);
+
+        parent::updateEntity($entityManager, $article);
+    }
+
+    // Defines the user for the article
+    private function setUser(Article $article): void
+    {
+        $user = $this->security->getUser();
+        if (null !== $user) {
+            $article->setUser($user);
+        }
     }
 }

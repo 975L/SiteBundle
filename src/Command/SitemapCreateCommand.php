@@ -1,14 +1,16 @@
 <?php
 namespace c975L\SiteBundle\Command;
 
-use Twig\Environment;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use c975L\SiteBundle\Service\PageServiceInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Finder\Finder;
+use Twig\Environment;
 
 /**
  * Console command to create sitemap of pages, executed with 'pageedit:createSitemap'
@@ -21,13 +23,18 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 )]
 class SitemapCreateCommand extends Command
 {
-    public function __construct(
-        private readonly ConfigServiceInterface $configService,
-        private readonly Environment $environment
+    private $urlRoot;
+    private $sitemapFolder;
 
-    )
-    {
+    public function __construct(
+        private readonly ParameterBagInterface $parameterBag,
+        private readonly Environment $environment,
+        private readonly ConfigServiceInterface $configService,
+        private readonly PageServiceInterface $pageService,
+    ) {
         parent::__construct();
+        $this->sitemapFolder = $this->parameterBag->get('kernel.project_dir') . '/public';
+        $this->urlRoot = $this->configService->get('url');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -41,28 +48,38 @@ class SitemapCreateCommand extends Command
         return Command::SUCCESS;
     }
 
+    // Creates the sitemap
     private function createSitemap(): void
     {
-        $root = $this->configService->getContainerParameter('kernel.project_dir');
-        $urlRoot = $this->configService->getParameter('c975LCommon.url');
-        $folderPath = $root . '/templates/pages';
+        $urlsPages = $this->getUrlsFromFolder();
+        $urlsDatabase = $this->getUrlsFromDatabase();
+        $urls = array_merge($urlsPages, $urlsDatabase);
 
-        //Gets pages
+        //Writes file
+        $sitemapContent = $this->environment->render('@c975LSite/sitemap.xml.twig', ['urls' => $urls]);
+        $sitemapFile = $this->sitemapFolder . '/sitemap-pages.xml';
+        file_put_contents($sitemapFile, $sitemapContent);
+    }
+
+
+    // Gets urls form physical files in templates/pages folder
+    public function getUrlsFromFolder(): array
+    {
         $finder = new Finder();
         $finder
             ->files()
-            ->in($folderPath)
+            ->in($this->parameterBag->get('kernel.project_dir') . '/templates/pages')
             ->depth('== 0')
             ->name('*.html.twig')
             ->sortByName()
-            ;
+        ;
 
         // Urls for the pages
         $urls = [];
         foreach ($finder as $file) {
             $fileContent = $file->getContents();
-            $url = $urlRoot . '/pages/' . str_replace('.html.twig', '', $file->getRelativePathname());
-            $url = $url === $urlRoot . "/pages/home" ? $urlRoot : $url;
+            $url = $this->urlRoot . '/pages/' . str_replace('.html.twig', '', $file->getRelativePathname());
+            $url = $url === $this->urlRoot . "/pages/home" ? $this->urlRoot : $url;
             $urls[]= [
                 'loc' => $url,
                 'lastmod' => date('Y-m-d', $file->getMTime()),
@@ -71,10 +88,27 @@ class SitemapCreateCommand extends Command
             ];
         }
 
-        //Writes file
-        $sitemapContent = $this->environment->render('@c975LSite/sitemap.xml.twig', ['urls' => $urls]);
-        $sitemapFile = $root . '/public/sitemap-pages.xml';
-        file_put_contents($sitemapFile, $sitemapContent);
+        return $urls;
+    }
+
+    // Gets urls from database
+    public function getUrlsFromDatabase(): array
+    {
+        $pages = $this->pageService->findAll();
+
+        // Urls for the pages
+        $urls = [];
+        foreach ($pages as $page) {
+            $url = $this->urlRoot . '/pages/' . $page->getSlug();
+            $urls[]= [
+                'loc' => $url,
+                'lastmod' => date('Y-m-d', $page->getModification()->getTimestamp()),
+                'changefreq' => 'weekly',
+                'priority' => 9,
+            ];
+        }
+
+        return $urls;
     }
 
     // Returns frequency from file content

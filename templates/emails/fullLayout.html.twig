@@ -1,10 +1,9 @@
 {% trans_default_domain 'site' %}
 
-{# Gets data from parameters set via c975L/ConfigBundle #}
-{% set site = config('c975LCommon.site') %}
-{% set author = config('c975LCommon.author') %}
-{% set firstOnlineDate = config('c975LCommon.firstOnlineDate') %}
-{% set logo = config('c975LCommon.url') ~ "/" ~ asset(config('c975LCommon.logo')) %}
+{% set site = config('site-name') %}
+{% set author = config('site-author') %}
+{% set firstOnlineDate = config('site-first-online-date') %}
+{% set logo = config('site-url') ~ "/" ~ asset(config('site-logo')) %}
 
 {# Copyright #}
 {% if firstOnlineDate is defined %}
