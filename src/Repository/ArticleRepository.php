@@ -26,6 +26,8 @@ class ArticleRepository extends ServiceEntityRepository
     public function findAllOrdered(): array
     {
         return $this->createQueryBuilder('a')
+            ->select('a, m')
+            ->leftJoin('a.medias', 'm')
             ->andWhere('a.isPublished = :published')
             ->setParameter('published', true)
             ->orderBy('a.position', 'ASC')
@@ -37,6 +39,8 @@ class ArticleRepository extends ServiceEntityRepository
     public function findByPage(int $pageId): array
     {
         return $this->createQueryBuilder('a')
+            ->select('a, m')
+            ->leftJoin('a.medias', 'm')
             ->andWhere('a.page = :pageId')
             ->andWhere('a.isPublished = :published')
             ->setParameter('pageId', $pageId)

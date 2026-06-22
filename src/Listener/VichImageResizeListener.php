@@ -15,9 +15,7 @@ use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
 use Vich\UploaderBundle\Event\Event;
 use Vich\UploaderBundle\Event\Events;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use c975L\SiteBundle\Entity\ArticleMedia;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -29,7 +27,6 @@ class VichImageResizeListener implements EventSubscriberInterface
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-        private readonly EntityManagerInterface $entityManager,
     ) {
         $this->filesystem = new Filesystem();
     }

@@ -2,19 +2,14 @@
 <nav class="menu" data-controller="menu">
     <div class="menu-header">
         {% if logo is defined %}
-            <a href="{{ path('page_home') }}" class="menu-logo">
-                <img src="{{ asset(logo) }}" alt="{{ siteName|default('Logo') }}" width="40" height="40" loading="eager">
-            </a>
+            <twig:c975LSite:Image:Link src="{{ asset(logo) }}" url="{{ path('page_home') }}" class="menu-logo" alt="{{ siteName|default('Logo') }}" width="40"/>
         {% endif %}
 
         {% if siteName is defined %}
-            <span class="menu-site-name">{{ siteName }}</span>
+            <p class="menu-site-name">{{ siteName }}</p>
         {% endif %}
 
-        <button class="menu-toggle"
-                data-action="click->menu#toggle"
-                aria-label="{{ 'menu.toggle'|trans({}, 'site') }}"
-                aria-expanded="false">
+        <button class="menu-toggle" data-action="click->menu#toggle" aria-label="{{ 'menu.toggle'|trans({}, 'site') }}" aria-expanded="false">
             <img src="bundles/c975lsite/images/bars.svg" class="menu-toggle-icon white" alt="" width="24" height="24">
         </button>
     </div>

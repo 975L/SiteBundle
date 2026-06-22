@@ -1,21 +1,20 @@
-{# Gets data from parameters set via c975L/ConfigBundle #}
-{% if config('c975LCommon.site') != null %}
-    {% set site = config('c975LCommon.site') %}
+{% if config('site-name') != null %}
+    {% set site = config('site-name') %}
 {% endif %}
-{% if config('c975LCommon.author') != null %}
-    {% set author = config('c975LCommon.author') %}
+{% if config('site-author') != null %}
+    {% set author = config('site-author') %}
 {% endif %}
-{% if config('c975LCommon.firstOnlineDate') != null %}
-    {% set firstOnlineDate = config('c975LCommon.firstOnlineDate') %}
+{% if config('site-first-online-date') != null %}
+    {% set firstOnlineDate = config('site-first-online-date') %}
 {% endif %}
-{% if config('c975LCommon.logo') != null %}
-    {% set logo = absolute_url(asset(config('c975LCommon.logo'))) %}
+{% if config('site-logo') != null %}
+    {% set logo = absolute_url(asset(config('site-logo'))) %}
 {% endif %}
-{% if config('c975LCommon.favicon') != null %}
-    {% set favicon = absolute_url(asset(config('c975LCommon.favicon'))) %}
+{% if config('site-favicon') != null %}
+    {% set favicon = absolute_url(asset(config('site-favicon'))) %}
 {% endif %}
-{% if config('c975LCommon.appleTouchIcon') != null %}
-    {% set appleTouchIcon = absolute_url(asset(config('c975LCommon.appleTouchIcon'))) %}
+{% if config('site-apple-touch-icon') != null %}
+    {% set appleTouchIcon = absolute_url(asset(config('site-apple-touch-icon'))) %}
 {% endif %}
 
 {# Copyright #}
@@ -79,8 +78,6 @@
                     {% if site is defined %}
                         <meta property="og:site_name" content="{{ site }}">
                     {% endif %}
-{# Twitter card #}
-                    <meta name="twitter:card" content="summary">
 {# Author #}
                     {% if author is defined %}
                         <meta name="author" content="{{ author }}">
@@ -93,25 +90,21 @@
                     {% if description is defined and description is not empty %}
                         <meta name="description" content="{{ description|striptags }}">
                         <meta property="og:description" content="{{ description|striptags|slice(0,150) }}">
-                        <meta name="twitter:description" content="{{ description|striptags|slice(0,200) }}">
                     {% endif %}
 {# Title #}
                     {% if pageTitle is defined %}
                         <title>{{ pageTitle }}</title>
                         <meta name="title" content="{{ pageTitle }}">
                         <meta property="og:title" content="{{ pageTitle }}">
-                        <meta name="twitter:title" content="{{ pageTitle }}">
                     {% endif %}
 {# Type #}
                     <meta property="og:type" content="website">
 {# Image #}
                     {% if ogImage is defined %}
                         <meta property="og:image" content="{{ ogImage }}">
-                        <meta name="twitter:image" content="{{ ogImage }}">
                     {% endif %}
 {# Url #}
                     <meta property="og:url" content="{{ app.request.uri }}">
-                    <meta property="twitter:url" content="{{ app.request.uri }}">
                     <link rel="canonical" href="{{ app.request.uri }}">
 {# Favicon #}
                     {% if favicon is defined%}

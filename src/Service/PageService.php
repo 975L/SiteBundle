@@ -24,17 +24,11 @@ class PageService implements PageServiceInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findAll(): array
     {
         return $this->pageRepository->findAllOrdered();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function findOneBySlug(string $page): ?Page
     {
         return $this->pageRepository->findOneBySlug(str_replace('.html.twig', '', $page));

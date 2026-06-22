@@ -1,0 +1,73 @@
+[
+    {
+        "label": "Site Name",
+        "slug": "site-name",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Name of the web site: i.e. Example.com"
+    },
+    {
+        "label": "Site Tagline",
+        "slug": "site-tagline",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Tagline of the website"
+    },
+    {
+        "label": "Site Logo",
+        "slug": "site-logo",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Path for the logo to be display in email (recommended): i.e. images/logo.png (Default: null)"
+    },
+    {
+        "label": "Site Favicon",
+        "slug": "site-favicon",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Path for the favicon to be display: i.e. favicon.ico (Default: null)"
+    },
+    {
+        "label": "Site Apple Touch Icon",
+        "slug": "site-apple-touch-icon",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Path for the appleTouchIcon to be display: i.e. apple-touch-icon.png (Default: null)"
+    },
+    {
+        "label": "Site Author",
+        "slug": "site-author",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "The author that will be set in the meta data"
+    },
+    {
+        "label": "Site first online date",
+        "slug": "site-first-online-date",
+        "sensitive": true,
+        "value": null,
+        "kind": "date",
+        "description": "Date when the site went online"
+    },
+    {
+        "label": "Site URL",
+        "slug": "site-url",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "URL of the website i.e. https://example.com"
+    },
+    {
+        "label": "URL Terms of use",
+        "slug": "url-terms-of-use",
+        "value": null,
+        "kind": "text",
+        "description": "URL of the terms of use page i.e. https://example.com/terms-of-use"
+    }
+]
