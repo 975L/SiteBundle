@@ -12,12 +12,11 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\SiteBundle\Controller\Management\ArticleCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use c975L\ConfigBundle\Management\AbstractMenuProvider;
 
 class MenuProvider extends AbstractMenuProvider
 {
-    public function getSection(): array
+    public function getMenuSection(): array
     {
         return [
             'label' => 'label.management',
@@ -25,7 +24,7 @@ class MenuProvider extends AbstractMenuProvider
         ];
     }
 
-    public function getMenu(): array
+    public function getMenus(): array
     {
         return [
             'page' => [
