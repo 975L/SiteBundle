@@ -9,6 +9,7 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Article;
 use c975L\SiteBundle\Form\ArticleMediaType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,12 +30,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Translation\TranslatableMessage;
 
 #[IsGranted('ROLE_ADMIN')]
 class ArticleCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly Security $security,
+        private readonly ConfigServiceInterface $configService,
     ) {
     }
 
@@ -50,15 +53,15 @@ class ArticleCrudController extends AbstractCrudController
             IdField::new('id')
                 ->onlyOnIndex(),
             TextField::new('title')
-                ->setLabel('label.title')
+                ->setLabel(new TranslatableMessage('label.title', [], 'site'))
                 ->setRequired(true),
             SlugField::new('slug')
-                ->setLabel('label.slug')
+                ->setLabel(new TranslatableMessage('label.slug', [], 'site'))
                 ->setTargetFieldName('title')
                 ->setRequired(true),
 
             // Media management
-            FormField::addFieldset('Media')
+            FormField::addFieldset(new TranslatableMessage('label.media', [], 'site'))
                 ->hideOnIndex(),
             CollectionField::new('medias')
                 ->hideOnIndex()
@@ -66,28 +69,28 @@ class ArticleCrudController extends AbstractCrudController
 
             // Content
             TextEditorField::new('description')
-                ->setLabel('label.description')
+                ->setLabel(new TranslatableMessage('label.description', [], 'site'))
                 ->hideOnIndex(),
             TextEditorField::new('detail')
-                ->setLabel('label.detail')
+                ->setLabel(new TranslatableMessage('label.detail', [], 'site'))
                 ->hideOnIndex(),
 
             // Page association and publication
             AssociationField::new('page')
-                ->setLabel('label.page'),
+                ->setLabel(new TranslatableMessage('label.page', [], 'site')),
             IntegerField::new('position')
-                ->setLabel('label.position')
-                ->setHelp('label.position_help'),
+                ->setLabel(new TranslatableMessage('label.position', [], 'site'))
+                ->setHelp(new TranslatableMessage('label.position_help', [], 'site')),
             BooleanField::new('isPublished')
-                ->setLabel('label.is_published'),
+                ->setLabel(new TranslatableMessage('label.is_published', [], 'site')),
 
             // Dates
             DateTimeField::new('creation')
-                ->setLabel('label.creation')
+                ->setLabel(new TranslatableMessage('label.creation', [], 'site'))
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
             DateTimeField::new('modification')
-                ->setLabel('label.modification')
+                ->setLabel(new TranslatableMessage('label.modification', [], 'site'))
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
         ];
@@ -97,7 +100,7 @@ class ArticleCrudController extends AbstractCrudController
     {
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->setPermission(Action::NEW, 'ROLE_ADMIN')
+            ->setPermission(Action::NEW, $this->configService->get('site-role-needed'))
         ;
     }
 
@@ -105,7 +108,7 @@ class ArticleCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission('ROLE_ADMIN')
+            ->setEntityPermission($this->configService->get('site-role-needed'))
             ->setDefaultSort(['position' => 'ASC'])
         ;
     }

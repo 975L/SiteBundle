@@ -293,6 +293,10 @@
                 <source>label.is_published</source>
                 <target>Est publié</target>
             </trans-unit>
+            <trans-unit id="73">
+                <source>label.website</source>
+                <target>Site web</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

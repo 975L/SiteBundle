@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.27.3
+
+- Renamed method in MenuProvider (22/06/2026)
+- Corrected default configs (22/06/2026)
+- Added translated messages (22/06/2026)
+
 ## v6.27.2
 
 - Corrected SitemapCreateCommand
