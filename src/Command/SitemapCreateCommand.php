@@ -41,7 +41,7 @@ class SitemapCreateCommand extends Command
     ) {
         parent::__construct();
         $this->sitemapFolder = $this->parameterBag->get('kernel.project_dir') . '/public';
-        $this->urlRoot = $this->configService->get('url');
+        $this->urlRoot = $this->configService->get('site-url');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

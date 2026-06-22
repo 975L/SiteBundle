@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.27.2
+
+- Corrected SitemapCreateCommand
+
 ## v6.27.1
 
 - Removed use of Fixtures to load default values and made use of ConfigBundle Command (22/06/2026)
