@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.27.4
+
+- Added composer require for c975l/ui-bundle (24/06/2026)
+
 ## v6.27.3
 
 - Renamed method in MenuProvider (22/06/2026)
