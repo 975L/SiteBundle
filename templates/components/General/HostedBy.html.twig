@@ -1,12 +1,13 @@
-{# <twig:c975LSite:General:HostedBy url="https://..." logo="https://..." [class="your-class"] [classLabel="your-class-label"] ["height"=""] [width=""]/> #}
-<twig:c975LSite:Image:Link
+{# <twig:c975LSite:General:HostedBy/> #}
+{% set hostedByUrl = config('site-hosted-by-url') %}
+{% set hostedByLogo = config('site-hosted-by-logo') %}
+{% if hostedByUrl and hostedByLogo %}
+<twig:c975LUi:Image:Link
     label="{{ 'label.hosted_by'|trans({}, 'site') }}"
-    src="{{ logo }}"
-    url="{{ url }}"
+    src="{{ hostedByLogo }}"
+    url="{{ hostedByUrl }}"
+    height="25"
     target="_blank"
     above="true"
-    class="{{ class|default('') }}"
-    classLabel="{{ classLabel|default('') }}"
-    width="{{ width|default("") }}"
-    height="{{ height|default("") }}"
 />
+{% endif %}

@@ -25,7 +25,7 @@ use Twig\Environment;
  * @copyright 2017 975L <contact@975l.com>
  */
 #[AsCommand(
-    name: 'site:sitemaps:create',
+    name: 'c975l:site:sitemaps:create',
     description: 'Creates the sitemap of pages located in templates/pages folder'
 )]
 class SitemapCreateCommand extends Command
@@ -110,8 +110,8 @@ class SitemapCreateCommand extends Command
             $urls[]= [
                 'loc' => $url,
                 'lastmod' => date('Y-m-d', $page->getModification()->getTimestamp()),
-                'changefreq' => 'weekly',
-                'priority' => 9,
+                'changefreq' => $page->getChangeFrequency() ?? 'weekly',
+                'priority' => $page->getPriority() ?? 9,
             ];
         }
 
