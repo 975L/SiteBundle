@@ -19,9 +19,6 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
  */
 class c975LSiteExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function load(array $configs, ContainerBuilder $container): void
     {
     }

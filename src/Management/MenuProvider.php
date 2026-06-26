@@ -10,7 +10,6 @@
 
 namespace c975L\SiteBundle\Management;
 
-use c975L\SiteBundle\Controller\Management\ArticleCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\ConfigBundle\Management\AbstractMenuProvider;
 
@@ -32,12 +31,6 @@ class MenuProvider extends AbstractMenuProvider
                 'label' => 'label.pages',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-file',
-            ],
-            'article' => [
-                'controller' => ArticleCrudController::class,
-                'label' => 'label.articles',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-newspaper',
             ],
         ];
     }

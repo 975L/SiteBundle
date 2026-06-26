@@ -296,6 +296,54 @@
                 <source>label.website</source>
                 <target>Website</target>
             </trans-unit>
+            <trans-unit id="74">
+                <source>label.change_frequency</source>
+                <target>Change frequency</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.change_frequency_help</source>
+                <target>Frequency at which the page content changes</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.priority</source>
+                <target>Priority</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>label.priority_help</source>
+                <target>Priority of the page in the sitemap (0 = low, 10 = high)</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.always</source>
+                <target>Always</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.hourly</source>
+                <target>Hourly</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.daily</source>
+                <target>Daily</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.weekly</source>
+                <target>Weekly</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.monthly</source>
+                <target>Monthly</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>label.yearly</source>
+                <target>Yearly</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>label.never</source>
+                <target>Never</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.description_help</source>
+                <target>This content will be used to describe the page to search engines and social networks. It is not visible on the page.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

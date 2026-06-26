@@ -66,8 +66,105 @@
     {
         "label": "URL Terms of use",
         "slug": "url-terms-of-use",
+        "sensitive": false,
         "value": null,
         "kind": "text",
         "description": "URL of the terms of use page i.e. https://example.com/terms-of-use"
+    },
+    {
+        "label": "Hosted By URL",
+        "slug": "site-hosted-by-url",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "URL of the hosting company i.e. https://example.com"
+    },
+    {
+        "label": "Hosted By Logo",
+        "slug": "site-hosted-by-logo",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Path or URL of the hosting company logo"
+    },
+    {
+        "label": "Made By URL",
+        "slug": "site-made-by-url",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "URL of the developer/agency i.e. https://example.com"
+    },
+    {
+        "label": "Made By Logo",
+        "slug": "site-made-by-logo",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "Path or URL of the developer/agency logo"
+    },
+    {
+        "label": "URL Cookies Policy",
+        "slug": "url-cookies-policy",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "URL of the cookies policy page i.e. https://example.com/cookies"
+    },
+    {
+        "label": "Matomo URL",
+        "slug": "site-matomo-url",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "description": "URL of the Matomo instance i.e. https://matomo.example.com"
+    },
+    {
+        "label": "Matomo Site ID",
+        "slug": "site-matomo-id",
+        "sensitive": true,
+        "value": null,
+        "kind": "text",
+        "description": "Matomo site ID (integer)"
+    },
+    {
+        "label": "Backup DB Host",
+        "slug": "site-backup-db-host",
+        "sensitive": true,
+        "value": "localhost",
+        "kind": "text",
+        "description": "MySQL host for backups"
+    },
+    {
+        "label": "Backup DB User",
+        "slug": "site-backup-db-user",
+        "sensitive": true,
+        "value": null,
+        "kind": "text",
+        "description": "MySQL user for backups"
+    },
+    {
+        "label": "Backup DB Password",
+        "slug": "site-backup-db-password",
+        "sensitive": true,
+        "value": null,
+        "kind": "text",
+        "description": "MySQL password for backups"
+    },
+    {
+        "label": "Backup Database",
+        "slug": "site-backup-database",
+        "sensitive": true,
+        "value": null,
+        "kind": "text",
+        "description": "Name of the MySQL database to back up"
+    },
+    {
+        "label": "Backup Mailto",
+        "slug": "site-backup-mailto",
+        "sensitive": true,
+        "value": null,
+        "kind": "text",
+        "description": "Email address for backup reports and error notifications"
     }
 ]

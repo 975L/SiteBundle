@@ -1,119 +1,171 @@
 # SiteBundle
 
-**-- README IS NOT REALLY UP TO DATE ;( --**
+Symfony bundle that provides a complete foundation for building websites — layout, pages, SEO, admin, sitemap, legal templates, and more.
 
-SiteBundle does the following:
+[![GitHub](https://img.shields.io/github/license/975L/SiteBundle)](https://github.com/975L/SiteBundle/blob/master/LICENSE)
+[![Packagist Version](https://img.shields.io/packagist/v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
+[![PHP Version](https://img.shields.io/packagist/php-v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 
-- Defines a layout used to display the web pages,
-- Variables are used to display data linked to website, name, etc.,
-- Allows to add Matomo javascript by just set url and id,
-- Allows to add CookieConsent by just adding its data,
-- Allows to have templates to override TwigBundle/Exception templates,
-- Allows to use pre-defined Terms of use, Terms of sales, etc.
+---
 
-## Bundle installation
+## Features
 
-### Download the Bundle
+- **Base layout** with SEO-optimized meta tags (OpenGraph, robots, canonical, favicon, Apple touch icon)
+- **Page display** from Twig templates (file-based) or from the database via the `Page` entity
+- **Page redirects** and 410 Gone handling
+- **Admin CRUD** for database pages via EasyAdmin
+- **Sitemap generation** from both filesystem templates and database pages
+- **Error page templates** for 401, 403, 404, 410, and 500
+- **Legal model templates** for France (French): cookies, copyright, legal notice, privacy policy, terms of sales, terms of use
+- **Matomo analytics** integration
+- **CookieConsent** integration
+- **Alternate language** hreflang meta tags
+- **Open Graph** image support
+- **Email templates** with CSS inlining
+- **Asset serving** controller (inline display, access-protected)
+- **File download** controller (forced download, access-protected)
+- **Twig extensions**: `route_exists`, `template_exists`, `asset_exists`, `nl2br`
+- **CSS animations** stylesheet
+- **File lists**: `extensions.txt` and `bots.txt`
 
-Use [Composer](https://getcomposer.org) to install the library
+---
+
+## Requirements
+
+- PHP >= 8.1
+- [c975L/ConfigBundle](https://github.com/975L/ConfigBundle)
+- [c975L/UiBundle](https://github.com/975L/UiBundle)
+- Doctrine ORM
+- EasyAdmin
+- symfony/ux-twig-component
+- twig/cssinliner-extra
+
+---
+
+## Installation
+
+### 1. Download
 
 ```bash
-    composer require c975L/site-bundle
+composer require c975l/site-bundle
 ```
 
-### Load config values
+### 2. Load configuration values
 
-This bundles relies on [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage its configuration values. So, you have to install it and then load the default data using `php bin/console c975l:config:load 'vendor/c975l/site-bundle/config/configs.json'` to add data in the database, then use the dashboard route of ConfigBundle to set values for the keys.
+This bundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage its settings. Load the default configuration keys into the database:
 
-### Enable the Routes
+```bash
+php bin/console c975l:config:load 'vendor/c975l/site-bundle/config/configs.json'
+```
 
-Then, enable the routes by adding them to the `config/routes.yaml` file of your project:
+Then open the ConfigBundle dashboard to set values for the following keys:
 
-```yml
+| Key | Description |
+| --- | --- |
+| `site-name` | Website name |
+| `site-tagline` | Website tagline |
+| `site-logo` | Logo path (used in emails) |
+| `site-favicon` | Favicon path (default: `/favicon.ico`) |
+| `site-apple-touch-icon` | Apple touch icon path (default: `/apple-touch-icon.png`) |
+| `site-author` | `<meta name="author">` value |
+| `site-first-online-date` | Date the site went online |
+| `site-url` | Base URL, e.g. `https://example.com` |
+| `url-terms-of-use` | URL of the terms of use page |
+| `url-cookies-policy` | URL of the cookies policy page (used by CookieConsent) |
+| `site-matomo-url` | Matomo instance URL, e.g. `https://matomo.example.com` |
+| `site-matomo-id` | Matomo site ID (integer) |
+| `site-hosted-by-url` | URL of the hosting company |
+| `site-hosted-by-logo` | Path or URL of the hosting company logo |
+| `site-made-by-url` | URL of the developer / agency |
+| `site-made-by-logo` | Path or URL of the developer / agency logo |
+| `site-backup-database` | MySQL database name to back up |
+| `site-backup-mailto` | Email for backup reports and error notifications |
+
+### 3. Enable routes
+
+Add the bundle routes to `config/routes.yaml`:
+
+```yaml
 c975_l_site:
     resource: "@c975LSiteBundle/Controller/"
     type: attribute
     prefix: /
-    #Multilingual website use the following
-    #prefix: /{_locale}
-    #defaults:   { _locale: '%locale%' }
-    #requirements:
-    #    _locale: en|fr|es
+    # For multilingual websites:
+    # prefix: /{_locale}
+    # defaults:
+    #     _locale: '%locale%'
+    # requirements:
+    #     _locale: en|fr|es
 ```
 
-### Install assets to web folder
-
-Install assets by running
+### 4. Install assets
 
 ```bash
 php bin/console assets:install --symlink
 ```
 
-It will create a link from folder `Resources/public/` in your web folder. These files are used in the `layout.html.twig`.
+---
 
-### How to use
+## Usage
 
-You **must** create a file named `layout.html.twig` in your `app/Resources/views/` that extends `@c975LSite/layout.html.twig`, so simply add this `{% extends '@c975LSite/layout.html.twig' %}` at its top.
+### Creating your layout
 
-SiteBundle use the following variables which are page-based, meaning that they change for each page. If you want to use them, simply declare them on each page that extend your `app/Resources/views/layout.html.twig`.
-
-```twig
-{% set title = 'YOUR_PAGE_TITLE' %}
-{% set description = 'YOUR_PAGE_DESCRIPTION' %}
-```
-
-## Display Pages
-
-Transferred from c975L/PageEditBundle, you can display pages, from Twig templates taht are located in `templates/pages` using the Route `page_display`. You can also redirect pages by adding a `pages/redirected/redirect.html.twig`, where `redirect` is the slug of the page you want to redirect and th file itself contains the slug of the redirection. In the same way if you create a `pages/deleted/delete.html.twig`, where `delete` is the slug of the deleted page, a GoneException will be thrown.
-
-### Pages in database
-
-You can use the `Page` entity to create pages in database, these pages will be displayed with the `page_display` route. You can also use the `Article` entity to create articles linked to a page, these articles will be displayed in the page template.
-
-To upload images, you need to use the `VichUploaderBundle` and to create a mapping named `site_articles` with the following configuration:
-
-```yaml
-# config/packages/vich_uploader.yaml
-vich_uploader:
-    db_driver: orm
-
-    mappings:
-        site_articles:
-            uri_prefix: /medias/site
-            upload_destination: '%kernel.project_dir%/public/medias/site'
-            namer: c975L\SiteBundle\Namer\SiteMediaNamer
-            inject_on_load: false
-            delete_on_update: true
-            delete_on_remove: true
-```
-
-### Override a block
-
-You can override any block in the template, to do so, simply add the following in your `app/Resources/views/layout.html.twig`:
+Create `templates/layout.html.twig` in your project and extend the bundle's layout:
 
 ```twig
-{% block share %}
-    {# You can also use {{ parent() }} #}
-    {# YOUR_OWN_TEXT #}
-{% endblock %}
+{% extends '@c975LSite/layout.html.twig' %}
 ```
 
-Have a look at `Resources/views/layout.html.twig`, to see all available blocks.
+### Page-specific variables
 
-### Disable a block
+Declare these variables in each page template to populate meta tags and the page title:
 
-To disable a block, simply add the following in your `app/Resources/views/layout.html.twig`:
+```twig
+{% set title = 'My Page Title' %}
+{% set description = 'A short description of this page.' %}
+```
+
+### Template blocks
+
+The layout exposes the following Twig blocks for you to override or extend:
+
+| Block | Description |
+| --- | --- |
+| `head` | Entire `<head>` element |
+| `meta` | Meta tags (charset, viewport, robots, og:*, etc.) |
+| `stylesheets` | CSS links |
+| `preconnect` | `<link rel="preconnect">` hints |
+| `body` | Entire `<body>` element |
+| `header` | Site header |
+| `navigation` | Main navigation |
+| `main` | Main content wrapper |
+| `title` | Page `<h1>` title |
+| `flashes` | Flash messages |
+| `container` | Container div wrapping `content` |
+| `content` | Page-specific content |
+| `share` | Sharing widgets |
+| `navigationBottom` | Bottom navigation |
+| `footer` | Site footer |
+| `javascripts` | JavaScript includes |
+
+**Override a block:**
 
 ```twig
 {% block share %}
+    {{ parent() }}
+    {# your additional content #}
 {% endblock %}
 ```
 
-Have a look at `Resources/views/layout.html.twig`, to see all available blocks.
+**Disable a block:**
 
-### Use the display variable
+```twig
+{% block share %}{% endblock %}
+```
 
-In your `app/Resources/views/layout.html.twig` you can use the following to include (or not) templates:
+### Display mode
+
+Use the `display` variable to conditionally include templates (defaults to `html`):
 
 ```twig
 {% if display == 'pdf' %}
@@ -123,457 +175,399 @@ In your `app/Resources/views/layout.html.twig` you can use the following to incl
 {% endif %}
 ```
 
-if `display` is not defined, hten it's define to `html`.
+---
 
-### Matomo javascript
+## Pages
 
-You can easily add a call to matomo by adding the following in your `app/Resources/views/layout.html.twig`:
+### File-based pages
+
+Place Twig templates in `templates/pages/`. They are served at `/pages/{slug}` via the `page_display` route.
+
+To **hint the sitemap generator**, add metadata in a Twig comment at the top of the file:
 
 ```twig
-{%
-    set matomo = {
-        'id': YOUR_MATOMO_ID,
-        'url': 'YOUR_MATOMO_URL'
-    }
-%}
+{# changeFrequency="monthly" priority="8" #}
 ```
 
-### CookieConsent
+### Redirects and deleted pages
 
-You can easily add a call to CookieConsent by adding the following in your `app/Resources/views/layout.html.twig`
+| Location | Effect |
+| --- | --- |
+| `templates/pages/redirected/{slug}.html.twig` | Redirects to the slug written inside the file |
+| `templates/pages/deleted/{slug}.html.twig` | Throws a 410 Gone exception |
 
-```twig
-{%
-    set cookieConsent = {
-        'message': 'YOUR TEXT',
-        'dismiss': 'YOUR_DISMISS_TEXT',
-        'link': 'YOUR_COOKIES_POLICY_LINK_TEXT',
-        'href': 'YOUR_COOKIES_POLICY_LINK'
-    }
-%}
-{# or use the texts defined in SiteBundle #}
-{%
-    set cookieConsent = {
-        'message': 'text.cookies_banner'|trans,
-        'dismiss': 'text.cookies_dismiss'|trans,
-        'link': 'label.cookies_policy'|trans,
-        'href': 'YOUR_COOKIES_POLICY_LINK'
-    }
-%}
+### Database pages
+
+Use the `Page` entity to manage pages through the database. Each page supports:
+
+- Title, slug (unique), description
+- Published status and display position
+- Sitemap fields: change frequency and priority (0–10)
+- Blocks (content blocks from [c975L/UiBundle](https://github.com/975L/UiBundle))
+- Creation / modification timestamps and author reference
+
+Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` template, which displays the page title, description, and its associated blocks.
+
+### Admin management
+
+Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-needed` key in ConfigBundle.
+
+---
+
+## SEO
+
+### Sitemap generation
+
+Run the following command to generate `public/sitemap-pages.xml`:
+
+```bash
+php bin/console site:sitemaps:create
 ```
 
-### Alternate languages
+The command aggregates URLs from:
+1. Twig files in `templates/pages/` (reads `changeFrequency` and `priority` from comments)
+2. Published database pages (uses their `changeFrequency` and `priority` fields)
 
-You can define the meta `<link rel="alternate" hreflang="YOUR_LANGUAGE" href="URL_WITH_ALTERNATE_LANGUAGE">` by setting a `languagesAlt` array in your `app/Resources/views/layout.html.twig`
+A sitemap index template is also available at `@c975LSite/sitemap-index.xml.twig`.
+
+### Alternate languages (hreflang)
+
+Define `languagesAlt` to add `<link rel="alternate" hreflang="...">` tags and enable a language switcher navbar component:
 
 ```twig
-{%
-set languagesAlt = {
+{% set languagesAlt = {
     en: { title: 'English' },
     fr: { title: 'Français' },
     es: { title: 'Español' }
-    }
-%}
+} %}
 ```
 
-It will replace the current language by the ones set in `languagesAlt` using the following scheme `https://example.com/LANGUAGE/pages/XXX`.
+URLs are built as `https://example.com/{locale}/pages/{slug}`.
 
-Having this array set, you can also use `navbarLanguagesDropdownMenu.html.twig` in your navbar to display a dropdown menu to select available languages.
+### Open Graph image
 
-### ogImage
-
-You can define an ogImage to use on page basis, with the following code:
+Set a per-page OG image:
 
 ```twig
-{% set ogImage = absolute_url(asset('PATH_TO_YOUR_IMAGE')) %}
+{% set ogImage = absolute_url(asset('images/my-og-image.jpg')) %}
 ```
 
-### Animations
+---
 
-There's a css file in `public/css/` that you can link to to use some animations
+## General components
+
+All components below read their data from ConfigBundle. No props are needed — just include the tag and set the corresponding keys via the ConfigBundle dashboard.
+
+### Matomo
+
+Set `site-matomo-url` and `site-matomo-id` in ConfigBundle, then place the component wherever you want the tracking snippet (typically just before `</body>`):
 
 ```twig
-<link rel="stylesheet" href="bundles/c975lsite/css/animations.min.css">
+<twig:c975LSite:General:Matomo/>
 ```
 
-### Error pages
+The component renders nothing if either config value is missing.
 
-You can also use the templates for common error pages. For this, you need to follow [How to Customize Error Pages](http://symfony.com/doc/current/controller/error_pages.html) to create the structure `app/Resources/TwigBundle/views/Exception` and files for each type of error. Of course you can still stop at the level of overidding `TwigBundle/Exception`, but if you want to use the pre-defined error templates, do the following:
+### CookieConsent
 
-The types of error covered by SiteBundle are:
+Set `url-cookies-policy` in ConfigBundle (optional — links the banner to your cookies page), then place the component in your layout:
 
-- error
-- error401
-- error403
-- error404
-- error410
-- error500
+```twig
+<twig:c975LSite:General:CookieConsent/>
+```
 
-In each file copy/paste the following code:
+The `message`, `dismiss`, and `link` texts are loaded from the `site` translation domain.
+
+### HostedBy / MadeBy
+
+Set `site-hosted-by-url` + `site-hosted-by-logo` and/or `site-made-by-url` + `site-made-by-logo` in ConfigBundle, then include the components (typically in the footer):
+
+```twig
+<twig:c975LSite:General:HostedBy/>
+<twig:c975LSite:General:MadeBy/>
+```
+
+Each component renders nothing if either its URL or logo config value is missing.
+
+---
+
+## Error templates
+
+Pre-built error templates are available for: `error`, `error401`, `error403`, `error404`, `error410`, and `error500`.
+
+Follow the Symfony guide on [customizing error pages](https://symfony.com/doc/current/controller/error_pages.html), then include the bundle templates in your own error files:
 
 ```twig
 {% extends 'layout.html.twig' %}
 
 {% block content %}
-    {# Take care to modify the error code in the included template name, i.e. "404" given here #}
-    {% include('@c975LSite/Exception/error404.html.twig') %}
+    {% include '@c975LSite/Exception/error404.html.twig' %}
 {% endblock %}
 
-{% block share %}
-{% endblock %}
+{% block share %}{% endblock %}
 ```
 
-### Add stylesheets
+---
 
-To add stylesheets, simply add the following  in your `app/Resources/views/layout.html.twig`:
+## Legal models
 
-```twig
-{% block stylesheets %}
-    {{ parent() }}
-    {# Of course you can provide the full "link" html data #}
-{% endblock %}
-```
+Pre-built legal templates are available for **France** in **French** (`fr`). Available models:
 
-### Add javascripts
+| Model | Path |
+| --- | --- |
+| Cookies policy | `@c975LSite/models/france/fr/cookies.html.twig` |
+| Copyright | `@c975LSite/models/france/fr/copyright.html.twig` |
+| Legal notice | `@c975LSite/models/france/fr/legal-notice.html.twig` |
+| Privacy policy | `@c975LSite/models/france/fr/privacy-policy.html.twig` |
+| Terms of sales | `@c975LSite/models/france/fr/terms-of-sales.html.twig` |
+| Terms of use | `@c975LSite/models/france/fr/terms-of-use.html.twig` |
 
-To add javascripts, simply add the following  in your `app/Resources/views/layout.html.twig`:
+Each model is also available in Markdown format (`.md`).
 
-```twig
-{% block javascripts %}
-    {{ parent() }}
-   {# Of course you can provide the full "script" html data #}
-{% endblock %}
-```
+**Feel free to contribute translations or add templates for other countries.**
 
-## Full layout example
-
-You can use this full layout example as a basis for your project:
+### Include the whole model
 
 ```twig
-{% extends '@c975LSite/layout.html.twig' %}
-
-{%
-set languagesAlt = {
-    en: { title: 'English' },
-    fr: { title: 'Français' },
-    es: { title: 'Español' }
-    }
-%}
-{%
-    set matomo = {
-        'id': YOUR_MATOMO_ID,
-        'url': 'YOUR_MATOMO_URL'
-    }
-%}
-{%
-    set cookieConsent = {
-        'message': 'text.cookies_banner'|trans,
-        'dismiss': 'text.cookies_dismiss'|trans,
-        'link': 'label.cookies_policy'|trans,
-        'href': 'YOUR_COOKIES_POLICY_LINK'
-    }
-%}
-
-{# Meta #}
-{% block meta %}
-    {{ parent() }}
-{# Facebook app_id #}
-    <meta property="fb:app_id" content="YOUR_FACEBOOK_APP_ID">
-{% endblock %}
-
-{# Css #}
-{% block stylesheets %}
-    {{ parent() }}
-{% endblock %}
-
-{# Navigation #}
-{% block navigation %}
-    {{ include('navbar.html.twig') }}
-{% endblock %}
-
-{# Title #}
-{% block title %}
-    {% if app.request.get('_route') != null %}
-        <h1>
-            {{ title }}
-        </h1>
-    {% endif %}
-{% endblock %}
-
-{# Container #}
-{% block container %}
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
-{% endblock %}
-
-{# Share #}
-{% block share %}
-    {# YOUR SHARING TOOL  #}
-{% endblock %}
-
-{# Footer #}
-{% block footer %}
-    {{ include('footer.html.twig') }}
-{% endblock %}
-
-{# Javascript #}
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %}
-```
-
-## Use pre-defined models
-
-There are two ways to use the pre-defined models, `include` or `embed`, both are based on country an language: `{% include '@c975LSite/models/COUNTRY/LANGUAGE/terms-of-sales.html.twig' %}`. You can see an example below for `Terms of sale` for `France` in `fr` (french).
-
-If you have a **multlingual website** you can call by ommitting the language `{% include '@c975LSite/models/COUNTRY/terms-of-sales.html.twig' %}`, SiteBundle will check if your current language is available and will display it, or will display the default language if not.
-
-## Use whole file (include)
-
-You want to use the whole file, place this code in your template:
-
-```twig
-{% extends 'YOUR_LAYOUT.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% trans_default_domain 'site' %}
-{# Title value is made of 'label.' + name of page, replacing "-" by "_" #}
-{# i.e. page 'terms-of-sales' gives title = 'label.terms_of_sales' #}
 {% set title = 'label.terms_of_sales'|trans %}
 
 {% block content %}
-    {# set the defined data (indicated at the top of the template file) before including #}
-    {% set latestUpdate = '2018-03-08' %}
-
+    {% set latestUpdate = '2024-01-01' %}
     {% include '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
-
-    {# You can your own data at the end #}
-    <h2>Achat de crédits</h2>
-    <p class="text-justify">
-        L’achat de crédits ...
-    </p>
 {% endblock %}
 ```
 
-### Select blocks (embed)
-
-You want to select the displayed blocks, place this code in your template. **Note** that you have to specify the language in the `embed` function:
+### Select specific blocks (embed)
 
 ```twig
-{% extends 'YOUR_LAYOUT.html.twig' %}
+{% extends 'layout.html.twig' %}
 
 {% trans_default_domain 'site' %}
 {% set title = 'label.terms_of_sales'|trans %}
 
 {% block content %}
-    {# set the defined data (indicated at the top of the template file) before including #}
-    {% set latestUpdate = '2018-03-08' %}
-
+    {% set latestUpdate = '2024-01-01' %}
     {% embed '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
-        {# Then you can disable block #}
-        {% block acceptation %}
-        {% endblock %}
+        {# Disable a block #}
+        {% block acceptation %}{% endblock %}
 
-        {# Or append information to it #}
+        {# Or extend a block #}
         {% block acceptation %}
             {{ parent() }}
-            Your added content
-        {% endblock %}
-
-        {# Or replace content #}
-        {% block acceptation %}
-            Your replacing content
+            Additional content here.
         {% endblock %}
     {% endembed %}
 {% endblock %}
-
 ```
 
-### Available models
+---
 
-You can find below a table containing all the models available per country and language. **Feel free to update them, add translations or countries.** By convention files are named using "-" with the english name.
-
-| Model          | France |
-|---             |---     |
-| Cookies        | fr     |
-| Copyright      | fr     |
-| Legal notice   | fr     |
-| Privacy policy | fr     |
-| Tems of sales  | fr     |
-| Tems of use    | fr     |
-
-To facilitate reading, models are also available in Markdown format. If you do a modification, you can use Command `php bin/console models:twig2md` to convert Twig models templates to their Markdown equivalent.
-
-If this project **help you to reduce time to develop**, you can sponsor me via the "Sponsor" button at the top :)
+## Asset and Download controllers
 
 ### AssetController
 
-You can use this route to serve an asset file, by using the following code in your Twig template: `{{ path('asset_file', {'file': 'your/path/your_file.ext[.ext2]'}) }}`.
+Serves a file inline (e.g., images, PDFs). Useful for serving files only to authenticated users.
 
-file name can contain uppercase, lowercase, accented letters, "-", "_", "/", "\", only spaces are not allowed. You can also use 2 file extensions.
+```twig
+{{ path('asset_file', { file: 'path/to/your_file.pdf' }) }}
+```
 
-This will be helpful if you want to give access to your assets to registered users. You simply need to add `- { path: ^/your/path, roles: ROLE_USER }` to `config/packages/security.yaml` > `access_control`part. And you can add an http basic authentication on the asset folder itself.
+To restrict access, add an entry to `config/packages/security.yaml`:
+
+```yaml
+access_control:
+    - { path: ^/asset/protected/, roles: ROLE_USER }
+```
 
 ### DownloadController
 
-You can use this route to force the download of an asset file, by using the following code in your Twig template: `{{ path('download_file', {'file': 'your/path/your_file.ext[.ext2]'}) }}`.
+Forces a file download.
 
-file name can contain uppercase, lowercase, accented letters, "-", "_", "/", "\", only spaces are not allowed. You can also use 2 file extensions.
+```twig
+{{ path('download_file', { file: 'path/to/your_file.csv' }) }}
+```
 
-This will be helpful in case of text files like json or whatever.nt to give access to your assets to registered users. You can also protect your route by adding `- { path: ^/your/path, roles: ROLE_USER }` to `config/packages/security.yaml` > `access_control`part. And you can add an http basic authentication on the download folder itself.
+File names may contain letters (including accented), digits, `-`, `_`, `/`, and up to two extensions. Spaces are not allowed.
 
-### Twig Components
+---
 
-Some Twig components are available, check `templates/components` to see them. An example of use is in each component file.
+## Twig extensions
 
-### Maintenance mode
+| Function / Filter | Description |
+| --- | --- |
+| `route_exists('route_name')` | Returns `true` if the named route exists |
+| `template_exists('template.html.twig')` | Returns `true` if the template file exists |
+| `asset_exists('path/to/file')` | Returns `true` if the asset exists in `public/` or `assets/` |
+| `\|nl2br` | Applies PHP's `nl2br()` with HTML output safe |
 
-You can activate the maintenance mode by setting `MAINTENANCE_MODE` environment variable to `true`. You also need to set a secret token with `MAINTENANCE_TOKEN` environment variable, to allow access to the website for users having the token, via URL parameter `?t=YOUR_TOKEN` or via session if they have already accessed the website with the token.
+---
 
-### Resize image
+## Email templates
 
-If you want to resize an image, you can do the following:
+Pre-built email templates are available at `@c975LSite/emails/`:
+
+| Template | Description |
+| --- | --- |
+| `layout.html.twig` | Base email layout |
+| `fullLayout.html.twig` | Full email layout |
+| `footer.html.twig` | Email footer |
+
+CSS is inlined automatically via `twig/cssinliner-extra`. Minified stylesheets (`emails.min.css`, `styles.min.css`, `animations.min.css`) are embedded.
+
+---
+
+## CSS animations
+
+Link the animations stylesheet to use scroll-triggered CSS animations:
+
+```twig
+<link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/animations.min.css') }}">
+```
+
+---
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `php bin/console site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
+| `php bin/console site:backup` | Backs up the database and `public/` files (replaces `BackupServer.sh`) |
+| `php bin/console models:twig2md` | Converts Twig model templates to their Markdown equivalent |
+
+---
+
+## Scheduler
+
+The bundle provides `site:sitemaps:create` and `site:backup` as schedulable commands. The schedule itself is defined in your app so each project controls its own timing.
+
+### 1. Create the schedule class
 
 ```php
-use c975L\SiteBundle\Service\ImageServiceInterface;
+// src/Scheduler/SiteSchedule.php
+namespace App\Scheduler;
 
-class YourClass
+use Symfony\Component\Console\Messenger\RunCommandMessage;
+use Symfony\Component\Scheduler\Attribute\AsSchedule;
+use Symfony\Component\Scheduler\RecurringMessage;
+use Symfony\Component\Scheduler\Schedule;
+use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+
+#[AsSchedule('site')]
+class MaintenanceSchedule implements ScheduleProviderInterface
 {
-    private $imageService;
+    public function __construct(
+        private readonly CacheInterface $cache,
+    ) {}
 
-    public yourMethod(ImageServiceInterface $imageService)
+    public function getSchedule(): Schedule
     {
-        //Do your stuff...
-
-        //Resizes image
-        $imageService->resize($file, string $folder, string $filename, string $format = 'jpg', int $finalHeight = 400, int $compression = 75, bool $square = false, $stamp = null);
+        return (new Schedule())
+            ->stateful($this->cache)
+            // Sitemap: daily at 00:05
+            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('site:sitemaps:create')))
+            // Partial backup: every 6 hours (DB regular tables + modified files only)
+            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('site:backup')))
+            // Full backup + report: every Monday at 03:07 (archive tables + whole DB + all user files)
+            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --full --report')));
     }
 }
 ```
 
-### Create Flash message
+The `stateful()` call persists the last-run time via Symfony Cache so tasks are not re-run if the worker restarts.
 
-If you want to create a flash message, you can do the following:
+### 2. Start the worker
 
-```php
-use c975L\SiteBundle\Service\ToolsServiceInterface;
-
-class YourClass
-{
-    private $toolsService;
-
-    public yourMethod(ToolsServiceInterface $toolsService)
-    {
-        //Do your stuff...
-
-        //Create flash
-        $toolsService->createFlash(string $translationDomain = null, string $text, string $style = 'success', array $options = array());
-    }
-}
-```
-
-## Useful Commands
-
-Run this Command `php bin/console site:media:delete` once a day to remove physical ProdutItemMedia not deleted when the ProductItem is deleted.
-
-## `.sh` scripts
-
-These scripts are not directly related to Symfony but to its production steps for `GitHookPostUpdate.sh` and its backup `BackupXXX.sh`. **They are programmed to work on the Synfony 4(flex) structure AND on a GNU/Linux server. You can find more information on them below.
-
-### GitHookPostUpdate.sh
-
-This script is to be run after the Git repository has been updated (via `git pull`), for this, it's call should be placed in the `.git/hooks/post-update` file with the following code:
+Run the consumer as a long-lived process (supervised by Supervisor or systemd):
 
 ```bash
-#!/bin/bash
-Folder="$( cd "$(dirname "${BASH_SOURCE[0]}")"; pwd -P )";
-#YOUR_PHP_VERSION is the name of the php binary you will use i.e. `php-7.3`
-source $Folder/../../PATH_TO_ROOT_FOLDER/vendor/c975l/site-bundle/Scripts/GitHookPostUpdate.sh YOUR_PHP_VERSION;
-exit 0
+php bin/console messenger:consume scheduler_site
 ```
 
-### ImportSqlFile.sh
-
-This script is useful if you store some SQL queries in a file to allow bulk import directly to MySql server. The script will rename the imported file (must be "/var/tmp/sqlFile.sql") before processing, to avoid collisions, and will rename it, after, with date and time. You can then simply add a new cron with the following code:
+You may keep a cron entry that restarts the worker daily (e.g., at 00:25) to recover from crashes without monitoring the process continuously:
 
 ```bash
-MAILTO=YOUR_EMAIL_ADDRESS
-*/20    *       *       *       *       bash ~/run.as/httpdocs/vendor/c975l/site-bundle/Scripts/ImportSqlFile.sh 1> /dev/null
+25 0 * * * systemctl --user start messenger-worker@your-site.service
 ```
 
-It will also delete files older than 7 days. It uses the data define in `/config/backup_config.cnf`, see below.
-
-### BackupXXX.sh
-
-These scripts helps for the backup of a website, they are detailed below. The backup files are stored in `/var/backup/{year}/[year-month]/{year-month-day}`. The files are named using the following scheme: "[MYSQL|WEBSITE]_-_NAME_-_YYYY-MM-DD_-_HH-II_-_[WithoutArchives|Archives|Complete|Partial].tar.bz2".
-
-You can include them in a crontab like in the following to execute each hour between 06 and 22 at the 15 minute:
-
-```bash
-MAILTO=YOUR_EMAIL_ADDRESS
-15       6-22       *       *       *       bash /server_path_website/vendor/c975l/site-bundle/Scripts/BackupXXX.sh
-```
-
-An email wil be sent via cron on each error and only once a day (at the hour specified in config file, see below) to sum up the backup actions.
-
-You have to create a config file `/config/backup_config.cnf` with the following data (without space) **Keep in mind to add this file to your `.gitignore`**:
-
-```txt
-[client]
-user=DB_USER
-password=DB_PASSWORD
-host=DB_HOST
-[config]
-website=WEBSITE_NAME
-database=DATABASE_NAME
-day=DAY_FOR_COMPLETE_BACKUP
-hour=HOUR_FOR_COMPLETE_BACKUP This hour has to be one of which the cron will be launched otherwise it will never be reached
-```
-
-### BackupServer.sh
-
-This script groups calls for `BackupMysql.sh` and `BackupFiles.sh` to allow only one crontab but they can be called individually.
-
-### BackupMysql.sh
-
-This script makes a backup of the tables in MySql server. All the tables are mysqldumped (one by one, to allow restore table by table) at each run, except those named with `_archives` which occurs once a day at the hour specified in `/config/backup_config.cnf`. There is also a mysqldump of the whole database, at the same hour specified as for `*_archives`, to allow a restore with only one file. The format used for the naming is "NAME_-_TABLE.sql".
-
-### BackupFolders.sh
-
-This script makes a backup of the `public` folder. There is a complete backup once a week and a partial backup (only new and newer files) other times.
-You can specify a list of patterns to exclude, separated with lines break, in a file named `/config/backup_exclude.cnf` i.e `*/folder_to_exclude`.
-
-## Twig Extensions
-
-Using the provided Twig extension `RouteExists` you can check via `{% if route_exists('YOUR_ROUTE_TO_CHECK') %}` if the Route is available.
-
-Using the provided Twig extension `TemplateExists` you can check via `{% if template_exists('YOUR_TEMPLATE_TO_CHECK') %}` if the template is available.
+---
 
 ## Lists
 
-You can use the provided lists:
-
-- extensions
-- bots
-to check against. They can be called by the following code:
+Two plain-text lists are available for validation purposes:
 
 ```php
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-class YourClass
-{
-    public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
-    ) {
-    }
+$extensions = file(
+    $this->parameterBag->get('kernel.project_dir') . '/../vendor/c975l/site-bundle/Lists/extensions.txt',
+    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+);
 
-    public function yourMethod()
-    {
-        $extensions = file($this->parameterBag->get('kernel.project_dir') . '/../vendor/c975l/site-bundle/Lists/extensions.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (in_array('txt', $extensions)) {
-            //Do your stuff
-        }
-    }
-}
+$bots = file(
+    $this->parameterBag->get('kernel.project_dir') . '/../vendor/c975l/site-bundle/Lists/bots.txt',
+    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+);
 ```
+
+---
+
+## Full layout example
+
+```twig
+{% extends '@c975LSite/layout.html.twig' %}
+
+{% set languagesAlt = {
+    en: { title: 'English' },
+    fr: { title: 'Français' },
+    es: { title: 'Español' }
+} %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta property="fb:app_id" content="YOUR_FACEBOOK_APP_ID">
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block navigation %}
+    {{ include('navbar.html.twig') }}
+{% endblock %}
+
+{% block title %}
+    {% if app.request.get('_route') is not null %}
+        <h1>{{ title }}</h1>
+    {% endif %}
+{% endblock %}
+
+{% block container %}
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block share %}
+    {# your sharing widget #}
+{% endblock %}
+
+{% block footer %}
+    {{ include('footer.html.twig') }}
+    <twig:c975LSite:General:HostedBy/>
+    <twig:c975LSite:General:MadeBy/>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <twig:c975LSite:General:CookieConsent/>
+    <twig:c975LSite:General:Matomo/>
+{% endblock %}
+```
+
+---
+
+If this project **helps you save development time**, consider sponsoring via the **Sponsor** button at the top of the GitHub page. Thank you!

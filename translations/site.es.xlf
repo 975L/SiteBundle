@@ -158,7 +158,7 @@
             </trans-unit>
             <trans-unit id="39">
                 <source>label.phone</source>
-                <target>TTeléfono</target>
+                <target>Teléfono</target>
             </trans-unit>
             <trans-unit id="40">
                 <source>label.opening_hours</source>
@@ -295,6 +295,54 @@
             <trans-unit id="73">
                 <source>label.website</source>
                 <target>Sitio web</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.change_frequency</source>
+                <target>Frecuencia de cambio</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.change_frequency_help</source>
+                <target>Frecuencia con la que cambia el contenido de la página</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>label.priority</source>
+                <target>Prioridad</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>label.priority_help</source>
+                <target>Prioridad de la página en el sitemap (0 = baja, 10 = alta)</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.always</source>
+                <target>Siempre</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.hourly</source>
+                <target>Cada hora</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.daily</source>
+                <target>Cada día</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.weekly</source>
+                <target>Cada semana</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.monthly</source>
+                <target>Cada mes</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>label.yearly</source>
+                <target>Cada año</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>label.never</source>
+                <target>Nunca</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.description_help</source>
+                <target>Este contenido se utilizará para describir la página a los motores de búsqueda y a las redes sociales. No es visible en la página.</target>
             </trans-unit>
         </body>
     </file>

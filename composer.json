@@ -18,17 +18,19 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "c975l/config-bundle": "*",
         "c975l/ui-bundle": "*",
         "doctrine/orm": "*",
+        "dragonmantank/cron-expression": "*",
         "easycorp/easyadmin-bundle": "*",
-        "imagine/imagine": "*",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
+        "symfony/mailer": "*",
+        "symfony/process": "*",
+        "symfony/scheduler": "*",
         "symfony/ux-twig-component": "*",
-        "twig/cssinliner-extra": "*",
-        "vich/uploader-bundle": "*"
+        "twig/cssinliner-extra": "*"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

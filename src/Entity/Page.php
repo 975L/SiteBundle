@@ -11,17 +11,24 @@ namespace c975L\SiteBundle\Entity;
 
 use App\Entity\User;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Contract\HasBlocksInterface;
+use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PageRepository::class)]
 #[ORM\Table(name: 'site_page')]
 #[ORM\HasLifecycleCallbacks]
-class Page
+#[UniqueEntity('slug')]
+class Page implements HasBlocksInterface
 {
+    use HasBlocksTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -49,9 +56,17 @@ class Page
     #[ORM\ManyToOne(inversedBy: 'pages')]
     private ?User $user = null;
 
-    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'page', cascade: ['persist', 'remove'])]
-    #[ORM\OrderBy(["position" => "ASC"])]
-    private Collection $articles;
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Assert\Range(min: 0, max: 10)]
+    private ?int $priority = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\Length(max: 50)]
+    private ?string $changeFrequency = null;
+
+    #[ORM\OneToMany(targetEntity: Block::class, mappedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $blocks;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isPublished = false;
@@ -61,7 +76,12 @@ class Page
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
+        $this->blocks = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->title ?? '';
     }
 
     public function getId(): ?int
@@ -141,31 +161,26 @@ class Page
         return $this;
     }
 
-    /**
-     * @return Collection<int, Article>
-     */
-    public function getArticles(): Collection
+    public function getPriority(): ?int
     {
-        return $this->articles;
+        return $this->priority;
     }
 
-    public function addArticle(Article $article): static
+    public function setPriority(?int $priority): static
     {
-        if (!$this->articles->contains($article)) {
-            $this->articles->add($article);
-            $article->setPage($this);
-        }
+        $this->priority = $priority;
 
         return $this;
     }
 
-    public function removeArticle(Article $article): static
+    public function getChangeFrequency(): ?string
     {
-        if ($this->articles->removeElement($article)) {
-            if ($article->getPage() === $this) {
-                $article->setPage(null);
-            }
-        }
+        return $this->changeFrequency;
+    }
+
+    public function setChangeFrequency(?string $changeFrequency): static
+    {
+        $this->changeFrequency = $changeFrequency;
 
         return $this;
     }
@@ -192,10 +207,5 @@ class Page
         $this->position = $position;
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->title ?? '';
     }
 }

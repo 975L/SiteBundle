@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @copyright 2018 975L <contact@975l.com>
  */
 #[AsCommand(
-    name: 'models:twig2md',
+    name: 'c975l:site:models:twig2md',
     description: 'Convert c975L/SiteBundle twig models templates to markdown format'
 )]
 class Twig2MdCommand extends Command

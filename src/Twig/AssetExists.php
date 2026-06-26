@@ -24,9 +24,7 @@ class AssetExists extends AbstractExtension
         return [new TwigFunction('asset_exists', $this->assetExists(...))];
     }
 
-    /**
-     * Checks if the template exists
-     */
+    // Checks if the template exists
     public function assetExists($asset)
     {
         $root = $this->configService->getContainerParameter('kernel.project_dir');

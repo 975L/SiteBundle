@@ -27,11 +27,10 @@ class PageRepository extends ServiceEntityRepository
     public function findAllOrdered(): array
     {
         return $this->createQueryBuilder('p')
-            ->select('p, a, m')
-            ->leftJoin('p.articles', 'a')
-            ->leftJoin('a.medias', 'm')
+            ->select('p, b, m')
+            ->leftJoin('p.blocks', 'b')
+            ->leftJoin('b.medias', 'm')
             ->andWhere('p.isPublished = :published')
-            ->andWhere('a.isPublished = :published')
             ->setParameter('published', true)
             ->orderBy('p.position', 'ASC')
             ->getQuery()
@@ -43,12 +42,11 @@ class PageRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?Page
     {
         return $this->createQueryBuilder('p')
-            ->select('p, a, m')
-            ->leftJoin('p.articles', 'a')
-            ->leftJoin('a.medias', 'm')
+            ->select('p, b, m')
+            ->leftJoin('p.blocks', 'b')
+            ->leftJoin('b.medias', 'm')
             ->andWhere('p.slug = :slug')
             ->andWhere('p.isPublished = :published')
-            ->andWhere('a.isPublished = :published')
             ->setParameter('published', true)
             ->setParameter('slug', $slug)
             ->getQuery()

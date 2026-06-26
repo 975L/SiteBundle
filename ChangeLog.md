@@ -1,5 +1,16 @@
 # Changelog
 
+## v6.28
+
+- Added priority and changeFrequency fields for pages (24/06/2026)
+- Moved components to c975L/UiBundle (simply replace "twig:c975LSite" by "twig:c975LUi") (25/06/2026) [BC-Break]
+- Changed the way src folders are exposed (26/06/2026)
+- Suppressed Articles as they are a Block in c975L/UiBundle (26/06/2026)
+- Renamed Services (26/06/2026)
+- Suppressed bash scripts and replaced backup by a command (26/06/2026)
+- Added Schedule Component require (26/06/2026)
+- Added c975l:prefix for Command (26/06/2026)
+
 ## v6.27.4
 
 - Added composer require for c975l/ui-bundle (24/06/2026)
@@ -25,7 +36,7 @@
 - Corrected Sitemap command to include pages in database (18/06/2026)
 - Moved Listener logic to CrudControllers (18/06/2026)
 - Removed twitter meta data (20/06/2026)
-- Removed MaintenanceListener (moved to c975L/ConfigBundle) (22/06/2026)
+- Moved MaintenanceListener to c975L/ConfigBundle (22/06/2026)
 
 ## v6.26.2
 
@@ -433,13 +444,13 @@
 
 - Added {{ importmap('app') }} for asset-mapper (29/09/2024)
 - Moved block javascript to head (29/09/2024)
-- Converted javascripts to Stimulus controllers [BC-Break] (29/09/2024)
+- Converted javascripts to Stimulus controllers (29/09/2024) [BC-Break]
 - Added Component Stimulus:Controller (29/09/2024)
 - Added confetti animation (29/09/2024)
 
 ## v6.11
 
-- Removed lock from button and added icon [BC Break] (26/09/2024)
+- Removed lock from button and added icon (26/09/2024) [BC-Break]
 - Corrected slider style (26/09/2024)
 - Modified Slider to display arrows and dots only for more than one item (26/09/2024)
 - Added --button-secondary-color (26/09/2024)
@@ -451,7 +462,7 @@
 
 ## v6.10
 
-- Removed abbreviation for components [BC Break] (26/09/2024)
+- Removed abbreviation for components (26/09/2024) [BC-Break]
 - Added class to Card component (26/09/2024)
 - Added animations (26/09/2024)
 - Used SASS for animations (26/09/2024)

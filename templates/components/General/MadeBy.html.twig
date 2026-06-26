@@ -1,12 +1,13 @@
-{# <twig:c975LSite:General:MadeBy url="https://..." logo="https://..." ["class"="your-class"] ["classLabel"="your-class-label"] ["height"=""] [width=""] /> #}
-<twig:c975LSite:Image:Link
+{# <twig:c975LSite:General:MadeBy/> #}
+{% set madeByUrl = config('site-made-by-url') %}
+{% set madeByLogo = config('site-made-by-logo') %}
+{% if madeByUrl and madeByLogo %}
+<twig:c975LUi:Image:Link
     label="{{ 'label.made_by'|trans({}, 'site') }}"
-    src="{{ logo }}"
-    url="{{ url }}"
+    src="{{ madeByLogo }}"
+    url="{{ madeByUrl }}"
+    height="50"
     target="_blank"
     above="true"
-    class="{{ class|default("") }}"
-    classLabel="{{ classLabel|default("") }}"
-    width="{{ width|default("") }}"
-    height="{{ height|default("") }}"
 />
+{% endif %}

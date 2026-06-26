@@ -1,2 +1,0 @@
-{# <twig:c975LSite:Image:Icon src="your-path/file.ext" [class="your-css-classes"] [width=""] [height=""]/> #}
-<img src="{{ absolute_url(asset(src)) }}" alt="" class="icon {{ class|default("") }}" {% if width is defined and width != "" %} width="{{ width }}" {% endif %} {% if height is defined and height != "" %} height="{{ height }}" {% endif %} loading="lazy">
