@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.28.2
+
+- Added ManyToMany relation page-blockx (27/06/2026)
+- Added StyleSheetProvider to load stylesheets automatically (27/06/2026)
+- Removed animations.css (27/06/2026)
+
 ## 6.28.1
 
 - Put icons in their own folder (27/06/2026)

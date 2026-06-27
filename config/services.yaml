@@ -8,3 +8,7 @@ services:
         resource: '../src/'
         exclude: '../src/{DependencyInjection,Entity}'
 
+    c975L\SiteBundle\Service\StylesheetProvider:
+        tags:
+            - { name: 'ui.stylesheet', priority: 100 }
+

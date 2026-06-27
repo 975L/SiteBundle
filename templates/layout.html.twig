@@ -135,7 +135,9 @@
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
-                <link rel="stylesheet" href="{{ absolute_url(asset('bundles/c975lsite/css/styles.min.css')) }}">
+                {% for stylesheet in bundle_stylesheets() %}
+                    <link rel="stylesheet" href="{{ stylesheet }}">
+                {% endfor %}
             {% endblock %}
 {# Preconnect #}
             {% block preconnect %}

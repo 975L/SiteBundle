@@ -64,7 +64,8 @@ class Page implements HasBlocksInterface
     #[Assert\Length(max: 50)]
     private ?string $changeFrequency = null;
 
-    #[ORM\OneToMany(targetEntity: Block::class, mappedBy: 'page', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinTable(name: 'site_page_blocks')]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $blocks;
 
