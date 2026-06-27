@@ -44,44 +44,23 @@ Symfony bundle that provides a complete foundation for building websites — lay
 
 ## Installation
 
-### 1. Download
+### Download
 
 ```bash
 composer require c975l/site-bundle
 ```
 
-### 2. Load configuration values
+### Load configuration values
 
 This bundle uses [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) to manage its settings. Load the default configuration keys into the database:
 
 ```bash
-php bin/console c975l:config:load 'vendor/c975l/site-bundle/config/configs.json'
+php bin/console c975l:config:load-all
 ```
 
-Then open the ConfigBundle dashboard to set values for the following keys:
+Then open the ConfigBundle dashboard to set values for the keys
 
-| Key | Description |
-| --- | --- |
-| `site-name` | Website name |
-| `site-tagline` | Website tagline |
-| `site-logo` | Logo path (used in emails) |
-| `site-favicon` | Favicon path (default: `/favicon.ico`) |
-| `site-apple-touch-icon` | Apple touch icon path (default: `/apple-touch-icon.png`) |
-| `site-author` | `<meta name="author">` value |
-| `site-first-online-date` | Date the site went online |
-| `site-url` | Base URL, e.g. `https://example.com` |
-| `url-terms-of-use` | URL of the terms of use page |
-| `url-cookies-policy` | URL of the cookies policy page (used by CookieConsent) |
-| `site-matomo-url` | Matomo instance URL, e.g. `https://matomo.example.com` |
-| `site-matomo-id` | Matomo site ID (integer) |
-| `site-hosted-by-url` | URL of the hosting company |
-| `site-hosted-by-logo` | Path or URL of the hosting company logo |
-| `site-made-by-url` | URL of the developer / agency |
-| `site-made-by-logo` | Path or URL of the developer / agency logo |
-| `site-backup-database` | MySQL database name to back up |
-| `site-backup-mailto` | Email for backup reports and error notifications |
-
-### 3. Enable routes
+### Enable routes
 
 Add the bundle routes to `config/routes.yaml`:
 
@@ -98,11 +77,35 @@ c975_l_site:
     #     _locale: en|fr|es
 ```
 
-### 4. Install assets
+### Install assets
 
 ```bash
 php bin/console assets:install --symlink
 ```
+
+### Register Stimulus controllers
+
+This bundle ships Stimulus controllers (basic, matomo, cookieConsent). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace.
+
+**Add one entry to `importmap.php`** (one-time, at installation):
+
+```php
+'@c975l/site-bundle/controllers.js' => [
+    'path' => './vendor/c975l/site-bundle/assets/controllers.js',
+],
+```
+
+**Add two lines to `assets/bootstrap.js`** (or `assets/stimulus_bootstrap.js`):
+
+```js
+import { startStimulusApp } from '@symfony/stimulus-bundle';
+import { register as registerc975lSite } from '@c975l/site-bundle/controllers.js';
+
+const app = startStimulusApp();
+registerc975lSite(app);
+```
+
+After that, all controllers are loaded with hashed filenames (cache busting). Adding or removing controllers in a future bundle update requires no change in your app.
 
 ---
 

@@ -152,7 +152,7 @@
         {% endblock %}
     </head>
 {# Body #}
-    <body id="top">
+    <body id="top" data-controller="basic">
 {# jQuery #}
         {% block jquery %}
         {% endblock %}
@@ -237,7 +237,5 @@
             {% endblock %}
         {% endblock %}
         <span id="bottom"></span>
-{# Loads basic javascript functions #}
-        <twig:c975LUi:Stimulus:Controller controllers="{{ ['basic'] }}"/>
     </body>
 </html>
