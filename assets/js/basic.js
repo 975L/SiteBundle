@@ -16,7 +16,6 @@ export default class extends Controller {
         this.togglePasswordVisibility();
         this.validatePasswordFormat();
         this.validatePassword();
-
         // Also listen for scroll events
         window.addEventListener("scroll", () => {
             this.backTopButton();
@@ -120,7 +119,7 @@ export default class extends Controller {
 
                 // Adds image
                 let image = document.createElement("img");
-                image.src = "/bundles/c975lsite/images/eye.svg";
+                image.src = "/bundles/c975lsite/icons/eye.svg";
                 toggle.appendChild(image);
 
                 // Append toggle to parent so it stays positioned even if an error node is inserted
@@ -131,11 +130,11 @@ export default class extends Controller {
                     if (passwordInput.type === "password") {
                         passwordInput.type = "text";
                         passwordInput.setAttribute("autocomplete", "off");
-                        image.src = "/bundles/c975lsite/images/eye-slash.svg";
+                        image.src = "/bundles/c975lsite/icons/eye-slash.svg";
                     } else {
                         passwordInput.type = "password";
                         passwordInput.setAttribute("autocomplete", "current-password");
-                        image.src = "/bundles/c975lsite/images/eye.svg";
+                        image.src = "/bundles/c975lsite/icons/eye.svg";
                     }
                 });
             }

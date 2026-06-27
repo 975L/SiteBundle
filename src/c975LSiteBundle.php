@@ -20,6 +20,17 @@ class c975LSiteBundle extends AbstractBundle
         $containerConfigurator->import('../config/services.yaml');
     }
 
+    public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        $builder->prependExtensionConfig('framework', [
+            'asset_mapper' => [
+                'paths' => [
+                    __DIR__ . '/../assets' => '@c975l/site-bundle',
+                ],
+            ],
+        ]);
+    }
+
     public function getPath(): string
     {
         return \dirname(__DIR__);

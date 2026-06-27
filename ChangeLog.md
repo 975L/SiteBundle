@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.28.1
+
+- Put icons in their own folder (27/06/2026)
+- Added a controller.js to register stimulus controllers (27/06/2026)
+- Moved related controllers + sass to c975L/UiBundle (27/06/2026)
+- Updated Readme (27/06/2026)
+
 ## v6.28
 
 - Added priority and changeFrequency fields for pages (24/06/2026)
