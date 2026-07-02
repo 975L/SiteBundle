@@ -1,5 +1,15 @@
 # UPGRADE
 
+## > v7.x
+
+- Add `'@c975l/site-bundle/controllers-admin.js' => ['path' => './vendor/c975l/site-bundle/assets/controllers-admin.js', 'entrypoint' => true]` to `importmap.php` - needed for the title/slug confirm in the pages admin
+- Requires `c975l/ui-bundle` >= v1.5 - see its own UPGRADE.md for the full list of `importmap.php` entries needed
+- Run `php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate` to add the new columns
+- Migrate static file pages (`templates/pages/*.html.twig`) to DB pages
+- Migrate redirect files (`templates/pages/redirected/`) to DB pages with `redirectTo` set to the target slug
+- Migrate deleted files (`templates/pages/deleted/`) to DB pages with `isDeleted = true`
+- The "Delete" action in the admin now soft-deletes instead of removing the row
+
 ## v3.x > v4.x
 
 Changed compatibility to PHP 8

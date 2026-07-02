@@ -344,6 +344,110 @@
                 <source>label.description_help</source>
                 <target>Este contenido se utilizará para describir la página a los motores de búsqueda y a las redes sociales. No es visible en la página.</target>
             </trans-unit>
+            <trans-unit id="88">
+                <source>label.is_deleted</source>
+                <target>Eliminado</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>label.redirect</source>
+                <target>Redirección</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.redirects</source>
+                <target>Redirecciones</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.from_path</source>
+                <target>Ruta de origen</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>label.from_path_help</source>
+                <target>Ruta URL con la / inicial (ej: /la-guilde-des-seigneurs)</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.to_url</source>
+                <target>URL de destino</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.to_url_help</source>
+                <target>URL completa (https://...) o ruta absoluta (/serie/la-guilde)</target>
+            </trans-unit>
+            <trans-unit id="95">
+                <source>label.permanent</source>
+                <target>Permanente (301)</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>label.permanent_help</source>
+                <target>Marcado = redirección permanente 301 (SEO), desmarcado = temporal 302</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>action.trash</source>
+                <target>Papelera</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>action.move_to_trash</source>
+                <target>Mover a la papelera</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>action.delete_permanently</source>
+                <target>Eliminar definitivamente</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>confirm.delete_permanently</source>
+                <target>Esta acción es irreversible y eliminará definitivamente la página y su contenido. ¿Continuar?</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>flash.page_deleted_permanently</source>
+                <target>La página ha sido eliminada definitivamente.</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>action.restore</source>
+                <target>Restaurar</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>flash.page_restored</source>
+                <target>La página ha sido restaurada.</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>action.view_on_site</source>
+                <target>Ver en el sitio</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.slug_help</source>
+                <target>Es importante que el slug corresponda al título de la página (sin acentos, mayúsculas ni espacios). Puede modificarlo haciendo clic en el candado, se establecerá una redirección para mantener el SEO.</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>confirm.title_change</source>
+                <target>Modificar el título cambiará la URL de la página (slug), se establecerá automáticamente una redirección. ¿Continuar?</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.content</source>
+                <target>Contenido</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>label.content_help</source>
+                <target>Pegue aquí el contenido Twig del antiguo archivo .html.twig (el archivo puede eliminarse después). El contenido se interpreta como Twig: puede usar las funciones/filtros habituales (config(), path(), etc.).</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>block.twig_content</source>
+                <target>Contenido Twig</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>block.legal_model</source>
+                <target>Modelo legal</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.category_legal</source>
+                <target>Legal</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>label.category_migration</source>
+                <target>Migración</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.model</source>
+                <target>Modelo</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

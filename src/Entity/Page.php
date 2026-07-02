@@ -72,8 +72,8 @@ class Page implements HasBlocksInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isPublished = false;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $position = null;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isDeleted = false;
 
     public function __construct()
     {
@@ -198,14 +198,14 @@ class Page implements HasBlocksInterface
         return $this;
     }
 
-    public function getPosition(): ?int
+    public function isDeleted(): bool
     {
-        return $this->position;
+        return $this->isDeleted;
     }
 
-    public function setPosition(?int $position): static
+    public function setIsDeleted(bool $isDeleted): self
     {
-        $this->position = $position;
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }

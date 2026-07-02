@@ -29,6 +29,7 @@
         "symfony/mailer": "*",
         "symfony/process": "*",
         "symfony/scheduler": "*",
+        "symfony/string": "*",
         "symfony/ux-twig-component": "*",
         "twig/cssinliner-extra": "*"
     },

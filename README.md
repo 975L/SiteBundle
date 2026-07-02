@@ -25,7 +25,6 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - **Asset serving** controller (inline display, access-protected)
 - **File download** controller (forced download, access-protected)
 - **Twig extensions**: `route_exists`, `template_exists`, `asset_exists`, `nl2br`
-- **CSS animations** stylesheet
 - **File lists**: `extensions.txt` and `bots.txt`
 
 ---
@@ -418,7 +417,7 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | `fullLayout.html.twig` | Full email layout |
 | `footer.html.twig` | Email footer |
 
-CSS is inlined automatically via `twig/cssinliner-extra`. Minified stylesheets (`emails.min.css`, `styles.min.css`, `animations.min.css`) are embedded.
+CSS is inlined automatically via `twig/cssinliner-extra`. Minified stylesheets (`emails.min.css`, `styles.min.css`) are embedded.
 
 ---
 
@@ -436,9 +435,30 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 
 | Command | Description |
 | --- | --- |
-| `php bin/console site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
-| `php bin/console site:backup` | Backs up the database and `public/` files (replaces `BackupServer.sh`) |
-| `php bin/console models:twig2md` | Converts Twig model templates to their Markdown equivalent |
+| `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
+| `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
+| `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
+
+### Import default pages
+
+Run once after setting up a new site to pre-populate the database with common pages:
+
+```bash
+php bin/console c975l:site:pages:import-defaults
+```
+
+Pages created:
+
+| Slug | Title | Block |
+| --- | --- | --- |
+| `home` | Home | — |
+| `legal-notice` | Mentions légales | `legal_model` → `france/legal-notice` |
+| `privacy-policy` | Politique de confidentialité | `legal_model` → `france/privacy-policy` |
+| `terms-of-use` | Conditions générales d'utilisation | `legal_model` → `france/terms-of-use` |
+| `terms-of-sales` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` |
+| `cookies` | Politique de cookies | `legal_model` → `france/cookies` |
+
+All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped.
 
 ---
 

@@ -12,14 +12,23 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Entity\Redirect;
+use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Form\BlockType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -29,7 +38,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
 
@@ -38,6 +56,12 @@ class PageCrudController extends AbstractCrudController
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly TranslatorInterface $translator,
+        private readonly RedirectRepository $redirectRepository,
+        private readonly AdminContextProvider $adminContextProvider,
+        private readonly RequestStack $requestStack,
+        private readonly SluggerInterface $slugger,
     ) {
     }
 
@@ -46,38 +70,84 @@ class PageCrudController extends AbstractCrudController
         return Page::class;
     }
 
-    // Add JS for blocks, to handle change of kind
-    public function configureAssets(Assets $assets): Assets
+    // Symfony's form-level adder/remover diffing for the "blocks" ManyToMany collection is unreliable
+    // once nested dynamic sub-forms (data/medias) are involved: removing one block among several leaves
+    // it fully untouched in the database instead of removing it. Reconciling explicitly against the
+    // block positions still present in the submission side-steps that, instead of trusting Symfony's
+    // own object-identity diff. Separately, removing the very last block leaves nothing submitted at all
+    // for "blocks" (an HTML form can't represent an empty array, only an absent key), which also has to
+    // be normalized to [] or Symfony skips add/remove handling entirely for the whole field.
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
-        return $assets->addJsFile('@c975l/ui-bundle/js/blocks.js');
+        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+
+        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($entityDto): void {
+            $data = $event->getData();
+            if (!is_array($data)) {
+                return;
+            }
+
+            $page = $entityDto->getInstance();
+            if ($page instanceof Page) {
+                $submittedBlocks = $data['blocks'] ?? [];
+                foreach (array_values($page->getBlocks()->toArray()) as $index => $block) {
+                    if (!array_key_exists($index, $submittedBlocks)) {
+                        $page->removeBlock($block);
+                    }
+                }
+            }
+
+            if (!isset($data['blocks'])) {
+                $data['blocks'] = [];
+                $event->setData($data);
+            }
+        });
+
+        return $formBuilder;
     }
 
     public function configureFields(string $pageName): iterable
     {
+        // The "home" page's slug is fixed, it also serves as the site root (see redirect in PageController)
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+        $isHomePage = $entity instanceof Page && 'home' === $entity->getSlug();
+
+        // Trashed pages are always unpublished, no need to show that column in the trash view
+        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
+        $isPublishedField = BooleanField::new('isPublished')
+            ->setLabel(t('label.is_published', [], 'site'));
+        if ($isTrash) {
+            $isPublishedField->hideOnIndex();
+        }
+
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
 
             // Data
+            // Confirms with the user before letting them change the title, since it will also change the slug (see updateEntity)
+            // Handled by the "titleConfirm" Stimulus controller (assets/js/title-confirm.js), loaded admin-wide via admin.js
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'site'))
-                ->setRequired(true),
+                ->setRequired(true)
+                ->setFormTypeOption('attr', $isHomePage ? [] : [
+                    'data-controller' => 'titleConfirm',
+                    'data-action' => 'focus->titleConfirm#confirm click->titleConfirm#confirm',
+                    'data-title-confirm-message-value' => $this->translator->trans('confirm.title_change', [], 'site'),
+                ]),
             SlugField::new('slug')
                 ->setLabel(t('label.slug', [], 'site'))
                 ->setTargetFieldName('title')
-                ->setRequired(true),
+                ->setRequired(true)
+                ->setHelp(t('label.slug_help', [], 'site'))
+                ->setFormTypeOption('disabled', $isHomePage),
 
             // Content
             TextareaField::new('description')
                 ->setLabel(t('label.description', [], 'site'))
                 ->setHelp(t('label.description_help', [], 'site'))
                 ->hideOnIndex(),
-            IntegerField::new('position')
-                ->setLabel(t('label.position', [], 'site'))
-                ->setHelp(t('label.position_help', [], 'site'))
-                ->setRequired(true),
-            BooleanField::new('isPublished')
-                ->setLabel(t('label.is_published', [], 'site')),
+            $isPublishedField,
 
             // Sitemaps
             ChoiceField::new('changeFrequency')
@@ -126,13 +196,106 @@ class PageCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-needed');
 
+        // Toggles between "go to trash" and "back to pages", depending on where we currently are
+        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
+        $trashAction = $isTrash
+            ? Action::new('trash', t('label.pages', [], 'site'), 'fa fa-file')
+                ->linkToUrl(fn () => $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::INDEX)
+                    ->unset('trash')
+                    ->generateUrl())
+            : Action::new('trash', t('action.trash', [], 'site'), 'fa fa-trash-alt')
+                ->linkToUrl(fn () => $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::INDEX)
+                    ->set('trash', 1)
+                    ->generateUrl());
+        $trashAction
+            ->createAsGlobalAction()
+            ->addCssClass('btn btn-secondary');
+
+        // Permanently removes the page, only shown once already in the trash
+        $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
+            ->linkToCrudAction('deletePermanently')
+            ->displayIf(static fn (Page $page): bool => $page->isDeleted())
+            ->setHtmlAttributes([
+                'onclick' => sprintf(
+                    "return confirm('%s')",
+                    $this->translator->trans('confirm.delete_permanently', [], 'site')
+                ),
+            ])
+            ->addCssClass('btn btn-danger');
+
+        // Restores a page out of the trash, only shown once already in the trash
+        $restoreAction = Action::new('restore', t('action.restore', [], 'site'), 'fa fa-trash-restore')
+            ->linkToCrudAction('restore')
+            ->displayIf(static fn (Page $page): bool => $page->isDeleted())
+            ->addCssClass('btn btn-secondary');
+
+        // Opens the page on the public site, in a new tab - hidden for trashed pages (they 410 on the site)
+        $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'site'), 'fa fa-external-link-alt')
+            ->linkToUrl(fn (Page $page) => 'home' === $page->getSlug()
+                ? $this->generateUrl('page_home')
+                : $this->generateUrl('page_display', ['page' => $page->getSlug()]))
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+            ->addCssClass('btn btn-secondary');
+
         return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $trashAction)
+            ->add(Crud::PAGE_INDEX, $restoreAction)
+            ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
+            ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
+            ->add(Crud::PAGE_DETAIL, $restoreAction)
+            ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
+            ->add(Crud::PAGE_DETAIL, $viewOnSiteAction)
+            ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
+            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite'])
+            ->reorder(Crud::PAGE_EDIT, ['viewOnSite'])
+            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite'])
+            ->update(Crud::PAGE_INDEX, Action::DELETE, static function (Action $action): Action {
+                return $action
+                    ->setLabel(t('action.move_to_trash', [], 'site'))
+                    ->setIcon('fa fa-box-archive')
+                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
+            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, static function (Action $action): Action {
+                return $action
+                    ->setLabel(t('action.move_to_trash', [], 'site'))
+                    ->setIcon('fa fa-box-archive')
+                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
+            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, static function (Action $action): Action {
+                return $action->displayIf(static fn (Page $page): bool => !$page->isDeleted());
+            })
+            ->update(Crud::PAGE_DETAIL, Action::EDIT, static function (Action $action): Action {
+                return $action->displayIf(static fn (Page $page): bool => !$page->isDeleted());
+            })
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
             ->setPermission(Action::DETAIL, $role)
+            ->setPermission('trash', $role)
+            ->setPermission('restore', $role)
+            ->setPermission('deletePermanently', $role)
+            ->setPermission('viewOnSite', $role)
+        ;
+    }
+
+    // Only lists non-deleted pages by default, or deleted ones when viewing the trash
+    public function createIndexQueryBuilder(
+        SearchDto $searchDto,
+        EntityDto $entityDto,
+        FieldCollection $fields,
+        FilterCollection $filters
+    ): QueryBuilder {
+        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
+
+        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
+            ->andWhere('entity.isDeleted = :isDeleted')
+            ->setParameter('isDeleted', $isTrash)
         ;
     }
 
@@ -141,7 +304,6 @@ class PageCrudController extends AbstractCrudController
         return $crud
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-needed'))
-            ->setDefaultSort(['position' => 'ASC', 'id' => 'DESC'])
         ;
     }
 
@@ -154,9 +316,60 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
+    // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact
+    public function deleteEntity(EntityManagerInterface $entityManager, mixed $page): void
+    {
+        $page->setIsDeleted(true);
+        $page->setIsPublished(false);
+        $page->setModification(new \DateTime());
+        $entityManager->flush();
+    }
+
+    // Permanently removes the page and its blocks - only reachable once already in the trash
+    #[AdminRoute('/{entityId}/delete-permanently')]
+    public function deletePermanently(AdminContext $context, EntityManagerInterface $entityManager): Response
+    {
+        $page = $context->getEntity()->getInstance();
+
+        $entityManager->remove($page);
+        $entityManager->flush();
+
+        $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->set('trash', 1)
+                ->generateUrl()
+        );
+    }
+
+    // Restores a page out of the trash - keeps its content untouched
+    #[AdminRoute('/{entityId}/restore')]
+    public function restore(AdminContext $context, EntityManagerInterface $entityManager): Response
+    {
+        $page = $context->getEntity()->getInstance();
+
+        $page->setIsDeleted(false);
+        $page->setModification(new \DateTime());
+        $entityManager->flush();
+
+        $this->addFlash('success', $this->translator->trans('flash.page_restored', [], 'site'));
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::INDEX)
+                ->set('trash', 1)
+                ->generateUrl()
+        );
+    }
+
     // New page
     public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
+        $this->slugifyPage($page);
         $page->setCreation(new \DateTime());
         $page->setModification(new \DateTime());
         $this->setUser($page);
@@ -164,13 +377,60 @@ class PageCrudController extends AbstractCrudController
         parent::persistEntity($entityManager, $page);
     }
 
-    // Updated page - Invalidate cache
+    // Updated page - Resyncs the slug when the title changes, then creates a redirect from the old slug when it changes
     public function updateEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
+        $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($page);
+        $originalSlug = $originalData['slug'] ?? null;
+        $originalTitle = $originalData['title'] ?? null;
+
+        // The home page's slug is fixed (see isHomePage in configureFields), its title can change without affecting it
+        if ('home' !== $originalSlug && null !== $originalTitle && $originalTitle !== $page->getTitle()) {
+            $page->setSlug($page->getTitle());
+        }
+
+        $this->slugifyPage($page);
+
+        if (null !== $originalSlug && $originalSlug !== $page->getSlug()) {
+            $this->redirectSlugChange($entityManager, $originalSlug, $page->getSlug());
+        }
+
         $page->setModification(new \DateTime());
         $this->setUser($page);
 
         parent::updateEntity($entityManager, $page);
+    }
+
+    // Normalizes the slug entered by the user (removes accents, spaces, uppercase...)
+    private function slugifyPage(Page $page): void
+    {
+        $slug = $page->getSlug();
+        if (null !== $slug) {
+            $page->setSlug(strtolower($this->slugger->slug($slug)->toString()));
+        }
+    }
+
+    // Redirects the old page URL to the new one, reusing an existing redirect if the old slug already had one
+    private function redirectSlugChange(EntityManagerInterface $entityManager, string $oldSlug, string $newSlug): void
+    {
+        $fromPath = '/pages/' . $oldSlug;
+        $toUrl = '/pages/' . $newSlug;
+
+        // Removes any existing redirect starting from the new slug, otherwise it would create a redirect loop
+        // (e.g. prestations -> prestations-2, then renaming prestations-2 back to prestations)
+        $reverseRedirect = $this->redirectRepository->findOneByFromPath($toUrl);
+        if (null !== $reverseRedirect) {
+            $entityManager->remove($reverseRedirect);
+        }
+
+        $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
+            ?? (new Redirect())->setFromPath($fromPath);
+
+        $redirect
+            ->setToUrl($toUrl)
+            ->setPermanent(true);
+
+        $entityManager->persist($redirect);
     }
 
     // Defines the user for the page

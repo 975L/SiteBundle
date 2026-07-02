@@ -10,10 +10,11 @@
 
 namespace c975L\SiteBundle\Management;
 
+use c975L\ConfigBundle\Management\MenuProviderInterface;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
-use c975L\ConfigBundle\Management\AbstractMenuProvider;
+use c975L\SiteBundle\Controller\Management\RedirectCrudController;
 
-class MenuProvider extends AbstractMenuProvider
+class MenuProvider implements MenuProviderInterface
 {
     public function getMenuSection(): array
     {
@@ -32,6 +33,17 @@ class MenuProvider extends AbstractMenuProvider
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-file',
             ],
+            'redirect' => [
+                'controller' => RedirectCrudController::class,
+                'label' => 'label.redirects',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-arrow-right',
+            ],
         ];
+    }
+
+    public function getLinks(): array
+    {
+        return [];
     }
 }

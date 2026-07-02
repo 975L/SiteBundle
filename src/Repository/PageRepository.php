@@ -31,14 +31,16 @@ class PageRepository extends ServiceEntityRepository
             ->leftJoin('p.blocks', 'b')
             ->leftJoin('b.medias', 'm')
             ->andWhere('p.isPublished = :published')
+            ->andWhere('p.isDeleted = :deleted')
+            ->setParameter('deleted', false)
             ->setParameter('published', true)
-            ->orderBy('p.position', 'ASC')
+            ->orderBy('p.slug', 'ASC')
             ->getQuery()
             ->getResult()
         ;
     }
 
-    // Find one page by slug
+    // Find one page by slug (published only)
     public function findOneBySlug(string $slug): ?Page
     {
         return $this->createQueryBuilder('p')
@@ -47,7 +49,23 @@ class PageRepository extends ServiceEntityRepository
             ->leftJoin('b.medias', 'm')
             ->andWhere('p.slug = :slug')
             ->andWhere('p.isPublished = :published')
+            ->andWhere('p.isDeleted = :deleted')
             ->setParameter('published', true)
+            ->setParameter('deleted', false)
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    // Find one page by slug regardless of status (for display: handles redirects and 410)
+    public function findOneBySlugForDisplay(string $slug): ?Page
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p, b, m')
+            ->leftJoin('p.blocks', 'b')
+            ->leftJoin('b.medias', 'm')
+            ->andWhere('p.slug = :slug')
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult()

@@ -8,7 +8,38 @@ services:
         resource: '../src/'
         exclude: '../src/{DependencyInjection,Entity}'
 
+    # Enables template_from_string(), used by the twig_content block (see below) to render Twig content stored in DB
+    Twig\Extension\StringLoaderExtension:
+        tags: ['twig.extension']
+
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 100 }
+
+    c975L\SiteBundle\Service\ScriptProvider:
+        tags:
+            - { name: 'ui.script', priority: 100 }
+            - { name: 'ui.admin_script', priority: 100 }
+
+    site.block.legal_model:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: legal_model
+              label: "block.legal_model"
+              translation_domain: 'site'
+              form: c975L\SiteBundle\Form\Block\LegalModelType
+              template: '@c975LSite/blocks/LegalModel.html.twig'
+              category: 'label.category_legal'
+
+    site.block.twig_content:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: twig_content
+              label: "block.twig_content"
+              translation_domain: 'site'
+              form: c975L\SiteBundle\Form\Block\TwigContentType
+              template: '@c975LSite/blocks/TwigContent.html.twig'
+              category: 'label.category_migration'
 

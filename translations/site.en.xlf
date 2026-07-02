@@ -344,6 +344,110 @@
                 <source>label.description_help</source>
                 <target>This content will be used to describe the page to search engines and social networks. It is not visible on the page.</target>
             </trans-unit>
+            <trans-unit id="88">
+                <source>label.is_deleted</source>
+                <target>Deleted</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>label.redirect</source>
+                <target>Redirect</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.redirects</source>
+                <target>Redirects</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>label.from_path</source>
+                <target>Source path</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>label.from_path_help</source>
+                <target>URL path with leading / (e.g. /la-guilde-des-seigneurs)</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.to_url</source>
+                <target>Target URL</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.to_url_help</source>
+                <target>Full URL (https://...) or absolute path (/series/la-guilde)</target>
+            </trans-unit>
+            <trans-unit id="95">
+                <source>label.permanent</source>
+                <target>Permanent (301)</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>label.permanent_help</source>
+                <target>Checked = permanent redirect 301 (SEO), unchecked = temporary 302</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>action.trash</source>
+                <target>Trash</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>action.move_to_trash</source>
+                <target>Move to trash</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>action.delete_permanently</source>
+                <target>Delete permanently</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>confirm.delete_permanently</source>
+                <target>This action is irreversible and will permanently delete the page and its content. Continue?</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>flash.page_deleted_permanently</source>
+                <target>The page has been permanently deleted.</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>action.restore</source>
+                <target>Restore</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>flash.page_restored</source>
+                <target>The page has been restored.</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>action.view_on_site</source>
+                <target>View on site</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.slug_help</source>
+                <target>It is important that the slug matches the page title (without accents, uppercase letters or spaces). You can modify it by clicking on the lock, a redirect will be set up to maintain SEO.</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>confirm.title_change</source>
+                <target>Changing the title will change the page's URL (slug), a redirect will be automatically set up. Continue?</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.content</source>
+                <target>Content</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>label.content_help</source>
+                <target>Paste the Twig content of the old .html.twig file here (the file can then be deleted). The content is interpreted as Twig: you can use the usual functions/filters (config(), path(), etc.).</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>block.twig_content</source>
+                <target>Twig Content</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>block.legal_model</source>
+                <target>Legal Model</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.category_legal</source>
+                <target>Legal</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>label.category_migration</source>
+                <target>Migration</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.model</source>
+                <target>Model</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

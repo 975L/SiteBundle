@@ -11,9 +11,7 @@ namespace c975L\SiteBundle\Controller;
 
 use c975L\SiteBundle\Service\PageServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 /**
  * Main Site Controller class
@@ -29,10 +27,27 @@ class PageController extends AbstractController
     }
 
 //HOME
-    /**
-     * Redirects to page_home
-     * @return Redirect
-     */
+    #[Route(
+        '/',
+        name: 'page_home',
+        methods: ['GET']
+    )]
+    public function home()
+    {
+        $homePage = $this->pageService->findOneBySlug('home');
+        if ($homePage) {
+            return $this->render(
+                '@c975LSite/pages/page.html.twig',
+                ['page' => $homePage]
+            )->setMaxAge(3600);
+        }
+
+        return $this->render(
+            'pages/home.html.twig', ['pages' => $this->pageService->findAll()],
+        )->setMaxAge(3600);
+    }
+
+// REDIRECT HOME
     #[Route(
         '/pages',
         name: 'page_redirect_home',
@@ -43,34 +58,18 @@ class PageController extends AbstractController
         return $this->redirectToRoute('page_home');
     }
 
-    /**
-     * Displays the homepage
-     * @return Response
-     */
+// REDIRECT POST REQUESTS
     #[Route(
         '/',
-        name: 'page_home',
-        methods: ['GET']
+        name: 'redirect_home_post',
+        methods: ['POST']
     )]
-    #[Route( // Kept for backward compatibility with former c975L/PageEditBundle
-        '/',
-        name: 'pageedit_home',
-        methods: ['GET']
-    )]
-    public function home()
+    public function redirectIndexPost()
     {
-        return $this->render(
-            'pages/home.html.twig', ['pages' => $this->pageService->findAll()],
-        )->setMaxAge(3600);
+        return $this->redirectToRoute('page_home');
     }
 
-//DISPLAY REQUESTED PAGE
-    /**
-     * Displays the page
-     * @return Response
-     * @throws AccessDeniedException
-     * @throws NotFoundHttpException
-     */
+//DISPLAY
     #[Route(
         '/pages/{page}',
         name: 'page_display',
@@ -89,30 +88,27 @@ class PageController extends AbstractController
     )]
     public function display($page)
     {
-        $pageFolder = $this->getParameter('kernel.project_dir') . '/templates/';
+        $slug = rtrim($page, '/');
 
-        $page =  rtrim($page, '/') . '.html.twig';
+        // The home page only has one canonical URL: the site root
+        if ('home' === $slug) {
+            return $this->redirectToRoute('page_home', [], 301);
+        }
 
-        // Displays page
-        if (is_file($pageFolder . 'pages/' .$page)) {
-            return $this->render(
-                'pages/' . $page
-            )->setMaxAge(3600);
-        // Redirected
-        } elseif (is_file($pageFolder . 'pages/redirected/' . $page)) {
-            return $this->redirectToRoute('page_display', ['page' => trim(file_get_contents($pageFolder . 'pages/redirected/' . $page))]);
-        // Deleted
-        } elseif (is_file($pageFolder . 'pages/deleted/' . $page)) {
-            throw new GoneHttpException();
-        // Page in ORM
-        } else {
-            $pageObject = $this->pageService->findOneBySlug($page);
-            if ($pageObject) {
-                return $this->render(
-                        '@c975LSite/pages/page.html.twig',
-                        ['page' => $pageObject]
-                    )->setMaxAge(3600);
+        $pageObject = $this->pageService->findForDisplay($slug);
+
+        if ($pageObject) {
+            if ($pageObject->isDeleted()) {
+                throw new GoneHttpException();
             }
+            if (!$pageObject->isPublished()) {
+                throw $this->createNotFoundException();
+            }
+
+            return $this->render(
+                '@c975LSite/pages/page.html.twig',
+                ['page' => $pageObject]
+            )->setMaxAge(3600);
         }
 
         throw $this->createNotFoundException();

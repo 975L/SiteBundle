@@ -21,6 +21,9 @@ interface PageServiceInterface
     // Find all pages
     public function findAll(): array;
 
-    // Gets the page
+    // Gets the page (published only)
     public function findOneBySlug(string $slug): ?Page;
+
+    // Gets the page regardless of status (for display: handles redirects and 410)
+    public function findForDisplay(string $slug): ?Page;
 }

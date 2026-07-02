@@ -58,48 +58,16 @@ class SitemapCreateCommand extends Command
     // Creates the sitemap
     private function createSitemap(): void
     {
-        $urlsPages = $this->getUrlsFromFolder();
-        $urlsDatabase = $this->getUrlsFromDatabase();
-        $urls = array_merge($urlsPages, $urlsDatabase);
+        $urls = $this->getUrls();
 
         //Writes file
         $sitemapContent = $this->environment->render('@c975LSite/sitemap.xml.twig', ['urls' => $urls]);
-        $sitemapFile = $this->sitemapFolder . '/sitemap-pages.xml';
+        $sitemapFile = $this->sitemapFolder . '/sitemap-site.xml';
         file_put_contents($sitemapFile, $sitemapContent);
     }
 
-
-    // Gets urls form physical files in templates/pages folder
-    public function getUrlsFromFolder(): array
-    {
-        $finder = new Finder();
-        $finder
-            ->files()
-            ->in($this->parameterBag->get('kernel.project_dir') . '/templates/pages')
-            ->depth('== 0')
-            ->name('*.html.twig')
-            ->sortByName()
-        ;
-
-        // Urls for the pages
-        $urls = [];
-        foreach ($finder as $file) {
-            $fileContent = $file->getContents();
-            $url = $this->urlRoot . '/pages/' . str_replace('.html.twig', '', $file->getRelativePathname());
-            $url = $url === $this->urlRoot . "/pages/home" ? $this->urlRoot : $url;
-            $urls[]= [
-                'loc' => $url,
-                'lastmod' => date('Y-m-d', $file->getMTime()),
-                'changefreq' => $this->getChangeFrequency($fileContent),
-                'priority' => $this->getPriority($fileContent),
-            ];
-        }
-
-        return $urls;
-    }
-
     // Gets urls from database
-    public function getUrlsFromDatabase(): array
+    public function getUrls(): array
     {
         $pages = $this->pageService->findAll();
 
@@ -111,7 +79,7 @@ class SitemapCreateCommand extends Command
                 'loc' => $url,
                 'lastmod' => date('Y-m-d', $page->getModification()->getTimestamp()),
                 'changefreq' => $page->getChangeFrequency() ?? 'weekly',
-                'priority' => $page->getPriority() ?? 9,
+                'priority' => $page->getPriority() ?? 4,
             ];
         }
 

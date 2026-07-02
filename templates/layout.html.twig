@@ -146,7 +146,7 @@
             {% if display != 'pdf' %}
                 {% block javascripts %}
                     {% block importmap %}
-                        {{ importmap('app', {'nonce': csp_nonce('script')}) }}
+                        {{ importmap(['app']|merge(bundle_scripts()), {'nonce': csp_nonce('script')}) }}
                     {% endblock %}
                 {% endblock %}
 {# End display for html #}

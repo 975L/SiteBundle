@@ -1,8 +1,21 @@
 # Changelog
 
+## v7.0
+
+- Deleted Twig2MdCommand (28/06/2026)
+- Removed page position as not needed (28/06/2026)
+- Changed name of sitemap from sitemap-pages to sitemap-site (28/06/2026)
+- Suppressed the discovery of physical templates, everything is in database [BC-Break] (28/06/2026)
+- Added  `isDeleted` fields to `Page` entity (28/06/2026)
+- Page deletion is now a soft-delete: row kept in DB, content cleared, URL returns 410 Gone (28/06/2026)
+- Added Redirect sytem for global urls (28/06/2026)
+- Transformed EasyAdmin action to import default pages to a Command (01/07/2026)
+- Moved sass related to components to c975L/UiBundle (01/07/2026)
+- Added possibility to delete/undelete pages (01/07/2026)
+-
 ## v6.28.2
 
-- Added ManyToMany relation page-blockx (27/06/2026)
+- Added ManyToMany relation page-blocks (27/06/2026)
 - Added StyleSheetProvider to load stylesheets automatically (27/06/2026)
 - Removed animations.css (27/06/2026)
 

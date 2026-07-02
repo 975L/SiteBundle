@@ -29,8 +29,13 @@ class PageService implements PageServiceInterface
         return $this->pageRepository->findAllOrdered();
     }
 
-    public function findOneBySlug(string $page): ?Page
+    public function findOneBySlug(string $slug): ?Page
     {
-        return $this->pageRepository->findOneBySlug(str_replace('.html.twig', '', $page));
+        return $this->pageRepository->findOneBySlug($slug);
+    }
+
+    public function findForDisplay(string $slug): ?Page
+    {
+        return $this->pageRepository->findOneBySlugForDisplay($slug);
     }
 }
