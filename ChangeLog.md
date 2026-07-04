@@ -1,5 +1,12 @@
 # Changelog
 
+## v7.1.3
+
+- Added the display of page description on page, before it was hidden (04/07/2026)
+- Added a What's new file that will appear on main dashboard + menu (04/07/2026)
+- Added a QrCode by page on the crud edit page (04/07/2026)
+- Protected routes that were not in crud controllers (04/07/2026)
+
 ## v7.1.2
 
 - Added config values (04/07/2026)

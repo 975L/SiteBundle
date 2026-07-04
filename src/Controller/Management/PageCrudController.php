@@ -22,6 +22,7 @@ use c975L\UiBundle\Form\Util\CollectionReconciler;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Endroid\QrCode\Builder\Builder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -42,7 +43,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -146,7 +147,7 @@ class PageCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', $isHomePage),
 
             // Content
-            TextareaField::new('description')
+            TextEditorField::new('description')
                 ->setLabel(t('label.description', [], 'site'))
                 ->setHelp(t('label.description_help', [], 'site'))
                 ->hideOnIndex(),
@@ -245,11 +246,7 @@ class PageCrudController extends AbstractCrudController
                 : t('action.preview', [], 'site'),
             'fa fa-external-link-alt'
         )
-            ->linkToUrl(fn (Page $page) => match (true) {
-                !$page->isPublished() => $this->generateUrl('page_preview', ['page' => $page->getSlug()]),
-                'home' === $page->getSlug() => $this->generateUrl('page_home'),
-                default => $this->generateUrl('page_display', ['page' => $page->getSlug()]),
-            })
+            ->linkToUrl(fn (Page $page) => $this->pagePath($page))
             ->setHtmlAttributes(['target' => '_blank'])
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
@@ -301,6 +298,7 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('restore', $role)
             ->setPermission('deletePermanently', $role)
             ->setPermission('viewOnSite', $role)
+            ->setPermission('qrcode', $role)
             ->setPermission('exportSql', $role)
             ->setPermission('exportCsv', $role)
             ->setPermission('exportJson', $role)
@@ -328,6 +326,7 @@ class PageCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-needed'))
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
         ;
     }
 
@@ -353,6 +352,8 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute('/{entityId}/delete-permanently')]
     public function deletePermanently(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         $page = $context->getEntity()->getInstance();
 
         $entityManager->remove($page);
@@ -373,6 +374,8 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute('/{entityId}/restore')]
     public function restore(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         $page = $context->getEntity()->getInstance();
 
         $page->setIsDeleted(false);
@@ -425,6 +428,22 @@ class PageCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $page);
     }
 
+    // Relative path of the page on the public site: preview link if unpublished, otherwise home or its slug
+    private function pagePath(Page $page): string
+    {
+        return match (true) {
+            !$page->isPublished() => $this->generateUrl('page_preview', ['page' => $page->getSlug()]),
+            'home' === $page->getSlug() => $this->generateUrl('page_home'),
+            default => $this->generateUrl('page_display', ['page' => $page->getSlug()]),
+        };
+    }
+
+    // Absolute, public-facing URL of the page (site-url + its path), used for the QR code
+    private function buildPageUrl(Page $page): string
+    {
+        return rtrim((string) $this->configService->get('site-url'), '/') . $this->pagePath($page);
+    }
+
     // Normalizes the slug entered by the user (removes accents, spaces, uppercase...)
     private function slugifyPage(Page $page): void
     {
@@ -466,21 +485,44 @@ class PageCrudController extends AbstractCrudController
         }
     }
 
+    // Generates on the fly the QR code pointing to the page, shown in the edit view (see page_crud_edit.html.twig)
+    #[AdminRoute('/{entityId}/qrcode')]
+    public function qrcode(AdminContext $context): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
+        $page = $context->getEntity()->getInstance();
+
+        $result = (new Builder())->build(
+            data: $this->buildPageUrl($page),
+            size: 250,
+            margin: 10,
+        );
+
+        return new Response($result->getString(), Response::HTTP_OK, ['Content-Type' => $result->getMimeType()]);
+    }
+
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Sql, 'site_page', $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportCsv(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Csv, 'site_page', $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Json, 'site_page', $this->fetchExportRows());
     }
 

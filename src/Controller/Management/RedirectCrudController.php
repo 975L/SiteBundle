@@ -111,18 +111,24 @@ class RedirectCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Sql, 'site_redirect', $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportCsv(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Csv, 'site_redirect', $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Json, 'site_redirect', $this->fetchExportRows());
     }
 

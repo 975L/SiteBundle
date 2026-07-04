@@ -342,7 +342,7 @@
             </trans-unit>
             <trans-unit id="85">
                 <source>label.description_help</source>
-                <target>This content will be used to describe the page to search engines and social networks. It is not visible on the page.</target>
+                <target>This content is displayed at the top of the page and is used to describe the page to search engines and social networks</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -503,6 +503,14 @@
             <trans-unit id="125">
                 <source>label.info_user</source>
                 <target>List of all users on the site</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.qrcode</source>
+                <target>QR Code</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.qrcode_help</source>
+                <target>Right-click on the QR Code, save the image, and use it wherever you want</target>
             </trans-unit>
         </body>
     </file>

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<xliff version="1.2"
-    xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="site.en.xlf">
         <body>
             <trans-unit id="1">
@@ -343,7 +342,7 @@
             </trans-unit>
             <trans-unit id="85">
                 <source>label.description_help</source>
-                <target>Ce contenu sera utilisé pour décrire la page aux moteurs de recherche et aux réseaux sociaux. Il n'est pas visible sur la page.</target>
+                <target>Ce contenu est affiché au début de la page et est utilisé pour décrire la page aux moteurs de recherche et aux réseaux sociaux</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -504,6 +503,14 @@
             <trans-unit id="125">
                 <source>label.info_user</source>
                 <target>Liste de tous les utilisateurs du site</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.qrcode</source>
+                <target>QR Code</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.qrcode_help</source>
+                <target>Clic droit sur le QR Code, enregistrez l'image et utilisez-le où vous le souhaitez</target>
             </trans-unit>
         </body>
     </file>

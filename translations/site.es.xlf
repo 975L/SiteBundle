@@ -342,7 +342,7 @@
             </trans-unit>
             <trans-unit id="85">
                 <source>label.description_help</source>
-                <target>Este contenido se utilizará para describir la página a los motores de búsqueda y a las redes sociales. No es visible en la página.</target>
+                <target>Este contenido se muestra al inicio de la página y se utiliza para describir la página a los motores de búsqueda y a las redes sociales</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -503,6 +503,14 @@
             <trans-unit id="125">
                 <source>label.info_user</source>
                 <target>Lista de todos los usuarios del sitio</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.qrcode</source>
+                <target>Código QR</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.qrcode_help</source>
+                <target>Clic derecho en el código QR, guarde la imagen y utilícela donde quiera</target>
             </trans-unit>
         </body>
     </file>

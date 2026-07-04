@@ -118,18 +118,24 @@ class UserCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Sql, $this->getUserTableName(), $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportCsv(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Csv, $this->getUserTableName(), $this->fetchExportRows());
     }
 
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
         return $this->tableExporter->export(ExportFormat::Json, $this->getUserTableName(), $this->fetchExportRows());
     }
 

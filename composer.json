@@ -24,6 +24,7 @@
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",
         "easycorp/easyadmin-bundle": "*",
+        "endroid/qr-code": "^6",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/mailer": "*",
