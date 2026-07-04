@@ -11,18 +11,22 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\Export\ExportFormat;
+use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -64,6 +68,8 @@ class PageCrudController extends AbstractCrudController
         private readonly AdminContextProvider $adminContextProvider,
         private readonly RequestStack $requestStack,
         private readonly SluggerInterface $slugger,
+        private readonly Connection $connection,
+        private readonly TableExporter $tableExporter,
     ) {
     }
 
@@ -248,11 +254,19 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
+        $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
+            ->createAsGlobalActionGroup()
+            ->addAction(Action::new('exportSql', t('label.export_sql', [], 'site'))->linkToCrudAction('exportSql'))
+            ->addAction(Action::new('exportCsv', t('label.export_csv', [], 'site'))->linkToCrudAction('exportCsv'))
+            ->addAction(Action::new('exportJson', t('label.export_json', [], 'site'))->linkToCrudAction('exportJson'))
+        ;
+
         return $actions
             ->add(Crud::PAGE_INDEX, $trashAction)
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
+            ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_DETAIL, $restoreAction)
             ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
             ->add(Crud::PAGE_DETAIL, $viewOnSiteAction)
@@ -287,6 +301,9 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('restore', $role)
             ->setPermission('deletePermanently', $role)
             ->setPermission('viewOnSite', $role)
+            ->setPermission('exportSql', $role)
+            ->setPermission('exportCsv', $role)
+            ->setPermission('exportJson', $role)
         ;
     }
 
@@ -446,5 +463,28 @@ class PageCrudController extends AbstractCrudController
         if (null !== $user) {
             $page->setUser($user);
         }
+    }
+
+    #[AdminRoute]
+    public function exportSql(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Sql, 'site_page', $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportCsv(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Csv, 'site_page', $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportJson(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Json, 'site_page', $this->fetchExportRows());
+    }
+
+    private function fetchExportRows(): array
+    {
+        return $this->connection->fetchAllAssociative('SELECT * FROM `site_page` ORDER BY `id`');
     }
 }

@@ -27,6 +27,7 @@ services:
             - name: ui.block
               kind: legal_model
               label: "block.legal_model"
+              description: "block.legal_model_description"
               translation_domain: 'site'
               form: c975L\SiteBundle\Form\Block\LegalModelType
               template: '@c975LSite/blocks/LegalModel.html.twig'
@@ -38,6 +39,7 @@ services:
             - name: ui.block
               kind: twig_content
               label: "block.twig_content"
+              description: "block.twig_content_description"
               translation_domain: 'site'
               form: c975L\SiteBundle\Form\Block\TwigContentType
               template: '@c975LSite/blocks/TwigContent.html.twig'
@@ -49,6 +51,7 @@ services:
             - name: ui.block
               kind: articles_slider
               label: "block.articles_slider"
+              description: "block.articles_slider_description"
               translation_domain: 'site'
               form: c975L\SiteBundle\Form\Block\ArticlesSliderType
               template: '@c975LSite/blocks/ArticlesSlider.html.twig'

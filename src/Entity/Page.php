@@ -53,7 +53,7 @@ class Page implements HasBlocksInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
-    #[ORM\ManyToOne(inversedBy: 'pages')]
+    #[ORM\ManyToOne]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]

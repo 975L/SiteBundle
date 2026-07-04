@@ -432,9 +432,17 @@
                 <source>block.twig_content</source>
                 <target>Contenido Twig</target>
             </trans-unit>
+            <trans-unit id="121">
+                <source>block.twig_content_description</source>
+                <target>Contenido Twig en bruto, para migrar páginas antiguas</target>
+            </trans-unit>
             <trans-unit id="110">
                 <source>block.legal_model</source>
                 <target>Modelo legal</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>block.legal_model_description</source>
+                <target>Inserta una plantilla de texto legal existente (CGU, aviso legal...)</target>
             </trans-unit>
             <trans-unit id="111">
                 <source>label.category_legal</source>
@@ -451,6 +459,10 @@
             <trans-unit id="114">
                 <source>block.articles_slider</source>
                 <target>Carrusel de artículos</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>block.articles_slider_description</source>
+                <target>Carrusel que destaca una selección de artículos</target>
             </trans-unit>
             <trans-unit id="115">
                 <source>label.category_navigation</source>
@@ -475,6 +487,22 @@
             <trans-unit id="120">
                 <source>label.preview_mode</source>
                 <target>Está viendo una vista previa de esta página, todavía no está publicada y no es visible para el público.</target>
+            </trans-unit>
+            <trans-unit id="125">
+                <source>label.export</source>
+                <target>Exportar</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.export_sql</source>
+                <target>SQL</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.export_csv</source>
+                <target>CSV</target>
+            </trans-unit>
+            <trans-unit id="128">
+                <source>label.export_json</source>
+                <target>JSON</target>
             </trans-unit>
         </body>
     </file>

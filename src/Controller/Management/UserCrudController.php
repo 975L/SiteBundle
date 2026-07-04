@@ -12,11 +12,18 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use App\Entity\User;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\Export\ExportFormat;
+use c975L\ConfigBundle\Service\Export\TableExporter;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Symfony\Component\Translation\t;
 
@@ -24,6 +31,8 @@ class UserCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly ConfigServiceInterface $configService,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TableExporter $tableExporter,
     ) {
     }
 
@@ -77,12 +86,23 @@ class UserCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-needed');
 
+        $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
+            ->createAsGlobalActionGroup()
+            ->addAction(Action::new('exportSql', t('label.export_sql', [], 'site'))->linkToCrudAction('exportSql'))
+            ->addAction(Action::new('exportCsv', t('label.export_csv', [], 'site'))->linkToCrudAction('exportCsv'))
+            ->addAction(Action::new('exportJson', t('label.export_json', [], 'site'))->linkToCrudAction('exportJson'))
+        ;
+
         return $actions
             ->disable(Action::NEW)
             ->disable(Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $exportGroup)
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
+            ->setPermission('exportSql', $role)
+            ->setPermission('exportCsv', $role)
+            ->setPermission('exportJson', $role)
         ;
     }
 
@@ -92,5 +112,37 @@ class UserCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-needed'))
         ;
+    }
+
+    #[AdminRoute]
+    public function exportSql(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Sql, $this->getUserTableName(), $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportCsv(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Csv, $this->getUserTableName(), $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportJson(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Json, $this->getUserTableName(), $this->fetchExportRows());
+    }
+
+    // The hashed password is never exported, exposing it brings no legitimate use and only adds risk
+    private function fetchExportRows(): array
+    {
+        $rows = $this->entityManager->getConnection()
+            ->fetchAllAssociative("SELECT * FROM `{$this->getUserTableName()}`");
+
+        return array_map(static fn (array $row): array => array_diff_key($row, ['password' => null]), $rows);
+    }
+
+    private function getUserTableName(): string
+    {
+        return $this->entityManager->getClassMetadata(User::class)->getTableName();
     }
 }

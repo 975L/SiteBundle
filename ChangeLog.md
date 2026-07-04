@@ -1,5 +1,12 @@
 # Changelog
 
+## v7.1.1
+
+- Added Export dropdown (SQL/CSV/JSON) to Page, Redirect, and User CRUD controllers, using ConfigBundle's `TableExporter` (04/07/2026)
+- Added severity on configs (04/07/2026)
+- Added desciptions for Blocks (04/07/2026)
+- Corrected Config Relation (04/07/2026)
+
 ## v7.1
 
 - Suppressed home fallback on physical template (04/07/2026)

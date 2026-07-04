@@ -6,6 +6,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": "warning",
         "description": "Name of the web site: i.e. Example.com"
     },
     {
@@ -15,6 +16,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": null,
         "description": "Tagline of the website"
     },
     {
@@ -24,6 +26,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": "warning",
         "description": "Path for the logo to be display in email (recommended): i.e. images/logo.png (Default: null)"
     },
     {
@@ -33,6 +36,7 @@
         "value": "/favicon.ico",
         "kind": "text",
         "group": "general",
+        "severity": "warning",
         "description": "Path for the favicon to be display: i.e. favicon.ico (Default: null)"
     },
     {
@@ -42,6 +46,7 @@
         "value": "/apple-touch-icon.png",
         "kind": "text",
         "group": "general",
+        "severity": "warning",
         "description": "Path for the appleTouchIcon to be display: i.e. apple-touch-icon.png (Default: null)"
     },
     {
@@ -51,6 +56,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": "info",
         "description": "The author that will be set in the meta data"
     },
     {
@@ -60,6 +66,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": "info",
         "description": "Date when the site went online"
     },
     {
@@ -69,6 +76,7 @@
         "value": null,
         "kind": "text",
         "group": "general",
+        "severity": "danger",
         "description": "URL of the website i.e. https://example.com"
     },
     {
@@ -78,6 +86,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "URL of the terms of use page i.e. https://example.com/terms-of-use"
     },
     {
@@ -87,6 +96,7 @@
         "value": null,
         "kind": "text",
         "group": "credits",
+        "severity": "info",
         "description": "URL of the hosting company i.e. https://example.com"
     },
     {
@@ -96,6 +106,7 @@
         "value": null,
         "kind": "text",
         "group": "credits",
+        "severity": "info",
         "description": "Path or URL of the hosting company logo"
     },
     {
@@ -105,6 +116,7 @@
         "value": null,
         "kind": "text",
         "group": "credits",
+        "severity": "info",
         "description": "URL of the developer/agency i.e. https://example.com"
     },
     {
@@ -114,6 +126,7 @@
         "value": null,
         "kind": "text",
         "group": "credits",
+        "severity": "info",
         "description": "Path or URL of the developer/agency logo"
     },
     {
@@ -123,6 +136,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "URL of the cookies policy page i.e. https://example.com/cookies"
     },
     {
@@ -132,6 +146,7 @@
         "value": null,
         "kind": "text",
         "group": "analytics",
+        "severity": "warning",
         "description": "URL of the Matomo instance i.e. https://matomo.example.com"
     },
     {
@@ -141,6 +156,7 @@
         "value": null,
         "kind": "text",
         "group": "analytics",
+        "severity": "warning",
         "description": "Matomo site ID (integer)"
     },
     {
@@ -150,6 +166,7 @@
         "value": "localhost",
         "kind": "text",
         "group": "backup",
+        "severity": "danger",
         "description": "MySQL host for backups"
     },
     {
@@ -159,6 +176,7 @@
         "value": null,
         "kind": "text",
         "group": "backup",
+        "severity": "danger",
         "description": "MySQL user for backups"
     },
     {
@@ -168,6 +186,7 @@
         "value": null,
         "kind": "text",
         "group": "backup",
+        "severity": "danger",
         "description": "MySQL password for backups"
     },
     {
@@ -177,6 +196,7 @@
         "value": null,
         "kind": "text",
         "group": "backup",
+        "severity": "danger",
         "description": "Name of the MySQL database to back up"
     },
     {
@@ -186,6 +206,7 @@
         "value": null,
         "kind": "text",
         "group": "backup",
+        "severity": "warning",
         "description": "Email address for backup reports and error notifications"
     },
     {
@@ -195,6 +216,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "Public contact email address displayed on legal pages"
     },
     {
@@ -204,6 +226,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": null,
         "description": "Public contact phone number displayed on legal pages"
     },
     {
@@ -213,6 +236,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "Full name of the director of publication (required for legal notice)"
     },
     {
@@ -222,6 +246,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "City or department where the director of publication resides"
     },
     {
@@ -231,6 +256,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "Owner of the website, displayed in the legal notice (HTML allowed)"
     },
     {
@@ -240,6 +266,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "info",
         "description": "Producer / developer of the website displayed in the legal notice (HTML allowed)"
     },
     {
@@ -249,6 +276,7 @@
         "value": null,
         "kind": "text",
         "group": "legal",
+        "severity": "warning",
         "description": "Full name of the Data Protection Officer, required for privacy policy"
     },
     {
@@ -258,6 +286,7 @@
         "value": "false",
         "kind": "bool",
         "group": "security",
+        "severity": null,
         "description": "Enable (true) or disable (false) the user registration route"
     },
     {
@@ -267,6 +296,7 @@
         "value": "[\"ROLE_ADMIN\"]",
         "kind": "json",
         "group": "security",
+        "severity": null,
         "description": "Extra roles selectable for users in the backoffice (besides the default ROLE_USER), as a JSON array i.e. [\"ROLE_ADMIN\",\"ROLE_EDITOR\"]"
     }
 ]

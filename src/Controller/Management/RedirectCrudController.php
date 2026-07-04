@@ -11,15 +11,22 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\Export\ExportFormat;
+use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Redirect;
+use Doctrine\DBAL\Connection;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\ActionGroup;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\Response;
 
 use function Symfony\Component\Translation\t;
 
@@ -27,6 +34,8 @@ class RedirectCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly ConfigServiceInterface $configService,
+        private readonly Connection $connection,
+        private readonly TableExporter $tableExporter,
     ) {
     }
 
@@ -61,13 +70,24 @@ class RedirectCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-needed');
 
+        $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
+            ->createAsGlobalActionGroup()
+            ->addAction(Action::new('exportSql', t('label.export_sql', [], 'site'))->linkToCrudAction('exportSql'))
+            ->addAction(Action::new('exportCsv', t('label.export_csv', [], 'site'))->linkToCrudAction('exportCsv'))
+            ->addAction(Action::new('exportJson', t('label.export_json', [], 'site'))->linkToCrudAction('exportJson'))
+        ;
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $exportGroup)
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
             ->setPermission(Action::DETAIL, $role)
+            ->setPermission('exportSql', $role)
+            ->setPermission('exportCsv', $role)
+            ->setPermission('exportJson', $role)
         ;
     }
 
@@ -85,5 +105,28 @@ class RedirectCrudController extends AbstractCrudController
             ->add('fromPath')
             ->add('toUrl')
         ;
+    }
+
+    #[AdminRoute]
+    public function exportSql(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Sql, 'site_redirect', $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportCsv(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Csv, 'site_redirect', $this->fetchExportRows());
+    }
+
+    #[AdminRoute]
+    public function exportJson(AdminContext $context): Response
+    {
+        return $this->tableExporter->export(ExportFormat::Json, 'site_redirect', $this->fetchExportRows());
+    }
+
+    private function fetchExportRows(): array
+    {
+        return $this->connection->fetchAllAssociative('SELECT * FROM `site_redirect` ORDER BY `id`');
     }
 }
