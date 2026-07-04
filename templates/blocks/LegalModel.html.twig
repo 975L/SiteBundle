@@ -1,1 +1,3 @@
-{% include ['@c975LSite/models/' ~ model ~ '.html.twig'] with {latestUpdate: latestUpdate|default(null)} %}
+{% set locale = app.request.locale|default('fr') %}
+
+{% include '@c975LSite/models/' ~ model ~ '.' ~ locale ~ '.html.twig' with {latestUpdate: latestUpdate|default(null)} %}

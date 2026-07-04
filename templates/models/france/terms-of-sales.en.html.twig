@@ -1,0 +1,90 @@
+{% trans_default_domain 'site' %}
+
+{% set updateDate = '2018-03-08' %}
+
+<p class="text-center">
+	{{ 'label.latest_update'|trans }}
+	:
+	{{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+</p>
+
+<h2>Purpose</h2>
+<p class="text text-justify">
+	These General Terms and Conditions of Sale (GTCS) define the contractual conditions applicable to any purchase made by a user on the website
+	<strong>{{ config('site-name') }}</strong>.
+	They apply from the date of publication.
+</p>
+
+<h2>Acceptance</h2>
+<p class="text text-justify">
+	Any purchase on
+	<strong>{{ config('site-name') }}</strong>
+	constitutes full and complete acceptance of the applicable GTCS.
+</p>
+
+<h2>Modification</h2>
+<p class="text text-justify">
+	We reserve the right to modify these GTCS, in whole or in part, at any time. You are invited to review them regularly to stay informed of changes. They apply from the date of publication.
+</p>
+
+<h2>Prices</h2>
+<p class="text text-justify">
+	The prices applied are those in force on the date of purchase on
+	<strong>{{ config('site-name') }}</strong>. They may be modified at any time. All prices are shown inclusive of taxes.
+</p>
+
+<h2>Payment</h2>
+<p class="text text-justify">
+	Purchases are made using the payment methods offered on
+	<strong>{{ config('site-name') }}</strong>.
+</p>
+
+<h2>Refund</h2>
+<p class="text text-justify">
+	Unused services are refundable within the legal withdrawal period.<br>
+</p>
+
+<h2>Withdrawal</h2>
+<p class="text text-justify">
+	Pursuant to article L 221-18 of the French Consumer Code, the user has a period of fourteen (14) clear days to withdraw and cancel their commitment. This period runs from the day after acceptance of the offer for service contracts. If it expires on a Saturday, Sunday, or public holiday, it is extended to the next working day. However, by validating the service, the private user agrees that we begin performance immediately and expressly waives the withdrawal right for paid services used and consumed before the legal withdrawal period expires.
+	<br>
+	The withdrawal procedure is as follows:
+</p>
+<ol>
+	<li>Submit a withdrawal request by contacting us</li>
+	<li>Validation of the request by our services</li>
+	<li>Acceptance and refund to the payment method used for the defined amount
+		<strong>OR</strong>
+		or rejection of the request with explanations</li>
+</ol>
+
+<h2>Liability</h2>
+<p class="text text-justify">
+	Our liability cannot be engaged in case of non-performance or improper performance of an order due either to the user or to a temporary force majeure event. In the opposite case, a refund procedure may be initiated.
+</p>
+
+<h2>Disputes</h2>
+<p class="text text-justify">
+	In the event of a dispute, the procedure is as follows:
+</p>
+<ol>
+	<li>Contact us for an amicable resolution</li>
+	<li>If unsuccessful, contact a
+		<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediator</a>
+	</li>
+	<li>As a last resort, refer the matter to the competent court</li>
+</ol>
+
+<h2>Applicable law - Jurisdiction</h2>
+<p class="text text-justify">
+	These GTCS are governed by French law. Any dispute relating to the interpretation and performance of these terms shall fall under the exclusive jurisdiction of French courts, and more specifically those located in the French department where the registered office of the publishing company of
+	<strong>{{ config('site-name') }}</strong> is located, whether for professional or private users.
+</p>
+
+<h2>Miscellaneous</h2>
+<p class="text text-justify">
+	If any part of the GTCS is found to be illegal, invalid, or unenforceable for any reason, the relevant provisions shall be deemed unwritten without affecting the validity of the remaining provisions, which shall continue to apply, unless it is a decisive clause that led to the purchase on
+	<strong>{{ config('site-name') }}</strong>.<br>
+	Any claim must be sent to us using the contact methods defined on the website.<br>
+	The GTCS are governed by French law.
+</p>

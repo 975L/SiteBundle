@@ -23,12 +23,21 @@ class PageExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        return [new TwigFunction('site_page', $this->getPage(...))];
+        return [
+            new TwigFunction('site_page', $this->getPage(...)),
+            new TwigFunction('site_legal_pages', $this->getLegalPages(...)),
+        ];
     }
 
     // Resolves a Page (with its blocks/medias eager-loaded), used by blocks referencing another page (e.g. articles_slider)
     public function getPage(?int $id): ?Page
     {
         return null !== $id ? $this->pageRepository->findOneByIdWithBlocks($id) : null;
+    }
+
+    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section)
+    public function getLegalPages(array $models): array
+    {
+        return $this->pageRepository->findByLegalModels($models);
     }
 }

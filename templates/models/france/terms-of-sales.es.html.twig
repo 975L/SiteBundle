@@ -1,0 +1,90 @@
+{% trans_default_domain 'site' %}
+
+{% set updateDate = '2018-03-08' %}
+
+<p class="text-center">
+	{{ 'label.latest_update'|trans }}
+	:
+	{{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+</p>
+
+<h2>Objeto</h2>
+<p class="text text-justify">
+	Las presentes Condiciones Generales de Venta (CGV) tienen por objeto definir las condiciones contractuales aplicables a toda compra realizada por un/a usuario/a en el sitio
+	<strong>{{ config('site-name') }}</strong>.
+	Se aplican desde su publicacion.
+</p>
+
+<h2>Aceptacion</h2>
+<p class="text text-justify">
+	Toda compra en
+	<strong>{{ config('site-name') }}</strong>
+	implica la aceptacion plena y total de las CGV vigentes.
+</p>
+
+<h2>Modificacion</h2>
+<p class="text text-justify">
+	Nos reservamos la posibilidad de modificar, total o parcialmente, y en cualquier momento, las presentes CGV. Se le invita a consultarlas regularmente para conocer los cambios introducidos. Son aplicables desde su publicacion.
+</p>
+
+<h2>Precios</h2>
+<p class="text text-justify">
+	Los precios aplicados son los vigentes el dia de la compra en
+	<strong>{{ config('site-name') }}</strong>. Pueden modificarse en cualquier momento. Todos nuestros precios se indican con impuestos incluidos.
+</p>
+
+<h2>Pago</h2>
+<p class="text text-justify">
+	La compra se realiza mediante los medios de pago propuestos en
+	<strong>{{ config('site-name') }}</strong>.
+</p>
+
+<h2>Reembolso</h2>
+<p class="text text-justify">
+	Los servicios no consumidos son reembolsables dentro del plazo legal de desistimiento.<br>
+</p>
+
+<h2>Desistimiento</h2>
+<p class="text text-justify">
+	En aplicacion del articulo L 221-18 del codigo de consumo, el/la usuario/a dispone de un plazo de catorce (14) dias naturales para desistir y retractarse de sus compromisos. Este plazo empieza al dia siguiente de la aceptacion de la oferta en el caso de prestaciones de servicios. Si termina en sabado, domingo o dia festivo, se prorroga hasta el siguiente dia laborable. No obstante, al validar el servicio, el/la usuario/a particular acepta que empecemos a ejecutar la prestacion inmediatamente y renuncia expresamente a su derecho de desistimiento para los servicios de pago utilizados y consumidos antes de la expiracion del plazo legal de desistimiento.
+	<br>
+	El procedimiento de desistimiento es el siguiente:
+</p>
+<ol>
+	<li>Hacer una solicitud de desistimiento contactandonos</li>
+	<li>Verificacion por nuestros servicios de la validez de la solicitud</li>
+	<li>Aceptacion y reembolso en el medio de pago utilizado del importe definido
+		<strong>O</strong>
+		o rechazo de la solicitud con explicaciones</li>
+</ol>
+
+<h2>Responsabilidad</h2>
+<p class="text text-justify">
+	Nuestra responsabilidad no podra verse comprometida en caso de no ejecucion o mala ejecucion del pedido debida, ya sea al/a la usuario/a, ya sea a un caso de fuerza mayor no duradero en el tiempo. En caso contrario, podra iniciarse un procedimiento de reembolso.
+</p>
+
+<h2>Litigios</h2>
+<p class="text text-justify">
+	En caso de litigio, el procedimiento sera el siguiente:
+</p>
+<ol>
+	<li>Contactarnos para una solucion amistosa</li>
+	<li>En caso de fracaso, contactar con un/a
+		<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediador/a</a>
+	</li>
+	<li>Como ultimo recurso, acudir al tribunal competente</li>
+</ol>
+
+<h2>Ley aplicable - Jurisdiccion competente</h2>
+<p class="text text-justify">
+	Las presentes CGV estan sometidas a la ley francesa. Todo litigio relativo a la interpretacion y ejecucion de estas condiciones sera competencia exclusiva de los tribunales franceses y, en particular, de los localizados en el departamento frances de la sede de la empresa editora de
+	<strong>{{ config('site-name') }}</strong>, tanto para usuarios/as profesionales como particulares.
+</p>
+
+<h2>Disposiciones varias</h2>
+<p class="text text-justify">
+	Si una parte de las CGV resultara ilegal, invalida o inaplicable, por cualquier motivo, las disposiciones en cuestion se consideraran no escritas, sin afectar a la validez de las demas disposiciones que seguiran aplicandose, salvo si se trata de una clausula determinante que haya llevado a la compra en
+	<strong>{{ config('site-name') }}</strong>.<br>
+	Toda reclamacion debe enviarse mediante las modalidades de contacto definidas en el sitio.<br>
+	Las CGV estan sometidas al derecho frances.
+</p>

@@ -87,7 +87,7 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "URL of the terms of use page i.e. https://example.com/terms-of-use"
+        "description": "URL of the terms of use page i.e. https://example.com/pages/terms-of-use"
     },
     {
         "label": "Hosted By URL",
@@ -137,7 +137,7 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "URL of the cookies policy page i.e. https://example.com/cookies"
+        "description": "URL of the cookies policy page i.e. https://example.com/pages/cookies"
     },
     {
         "label": "Matomo URL",
@@ -268,6 +268,36 @@
         "group": "legal",
         "severity": "info",
         "description": "Producer / developer of the website displayed in the legal notice (HTML allowed)"
+    },
+    {
+        "label": "Site Hosting provider",
+        "slug": "site-hosting-provider",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "group": "legal",
+        "severity": "info",
+        "description": "Hosting provider of the website displayed in the legal notice (HTML allowed)"
+    },
+    {
+        "label": "Site Other Copyright",
+        "slug": "site-other-copyright",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "group": "legal",
+        "severity": null,
+        "description": "Other copyright information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"
+    },
+    {
+        "label": "Site Other Cookies",
+        "slug": "site-other-cookies",
+        "sensitive": false,
+        "value": null,
+        "kind": "text",
+        "group": "legal",
+        "severity": null,
+        "description": "Other cookies information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"
     },
     {
         "label": "Data Protection Officer (DPO)",

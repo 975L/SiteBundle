@@ -149,7 +149,7 @@ h6 {
 .text,
 .site-article {
   max-width: 90vw;
-  margin: 0 auto;
+  margin: 1em auto;
 }
 
 .text-center {

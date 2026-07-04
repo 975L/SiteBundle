@@ -1,5 +1,12 @@
 # Changelog
 
+## v7.1.2
+
+- Added config values (04/07/2026)
+- Removed twig blocks in legal model as cannot be used anymore (04/07/2026)
+- Translated (IA) legal model in english and spanish (04/07/2026)
+- Added global info on CrudController (04/07/2026)
+
 ## v7.1.1
 
 - Added Export dropdown (SQL/CSV/JSON) to Page, Redirect, and User CRUD controllers, using ConfigBundle's `TableExporter` (04/07/2026)

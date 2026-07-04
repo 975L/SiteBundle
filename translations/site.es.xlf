@@ -80,7 +80,7 @@
             </trans-unit>
             <trans-unit id="20">
                 <source>text.only_french</source>
-                <target>Este texto sólo está disponible en francés</target>
+                <target>Solo el texto en francés es válido, los demás idiomas son traducciones.</target>
             </trans-unit>
             <trans-unit id="21">
                 <source>label.hosted_by</source>
@@ -344,103 +344,103 @@
                 <source>label.description_help</source>
                 <target>Este contenido se utilizará para describir la página a los motores de búsqueda y a las redes sociales. No es visible en la página.</target>
             </trans-unit>
-            <trans-unit id="88">
+            <trans-unit id="86">
                 <source>label.is_deleted</source>
                 <target>Eliminado</target>
             </trans-unit>
-            <trans-unit id="89">
+            <trans-unit id="87">
                 <source>label.redirect</source>
                 <target>Redirección</target>
             </trans-unit>
-            <trans-unit id="90">
+            <trans-unit id="88">
                 <source>label.redirects</source>
                 <target>Redirecciones</target>
             </trans-unit>
-            <trans-unit id="91">
+            <trans-unit id="89">
                 <source>label.from_path</source>
                 <target>Ruta de origen</target>
             </trans-unit>
-            <trans-unit id="92">
+            <trans-unit id="90">
                 <source>label.from_path_help</source>
                 <target>Ruta URL con la / inicial (ej: /la-guilde-des-seigneurs)</target>
             </trans-unit>
-            <trans-unit id="93">
+            <trans-unit id="91">
                 <source>label.to_url</source>
                 <target>URL de destino</target>
             </trans-unit>
-            <trans-unit id="94">
+            <trans-unit id="92">
                 <source>label.to_url_help</source>
                 <target>URL completa (https://...) o ruta absoluta (/serie/la-guilde)</target>
             </trans-unit>
-            <trans-unit id="95">
+            <trans-unit id="93">
                 <source>label.permanent</source>
                 <target>Permanente (301)</target>
             </trans-unit>
-            <trans-unit id="96">
+            <trans-unit id="94">
                 <source>label.permanent_help</source>
                 <target>Marcado = redirección permanente 301 (SEO), desmarcado = temporal 302</target>
             </trans-unit>
-            <trans-unit id="97">
+            <trans-unit id="95">
                 <source>action.trash</source>
                 <target>Papelera</target>
             </trans-unit>
-            <trans-unit id="98">
+            <trans-unit id="96">
                 <source>action.move_to_trash</source>
                 <target>Mover a la papelera</target>
             </trans-unit>
-            <trans-unit id="99">
+            <trans-unit id="97">
                 <source>action.delete_permanently</source>
                 <target>Eliminar definitivamente</target>
             </trans-unit>
-            <trans-unit id="100">
+            <trans-unit id="98">
                 <source>confirm.delete_permanently</source>
                 <target>Esta acción es irreversible y eliminará definitivamente la página y su contenido. ¿Continuar?</target>
             </trans-unit>
-            <trans-unit id="101">
+            <trans-unit id="99">
                 <source>flash.page_deleted_permanently</source>
                 <target>La página ha sido eliminada definitivamente.</target>
             </trans-unit>
-            <trans-unit id="102">
+            <trans-unit id="100">
                 <source>action.restore</source>
                 <target>Restaurar</target>
             </trans-unit>
-            <trans-unit id="103">
+            <trans-unit id="101">
                 <source>flash.page_restored</source>
                 <target>La página ha sido restaurada.</target>
             </trans-unit>
-            <trans-unit id="104">
+            <trans-unit id="102">
                 <source>action.view_on_site</source>
                 <target>Ver en el sitio</target>
             </trans-unit>
-            <trans-unit id="105">
+            <trans-unit id="103">
                 <source>label.slug_help</source>
                 <target>Es importante que el slug corresponda al título de la página (sin acentos, mayúsculas ni espacios). Puede modificarlo haciendo clic en el candado, se establecerá una redirección para mantener el SEO.</target>
             </trans-unit>
-            <trans-unit id="106">
+            <trans-unit id="104">
                 <source>confirm.title_change</source>
                 <target>Modificar el título cambiará la URL de la página (slug), se establecerá automáticamente una redirección. ¿Continuar?</target>
             </trans-unit>
-            <trans-unit id="107">
+            <trans-unit id="105">
                 <source>label.content</source>
                 <target>Contenido</target>
             </trans-unit>
-            <trans-unit id="108">
+            <trans-unit id="106">
                 <source>label.content_help</source>
                 <target>Pegue aquí el contenido Twig del antiguo archivo .html.twig (el archivo puede eliminarse después). El contenido se interpreta como Twig: puede usar las funciones/filtros habituales (config(), path(), etc.).</target>
             </trans-unit>
-            <trans-unit id="109">
+            <trans-unit id="107">
                 <source>block.twig_content</source>
                 <target>Contenido Twig</target>
             </trans-unit>
-            <trans-unit id="121">
+            <trans-unit id="108">
                 <source>block.twig_content_description</source>
                 <target>Contenido Twig en bruto, para migrar páginas antiguas</target>
             </trans-unit>
-            <trans-unit id="110">
+            <trans-unit id="109">
                 <source>block.legal_model</source>
                 <target>Modelo legal</target>
             </trans-unit>
-            <trans-unit id="122">
+            <trans-unit id="110">
                 <source>block.legal_model_description</source>
                 <target>Inserta una plantilla de texto legal existente (CGU, aviso legal...)</target>
             </trans-unit>
@@ -460,49 +460,49 @@
                 <source>block.articles_slider</source>
                 <target>Carrusel de artículos</target>
             </trans-unit>
-            <trans-unit id="123">
+            <trans-unit id="115">
                 <source>block.articles_slider_description</source>
                 <target>Carrusel que destaca una selección de artículos</target>
             </trans-unit>
-            <trans-unit id="115">
+            <trans-unit id="116">
                 <source>label.category_navigation</source>
                 <target>Navegación</target>
             </trans-unit>
-            <trans-unit id="116">
+            <trans-unit id="117">
                 <source>label.duration</source>
                 <target>Duración</target>
             </trans-unit>
-            <trans-unit id="117">
+            <trans-unit id="118">
                 <source>label.users</source>
                 <target>Usuarios</target>
             </trans-unit>
-            <trans-unit id="118">
+            <trans-unit id="119">
                 <source>label.roles</source>
                 <target>Roles</target>
             </trans-unit>
-            <trans-unit id="119">
+            <trans-unit id="120">
                 <source>action.preview</source>
                 <target>Vista previa</target>
             </trans-unit>
-            <trans-unit id="120">
+            <trans-unit id="121">
                 <source>label.preview_mode</source>
                 <target>Está viendo una vista previa de esta página, todavía no está publicada y no es visible para el público.</target>
             </trans-unit>
-            <trans-unit id="125">
+            <trans-unit id="122">
                 <source>label.export</source>
                 <target>Exportar</target>
             </trans-unit>
-            <trans-unit id="126">
-                <source>label.export_sql</source>
-                <target>SQL</target>
+            <trans-unit id="123">
+                <source>label.info_page</source>
+                <target>Lista de todas las páginas disponibles en el sitio</target>
             </trans-unit>
-            <trans-unit id="127">
-                <source>label.export_csv</source>
-                <target>CSV</target>
+            <trans-unit id="124">
+                <source>label.info_redirect</source>
+                <target>Lista de todas las redirecciones disponibles en el sitio</target>
             </trans-unit>
-            <trans-unit id="128">
-                <source>label.export_json</source>
-                <target>JSON</target>
+            <trans-unit id="125">
+                <source>label.info_user</source>
+                <target>Lista de todos los usuarios del sitio</target>
             </trans-unit>
         </body>
     </file>

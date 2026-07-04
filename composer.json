@@ -1,7 +1,7 @@
 {
     "name": "c975l/site-bundle",
     "type": "symfony-bundle",
-    "description": "Groups common files and settings to create a website",
+    "description": "Symfony bundle that provides a complete foundation for building websites — layout, pages, SEO, admin, sitemap, legal templates, and more.",
     "keywords": ["symfony", "bundle", "website"],
     "homepage": "https://github.com/975L/SiteBundle",
     "license": "MIT",

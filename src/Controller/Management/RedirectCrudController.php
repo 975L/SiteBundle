@@ -72,9 +72,9 @@ class RedirectCrudController extends AbstractCrudController
 
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
-            ->addAction(Action::new('exportSql', t('label.export_sql', [], 'site'))->linkToCrudAction('exportSql'))
-            ->addAction(Action::new('exportCsv', t('label.export_csv', [], 'site'))->linkToCrudAction('exportCsv'))
-            ->addAction(Action::new('exportJson', t('label.export_json', [], 'site'))->linkToCrudAction('exportJson'))
+            ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
+            ->addAction(Action::new('exportCsv', 'CSV')->linkToCrudAction('exportCsv'))
+            ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
         return $actions
@@ -96,6 +96,7 @@ class RedirectCrudController extends AbstractCrudController
         return $crud
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-needed'))
+            ->overrideTemplate('crud/index', '@c975LSite/management/redirect_crud_index.html.twig')
         ;
     }
 

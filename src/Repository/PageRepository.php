@@ -85,4 +85,39 @@ class PageRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    // Find published pages having a legal_model block matching one of the given model identifiers (e.g. 'france/cookies'), preserving the given order
+    public function findByLegalModels(array $models): array
+    {
+        $pages = $this->createQueryBuilder('p')
+            ->select('p, b')
+            ->innerJoin('p.blocks', 'b')
+            ->andWhere('b.kind = :kind')
+            ->andWhere('p.isPublished = :published')
+            ->andWhere('p.isDeleted = :deleted')
+            ->setParameter('kind', 'legal_model')
+            ->setParameter('published', true)
+            ->setParameter('deleted', false)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $byModel = [];
+        foreach ($pages as $page) {
+            foreach ($page->getBlocks() as $block) {
+                if ('legal_model' === $block->getKind()) {
+                    $byModel[$block->getData()['model'] ?? ''] = $page;
+                }
+            }
+        }
+
+        $result = [];
+        foreach ($models as $model) {
+            if (isset($byModel[$model])) {
+                $result[] = $byModel[$model];
+            }
+        }
+
+        return $result;
+    }
 }

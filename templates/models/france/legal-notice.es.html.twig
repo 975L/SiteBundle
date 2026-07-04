@@ -1,0 +1,66 @@
+{% trans_default_domain 'site' %}
+
+{% set updateDate = '2018-03-08' %}
+
+<p class="text text-center">
+	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+</p>
+
+<h2>Acceso al sitio web</h2>
+<p class="text text-justify">
+	Le recordamos las características y los límites de la red de Internet y declinamos toda responsabilidad por las consecuencias de su conexión a esta red a través de
+	<strong>{{ config('site-name') }}</strong>.<br>
+	En particular, no podremos ser considerados responsables de ningún daño, material o inmaterial, causado a sus equipos informáticos y a los datos almacenados en ellos, ni de las consecuencias que puedan derivarse para su actividad personal, profesional o comercial.<br>
+	Tampoco podremos ser considerados responsables en caso de que usted no pueda conectarse a
+	<strong>{{ config('site-name') }}</strong>
+	debido a cualquier defecto técnico o a cualquier problema relacionado, en particular, con la congestión de la red.
+</p>
+
+{% if config('site-owner') %}
+	<h2>Propietario</h2>
+	<p class="text text-justify">
+		{{ config('site-owner')|raw }}
+	</p>
+{% endif %}
+
+<h2>Edición</h2>
+<p class="text text-justify">
+	El director de la publicación es
+	<strong>{{ config('site-director') }}</strong>
+	con domicilio en
+	<strong>{{ config('site-director-location') }}</strong>.
+</p>
+
+<h2>Contact</h2>
+<p class="text text-justify">
+	Puede contactarnos por uno de los siguientes medios:
+</p>
+<ul class="text text-justify">
+	<li>formulario de contacto</li>
+	<li>{{ config('site-contact-email') }}</li>
+	<li>por teléfono
+		{{ config('site-contact-phone') }}</li>
+</ul>
+
+<h2>Realización</h2>
+<p class="text text-justify">
+	Este sitio está realizado por
+	{{ config('site-producer')|raw }}.
+</p>
+
+<h2>Alojamiento del sitio web</h2>
+<p class="text text-justify">
+	Este sitio web está alojado por
+    <br>
+    {{ config('site-hosting-provider')|raw|nl2br }}.
+</p>
+
+<h2>Anexos</h2>
+{% set legalPages = site_legal_pages(['france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright']) %}
+{% if legalPages %}
+	<ul class="text text-justify">
+		{% for legalPage in legalPages %}
+			<li><a href="{{ path('page_display', {page: legalPage.slug}) }}">{{ legalPage.title }}</a></li>
+		{% endfor %}
+	</ul>
+{% endif %}

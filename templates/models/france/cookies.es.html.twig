@@ -1,0 +1,24 @@
+{% trans_default_domain 'site' %}
+
+<p class="text text-justify">
+    Las cookies son archivos de texto que se colocan en su ordenador para ayudar al sitio web a analizar el uso que hacen de el sus usuarios. Los datos generados por las cookies sobre su uso del sitio (incluida su direccion IP, que sera truncada) se transmitiran y almacenaran en nuestros servidores. Utilizaremos esta informacion para evaluar el uso del sitio, elaborar informes sobre la actividad del sitio para nuestro uso y proporcionar otros servicios relacionados con la actividad del sitio y el uso de Internet.
+</p>
+<p class="text text-justify">
+    Es posible que comuniquemos estos datos a terceros en caso de obligacion legal. No cruzaremos su direccion IP con ningun otro dato del que dispongamos. Al utilizar este sitio web, usted consiente expresamente el tratamiento de sus datos personales por nuestra parte en las condiciones y para las finalidades descritas anteriormente.
+</p>
+<p class="text text-justify">
+    Puede desactivar el uso de cookies seleccionando la configuracion apropiada en su navegador. <strong>Sin embargo, dicha desactivacion podria impedir el uso de algunas funcionalidades de este sitio web.</strong>
+</p>
+<p class="text text-justify">
+    Para mas informacion, y si tiene alguna duda o necesita una aclaracion, no dude en contactarnos.
+</p>
+<p class="text text-justify">
+    Para ampliar informacion sobre lo que dice la ley en Francia: <a href="http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi">http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi</a>
+</p>
+
+{% if config('site-other-cookies') %}
+    <h2>Otras cookies</h2>
+    <div class="text text-justify">
+        {{ config('site-other-cookies')|raw|nl2br }}.
+    </div>
+{% endif %}

@@ -80,7 +80,7 @@
             </trans-unit>
             <trans-unit id="20">
                 <source>text.only_french</source>
-                <target>This text is only available in french</target>
+                <target>Only the French text is authoritative, the other languages being translations.</target>
             </trans-unit>
             <trans-unit id="21">
                 <source>label.hosted_by</source>
@@ -344,103 +344,103 @@
                 <source>label.description_help</source>
                 <target>This content will be used to describe the page to search engines and social networks. It is not visible on the page.</target>
             </trans-unit>
-            <trans-unit id="88">
+            <trans-unit id="86">
                 <source>label.is_deleted</source>
                 <target>Deleted</target>
             </trans-unit>
-            <trans-unit id="89">
+            <trans-unit id="87">
                 <source>label.redirect</source>
                 <target>Redirect</target>
             </trans-unit>
-            <trans-unit id="90">
+            <trans-unit id="88">
                 <source>label.redirects</source>
                 <target>Redirects</target>
             </trans-unit>
-            <trans-unit id="91">
+            <trans-unit id="89">
                 <source>label.from_path</source>
                 <target>Source path</target>
             </trans-unit>
-            <trans-unit id="92">
+            <trans-unit id="90">
                 <source>label.from_path_help</source>
                 <target>URL path with leading / (e.g. /la-guilde-des-seigneurs)</target>
             </trans-unit>
-            <trans-unit id="93">
+            <trans-unit id="91">
                 <source>label.to_url</source>
                 <target>Target URL</target>
             </trans-unit>
-            <trans-unit id="94">
+            <trans-unit id="92">
                 <source>label.to_url_help</source>
                 <target>Full URL (https://...) or absolute path (/series/la-guilde)</target>
             </trans-unit>
-            <trans-unit id="95">
+            <trans-unit id="93">
                 <source>label.permanent</source>
                 <target>Permanent (301)</target>
             </trans-unit>
-            <trans-unit id="96">
+            <trans-unit id="94">
                 <source>label.permanent_help</source>
                 <target>Checked = permanent redirect 301 (SEO), unchecked = temporary 302</target>
             </trans-unit>
-            <trans-unit id="97">
+            <trans-unit id="95">
                 <source>action.trash</source>
                 <target>Trash</target>
             </trans-unit>
-            <trans-unit id="98">
+            <trans-unit id="96">
                 <source>action.move_to_trash</source>
                 <target>Move to trash</target>
             </trans-unit>
-            <trans-unit id="99">
+            <trans-unit id="97">
                 <source>action.delete_permanently</source>
                 <target>Delete permanently</target>
             </trans-unit>
-            <trans-unit id="100">
+            <trans-unit id="98">
                 <source>confirm.delete_permanently</source>
                 <target>This action is irreversible and will permanently delete the page and its content. Continue?</target>
             </trans-unit>
-            <trans-unit id="101">
+            <trans-unit id="99">
                 <source>flash.page_deleted_permanently</source>
                 <target>The page has been permanently deleted.</target>
             </trans-unit>
-            <trans-unit id="102">
+            <trans-unit id="100">
                 <source>action.restore</source>
                 <target>Restore</target>
             </trans-unit>
-            <trans-unit id="103">
+            <trans-unit id="101">
                 <source>flash.page_restored</source>
                 <target>The page has been restored.</target>
             </trans-unit>
-            <trans-unit id="104">
+            <trans-unit id="102">
                 <source>action.view_on_site</source>
                 <target>View on site</target>
             </trans-unit>
-            <trans-unit id="105">
+            <trans-unit id="103">
                 <source>label.slug_help</source>
                 <target>It is important that the slug matches the page title (without accents, uppercase letters or spaces). You can modify it by clicking on the lock, a redirect will be set up to maintain SEO.</target>
             </trans-unit>
-            <trans-unit id="106">
+            <trans-unit id="104">
                 <source>confirm.title_change</source>
                 <target>Changing the title will change the page's URL (slug), a redirect will be automatically set up. Continue?</target>
             </trans-unit>
-            <trans-unit id="107">
+            <trans-unit id="105">
                 <source>label.content</source>
                 <target>Content</target>
             </trans-unit>
-            <trans-unit id="108">
+            <trans-unit id="106">
                 <source>label.content_help</source>
                 <target>Paste the Twig content of the old .html.twig file here (the file can then be deleted). The content is interpreted as Twig: you can use the usual functions/filters (config(), path(), etc.).</target>
             </trans-unit>
-            <trans-unit id="109">
+            <trans-unit id="107">
                 <source>block.twig_content</source>
                 <target>Twig Content</target>
             </trans-unit>
-            <trans-unit id="121">
+            <trans-unit id="108">
                 <source>block.twig_content_description</source>
                 <target>Raw Twig content, for migrating legacy pages</target>
             </trans-unit>
-            <trans-unit id="110">
+            <trans-unit id="109">
                 <source>block.legal_model</source>
                 <target>Legal Model</target>
             </trans-unit>
-            <trans-unit id="122">
+            <trans-unit id="110">
                 <source>block.legal_model_description</source>
                 <target>Inserts an existing legal text template (T&amp;Cs, legal notice...)</target>
             </trans-unit>
@@ -460,49 +460,49 @@
                 <source>block.articles_slider</source>
                 <target>Articles Slider</target>
             </trans-unit>
-            <trans-unit id="123">
+            <trans-unit id="115">
                 <source>block.articles_slider_description</source>
                 <target>Slideshow highlighting a selection of articles</target>
             </trans-unit>
-            <trans-unit id="115">
+            <trans-unit id="116">
                 <source>label.category_navigation</source>
                 <target>Navigation</target>
             </trans-unit>
-            <trans-unit id="116">
+            <trans-unit id="117">
                 <source>label.duration</source>
                 <target>Duration</target>
             </trans-unit>
-            <trans-unit id="117">
+            <trans-unit id="118">
                 <source>label.users</source>
                 <target>Users</target>
             </trans-unit>
-            <trans-unit id="118">
+            <trans-unit id="119">
                 <source>label.roles</source>
                 <target>Roles</target>
             </trans-unit>
-            <trans-unit id="119">
+            <trans-unit id="120">
                 <source>action.preview</source>
                 <target>Preview</target>
             </trans-unit>
-            <trans-unit id="120">
+            <trans-unit id="121">
                 <source>label.preview_mode</source>
                 <target>You are viewing a preview of this page, it is not yet published and not visible to the public.</target>
             </trans-unit>
-            <trans-unit id="125">
+            <trans-unit id="122">
                 <source>label.export</source>
                 <target>Export</target>
             </trans-unit>
-            <trans-unit id="126">
-                <source>label.export_sql</source>
-                <target>SQL</target>
+            <trans-unit id="123">
+                <source>label.info_page</source>
+                <target>List of all pages available on the site</target>
             </trans-unit>
-            <trans-unit id="127">
-                <source>label.export_csv</source>
-                <target>CSV</target>
+            <trans-unit id="124">
+                <source>label.info_redirect</source>
+                <target>List of all redirects available on the site</target>
             </trans-unit>
-            <trans-unit id="128">
-                <source>label.export_json</source>
-                <target>JSON</target>
+            <trans-unit id="125">
+                <source>label.info_user</source>
+                <target>List of all users on the site</target>
             </trans-unit>
         </body>
     </file>
