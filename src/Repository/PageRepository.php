@@ -40,6 +40,20 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
+    // Find one page by id, with its blocks and their medias eager-loaded (used by the articles_slider block)
+    public function findOneByIdWithBlocks(int $id): ?Page
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p, b, m')
+            ->leftJoin('p.blocks', 'b')
+            ->leftJoin('b.medias', 'm')
+            ->andWhere('p.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // Find one page by slug (published only)
     public function findOneBySlug(string $slug): ?Page
     {

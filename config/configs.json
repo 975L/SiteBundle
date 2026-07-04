@@ -229,7 +229,7 @@
         "slug": "site-owner",
         "sensitive": false,
         "value": null,
-        "kind": "textarea",
+        "kind": "text",
         "group": "legal",
         "description": "Owner of the website, displayed in the legal notice (HTML allowed)"
     },
@@ -250,5 +250,23 @@
         "kind": "text",
         "group": "legal",
         "description": "Full name of the Data Protection Officer, required for privacy policy"
+    },
+    {
+        "label": "User Registration Enabled",
+        "slug": "user-registration-enabled",
+        "sensitive": false,
+        "value": "false",
+        "kind": "bool",
+        "group": "security",
+        "description": "Enable (true) or disable (false) the user registration route"
+    },
+    {
+        "label": "User Roles Available",
+        "slug": "user-roles-available",
+        "sensitive": false,
+        "value": "[\"ROLE_ADMIN\"]",
+        "kind": "json",
+        "group": "security",
+        "description": "Extra roles selectable for users in the backoffice (besides the default ROLE_USER), as a JSON array i.e. [\"ROLE_ADMIN\",\"ROLE_EDITOR\"]"
     }
 ]

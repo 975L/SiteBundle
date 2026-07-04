@@ -43,3 +43,14 @@ services:
               template: '@c975LSite/blocks/TwigContent.html.twig'
               category: 'label.category_migration'
 
+    site.block.articles_slider:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: articles_slider
+              label: "block.articles_slider"
+              translation_domain: 'site'
+              form: c975L\SiteBundle\Form\Block\ArticlesSliderType
+              template: '@c975LSite/blocks/ArticlesSlider.html.twig'
+              category: 'label.category_navigation'
+

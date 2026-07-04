@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\MenuProviderInterface;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
+use c975L\SiteBundle\Controller\Management\UserCrudController;
 
 class MenuProvider implements MenuProviderInterface
 {
@@ -38,6 +39,12 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.redirects',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-arrow-right',
+            ],
+            'user' => [
+                'controller' => UserCrudController::class,
+                'label' => 'label.users',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-users',
             ],
         ];
     }

@@ -14,7 +14,9 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Repository\RedirectRepository;
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
+use c975L\UiBundle\Form\Util\CollectionReconciler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -70,31 +72,26 @@ class PageCrudController extends AbstractCrudController
         return Page::class;
     }
 
-    // Symfony's form-level adder/remover diffing for the "blocks" ManyToMany collection is unreliable
-    // once nested dynamic sub-forms (data/medias) are involved: removing one block among several leaves
-    // it fully untouched in the database instead of removing it. Reconciling explicitly against the
-    // block positions still present in the submission side-steps that, instead of trusting Symfony's
-    // own object-identity diff. Separately, removing the very last block leaves nothing submitted at all
-    // for "blocks" (an HTML form can't represent an empty array, only an absent key), which also has to
-    // be normalized to [] or Symfony skips add/remove handling entirely for the whole field.
+    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't
+    // represent an empty array, only an absent key), which has to be normalized to [] below or Symfony
+    // skips add/remove handling entirely for the whole field.
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
 
-        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($entityDto): void {
+        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             if (!is_array($data)) {
                 return;
             }
 
-            $page = $entityDto->getInstance();
+            $page = $event->getForm()->getData();
             if ($page instanceof Page) {
-                $submittedBlocks = $data['blocks'] ?? [];
-                foreach (array_values($page->getBlocks()->toArray()) as $index => $block) {
-                    if (!array_key_exists($index, $submittedBlocks)) {
-                        $page->removeBlock($block);
-                    }
-                }
+                CollectionReconciler::pruneRemoved(
+                    $page->getBlocks(),
+                    $data['blocks'] ?? [],
+                    static fn (Block $block) => $page->removeBlock($block)
+                );
             }
 
             if (!isset($data['blocks'])) {
@@ -233,11 +230,20 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
-        // Opens the page on the public site, in a new tab - hidden for trashed pages (they 410 on the site)
-        $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'site'), 'fa fa-external-link-alt')
-            ->linkToUrl(fn (Page $page) => 'home' === $page->getSlug()
-                ? $this->generateUrl('page_home')
-                : $this->generateUrl('page_display', ['page' => $page->getSlug()]))
+        // Opens the page on the public site if published, or a preview (admin-only, works even unpublished) otherwise
+        // In a new tab - hidden for trashed pages (they 410 on the site)
+        $viewOnSiteAction = Action::new(
+            'viewOnSite',
+            static fn (Page $page) => $page->isPublished()
+                ? t('action.view_on_site', [], 'site')
+                : t('action.preview', [], 'site'),
+            'fa fa-external-link-alt'
+        )
+            ->linkToUrl(fn (Page $page) => match (true) {
+                !$page->isPublished() => $this->generateUrl('page_preview', ['page' => $page->getSlug()]),
+                'home' === $page->getSlug() => $this->generateUrl('page_home'),
+                default => $this->generateUrl('page_display', ['page' => $page->getSlug()]),
+            })
             ->setHtmlAttributes(['target' => '_blank'])
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
             ->addCssClass('btn btn-secondary');

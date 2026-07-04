@@ -449,6 +449,34 @@
                 <source>label.model</source>
                 <target>Modèle</target>
             </trans-unit>
+            <trans-unit id="114">
+                <source>block.articles_slider</source>
+                <target>Diaporama d'articles</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.category_navigation</source>
+                <target>Navigation</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>label.duration</source>
+                <target>Durée</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.users</source>
+                <target>Utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>label.roles</source>
+                <target>Rôles</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>action.preview</source>
+                <target>Prévisualiser</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>label.preview_mode</source>
+                <target>Vous visualisez un aperçu de cette page, elle n'est pas encore publiée et n'est pas visible du public.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,5 +1,14 @@
 # Changelog
 
+## v7.1
+
+- Suppressed home fallback on physical template (04/07/2026)
+- Added component ArticleSlider (04/07/2026)
+- Added config to allow/unallow user's registration (04/07/2026)
+- Added UserCrudController (04/07/2026)
+- Added `user-roles-available` config to manage selectable roles from the backoffice (04/07/2026)
+- Added preview for pages not yet published (04/07/2026)
+
 ## v7.0
 
 - Deleted Twig2MdCommand (28/06/2026)
@@ -12,7 +21,7 @@
 - Transformed EasyAdmin action to import default pages to a Command (01/07/2026)
 - Moved sass related to components to c975L/UiBundle (01/07/2026)
 - Added possibility to delete/undelete pages (01/07/2026)
--
+
 ## v6.28.2
 
 - Added ManyToMany relation page-blocks (27/06/2026)

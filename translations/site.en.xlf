@@ -448,6 +448,34 @@
                 <source>label.model</source>
                 <target>Model</target>
             </trans-unit>
+            <trans-unit id="114">
+                <source>block.articles_slider</source>
+                <target>Articles Slider</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.category_navigation</source>
+                <target>Navigation</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>label.duration</source>
+                <target>Duration</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.users</source>
+                <target>Users</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>label.roles</source>
+                <target>Roles</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>action.preview</source>
+                <target>Preview</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>label.preview_mode</source>
+                <target>You are viewing a preview of this page, it is not yet published and not visible to the public.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
