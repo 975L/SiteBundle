@@ -612,6 +612,10 @@
                 <source>constraint.menu_item_target</source>
                 <target>Choose either a page or a route, not both, not neither.</target>
             </trans-unit>
+            <trans-unit id="153">
+                <source>label.export_tables</source>
+                <target>Export site_ tables</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

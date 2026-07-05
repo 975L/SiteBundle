@@ -16,6 +16,7 @@ use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
 use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Controller\Management\UserCrudController;
+use c975L\UiBundle\Controller\Management\MediaCrudController;
 
 class MenuProvider implements MenuProviderInterface
 {
@@ -59,6 +60,15 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.menus',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-bars',
+            ],
+            // Lives in UiBundle (Media is defined there), but UiBundle can't register its own menu
+            // entry: ConfigBundle already depends on UiBundle, so the reverse would be circular.
+            // SiteBundle depends on both, so it's the natural place to wire this menu item.
+            'media' => [
+                'controller' => MediaCrudController::class,
+                'label' => 'label.media_library',
+                'translation_domain' => 'ui',
+                'icon' => 'fas fa-photo-film',
             ],
         ];
     }

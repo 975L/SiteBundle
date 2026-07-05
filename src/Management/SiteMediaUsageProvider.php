@@ -15,7 +15,6 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\MediaUsageProviderInterface;
 use c975L\UiBundle\Entity\Media;
-use c975L\UiBundle\Repository\MediaRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,17 +31,16 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
     ];
 
     public function __construct(
-        private readonly MediaRepository $mediaRepository,
         private readonly PageRepository $pageRepository,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
         private readonly TranslatorInterface $translator,
     ) {
     }
 
-    public function getUsages(array $mediaIds): array
+    public function getUsages(array $medias): array
     {
         $usages = [];
-        $medias = $this->mediaRepository->findBy(['id' => $mediaIds]);
+        $mediaIds = array_map(static fn (Media $media): ?int => $media->getId(), $medias);
 
         foreach ($medias as $media) {
             if (null === $media->getRole()) {

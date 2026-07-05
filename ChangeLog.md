@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.1.5
+
+- Added a Command to bulk export data from tables site_* + Shortcut on admin dashboard(05/07/2026)
+
 ## v7.1.4
 
 - Moved favicon/apple-touch-icon/og-image/logo from plain config paths to site_media managed from a new "Site graphics" CRUD (05/07/2026)

@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Command\ExportTablesCommand;
 use c975L\SiteBundle\Command\SitemapCreateCommand;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,9 +22,12 @@ class SiteShortcutController extends AbstractController
 {
     // EasyAdmin prefixes this with the Dashboard's own route name, giving management_site_sitemap_create
     public const SITEMAP_CREATE_ROUTE = 'management_site_sitemap_create';
+    // EasyAdmin prefixes this with the Dashboard's own route name, giving management_site_export_tables
+    public const EXPORT_TABLES_ROUTE = 'management_site_export_tables';
 
     public function __construct(
         private readonly SitemapCreateCommand $sitemapCreateCommand,
+        private readonly ExportTablesCommand $exportTablesCommand,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
     ) {
@@ -37,6 +41,26 @@ class SiteShortcutController extends AbstractController
         if ($this->isCsrfTokenValid(self::SITEMAP_CREATE_ROUTE, $request->request->get('_token'))) {
             $this->sitemapCreateCommand->createSitemap();
             $this->addFlash('success', $this->translator->trans('flash.sitemap_created', [], 'site'));
+        }
+
+        return $this->redirectToRoute('management');
+    }
+
+    #[AdminRoute(path: '/site/export-tables', name: 'site_export_tables', options: ['methods' => ['POST']])]
+    public function exportTables(Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+
+        if ($this->isCsrfTokenValid(self::EXPORT_TABLES_ROUTE, $request->request->get('_token'))) {
+            $result = $this->exportTablesCommand->exportTables();
+
+            if ($result['error'] !== null) {
+                $this->addFlash('danger', $result['error']);
+            } elseif (empty($result['tables'])) {
+                $this->addFlash('warning', $result['message']);
+            } else {
+                $this->addFlash('success', $result['message']);
+            }
         }
 
         return $this->redirectToRoute('management');

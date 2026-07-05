@@ -28,6 +28,12 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'route' => SiteShortcutController::SITEMAP_CREATE_ROUTE,
                 'active' => false,
             ],
+            [
+                'label' => $this->translator->trans('label.export_tables', [], 'site'),
+                'icon' => 'fas fa-file-export',
+                'route' => SiteShortcutController::EXPORT_TABLES_ROUTE,
+                'active' => false,
+            ],
         ];
     }
 }
