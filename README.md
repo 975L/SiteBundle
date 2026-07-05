@@ -253,6 +253,8 @@ An item disappears from the rendered menu automatically (no dangling link) if it
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).
 
+The navbar can be kept fixed at the top of the viewport while scrolling via the `site-navbar-fixed` ConfigBundle key (`bool`, default `false`). When enabled, `.menu-fixed` is added on the `<nav>` and a `navbar-fixed` class is added on `<body>` to compensate the space it frees from the normal flow.
+
 `site-tagline` is authored as rich text in the backoffice (Trix wraps the value in its own `<div>`), so it's rendered with `|raw` — style `.menu-site-tagline` in your own SCSS if you need to adjust it.
 
 ### Linking to a bundle's own route

@@ -163,7 +163,7 @@
         {% endblock %}
     </head>
 {# Body #}
-    <body id="top" data-controller="basic">
+    <body id="top" class="{{ config('site-navbar-fixed') ? 'navbar-fixed' : '' }}" data-controller="basic">
 {# jQuery #}
         {% block jquery %}
         {% endblock %}

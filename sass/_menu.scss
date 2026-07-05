@@ -7,6 +7,20 @@
     box-shadow: 0 2px 4px var(--primary);
 }
 
+.menu-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+// Compensates the space freed by .menu-fixed taking the navbar out of the flow
+body.navbar-fixed {
+    padding-top: 65px;
+}
+
 .menu-header {
     display: flex;
     align-items: center;
@@ -87,6 +101,10 @@
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+// Navbar's collapsible mobile dropdown (scoped to .menu so it doesn't leak into footer's .menu-items)
+.menu .menu-items {
     display: none;
     flex-direction: column;
     background-color: var(--primary);
@@ -148,16 +166,13 @@
         flex: 0 0 auto;
     }
 
-    .menu-items {
-        position: static;
-        box-shadow: none;
-    }
-
     .menu-toggle {
         display: none;
     }
 
-    .menu-items {
+    .menu .menu-items {
+        position: static;
+        box-shadow: none;
         display: flex;
         flex-direction: row;
         flex: 1;

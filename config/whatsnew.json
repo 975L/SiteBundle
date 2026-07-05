@@ -1,5 +1,21 @@
 [
     {
+    "version": "7.1.6",
+    "date": "2026-07-05",
+    "description": [
+        {
+            "en": "Corrected css for footer on mobile",
+            "fr": "Correction du css pour le pied de page sur mobile",
+            "es": "Corregido el css para el pie de página en móvil"
+        },
+        {
+            "en": "Added a config value to allow fixed navbar",
+            "fr": "Ajout d'une valeur de configuration pour permettre une barre de navigation fixe",
+            "es": "Añadido un valor de configuración para permitir una barra de navegación fija"
+        }
+    ]
+    },
+    {
         "version": "7.1.5",
         "date": "2026-07-05",
         "description": [

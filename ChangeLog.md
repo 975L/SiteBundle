@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.1.6
+
+- Corrected css for footer on mobile (05/07/2026)
+- Added a config value to allow fixed navbar (05/07/2026)
+
 ## v7.1.5
 
 - Added a Command to bulk export data from tables site_* + Shortcut on admin dashboard(05/07/2026)

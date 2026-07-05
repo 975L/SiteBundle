@@ -30,6 +30,16 @@
         "description": "Display the site name (and tagline) next to the logo in the navbar"
     },
     {
+        "label": "Fixed Navbar",
+        "slug": "site-navbar-fixed",
+        "sensitive": false,
+        "value": "false",
+        "kind": "bool",
+        "group": "general",
+        "severity": null,
+        "description": "Keep the navbar fixed at the top of the viewport while scrolling"
+    },
+    {
         "label": "Site Author",
         "slug": "site-author",
         "sensitive": false,

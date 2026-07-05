@@ -3,7 +3,8 @@
 {% set siteName = config('site-name') %}
 {% set siteTagline = config('site-tagline') %}
 {% set showSiteName = config('site-navbar-show-name') %}
-<nav class="menu" data-controller="menu">
+{% set fixedNavbar = config('site-navbar-fixed') %}
+<nav class="menu{{ fixedNavbar ? ' menu-fixed' : '' }}" data-controller="menu">
     <div class="menu-header">
         <div class="menu-brand">
             <div class="menu-brand-top">
