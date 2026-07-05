@@ -77,7 +77,7 @@ class DefaultPagesImporter
     {
         return [
             [
-                'title'           => 'Home',
+                'title'           => 'Accueil',
                 'slug'            => 'home',
                 'description'     => 'Accueil',
                 'changeFrequency' => 'daily',

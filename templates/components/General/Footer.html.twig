@@ -1,0 +1,13 @@
+{# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
+<footer>
+    <ul class="menu-items">
+        {% for item in menu_items('footer') %}
+            <twig:c975LSite:General:MenuItem item="{{ item }}" />
+        {% endfor %}
+        {% if copyright is defined and copyright is not empty %}
+            <li class="menu-item">{{ copyright }}</li>
+        {% endif %}
+    </ul>
+    <twig:c975LSite:General:MadeBy/>
+    <twig:c975LSite:General:HostedBy/>
+</footer>

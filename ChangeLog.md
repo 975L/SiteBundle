@@ -1,5 +1,19 @@
 # Changelog
 
+## v7.1.4
+
+- Moved favicon/apple-touch-icon/og-image/logo from plain config paths to site_media managed from a new "Site graphics" CRUD (05/07/2026)
+- Added `ogImage` to Page, letting each page override the site's default og-image (05/07/2026)
+- Added dashboard alerts (via ConfigBundle's new `AlertProviderInterface`) for site graphics not yet uploaded (05/07/2026)
+- Added `SiteMediaUsageProvider` so UiBundle's Media library can show where a site graphic/page og-image/block media is used (05/07/2026)
+- Made template pages/page.html.twig extend `@c975LSite/layout.html.twig` (05/07/2026)
+- Added Menu/MenuItem entitys to manage the site's main menu (05/07/2026) [BC-Break]
+- Taken Menu/Navbar/Footer components + sass from c975L/UiBundle and wired them (with Matomo/CookieConsent) directly into layout.html.twig's navigation/footer blocks, removing the `logoPrintOnly` block (05/07/2026) [BC-Break]
+- Added tagline in layout (05/07/2026)
+- Added config value to allow display of site name (05/07/2026)
+- Added `site-preconnect` config to preconnect to external origins used by HostedBy/MadeBy/Matomo (05/07/2026)
+- Added a "Regenerate sitemap" dashboard shortcut via ConfigBundle's new `ShortcutProviderInterface`, reusing `SitemapCreateCommand` (05/07/2026)
+
 ## v7.1.3
 
 - Added the display of page description on page, before it was hidden (04/07/2026)

@@ -62,6 +62,9 @@ h6 {
 .site-article {
   max-width: 90vw;
   margin: 1em auto;
+  // Reserves room above the anchor target so a fixed/sticky header doesn't cover it after
+  // a #article-{slug} jump. Override --scroll-offset per site to match the header's height.
+  scroll-margin-top: var(--scroll-offset, 80px);
 }
 
 .text-center {

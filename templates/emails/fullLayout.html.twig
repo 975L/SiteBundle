@@ -3,7 +3,9 @@
 {% set site = config('site-name') %}
 {% set author = config('site-author') %}
 {% set firstOnlineDate = config('site-first-online-date') %}
-{% set logo = config('site-url') ~ "/" ~ asset(config('site-logo')) %}
+{% if site_media('logo') is not null %}
+    {% set logo = config('site-url') ~ '/' ~ site_media('logo').filename %}
+{% endif %}
 
 {# Copyright #}
 {% if firstOnlineDate is defined %}

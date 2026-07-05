@@ -150,6 +150,7 @@ h6 {
 .site-article {
   max-width: 90vw;
   margin: 1em auto;
+  scroll-margin-top: var(--scroll-offset, 80px);
 }
 
 .text-center {
@@ -576,6 +577,12 @@ footer {
   padding: 2em 0 6em 0;
 }
 
+footer .menu-items {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 footer a,
 footer a:visited {
   color: var(--white);
@@ -589,6 +596,6 @@ footer a:visited:hover {
 }
 
 footer li {
-  margin: 10px;
-  font-size: 1.15em;
+  margin: 0;
+  color: var(--white);
 }/*# sourceMappingURL=emails.css.map */

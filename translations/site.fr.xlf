@@ -512,6 +512,106 @@
                 <source>label.qrcode_help</source>
                 <target>Clic droit sur le QR Code, enregistrez l'image et utilisez-le où vous le souhaitez</target>
             </trans-unit>
+            <trans-unit id="128">
+                <source>label.site_graphics</source>
+                <target>Graphiques du site</target>
+            </trans-unit>
+            <trans-unit id="129">
+                <source>label.site_graphic</source>
+                <target>Graphique du site</target>
+            </trans-unit>
+            <trans-unit id="130">
+                <source>label.role</source>
+                <target>Rôle</target>
+            </trans-unit>
+            <trans-unit id="131">
+                <source>label.file</source>
+                <target>Fichier</target>
+            </trans-unit>
+            <trans-unit id="132">
+                <source>label.favicon</source>
+                <target>Favicon</target>
+            </trans-unit>
+            <trans-unit id="133">
+                <source>label.apple_touch_icon</source>
+                <target>Icône Apple Touch</target>
+            </trans-unit>
+            <trans-unit id="134">
+                <source>label.og_image</source>
+                <target>Image Open Graph</target>
+            </trans-unit>
+            <trans-unit id="135">
+                <source>label.logo</source>
+                <target>Logo</target>
+            </trans-unit>
+            <trans-unit id="136">
+                <source>label.og_image_help</source>
+                <target>Image affichée lors du partage de cette page sur les réseaux sociaux. Si laissé vide, utilise l'og-image ou le logo par défaut du site.</target>
+            </trans-unit>
+            <trans-unit id="137">
+                <source>label.site_graphic_missing</source>
+                <target>Aucun fichier n'a encore été téléversé</target>
+            </trans-unit>
+            <trans-unit id="138">
+                <source>label.info_site_graphic</source>
+                <target>Les graphiques globaux du site : favicon, icône Apple Touch, og-image par défaut et logo</target>
+            </trans-unit>
+            <trans-unit id="139">
+                <source>label.menus</source>
+                <target>Menus</target>
+            </trans-unit>
+            <trans-unit id="140">
+                <source>label.menu</source>
+                <target>Menu</target>
+            </trans-unit>
+            <trans-unit id="141">
+                <source>label.location</source>
+                <target>Emplacement</target>
+            </trans-unit>
+            <trans-unit id="142">
+                <source>label.navbar</source>
+                <target>Navigation</target>
+            </trans-unit>
+            <trans-unit id="143">
+                <source>label.footer</source>
+                <target>Pied de page</target>
+            </trans-unit>
+            <trans-unit id="144">
+                <source>label.menu_items</source>
+                <target>Éléments du menu</target>
+            </trans-unit>
+            <trans-unit id="145">
+                <source>label.sitemap_create</source>
+                <target>Régénérer le sitemap</target>
+            </trans-unit>
+            <trans-unit id="146">
+                <source>flash.sitemap_created</source>
+                <target>Sitemap régénéré</target>
+            </trans-unit>
+            <trans-unit id="147">
+                <source>label.media_used_as_og_image</source>
+                <target>Image OG de « %page% »</target>
+            </trans-unit>
+            <trans-unit id="148">
+                <source>label.media_used_in_page_block</source>
+                <target>Utilisé dans un bloc de « %page% »</target>
+            </trans-unit>
+            <trans-unit id="149">
+                <source>label.route</source>
+                <target>Route</target>
+            </trans-unit>
+            <trans-unit id="150">
+                <source>label.choose_page</source>
+                <target>Choisir une page</target>
+            </trans-unit>
+            <trans-unit id="151">
+                <source>label.choose_route</source>
+                <target>Choisir une route</target>
+            </trans-unit>
+            <trans-unit id="152">
+                <source>constraint.menu_item_target</source>
+                <target>Choisissez soit une page, soit une route, mais pas les deux ni aucune des deux.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

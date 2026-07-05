@@ -1,12 +1,44 @@
 [
     {
-        "version": "7.1.3",
-        "date": "2026-07-04",
-        "description": "Added the display of page description on page, before it was hidden"
+        "version": "7.1.4",
+        "date": "2026-07-05",
+        "description": [
+            {
+                "en": "Site graphics (favicon, apple touch icon, logo, default social-sharing image) are now managed from a new \"Site graphics\" page in the dashboard, with alerts when one is missing",
+                "fr": "Les visuels du site (favicon, icône Apple, logo, image de partage par défaut) se gèrent désormais depuis une nouvelle page « Visuels du site » du tableau de bord, avec des alertes en cas d'oubli",
+                "es": "Los gráficos del sitio (favicon, icono de Apple, logo, imagen de compartición por defecto) ahora se gestionan desde una nueva página «Gráficos del sitio» del panel de control, con alertas si falta alguno"
+            },
+            {
+                "en": "Each page can now have its own social-sharing image, overriding the site's default one",
+                "fr": "Chaque page peut désormais avoir sa propre image de partage sur les réseaux sociaux, qui remplace celle par défaut du site",
+                "es": "Cada página puede tener ahora su propia imagen para compartir en redes sociales, sustituyendo a la del sitio por defecto"
+            },
+            {
+                "en": "The site's navbar and footer menus can now be managed from a new \"Menus\" page in the dashboard",
+                "fr": "Les menus de la barre de navigation et du pied de page se gèrent désormais depuis une nouvelle page « Menus » du tableau de bord",
+                "es": "Los menús de la barra de navegación y del pie de página ahora se gestionan desde una nueva página «Menús» del panel de control"
+            },
+            {
+                "en": "The dashboard now has a \"Regenerate sitemap\" shortcut, contributed via ConfigBundle's new ShortcutProviderInterface",
+                "fr": "Le tableau de bord propose désormais un raccourci « Régénérer le sitemap », fourni via la nouvelle ShortcutProviderInterface de ConfigBundle",
+                "es": "El panel de control ahora ofrece un atajo «Regenerar el sitemap», aportado mediante la nueva ShortcutProviderInterface de ConfigBundle"
+            }
+        ]
     },
     {
         "version": "7.1.3",
         "date": "2026-07-04",
-        "description": "Added a QrCode by page on the crud edit page"
+        "description": [
+            {
+                "en": "Added the display of page description on page, before it was hidden",
+                "fr": "Ajout de l'affichage de la description de la page, auparavant masquée",
+                "es": "Añadida la visualización de la descripción de la página, antes oculta"
+            },
+            {
+                "en": "Added a QrCode by page on the crud edit page",
+                "fr": "Ajout d'un QrCode par page sur la page d'édition du crud",
+                "es": "Añadido un código QR por página en la página de edición del crud"
+            }
+        ]
     }
 ]

@@ -15,7 +15,9 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - **Page redirects** and 410 Gone handling
 - **Admin CRUD** for database pages via EasyAdmin
 - **Admin CRUD** for users via EasyAdmin, with role management
-- **Sitemap generation** from both filesystem templates and database pages
+- **Admin CRUD** for the site's navbar/footer menus via EasyAdmin
+- **Admin CRUD** for the site's graphics (favicon, Apple touch icon, logo, default Open Graph image) via EasyAdmin
+- **Sitemap generation** from both filesystem templates and database pages, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
 - **Legal model templates** for France (French): cookies, copyright, legal notice, privacy policy, terms of sales, terms of use
 - **Matomo analytics** integration
@@ -229,6 +231,38 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 ---
 
+## Menus
+
+The site-wide navbar and footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar` or `footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`) owning an ordered collection of `MenuItem` rows, each targeting either:
+
+- an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
+- a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
+
+Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-needed` key in ConfigBundle.
+
+Both are rendered by built-in components already wired into the bundle's layout (`navigation`/`footer` blocks) — nothing to add in your app:
+
+```twig
+<twig:c975LSite:General:Navbar/>
+<twig:c975LSite:General:Footer copyright="{{ copyright }}"/>
+```
+
+An item disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
+
+### Navbar: logo, site name, tagline
+
+`Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).
+
+`site-tagline` is authored as rich text in the backoffice (Trix wraps the value in its own `<div>`), so it's rendered with `|raw` — style `.menu-site-tagline` in your own SCSS if you need to adjust it.
+
+### Linking to a bundle's own route
+
+A `MenuItem` isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
+
+Deliberately **not** a `ui.block` — a Menu item is site-wide chrome (like the navbar/footer themselves), not page content, so it isn't selectable from the page content-block picker.
+
+---
+
 ## Users
 
 `App\Entity\User` is managed in the EasyAdmin dashboard via `UserCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-needed` key in ConfigBundle, same as pages.
@@ -263,7 +297,7 @@ if (false === $this->configService->get('user-registration-enabled')) {
 Run the following command to generate `public/sitemap-pages.xml`:
 
 ```bash
-php bin/console site:sitemaps:create
+php bin/console c975l:site:sitemaps:create
 ```
 
 The command aggregates URLs from:
@@ -271,6 +305,8 @@ The command aggregates URLs from:
 2. Published database pages (uses their `changeFrequency` and `priority` fields)
 
 A sitemap index template is also available at `@c975LSite/sitemap-index.xml.twig`.
+
+The same command can also be triggered from the dashboard, via a "Regenerate sitemap" shortcut contributed through ConfigBundle's `ShortcutProviderInterface`.
 
 ### Alternate languages (hreflang)
 
@@ -288,11 +324,21 @@ URLs are built as `https://example.com/{locale}/pages/{slug}`.
 
 ### Open Graph image
 
-Set a per-page OG image:
+Resolved in this order: an `ogImage` variable set by the template/page takes priority, then a database `Page`'s own `ogImage` (settable from `PageCrudController`), then the site-wide default og-image managed via [Site graphics](#site-graphics), then the site's logo.
+
+To override it manually for a file-based page:
 
 ```twig
 {% set ogImage = absolute_url(asset('images/my-og-image.jpg')) %}
 ```
+
+---
+
+## Site graphics
+
+The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
+
+Access is controlled by the `site-role-needed` key in ConfigBundle, same as pages.
 
 ---
 
@@ -330,6 +376,10 @@ Set `site-hosted-by-url` + `site-hosted-by-logo` and/or `site-made-by-url` + `si
 ```
 
 Each component renders nothing if either its URL or logo config value is missing.
+
+### Preconnect
+
+Set `site-preconnect` in ConfigBundle to a JSON array of external origins to preconnect to, i.e. `["https://975l.com"]`. Useful when `HostedBy`/`MadeBy` logos or Matomo are served from a third-party domain. Empty by default, so it has no effect unless configured.
 
 ---
 

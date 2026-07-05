@@ -86,6 +86,23 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
+    // Find pages owning any of the given blocks (used by SiteMediaUsageProvider to resolve a Block's owning Page)
+    public function findByBlockIds(array $blockIds): array
+    {
+        if ([] === $blockIds) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('p')
+            ->select('p, b')
+            ->innerJoin('p.blocks', 'b')
+            ->andWhere('b.id IN (:blockIds)')
+            ->setParameter('blockIds', $blockIds)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // Find published pages having a legal_model block matching one of the given model identifiers (e.g. 'france/cookies'), preserving the given order
     public function findByLegalModels(array $models): array
     {

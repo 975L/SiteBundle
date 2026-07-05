@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
+use c975L\SiteBundle\Form\OgImageType;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
@@ -173,6 +174,20 @@ class PageCrudController extends AbstractCrudController
                 ->setHelp(t('label.priority_help', [], 'site'))
                 ->setFormTypeOption('attr', ['min' => 0, 'max' => 10])
                 ->setRequired(true)
+                ->hideOnIndex(),
+
+            // SEO
+            // TextField, not Field: "ogImage" is a real Doctrine ManyToOne (to Media), so a plain
+            // Field::new() gets silently rebuilt by EasyAdmin into an AssociationField, which then
+            // force-injects EntityType-style "class"/"query_builder" form options regardless of the
+            // custom setFormType() below - and OgImageType (a plain AbstractType) doesn't declare
+            // those options, so the form crashes. TextField isn't auto-guessed as an association, so
+            // this injection never happens; setFormType() fully takes over as intended.
+            TextField::new('ogImage')
+                ->setLabel(t('label.og_image', [], 'site'))
+                ->setHelp(t('label.og_image_help', [], 'site'))
+                ->setFormType(OgImageType::class)
+                ->setFormTypeOption('required', false)
                 ->hideOnIndex(),
 
             // Blocks

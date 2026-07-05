@@ -2,12 +2,12 @@
 {% set hostedByUrl = config('site-hosted-by-url') %}
 {% set hostedByLogo = config('site-hosted-by-logo') %}
 {% if hostedByUrl and hostedByLogo %}
-<twig:c975LUi:Image:Link
-    label="{{ 'label.hosted_by'|trans({}, 'site') }}"
-    src="{{ hostedByLogo }}"
-    url="{{ hostedByUrl }}"
-    height="25"
-    target="_blank"
-    above="true"
-/>
+    <twig:c975LUi:Image:Link
+        label="{{ 'label.hosted_by'|trans({}, 'site') }}"
+        src="{{ hostedByLogo }}"
+        url="{{ hostedByUrl }}"
+        height="25"
+        target="_blank"
+        above="true"
+    />
 {% endif %}

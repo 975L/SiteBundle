@@ -6,6 +6,12 @@ footer {
     padding: 2em 0 6em 0;
 }
 
+footer .menu-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 footer a,
 footer a:visited {
     color: var(--white);
@@ -19,6 +25,6 @@ footer a:visited:hover {
 }
 
 footer li {
-    margin: 10px;
-    font-size: 1.15em;
+    margin: 0;
+    color: var(--white);
 }

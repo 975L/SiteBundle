@@ -20,34 +20,14 @@
         "description": "Tagline of the website"
     },
     {
-        "label": "Site Logo",
-        "slug": "site-logo",
+        "label": "Show Site Name In Navbar",
+        "slug": "site-navbar-show-name",
         "sensitive": false,
-        "value": null,
-        "kind": "text",
+        "value": "true",
+        "kind": "bool",
         "group": "general",
-        "severity": "warning",
-        "description": "Path for the logo to be display in email (recommended): i.e. images/logo.png (Default: null)"
-    },
-    {
-        "label": "Site Favicon",
-        "slug": "site-favicon",
-        "sensitive": false,
-        "value": "/favicon.ico",
-        "kind": "text",
-        "group": "general",
-        "severity": "warning",
-        "description": "Path for the favicon to be display: i.e. favicon.ico (Default: null)"
-    },
-    {
-        "label": "Site Apple Touch Icon",
-        "slug": "site-apple-touch-icon",
-        "sensitive": false,
-        "value": "/apple-touch-icon.png",
-        "kind": "text",
-        "group": "general",
-        "severity": "warning",
-        "description": "Path for the appleTouchIcon to be display: i.e. apple-touch-icon.png (Default: null)"
+        "severity": null,
+        "description": "Display the site name (and tagline) next to the logo in the navbar"
     },
     {
         "label": "Site Author",
@@ -160,6 +140,16 @@
         "description": "Matomo site ID (integer)"
     },
     {
+        "label": "Preconnect URLs",
+        "slug": "site-preconnect",
+        "sensitive": false,
+        "value": "[]",
+        "kind": "json",
+        "group": "general",
+        "severity": null,
+        "description": "External origins to preconnect to (JSON array), i.e. [\"https://example.com\"]. Useful when credits logos or Matomo are hosted on a third-party domain"
+    },
+    {
         "label": "Backup DB Host",
         "slug": "site-backup-db-host",
         "sensitive": true,
@@ -254,7 +244,7 @@
         "slug": "site-owner",
         "sensitive": false,
         "value": null,
-        "kind": "text",
+        "kind": "html",
         "group": "legal",
         "severity": "warning",
         "description": "Owner of the website, displayed in the legal notice (HTML allowed)"
@@ -274,7 +264,7 @@
         "slug": "site-hosting-provider",
         "sensitive": false,
         "value": null,
-        "kind": "text",
+        "kind": "html",
         "group": "legal",
         "severity": "info",
         "description": "Hosting provider of the website displayed in the legal notice (HTML allowed)"
@@ -284,7 +274,7 @@
         "slug": "site-other-copyright",
         "sensitive": false,
         "value": null,
-        "kind": "text",
+        "kind": "html",
         "group": "legal",
         "severity": null,
         "description": "Other copyright information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"
@@ -294,7 +284,7 @@
         "slug": "site-other-cookies",
         "sensitive": false,
         "value": null,
-        "kind": "text",
+        "kind": "html",
         "group": "legal",
         "severity": null,
         "description": "Other cookies information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"

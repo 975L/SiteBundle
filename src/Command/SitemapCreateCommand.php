@@ -55,8 +55,8 @@ class SitemapCreateCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Creates the sitemap
-    private function createSitemap(): void
+    // Creates the sitemap - public so it can also be triggered from the dashboard (see SiteShortcutController)
+    public function createSitemap(): void
     {
         $urls = $this->getUrls();
 

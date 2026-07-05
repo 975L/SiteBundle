@@ -13,6 +13,7 @@ use App\Entity\User;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\HasBlocksInterface;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -74,6 +75,13 @@ class Page implements HasBlocksInterface
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isDeleted = false;
+
+    // Falls back to the site-wide default og-image (see MediaExtension::getSiteMedia) when not set.
+    // cascade: remove - this Media is exclusively owned by this Page (not shared), so deleting the
+    // Page must also delete its file, same as Block's own medias
+    #[ORM\ManyToOne(targetEntity: Media::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Media $ogImage = null;
 
     public function __construct()
     {
@@ -206,6 +214,18 @@ class Page implements HasBlocksInterface
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getOgImage(): ?Media
+    {
+        return $this->ogImage;
+    }
+
+    public function setOgImage(?Media $ogImage): self
+    {
+        $this->ogImage = $ogImage;
 
         return $this;
     }

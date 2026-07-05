@@ -7,14 +7,14 @@
 {% if config('site-first-online-date') != null %}
     {% set firstOnlineDate = config('site-first-online-date') %}
 {% endif %}
-{% if config('site-logo') != null %}
-    {% set logo = absolute_url(asset(config('site-logo'))) %}
+{% if site_media('logo') is not null %}
+    {% set logo = absolute_url(asset('/' ~ site_media('logo').filename)) ~ (site_media('logo').updatedAt ? '?v=' ~ site_media('logo').updatedAt.timestamp : '') %}
 {% endif %}
-{% if config('site-favicon') != null %}
-    {% set favicon = absolute_url(asset(config('site-favicon'))) %}
+{% if site_media('favicon') is not null %}
+    {% set favicon = absolute_url(asset('/' ~ site_media('favicon').filename)) ~ (site_media('favicon').updatedAt ? '?v=' ~ site_media('favicon').updatedAt.timestamp : '') %}
 {% endif %}
-{% if config('site-apple-touch-icon') != null %}
-    {% set appleTouchIcon = absolute_url(asset(config('site-apple-touch-icon'))) %}
+{% if site_media('apple-touch-icon') is not null %}
+    {% set appleTouchIcon = absolute_url(asset('/' ~ site_media('apple-touch-icon').filename)) ~ (site_media('apple-touch-icon').updatedAt ? '?v=' ~ site_media('apple-touch-icon').updatedAt.timestamp : '') %}
 {% endif %}
 
 {# Copyright #}
@@ -32,9 +32,15 @@
     {% set copyright = copyright ~ ' : ' ~ site %}
 {% endif %}
 
-{# ogImage #}
-{% if (ogImage is not defined or ogImage == null) and logo is defined %}
-    {% set ogImage = logo %}
+{# ogImage: page-specific override, then the site's default og-image, then the logo #}
+{% if ogImage is not defined or ogImage == null %}
+    {% if page is defined and page.ogImage is not null %}
+        {% set ogImage = absolute_url(asset('/' ~ page.ogImage.filename)) ~ (page.ogImage.updatedAt ? '?v=' ~ page.ogImage.updatedAt.timestamp : '') %}
+    {% elseif site_media('og-image') is not null %}
+        {% set ogImage = absolute_url(asset('/' ~ site_media('og-image').filename)) ~ (site_media('og-image').updatedAt ? '?v=' ~ site_media('og-image').updatedAt.timestamp : '') %}
+    {% elseif logo is defined %}
+        {% set ogImage = logo %}
+    {% endif %}
 {% endif %}
 
 {# pageTitle #}
@@ -141,6 +147,9 @@
             {% endblock %}
 {# Preconnect #}
             {% block preconnect %}
+                {% for preconnectUrl in config('site-preconnect') %}
+                    <link rel="preconnect" href="{{ preconnectUrl }}">
+                {% endfor %}
             {% endblock %}
 {# Javascript #}
             {% if display != 'pdf' %}
@@ -171,27 +180,9 @@
 {# Navigation #}
                     {% if display != 'pdf' %}
                         {% block navigation %}
+                            <twig:c975LSite:General:Navbar />
                         {% endblock %}
                     {% endif %}
-{# Logo print only #}
-                    {% block logoPrintOnly %}
-                        {% if site is defined or logo is defined %}
-                            {% if display == 'pdf' %}
-                                <div class="container-fluid text-center">
-                            {% else %}
-                                <div class="container-fluid text-center visible-print-block">
-                            {% endif %}
-                                <h1>
-                                    {% if logo is defined %}
-                                        <img src="{{ logo }}" height="80" alt="" loading="lazy">
-                                    {% endif %}
-                                    {% if site is defined %}
-                                        {{ site }}
-                                    {% endif %}
-                                </h1>
-                            </div>
-                        {% endif %}
-                    {% endblock %}
                 </header>
             {% endblock %}
 {# Title #}
@@ -219,8 +210,10 @@
 {# Container #}
                     {% block container %}
 {# Content #}
-                        {% block content %}
-                        {% endblock %}
+                        <div class="container">
+                            {% block content %}
+                            {% endblock %}
+                        </div>
                     {% endblock %}
 {# Share #}
                     {% if display != 'pdf' %}
@@ -236,6 +229,9 @@
             {% endblock %}
 {# Footer #}
             {% block footer %}
+                <twig:c975LSite:General:Matomo />
+                <twig:c975LSite:General:CookieConsent />
+                <twig:c975LSite:General:Footer copyright="{{ copyright is defined ? copyright : '' }}" />
             {% endblock %}
         {% endblock %}
         <span id="bottom"></span>

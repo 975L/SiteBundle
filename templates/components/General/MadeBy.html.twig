@@ -2,12 +2,12 @@
 {% set madeByUrl = config('site-made-by-url') %}
 {% set madeByLogo = config('site-made-by-logo') %}
 {% if madeByUrl and madeByLogo %}
-<twig:c975LUi:Image:Link
-    label="{{ 'label.made_by'|trans({}, 'site') }}"
-    src="{{ madeByLogo }}"
-    url="{{ madeByUrl }}"
-    height="50"
-    target="_blank"
-    above="true"
-/>
+    <twig:c975LUi:Image:Link
+        label="{{ 'label.made_by'|trans({}, 'site') }}"
+        src="{{ madeByLogo }}"
+        url="{{ madeByUrl }}"
+        height="50"
+        target="_blank"
+        above="true"
+    />
 {% endif %}
