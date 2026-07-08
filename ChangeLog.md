@@ -1,5 +1,13 @@
 # Changelog
 
+## v7.1.7
+
+- set `user-registration-enabled` to true, otherwise we can't create the first user (05/07/2026)
+- Added scaffold folder for overriding src, templates, to be used in site, if needed (08/07/2026)
+- Added translations to Twig Error templates (08/07/2026)
+- Added possibility to upload user defined error images (08/07/2026)
+- Added isPublished on default imported pages (08/07/2026)
+
 ## v7.1.6
 
 - Corrected css for footer on mobile (05/07/2026)

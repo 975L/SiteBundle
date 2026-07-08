@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="validators.en.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>text.email_taken</source>
+                <target>Un compte existe déjà avec cette adresse email</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>text.agree_terms</source>
+                <target>Vous devez accepter nos conditions.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>text.password_required</source>
+                <target>Veuillez saisir un mot de passe</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>text.password_min_length</source>
+                <target>Votre mot de passe doit comporter au moins {{ limit }} caractères</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>text.password_complexity</source>
+                <target>Votre mot de passe doit comporter au moins 8 caractères et inclure une minuscule, une majuscule, un chiffre et un caractère spécial</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>text.email_required</source>
+                <target>Veuillez saisir votre adresse email</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>text.password_max_length</source>
+                <target>Votre mot de passe ne doit pas dépasser {{ limit }} caractères</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

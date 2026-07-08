@@ -1,0 +1,14 @@
+{% extends 'layout.html.twig' %}
+
+{% set title = 'Err404' %}
+
+{% block content %}
+    {% set errorImage = site_random_media('error-image') %}
+    {% if errorImage is not null %}
+        {% set image = '/' ~ errorImage.filename %}
+    {% endif %}
+    {% include('@c975LSite/Exception/error404.html.twig') %}
+{% endblock %}
+
+{% block share %}
+{% endblock %}

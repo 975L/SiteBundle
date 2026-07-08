@@ -28,6 +28,7 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
         Media::ROLE_APPLE_TOUCH_ICON => 'label.apple_touch_icon',
         Media::ROLE_OG_IMAGE => 'label.og_image',
         Media::ROLE_LOGO => 'label.logo',
+        Media::ROLE_ERROR_IMAGE => 'label.error_image',
     ];
 
     public function __construct(

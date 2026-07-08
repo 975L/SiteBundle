@@ -101,43 +101,41 @@ export default class extends Controller {
     togglePasswordVisibility() {
         let passwordInputs = document.querySelectorAll('input[type="password"]');
         passwordInputs.forEach((passwordInput) => {
-            if (!passwordInput) {
+            if (!passwordInput || passwordInput.closest(".has-toggle")) {
                 return;
             }
 
-            const parent = passwordInput.parentNode;
-            // mark parent so CSS can add input padding and position the toggle
-            if (!parent.classList.contains("has-toggle")) {
-                parent.classList.add("has-toggle");
-                if (getComputedStyle(parent).position === "static") {
-                    parent.style.position = "relative";
+            // Wraps only the input (not its label/help text) so the toggle
+            // icon stays vertically centered on the input itself
+            let wrapper = document.createElement("div");
+            wrapper.classList.add("has-toggle");
+            passwordInput.parentNode.insertBefore(wrapper, passwordInput);
+            wrapper.appendChild(passwordInput);
+
+            // Defines toggle
+            let toggle = document.createElement("span");
+            toggle.classList.add("toggle-password");
+
+            // Adds image
+            let image = document.createElement("img");
+            image.src = "/bundles/c975lsite/icons/eye.svg";
+            toggle.appendChild(image);
+
+            // Append toggle right after the input, inside the wrapper
+            wrapper.appendChild(toggle);
+
+            // Handles the click on the toggle
+            toggle.addEventListener("click", function () {
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    passwordInput.setAttribute("autocomplete", "off");
+                    image.src = "/bundles/c975lsite/icons/eye-slash.svg";
+                } else {
+                    passwordInput.type = "password";
+                    passwordInput.setAttribute("autocomplete", "current-password");
+                    image.src = "/bundles/c975lsite/icons/eye.svg";
                 }
-
-                // Defines toggle
-                let toggle = document.createElement("span");
-                toggle.classList.add("toggle-password");
-
-                // Adds image
-                let image = document.createElement("img");
-                image.src = "/bundles/c975lsite/icons/eye.svg";
-                toggle.appendChild(image);
-
-                // Append toggle to parent so it stays positioned even if an error node is inserted
-                parent.appendChild(toggle);
-
-                // Handles the click on the toggle
-                toggle.addEventListener("click", function () {
-                    if (passwordInput.type === "password") {
-                        passwordInput.type = "text";
-                        passwordInput.setAttribute("autocomplete", "off");
-                        image.src = "/bundles/c975lsite/icons/eye-slash.svg";
-                    } else {
-                        passwordInput.type = "password";
-                        passwordInput.setAttribute("autocomplete", "current-password");
-                        image.src = "/bundles/c975lsite/icons/eye.svg";
-                    }
-                });
-            }
+            });
         });
     }
 

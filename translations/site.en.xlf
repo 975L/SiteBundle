@@ -616,6 +616,134 @@
                 <source>label.export_tables</source>
                 <target>Export site_ tables</target>
             </trans-unit>
+            <trans-unit id="154">
+                <source>label.register</source>
+                <target>Register</target>
+            </trans-unit>
+            <trans-unit id="155">
+                <source>label.password</source>
+                <target>Password</target>
+            </trans-unit>
+            <trans-unit id="156">
+                <source>label.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="157">
+                <source>label.confirm_email_title</source>
+                <target>Hi! Please confirm your email!</target>
+            </trans-unit>
+            <trans-unit id="158">
+                <source>text.confirm_email_instructions</source>
+                <target>Please confirm your email address by clicking the following link:</target>
+            </trans-unit>
+            <trans-unit id="159">
+                <source>label.confirm_my_email</source>
+                <target>Confirm my Email</target>
+            </trans-unit>
+            <trans-unit id="160">
+                <source>text.link_expires_in</source>
+                <target>This link will expire in</target>
+            </trans-unit>
+            <trans-unit id="162">
+                <source>label.password_reset_email_sent</source>
+                <target>Password Reset Email Sent</target>
+            </trans-unit>
+            <trans-unit id="163">
+                <source>text.password_reset_email_sent_info</source>
+                <target>If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.</target>
+            </trans-unit>
+            <trans-unit id="164">
+                <source>text.no_email_received</source>
+                <target>If you don't receive an email please check your spam folder or</target>
+            </trans-unit>
+            <trans-unit id="165">
+                <source>label.try_again</source>
+                <target>try again</target>
+            </trans-unit>
+            <trans-unit id="166">
+                <source>text.reset_password_instructions</source>
+                <target>To reset your password, please visit the following link</target>
+            </trans-unit>
+            <trans-unit id="167">
+                <source>label.reset_password</source>
+                <target>Reset your password</target>
+            </trans-unit>
+            <trans-unit id="168">
+                <source>text.reset_password_help</source>
+                <target>Enter your email address, and we will send you a link to reset your password.</target>
+            </trans-unit>
+            <trans-unit id="169">
+                <source>label.send_password_reset_email</source>
+                <target>Send password reset email</target>
+            </trans-unit>
+            <trans-unit id="170">
+                <source>label.login</source>
+                <target>Log in!</target>
+            </trans-unit>
+            <trans-unit id="171">
+                <source>label.please_sign_in</source>
+                <target>Please sign in</target>
+            </trans-unit>
+            <trans-unit id="172">
+                <source>label.sign_in</source>
+                <target>Sign in</target>
+            </trans-unit>
+            <trans-unit id="173">
+                <source>text.logged_in_as</source>
+                <target>You are logged in as %user%,</target>
+            </trans-unit>
+            <trans-unit id="174">
+                <source>label.forgot_password</source>
+                <target>Forgot your password?</target>
+            </trans-unit>
+            <trans-unit id="175">
+                <source>label.create_account</source>
+                <target>Create an account</target>
+            </trans-unit>
+            <trans-unit id="176">
+                <source>label.error_image</source>
+                <target>Error image</target>
+            </trans-unit>
+            <trans-unit id="177">
+                <source>label.error</source>
+                <target>Error</target>
+            </trans-unit>
+            <trans-unit id="178">
+                <source>label.error_code</source>
+                <target>Error %code%</target>
+            </trans-unit>
+            <trans-unit id="179">
+                <source>label.agree_terms</source>
+                <target>I agree to the terms</target>
+            </trans-unit>
+            <trans-unit id="180">
+                <source>label.new_password</source>
+                <target>New password</target>
+            </trans-unit>
+            <trans-unit id="181">
+                <source>label.password_confirm</source>
+                <target>Repeat password</target>
+            </trans-unit>
+            <trans-unit id="182">
+                <source>label.password_help</source>
+                <target>Your password must be at least 8 characters long and include one lowercase letter, one uppercase letter, one digit and one special character</target>
+            </trans-unit>
+            <trans-unit id="183">
+                <source>label.confirm_your_email</source>
+                <target>Confirm your email</target>
+            </trans-unit>
+            <trans-unit id="184">
+                <source>label.email_address_verified</source>
+                <target>Your email address has been verified.</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>label.password_reset_request</source>
+                <target>Your password reset request</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>label.no_reset_password_token_found</source>
+                <target>No reset password token found in the URL or in the session.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

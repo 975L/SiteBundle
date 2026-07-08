@@ -313,7 +313,7 @@
         "label": "User Registration Enabled",
         "slug": "user-registration-enabled",
         "sensitive": false,
-        "value": "false",
+        "value": "true",
         "kind": "bool",
         "group": "security",
         "severity": null,

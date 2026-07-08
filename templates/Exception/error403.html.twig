@@ -1,26 +1,20 @@
 {% trans_default_domain 'site' %}
 
-{# Defines specific variables #}
-{% set title = 'Err403' %}
+{% set code = 403 %}
+{% set title = 'label.error_code'|trans({'%code%': code}) %}
 
 {% block content %}
-    {# Alert #}
     <div class="alert alert-danger text-center">
-        {# Title #}
         <h2>
-            <img src="{{ absolute_url(asset('bundles/c975lsite/icons/thumbs-down.svg')) }}" class="img img-responsive" alt="Thumbs down" width="48"> Err403
+            <img src="{{ absolute_url(asset('bundles/c975lsite/icons/thumbs-down.svg')) }}" class="img img-responsive" alt="Thumbs down" width="48"> {{ title }}
         </h2>
-        {# Message #}
         <p>
             <span class="lead"><strong>Ooops...</strong></span><br>
-            {{ 'text.err403'|trans }}<br>
+            {{ ('text.err' ~ code)|trans }}<br>
         </p>
     </div>
-    {# Image #}
     {% if image is not defined %}
         {% set image = 'bundles/c975lsite/images/error-' ~ random(1,6) ~ '.webp' %}
     {% endif %}
-    <p class="text-center">
-        <img src="{{ absolute_url(asset(image)) }}" class="img img-responsive img-rounded" alt="error" loading="lazy">
-    </p>
+    <twig:c975LUi:Image:Image src="{{ absolute_url(asset(image)) }}" class="img-rounded" alt="error"/>
 {% endblock %}

@@ -539,18 +539,19 @@ Run once after setting up a new site to pre-populate the database with common pa
 php bin/console c975l:site:pages:import-defaults
 ```
 
-Pages created:
+One page is created per locale — `%kernel.default_locale%` plus every locale listed in `framework.enabled_locales` (falling back to just the default locale if that list is empty):
 
-| Slug | Title | Block |
-| --- | --- | --- |
-| `home` | Home | — |
-| `legal-notice` | Mentions légales | `legal_model` → `france/legal-notice` |
-| `privacy-policy` | Politique de confidentialité | `legal_model` → `france/privacy-policy` |
-| `terms-of-use` | Conditions générales d'utilisation | `legal_model` → `france/terms-of-use` |
-| `terms-of-sales` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` |
-| `cookies` | Politique de cookies | `legal_model` → `france/cookies` |
+| Slug (fr) | Slug (en) | Slug (es) | Title (fr) | Block |
+| --- | --- | --- | --- | --- |
+| `home` | `home` | `home` | Accueil | — |
+| `mentions-legales` | `legal-notice` | `aviso-legal` | Mentions légales | `legal_model` → `france/legal-notice` |
+| `regles-de-confidentialite` | `privacy-policy` | `politica-de-privacidad` | Règles de confidentialité | `legal_model` → `france/privacy-policy` |
+| `conditions-generales-d-utilisation` | `terms-of-use` | `condiciones-de-uso` | Conditions générales d'utilisation | `legal_model` → `france/terms-of-use` |
+| `conditions-generales-de-vente` | `terms-of-sales` | `condiciones-de-venta` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` |
+| `cookies` | `cookies-usage` | `uso-de-cookies` | Utilisation des cookies | `legal_model` → `france/cookies` |
+| `copyright` | `copyright-notice` | `aviso-de-copyright` | Copyright | `legal_model` → `france/copyright` |
 
-All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped.
+`home` is always the same slug across locales — `PageController` looks it up literally, so only one homepage can ever exist. All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped, so re-running the command after adding a new `enabled_locales` entry only creates the missing locale's pages.
 
 ---
 

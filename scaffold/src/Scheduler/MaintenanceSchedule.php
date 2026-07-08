@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Scheduler;
+
+use Symfony\Component\Console\Messenger\RunCommandMessage;
+use Symfony\Component\Scheduler\Attribute\AsSchedule;
+use Symfony\Component\Scheduler\RecurringMessage;
+use Symfony\Component\Scheduler\Schedule;
+use Symfony\Component\Scheduler\ScheduleProviderInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+
+#[AsSchedule('site')]
+class MaintenanceSchedule implements ScheduleProviderInterface
+{
+    public function __construct(
+        private readonly CacheInterface $cache,
+    ) {}
+
+    public function getSchedule(): Schedule
+    {
+        return new SymfonySchedule()
+            ->stateful($this->cache)
+            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('app:sitemaps:create')))
+            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
+            ->add(RecurringMessage::cron('7 3 * * 1',   new RunCommandMessage('c975l:site:backup --full --report')))
+        ;
+    }
+}

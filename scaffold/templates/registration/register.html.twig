@@ -1,0 +1,16 @@
+{% extends 'layout.html.twig' %}
+
+{% set title = 'label.register'|trans({}, 'site') %}
+
+{% block content %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    {{ form_errors(registrationForm) }}
+
+    {{ form_start(registrationForm) }}
+        {{ form_widget(registrationForm) }}
+        <button type="submit" class="btn btn-large btn-primary">{{ 'label.register'|trans({}, 'site') }}</button>
+    {{ form_end(registrationForm) }}
+{% endblock %}
