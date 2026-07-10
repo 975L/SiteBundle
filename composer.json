@@ -20,6 +20,7 @@
     "require": {
         "php": ">=8.1",
         "c975l/config-bundle": "*",
+        "c975l/social-bundle": "*",
         "c975l/ui-bundle": "*",
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",

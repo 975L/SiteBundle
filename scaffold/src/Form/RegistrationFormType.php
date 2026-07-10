@@ -38,6 +38,8 @@ class RegistrationFormType extends AbstractType
                 'options' => [
                     'attr' => ['autocomplete' => 'new-password'],
                 ],
+                'first_name' => 'plainPassword',
+                'second_name' => 'confirmPassword',
                 'first_options' => [
                     'label' => 'label.password',
                     'help' => 'label.password_help',

@@ -28,7 +28,12 @@ class RegistrationController extends AbstractController
     ) {
     }
 
-    #[Route('/register', name: 'app_register')]
+// REGISTER
+    #[Route(
+        path: '/register',
+        name: 'app_register',
+        methods: ['GET', 'POST'],
+    )]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         // Access denied if registration is disabled in the configuration
@@ -71,7 +76,12 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/verification/email', name: 'app_verify_email')]
+// VERIFY EMAIL
+    #[Route(
+        path: '/verification/email',
+        name: 'app_verify_email',
+        methods: ['GET']
+    )]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
         $id = $request->query->get('id');

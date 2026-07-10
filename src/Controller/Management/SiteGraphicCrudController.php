@@ -140,6 +140,7 @@ class SiteGraphicCrudController extends AbstractCrudController
 
             Field::new('file')
                 ->setLabel(t('label.file', [], 'site'))
+                ->setHelp(t('label.site_graphic_file_help', [], 'site'))
                 ->setFormType(VichImageType::class)
                 ->setFormTypeOptions([
                     'required' => $isNew,

@@ -1,158 +1,170 @@
-{% trans_default_domain 'site' %}
+{% set updateDate = '2026-07-09' %}
 
-{% set updateDate = '2018-05-25' %}
+<div class="legal">
+	<p class="text text-center">
+		{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+	</p>
 
-<p class="text text-center">
-	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
-</p>
+	<p class="text text-center">
+		Les Règles de confidentialité font partie intégrante des Conditions générales d'utilisation (CGU) de
+		<strong>{{ config('site-name') }}</strong>.
+	</p>
 
-<p class="text text-center">
-	Les Règles de confidentialité font partie intégrante des Conditions générales d'utilisation (CGU) de
-	<strong>{{ config('site-name') }}</strong>.
-</p>
+	<section>
+		<h2>Données personnelles</h2>
+		<div>
+			Vous pouvez, globalement, naviguer sur
+			<strong>{{ config('site-name') }}</strong>
+			sans nous dire qui vous êtes. En naviguant sur
+			<strong>{{ config('site-name') }}</strong>, votre navigateur transmet automatiquement diverses données qui permettent d'assurer le suivi technique de navigation. Certaines informations sont analysées à des fins purement statistiques, puis effacées.
+		</div>
+		<div>
+			Afin de respecter la protection de votre vie privée et des données personnelles que vous nous confiez volontairement et de votre propre initiative (par exemple lors de la création d'un compte d'utilisateur), nous nous engageons à NE PAS divulguer ces informations à d'autres sociétés et/ou organisations à des fins d'utilisations par celles-ci, sans votre accord.
+		</div>
+	</section>
 
-<h2>Données personnelles</h2>
-<p class="text text-justify">
-	Vous pouvez, globalement, naviguer sur
-	<strong>{{ config('site-name') }}</strong>
-	sans nous dire qui vous êtes. En naviguant sur
-	<strong>{{ config('site-name') }}</strong>, votre navigateur transmet automatiquement diverses données qui permettent d'assurer le suivi technique de navigation. Certaines informations sont analysées à des fins purement statistiques, puis effacées.
-</p>
-<p class="text text-justify">
-	Afin de respecter la protection de votre vie privée et des données personnelles que vous nous confiez volontairement et de votre propre initiative (par exemple lors de la création d'un compte d'utilisateur), nous nous engageons à NE PAS divulguer ces informations à d'autres sociétés et/ou organisations à des fins d'utilisations par celles-ci, sans votre accord.
-</p>
+	<section>
+		<h2>Adresses email</h2>
+		<div>
+			Nous ne diffusons pas les adresses emails que vous prenez le soin de nous laisser. Elles sont uniquement utilisées pour communiquer avec vous et constituent l'identifiant de connexion au site web.
+		</div>
+	</section>
 
-<h2>Adresses email</h2>
-<p class="text text-justify">
-	Nous ne diffusons pas les adresses emails que vous prenez le soin de nous laisser. Elles sont uniquement utilisées pour communiquer avec vous et constituent l'identifiant de connexion au site web.
-</p>
+	<section>
+		<h2>Compte</h2>
+		<div>
+			Votre compte sur
+			<strong>{{ config('site-name') }}</strong>
+			contiendra au minimum une adresse email valide et un mot de passe personnel. Les informations de votre compte sont protégées par les lois de protection des données applicables dans le pays qui nous héberge.<br>
+			Les informations enregistrées sont réservées à l'usage de
+			<strong>{{ config('site-name') }}</strong>
+			et NE sont PAS communiquées à des tiers.
+		</div>
+	</section>
 
-<h2>Compte</h2>
-<p class="text text-justify">
-	Votre compte sur
-	<strong>{{ config('site-name') }}</strong>
-	contiendra au minimum une adresse email valide et un mot de passe personnel. Les informations de votre compte sont protégées par les lois de protection des données applicables dans le pays qui nous héberge.<br>
-	Les informations enregistrées sont réservées à l'usage de
-	<strong>{{ config('site-name') }}</strong>
-	et NE sont PAS communiquées à des tiers.
-</p>
+	<section>
+		<h2>Politique sur les mots de passe</h2>
+		<div>
+			Votre mot de passe est crypté
+			<strong>(cryptage à sens unique qui fait qu'il ne peut pas être décrypté)</strong>
+			afin qu'il soit sécurisé. Cependant, il est recommandé de ne pas utiliser le même mot de passe sur plusieurs sites Internet différents. Votre mot de passe est le moyen d'accès à votre compte sur
+			<strong>{{ config('site-name') }}</strong>, veuillez le conservez précieusement. En aucun cas une personne affiliée à nos services ou à une tierce partie ne peut vous demander légitimement votre mot de passe.<br>
+			Si vous oubliez le mot de passe de votre compte, vous pouvez utiliser la fonction « Mot de passe oublié », cette procédure vous demandera de spécifier votre adresse e-mail et vous permettra de pouvoir saisir un nouveau mot de passe, afin que vous puissiez reprendre votre compte sur
+			<strong>{{ config('site-name') }}</strong>.
+		</div>
+	</section>
 
-<h2>Politique sur les mots de passe</h2>
-<p class="text text-justify">
-	Votre mot de passe est crypté
-	<strong>(cryptage à sens unique qui fait qu'il ne peut pas être décrypté)</strong>
-	afin qu'il soit sécurisé. Cependant, il est recommandé de ne pas utiliser le même mot de passe sur plusieurs sites Internet différents. Votre mot de passe est le moyen d'accès à votre compte sur
-	<strong>{{ config('site-name') }}</strong>, veuillez le conservez précieusement. En aucun cas une personne affiliée à nos services ou à une tierce partie ne peut vous demander légitimement votre mot de passe.<br>
-	Si vous oubliez le mot de passe de votre compte, vous pouvez utiliser la fonction « Mot de passe oublié », cette procédure vous demandera de spécifier votre adresse e-mail et vous permettra de pouvoir saisir un nouveau mot de passe, afin que vous puissiez reprendre votre compte sur
-	<strong>{{ config('site-name') }}</strong>.
-</p>
+	<section>
+		<h2>Vos droits</h2>
+		<div>
+			Conformément à la réglementation en vigueur les utilisateurs de
+			<strong>{{ config('site-name') }}</strong>
+			disposent des droits suivants :
+		</div>
+		<ul class="text text-justify">
+			<li>droit d'accès, de rectification, de mise à jour, de complétude, de verrouillage ou de suppression de vos données;</li>
+			<li>droit de retirer à tout moment un consentement ;</li>
+			<li>droit à la limitation du traitement de vos données ;</li>
+			<li>droit d'opposition aux traitement de vos données personnelles ;</li>
+			<li>droit de réclamation auprès d'une autorité de contrôle ;</li>
+			<li>droit à la portabilité des données fournies.</li>
+		</ul>
+		<div>
+			Si vous souhaitez savoir comment
+			<strong>{{ config('site-name') }}</strong>
+			utilise vos données personnelles, demander à les rectifier ou s'opposer à un traitement vous pouvez nous contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
+		</div>
+	</section>
 
-<h2>Vos droits</h2>
-<p class="text text-justify">
-	Conformément à la réglementation en vigueur les utilisateurs de
-	<strong>{{ config('site-name') }}</strong>
-	disposent des droits suivants :
-</p>
-<ul class="text text-justify">
-	<li>droit d'accès, de rectification, de mise à jour, de complétude, de verrouillage ou de suppression de vos données;</li>
-	<li>droit de retirer à tout moment un consentement ;</li>
-	<li>droit à la limitation du traitement de vos données ;</li>
-	<li>droit d'opposition aux traitement de vos données personnelles ;</li>
-	<li>droit de réclamation auprès d'une autorité de contrôle ;</li>
-	<li>droit à la portabilité des données fournies.</li>
-</ul>
-<p class="text text-justify">
-	Si vous souhaitez savoir comment
-	<strong>{{ config('site-name') }}</strong>
-	utilise vos données personnelles, demander à les rectifier ou s'opposer à un traitement vous pouvez nous contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
-</p>
+	<section>
+		<h2>Règlement</h2>
+		<div>
+			Le présent règlement sur les règles de confidentialité décrit la manière dont nous traitons vos informations à caractère personnel. Nous collectons, utilisons et partageons des données à caractère personnel afin de permettre à
+			<strong>{{ config('site-name') }}</strong>
+			de fonctionner correctement et de protéger celui-ci. En d'autres termes, nous sommes le « responsable du traitement » de vos données personnelles. Le présent règlement est applicable à compter du jour de sa publication.
+		</div>
 
-<h2>Règlement</h2>
-<p class="text text-justify">
-	Le présent règlement sur les règles de confidentialité décrit la manière dont nous traitons vos informations à caractère personnel. Nous collectons, utilisons et partageons des données à caractère personnel afin de permettre à
-	<strong>{{ config('site-name') }}</strong>
-	de fonctionner correctement et de protéger celui-ci. En d'autres termes, nous sommes le « responsable du traitement » de vos données personnelles. Le présent règlement est applicable à compter du jour de sa publication.
-</p>
+		<h3>Modification du réglement</h3>
+		<div>
+			Nous nous réservons la possibilité de modifier, tout ou partie, et à tout moment, ce présent réglement. Vous êtes invités à le consulter régulièrement pour prendre connaissance des changements apportés. Il est applicable au moment de sa publication.
+		</div>
 
-<h3>Modification du réglement</h3>
-<p class="text text-justify">
-	Nous nous réservons la possibilité de modifier, tout ou partie, et à tout moment, ce présent réglement. Vous êtes invités à le consulter régulièrement pour prendre connaissance des changements apportés. Il est applicable au moment de sa publication.
-</p>
+		<h3>Collecte des données</h3>
+		<div>
+			Les informations mises en ligne sur
+			<strong>{{ config('site-name') }}</strong>
+			sont accessibles au public. Nos serveurs et nos prestataires de services se trouvent dans l'espace Européen. Ainsi, si vous souhaitez nous fournir des informations personnelles, vous acceptez que celles-ci soit transférées, traitées et stockées dans l'espace Européen.
+		</div>
+		<div>
+			Nous collectons et stockons les données personnelles suivantes :
+		</div>
+		<ul class="text text-justify">
+			<li>adresse e-mail</li>
+			<li>données de connexion, statistiques relatives à la consultation des pages, au trafic à destination et provenant de
+				<strong>{{ config('site-name') }}</strong>
+			</li>
+			<li>autres informations, notamment l'adresse IP de l'utilisateur et les informations standards du log serveur</li>
+		</ul>
 
-<h3>Collecte des données</h3>
-<p class="text text-justify">
-	Les informations mises en ligne sur
-	<strong>{{ config('site-name') }}</strong>
-	sont accessibles au public. Nos serveurs et nos prestataires de services se trouvent dans l'espace Européen. Ainsi, si vous souhaitez nous fournir des informations personnelles, vous acceptez que celles-ci soit transférées, traitées et stockées dans l'espace Européen.
-</p>
-<p class="text text-justify">
-	Nous collectons et stockons les données personnelles suivantes :
-</p>
-<ul class="text text-justify">
-	<li>adresse e-mail</li>
-	<li>données de connexion, statistiques relatives à la consultation des pages, au trafic à destination et provenant de
-		<strong>{{ config('site-name') }}</strong>
-	</li>
-	<li>autres informations, notamment l'adresse IP de l'utilisateur et les informations standards du log serveur</li>
-</ul>
+		<h3>Utilisation des données</h3>
+		<div>
+			Nous utilisons les informations personnelles des utilisateurs afin de :
+		</div>
+		<ul class="text text-justify">
+			<li>fournir nos services</li>
+			<li>résoudre les différends et identifier les problèmes</li>
+			<li>encourager des transactions sûres et appliquer nos règlements</li>
+			<li>tirer profit de l'expérience de nos utilisateurs, mesurer l'intérêt porté à nos services et informer les utilisateurs au sujet de nos services et de leur mise à jour</li>
+		</ul>
 
-<h3>Utilisation des données</h3>
-<p class="text text-justify">
-	Nous utilisons les informations personnelles des utilisateurs afin de :
-</p>
-<ul class="text text-justify">
-	<li>fournir nos services</li>
-	<li>résoudre les différends et identifier les problèmes</li>
-	<li>encourager des transactions sûres et appliquer nos règlements</li>
-	<li>tirer profit de l'expérience de nos utilisateurs, mesurer l'intérêt porté à nos services et informer les utilisateurs au sujet de nos services et de leur mise à jour</li>
-</ul>
+		<h3>Communication des données</h3>
+		<div>
+			<strong>Nous ne vendons pas ni ne louons vos informations personnelles à des tiers</strong>, mais nous pouvons être amenés à communiquer des informations personnelles pour satisfaire à des obligations légales, appliquer nos règlements, répondre aux réclamations, ou protéger les droits ou les biens de toute personne ou assurer sa sécurité.
+		</div>
 
-<h3>Communication des données</h3>
-<p class="text text-justify">
-	<strong>Nous ne vendons pas ni ne louons vos informations personnelles à des tiers</strong>, mais nous pouvons être amenés à communiquer des informations personnelles pour satisfaire à des obligations légales, appliquer nos règlements, répondre aux réclamations, ou protéger les droits ou les biens de toute personne ou assurer sa sécurité.
-</p>
+		<h3>Conservation des données</h3>
+		<div>
+			Nous conservons vos données personelles uniquement le temps nécessaire pour les finalités poursuivies, conformément aux prescriptions légales.
+		</div>
 
-<h3>Conservation des données</h3>
-<p class="text text-justify">
-	Nous conservons vos données personelles uniquement le temps nécessaire pour les finalités poursuivies, conformément aux prescriptions légales.
-</p>
+		<h3>Fichiers de logs</h3>
+		<div>
+			À chaque consultation de
+			<strong>{{ config('site-name') }}</strong>, notre système enregistre, dans nos fichiers de logs et de manière automatisée, des données et informations sur le système informatique de l'ordinateur consultant. Les données suivantes sont collectées :
+		</div>
+		<ul class="text text-justify">
+			<li>informations concernant le type de navigateur, la langue de celui-ci et la version utilisée ;</li>
+			<li>système d'exploitation de l'utilisateur ;</li>
+			<li>fournisseur de services Internet de l'utilisateur ;</li>
+			<li>adresse IP de l'utilisateur ;</li>
+			<li>date et heure/fuseau horaire de l'accès ;</li>
+			<li>contenu de la demande ;</li>
+			<li>statut d'accès/code de statut http ;</li>
+			<li>pages web à partir desquelles le système de l'utilisateur a accédé à notre site web ;</li>
+			<li>pages web consultées par le système de l'utilisateur par l'intermédiaire de notre site web ;</li>
+			<li>quantité de données transmise ;</li>
+		</ul>
+		<div>
+			En cas d'anomalie lors de la consultation d'une page, nous consignons l'identifiant, l'adresse IP, la demande http concernée et les données nécessaires à l'analyse et à la suppression de l'anomalie.
+		</div>
 
-<h3>Fichiers de logs</h3>
-<p class="text text-justify">
-	À chaque consultation de
-	<strong>{{ config('site-name') }}</strong>, notre système enregistre, dans nos fichiers de logs et de manière automatisée, des données et informations sur le système informatique de l'ordinateur consultant. Les données suivantes sont collectées :
-</p>
-<ul class="text text-justify">
-	<li>informations concernant le type de navigateur, la langue de celui-ci et la version utilisée ;</li>
-	<li>système d'exploitation de l'utilisateur ;</li>
-	<li>fournisseur de services Internet de l'utilisateur ;</li>
-	<li>adresse IP de l'utilisateur ;</li>
-	<li>date et heure/fuseau horaire de l'accès ;</li>
-	<li>contenu de la demande ;</li>
-	<li>statut d'accès/code de statut http ;</li>
-	<li>pages web à partir desquelles le système de l'utilisateur a accédé à notre site web ;</li>
-	<li>pages web consultées par le système de l'utilisateur par l'intermédiaire de notre site web ;</li>
-	<li>quantité de données transmise ;</li>
-</ul>
-<p class="text text-justify">
-	En cas d'anomalie lors de la consultation d'une page, nous consignons l'identifiant, l'adresse IP, la demande http concernée et les données nécessaires à l'analyse et à la suppression de l'anomalie.
-</p>
+		<h3>Sécurité des données</h3>
+		<div>
+			Nous utilisons un grand nombre d'outils techniques et organisationnels généralement reconnus, pour assurer la protection de vos données personnelles contre les accès ou la communication non autorisés. Toutefois, comme vous le savez sans doute, il n'existe pas de protection parfaite. Nous n'offrons donc aucune garantie à cet égard.
+		</div>
+		<div>
+			La sécurité des données personnelles est aussi l'affaire des utilisateurs qui s'engagent à conserver la confidentialité de leur identifiant et de leur mot de passe. Les utilisateurs s'engagent également à ne pas partager leur compte.
+		</div>
 
-<h3>Sécurité des données</h3>
-<p class="text text-justify">
-	Nous utilisons un grand nombre d'outils techniques et organisationnels généralement reconnus, pour assurer la protection de vos données personnelles contre les accès ou la communication non autorisés. Toutefois, comme vous le savez sans doute, il n'existe pas de protection parfaite. Nous n'offrons donc aucune garantie à cet égard.
-</p>
-<p class="text text-justify">
-	La sécurité des données personnelles est aussi l'affaire des utilisateurs qui s'engagent à conserver la confidentialité de leur identifiant et de leur mot de passe. Les utilisateurs s'engagent également à ne pas partager leur compte.
-</p>
+		<h3>Archivage des données</h3>
+		<div>
+			Les données supprimées sont archivées, mais non accessibles au public, pour la durée légale de un an. Elles sont ensuite définitivement supprimées.
+		</div>
 
-<h3>Archivage des données</h3>
-<p class="text text-justify">
-	Les données supprimées sont archivées, mais non accessibles au public, pour la durée légale de un an. Elles sont ensuite définitivement supprimées.
-</p>
-
-<h3>Data Protection Officer (DPO)</h3>
-<p class="text text-justify">
-	Le responsable du traitement et de la protection des données est
-	<strong>{{ config('site-dpo') }}</strong>. Vous pouvez le contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
-</p>
+		<h3>Data Protection Officer (DPO)</h3>
+		<div>
+			Le responsable du traitement et de la protection des données est
+			<strong>{{ config('site-dpo') }}</strong>. Vous pouvez le contacter via le formulaire de contact ou via les moyens indiqués dans les Mentions légales.
+		</div>
+	</section>
+</div>

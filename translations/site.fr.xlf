@@ -72,11 +72,11 @@
             </trans-unit>
             <trans-unit id="18">
                 <source>label.terms_of_sales</source>
-                <target>Conditions générales de vente (CGV)</target>
+                <target>Conditions générales de vente</target>
             </trans-unit>
             <trans-unit id="19">
                 <source>label.terms_of_use</source>
-                <target>Conditions générales d'utilisation (CGU)</target>
+                <target>Conditions générales d'utilisation</target>
             </trans-unit>
             <trans-unit id="20">
                 <source>text.only_french</source>
@@ -185,8 +185,8 @@
                 <target>Slug</target>
             </trans-unit>
             <trans-unit id="46">
-                <source>label.description</source>
-                <target>Description</target>
+                <source>label.summary_social_network</source>
+                <target>Résumé réseaux sociaux</target>
             </trans-unit>
             <trans-unit id="47">
                 <source>label.dashboard</source>
@@ -341,8 +341,8 @@
                 <target>Jamais</target>
             </trans-unit>
             <trans-unit id="85">
-                <source>label.description_help</source>
-                <target>Ce contenu est affiché au début de la page et est utilisé pour décrire la page aux moteurs de recherche et aux réseaux sociaux</target>
+                <source>label.summary_social_network_help</source>
+                <target>Ce contenu sera utilisé par les réseaux sociaux lors du partage de la page</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -581,170 +581,193 @@
                 <target>Éléments du menu</target>
             </trans-unit>
             <trans-unit id="145">
-                <source>label.sitemap_create</source>
-                <target>Régénérer le sitemap</target>
+                <source>label.create_page</source>
+                <target>Créer une page</target>
             </trans-unit>
             <trans-unit id="146">
-                <source>flash.sitemap_created</source>
-                <target>Sitemap régénéré</target>
-            </trans-unit>
-            <trans-unit id="147">
                 <source>label.media_used_as_og_image</source>
                 <target>Image OG de « %page% »</target>
             </trans-unit>
-            <trans-unit id="148">
+            <trans-unit id="147">
                 <source>label.media_used_in_page_block</source>
                 <target>Utilisé dans un bloc de « %page% »</target>
             </trans-unit>
-            <trans-unit id="149">
+            <trans-unit id="148">
                 <source>label.route</source>
                 <target>Route</target>
             </trans-unit>
-            <trans-unit id="150">
+            <trans-unit id="149">
                 <source>label.choose_page</source>
                 <target>Choisir une page</target>
             </trans-unit>
-            <trans-unit id="151">
+            <trans-unit id="150">
                 <source>label.choose_route</source>
                 <target>Choisir une route</target>
             </trans-unit>
-            <trans-unit id="152">
+            <trans-unit id="151">
                 <source>constraint.menu_item_target</source>
                 <target>Choisissez soit une page, soit une route, mais pas les deux ni aucune des deux.</target>
             </trans-unit>
-            <trans-unit id="153">
+            <trans-unit id="152">
                 <source>label.export_tables</source>
-                <target>Exporter les tables site_</target>
+                <target>Exporter (SQL) les tables "site_xxx"</target>
             </trans-unit>
-            <trans-unit id="154">
+            <trans-unit id="153">
                 <source>label.register</source>
                 <target>S'inscrire</target>
             </trans-unit>
-            <trans-unit id="155">
+            <trans-unit id="154">
                 <source>label.password</source>
                 <target>Mot de passe</target>
             </trans-unit>
-            <trans-unit id="156">
+            <trans-unit id="155">
                 <source>label.email</source>
                 <target>Email</target>
             </trans-unit>
-            <trans-unit id="157">
+            <trans-unit id="156">
                 <source>label.confirm_email_title</source>
                 <target>Bonjour ! Merci de confirmer votre email !</target>
             </trans-unit>
-            <trans-unit id="158">
+            <trans-unit id="157">
                 <source>text.confirm_email_instructions</source>
                 <target>Merci de confirmer votre adresse email en cliquant sur le lien suivant :</target>
             </trans-unit>
-            <trans-unit id="159">
+            <trans-unit id="158">
                 <source>label.confirm_my_email</source>
                 <target>Confirmer mon email</target>
             </trans-unit>
-            <trans-unit id="160">
+            <trans-unit id="159">
                 <source>text.link_expires_in</source>
                 <target>Ce lien expirera dans</target>
             </trans-unit>
-            <trans-unit id="162">
+            <trans-unit id="160">
                 <source>label.password_reset_email_sent</source>
                 <target>Email de réinitialisation du mot de passe envoyé</target>
             </trans-unit>
-            <trans-unit id="163">
+            <trans-unit id="161">
                 <source>text.password_reset_email_sent_info</source>
                 <target>Si un compte correspondant à votre email existe, un email contenant un lien pour réinitialiser votre mot de passe vient de vous être envoyé.</target>
             </trans-unit>
-            <trans-unit id="164">
+            <trans-unit id="162">
                 <source>text.no_email_received</source>
                 <target>Si vous ne recevez pas d'email, merci de vérifier votre dossier spam ou</target>
             </trans-unit>
-            <trans-unit id="165">
+            <trans-unit id="163">
                 <source>label.try_again</source>
                 <target>réessayer</target>
             </trans-unit>
-            <trans-unit id="166">
+            <trans-unit id="164">
                 <source>text.reset_password_instructions</source>
                 <target>Pour réinitialiser votre mot de passe, merci de suivre le lien suivant</target>
             </trans-unit>
-            <trans-unit id="167">
+            <trans-unit id="165">
                 <source>label.reset_password</source>
                 <target>Réinitialiser votre mot de passe</target>
             </trans-unit>
-            <trans-unit id="168">
+            <trans-unit id="166">
                 <source>text.reset_password_help</source>
                 <target>Saisissez votre adresse email, nous vous enverrons un lien pour réinitialiser votre mot de passe.</target>
             </trans-unit>
-            <trans-unit id="169">
+            <trans-unit id="167">
                 <source>label.send_password_reset_email</source>
                 <target>Envoyer l'email de réinitialisation</target>
             </trans-unit>
-            <trans-unit id="170">
+            <trans-unit id="168">
                 <source>label.login</source>
                 <target>Connexion !</target>
             </trans-unit>
-            <trans-unit id="171">
+            <trans-unit id="169">
                 <source>label.please_sign_in</source>
                 <target>Merci de vous identifier</target>
             </trans-unit>
-            <trans-unit id="172">
+            <trans-unit id="170">
                 <source>label.sign_in</source>
                 <target>Se connecter</target>
             </trans-unit>
-            <trans-unit id="173">
+            <trans-unit id="171">
                 <source>text.logged_in_as</source>
                 <target>Vous êtes connecté en tant que %user%,</target>
             </trans-unit>
-            <trans-unit id="174">
+            <trans-unit id="172">
                 <source>label.forgot_password</source>
                 <target>Mot de passe oublié ?</target>
             </trans-unit>
-            <trans-unit id="175">
+            <trans-unit id="173">
                 <source>label.create_account</source>
                 <target>Créer un compte</target>
             </trans-unit>
-            <trans-unit id="176">
+            <trans-unit id="174">
                 <source>label.error_image</source>
                 <target>Image d'erreur</target>
             </trans-unit>
-            <trans-unit id="177">
+            <trans-unit id="175">
                 <source>label.error</source>
                 <target>Erreur</target>
             </trans-unit>
-            <trans-unit id="178">
+            <trans-unit id="176">
                 <source>label.error_code</source>
                 <target>Erreur %code%</target>
             </trans-unit>
-            <trans-unit id="179">
+            <trans-unit id="177">
                 <source>label.agree_terms</source>
                 <target>J'accepte les conditions</target>
             </trans-unit>
-            <trans-unit id="180">
+            <trans-unit id="178">
                 <source>label.new_password</source>
                 <target>Nouveau mot de passe</target>
             </trans-unit>
-            <trans-unit id="181">
+            <trans-unit id="179">
                 <source>label.password_confirm</source>
                 <target>Répéter le mot de passe</target>
             </trans-unit>
-            <trans-unit id="182">
+            <trans-unit id="180">
                 <source>label.password_help</source>
                 <target>Votre mot de passe doit comporter au moins 8 caractères et inclure une minuscule, une majuscule, un chiffre et un caractère spécial</target>
             </trans-unit>
-            <trans-unit id="183">
+            <trans-unit id="181">
                 <source>label.confirm_your_email</source>
                 <target>Confirmez votre email</target>
             </trans-unit>
-            <trans-unit id="184">
+            <trans-unit id="182">
                 <source>label.email_address_verified</source>
                 <target>Votre adresse email a été vérifiée.</target>
             </trans-unit>
-            <trans-unit id="185">
+            <trans-unit id="183">
                 <source>label.password_reset_request</source>
                 <target>Votre demande de réinitialisation de mot de passe</target>
             </trans-unit>
-            <trans-unit id="186">
+            <trans-unit id="184">
                 <source>label.no_reset_password_token_found</source>
                 <target>Aucun jeton de réinitialisation de mot de passe trouvé dans l'URL ou dans la session.</target>
             </trans-unit>
-
+            <trans-unit id="185">
+                <source>label.site_graphic_file_help</source>
+                <target>Le favicon sera automatiquement redimensionné en 48×48 px (.ico). L'icône Apple Touch sera automatiquement redimensionnée en 114×114 px (.png).</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>flash.user_registration_enabled</source>
+                <target>Inscription des utilisateurs activée</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>flash.user_registration_disabled</source>
+                <target>Inscription des utilisateurs désactivée</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>label.user_registration_enable</source>
+                <target>Activer l'inscription des utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>label.user_registration_disable</source>
+                <target>Désactiver l'inscription des utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>label.sitemaps_create</source>
+                <target>Créer sitemaps</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>flash.sitemaps_created</source>
+                <target>Sitemaps créées avec succès</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

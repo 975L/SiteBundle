@@ -93,9 +93,9 @@
                         <meta name="copyright" content="{{ copyright }}">
                     {% endif %}
 {# Description #}
-                    {% if description is defined and description is not empty %}
-                        <meta name="description" content="{{ description|striptags }}">
-                        <meta property="og:description" content="{{ description|striptags|slice(0,150) }}">
+                    {% if summarySocialNetwork is defined and summarySocialNetwork is not empty %}
+                        <meta name="description" content="{{ summarySocialNetwork|striptags }}">
+                        <meta property="og:description" content="{{ summarySocialNetwork|striptags|slice(0,150) }}">
                     {% endif %}
 {# Title #}
                     {% if pageTitle is defined %}

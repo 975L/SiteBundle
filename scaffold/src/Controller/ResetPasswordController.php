@@ -35,7 +35,12 @@ class ResetPasswordController extends AbstractController
     ) {
     }
 
-    #[Route('', name: 'app_forgot_password_request')]
+// REQUEST
+    #[Route(
+        path: '',
+        name: 'app_forgot_password_request',
+        methods: ['GET', 'POST']
+    )]
     public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
     {
         $form = $this->createForm(ResetPasswordRequestFormType::class);
@@ -45,8 +50,7 @@ class ResetPasswordController extends AbstractController
             /** @var string $email */
             $email = $form->get('email')->getData();
 
-            return $this->processSendingPasswordResetEmail($email, $mailer, $translator
-            );
+            return $this->processSendingPasswordResetEmail($email, $mailer, $translator);
         }
 
         return $this->render('reset_password/request.html.twig', [
@@ -54,8 +58,12 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    // Confirmation page after a user has requested a password reset.
-    #[Route('/check-email', name: 'app_check_email')]
+// CONFIRMATION
+    #[Route(
+        path: '/check-email',
+        name: 'app_check_email',
+        methods: ['GET']
+    )]
     public function checkEmail(): Response
     {
         // Generate a fake token if the user does not exist or someone hit this page directly.
@@ -69,8 +77,12 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
-    // Validates and process the reset URL that the user clicked in their email.
-    #[Route('/reset/{token}', name: 'app_reset_password')]
+// RESET
+    #[Route(
+        path: '/reset/{token}',
+        name: 'app_reset_password',
+        methods: ['GET', 'POST']
+    )]
     public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, ?string $token = null): Response
     {
         if ($token) {
@@ -113,6 +125,7 @@ class ResetPasswordController extends AbstractController
 
             // Encode(hash) the plain password, and set it.
             $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            $user->setModification(new \DateTime());
             $this->entityManager->flush();
 
             // The session is cleaned up after the password has been changed.
@@ -126,6 +139,7 @@ class ResetPasswordController extends AbstractController
         ]);
     }
 
+// SENDING EMAIL
     private function processSendingPasswordResetEmail(string $emailFormData, MailerInterface $mailer, TranslatorInterface $translator): RedirectResponse
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy([

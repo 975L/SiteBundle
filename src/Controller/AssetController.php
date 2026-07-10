@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class AssetController extends AbstractController
 {
     #[Route(
-        '/asset/{file}',
+        path: '/asset/{file}',
         requirements: ['file' => '^.*$'],
         name: 'asset_file',
         methods: ['GET']

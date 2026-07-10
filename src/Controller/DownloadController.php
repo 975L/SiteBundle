@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 class DownloadController extends AbstractController
 {
     #[Route(
-        '/download/{file}',
+        path: '/download/{file}',
         requirements: ['file' => '[\p{L}0-9\-\_\/]+.[a-z]{1,5}.[a-z]*'],
         name: 'download_file',
         methods: ['GET']

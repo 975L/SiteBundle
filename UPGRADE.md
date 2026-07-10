@@ -2,6 +2,8 @@
 
 ## > v7.x
 
+- New `ROLE_SUPER_ADMIN` role: requires `c975l/config-bundle` >= v5.4 (adds the `restricted` config criterion, see its own UPGRADE.md). The DB backup credentials (`site-backup-db-host/user/password`) are now flagged `"restricted": true` and hidden from the Config admin (index/detail/edit/export) to anyone without `ROLE_SUPER_ADMIN`. `site:create` grants it automatically to the bootstrap user, but on an existing site you must add it yourself:
+  - Add `"ROLE_SUPER_ADMIN"` to the `user-roles-available` config value (not synced automatically, existing config values are never overwritten), then grant it to the account(s) that should manage backup credentials
 - Add `'@c975l/site-bundle/controllers-admin.js' => ['path' => './vendor/c975l/site-bundle/assets/controllers-admin.js', 'entrypoint' => true]` to `importmap.php` - needed for the title/slug confirm in the pages admin
 - Requires `c975l/ui-bundle` >= v1.5 - see its own UPGRADE.md for the full list of `importmap.php` entries needed
 - Run `php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate` to add the new columns

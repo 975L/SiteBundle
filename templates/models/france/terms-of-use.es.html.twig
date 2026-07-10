@@ -1,168 +1,202 @@
-{% trans_default_domain 'site' %}
+{% set updateDate = '2026-07-09' %}
 
-{% set updateDate = '2018-03-08' %}
+<div class="legal">
+	<p class="text text-center">
+		{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+	</p>
 
-<p class="text text-center">
-	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
-</p>
+	<section>
+		<h2>Propósito</h2>
+		<div>
+			Las presentes Condiciones generales de uso (CGU) tienen por objeto definir los términos y condiciones en los que el sitio
+			<strong>{{ config('site-name') }}</strong>
+			proporciona servicios a los usuarios/as. Cualquier uso de cualquiera de los servicios ofrecidos por
+			<strong>{{ config('site-name') }}</strong>
+			se realizará respetando las presentes CGU.<br>
+			Estas fueron diseñadas para que el sitio funcione de manera satisfactoria para todos.<br>
+			Las presentes CGU son aplicables desde su publicación.
+		</div>
+	</section>
 
-<h2>Propósito</h2>
-<p class="text text-justify">
-	Las presentes Condiciones generales de uso (CGU) tienen por objeto definir los términos y condiciones en los que el sitio
-	<strong>{{ config('site-name') }}</strong>
-	proporciona servicios a los usuarios/as. Cualquier uso de cualquiera de los servicios ofrecidos por
-	<strong>{{ config('site-name') }}</strong>
-	se realizará respetando las presentes CGU.<br>
-	Estas fueron diseñadas para que el sitio funcione de manera satisfactoria para todos.<br>
-	Las presentes CGU son aplicables desde su publicación.
-</p>
+	<section>
+		<h2>Aceptación</h2>
+		<div>
+			El usuario/a declara haber tomado conocimiento y haber aceptado expresamente e incondicionalmente las presentes CGU vigentes el día del acceso a este sitio de Internet. Si este no fuera el caso, le pedimos que no utilice ni acceda a este sitio de Internet.
+		</div>
+	</section>
 
-<h2>Aceptación</h2>
-<p class="text text-justify">
-	El usuario/a declara haber tomado conocimiento y haber aceptado expresamente e incondicionalmente las presentes CGU vigentes el día del acceso a este sitio de Internet. Si este no fuera el caso, le pedimos que no utilice ni acceda a este sitio de Internet.
-</p>
+	<section>
+		<h2>Modificación</h2>
+		<div>
+			Nos reservamos la posibilidad de modificar, en todo o en parte, y en cualquier momento, las presentes CGU. Le invitamos a consultarlas regularmente para conocer los cambios introducidos. Son aplicables en el momento de su publicación.
+		</div>
+	</section>
 
-<h2>Modificación</h2>
-<p class="text text-justify">
-	Nos reservamos la posibilidad de modificar, en todo o en parte, y en cualquier momento, las presentes CGU. Le invitamos a consultarlas regularmente para conocer los cambios introducidos. Son aplicables en el momento de su publicación.
-</p>
+	<section>
+		<h2>Aceptación de los riesgos de Internet</h2>
+		<div>
+			El usuario/a declara conocer bien Internet, sus características y sus limitaciones y en particular reconoce:
+		</div>
+		<ul class="text text-justify">
+			<li>que Internet es una red abierta, incontrolable por nosotros mismos, y que el intercambio de datos que circulan por Internet solo tiene una fiabilidad relativa y no están protegidos, en particular, contra los riesgos de desviación o piratería eventual</li>
+			<li>que la comunicación por parte del usuario/a de información de carácter sensible se realiza por lo tanto bajo su propio riesgo</li>
+			<li>tener conocimiento de la naturaleza de la red Internet y en particular de su desempeño técnico y de los tiempos de respuesta para consultar, interrogar o transferir datos de información.</li>
+		</ul>
+		<div>
+			No podemos garantizar que la información intercambiada no sea interceptada por terceros, y por lo tanto la confidencialidad de estos intercambios. Informamos al usuario/a de la existencia de reglas y usos en vigor en Internet conocidos como
+			<a href="http://fr.wikipedia.org/wiki/Nétiquette">Netiqueta</a>
+			así como de diferentes códigos de conducta.
+		</div>
+	</section>
 
-<h2>Aceptación de los riesgos de Internet</h2>
-<p class="text text-justify">
-	El usuario/a declara conocer bien Internet, sus características y sus limitaciones y en particular reconoce:
-</p>
-<ul class="text text-justify">
-	<li>que Internet es una red abierta, incontrolable por nosotros mismos, y que el intercambio de datos que circulan por Internet solo tiene una fiabilidad relativa y no están protegidos, en particular, contra los riesgos de desviación o piratería eventual</li>
-	<li>que la comunicación por parte del usuario/a de información de carácter sensible se realiza por lo tanto bajo su propio riesgo</li>
-	<li>tener conocimiento de la naturaleza de la red Internet y en particular de su desempeño técnico y de los tiempos de respuesta para consultar, interrogar o transferir datos de información.</li>
-</ul>
-<p class="text text-justify">
-	No podemos garantizar que la información intercambiada no sea interceptada por terceros, y por lo tanto la confidencialidad de estos intercambios. Informamos al usuario/a de la existencia de reglas y usos en vigor en Internet conocidos como
-	<a href="http://fr.wikipedia.org/wiki/Nétiquette">Netiqueta</a>
-	así como de diferentes códigos de conducta.
-</p>
+	<section>
+		<h2>Responsabilidad</h2>
+		<div>
+			El usuario/a acepta no responsabilizar a este sitio de Internet y su editor del contenido publicado por otros usuarios/as o por sus acciones. No podemos garantizar la exactitud de estos contenidos de terceros, relacionados con la calidad, la seguridad o la legalidad. Le aconsejamos que haga sistemáticamente una prueba previa, se informe, observe y reflexione antes de cualquier acción.<br>
+			Tampoco podemos garantizar un acceso continuo y seguro a nuestros servicios. En consecuencia, en la medida permitida por la ley, excluimos toda forma de garantía. No podemos ser responsables de ninguna pérdida financiera o comercial, de ningún daño a la reputación, o de ningún perjuicio directo e indirecto que resulte del uso de este sitio de Internet. En la medida en que algunos países limiten el alcance de las exclusiones de garantía o responsabilidad, es posible que las exclusiones mencionadas anteriormente no le sean oponibles.
+		</div>
+		<div>
+			Sin embargo, si nuestra responsabilidad fuera comprometida hacia usted o hacia cualquier tercero, sería limitada a la más alta de las dos cantidades siguientes: (a) la cantidad total de honorarios y comisiones que nos hubiera pagado (si corresponde) durante los seis meses anteriores al evento generador de esta responsabilidad, o (b) 1 euro.
+		</div>
+		<div>
+			El usuario/a reconoce explícitamente que debe ejercer discernimiento en el uso del contenido editorial y asumir todos los riesgos asociados, en particular cuando se basa en la oportunidad, utilidad o integridad de este contenido editorial, y proceder a cualquier verificación bajo su responsabilidad.<br>
+			Aplicamos todo el cuidado considerado necesario en la constitución del contenido editorial bajo nuestra responsabilidad. Sin embargo, no garantizamos la fiabilidad de la información del contenido editorial. Por lo tanto, no podemos ser responsables de los daños resultantes del uso por parte del usuario/a para cualquier propósito de la información que constituye el contenido editorial.
+		</div>
+		<div>
+			El usuario/a reconoce que el uso de los servicios se realiza bajo su propio riesgo, en particular con respecto a la descarga de datos, archivos o software que podrían dañar su ordenador. La responsabilidad de este sitio de Internet no puede en particular ser comprometida por ninguna pérdida de datos, virus, errores informáticos o daño que afecte su ordenador.
+		</div>
+		<div>
+			No garantizamos la adecuación entre los servicios propuestos y las expectativas del usuario/a, así como la calidad y/o la legalidad o la conformidad con la ley del contenido no creado por nosotros mismos, en particular del contenido y las opiniones emitidas por usuarios/as o difundido en sitios externos accesibles a través de un hipervínculo. No podemos ser responsables de la difusión de datos por parte del usuario/a en violación de derechos, en particular exclusivos, ostentados por terceros, así como en caso de daño resultante de causas técnicas y en particular de la indisponibilidad de este sitio de Internet y de cualquier defecto que afecte su funcionamiento, y finalmente de daños directos o indirectos tales como pérdidas financieras, falta de ganancias, molestia de cualquier naturaleza que pueda resultar del uso o de la imposibilidad de usar los servicios propuestos.<br>
+			Además, el usuario/a nos garantiza contra cualquier recurso o acción que pudiera entablarse contra usted a título alguno y por cualquier razón, y más generalmente con ocasión de la entrada de datos o información, toda persona que se estimara lesionada por la publicación en línea de estos datos o información en este sitio de Internet y se compromete a mantenernos indemnes contra todos los gastos judiciales y extrajudiciales que pudieran resultar.
+		</div>
+		<div>
+			El usuario/a se prohíbe a sí mismo adoptar los siguientes comportamientos reprehensibles:
+		</div>
+		<ul class="text text-justify">
+			<li>violar leyes vigentes o la Política de contenidos prohibidos;</li>
+			<li>dar información falsa o de naturaleza engañosa;</li>
+			<li>recopilar u obtener de cualquier otra forma información sobre otros, en particular direcciones de correo electrónico, sin estar autorizado;</li>
+			<li>enviar correos electrónicos no solicitados de carácter comercial (spam) u ofrecer sistemas de cadenas de dinero o esquemas piramidales;</li>
+			<li>difundir virus u otras tecnologías de naturaleza ofensiva para este sitio de Internet o para los intereses y bienes de los usuarios/as;</li>
+			<li>imponer una carga irrazonable en nuestra infraestructura o interferir con el funcionamiento correcto de este sitio de Internet;</li>
+			<li>copiar, modificar o distribuir ningún contenido que pertenezca a otros sin autorización o sin citar la fuente;</li>
+			<li>afectar derechos ostentados por terceros;</li>
+			<li>eludir medidas destinadas a prevenir o restringir el acceso a este sitio de Internet.</li>
+		</ul>
+	</section>
 
-<h2>Responsabilidad</h2>
-<p class="text text-justify">
-	El usuario/a acepta no responsabilizar a este sitio de Internet y su editor del contenido publicado por otros usuarios/as o por sus acciones. No podemos garantizar la exactitud de estos contenidos de terceros, relacionados con la calidad, la seguridad o la legalidad. Le aconsejamos que haga sistemáticamente una prueba previa, se informe, observe y reflexione antes de cualquier acción.<br>
-	Tampoco podemos garantizar un acceso continuo y seguro a nuestros servicios. En consecuencia, en la medida permitida por la ley, excluimos toda forma de garantía. No podemos ser responsables de ninguna pérdida financiera o comercial, de ningún daño a la reputación, o de ningún perjuicio directo e indirecto que resulte del uso de este sitio de Internet. En la medida en que algunos países limiten el alcance de las exclusiones de garantía o responsabilidad, es posible que las exclusiones mencionadas anteriormente no le sean oponibles.
-</p>
-<p class="text text-justify">
-	Sin embargo, si nuestra responsabilidad fuera comprometida hacia usted o hacia cualquier tercero, sería limitada a la más alta de las dos cantidades siguientes: (a) la cantidad total de honorarios y comisiones que nos hubiera pagado (si corresponde) durante los seis meses anteriores al evento generador de esta responsabilidad, o (b) 1 euro.
-</p>
-<p class="text text-justify">
-	El usuario/a reconoce explícitamente que debe ejercer discernimiento en el uso del contenido editorial y asumir todos los riesgos asociados, en particular cuando se basa en la oportunidad, utilidad o integridad de este contenido editorial, y proceder a cualquier verificación bajo su responsabilidad.<br>
-	Aplicamos todo el cuidado considerado necesario en la constitución del contenido editorial bajo nuestra responsabilidad. Sin embargo, no garantizamos la fiabilidad de la información del contenido editorial. Por lo tanto, no podemos ser responsables de los daños resultantes del uso por parte del usuario/a para cualquier propósito de la información que constituye el contenido editorial.
-</p>
-<p class="text text-justify">
-	El usuario/a reconoce que el uso de los servicios se realiza bajo su propio riesgo, en particular con respecto a la descarga de datos, archivos o software que podrían dañar su ordenador. La responsabilidad de este sitio de Internet no puede en particular ser comprometida por ninguna pérdida de datos, virus, errores informáticos o daño que afecte su ordenador.
-</p>
-<p class="text text-justify">
-	No garantizamos la adecuación entre los servicios propuestos y las expectativas del usuario/a, así como la calidad y/o la legalidad o la conformidad con la ley del contenido no creado por nosotros mismos, en particular del contenido y las opiniones emitidas por usuarios/as o difundido en sitios externos accesibles a través de un hipervínculo. No podemos ser responsables de la difusión de datos por parte del usuario/a en violación de derechos, en particular exclusivos, ostentados por terceros, así como en caso de daño resultante de causas técnicas y en particular de la indisponibilidad de este sitio de Internet y de cualquier defecto que afecte su funcionamiento, y finalmente de daños directos o indirectos tales como pérdidas financieras, falta de ganancias, molestia de cualquier naturaleza que pueda resultar del uso o de la imposibilidad de usar los servicios propuestos.<br>
-	Además, el usuario/a nos garantiza contra cualquier recurso o acción que pudiera entablarse contra usted a título alguno y por cualquier razón, y más generalmente con ocasión de la entrada de datos o información, toda persona que se estimara lesionada por la publicación en línea de estos datos o información en este sitio de Internet y se compromete a mantenernos indemnes contra todos los gastos judiciales y extrajudiciales que pudieran resultar.
-</p>
-<p class="text text-justify">
-	El usuario/a se prohíbe a sí mismo adoptar los siguientes comportamientos reprehensibles:
-</p>
-<ul class="text text-justify">
-	<li>violar leyes vigentes o la Política de contenidos prohibidos;</li>
-	<li>dar información falsa o de naturaleza engañosa;</li>
-	<li>recopilar u obtener de cualquier otra forma información sobre otros, en particular direcciones de correo electrónico, sin estar autorizado;</li>
-	<li>enviar correos electrónicos no solicitados de carácter comercial (spam) u ofrecer sistemas de cadenas de dinero o esquemas piramidales;</li>
-	<li>difundir virus u otras tecnologías de naturaleza ofensiva para este sitio de Internet o para los intereses y bienes de los usuarios/as;</li>
-	<li>imponer una carga irrazonable en nuestra infraestructura o interferir con el funcionamiento correcto de este sitio de Internet;</li>
-	<li>copiar, modificar o distribuir ningún contenido que pertenezca a otros sin autorización o sin citar la fuente;</li>
-	<li>afectar derechos ostentados por terceros;</li>
-	<li>eludir medidas destinadas a prevenir o restringir el acceso a este sitio de Internet.</li>
-</ul>
+	<section>
+		<h2>Contenido</h2>
+		<div>
+			Al aceptar las presentes CGU, usted nos otorga, por la duración de los derechos de propiedad intelectual, el derecho de reproducir en este sitio de Internet el contenido que proporciona. Estos derechos se otorgan a título no exclusivo, para el mundo entero de manera irrevocable, gratuita y transferible (en particular, necesitamos estos derechos para alojar y mostrar su contenido).<br>
+			Si considera que se ha producido una violación de sus derechos, o que un contenido es ilegal, le pedimos que nos lo comunique para poder investigar. Nos reservamos la posibilidad de retirar un contenido en cualquier momento si tenemos razones para creer que constituye una violación de las presentes CGU o de derechos ostentados por terceros.<br>
+			Al utilizar este sitio de Internet,
+			<strong>el usuario/a acepta no publicar ningún contenido de carácter racista, negacionista, pederasta, abusivo, obsceno, vulgar, denigrante, difamatorio, ofensivo, amenazador, pornográfico, injurioso, que afecte la vida privada, el derecho de autor o la imagen o la propiedad, piratería, competencia desleal u otro que pudiera transgredir las leyes de su país, el país donde este sitio de Internet está alojado o la ley internacional. No respetar esto puede llevar a una prohibición inmediata, además del envío de una advertencia a su proveedor de servicios de Internet si lo consideramos necesario.</strong><br>
+			La dirección IP de todas las publicaciones se registra para ayudar a reforzar estas condiciones. Acepta el hecho de que tenemos el derecho de eliminar, editar, mover o bloquear cualquier contenido cuando lo consideremos necesario. Como usuario/a, acepta que toda la información que ha ingresado se almacene en nuestra base de datos. No podemos ser responsables en caso de intentos de piratería destinados a comprometer los datos.
+		</div>
+		<div>
+			El usuario/a es el único/a responsable de los datos que difunde y/o utiliza y/o transfiere. También se compromete a no perjudicar los derechos de terceros (derechos de propiedad intelectual, derechos de imagen, etc.), a proporcionar información real, exacta y actualizada en el momento de su ingreso y en particular a no utilizar nombres falsos, cualidades o direcciones, o nombres, cualidades o direcciones sin estar autorizado, a no poner disponible o distribuir información, programas o elementos ilegales, reprehensibles o perjudiciales (como virus, software de piratería o copia).<br>
+			En caso de violación de estas disposiciones, los contenidos que ha publicado pueden ser eliminados sin notificación previa y su acceso a los servicios puede ser suspendido o rescindido bajo su culpa exclusiva, sin perjuicio de ninguna acción de responsabilidad.
+		</div>
+	</section>
 
-<h2>Contenido</h2>
-<p class="text text-justify">
-	Al aceptar las presentes CGU, usted nos otorga, por la duración de los derechos de propiedad intelectual, el derecho de reproducir en este sitio de Internet el contenido que proporciona. Estos derechos se otorgan a título no exclusivo, para el mundo entero de manera irrevocable, gratuita y transferible (en particular, necesitamos estos derechos para alojar y mostrar su contenido).<br>
-	Si considera que se ha producido una violación de sus derechos, o que un contenido es ilegal, le pedimos que nos lo comunique para poder investigar. Nos reservamos la posibilidad de retirar un contenido en cualquier momento si tenemos razones para creer que constituye una violación de las presentes CGU o de derechos ostentados por terceros.<br>
-	Al utilizar este sitio de Internet,
-	<strong>el usuario/a acepta no publicar ningún contenido de carácter racista, negacionista, pederasta, abusivo, obsceno, vulgar, denigrante, difamatorio, ofensivo, amenazador, pornográfico, injurioso, que afecte la vida privada, el derecho de autor o la imagen o la propiedad, piratería, competencia desleal u otro que pudiera transgredir las leyes de su país, el país donde este sitio de Internet está alojado o la ley internacional. No respetar esto puede llevar a una prohibición inmediata, además del envío de una advertencia a su proveedor de servicios de Internet si lo consideramos necesario.</strong><br>
-	La dirección IP de todas las publicaciones se registra para ayudar a reforzar estas condiciones. Acepta el hecho de que tenemos el derecho de eliminar, editar, mover o bloquear cualquier contenido cuando lo consideremos necesario. Como usuario/a, acepta que toda la información que ha ingresado se almacene en nuestra base de datos. No podemos ser responsables en caso de intentos de piratería destinados a comprometer los datos.
-</p>
-<p class="text text-justify">
-	El usuario/a es el único/a responsable de los datos que difunde y/o utiliza y/o transfiere. También se compromete a no perjudicar los derechos de terceros (derechos de propiedad intelectual, derechos de imagen, etc.), a proporcionar información real, exacta y actualizada en el momento de su ingreso y en particular a no utilizar nombres falsos, cualidades o direcciones, o nombres, cualidades o direcciones sin estar autorizado, a no poner disponible o distribuir información, programas o elementos ilegales, reprehensibles o perjudiciales (como virus, software de piratería o copia).<br>
-	En caso de violación de estas disposiciones, los contenidos que ha publicado pueden ser eliminados sin notificación previa y su acceso a los servicios puede ser suspendido o rescindido bajo su culpa exclusiva, sin perjuicio de ninguna acción de responsabilidad.
-</p>
+	<section>
+		<h2>Información</h2>
+		<div>
+			La información presente en este sitio de Internet se proporciona a título indicativo. En cualquier caso, debe considerarse en el momento de su publicación y no en el momento de la consulta del sitio. Nuestra responsabilidad no puede ser comprometida por esta información.
+		</div>
+	</section>
 
-<h2>Información</h2>
-<p class="text text-justify">
-	La información presente en este sitio de Internet se proporciona a título indicativo. En cualquier caso, debe considerarse en el momento de su publicación y no en el momento de la consulta del sitio. Nuestra responsabilidad no puede ser comprometida por esta información.
-</p>
+	<section>
+		<h2>Hipervínculos</h2>
+		<div>
+			Este sitio contiene hipervínculos que remiten a otros sitios de Internet gestionados por terceros y sobre los cuales no ejercemos ningún control.<br>
+			En consecuencia, no somos responsables del contenido, la información, los productos y los servicios ofrecidos en los sitios accesibles a través de los hipervínculos contenidos en nuestro sitio y nuestra responsabilidad no puede de ninguna manera ser comprometida por posibles daños directos o indirectos resultantes del uso de estos sitios.<br>
+			La inserción de estos enlaces no significa que aprobemos los elementos contenidos en estos sitios. Por lo tanto, no podemos ser responsables del contenido de estos sitios, y el hecho de que estos sitios sean referenciados en este sitio de Internet de ninguna manera compromete nuestra responsabilidad. No garantizamos nada relacionado con la veracidad, actualidad, calidad, integridad, exhaustividad, relevancia y dificultades de acceso y funcionamiento de estos sitios de Internet indexados.
+		</div>
+	</section>
 
-<h2>Hipervínculos</h2>
-<p class="text text-justify">
-	Este sitio contiene hipervínculos que remiten a otros sitios de Internet gestionados por terceros y sobre los cuales no ejercemos ningún control.<br>
-	En consecuencia, no somos responsables del contenido, la información, los productos y los servicios ofrecidos en los sitios accesibles a través de los hipervínculos contenidos en nuestro sitio y nuestra responsabilidad no puede de ninguna manera ser comprometida por posibles daños directos o indirectos resultantes del uso de estos sitios.<br>
-	La inserción de estos enlaces no significa que aprobemos los elementos contenidos en estos sitios. Por lo tanto, no podemos ser responsables del contenido de estos sitios, y el hecho de que estos sitios sean referenciados en este sitio de Internet de ninguna manera compromete nuestra responsabilidad. No garantizamos nada relacionado con la veracidad, actualidad, calidad, integridad, exhaustividad, relevancia y dificultades de acceso y funcionamiento de estos sitios de Internet indexados.
-</p>
+	<section>
+		<h2>Propiedad intelectual</h2>
+		<div>
+			El usuario/a reconoce que este sitio de Internet es el único propietario de los derechos de propiedad intelectual relacionados con este mismo sitio de Internet y al contenido editorial.<br>
+			Ninguna disposición de las presentes CGU puede interpretarse como que otorga al usuario/a una licencia sobre los derechos de propiedad intelectual, cuya propiedad o derecho exclusivo de explotación. Solo otorgamos una autorización para ver el contenido editorial.
+		</div>
+		<div>
+			Si cree que una página infringe las leyes de propiedad intelectual, le pedimos que nos la comunique explicando por qué y posiblemente las soluciones para remediar esto.
+		</div>
+	</section>
 
-<h2>Propiedad intelectual</h2>
-<p class="text text-justify">
-	El usuario/a reconoce que este sitio de Internet es el único propietario de los derechos de propiedad intelectual relacionados con este mismo sitio de Internet y al contenido editorial.<br>
-	Ninguna disposición de las presentes CGU puede interpretarse como que otorga al usuario/a una licencia sobre los derechos de propiedad intelectual, cuya propiedad o derecho exclusivo de explotación. Solo otorgamos una autorización para ver el contenido editorial.
-</p>
-<p class="text text-justify">
-	Si cree que una página infringe las leyes de propiedad intelectual, le pedimos que nos la comunique explicando por qué y posiblemente las soluciones para remediar esto.
-</p>
+	<section>
+		<h2>Accesibilidad a los servicios</h2>
+		<div>
+			Nos esforzamos, en la medida de lo posible, por mantener accesible nuestro sitio de Internet 7 días a la semana y 24 horas al día, pero podemos interrumpir su acceso, en particular por razones de mantenimiento y actualizaciones o por cualquier otro motivo, en particular técnico. No somos responsables de las consecuencias que esto pueda tener para el usuario/a.<br>
+			Nos reservamos el derecho de denegar a cualquier usuario/a el acceso a todo o parte del sitio unilateralmente y sin notificación previa, en particular en caso de violación manifiesta de las presentes CGU. El usuario/a reconoce que no podemos ser responsables de ningún daño directo o indirecto ocurrido por la supresión del acceso del usuario/a al sitio de Internet.
+		</div>
+	</section>
 
-<h2>Accesibilidad a los servicios</h2>
-<p class="text text-justify">
-	Nos esforzamos, en la medida de lo posible, por mantener accesible nuestro sitio de Internet 7 días a la semana y 24 horas al día, pero podemos interrumpir su acceso, en particular por razones de mantenimiento y actualizaciones o por cualquier otro motivo, en particular técnico. No somos responsables de las consecuencias que esto pueda tener para el usuario/a.<br>
-	Nos reservamos el derecho de denegar a cualquier usuario/a el acceso a todo o parte del sitio unilateralmente y sin notificación previa, en particular en caso de violación manifiesta de las presentes CGU. El usuario/a reconoce que no podemos ser responsables de ningún daño directo o indirecto ocurrido por la supresión del acceso del usuario/a al sitio de Internet.
-</p>
+	<section>
+		<h2>Condiciones de acceso al contenido</h2>
+		<div>
+			El acceso al contenido editorial del sitio de Internet es completamente libre y gratuito.
+		</div>
+	</section>
 
-<h2>Condiciones de acceso al contenido</h2>
-<p class="text text-justify">
-	El acceso al contenido editorial del sitio de Internet es completamente libre y gratuito.
-</p>
+	<section>
+		<h2>Condiciones de acceso a servicios específicos</h2>
+		<div>
+			El uso de servicios específicos requiere que el usuario/a respete un procedimiento de registro mediante el cual debe proporcionar sus datos de contacto. El usuario/a se compromete a que la información comunicada, en particular la información personal, sea exacta, completa y actualizada y a realizar las modificaciones necesarias para este propósito.<br>
+			El acceso a ciertos servicios específicos es, o bien gratuito, o bien de pago, según el servicio solicitado. En caso de servicio de pago, el precio se menciona antes de la suscripción y el uso de este servicio.<br>
+			El usuario/a declara haber tomado conocimiento y haber aceptado expresamente las presentes CGU vigentes el día de su registro en este sitio, validando la opción "Acepto las CGU". Cualquier aceptación expresada por el usuario/a mediante un clic es tan válida como su firma manuscrita. Mediante la realización de este clic, se presume que el usuario/a ha dado su consentimiento de manera irrevocable.
+		</div>
+	</section>
 
-<h2>Condiciones de acceso a servicios específicos</h2>
-<p class="text text-justify">
-	El uso de servicios específicos requiere que el usuario/a respete un procedimiento de registro mediante el cual debe proporcionar sus datos de contacto. El usuario/a se compromete a que la información comunicada, en particular la información personal, sea exacta, completa y actualizada y a realizar las modificaciones necesarias para este propósito.<br>
-	El acceso a ciertos servicios específicos es, o bien gratuito, o bien de pago, según el servicio solicitado. En caso de servicio de pago, el precio se menciona antes de la suscripción y el uso de este servicio.<br>
-	El usuario/a declara haber tomado conocimiento y haber aceptado expresamente las presentes CGU vigentes el día de su registro en este sitio, validando la opción "Acepto las CGU". Cualquier aceptación expresada por el usuario/a mediante un clic es tan válida como su firma manuscrita. Mediante la realización de este clic, se presume que el usuario/a ha dado su consentimiento de manera irrevocable.
-</p>
+	<section>
+		<h2>Datos personales</h2>
+		<div>
+			Recopilamos información proporcionada por los usuarios/as a través de formularios. Conscientes de que la recopilación y el procesamiento de datos personales en Internet deben respetar los derechos fundamentales de las personas, nos comprometemos a que todo procesamiento de datos nominativos en este sitio de Internet sea conforme a la Ley n° 78-17 de 6 de enero de 1978 relativa a la informática, los ficheros y las libertades. El usuario/a tiene un derecho de acceso (artículos 34 a 38 de la ley de 1978) y un derecho de rectificación (artículo 36 de la ley de 1978) a los datos personales que le conciernen.<br>
+			El usuario/a puede ejercer este derecho en cualquier momento contactándonos, es decir, rectificar, completar, aclarar, actualizar o eliminar la información que le concierne que sea inexacta, incompleta o caducada. Se solicita un plazo máximo de 15 días antes de la consideración de la solicitud del usuario/a.<br>
+			Nos comprometemos, además, a hacer los mejores esfuerzos para proteger estos datos personales, a fin de impedir que se deformen, dañen o comuniquen a terceros no autorizados de conformidad con el artículo 29 de la ley de 6 de enero de 1978.
+		</div>
+	</section>
 
-<h2>Datos personales</h2>
-<p class="text text-justify">
-	Recopilamos información proporcionada por los usuarios/as a través de formularios. Conscientes de que la recopilación y el procesamiento de datos personales en Internet deben respetar los derechos fundamentales de las personas, nos comprometemos a que todo procesamiento de datos nominativos en este sitio de Internet sea conforme a la Ley n° 78-17 de 6 de enero de 1978 relativa a la informática, los ficheros y las libertades. El usuario/a tiene un derecho de acceso (artículos 34 a 38 de la ley de 1978) y un derecho de rectificación (artículo 36 de la ley de 1978) a los datos personales que le conciernen.<br>
-	El usuario/a puede ejercer este derecho en cualquier momento contactándonos, es decir, rectificar, completar, aclarar, actualizar o eliminar la información que le concierne que sea inexacta, incompleta o caducada. Se solicita un plazo máximo de 15 días antes de la consideración de la solicitud del usuario/a.<br>
-	Nos comprometemos, además, a hacer los mejores esfuerzos para proteger estos datos personales, a fin de impedir que se deformen, dañen o comuniquen a terceros no autorizados de conformidad con el artículo 29 de la ley de 6 de enero de 1978.
-</p>
+	<section>
+		<h2>Abuso</h2>
+		<div>
+			El usuario/a puede llamar nuestra atención sobre cualquier problema o contenido ofensivo usando el sistema de reporte para que juntos podamos asegurar el buen funcionamiento de este sitio de Internet. Podemos rescindir o reducir el acceso a nuestros servicios, retirar ciertos contenidos alojados y tomar medidas técnicas y legales para prohibir el acceso a este sitio de Internet a ciertos usuarios/as si consideramos que causan problemas, o se comportan de una manera incompatible con nuestras normas o el espíritu de estas. Sin embargo, ya sea que decidamos prohibir o no a un usuario/a acceder a este sitio de Internet, renunciamos a toda responsabilidad en caso de uso no autorizado o ilícito de este sitio de Internet por sus usuarios/as.
+		</div>
+	</section>
 
-<h2>Abuso</h2>
-<p class="text text-justify">
-	El usuario/a puede llamar nuestra atención sobre cualquier problema o contenido ofensivo usando el sistema de reporte para que juntos podamos asegurar el buen funcionamiento de este sitio de Internet. Podemos rescindir o reducir el acceso a nuestros servicios, retirar ciertos contenidos alojados y tomar medidas técnicas y legales para prohibir el acceso a este sitio de Internet a ciertos usuarios/as si consideramos que causan problemas, o se comportan de una manera incompatible con nuestras normas o el espíritu de estas. Sin embargo, ya sea que decidamos prohibir o no a un usuario/a acceder a este sitio de Internet, renunciamos a toda responsabilidad en caso de uso no autorizado o ilícito de este sitio de Internet por sus usuarios/as.
-</p>
+	<section>
+		<h2>Litigios</h2>
+		<div>
+			En caso de disputa, el procedimiento a seguir será el siguiente:
+		</div>
+		<ol class="text text-justify">
+			<li>Contactarnos para un tratamiento amistoso</li>
+			<li>En caso de fracaso, ponerse en contacto con un/a
+				<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediador/a</a>
+			</li>
+			<li>En último recurso, acudir a los tribunales competentes</li>
+		</ol>
+	</section>
 
-<h2>Litigios</h2>
-<p class="text text-justify">
-	En caso de disputa, el procedimiento a seguir será el siguiente:
-</p>
-<ol class="text text-justify">
-	<li>Contactarnos para un tratamiento amistoso</li>
-	<li>En caso de fracaso, ponerse en contacto con un/a
-		<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediador/a</a>
-	</li>
-	<li>En último recurso, acudir a los tribunales competentes</li>
-</ol>
+	<section>
+		<h2>Ley aplicable - Atribución de competencia</h2>
+		<div>
+			Las presentes CGU se rigen por la ley francesa. Cualquier disputa relacionada con la interpretación y ejecución de estas condiciones será de la competencia exclusiva de los tribunales franceses y en particular de los ubicados en el departamento francés de la sede de la empresa editora de
+			<strong>{{ config('site-name') }}</strong>, ya sea para usuarios/as profesionales o particulares.
+		</div>
+	</section>
 
-<h2>Ley aplicable - Atribución de competencia</h2>
-<p class="text text-justify">
-	Las presentes CGU se rigen por la ley francesa. Cualquier disputa relacionada con la interpretación y ejecución de estas condiciones será de la competencia exclusiva de los tribunales franceses y en particular de los ubicados en el departamento francés de la sede de la empresa editora de
-	<strong>{{ config('site-name') }}</strong>, ya sea para usuarios/as profesionales o particulares.
-</p>
-
-<h2>Varios</h2>
-<p class="text text-justify">
-	Las presentes CGU así como las otras normas presentes en este sitio de Internet constituyen la totalidad del acuerdo existente entre el usuario/a y este sitio de Internet por mediación de su editor y reemplazan cualquier acuerdo anterior.<br>
-	Si alguna parte de las CGU resultara ser ilegal, inválida o inaplicable, por cualquier razón que fuere, las disposiciones en cuestión se considerarían no escritas, sin comprometer la validez de las otras disposiciones que continuarán siendo aplicables.<br>
-	El hecho de no solicitar la ejecución de ninguna de las estipulaciones de las presentes no significa que renunciemos a poder prevalernos de ellas posteriormente. Si un tribunal llegara a privar de efecto cualquiera de las estipulaciones de las presentes, las otras estipulaciones permanecerían en vigor. Tenemos derecho a rescindir el presente contrato de pleno derecho y de manera discrecional.<br>
-	Toda reclamación debe dirigirse a nosotros a través de las modalidades de contacto definidas en el sitio.<br>
-	Las CGU están sujetas a la ley francesa.
-</p>
+	<section>
+		<h2>Varios</h2>
+		<div>
+			Las presentes CGU así como las otras normas presentes en este sitio de Internet constituyen la totalidad del acuerdo existente entre el usuario/a y este sitio de Internet por mediación de su editor y reemplazan cualquier acuerdo anterior.<br>
+			Si alguna parte de las CGU resultara ser ilegal, inválida o inaplicable, por cualquier razón que fuere, las disposiciones en cuestión se considerarían no escritas, sin comprometer la validez de las otras disposiciones que continuarán siendo aplicables.<br>
+			El hecho de no solicitar la ejecución de ninguna de las estipulaciones de las presentes no significa que renunciemos a poder prevalernos de ellas posteriormente. Si un tribunal llegara a privar de efecto cualquiera de las estipulaciones de las presentes, las otras estipulaciones permanecerían en vigor. Tenemos derecho a rescindir el presente contrato de pleno derecho y de manera discrecional.<br>
+			Toda reclamación debe dirigirse a nosotros a través de las modalidades de contacto definidas en el sitio.<br>
+			Las CGU están sujetas a la ley francesa.
+		</div>
+	</section>
+</div>

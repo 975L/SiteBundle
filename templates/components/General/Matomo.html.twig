@@ -4,7 +4,7 @@
 {% if matomoUrl and matomoId %}
     <div data-controller="matomo" data-matomo-url="{{ matomoUrl }}" data-matomo-id="{{ matomoId }}">
         <noscript>
-            <img src="{{ matomoUrl ~ matomoId }}" style="border:0;" alt="" loading="lazy">
+            <img src="{{ matomoUrl ~ "?idsite=" ~ matomoId }}" style="border:0;" alt="" loading="lazy">
         </noscript>
     </div>
 {% endif %}

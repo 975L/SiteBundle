@@ -1,15 +1,12 @@
 {% extends '@c975LSite/layout.html.twig' %}
 
 {% set title = page.title %}
-{% set description = page.description %}
+{% set summarySocialNetwork = page.summarySocialNetwork %}
 
 {% block content %}
     {% if isPreview|default(false) and not page.isPublished %}
         <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />
     {% endif %}
-    <div class="text lead">
-        {{ page.description|raw|nl2br }}
     </div>
-
     <twig:c975LUi:Blocks:Blocks blocks="{{ page.blocks }}" />
 {% endblock %}

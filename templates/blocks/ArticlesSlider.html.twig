@@ -7,10 +7,10 @@
             {% set slides = slides|merge([{
                 image: articleBlock.media.first,
                 title: articleBlock.data.title|default(''),
-                text: articleBlock.data.content|default('')|striptags|slice(0, 160),
+                text: articleBlock.data.hook|default('')|striptags|slice(0, 160),
                 url: path('page_display', {page: page.slug}) ~ '#article-' ~ articleBlock.data.slug|default('')
             }]) %}
         {% endif %}
     {% endfor %}
-    <twig:c975LUi:Slider:Slider slides="{{ slides }}" id="articles-slider-{{ block.id }}" duration="{{ duration }}"/>
+    <twig:c975LUi:Slider:Slider slides="{{ slides }}" id="articles-slider-{{ block.id }}" duration="{{ duration }}" imageLinksToUrl="true"/>
 {% endif %}

@@ -1,169 +1,203 @@
-{% trans_default_domain 'site' %}
+{% set updateDate = '2026-07-09' %}
 
-{% set updateDate = '2018-03-08' %}
+<div class="legal">
+	<p class="text text-center">
+		{{ 'label.latest_update'|trans }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+	</p>
 
-<p class="text text-center">
-	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
-</p>
+	<section>
+		<h2>Purpose</h2>
+		<div>
+			These General Terms and Conditions (GTC) are intended to define the terms and conditions under which the website
+			<strong>{{ config('site-name') }}</strong>
+			provides services to users. Any use of any of the services offered by
+			<strong>{{ config('site-name') }}</strong>
+			shall be in compliance with these GTC.<br>
+			These have been designed so that the website functions satisfactorily for everyone.<br>
+			These GTC are applicable from their publication.
+		</div>
+	</section>
 
-<h2>Purpose</h2>
-<p class="text text-justify">
-	These General Terms and Conditions (GTC) are intended to define the terms and conditions under which the website
-	<strong>{{ config('site-name') }}</strong>
-	provides services to users. Any use of any of the services offered by
-	<strong>{{ config('site-name') }}</strong>
-	shall be in compliance with these GTC.<br>
-	These have been designed so that the website functions satisfactorily for everyone.<br>
-	These GTC are applicable from their publication.
-</p>
+	<section>
+		<h2>Acceptance</h2>
+		<div>
+			The user declares having read and explicitly and unconditionally accepted these GTC in force at the time of access to this website; if this is not the case, please do not use and/or access this website.
+		</div>
+	</section>
 
-<h2>Acceptance</h2>
-<p class="text text-justify">
-	The user declares having read and explicitly and unconditionally accepted these GTC in force at the time of access to this website; if this is not the case, please do not use and/or access this website.
-</p>
+	<section>
+		<h2>Modification</h2>
+		<div>
+			We reserve the right to modify, in whole or in part, and at any time, these GTC. You are invited to consult them regularly to become aware of the changes made. They are applicable at the time of their publication.
+		</div>
+	</section>
 
-<h2>Modification</h2>
-<p class="text text-justify">
-	We reserve the right to modify, in whole or in part, and at any time, these GTC. You are invited to consult them regularly to become aware of the changes made. They are applicable at the time of their publication.
-</p>
+	<section>
+		<h2>Acceptance of Internet Risks</h2>
+		<div>
+			The user declares having good knowledge of the Internet, its characteristics and limitations and in particular acknowledges:
+		</div>
+		<ul class="text text-justify">
+			<li>that the Internet is an open network, which we cannot control, and that data exchanges circulating on the Internet have only relative reliability and are not protected, in particular, against the risks of embezzlement or possible piracy</li>
+			<li>that the communication by the user of sensitive information is therefore carried out at their own risk</li>
+			<li>having knowledge of the nature of the Internet network and in particular its technical performance and response times, to consult, interrogate or transfer data information.</li>
+		</ul>
+		<div>
+			We cannot guarantee that the information exchanged will not be intercepted by third parties, and therefore the confidentiality of these exchanges. We inform the user of the existence of rules and practices in force on the Internet known as
+			<a href="http://en.wikipedia.org/wiki/Netiquette">Netiquette</a>
+			as well as various codes of conduct.
+		</div>
+	</section>
 
-<h2>Acceptance of Internet Risks</h2>
-<p class="text text-justify">
-	The user declares having good knowledge of the Internet, its characteristics and limitations and in particular acknowledges:
-</p>
-<ul class="text text-justify">
-	<li>that the Internet is an open network, which we cannot control, and that data exchanges circulating on the Internet have only relative reliability and are not protected, in particular, against the risks of embezzlement or possible piracy</li>
-	<li>that the communication by the user of sensitive information is therefore carried out at their own risk</li>
-	<li>having knowledge of the nature of the Internet network and in particular its technical performance and response times, to consult, interrogate or transfer data information.</li>
-</ul>
-<p class="text text-justify">
-	We cannot guarantee that the information exchanged will not be intercepted by third parties, and therefore the confidentiality of these exchanges. We inform the user of the existence of rules and practices in force on the Internet known as
-	<a href="http://en.wikipedia.org/wiki/Netiquette">Netiquette</a>
-	as well as various codes of conduct.
-</p>
+	<section>
+		<h2>Responsibility</h2>
+		<div>
+			The user accepts not to hold this website and its publisher responsible for content posted online by other users or their actions. We cannot guarantee the accuracy of this third-party content, regarding quality, safety or legality. We advise you to systematically carry out a preliminary test, to inform yourself, observe and reflect before any action.<br>
+			We also cannot guarantee continuous and secure access to our services. Consequently, within the limits permitted by law, we exclude any form of warranty. We cannot be held responsible for any financial or commercial loss, any damage to reputation, or any direct and indirect loss resulting from your use of this website. To the extent that certain countries limit the scope of warranty or liability exclusions, it is possible that the exclusions mentioned above may not apply to you.
+		</div>
+		<div>
+			Notwithstanding the foregoing paragraph, if our liability were to be engaged with respect to you or any third party, it would be limited to the higher of the following two amounts: (a) the total amount of fees and commissions you have paid to us (if any) during the six months preceding the event giving rise to such liability, or (b) 1 euro.
+		</div>
+		<div>
+			The user expressly acknowledges that they must exercise judgment in using editorial content and assume all associated risks, and in particular when relying on the timeliness, usefulness or completeness of this editorial content, and perform any verification under their responsibility.<br>
+			We take all necessary care in compiling editorial content under our responsibility. However, we provide no warranty as to the reliability of the information in the editorial content. In this regard, we cannot be held responsible for damage resulting from the use by the user for any purpose whatsoever, of the information constituting the editorial content.
+		</div>
+		<div>
+			The user acknowledges that the use of services is at their own risk and peril, particularly with regard to the downloading of data, files or software that could damage their computer. The responsibility of this website cannot in particular be engaged for any loss of data, virus, computer bugs or damage affecting their computer.
+		</div>
+		<div>
+			We do not guarantee that the services offered are suitable for the user's expectations, nor the quality and/or legality or compliance with the law of content not created by ourselves, in particular content and opinions expressed by users or published on external websites accessible through a hyperlink. We cannot be held responsible for the dissemination of data by the user in violation of rights, in particular exclusive rights, held by third parties as well as in case of damage resulting from technical causes and in particular the unavailability of this website and any defect affecting its operation, and finally, direct or indirect damage such as financial losses, lost profits, troubles of any kind that could result from the use or inability to use the services offered.<br>
+			Furthermore, the user guarantees us against any recourse or action that any person could bring against them for any reason whatsoever and more generally on the occasion of the entry of data or information, any person who would consider themselves harmed by the posting of this data or information on this website and undertakes to hold us harmless against all judicial and extra-judicial costs that could result.
+		</div>
+		<div>
+			The user is prohibited from adopting the following reprehensible behaviors:
+		</div>
+		<ul class="text text-justify">
+			<li>violate laws in force or the Prohibited Content Regulations;</li>
+			<li>provide false information or information likely to mislead;</li>
+			<li>collect or otherwise obtain information relating to others, in particular email addresses, without having been authorized to do so;</li>
+			<li>send unsolicited commercial emails (spamming) or propose money chain systems or financial pyramids;</li>
+			<li>disseminate viruses or other technologies likely to harm this website or the interests and property of users;</li>
+			<li>impose an unreasonable load on our infrastructure or interfere with the proper functioning of this website;</li>
+			<li>copy, modify, or distribute any content belonging to others without their authorization or without citing the source;</li>
+			<li>infringe on rights held by third parties;</li>
+			<li>circumvent measures intended to prevent or restrict access to this website.</li>
+		</ul>
+	</section>
 
-<h2>Responsibility</h2>
-<p class="text text-justify">
-	The user accepts not to hold this website and its publisher responsible for content posted online by other users or their actions. We cannot guarantee the accuracy of this third-party content, regarding quality, safety or legality. We advise you to systematically carry out a preliminary test, to inform yourself, observe and reflect before any action.<br>
-	We also cannot guarantee continuous and secure access to our services. Consequently, within the limits permitted by law, we exclude any form of warranty. We cannot be held responsible for any financial or commercial loss, any damage to reputation, or any direct and indirect loss resulting from your use of this website. To the extent that certain countries limit the scope of warranty or liability exclusions, it is possible that the exclusions mentioned above may not apply to you.
-</p>
-<p class="text text-justify">
-	Notwithstanding the foregoing paragraph, if our liability were to be engaged with respect to you or any third party, it would be limited to the higher of the following two amounts: (a) the total amount of fees and commissions you have paid to us (if any) during the six months preceding the event giving rise to such liability, or (b) 1 euro.
-</p>
-<p class="text text-justify">
-	The user expressly acknowledges that they must exercise judgment in using editorial content and assume all associated risks, and in particular when relying on the timeliness, usefulness or completeness of this editorial content, and perform any verification under their responsibility.<br>
-	We take all necessary care in compiling editorial content under our responsibility. However, we provide no warranty as to the reliability of the information in the editorial content. In this regard, we cannot be held responsible for damage resulting from the use by the user for any purpose whatsoever, of the information constituting the editorial content.
-</p>
-<p class="text text-justify">
-	The user acknowledges that the use of services is at their own risk and peril, particularly with regard to the downloading of data, files or software that could damage their computer. The responsibility of this website cannot in particular be engaged for any loss of data, virus, computer bugs or damage affecting their computer.
-</p>
-<p class="text text-justify">
-	We do not guarantee that the services offered are suitable for the user's expectations, nor the quality and/or legality or compliance with the law of content not created by ourselves, in particular content and opinions expressed by users or published on external websites accessible through a hyperlink. We cannot be held responsible for the dissemination of data by the user in violation of rights, in particular exclusive rights, held by third parties as well as in case of damage resulting from technical causes and in particular the unavailability of this website and any defect affecting its operation, and finally, direct or indirect damage such as financial losses, lost profits, troubles of any kind that could result from the use or inability to use the services offered.<br>
-	Furthermore, the user guarantees us against any recourse or action that any person could bring against them for any reason whatsoever and more generally on the occasion of the entry of data or information, any person who would consider themselves harmed by the posting of this data or information on this website and undertakes to hold us harmless against all judicial and extra-judicial costs that could result.
-</p>
-<p class="text text-justify">
-	The user is prohibited from adopting the following reprehensible behaviors:
-</p>
-<ul class="text text-justify">
-	<li>violate laws in force or the Prohibited Content Regulations;</li>
-	<li>provide false information or information likely to mislead;</li>
-	<li>collect or otherwise obtain information relating to others, in particular email addresses, without having been authorized to do so;</li>
-	<li>send unsolicited commercial emails (spamming) or propose money chain systems or financial pyramids;</li>
-	<li>disseminate viruses or other technologies likely to harm this website or the interests and property of users;</li>
-	<li>impose an unreasonable load on our infrastructure or interfere with the proper functioning of this website;</li>
-	<li>copy, modify, or distribute any content belonging to others without their authorization or without citing the source;</li>
-	<li>infringe on rights held by third parties;</li>
-	<li>circumvent measures intended to prevent or restrict access to this website.</li>
-</ul>
+	<section>
+		<h2>Content</h2>
+		<div>
+			By accepting these GTC, you grant us, for the duration of intellectual property rights, the right to reproduce on this website the content you provide. These rights are granted on a non-exclusive basis, worldwide, irrevocably, free of charge and transferable (we particularly need these rights to host and display your content).<br>
+			If you believe that an infringement has been made to your rights, or that content is illegal, please inform us so that we can investigate. We reserve the right to remove content at any time if we have reason to believe that it constitutes a violation of these GTC or of rights held by third parties.<br>
+			By using this website,
+			<strong>the user agrees not to publish any content of a racist, negationist, pedophilic, abusive, obscene, vulgar, derogatory, defamatory, shocking, threatening, pornographic, insulting, privacy-infringing, copyright- or image-right-infringing, property-right-infringing, hacking-related, unfair-competition, or other nature that could violate the laws of your country, the country where this website is hosted, or international law. Failure to comply may result in an immediate ban, in addition to a warning sent to your Internet service provider if we deem it necessary.</strong><br>
+			The IP address of all publications is recorded to help enforce these conditions. You accept the fact that we have the right to delete, edit, move or lock any content when we deem it necessary. As a user, you accept that all information you have entered is stored in our database. We cannot be held responsible in case of attempted hacking aimed at compromising the data.
+		</div>
+		<div>
+			The user is solely responsible for the data they disseminate and/or use and/or transfer. They also undertake not to prejudice the rights of third parties (intellectual property rights, image rights, etc.), to provide real, accurate and up-to-date information at the time of entry and in particular not to use false names, qualities or addresses, or names, qualities or addresses without being authorized to do so, not to make available or distribute information, programs or elements that are illegal, reprehensible or harmful (such as viruses, hacking or copying software).<br>
+			In case of violation of these provisions, the content you have posted may be deleted without prior notice and your access to services may be suspended or terminated at your sole expense, without prejudice to any liability action.
+		</div>
+	</section>
 
-<h2>Content</h2>
-<p class="text text-justify">
-	By accepting these GTC, you grant us, for the duration of intellectual property rights, the right to reproduce on this website the content you provide. These rights are granted on a non-exclusive basis, worldwide, irrevocably, free of charge and transferable (we particularly need these rights to host and display your content).<br>
-	If you believe that an infringement has been made to your rights, or that content is illegal, please inform us so that we can investigate. We reserve the right to remove content at any time if we have reason to believe that it constitutes a violation of these GTC or of rights held by third parties.<br>
-	By using this website,
-	<strong>the user agrees not to publish any content of a racist, negationist, pedophilic, abusive, obscene, vulgar, derogatory, defamatory, shocking, threatening, pornographic, insulting, privacy-infringing, copyright- or image-right-infringing, property-right-infringing, hacking-related, unfair-competition, or other nature that could violate the laws of your country, the country where this website is hosted, or international law. Failure to comply may result in an immediate ban, in addition to a warning sent to your Internet service provider if we deem it necessary.</strong><br>
-	The IP address of all publications is recorded to help enforce these conditions. You accept the fact that we have the right to delete, edit, move or lock any content when we deem it necessary. As a user, you accept that all information you have entered is stored in our database. We cannot be held responsible in case of attempted hacking aimed at compromising the data.
-</p>
-<p class="text text-justify">
-	The user is solely responsible for the data they disseminate and/or use and/or transfer. They also undertake not to prejudice the rights of third parties (intellectual property rights, image rights, etc.), to provide real, accurate and up-to-date information at the time of entry and in particular not to use false names, qualities or addresses, or names, qualities or addresses without being authorized to do so, not to make available or distribute information, programs or elements that are illegal, reprehensible or harmful (such as viruses, hacking or copying software).<br>
-	In case of violation of these provisions, the content you have posted may be deleted without prior notice and your access to services may be suspended or terminated at your sole expense, without prejudice to any liability action.
-</p>
+	<section>
+		<h2>Information</h2>
+		<div>
+			The information present on this website is provided for informational purposes only. In any case, they must be considered at the time they are posted and not at the time of consultation of the website. Our responsibility cannot be engaged because of this information.
+		</div>
+	</section>
 
-<h2>Information</h2>
-<p class="text text-justify">
-	The information present on this website is provided for informational purposes only. In any case, they must be considered at the time they are posted and not at the time of consultation of the website. Our responsibility cannot be engaged because of this information.
-</p>
+	<section>
+		<h2>Hyperlinks</h2>
+		<div>
+			This website contains hyperlinks referring to other websites managed by third parties and over which we exercise no control.<br>
+			Consequently, we are in no way responsible for the content, information, products and services offered on the websites accessible via the hyperlinks contained on our website and our responsibility cannot in any way be engaged for any direct or indirect damage resulting from the use of these websites.<br>
+			The insertion of these links does not mean that we approve the elements contained on these websites. Consequently, we cannot be held responsible for the content of these websites, and the fact that these websites are referenced on this website does not in any way engage our responsibility. We provide no guarantee regarding the truthfulness, timeliness, quality, completeness, exhaustiveness, relevance and difficulties in access and operation of these indexed websites.
+		</div>
+	</section>
 
-<h2>Hyperlinks</h2>
-<p class="text text-justify">
-	This website contains hyperlinks referring to other websites managed by third parties and over which we exercise no control.<br>
-	Consequently, we are in no way responsible for the content, information, products and services offered on the websites accessible via the hyperlinks contained on our website and our responsibility cannot in any way be engaged for any direct or indirect damage resulting from the use of these websites.<br>
-	The insertion of these links does not mean that we approve the elements contained on these websites. Consequently, we cannot be held responsible for the content of these websites, and the fact that these websites are referenced on this website does not in any way engage our responsibility. We provide no guarantee regarding the truthfulness, timeliness, quality, completeness, exhaustiveness, relevance and difficulties in access and operation of these indexed websites.
-</p>
+	<section>
+		<h2>Intellectual Property</h2>
+		<div>
+			The user acknowledges that this website is the sole owner of the intellectual property rights relating to this same website and editorial content.<br>
+			No provision of these GTC may be interpreted as granting the user a license on intellectual property rights, the ownership or exclusive right of exploitation. We only grant an authorization to view editorial content.
+		</div>
+		<div>
+			If you believe that a page infringes intellectual property laws, please report it to us by explaining why and possibly the solutions to remedy it.
+		</div>
+	</section>
 
-<h2>Intellectual Property</h2>
-<p class="text text-justify">
-	The user acknowledges that this website is the sole owner of the intellectual property rights relating to this same website and editorial content.<br>
-	No provision of these GTC may be interpreted as granting the user a license on intellectual property rights, the ownership or exclusive right of exploitation. We only grant an authorization to view editorial content.
-</p>
-<p class="text text-justify">
-	If you believe that a page infringes intellectual property laws, please report it to us by explaining why and possibly the solutions to remedy it.
-</p>
+	<section>
+		<h2>Accessibility to Services</h2>
+		<div>
+			We strive, to the extent possible, to keep our website accessible 7 days a week and 24 hours a day but we may interrupt access, particularly for maintenance and upgrade reasons or for any other reason, including technical ones. We are in no way responsible for the consequences that may result for the user.<br>
+			We reserve the right to refuse any user access to all or part of the site unilaterally and without prior notice, particularly in case of manifest violation of these GTC. The user acknowledges that we cannot be held responsible for any direct or indirect damage occurring due to the removal of the user's access to the website.
+		</div>
+	</section>
 
-<h2>Accessibility to Services</h2>
-<p class="text text-justify">
-	We strive, to the extent possible, to keep our website accessible 7 days a week and 24 hours a day but we may interrupt access, particularly for maintenance and upgrade reasons or for any other reason, including technical ones. We are in no way responsible for the consequences that may result for the user.<br>
-	We reserve the right to refuse any user access to all or part of the site unilaterally and without prior notice, particularly in case of manifest violation of these GTC. The user acknowledges that we cannot be held responsible for any direct or indirect damage occurring due to the removal of the user's access to the website.
-</p>
+	<section>
+		<h2>Access Conditions to Content</h2>
+		<div>
+			Access to the editorial content of the website is completely free of charge.
+		</div>
+	</section>
 
-<h2>Access Conditions to Content</h2>
-<p class="text text-justify">
-	Access to the editorial content of the website is completely free of charge.
-</p>
+	<section>
+		<h2>Access Conditions to Specific Services</h2>
+		<div>
+			The use of specific services requires the user to comply with a registration procedure through which they must provide their contact details. The user undertakes that the information communicated, in particular personal information, is accurate, complete and up-to-date and to make the necessary changes for this purpose.<br>
+			Access to certain specific services is either free or paid, depending on the service requested. In the case of a paid service, the price is mentioned before subscription and use of this service.<br>
+			The user declares having read and having explicitly accepted these GTC in force at the time of their registration on this website, by validating the option "I accept the GTC". Any acceptance expressed by the user by a click is equivalent to a signature in the same way as their handwritten signature. By performing this click, the user is deemed to have given their agreement irrevocably.
+		</div>
+	</section>
 
-<h2>Access Conditions to Specific Services</h2>
-<p class="text text-justify">
-	The use of specific services requires the user to comply with a registration procedure through which they must provide their contact details. The user undertakes that the information communicated, in particular personal information, is accurate, complete and up-to-date and to make the necessary changes for this purpose.<br>
-	Access to certain specific services is either free or paid, depending on the service requested. In the case of a paid service, the price is mentioned before subscription and use of this service.<br>
-	The user declares having read and having explicitly accepted these GTC in force at the time of their registration on this website, by validating the option "I accept the GTC". Any acceptance expressed by the user by a click is equivalent to a signature in the same way as their handwritten signature. By performing this click, the user is deemed to have given their agreement irrevocably.
-</p>
+	<section>
+		<h2>Personal Data</h2>
+		<div>
+			We collect information provided by users through forms. Aware that the collection and processing of personal data on the Internet must respect the fundamental rights of individuals, we undertake that any processing of personal data on this website shall comply with law no. 78-17 of January 6, 1978 relating to data processing, files and freedoms. The user has a right of access (articles 34 to 38 of the 1978 law) and a right of rectification (article 36 of the 1978 law) to their personal data.<br>
+			The user can exercise this right at any time by contacting us, namely to rectify, complete, clarify, update or delete information concerning them that would be inaccurate, incomplete or outdated. A maximum period of 15 days is requested before the user's request is taken into account.<br>
+			We also undertake to make every effort to protect this personal data, to prevent it from being distorted, damaged or communicated to unauthorized third parties in accordance with article 29 of the law of January 6, 1978.
+		</div>
+	</section>
 
-<h2>Personal Data</h2>
-<p class="text text-justify">
-	We collect information provided by users through forms. Aware that the collection and processing of personal data on the Internet must respect the fundamental rights of individuals, we undertake that any processing of personal data on this website shall comply with law no. 78-17 of January 6, 1978 relating to data processing, files and freedoms. The user has a right of access (articles 34 to 38 of the 1978 law) and a right of rectification (article 36 of the 1978 law) to their personal data.<br>
-	The user can exercise this right at any time by contacting us, namely to rectify, complete, clarify, update or delete information concerning them that would be inaccurate, incomplete or outdated. A maximum period of 15 days is requested before the user's request is taken into account.<br>
-	We also undertake to make every effort to protect this personal data, to prevent it from being distorted, damaged or communicated to unauthorized third parties in accordance with article 29 of the law of January 6, 1978.
-</p>
+	<section>
+		<h2>Abuse</h2>
+		<div>
+			The user can bring to our attention any problem or offensive content using the reporting system so that together we can ensure the proper functioning of this website. We may terminate or reduce access to our services, remove certain hosted content and take technical and legal measures to prohibit access to this website to certain users if we believe they are problematic or are behaving in a manner inconsistent with our regulations or the spirit thereof. However, whether or not we decide to prohibit a user from accessing this website, we disclaim any liability in case of unauthorized or illegal use of this website by its users.
+		</div>
+	</section>
 
-<h2>Abuse</h2>
-<p class="text text-justify">
-	The user can bring to our attention any problem or offensive content using the reporting system so that together we can ensure the proper functioning of this website. We may terminate or reduce access to our services, remove certain hosted content and take technical and legal measures to prohibit access to this website to certain users if we believe they are problematic or are behaving in a manner inconsistent with our regulations or the spirit thereof. However, whether or not we decide to prohibit a user from accessing this website, we disclaim any liability in case of unauthorized or illegal use of this website by its users.
-</p>
+	<section>
+		<h2>Disputes</h2>
+		<div>
+			In case of dispute, the procedure to follow will be as follows:
+		</div>
+		<ol class="text text-justify">
+			<li>Contact us for amicable resolution</li>
+			<li>In case of failure, contact a
+				<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediator</a>
+			</li>
+			<li>As a last resort, bring proceedings before the competent court</li>
+		</ol>
+	</section>
 
-<h2>Disputes</h2>
-<p class="text text-justify">
-	In case of dispute, the procedure to follow will be as follows:
-</p>
-<ol class="text text-justify">
-	<li>Contact us for amicable resolution</li>
-	<li>In case of failure, contact a
-		<a href="http://www.economie.gouv.fr/mediation-conso" rel="nofollow">mediator</a>
-	</li>
-	<li>As a last resort, bring proceedings before the competent court</li>
-</ol>
+	<section>
+		<h2>Applicable Law - Jurisdiction</h2>
+		<div>
+			These GTC are subject to French law. Any dispute relating to the interpretation and performance of these terms shall be within the exclusive jurisdiction of the French courts and more particularly those located in the French department where the company editing
+			<strong>{{ config('site-name') }}</strong>
+			is headquartered, whether for professional or private users.
+		</div>
+	</section>
 
-<h2>Applicable Law - Jurisdiction</h2>
-<p class="text text-justify">
-	These GTC are subject to French law. Any dispute relating to the interpretation and performance of these terms shall be within the exclusive jurisdiction of the French courts and more particularly those located in the French department where the company editing
-	<strong>{{ config('site-name') }}</strong>
-	is headquartered, whether for professional or private users.
-</p>
-
-<h2>Miscellaneous</h2>
-<p class="text text-justify">
-	These GTC as well as the other regulations on this website constitute the entire agreement existing between the user and this website through its publisher and supersede any prior agreement.<br>
-	If any part of the GTC should prove to be illegal, invalid or unenforceable, for any reason whatsoever, the provisions in question shall be deemed unwritten, without calling into question the validity of the other provisions which will continue to apply.<br>
-	The fact of not requesting the performance of any of the stipulations of these conditions does not in any way mean that we waive the right to enforce them subsequently. If a court were to deprive any of the stipulations of these conditions of effect, the other stipulations would remain in force. We have the right to terminate this agreement as of right and at our discretion.<br>
-	Any complaint must be addressed to us via the contact details defined on the website.<br>
-	The GTC are subject to French law.
-</p>
+	<section>
+		<h2>Miscellaneous</h2>
+		<div>
+			These GTC as well as the other regulations on this website constitute the entire agreement existing between the user and this website through its publisher and supersede any prior agreement.<br>
+			If any part of the GTC should prove to be illegal, invalid or unenforceable, for any reason whatsoever, the provisions in question shall be deemed unwritten, without calling into question the validity of the other provisions which will continue to apply.<br>
+			The fact of not requesting the performance of any of the stipulations of these conditions does not in any way mean that we waive the right to enforce them subsequently. If a court were to deprive any of the stipulations of these conditions of effect, the other stipulations would remain in force. We have the right to terminate this agreement as of right and at our discretion.<br>
+			Any complaint must be addressed to us via the contact details defined on the website.<br>
+			The GTC are subject to French law.
+		</div>
+	</section>
+</div>

@@ -1,66 +1,82 @@
-{% trans_default_domain 'site' %}
+{% set updateDate = '2026-07-09' %}
 
-{% set updateDate = '2018-03-08' %}
-
-<p class="text text-center">
-	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
-</p>
-
-<h2>Accès au site Internet</h2>
-<p class="text text-justify">
-	Nous vous rappelons les caractéristiques et les limites du réseau Internet et déclinons toute responsabilité liée aux conséquences de votre connexion à ce réseau via
-	<strong>{{ config('site-name') }}</strong>.<br>
-	Plus particulièrement, nous ne saurions être tenus responsables de tout dommage, matériel ou immatériel causé à vos équipements informatiques et aux données qui y sont stockées, ni des conséquences pouvant en découler sur votre activité personnelle, professionnelle ou commerciale.<br>
-	Nous ne saurions davantage être tenus responsables au cas où vous ne pourriez pas parvenir à vous connecter à
-	<strong>{{ config('site-name') }}</strong>
-	du fait de tout défaut technique ou de tout problème lié notamment à l'encombrement du réseau.
-</p>
-
-{% if config('site-owner') %}
-	<h2>Propriétaire</h2>
-	<p class="text text-justify">
-		{{ config('site-owner')|raw }}
+<div class="legal">
+	<p class="text text-center">
+		{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
-{% endif %}
 
-<h2>Édition</h2>
-<p class="text text-justify">
-	Le directeur de la publication est
-	<strong>{{ config('site-director') }}</strong>
-	domicilié/e en
-	<strong>{{ config('site-director-location') }}</strong>.
-</p>
+	<section>
+		<h2>Accès au site Internet</h2>
+		<div>
+			Nous vous rappelons les caractéristiques et les limites du réseau Internet et déclinons toute responsabilité liée aux conséquences de votre connexion à ce réseau via
+			<strong>{{ config('site-name') }}</strong>.<br>
+			Plus particulièrement, nous ne saurions être tenus responsables de tout dommage, matériel ou immatériel causé à vos équipements informatiques et aux données qui y sont stockées, ni des conséquences pouvant en découler sur votre activité personnelle, professionnelle ou commerciale.<br>
+			Nous ne saurions davantage être tenus responsables au cas où vous ne pourriez pas parvenir à vous connecter à
+			<strong>{{ config('site-name') }}</strong>
+			du fait de tout défaut technique ou de tout problème lié notamment à l'encombrement du réseau.
+		</div>
+	</section>
 
-<h2>Contact</h2>
-<p class="text text-justify">
-	Vous pouvez nous contacter par l'un des moyens suivants :
-</p>
-<ul class="text text-justify">
-	<li>formulaire de contact</li>
-	<li>{{ config('site-contact-email') }}</li>
-	<li>par téléphone
-		{{ config('site-contact-phone') }}</li>
-</ul>
+	{% if config('site-owner') %}
+		<section>
+			<h2>Propriétaire</h2>
+			<div>
+				{{ config('site-owner')|raw }}
+			</div>
+		</section>
+	{% endif %}
 
-<h2>Réalisation</h2>
-<p class="text text-justify">
-	Ce site est réalisé par
-	{{ config('site-producer')|raw }}.
-</p>
+	<section>
+		<h2>Édition</h2>
+		<div>
+			Le directeur de la publication est
+			<strong>{{ config('site-director') }}</strong>
+			domicilié/e en
+			<strong>{{ config('site-director-location') }}</strong>.
+		</div>
+	</section>
 
-<h2>Hébergement site Internet</h2>
-<p class="text text-justify">
-	Ce site Internet est hébergé par
-    <br>
-    {{ config('site-hosting-provider')|raw|nl2br }}.
-</p>
+	<section>
+		<h2>Contact</h2>
+		<div>
+			Vous pouvez nous contacter par l'un des moyens suivants :
+		</div>
+		<ul class="text text-justify">
+			<li>formulaire de contact</li>
+			<li>{{ config('site-contact-email') }}</li>
+			<li>par téléphone
+				{{ config('site-contact-phone') }}</li>
+		</ul>
+	</section>
 
-<h2>Annexes</h2>
-{% set legalPages = site_legal_pages(['france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright']) %}
-{% if legalPages %}
-	<ul class="text text-justify">
-		{% for legalPage in legalPages %}
-			<li><a href="{{ path('page_display', {page: legalPage.slug}) }}">{{ legalPage.title }}</a></li>
-		{% endfor %}
-	</ul>
-{% endif %}
+	<section>
+		<h2>Réalisation</h2>
+		<div>
+			Ce site est réalisé par
+			{{ config('site-producer')|raw }}.
+		</div>
+	</section>
+
+	<section>
+		<h2>Hébergement site Internet</h2>
+		<div>
+			Ce site Internet est hébergé par
+			<br>
+			{{ config('site-hosting-provider')|raw|nl2br }}
+		</div>
+	</section>
+
+	<section>
+		<h2>Annexes</h2>
+		{% set legalPages = site_legal_pages(['france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright']) %}
+		{% if legalPages %}
+			<ul class="text text-justify">
+				{% for legalPage in legalPages %}
+					<li>
+						<a href="{{ path('page_display', {page: legalPage.slug}) }}">{{ legalPage.title }}</a>
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	</section>
+</div>

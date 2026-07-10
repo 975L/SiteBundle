@@ -16,14 +16,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Finder\Finder;
 use Twig\Environment;
 
-/**
- * Console command to create sitemap of pages, executed with 'pageedit:createSitemap'
- * @author Laurent Marquet <laurent.marquet@laposte.net>
- * @copyright 2017 975L <contact@975l.com>
- */
 #[AsCommand(
     name: 'c975l:site:sitemaps:create',
     description: 'Creates the sitemap of pages located in templates/pages folder'

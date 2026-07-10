@@ -3,330 +3,385 @@
         "label": "Site Name",
         "slug": "site-name",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "general",
         "severity": "warning",
-        "description": "Name of the web site: i.e. Example.com"
+        "description": "label.site_name"
     },
     {
         "label": "Site Tagline",
         "slug": "site-tagline",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "general",
         "severity": null,
-        "description": "Tagline of the website"
+        "description": "label.site_tagline"
     },
     {
         "label": "Show Site Name In Navbar",
         "slug": "site-navbar-show-name",
         "sensitive": false,
+        "restricted": false,
         "value": "true",
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "Display the site name (and tagline) next to the logo in the navbar"
+        "description": "label.site_navbar_show_name"
     },
     {
         "label": "Fixed Navbar",
         "slug": "site-navbar-fixed",
         "sensitive": false,
+        "restricted": false,
         "value": "false",
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "Keep the navbar fixed at the top of the viewport while scrolling"
+        "description": "label.site_navbar_fixed"
     },
     {
         "label": "Site Author",
         "slug": "site-author",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "general",
         "severity": "info",
-        "description": "The author that will be set in the meta data"
+        "description": "label.site_author"
     },
     {
         "label": "Site first online date",
         "slug": "site-first-online-date",
         "sensitive": true,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "general",
         "severity": "info",
-        "description": "Date when the site went online"
+        "description": "label.site_first_online_date"
     },
     {
         "label": "Site URL",
         "slug": "site-url",
         "sensitive": true,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "general",
         "severity": "danger",
-        "description": "URL of the website i.e. https://example.com"
+        "description": "label.site_url"
     },
     {
         "label": "URL Terms of use",
         "slug": "url-terms-of-use",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "URL of the terms of use page i.e. https://example.com/pages/terms-of-use"
+        "description": "label.url_terms_of_use"
     },
     {
         "label": "Hosted By URL",
         "slug": "site-hosted-by-url",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "URL of the hosting company i.e. https://example.com"
+        "description": "label.site_hosted_by_url"
     },
     {
         "label": "Hosted By Logo",
         "slug": "site-hosted-by-logo",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "Path or URL of the hosting company logo"
+        "description": "label.site_hosted_by_logo"
     },
     {
         "label": "Made By URL",
         "slug": "site-made-by-url",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "URL of the developer/agency i.e. https://example.com"
+        "description": "label.site_made_by_url"
     },
     {
         "label": "Made By Logo",
         "slug": "site-made-by-logo",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "Path or URL of the developer/agency logo"
+        "description": "label.site_made_by_logo"
     },
     {
         "label": "URL Cookies Policy",
         "slug": "url-cookies-policy",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "URL of the cookies policy page i.e. https://example.com/pages/cookies"
+        "description": "label.url_cookies_policy"
     },
     {
         "label": "Matomo URL",
         "slug": "site-matomo-url",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "analytics",
         "severity": "warning",
-        "description": "URL of the Matomo instance i.e. https://matomo.example.com"
+        "description": "label.site_matomo_url"
     },
     {
         "label": "Matomo Site ID",
         "slug": "site-matomo-id",
         "sensitive": true,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "analytics",
         "severity": "warning",
-        "description": "Matomo site ID (integer)"
+        "description": "label.site_matomo_id"
     },
     {
         "label": "Preconnect URLs",
         "slug": "site-preconnect",
         "sensitive": false,
+        "restricted": false,
         "value": "[]",
         "kind": "json",
         "group": "general",
         "severity": null,
-        "description": "External origins to preconnect to (JSON array), i.e. [\"https://example.com\"]. Useful when credits logos or Matomo are hosted on a third-party domain"
+        "description": "label.site_preconnect"
     },
     {
         "label": "Backup DB Host",
         "slug": "site-backup-db-host",
         "sensitive": true,
+        "restricted": true,
         "value": "localhost",
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "MySQL host for backups"
+        "description": "label.site_backup_db_host"
     },
     {
         "label": "Backup DB User",
         "slug": "site-backup-db-user",
         "sensitive": true,
+        "restricted": true,
         "value": null,
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "MySQL user for backups"
+        "description": "label.site_backup_db_user"
     },
     {
         "label": "Backup DB Password",
         "slug": "site-backup-db-password",
         "sensitive": true,
+        "restricted": true,
         "value": null,
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "MySQL password for backups"
+        "description": "label.site_backup_db_password"
     },
     {
         "label": "Backup Database",
         "slug": "site-backup-database",
         "sensitive": true,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "Name of the MySQL database to back up"
+        "description": "label.site_backup_database"
     },
     {
         "label": "Backup Mailto",
         "slug": "site-backup-mailto",
         "sensitive": true,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "backup",
         "severity": "warning",
-        "description": "Email address for backup reports and error notifications"
+        "description": "label.site_backup_mailto"
     },
     {
         "label": "Contact Email",
         "slug": "site-contact-email",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "Public contact email address displayed on legal pages"
+        "description": "label.site_contact_email"
     },
     {
         "label": "Contact Phone",
         "slug": "site-contact-phone",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": null,
-        "description": "Public contact phone number displayed on legal pages"
+        "description": "label.site_contact_phone"
     },
     {
         "label": "Director of Publication",
         "slug": "site-director",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "Full name of the director of publication (required for legal notice)"
+        "description": "label.site_director"
     },
     {
         "label": "Director Location",
         "slug": "site-director-location",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "City or department where the director of publication resides"
+        "description": "label.site_director_location"
     },
     {
         "label": "Site Owner",
         "slug": "site-owner",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "html",
         "group": "legal",
         "severity": "warning",
-        "description": "Owner of the website, displayed in the legal notice (HTML allowed)"
+        "description": "label.site_owner"
     },
     {
         "label": "Site Producer",
         "slug": "site-producer",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "info",
-        "description": "Producer / developer of the website displayed in the legal notice (HTML allowed)"
+        "description": "label.site_producer"
     },
     {
         "label": "Site Hosting provider",
         "slug": "site-hosting-provider",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "html",
         "group": "legal",
         "severity": "info",
-        "description": "Hosting provider of the website displayed in the legal notice (HTML allowed)"
+        "description": "label.site_hosting_provider"
     },
     {
         "label": "Site Other Copyright",
         "slug": "site-other-copyright",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "html",
         "group": "legal",
         "severity": null,
-        "description": "Other copyright information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"
+        "description": "label.site_other_copyright"
     },
     {
         "label": "Site Other Cookies",
         "slug": "site-other-cookies",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "html",
         "group": "legal",
         "severity": null,
-        "description": "Other cookies information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)"
+        "description": "label.site_other_cookies"
     },
     {
         "label": "Data Protection Officer (DPO)",
         "slug": "site-dpo",
         "sensitive": false,
+        "restricted": false,
         "value": null,
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "Full name of the Data Protection Officer, required for privacy policy"
+        "description": "label.site_dpo"
     },
     {
         "label": "User Registration Enabled",
         "slug": "user-registration-enabled",
         "sensitive": false,
+        "restricted": false,
         "value": "true",
         "kind": "bool",
         "group": "security",
         "severity": null,
-        "description": "Enable (true) or disable (false) the user registration route"
+        "description": "label.user_registration_enabled"
     },
     {
         "label": "User Roles Available",
         "slug": "user-roles-available",
         "sensitive": false,
-        "value": "[\"ROLE_ADMIN\"]",
+        "restricted": true,
+        "value": "[\"ROLE_ADMIN\", \"ROLE_SUPER_ADMIN\"]",
         "kind": "json",
         "group": "security",
         "severity": null,
-        "description": "Extra roles selectable for users in the backoffice (besides the default ROLE_USER), as a JSON array i.e. [\"ROLE_ADMIN\",\"ROLE_EDITOR\"]"
+        "description": "label.user_roles_available"
+    },
+    {
+        "label": "Email (from)",
+        "slug": "email-from",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": "danger",
+        "description": "label.email_from"
+    },
+    {
+        "label": "Email (from) Name",
+        "slug": "email-from-name",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": null,
+        "description": "label.email_from_name"
     }
 ]

@@ -1,33 +1,39 @@
-{% trans_default_domain 'site' %}
+<div class="legal">
+	<section>
+		<h2>All Rights Reserved</h2>
+		<p class="text text-center">
+			<strong>All rights of all kinds, in all countries and in all languages, are reserved by {{ config('site-name') }}.</strong>
+		</p>
+		<div>
+			The trademarks mentioned on <strong>{{ config('site-name') }}</strong> are registered trademarks or trade names belonging to their respective owners.
+		</div>
+		<div>
+			<strong>{{ config('site-name') }}</strong> is protected by international copyright and intellectual property laws.<br>
+			It is strictly forbidden to reproduce it, in its form or content, in whole or in part, without written permission from the author.<br>
+			Likewise, all documents and photos hosted on <strong>{{ config('site-name') }}</strong> are protected by copyright in favor of their respective authors.
+		</div>
+		<div>
+			In France, the law of March 11, 1957 only authorizes, under paragraphs 2 and 3 of article 4, on the one hand, copies or reproductions strictly reserved for the copier's private use and not intended for collective use, and on the other hand, analyses and short quotations for example and illustration purposes. Any representation or reproduction, in whole or in part, made without the consent of the author or right holders is unlawful (first paragraph of article 40).<br>
+			Such representation or reproduction therefore constitutes infringement punishable under articles 425 and following of the French Penal Code.
+		</div>
+	</section>
 
-<h2>All Rights Reserved</h2>
-<p class="text text-center">
-    <strong>All rights of all kinds, in all countries and in all languages, are reserved by {{ config('site-name') }}.</strong>
-</p>
-<p class="text text-justify">
-    The trademarks mentioned on <strong>{{ config('site-name') }}</strong> are registered trademarks or trade names belonging to their respective owners.
-</p>
-<p class="text text-justify">
-    <strong>{{ config('site-name') }}</strong> is protected by international copyright and intellectual property laws.<br>
-    It is strictly forbidden to reproduce it, in its form or content, in whole or in part, without written permission from the author.<br>
-    Likewise, all documents and photos hosted on <strong>{{ config('site-name') }}</strong> are protected by copyright in favor of their respective authors.
-</p>
-<p class="text text-justify">
-    In France, the law of March 11, 1957 only authorizes, under paragraphs 2 and 3 of article 4, on the one hand, copies or reproductions strictly reserved for the copier's private use and not intended for collective use, and on the other hand, analyses and short quotations for example and illustration purposes. Any representation or reproduction, in whole or in part, made without the consent of the author or right holders is unlawful (first paragraph of article 40).<br>
-    Such representation or reproduction therefore constitutes infringement punishable under articles 425 and following of the French Penal Code.
-</p>
+	<section>
+		<h2>Intellectual Property</h2>
+		<div>
+			The elements of the website, including texts, presentations, illustrations, photographs, structures, and layouts, are our exclusive property or that of our partners.
+		</div>
+		<div>
+			Any representation, reproduction, extraction, copying, or use by any means without our consent or that of our partners constitutes infringement that may lead to legal proceedings. The offender is liable to civil and criminal penalties, including those provided for in articles L. 335.2 and L. 343.1 of the Intellectual Property Code.
+		</div>
+	</section>
 
-<h2>Intellectual Property</h2>
-<p class="text text-justify">
-    The elements of the website, including texts, presentations, illustrations, photographs, structures, and layouts, are our exclusive property or that of our partners.
-</p>
-<p class="text text-justify">
-    Any representation, reproduction, extraction, copying, or use by any means without our consent or that of our partners constitutes infringement that may lead to legal proceedings. The offender is liable to civil and criminal penalties, including those provided for in articles L. 335.2 and L. 343.1 of the Intellectual Property Code.
-</p>
-
-{% if config('site-other-copyright') %}
-    <h2>Other Copyrights</h2>
-    <div class="text text-justify">
-        {{ config('site-other-copyright')|raw|nl2br }}.
-    </div>
-{% endif %}
+	{% if config('site-other-copyright') %}
+		<section>
+			<h2>Other Copyrights</h2>
+			<div class="text text-justify">
+				{{ config('site-other-copyright')|raw|nl2br }}
+			</div>
+		</section>
+	{% endif %}
+</div>

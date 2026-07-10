@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 
 use function Symfony\Component\Translation\t;
@@ -33,6 +34,7 @@ class UserCrudController extends AbstractCrudController
         private readonly ConfigServiceInterface $configService,
         private readonly EntityManagerInterface $entityManager,
         private readonly TableExporter $tableExporter,
+        private readonly Security $security,
     ) {
     }
 
@@ -44,6 +46,7 @@ class UserCrudController extends AbstractCrudController
     // Relies on EasyAdmin's auto-discovery of App\Entity\User's own fields (which vary per app), except for:
     // - the hashed password, excluded so it's never displayed or overwritten from the backoffice
     // - creation/modification, made readonly since they're set automatically
+    // - isVerified, made readonly since it must only be set by EmailVerifier upon email confirmation
     // "roles" is excluded by EasyAdmin's own auto-discovery (JSON columns are never auto-discovered),
     // so it's added explicitly as a proper multiple-choice field
     public function configureFields(string $pageName): iterable
@@ -55,7 +58,7 @@ class UserCrudController extends AbstractCrudController
                 continue;
             }
 
-            if (in_array($property, ['creation', 'modification'], true)) {
+            if (in_array($property, ['creation', 'modification', 'isVerified'], true)) {
                 yield $field->setFormTypeOption('disabled', 'disabled');
 
                 continue;
@@ -75,9 +78,17 @@ class UserCrudController extends AbstractCrudController
     }
 
     // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array)
+    // ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too,
+    // Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it —
+    // otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's
+    // "restricted" configs entirely
     private function roleChoices(): array
     {
         $roles = (array) $this->configService->get('user-roles-available');
+
+        if (!$this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            $roles = array_filter($roles, static fn (string $role): bool => 'ROLE_SUPER_ADMIN' !== $role);
+        }
 
         return array_combine($roles, $roles);
     }

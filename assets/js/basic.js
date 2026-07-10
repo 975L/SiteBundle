@@ -142,7 +142,7 @@ export default class extends Controller {
     // Checks the password format before submitting the form
     validatePasswordFormat() {
         let passwordInput = document.getElementById("registration_form_plainPassword");
-        let pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+        let pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
         let submitButton = document.querySelector('input[type="submit"]') ? document.querySelector('input[type="submit"]') : document.querySelector('button[type="submit"]');
 
         if (passwordInput) {

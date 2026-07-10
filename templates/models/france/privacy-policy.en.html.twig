@@ -1,159 +1,171 @@
-{% trans_default_domain 'site' %}
+{% set updateDate = '2026-07-09' %}
 
-{% set updateDate = '2018-05-25' %}
+<div class="legal">
+	<p class="text text-center">
+		{{ 'label.latest_update'|trans }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+	</p>
 
-<p class="text text-center">
-	{{ 'label.latest_update'|trans }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
-</p>
+	<p class="text text-center">
+		The Privacy Rules are an integral part of the Terms and Conditions of Use (ToU) of
+		<strong>{{ config('site-name') }}</strong>.
+	</p>
 
-<p class="text text-center">
-	The Privacy Rules are an integral part of the Terms and Conditions of Use (ToU) of
-	<strong>{{ config('site-name') }}</strong>.
-</p>
+	<section>
+		<h2>Personal Data</h2>
+		<div>
+			You can, generally, browse
+			<strong>{{ config('site-name') }}</strong>
+			without telling us who you are. When browsing
+			<strong>{{ config('site-name') }}</strong>, your browser automatically transmits various data that allows us to ensure technical monitoring of your browsing. Some information is analyzed for purely statistical purposes and then deleted.
+		</div>
+		<div>
+			In order to respect the protection of your privacy and personal data that you voluntarily and on your own initiative entrust to us (for example when creating a user account), we undertake NOT to disclose this information to other companies and/or organizations for their use, without your consent.
+		</div>
+	</section>
 
-<h2>Personal Data</h2>
-<p class="text text-justify">
-	You can, generally, browse
-	<strong>{{ config('site-name') }}</strong>
-	without telling us who you are. When browsing
-	<strong>{{ config('site-name') }}</strong>, your browser automatically transmits various data that allows us to ensure technical monitoring of your browsing. Some information is analyzed for purely statistical purposes and then deleted.
-</p>
-<p class="text text-justify">
-	In order to respect the protection of your privacy and personal data that you voluntarily and on your own initiative entrust to us (for example when creating a user account), we undertake NOT to disclose this information to other companies and/or organizations for their use, without your consent.
-</p>
+	<section>
+		<h2>Email Addresses</h2>
+		<div>
+			We do not distribute the email addresses you take care to give us. They are used solely to communicate with you and constitute your login identifier for the website.
+		</div>
+	</section>
 
-<h2>Email Addresses</h2>
-<p class="text text-justify">
-	We do not distribute the email addresses you take care to give us. They are used solely to communicate with you and constitute your login identifier for the website.
-</p>
+	<section>
+		<h2>Account</h2>
+		<div>
+			Your account on
+			<strong>{{ config('site-name') }}</strong>
+			will contain at least a valid email address and a personal password. Your account information is protected by data protection laws applicable in the country that hosts us.<br>
+			The recorded information is reserved for the use of
+			<strong>{{ config('site-name') }}</strong>
+			and is NOT communicated to third parties.
+		</div>
+	</section>
 
-<h2>Account</h2>
-<p class="text text-justify">
-	Your account on
-	<strong>{{ config('site-name') }}</strong>
-	will contain at least a valid email address and a personal password. Your account information is protected by data protection laws applicable in the country that hosts us.<br>
-	The recorded information is reserved for the use of
-	<strong>{{ config('site-name') }}</strong>
-	and is NOT communicated to third parties.
-</p>
+	<section>
+		<h2>Password Policy</h2>
+		<div>
+			Your password is encrypted
+			<strong>(one-way encryption that means it cannot be decrypted)</strong>
+			so that it is secure. However, it is recommended not to use the same password on multiple different websites. Your password is the means of access to your account on
+			<strong>{{ config('site-name') }}</strong>, please keep it safe. In no case can a person affiliated with our services or a third party legitimately ask you for your password.<br>
+			If you forget your account password, you can use the "Forgot Password" function, this procedure will ask you to specify your email address and will allow you to enter a new password, so that you can regain access to your account on
+			<strong>{{ config('site-name') }}</strong>.
+		</div>
+	</section>
 
-<h2>Password Policy</h2>
-<p class="text text-justify">
-	Your password is encrypted
-	<strong>(one-way encryption that means it cannot be decrypted)</strong>
-	so that it is secure. However, it is recommended not to use the same password on multiple different websites. Your password is the means of access to your account on
-	<strong>{{ config('site-name') }}</strong>, please keep it safe. In no case can a person affiliated with our services or a third party legitimately ask you for your password.<br>
-	If you forget your account password, you can use the "Forgot Password" function, this procedure will ask you to specify your email address and will allow you to enter a new password, so that you can regain access to your account on
-	<strong>{{ config('site-name') }}</strong>.
-</p>
+	<section>
+		<h2>Your Rights</h2>
+		<div>
+			In accordance with applicable regulations, users of
+			<strong>{{ config('site-name') }}</strong>
+			have the following rights:
+		</div>
+		<ul class="text text-justify">
+			<li>right of access, rectification, updating, completeness, locking or deletion of your data;</li>
+			<li>right to withdraw consent at any time;</li>
+			<li>right to restrict the processing of your data;</li>
+			<li>right to object to the processing of your personal data;</li>
+			<li>right to lodge a complaint with a supervisory authority;</li>
+			<li>right to data portability of the information provided.</li>
+		</ul>
+		<div>
+			If you wish to know how
+			<strong>{{ config('site-name') }}</strong>
+			uses your personal data, request to have it corrected or object to any processing, you can contact us via the contact form or via the means indicated in the Legal Notice.
+		</div>
+	</section>
 
-<h2>Your Rights</h2>
-<p class="text text-justify">
-	In accordance with applicable regulations, users of
-	<strong>{{ config('site-name') }}</strong>
-	have the following rights:
-</p>
-<ul class="text text-justify">
-	<li>right of access, rectification, updating, completeness, locking or deletion of your data;</li>
-	<li>right to withdraw consent at any time;</li>
-	<li>right to restrict the processing of your data;</li>
-	<li>right to object to the processing of your personal data;</li>
-	<li>right to lodge a complaint with a supervisory authority;</li>
-	<li>right to data portability of the information provided.</li>
-</ul>
-<p class="text text-justify">
-	If you wish to know how
-	<strong>{{ config('site-name') }}</strong>
-	uses your personal data, request to have it corrected or object to any processing, you can contact us via the contact form or via the means indicated in the Legal Notice.
-</p>
+	<section>
+		<h2>Regulations</h2>
+		<div>
+			This regulation on privacy rules describes how we process your personal information. We collect, use and share personal data to enable
+			<strong>{{ config('site-name') }}</strong>
+			to function properly and to protect it. In other words, we are the "data controller" of your personal data. This regulation applies from the date of its publication.
+		</div>
 
-<h2>Regulations</h2>
-<p class="text text-justify">
-	This regulation on privacy rules describes how we process your personal information. We collect, use and share personal data to enable
-	<strong>{{ config('site-name') }}</strong>
-	to function properly and to protect it. In other words, we are the "data controller" of your personal data. This regulation applies from the date of its publication.
-</p>
+		<h3>Modification of Regulations</h3>
+		<div>
+			We reserve the right to modify, in whole or in part, and at any time, these regulations. You are invited to consult them regularly to learn about the changes made. It applies at the time of its publication.
+		</div>
 
-<h3>Modification of Regulations</h3>
-<p class="text text-justify">
-	We reserve the right to modify, in whole or in part, and at any time, these regulations. You are invited to consult them regularly to learn about the changes made. It applies at the time of its publication.
-</p>
+		<h3>Data Collection</h3>
+		<div>
+			The information posted on
+			<strong>{{ config('site-name') }}</strong>
+			is publicly accessible. Our servers and service providers are located in the European area. Thus, if you wish to provide us with personal information, you accept that it will be transferred, processed and stored in the European area.
+		</div>
+		<div>
+			We collect and store the following personal data:
+		</div>
+		<ul class="text text-justify">
+			<li>email address</li>
+			<li>login data, statistics relating to page views, traffic to and from
+				<strong>{{ config('site-name') }}</strong>
+			</li>
+			<li>other information, including the user's IP address and standard server log information</li>
+		</ul>
 
-<h3>Data Collection</h3>
-<p class="text text-justify">
-	The information posted on
-	<strong>{{ config('site-name') }}</strong>
-	is publicly accessible. Our servers and service providers are located in the European area. Thus, if you wish to provide us with personal information, you accept that it will be transferred, processed and stored in the European area.
-</p>
-<p class="text text-justify">
-	We collect and store the following personal data:
-</p>
-<ul class="text text-justify">
-	<li>email address</li>
-	<li>login data, statistics relating to page views, traffic to and from
-		<strong>{{ config('site-name') }}</strong>
-	</li>
-	<li>other information, including the user's IP address and standard server log information</li>
-</ul>
+		<h3>Use of Data</h3>
+		<div>
+			We use users' personal information in order to:
+		</div>
+		<ul class="text text-justify">
+			<li>provide our services</li>
+			<li>resolve disputes and identify problems</li>
+			<li>encourage safe transactions and enforce our regulations</li>
+			<li>benefit from our users' experience, measure interest in our services and inform users about our services and their updates</li>
+		</ul>
 
-<h3>Use of Data</h3>
-<p class="text text-justify">
-	We use users' personal information in order to:
-</p>
-<ul class="text text-justify">
-	<li>provide our services</li>
-	<li>resolve disputes and identify problems</li>
-	<li>encourage safe transactions and enforce our regulations</li>
-	<li>benefit from our users' experience, measure interest in our services and inform users about our services and their updates</li>
-</ul>
+		<h3>Data Sharing</h3>
+		<div>
+			<strong>We do not sell or rent your personal information to third parties</strong>, but we may be required to share personal information to meet legal obligations, enforce our regulations, respond to complaints, or protect the rights or property of any person or ensure their safety.
+		</div>
 
-<h3>Data Sharing</h3>
-<p class="text text-justify">
-	<strong>We do not sell or rent your personal information to third parties</strong>, but we may be required to share personal information to meet legal obligations, enforce our regulations, respond to complaints, or protect the rights or property of any person or ensure their safety.
-</p>
+		<h3>Data Retention</h3>
+		<div>
+			We retain your personal data only for as long as necessary for the purposes pursued, in accordance with legal requirements.
+		</div>
 
-<h3>Data Retention</h3>
-<p class="text text-justify">
-	We retain your personal data only for as long as necessary for the purposes pursued, in accordance with legal requirements.
-</p>
+		<h3>Log Files</h3>
+		<div>
+			Each time
+			<strong>{{ config('site-name') }}</strong>
+			is accessed, our system automatically records data and information about the computer system of the visiting computer in our log files. The following data is collected:
+		</div>
+		<ul class="text text-justify">
+			<li>information concerning the browser type, its language and the version used;</li>
+			<li>user's operating system;</li>
+			<li>user's Internet Service Provider;</li>
+			<li>user's IP address;</li>
+			<li>date and time/timezone of access;</li>
+			<li>content of the request;</li>
+			<li>access status/http status code;</li>
+			<li>web pages from which the user's system accessed our website;</li>
+			<li>web pages viewed by the user's system through our website;</li>
+			<li>amount of data transmitted;</li>
+		</ul>
+		<div>
+			In the event of an abnormality when accessing a page, we record the identifier, IP address, http request concerned and the data necessary for the analysis and removal of the abnormality.
+		</div>
 
-<h3>Log Files</h3>
-<p class="text text-justify">
-	Each time
-	<strong>{{ config('site-name') }}</strong>
-	is accessed, our system automatically records data and information about the computer system of the visiting computer in our log files. The following data is collected:
-</p>
-<ul class="text text-justify">
-	<li>information concerning the browser type, its language and the version used;</li>
-	<li>user's operating system;</li>
-	<li>user's Internet Service Provider;</li>
-	<li>user's IP address;</li>
-	<li>date and time/timezone of access;</li>
-	<li>content of the request;</li>
-	<li>access status/http status code;</li>
-	<li>web pages from which the user's system accessed our website;</li>
-	<li>web pages viewed by the user's system through our website;</li>
-	<li>amount of data transmitted;</li>
-</ul>
-<p class="text text-justify">
-	In the event of an abnormality when accessing a page, we record the identifier, IP address, http request concerned and the data necessary for the analysis and removal of the abnormality.
-</p>
+		<h3>Data Security</h3>
+		<div>
+			We use a large number of technically and organizationally recognized tools to ensure the protection of your personal data against unauthorized access or disclosure. However, as you probably know, there is no perfect protection. We therefore offer no guarantee in this regard.
+		</div>
+		<div>
+			The security of personal data is also the responsibility of users who undertake to keep the confidentiality of their identifier and password. Users also undertake not to share their account.
+		</div>
 
-<h3>Data Security</h3>
-<p class="text text-justify">
-	We use a large number of technically and organizationally recognized tools to ensure the protection of your personal data against unauthorized access or disclosure. However, as you probably know, there is no perfect protection. We therefore offer no guarantee in this regard.
-</p>
-<p class="text text-justify">
-	The security of personal data is also the responsibility of users who undertake to keep the confidentiality of their identifier and password. Users also undertake not to share their account.
-</p>
+		<h3>Data Archiving</h3>
+		<div>
+			Deleted data is archived, but not publicly accessible, for the legal period of one year. It is then permanently deleted.
+		</div>
 
-<h3>Data Archiving</h3>
-<p class="text text-justify">
-	Deleted data is archived, but not publicly accessible, for the legal period of one year. It is then permanently deleted.
-</p>
-
-<h3>Data Protection Officer (DPO)</h3>
-<p class="text text-justify">
-	The controller and data protection officer is
-	<strong>{{ config('site-dpo') }}</strong>. You can contact them via the contact form or via the means indicated in the Legal Notice.
-</p>
+		<h3>Data Protection Officer (DPO)</h3>
+		<div>
+			The controller and data protection officer is
+			<strong>{{ config('site-dpo') }}</strong>. You can contact them via the contact form or via the means indicated in the Legal Notice.
+		</div>
+	</section>
+</div>

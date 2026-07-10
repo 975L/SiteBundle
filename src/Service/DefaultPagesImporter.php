@@ -30,8 +30,11 @@ class DefaultPagesImporter
     ) {
     }
 
+    // $onPage, if given, is called for each page not yet in database as fn(array $def): array{import: bool, isPublished: bool}
+    // and lets a command decide interactively whether to import it and with which isPublished value.
+    // Without it (default), every page is imported using the isPublished value from getDefinitions().
     // Returns ['created' => int, 'skipped' => int]
-    public function import(): array
+    public function import(?callable $onPage = null): array
     {
         $created = 0;
         $skipped = 0;
@@ -49,36 +52,25 @@ class DefaultPagesImporter
             }
 
             foreach ($definitions[$locale] as $def) {
+                // Skips definitions tied to a bundle (i.e. Shop's "terms of sales") that isn't installed
+                if (isset($def['requiresClass']) && !class_exists($def['requiresClass'])) {
+                    continue;
+                }
+
                 if ($this->pageRepository->findOneBy(['slug' => $def['slug']])) {
                     $skipped++;
                     continue;
                 }
 
-                $page = (new Page())
-                    ->setTitle($def['title'])
-                    ->setSlug($def['slug'])
-                    ->setDescription($def['description'])
-                    ->setIsPublished(false)
-                    ->setChangeFrequency($def['changeFrequency'])
-                    ->setPriority($def['priority'])
-                    ->setIsPublished($def['isPublished'])
-                    ->setCreation($now)
-                    ->setModification($now);
-
-                if (null !== $user) {
-                    $page->setUser($user);
+                if (null !== $onPage) {
+                    $decision = $onPage($def);
+                    if (!$decision['import']) {
+                        continue;
+                    }
+                    $def['isPublished'] = $decision['isPublished'];
                 }
 
-                if (isset($def['model'])) {
-                    $block = (new Block())
-                        ->setKind('legal_model')
-                        ->setPosition(1)
-                        ->setData(['model' => $def['model'], 'latestUpdate' => $now->format('Y-m-d')]);
-                    $this->em->persist($block);
-                    $page->addBlock($block);
-                }
-
-                $this->em->persist($page);
+                $this->em->persist($this->buildPage($def, $now, $user));
                 $created++;
             }
         }
@@ -90,6 +82,57 @@ class DefaultPagesImporter
         return ['created' => $created, 'skipped' => $skipped];
     }
 
+    private function buildPage(array $def, \DateTime $now, mixed $user): Page
+    {
+        $page = (new Page())
+            ->setTitle($def['title'])
+            ->setSlug($def['slug'])
+            ->setChangeFrequency($def['changeFrequency'])
+            ->setPriority($def['priority'])
+            ->setIsPublished($def['isPublished'])
+            ->setCreation($now)
+            ->setModification($now);
+
+        if (null !== $user) {
+            $page->setUser($user);
+        }
+
+        if (isset($def['model'])) {
+            $block = (new Block())
+                ->setKind('legal_model')
+                ->setPosition(1)
+                ->setData(['model' => $def['model'], 'latestUpdate' => $now->format('Y-m-d')]);
+            $this->em->persist($block);
+            $page->addBlock($block);
+        }
+
+        return $page;
+    }
+
+    // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display
+    // order below - used by SiteCreateCommand to offer them as footer menu items. A definition
+    // whose bundle isn't installed (e.g. terms-of-sales without ShopBundle) is skipped.
+    public function getLegalPageSlugsByModel(): array
+    {
+        $order = ['france/legal-notice', 'france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright'];
+
+        $slugsByModel = [];
+        foreach ($this->getDefinitions()[$this->defaultLocale] ?? [] as $def) {
+            if (isset($def['model']) && (!isset($def['requiresClass']) || class_exists($def['requiresClass']))) {
+                $slugsByModel[$def['model']] = $def['slug'];
+            }
+        }
+
+        $ordered = [];
+        foreach ($order as $model) {
+            if (isset($slugsByModel[$model])) {
+                $ordered[$model] = $slugsByModel[$model];
+            }
+        }
+
+        return $ordered;
+    }
+
     // Definitions are keyed by locale; the "home" slug is intentionally identical across
     // locales since PageController looks it up literally and only one can ever exist
     private function getDefinitions(): array
@@ -99,7 +142,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Accueil',
                     'slug'            => 'home',
-                    'description'     => 'Accueil',
                     'changeFrequency' => 'daily',
                     'priority'        => 10,
                     'isPublished'        => true,
@@ -107,7 +149,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Mentions légales',
                     'slug'            => 'mentions-legales',
-                    'description'     => 'Mentions légales',
                     'model'           => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -116,7 +157,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Règles de confidentialité',
                     'slug'            => 'regles-de-confidentialite',
-                    'description'     => 'Règles de confidentialité',
                     'model'           => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -125,7 +165,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Conditions générales d\'utilisation',
                     'slug'            => 'conditions-generales-d-utilisation',
-                    'description'     => 'Conditions générales d\'utilisation (CGU)',
                     'model'           => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -134,16 +173,15 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Conditions générales de vente',
                     'slug'            => 'conditions-generales-de-vente',
-                    'description'     => 'Conditions générales de vente (CGV)',
                     'model'           => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => false,
+                    'requiresClass'   => 'c975L\\ShopBundle\\c975LShopBundle',
                 ],
                 [
                     'title'           => 'Utilisation des cookies',
                     'slug'            => 'cookies',
-                    'description'     => 'Utilisation des cookies',
                     'model'           => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -152,7 +190,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Copyright',
                     'slug'            => 'copyright',
-                    'description'     => 'Copyright',
                     'model'           => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -163,7 +200,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Home',
                     'slug'            => 'home',
-                    'description'     => 'Home',
                     'changeFrequency' => 'daily',
                     'priority'        => 10,
                     'isPublished'        => true,
@@ -171,7 +207,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Legal notice',
                     'slug'            => 'legal-notice',
-                    'description'     => 'Legal notice',
                     'model'           => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -180,7 +215,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Privacy policy',
                     'slug'            => 'privacy-policy',
-                    'description'     => 'Privacy policy',
                     'model'           => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -189,7 +223,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Terms of use',
                     'slug'            => 'terms-of-use',
-                    'description'     => 'Terms of use',
                     'model'           => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -198,7 +231,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Terms of sales',
                     'slug'            => 'terms-of-sales',
-                    'description'     => 'Terms of sales',
                     'model'           => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -207,7 +239,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Cookies usage',
                     'slug'            => 'cookies-usage',
-                    'description'     => 'Cookies usage',
                     'model'           => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -216,7 +247,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Copyright',
                     'slug'            => 'copyright-notice',
-                    'description'     => 'Copyright',
                     'model'           => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -227,7 +257,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Inicio',
                     'slug'            => 'home',
-                    'description'     => 'Inicio',
                     'changeFrequency' => 'daily',
                     'priority'        => 10,
                     'isPublished'        => true,
@@ -235,7 +264,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Aviso legal',
                     'slug'            => 'aviso-legal',
-                    'description'     => 'Aviso legal',
                     'model'           => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -244,7 +272,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Política de privacidad',
                     'slug'            => 'politica-de-privacidad',
-                    'description'     => 'Política de privacidad',
                     'model'           => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -253,7 +280,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Condiciones de uso',
                     'slug'            => 'condiciones-de-uso',
-                    'description'     => 'Condiciones de uso',
                     'model'           => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -262,7 +288,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Condiciones de venta',
                     'slug'            => 'condiciones-de-venta',
-                    'description'     => 'Condiciones de venta',
                     'model'           => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -271,7 +296,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Uso de cookies',
                     'slug'            => 'uso-de-cookies',
-                    'description'     => 'Uso de cookies',
                     'model'           => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
@@ -280,7 +304,6 @@ class DefaultPagesImporter
                 [
                     'title'           => 'Copyright',
                     'slug'            => 'aviso-de-copyright',
-                    'description'     => 'Copyright',
                     'model'           => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,

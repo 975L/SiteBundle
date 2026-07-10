@@ -58,6 +58,7 @@ h6 {
     font-size: 90%;
 }
 
+.legal div,
 .text,
 .site-article {
   max-width: 90vw;
@@ -65,6 +66,14 @@ h6 {
   // Reserves room above the anchor target so a fixed/sticky header doesn't cover it after
   // a #article-{slug} jump. Override --scroll-offset per site to match the header's height.
   scroll-margin-top: var(--scroll-offset, 80px);
+}
+
+.legal div {
+    text-align: justify;
+}
+
+.text-left {
+    text-align: left;
 }
 
 .text-center {
@@ -75,8 +84,8 @@ h6 {
     text-align: right;
 }
 
-.text-left {
-    text-align: left;
+.text-justify {
+    text-align: justify;
 }
 
 .text-underline {
@@ -110,6 +119,7 @@ blockquote {
 
 
 @media only screen and (min-width: 768px) {
+    .legal div,
     .text,
     .site-article {
         max-width: 800px;

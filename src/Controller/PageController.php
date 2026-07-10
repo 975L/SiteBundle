@@ -30,29 +30,28 @@ class PageController extends AbstractController
 
 // REDIRECT HOME
     #[Route(
-        '/pages',
-        name: 'page_redirect_home',
-        methods: ['GET']
+        path: '/pages',
+        name: 'redirect_home_pages'
     )]
     public function redirectPages()
     {
         return $this->redirectToRoute('page_home');
     }
 
-// REDIRECT HOME POST REQUESTS
+// REDIRECT HOME POST, PUT, PATCH REQUESTS
     #[Route(
-        '/',
-        name: 'redirect_home_post',
-        methods: ['POST']
+        path: '/',
+        name: 'redirect_home_wrong_methods',
+        methods: ['POST', 'PUT', 'PATCH']
     )]
-    public function redirectIndexPost()
+    public function redirectIndexWrongMethods()
     {
         return $this->redirectToRoute('page_home');
     }
 
 //HOME
     #[Route(
-        '/',
+        path: '/',
         name: 'page_home',
         methods: ['GET']
     )]
@@ -69,9 +68,23 @@ class PageController extends AbstractController
         throw $this->createNotFoundException();
     }
 
+// REDIRECT PAGES POST, PUT, PATCH REQUESTS
+    #[Route(
+        path: '/pages/{page}',
+        name: 'redirect_pages_wrong_methods',
+        requirements: [
+            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'
+        ],
+        methods: ['POST', 'PUT', 'PATCH']
+    )]
+    public function redirectPagesWrongMethods()
+    {
+        return $this->redirectToRoute('page_home');
+    }
+
 //DISPLAY
     #[Route(
-        '/pages/{page}',
+        path: '/pages/{page}',
         name: 'page_display',
         requirements: [
             'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'
@@ -107,7 +120,7 @@ class PageController extends AbstractController
 
 // PREVIEW
     #[Route(
-        '/pages/{page}/preview',
+        path: '/pages/{page}/preview',
         name: 'page_preview',
         requirements: [
             'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'

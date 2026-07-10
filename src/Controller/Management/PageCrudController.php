@@ -44,7 +44,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -148,9 +148,9 @@ class PageCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', $isHomePage),
 
             // Content
-            TextEditorField::new('description')
-                ->setLabel(t('label.description', [], 'site'))
-                ->setHelp(t('label.description_help', [], 'site'))
+            TextareaField::new('summarySocialNetwork')
+                ->setLabel(t('label.summary_social_network', [], 'site'))
+                ->setHelp(t('label.summary_social_network_help', [], 'site'))
                 ->hideOnIndex(),
             $isPublishedField,
 

@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="site_config.fr.xlf">
+        <body>
+            <trans-unit id="1">
+                <source>label.site_name</source>
+                <target>Nom du site web : ex. Example.com</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>label.site_tagline</source>
+                <target>Slogan du site web</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>label.site_navbar_show_name</source>
+                <target>Afficher le nom du site (et le slogan) à côté du logo dans la barre de navigation</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>label.site_navbar_fixed</source>
+                <target>Garder la barre de navigation fixe en haut de l'écran lors du défilement</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>label.site_author</source>
+                <target>L'auteur qui sera renseigné dans les métadonnées</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>label.site_first_online_date</source>
+                <target>Date de mise en ligne du site (AAAA-MM-JJ)</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>label.site_url</source>
+                <target>URL du site web, ex. https://example.com</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>label.url_terms_of_use</source>
+                <target>URL de la page des conditions générales d'utilisation, ex. https://example.com/pages/terms-of-use</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>label.site_hosted_by_url</source>
+                <target>URL de l'hébergeur, ex. https://example.com</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>label.site_hosted_by_logo</source>
+                <target>Chemin ou URL du logo de l'hébergeur</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>label.site_made_by_url</source>
+                <target>URL du développeur/de l'agence, ex. https://example.com</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>label.site_made_by_logo</source>
+                <target>Chemin ou URL du logo du développeur/de l'agence</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>label.url_cookies_policy</source>
+                <target>URL de la page de politique des cookies, ex. https://example.com/pages/cookies</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>label.site_matomo_url</source>
+                <target>URL de l'instance Matomo, ex. https://matomo.example.com</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>label.site_matomo_id</source>
+                <target>Identifiant du site Matomo (entier)</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>label.site_preconnect</source>
+                <target>Origines externes à préconnecter (tableau JSON), ex. ["https://example.com"]. Utile quand les logos des crédits ou Matomo sont hébergés sur un domaine tiers</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>label.site_backup_db_host</source>
+                <target>Hôte MySQL pour les sauvegardes</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>label.site_backup_db_user</source>
+                <target>Utilisateur MySQL pour les sauvegardes</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>label.site_backup_db_password</source>
+                <target>Mot de passe MySQL pour les sauvegardes</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>label.site_backup_database</source>
+                <target>Nom de la base de données MySQL à sauvegarder</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>label.site_backup_mailto</source>
+                <target>Adresse email pour les rapports de sauvegarde et les notifications d'erreur</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>label.site_contact_email</source>
+                <target>Adresse email de contact publique affichée sur les pages légales</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>label.site_contact_phone</source>
+                <target>Numéro de téléphone de contact public affiché sur les pages légales</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>label.site_director</source>
+                <target>Nom complet du directeur de la publication (requis pour les mentions légales)</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>label.site_director_location</source>
+                <target>Ville ou département de résidence du directeur de la publication</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>label.site_owner</source>
+                <target>Propriétaire du site web, affiché dans les mentions légales (HTML autorisé)</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>label.site_producer</source>
+                <target>Producteur / développeur du site web affiché dans les mentions légales (HTML autorisé)</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>label.site_hosting_provider</source>
+                <target>Hébergeur du site web affiché dans les mentions légales (HTML autorisé)</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>label.site_other_copyright</source>
+                <target>Autres informations de copyright affichées dans les mentions légales (HTML autorisé, non traduit - même valeur affichée quelle que soit la langue de la page)</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>label.site_other_cookies</source>
+                <target>Autres informations sur les cookies affichées dans les mentions légales (HTML autorisé, non traduit - même valeur affichée quelle que soit la langue de la page)</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>label.site_dpo</source>
+                <target>Nom complet du délégué à la protection des données, requis pour la politique de confidentialité</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>label.user_registration_enabled</source>
+                <target>Active (true) ou désactive (false) la route d'inscription des utilisateurs</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>label.user_roles_available</source>
+                <target>Rôles supplémentaires sélectionnables pour les utilisateurs dans le back-office (en plus du ROLE_USER par défaut), sous forme de tableau JSON, ex. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>label.email_from</source>
+                <target>Adresse email utilisée pour l'envoi des emails, ex. contact@example.com</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>label.email_from_name</source>
+                <target>Nom utilisé pour l'envoi des notifications depuis le site.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

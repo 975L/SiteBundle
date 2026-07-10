@@ -5,9 +5,14 @@
             <twig:c975LSite:General:MenuItem item="{{ item }}" />
         {% endfor %}
         {% if copyright is defined and copyright is not empty %}
-            <li class="menu-item">{{ copyright }}</li>
+            <li class="menu-item">
+                <span class="menu-label">{{ copyright }}</span>
+            </li>
         {% endif %}
     </ul>
-    <twig:c975LSite:General:MadeBy/>
-    <twig:c975LSite:General:HostedBy/>
+    <twig:c975LSocial:SocialLinks />
+    <div class="made-by">
+        <twig:c975LSite:General:MadeBy />
+        <twig:c975LSite:General:HostedBy />
+    </div>
 </footer>

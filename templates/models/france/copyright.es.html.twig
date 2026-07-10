@@ -1,33 +1,39 @@
-{% trans_default_domain 'site' %}
+<div class="legal">
+	<section>
+		<h2>Todos los derechos reservados</h2>
+		<p class="text text-center">
+			<strong>Todos los derechos, de cualquier tipo, en todos los paises y en todos los idiomas, estan reservados a {{ config('site-name') }}.</strong>
+		</p>
+		<div>
+			Las marcas citadas en <strong>{{ config('site-name') }}</strong> son marcas registradas o marcas comerciales pertenecientes a sus respectivos propietarios.
+		</div>
+		<div>
+			<strong>{{ config('site-name') }}</strong> esta protegido por las leyes internacionales sobre derechos de autor y proteccion de la propiedad intelectual.<br>
+			Esta estrictamente prohibido reproducirlo, en su forma o en su contenido, total o parcialmente, sin una autorizacion escrita del autor.<br>
+			Del mismo modo, todos los documentos y fotos alojados en <strong>{{ config('site-name') }}</strong> estan sujetos a copyright que protege a sus respectivos autores.
+		</div>
+		<div>
+			En Francia, la ley de 11 de marzo de 1957 solo autoriza, conforme a los apartados 2 y 3 del articulo 4, por una parte, las copias o reproducciones estrictamente reservadas al uso privado del copista y no destinadas a un uso colectivo, y por otra parte, los analisis y las citas breves con finalidad de ejemplo e ilustracion. Toda representacion o reproduccion, total o parcial, realizada sin el consentimiento del autor o de sus derechohabientes es ilicita (apartado primero del articulo 40).<br>
+			Dicha representacion o reproduccion constituiria por tanto una infraccion sancionada por los articulos 425 y siguientes del Codigo Penal frances.
+		</div>
+	</section>
 
-<h2>Todos los derechos reservados</h2>
-<p class="text text-center">
-    <strong>Todos los derechos, de cualquier tipo, en todos los paises y en todos los idiomas, estan reservados a {{ config('site-name') }}.</strong>
-</p>
-<p class="text text-justify">
-    Las marcas citadas en <strong>{{ config('site-name') }}</strong> son marcas registradas o marcas comerciales pertenecientes a sus respectivos propietarios.
-</p>
-<p class="text text-justify">
-    <strong>{{ config('site-name') }}</strong> esta protegido por las leyes internacionales sobre derechos de autor y proteccion de la propiedad intelectual.<br>
-    Esta estrictamente prohibido reproducirlo, en su forma o en su contenido, total o parcialmente, sin una autorizacion escrita del autor.<br>
-    Del mismo modo, todos los documentos y fotos alojados en <strong>{{ config('site-name') }}</strong> estan sujetos a copyright que protege a sus respectivos autores.
-</p>
-<p class="text text-justify">
-    En Francia, la ley de 11 de marzo de 1957 solo autoriza, conforme a los apartados 2 y 3 del articulo 4, por una parte, las copias o reproducciones estrictamente reservadas al uso privado del copista y no destinadas a un uso colectivo, y por otra parte, los analisis y las citas breves con finalidad de ejemplo e ilustracion. Toda representacion o reproduccion, total o parcial, realizada sin el consentimiento del autor o de sus derechohabientes es ilicita (apartado primero del articulo 40).<br>
-    Dicha representacion o reproduccion constituiria por tanto una infraccion sancionada por los articulos 425 y siguientes del Codigo Penal frances.
-</p>
+	<section>
+		<h2>Propiedad intelectual</h2>
+		<div>
+			Los elementos del sitio web, en particular los textos, presentaciones, ilustraciones, fotografias, estructuras y maquetaciones, son de nuestra propiedad exclusiva o de nuestros socios.
+		</div>
+		<div>
+			Toda representacion, reproduccion, extraccion, copia o uso, por cualquier medio, sin nuestro acuerdo o el de nuestros socios, constituira una infraccion susceptible de acciones judiciales. El infractor se expone a sanciones civiles y penales, en particular a las penas previstas en los articulos L. 335.2 y L. 343.1 del Codigo de la propiedad intelectual.
+		</div>
+	</section>
 
-<h2>Propiedad intelectual</h2>
-<p class="text text-justify">
-    Los elementos del sitio web, en particular los textos, presentaciones, ilustraciones, fotografias, estructuras y maquetaciones, son de nuestra propiedad exclusiva o de nuestros socios.
-</p>
-<p class="text text-justify">
-    Toda representacion, reproduccion, extraccion, copia o uso, por cualquier medio, sin nuestro acuerdo o el de nuestros socios, constituira una infraccion susceptible de acciones judiciales. El infractor se expone a sanciones civiles y penales, en particular a las penas previstas en los articulos L. 335.2 y L. 343.1 del Codigo de la propiedad intelectual.
-</p>
-
-{% if config('site-other-copyright') %}
-    <h2>Otros derechos de autor</h2>
-    <div class="text text-justify">
-        {{ config('site-other-copyright')|raw|nl2br }}.
-    </div>
-{% endif %}
+	{% if config('site-other-copyright') %}
+		<section>
+			<h2>Otros derechos de autor</h2>
+			<div class="text text-justify">
+				{{ config('site-other-copyright')|raw|nl2br }}
+			</div>
+		</section>
+	{% endif %}
+</div>

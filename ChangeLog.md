@@ -1,5 +1,18 @@
 # Changelog
 
+## v7.2
+
+- Added a Command to interactively create the new site (05/07/2026)
+- Added Controllers redirections for wrong methods calls (09/07/2026)
+- Modified Matomo component (09/07/2026)
+- Added css class `legal` + sections in legal models (09/07/2026)
+- Corrected Matomo component (09/07/2026)
+- Renamed Page description to summarySocialNetwork (10/07/2026) [DB-Migration]
+- Modified Dashboard sortcuts (10/07/2026)
+- Re-ordered xlf files (10/07/2026)
+- Modified ArticleSlider to use article.hook (10/07/2026)
+- Added click on image to go to article for ArticlesSlider (10/07/2026)
+
 ## v7.1.7
 
 - set `user-registration-enabled` to true, otherwise we can't create the first user (05/07/2026)

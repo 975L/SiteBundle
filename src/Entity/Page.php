@@ -46,7 +46,7 @@ class Page implements HasBlocksInterface
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $description = null;
+    private ?string $summarySocialNetwork = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
@@ -122,14 +122,14 @@ class Page implements HasBlocksInterface
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getSummarySocialNetwork(): ?string
     {
-        return $this->description;
+        return $this->summarySocialNetwork;
     }
 
-    public function setDescription(?string $description): self
+    public function setSummarySocialNetwork(?string $summarySocialNetwork): self
     {
-        $this->description = $description;
+        $this->summarySocialNetwork = $summarySocialNetwork;
 
         return $this;
     }

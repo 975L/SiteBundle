@@ -127,7 +127,7 @@ Declare these variables in each page template to populate meta tags and the page
 
 ```twig
 {% set title = 'My Page Title' %}
-{% set description = 'A short description of this page.' %}
+{% set summarySocialNetwork = 'A short summary for social networks of this page.' %}
 ```
 
 ### Template blocks
@@ -205,13 +205,13 @@ To **hint the sitemap generator**, add metadata in a Twig comment at the top of 
 
 Use the `Page` entity to manage pages through the database. Each page supports:
 
-- Title, slug (unique), description
+- Title, slug (unique), summarySocialNetwork
 - Published status and display position
 - Sitemap fields: change frequency and priority (0–10)
 - Blocks (content blocks from [c975L/UiBundle](https://github.com/975L/UiBundle))
 - Creation / modification timestamps and author reference
 
-Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` template, which displays the page title, description, and its associated blocks.
+Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` template, which displays the page title, summarySocialNetwork, and its associated blocks.
 
 ### Blocks defined by this bundle
 
@@ -222,6 +222,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
 | `twig_content` | `label.category_migration` | Renders raw Twig content stored in the block's data via `template_from_string()`. Intended as a migration/escape hatch for content that doesn't fit another block type. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
+| `social_links` | `label.category_navigation` | A user-defined, ordered list of links (label, url, icon) — see [Social links](#social-links) below. |
 
 Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias.
 
@@ -263,6 +264,18 @@ A `MenuItem` isn't limited to database pages. Any bundle can expose one of its o
 
 Deliberately **not** a `ui.block` — a Menu item is site-wide chrome (like the navbar/footer themselves), not page content, so it isn't selectable from the page content-block picker.
 
+### Social links
+
+The footer's social icons are fully user-defined — no hardcoded list of networks, no dedicated entity/table. `social_links` is a regular `ui.block` kind (see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)): its data is an ordered list of links (`label`, `url`, `icon`), stored like any other block in `c975L\UiBundle\Entity\Block`'s JSON `data` column. Each icon is picked via UiBundle's `IconPickerType` — the same searchable picker used for block buttons, listing every SVG found under `public/icons/` and `public/bundles/*/icons/`. Drop the brand SVGs you need there (e.g. from the [Simple Icons](https://simpleicons.org/) set) and they become selectable immediately, no code change required.
+
+Because a `Block` can normally only be created by attaching it to a Page (there's no page-independent block library in UiBundle), `SocialLinksCrudController` gives it its own small dashboard entry, scoped to `kind = social_links` — so it can be created/edited without needing a host page. Once created, it's picked up automatically by the built-in `Footer` component, already wired in — nothing to add in your app:
+
+```twig
+<twig:c975LSite:General:SocialLinks/>
+```
+
+Under the hood, this looks up the first `social_links` block via `BlockRepository::findOneByKind()` and reuses UiBundle's `render_block()`. `social_links` also stays a normal selectable kind from any page's own block picker — but that always creates a *separate* block instance with its own links (Symfony's `CollectionType` only ever adds brand-new entries, there's no "attach this existing block" option), not the same footer one. Renders nothing if no `social_links` block exists yet.
+
 ---
 
 ## Users
@@ -274,10 +287,42 @@ The controller relies on EasyAdmin's auto-discovery of the app's own `User` fiel
 - The hashed password field, excluded so it's never displayed or overwritten from the backoffice
 - The `roles` field, added explicitly as a multiple-choice field, since JSON columns are never auto-discovered by EasyAdmin
 - The `creation` / `modification` fields, made readonly since they're set automatically
+- The `isVerified` field, made readonly since it must only be set by `EmailVerifier` upon email confirmation, never edited by hand from the backoffice
 
 `ROLE_USER` is always excluded from the choices (every user already has it by default, see `User::getRoles()`). The other selectable roles come from the `user-roles-available` ConfigBundle key (`json` kind, e.g. `["ROLE_ADMIN","ROLE_EDITOR"]`) — add roles for your app there, no code change needed.
 
 The detail page is disabled (not useful on top of the index and edit pages).
+
+### ROLE_SUPER_ADMIN and restricted configs
+
+Requires `c975l/config-bundle` >= v5.4.
+
+Some configs are shared server-level secrets rather than per-site application settings — for
+example `site-backup-db-user`/`site-backup-db-password`, used by `c975l:site:backup` (see
+[Commands](#commands)): a single privileged MySQL user reused to back up the database, not
+something a client's own site admin should ever be able to read or overwrite. ConfigBundle flags
+these with `"restricted": true` in
+`configs.json`; any config so flagged is hidden entirely (index, detail, edit, and export) from
+every user except one holding `ROLE_SUPER_ADMIN`, regardless of `site-role-needed`.
+
+`c975l:site:create` grants `ROLE_SUPER_ADMIN` (together with `ROLE_ADMIN`) to the bootstrap user
+automatically, since whoever runs it owns the site. When you (the producer) deploy a client's site,
+run `site:create` yourself to become its super-admin, then create the client's own users with plain
+`ROLE_ADMIN` via the User CRUD — they get full access to pages, menus, general configs, etc., but
+the `backup` config group stays out of their reach. A standalone install where you're the only user
+is never affected, since your own bootstrap account already holds both roles.
+
+To make your own bundle's configs restricted the same way, just add `"restricted": true` next to
+`"sensitive"` in its `configs.json` entry. `site-role-needed` and `user-roles-available` are
+restricted too: they gate the whole admin and decide which roles exist, so a plain `ROLE_ADMIN`
+must never be able to touch them.
+
+That last point matters for the role picker itself: `UserCrudController` strips `ROLE_SUPER_ADMIN`
+from the choices offered on the `roles` field unless the acting user already holds it — server-side,
+not just visually, so Symfony's `ChoiceType` rejects a crafted submission trying to sneak it in
+anyway. Without this, listing `ROLE_SUPER_ADMIN` in `user-roles-available` would let any
+`ROLE_ADMIN` grant it to themselves through the User CRUD and bypass every restricted config in one
+step.
 
 ### Disabling registration
 
@@ -289,6 +334,21 @@ if (false === $this->configService->get('user-registration-enabled')) {
     throw $this->createAccessDeniedException();
 }
 ```
+
+### Account activation (`isEnabled`)
+
+`App\Entity\User::isEnabled` gates login independently from `isVerified`. `EmailVerifier::handleEmailConfirmation` (scaffolded) sets both `isVerified` and `isEnabled` to `true` once the user confirms their email — `c975l:site:create` does the same for the bootstrap admin account, since there's no email to confirm.
+
+The scaffold ships `App\Security\UserChecker`, which refuses login with Symfony's built-in `DisabledException` ("Account is disabled.", already translated in `security.*.xlf` for en/fr/es, and rendered for free by the scaffolded `login.html.twig`) as soon as `isEnabled` is `false` — before the password is even checked. `c975l:site:create` registers it on the `main` firewall automatically (step 1, right after the scaffold install), by inserting `user_checker: App\Security\UserChecker` into `config/packages/security.yaml` if it isn't already there. If your site predates this or uses a differently-named firewall, add it yourself:
+
+```yaml
+security:
+    firewalls:
+        main:
+            user_checker: App\Security\UserChecker
+```
+
+This lets you disable a user from the backoffice (`isEnabled` isn't readonly, unlike `isVerified`) to lock them out without deleting their account — a verified user with `isEnabled = false` still can't log in.
 
 ---
 
@@ -527,9 +587,83 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 
 | Command | Description |
 | --- | --- |
+| `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
 | `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
+
+### Create a new site
+
+`c975l:site:create` is the single entry point used to bootstrap a brand new site. Run it once
+`make:user`, `make:registration-form` and `make:reset-password` have been run (it needs
+`App\Entity\User` to already exist):
+
+```bash
+php bin/console c975l:site:create
+```
+
+**One-shot only**: on success it writes a `.c975l-site-created` marker at the project root and
+commits — sorry, expects *you* to commit it — with the rest of the repo (it is not gitignored on
+purpose, so the guard survives `git clone`/deploy, not just a re-run on the same machine). Any
+further run refuses immediately with an error as long as that file exists. This exists because
+step 1 (scaffold) unconditionally overwrites any matching `src/`/`templates/` file — including
+ones you've since customized — and re-running isn't a supported way to add things to an existing
+site. To add config values, pages or menu items later, run the underlying commands directly
+(`c975l:config:load-all`, `c975l:site:pages:import-defaults`, ...) instead of this wizard. If you
+genuinely need to re-run the whole wizard (e.g. resetting a throwaway dev environment), delete
+`.c975l-site-created` first.
+
+It walks through, in order:
+
+1. **Scaffold install** — copies `scaffold/src` and `scaffold/templates` from every installed
+   c975L bundle (`vendor/c975l/*/scaffold`) into the project. Unlike a plain overwrite, any file
+   it would replace is first moved to `existingFiles/<same path>.old` at the project root, so
+   nothing generated by `make:*` is silently lost. Add `existingFiles/` to your own workflow if
+   you don't want it committed (the command adds it to `.gitignore` automatically).
+2. **Default config** — runs `c975l:config:load-all` internally.
+3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet.
+4. **Admin account** — asks for an email and password (typed in clear text, not masked, so you can
+   see what you're entering — it is never echoed back afterwards, including in the final summary),
+   creates the user with `ROLE_ADMIN`, `isVerified = true`, `isEnabled = true`.
+5. **Config values** — asks for the values listed in `config/site-create-questions.json` (see
+   below), validated against each config's `kind`.
+6. **Default pages** — same as `c975l:site:pages:import-defaults` below, but page by page:
+   confirms the import and the initial `isPublished` state for each page not already in database.
+7. **Footer menu** — offers to add, one by one (yes by default), every bundle-contributed route
+   registered via `LinkableRouteProviderInterface` (e.g. ContactFormBundle's contact page, only
+   proposed if that bundle is installed), then the legal pages just imported, in a fixed order
+   (mentions légales, règles de confidentialité, CGU, CGV, cookies, copyright). Re-running the
+   command never creates duplicate items.
+
+#### `config/site-create-questions.json`
+
+A flat, ordered JSON array of config slugs to ask about — edit it freely to add, remove or
+reorder questions:
+
+```json
+["site-name", "site-url", "site-author", "..."]
+```
+
+A slug can belong to any installed c975L bundle (looked up by slug in the database, regardless
+of which bundle's `configs.json` defined it); slugs that aren't found (bundle not installed, or
+`config:load-all` hasn't run yet) are skipped with a warning.
+
+#### Translating the questions
+
+Each question's text is the config's `description`, translated through the shared `site_config`
+translation domain. Since Symfony merges translation files sharing the same domain and locale
+across every bundle's own `translations/` directory, any c975L bundle can contribute to it
+independently — SiteBundle doesn't need to know about the others. To make a bundle's own configs
+show up as readable questions instead of raw text:
+
+1. In that bundle's `config/configs.json`, replace the `description` value with a translation key,
+   i.e. `"description": "label.my_slug"`.
+2. Add the corresponding entries to `translations/site_config.en.xlf`, `.fr.xlf` and `.es.xlf` in
+   that same bundle.
+
+This is backward-compatible: `trans()` on a plain-text `description` that isn't a known
+translation key simply returns it unchanged, so bundles that haven't migrated yet still display
+correctly, just untranslated.
 
 ### Import default pages
 
@@ -547,7 +681,7 @@ One page is created per locale — `%kernel.default_locale%` plus every locale l
 | `mentions-legales` | `legal-notice` | `aviso-legal` | Mentions légales | `legal_model` → `france/legal-notice` |
 | `regles-de-confidentialite` | `privacy-policy` | `politica-de-privacidad` | Règles de confidentialité | `legal_model` → `france/privacy-policy` |
 | `conditions-generales-d-utilisation` | `terms-of-use` | `condiciones-de-uso` | Conditions générales d'utilisation | `legal_model` → `france/terms-of-use` |
-| `conditions-generales-de-vente` | `terms-of-sales` | `condiciones-de-venta` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` |
+| `conditions-generales-de-vente` | `terms-of-sales` | `condiciones-de-venta` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` (only if c975L/ShopBundle is installed) |
 | `cookies` | `cookies-usage` | `uso-de-cookies` | Utilisation des cookies | `legal_model` → `france/cookies` |
 | `copyright` | `copyright-notice` | `aviso-de-copyright` | Copyright | `legal_model` → `france/copyright` |
 

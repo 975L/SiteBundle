@@ -146,11 +146,20 @@ h6 {
   font-size: 90%;
 }
 
+.legal div,
 .text,
 .site-article {
   max-width: 90vw;
   margin: 1em auto;
   scroll-margin-top: var(--scroll-offset, 80px);
+}
+
+.legal div {
+  text-align: justify;
+}
+
+.text-left {
+  text-align: left;
 }
 
 .text-center {
@@ -161,8 +170,8 @@ h6 {
   text-align: right;
 }
 
-.text-left {
-  text-align: left;
+.text-justify {
+  text-align: justify;
 }
 
 .text-underline {
@@ -195,6 +204,7 @@ blockquote {
 }
 
 @media only screen and (min-width: 768px) {
+  .legal div,
   .text,
   .site-article {
     max-width: 800px;
@@ -445,46 +455,6 @@ span.img-below {
   margin-top: 20px;
 }
 
-.img-100,
-.img-125,
-.img-150,
-.img-200,
-.img-250,
-.img-300,
-.img-500 {
-  width: 90vw;
-  height: auto;
-  margin: 0 auto;
-}
-
-.img-100 {
-  max-width: 100px;
-}
-
-.img-125 {
-  max-width: 125px;
-}
-
-.img-150 {
-  max-width: 150px;
-}
-
-.img-200 {
-  max-width: 200px;
-}
-
-.img-250 {
-  max-width: 250px;
-}
-
-.img-300 {
-  max-width: 300px;
-}
-
-.img-500 {
-  max-width: 500px;
-}
-
 img.icon {
   width: 24px;
   height: 24px;
@@ -500,6 +470,10 @@ img.white {
 }
 
 /* LISTS */
+ul {
+  list-style: url("/bundles/c975lsite/icons/angle-right.svg");
+}
+
 ul.inline {
   padding: 0;
 }
@@ -574,7 +548,10 @@ footer {
   background-color: var(--primary);
   border-top: solid grey 2px;
   margin-top: 3em;
-  padding: 2em 0 6em 0;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 2em 0 3em 0;
+  width: 100vw;
 }
 
 footer .menu-items {
@@ -598,4 +575,20 @@ footer a:visited:hover {
 footer li {
   margin: 0;
   color: var(--white);
+}
+
+footer .menu-link {
+  padding: 0.25rem;
+}
+
+footer .menu-label {
+  font-family: var(--font-family-body);
+}
+
+footer .made-by {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 2em;
 }/*# sourceMappingURL=emails.css.map */

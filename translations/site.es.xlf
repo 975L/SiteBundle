@@ -185,8 +185,8 @@
                 <target>Slug</target>
             </trans-unit>
             <trans-unit id="46">
-                <source>label.description</source>
-                <target>Descripción</target>
+                <source>label.summary_social_network</source>
+                <target>Resumen redes sociales</target>
             </trans-unit>
             <trans-unit id="47">
                 <source>label.dashboard</source>
@@ -341,8 +341,8 @@
                 <target>Nunca</target>
             </trans-unit>
             <trans-unit id="85">
-                <source>label.description_help</source>
-                <target>Este contenido se muestra al inicio de la página y se utiliza para describir la página a los motores de búsqueda y a las redes sociales</target>
+                <source>label.summary_social_network_help</source>
+                <target>Este contenido será utilizado por las redes sociales al compartir la página</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -581,168 +581,192 @@
                 <target>Elementos del menú</target>
             </trans-unit>
             <trans-unit id="145">
-                <source>label.sitemap_create</source>
-                <target>Regenerar el sitemap</target>
+                <source>label.create_page</source>
+                <target>Crear página</target>
             </trans-unit>
             <trans-unit id="146">
-                <source>flash.sitemap_created</source>
-                <target>Sitemap regenerado</target>
-            </trans-unit>
-            <trans-unit id="147">
                 <source>label.media_used_as_og_image</source>
                 <target>Imagen OG de «%page%»</target>
             </trans-unit>
-            <trans-unit id="148">
+            <trans-unit id="147">
                 <source>label.media_used_in_page_block</source>
                 <target>Usado en un bloque de «%page%»</target>
             </trans-unit>
-            <trans-unit id="149">
+            <trans-unit id="148">
                 <source>label.route</source>
                 <target>Ruta</target>
             </trans-unit>
-            <trans-unit id="150">
+            <trans-unit id="149">
                 <source>label.choose_page</source>
                 <target>Elegir una página</target>
             </trans-unit>
-            <trans-unit id="151">
+            <trans-unit id="150">
                 <source>label.choose_route</source>
                 <target>Elegir una ruta</target>
             </trans-unit>
-            <trans-unit id="152">
+            <trans-unit id="151">
                 <source>constraint.menu_item_target</source>
                 <target>Elija una página o una ruta, no ambas ni ninguna.</target>
             </trans-unit>
-            <trans-unit id="153">
+            <trans-unit id="152">
                 <source>label.export_tables</source>
-                <target>Exportar las tablas site_</target>
+                <target>Exportar (SQL) las tablas "site_xxx"</target>
             </trans-unit>
-            <trans-unit id="154">
+            <trans-unit id="153">
                 <source>label.register</source>
                 <target>Registrarse</target>
             </trans-unit>
-            <trans-unit id="155">
+            <trans-unit id="154">
                 <source>label.password</source>
                 <target>Contraseña</target>
             </trans-unit>
-            <trans-unit id="156">
+            <trans-unit id="155">
                 <source>label.email</source>
                 <target>Correo electrónico</target>
             </trans-unit>
-            <trans-unit id="157">
+            <trans-unit id="156">
                 <source>label.confirm_email_title</source>
                 <target>¡Hola! Confirma tu email</target>
             </trans-unit>
-            <trans-unit id="158">
+            <trans-unit id="157">
                 <source>text.confirm_email_instructions</source>
                 <target>Por favor, confirma tu dirección de email haciendo clic en el siguiente enlace:</target>
             </trans-unit>
-            <trans-unit id="159">
+            <trans-unit id="158">
                 <source>label.confirm_my_email</source>
                 <target>Confirmar mi email</target>
             </trans-unit>
-            <trans-unit id="160">
+            <trans-unit id="159">
                 <source>text.link_expires_in</source>
                 <target>Este enlace caducará en</target>
             </trans-unit>
-            <trans-unit id="162">
+            <trans-unit id="160">
                 <source>label.password_reset_email_sent</source>
                 <target>Email de restablecimiento de contraseña enviado</target>
             </trans-unit>
-            <trans-unit id="163">
+            <trans-unit id="161">
                 <source>text.password_reset_email_sent_info</source>
                 <target>Si existe una cuenta que coincide con tu email, se te acaba de enviar un email con un enlace para restablecer tu contraseña.</target>
             </trans-unit>
-            <trans-unit id="164">
+            <trans-unit id="162">
                 <source>text.no_email_received</source>
                 <target>Si no recibes ningún email, revisa tu carpeta de spam o</target>
             </trans-unit>
-            <trans-unit id="165">
+            <trans-unit id="163">
                 <source>label.try_again</source>
                 <target>inténtalo de nuevo</target>
             </trans-unit>
-            <trans-unit id="166">
+            <trans-unit id="164">
                 <source>text.reset_password_instructions</source>
                 <target>Para restablecer tu contraseña, visita el siguiente enlace</target>
             </trans-unit>
-            <trans-unit id="167">
+            <trans-unit id="165">
                 <source>label.reset_password</source>
                 <target>Restablecer tu contraseña</target>
             </trans-unit>
-            <trans-unit id="168">
+            <trans-unit id="166">
                 <source>text.reset_password_help</source>
                 <target>Introduce tu dirección de email y te enviaremos un enlace para restablecer tu contraseña.</target>
             </trans-unit>
-            <trans-unit id="169">
+            <trans-unit id="167">
                 <source>label.send_password_reset_email</source>
                 <target>Enviar email de restablecimiento</target>
             </trans-unit>
-            <trans-unit id="170">
+            <trans-unit id="168">
                 <source>label.login</source>
                 <target>¡Inicia sesión!</target>
             </trans-unit>
-            <trans-unit id="171">
+            <trans-unit id="169">
                 <source>label.please_sign_in</source>
                 <target>Por favor, inicia sesión</target>
             </trans-unit>
-            <trans-unit id="172">
+            <trans-unit id="170">
                 <source>label.sign_in</source>
                 <target>Iniciar sesión</target>
             </trans-unit>
-            <trans-unit id="173">
+            <trans-unit id="171">
                 <source>text.logged_in_as</source>
                 <target>Has iniciado sesión como %user%,</target>
             </trans-unit>
-            <trans-unit id="174">
+            <trans-unit id="172">
                 <source>label.forgot_password</source>
                 <target>¿Olvidaste tu contraseña?</target>
             </trans-unit>
-            <trans-unit id="175">
+            <trans-unit id="173">
                 <source>label.create_account</source>
                 <target>Crear una cuenta</target>
             </trans-unit>
-            <trans-unit id="176">
+            <trans-unit id="174">
                 <source>label.error_image</source>
                 <target>Imagen de error</target>
             </trans-unit>
-            <trans-unit id="177">
+            <trans-unit id="175">
                 <source>label.error</source>
                 <target>Error</target>
             </trans-unit>
-            <trans-unit id="178">
+            <trans-unit id="176">
                 <source>label.error_code</source>
                 <target>Error %code%</target>
             </trans-unit>
-            <trans-unit id="179">
+            <trans-unit id="177">
                 <source>label.agree_terms</source>
                 <target>Acepto las condiciones</target>
             </trans-unit>
-            <trans-unit id="180">
+            <trans-unit id="178">
                 <source>label.new_password</source>
                 <target>Nueva contraseña</target>
             </trans-unit>
-            <trans-unit id="181">
+            <trans-unit id="179">
                 <source>label.password_confirm</source>
                 <target>Repetir contraseña</target>
             </trans-unit>
-            <trans-unit id="182">
+            <trans-unit id="180">
                 <source>label.password_help</source>
                 <target>Su contraseña debe tener al menos 8 caracteres e incluir una minúscula, una mayúscula, un dígito y un carácter especial</target>
             </trans-unit>
-            <trans-unit id="183">
+            <trans-unit id="181">
                 <source>label.confirm_your_email</source>
                 <target>Confirma tu correo electrónico</target>
             </trans-unit>
-            <trans-unit id="184">
+            <trans-unit id="182">
                 <source>label.email_address_verified</source>
                 <target>Su dirección de correo electrónico ha sido verificada.</target>
             </trans-unit>
-            <trans-unit id="185">
+            <trans-unit id="183">
                 <source>label.password_reset_request</source>
                 <target>Su solicitud de restablecimiento de contraseña</target>
             </trans-unit>
-            <trans-unit id="186">
+            <trans-unit id="184">
                 <source>label.no_reset_password_token_found</source>
                 <target>No se encontró un token de restablecimiento de contraseña en la URL o en la sesión.</target>
+            </trans-unit>
+            <trans-unit id="185">
+                <source>label.site_graphic_file_help</source>
+                <target>El favicon se redimensionará automáticamente a 48×48 px (.ico). El icono Apple Touch se redimensionará automáticamente a 114×114 px (.png).</target>
+            </trans-unit>
+            <trans-unit id="186">
+                <source>flash.user_registration_enabled</source>
+                <target>Registro de usuarios habilitado</target>
+            </trans-unit>
+            <trans-unit id="187">
+                <source>flash.user_registration_disabled</source>
+                <target>Registro de usuarios deshabilitado</target>
+            </trans-unit>
+            <trans-unit id="188">
+                <source>label.user_registration_enable</source>
+                <target>Habilitar el registro de usuarios</target>
+            </trans-unit>
+            <trans-unit id="189">
+                <source>label.user_registration_disable</source>
+                <target>Deshabilitar el registro de usuarios</target>
+            </trans-unit>
+            <trans-unit id="190">
+                <source>label.sitemaps_create</source>
+                <target>Crear sitemaps</target>
+            </trans-unit>
+            <trans-unit id="191">
+                <source>flash.sitemaps_created</source>
+                <target>Sitemaps creadas con éxito</target>
             </trans-unit>
         </body>
     </file>
