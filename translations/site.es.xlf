@@ -768,6 +768,14 @@
                 <source>flash.sitemaps_created</source>
                 <target>Sitemaps creadas con éxito</target>
             </trans-unit>
+            <trans-unit id="192">
+                <source>label.menu_item_target</source>
+                <target>Objetivo</target>
+            </trans-unit>
+            <trans-unit id="193">
+                <source>label.choose_target</source>
+                <target>Elegir una página o una ruta</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
