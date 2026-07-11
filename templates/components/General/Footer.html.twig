@@ -10,9 +10,23 @@
             </li>
         {% endif %}
     </ul>
-    <twig:c975LSocial:SocialLinks />
-    <div class="made-by">
-        <twig:c975LSite:General:MadeBy />
-        <twig:c975LSite:General:HostedBy />
-    </div>
+    {% if config('display-footer-social') %}
+        <twig:c975LSocial:SocialLinks />
+    {% endif %}
+    {% if config('display-made-by') or config('display-hosted-by') %}
+        <div class="made-by">
+            {% if config('display-made-by') %}
+                <twig:c975LSite:General:MadeBy />
+            {% endif %}
+            {% if config('display-hosted-by') %}
+                <twig:c975LSite:General:HostedBy />
+            {% endif %}
+        </div>
+    {% endif %}
 </footer>
+{% if config('site-enable-matomo') %}
+    <twig:c975LSite:General:Matomo />
+{% endif %}
+{% if config('site-enable-cookie-consent') %}
+    <twig:c975LSite:General:CookieConsent />
+{% endif %}

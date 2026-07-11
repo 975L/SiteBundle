@@ -142,6 +142,26 @@
                 <source>label.email_from_name</source>
                 <target>Nombre utilizado para enviar las notificaciones desde el sitio.</target>
             </trans-unit>
+            <trans-unit id="36">
+                <source>label.display_footer_social</source>
+                <target>Mostrar los iconos de redes sociales en el pie de página</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.display_made_by</source>
+                <target>Mostrar el crédito "Realizado por" en el pie de página</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.display_hosted_by</source>
+                <target>Mostrar el crédito "Hospedado por" en el pie de página</target>
+            </trans-unit>
+            <trans-unit id="39"></trans-unit>
+                <source>label.site_enable_matomo</source>
+                <target>Activar Matomo para el seguimiento de estadísticas</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.site_enable_cookie_consent</source>
+                <target>Activar el uso de consentimiento de cookies</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

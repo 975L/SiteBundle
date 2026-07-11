@@ -383,5 +383,60 @@
         "group": "email",
         "severity": null,
         "description": "label.email_from_name"
+    },
+    {
+        "label": "Display Footer Social",
+        "slug": "display-footer-social",
+        "sensitive": false,
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "general",
+        "severity": null,
+        "description": "label.display_footer_social"
+    },
+    {
+        "label": "Display Made By",
+        "slug": "display-made-by",
+        "sensitive": false,
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "general",
+        "severity": null,
+        "description": "label.display_made_by"
+    },
+    {
+        "label": "Display Hosted By",
+        "slug": "display-hosted-by",
+        "sensitive": false,
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "general",
+        "severity": null,
+        "description": "label.display_hosted_by"
+    },
+    {
+        "label": "Enable Matomo Analytics",
+        "slug": "site-enable-matomo",
+        "sensitive": false,
+        "restricted": true,
+        "value": "true",
+        "kind": "bool",
+        "group": "analytics",
+        "severity": null,
+        "description": "label.site_enable_matomo"
+    },
+    {
+        "label": "Enable Cookie Consent",
+        "slug": "site-enable-cookie-consent",
+        "sensitive": false,
+        "restricted": true,
+        "value": "true",
+        "kind": "bool",
+        "group": "analytics",
+        "severity": null,
+        "description": "label.site_enable_cookie_consent"
     }
 ]

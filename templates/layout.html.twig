@@ -223,15 +223,15 @@
                     {% endif %}
 {# NavigationBottom #}
                     {% if display != 'pdf' %}
-                        {% block navigationBottom %}
+                        {% block share %}
+                            {% block navigationBottom %}
+                            {% endblock %}
                         {% endblock %}
                     {% endif %}
                 </main>
             {% endblock %}
 {# Footer #}
             {% block footer %}
-                <twig:c975LSite:General:Matomo />
-                <twig:c975LSite:General:CookieConsent />
                 <twig:c975LSite:General:Footer copyright="{{ copyright is defined ? copyright : '' }}" />
             {% endblock %}
         {% endblock %}

@@ -142,6 +142,26 @@
                 <source>label.email_from_name</source>
                 <target>Name used to send the notifications from the site.</target>
             </trans-unit>
+            <trans-unit id="36">
+                <source>label.display_footer_social</source>
+                <target>Display social media icons in the footer</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>label.display_made_by</source>
+                <target>Display the "Made by" credit in the footer</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>label.display_hosted_by</source>
+                <target>Display the "Hosted by" credit in the footer</target>
+            </trans-unit>
+            <trans-unit id="39"></trans-unit>
+                <source>label.site_enable_matomo</source>
+                <target>Enable Matomo for statistics tracking</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>label.site_enable_cookie_consent</source>
+                <target>Enable the use of cookie consent</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
