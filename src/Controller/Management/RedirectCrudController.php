@@ -68,8 +68,6 @@ class RedirectCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $role = $this->configService->get('site-role-needed');
-
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
             ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
@@ -80,14 +78,14 @@ class RedirectCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $exportGroup)
-            ->setPermission(Action::INDEX, $role)
-            ->setPermission(Action::NEW, $role)
-            ->setPermission(Action::EDIT, $role)
-            ->setPermission(Action::DELETE, $role)
-            ->setPermission(Action::DETAIL, $role)
-            ->setPermission('exportSql', $role)
-            ->setPermission('exportCsv', $role)
-            ->setPermission('exportJson', $role)
+            ->setPermission(Action::INDEX, $this->configService->get('site-role-editor'))
+            ->setPermission(Action::NEW, $this->configService->get('site-role-editor'))
+            ->setPermission(Action::EDIT, $this->configService->get('site-role-editor'))
+            ->setPermission(Action::DELETE, $this->configService->get('site-role-admin'))
+            ->setPermission(Action::DETAIL, $this->configService->get('site-role-editor'))
+            ->setPermission('exportSql', 'ROLE_SUPER_ADMIN')
+            ->setPermission('exportCsv', $this->configService->get('site-role-admin'))
+            ->setPermission('exportJson', 'ROLE_SUPER_ADMIN')
         ;
     }
 
@@ -95,7 +93,7 @@ class RedirectCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission($this->configService->get('site-role-needed'))
+            ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/redirect_crud_index.html.twig')
         ;
     }
@@ -111,7 +109,7 @@ class RedirectCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         return $this->tableExporter->export(ExportFormat::Sql, 'site_redirect', $this->fetchExportRows());
     }
@@ -119,7 +117,7 @@ class RedirectCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportCsv(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         return $this->tableExporter->export(ExportFormat::Csv, 'site_redirect', $this->fetchExportRows());
     }
@@ -127,7 +125,7 @@ class RedirectCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         return $this->tableExporter->export(ExportFormat::Json, 'site_redirect', $this->fetchExportRows());
     }

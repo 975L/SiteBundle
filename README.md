@@ -228,7 +228,7 @@ Each block is registered as a `ui.block`-tagged service, with a dedicated form (
 
 ### Admin management
 
-Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-needed` key in ConfigBundle.
+Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-editor` key in ConfigBundle.
 
 ---
 
@@ -239,7 +239,7 @@ The site-wide navbar and footer are managed entirely from the database — no ap
 - an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
 
-Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-needed` key in ConfigBundle.
+Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle.
 
 Both are rendered by built-in components already wired into the bundle's layout (`navigation`/`footer` blocks) — nothing to add in your app:
 
@@ -280,7 +280,7 @@ Under the hood, this looks up the first `social_links` block via `BlockRepositor
 
 ## Users
 
-`App\Entity\User` is managed in the EasyAdmin dashboard via `UserCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-needed` key in ConfigBundle, same as pages.
+`App\Entity\User` is managed in the EasyAdmin dashboard via `UserCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-admin` key in ConfigBundle, same as pages.
 
 The controller relies on EasyAdmin's auto-discovery of the app's own `User` fields (which vary per app), except for:
 
@@ -303,7 +303,7 @@ example `site-backup-db-user`/`site-backup-db-password`, used by `c975l:site:bac
 something a client's own site admin should ever be able to read or overwrite. ConfigBundle flags
 these with `"restricted": true` in
 `configs.json`; any config so flagged is hidden entirely (index, detail, edit, and export) from
-every user except one holding `ROLE_SUPER_ADMIN`, regardless of `site-role-needed`.
+every user except one holding `ROLE_SUPER_ADMIN`, regardless of `site-role-admin`.
 
 `c975l:site:create` grants `ROLE_SUPER_ADMIN` (together with `ROLE_ADMIN`) to the bootstrap user
 automatically, since whoever runs it owns the site. When you (the producer) deploy a client's site,
@@ -313,7 +313,7 @@ the `backup` config group stays out of their reach. A standalone install where y
 is never affected, since your own bootstrap account already holds both roles.
 
 To make your own bundle's configs restricted the same way, just add `"restricted": true` next to
-`"sensitive"` in its `configs.json` entry. `site-role-needed` and `user-roles-available` are
+`"sensitive"` in its `configs.json` entry. `site-role-admin` and `user-roles-available` are
 restricted too: they gate the whole admin and decide which roles exist, so a plain `ROLE_ADMIN`
 must never be able to touch them.
 
@@ -400,7 +400,7 @@ To override it manually for a file-based page:
 
 The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
 
-Access is controlled by the `site-role-needed` key in ConfigBundle, same as pages.
+Access is controlled by the `site-role-editor` key in ConfigBundle, same as pages.
 
 ---
 

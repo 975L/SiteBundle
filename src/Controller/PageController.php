@@ -130,7 +130,7 @@ class PageController extends AbstractController
     )]
     public function preview($page)
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         $slug = rtrim($page, '/');
         $pageObject = $this->pageService->findForDisplay($slug);

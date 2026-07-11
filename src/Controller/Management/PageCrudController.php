@@ -213,7 +213,7 @@ class PageCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $role = $this->configService->get('site-role-needed');
+        $role = $this->configService->get('site-role-editor');
 
         // Toggles between "go to trash" and "back to pages", depending on where we currently are
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
@@ -339,7 +339,7 @@ class PageCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission($this->configService->get('site-role-needed'))
+            ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
         ;
@@ -367,7 +367,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute('/{entityId}/delete-permanently')]
     public function deletePermanently(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         $page = $context->getEntity()->getInstance();
 
@@ -389,7 +389,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute('/{entityId}/restore')]
     public function restore(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         $page = $context->getEntity()->getInstance();
 
@@ -504,7 +504,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute('/{entityId}/qrcode')]
     public function qrcode(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         $page = $context->getEntity()->getInstance();
 
@@ -520,7 +520,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         return $this->tableExporter->export(ExportFormat::Sql, 'site_page', $this->fetchExportRows());
     }
@@ -528,7 +528,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportCsv(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         return $this->tableExporter->export(ExportFormat::Csv, 'site_page', $this->fetchExportRows());
     }
@@ -536,7 +536,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         return $this->tableExporter->export(ExportFormat::Json, 'site_page', $this->fetchExportRows());
     }

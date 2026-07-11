@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.2.1
+
+- Modified role access (11/07/2026)
+- Added placeholder for SociaShare (11/07/2026)
+- Modified restriction on configs (11/07/2026)
+
 ## v7.2
 
 - Added a Command to interactively create the new site (05/07/2026)

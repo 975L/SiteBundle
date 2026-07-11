@@ -76,7 +76,7 @@ class SiteGraphicCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular(t('label.site_graphic', [], 'site'))
             ->setEntityLabelInPlural(t('label.site_graphics', [], 'site'))
-            ->setEntityPermission($this->configService->get('site-role-needed'))
+            ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/site_graphic_crud_index.html.twig')
         ;
     }
@@ -97,7 +97,7 @@ class SiteGraphicCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $role = $this->configService->get('site-role-needed');
+        $role = $this->configService->get('site-role-editor');
 
         return $actions
             ->setPermission(Action::INDEX, $role)

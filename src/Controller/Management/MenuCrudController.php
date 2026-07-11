@@ -89,13 +89,13 @@ class MenuCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular(t('label.menu', [], 'site'))
             ->setEntityLabelInPlural(t('label.menus', [], 'site'))
-            ->setEntityPermission($this->configService->get('site-role-needed'))
+            ->setEntityPermission($this->configService->get('site-role-editor'))
         ;
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $role = $this->configService->get('site-role-needed');
+        $role = $this->configService->get('site-role-editor');
 
         return $actions
             ->setPermission(Action::INDEX, $role)

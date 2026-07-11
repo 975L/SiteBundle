@@ -217,8 +217,9 @@
                     {% endblock %}
 {# Share #}
                     {% if display != 'pdf' %}
-                        {% block share %}
-                        {% endblock %}
+                        {% if config('social-enable-share-buttons') %}
+                            {{ share_buttons_default() }}
+                        {% endif %}
                     {% endif %}
 {# NavigationBottom #}
                     {% if display != 'pdf' %}

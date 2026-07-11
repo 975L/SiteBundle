@@ -31,7 +31,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'icon' => 'fas fa-file',
                 'route' => SiteShortcutController::CREATE_PAGE_ROUTE,
                 'active' => false,
-                'role' => 'ROLE_EDITOR',
+                'role' => $this->configService->get('site-role-editor'),
             ],
             [
                 'label' => $this->translator->trans(
@@ -42,7 +42,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'icon' => 'fas fa-wrench',
                 'route' => SiteShortcutController::REGISTRATION_ENABLED_TOGGLE_ROUTE,
                 'active' => $userRegistrationEnabled,
-                'role' => $this->configService->get('site-role-needed'),
+                'role' => $this->configService->get('site-role-admin'),
             ],
             [
                 'label' => $this->translator->trans('label.sitemaps_create', [], 'site'),

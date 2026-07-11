@@ -45,7 +45,7 @@ class SiteShortcutController extends AbstractController
     )]
     public function createPage(Request $request): RedirectResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_EDITOR');
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         if ($this->isCsrfTokenValid(self::CREATE_PAGE_ROUTE, $request->request->get('_token'))) {
             return $this->redirect(
@@ -67,7 +67,7 @@ class SiteShortcutController extends AbstractController
     )]
     public function registrationEnabledToggle(Request $request): RedirectResponse
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         $config = $this->configRepository->findOneBySlug('user-registration-enabled');
         if (null !== $config && $this->isCsrfTokenValid(self::REGISTRATION_ENABLED_TOGGLE_ROUTE, $request->request->get('_token'))) {
@@ -120,7 +120,7 @@ class SiteShortcutController extends AbstractController
     )]
     public function createSitemap(Request $request): RedirectResponse
     {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-needed'));
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         if ($this->isCsrfTokenValid(self::SITEMAP_CREATE_ROUTE, $request->request->get('_token'))) {
             $this->sitemapCreateCommand->createSitemap();
