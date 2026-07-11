@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.2.7
+
+- Corrected footer margin to avoid horizontal scroll (11/07/2026)
+- Added navbar display without menu (11/07/2026)
+
 ## v7.2.6.1
 
 - Corrected xlf files (11/07/2026)
