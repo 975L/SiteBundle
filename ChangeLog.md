@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.2.6.1
+
+- Corrected xlf files (11/07/2026)
+
 ## v7.2.6
 
 - Re-added block share in layout.html.twig a used by Twig templates to not display (11/07/2026)

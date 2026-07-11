@@ -154,7 +154,7 @@
                 <source>label.display_hosted_by</source>
                 <target>Display the "Hosted by" credit in the footer</target>
             </trans-unit>
-            <trans-unit id="39"></trans-unit>
+            <trans-unit id="39">
                 <source>label.site_enable_matomo</source>
                 <target>Enable Matomo for statistics tracking</target>
             </trans-unit>

@@ -154,7 +154,7 @@
                 <source>label.display_hosted_by</source>
                 <target>Mostrar el crédito "Hospedado por" en el pie de página</target>
             </trans-unit>
-            <trans-unit id="39"></trans-unit>
+            <trans-unit id="39">
                 <source>label.site_enable_matomo</source>
                 <target>Activar Matomo para el seguimiento de estadísticas</target>
             </trans-unit>

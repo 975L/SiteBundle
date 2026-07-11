@@ -154,7 +154,7 @@
                 <source>label.display_hosted_by</source>
                 <target>Afficher le crédit "Hébergé par" dans le pied de page</target>
             </trans-unit>
-            <trans-unit id="39"></trans-unit>
+            <trans-unit id="39">
                 <source>label.site_enable_matomo</source>
                 <target>Activer Matomo pour le suivi des statistiques</target>
             </trans-unit>
