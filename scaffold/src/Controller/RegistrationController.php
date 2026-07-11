@@ -36,9 +36,9 @@ class RegistrationController extends AbstractController
     )]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        // Access denied if registration is disabled in the configuration
+        // 403 regardless of authentication state if registration is disabled in the configuration
         if (false === $this->configService->get('user-registration-enabled')) {
-            throw $this->createAccessDeniedException();
+            throw new HttpException(Response::HTTP_FORBIDDEN);
         }
 
         $user = new User();

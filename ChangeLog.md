@@ -1,5 +1,9 @@
 # Changelog
 
+## 7.2.4
+
+- Modified exception when register is disabled (11/07/2026)
+
 ## v7.2.3
 
 - Added ArticlesSlider ratio possibility (11/07/2026)
