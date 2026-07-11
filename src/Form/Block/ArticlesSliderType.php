@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Form\Block;
 
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Form\Block\SliderType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -38,6 +39,13 @@ class ArticlesSliderType extends AbstractType
             ->add('duration', IntegerType::class, [
                 'label' => 'label.duration',
                 'data'  => 3500,
+            ])
+            ->add('ratio', ChoiceType::class, [
+                'label'              => 'label.ratio',
+                'help'               => 'label.ratio_help',
+                'choices'            => SliderType::RATIO_CHOICES,
+                'translation_domain' => 'ui',
+                'data'               => 'free',
             ])
         ;
     }

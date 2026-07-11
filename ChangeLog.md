@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.2.3
+
+- Added ArticlesSlider ratio possibility (11/07/2026)
+
 ## v7.2.2
 
 - Merged selector for MenuItem (11/07/2026)
