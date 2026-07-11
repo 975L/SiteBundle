@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.2.5
+
+- Updated What's new (11/07/2026)
+
 ## 7.2.4
 
 - Modified exception when register is disabled (11/07/2026)
