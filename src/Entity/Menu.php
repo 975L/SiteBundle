@@ -10,22 +10,26 @@
 
 namespace c975L\SiteBundle\Entity;
 
-use c975L\SiteBundle\Contract\HasMenuItemsInterface;
-use c975L\SiteBundle\Entity\Trait\HasMenuItemsTrait;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\UiBundle\Contract\HasBlocksInterface;
+use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuRepository::class)]
 #[ORM\Table(name: 'site_menu')]
-class Menu implements HasMenuItemsInterface
+class Menu implements HasBlocksInterface
 {
-    use HasMenuItemsTrait;
+    use HasBlocksTrait;
 
-    // Site-wide menus, one row per location - enforced at the DB level (see $location)
+    // Site-wide menus, one row per location - enforced at the DB level (see $location). Each owns a
+    // single ordered $blocks collection: menu links are the "menu_link" Block kind (see
+    // MenuLinkType/MenuExtension::getMenuLinkUrl()), sortable alongside any other block
     public const LOCATION_NAVBAR = 'navbar';
     public const LOCATION_FOOTER = 'footer';
+    public const LOCATION_EMAIL_FOOTER = 'email-footer';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,13 +39,14 @@ class Menu implements HasMenuItemsInterface
     #[ORM\Column(length: 20, unique: true)]
     private ?string $location = null;
 
-    #[ORM\OneToMany(mappedBy: 'menu', targetEntity: MenuItem::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinTable(name: 'site_menu_blocks')]
     #[ORM\OrderBy(['position' => 'ASC'])]
-    private Collection $items;
+    private Collection $blocks;
 
     public function __construct()
     {
-        $this->items = new ArrayCollection();
+        $this->blocks = new ArrayCollection();
     }
 
     public function __toString(): string

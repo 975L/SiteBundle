@@ -11,6 +11,8 @@
 - Migrate redirect files (`templates/pages/redirected/`) to DB pages with `redirectTo` set to the target slug
 - Migrate deleted files (`templates/pages/deleted/`) to DB pages with `isDeleted = true`
 - The "Delete" action in the admin now soft-deletes instead of removing the row
+- `Menu` now owns a `blocks` collection (like `Page`), used by the "footer" location (replacing the hardcoded `<twig:c975LSocial:SocialLinks/>` + `display-footer-social` config - add a `social_links_display` block in the footer's own menu edit screen instead) and by the new "email-footer" location (rendered in `templates/emails/footer.html.twig`, independent from the site footer's blocks). Run `php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate` to add the `site_menu_blocks` table. The `display-footer-social` config value is removed - not synced automatically, delete it yourself if you keep a local copy of `configs.json`
+- `MenuItem` and the `site_menu_item` table are removed - navbar/footer/email-footer no longer have a separate `items` collection, only `blocks` (see above). Menu links are now a "menu_link" Block kind, sortable alongside any other block using the same drag & drop as a `Page`'s blocks. Run `php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate` to drop `site_menu_item` - **existing menu links are not migrated automatically, recreate them as "Menu link" blocks in each Menu's edit screen after upgrading**
 
 ## v3.x > v4.x
 

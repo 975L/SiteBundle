@@ -1,6 +1,6 @@
 [
     {
-        "label": "Site Name",
+        "label": "label.site_name",
         "slug": "site-name",
         "sensitive": false,
         "restricted": false,
@@ -8,10 +8,10 @@
         "kind": "text",
         "group": "general",
         "severity": "warning",
-        "description": "label.site_name"
+        "description": "description.site_name"
     },
     {
-        "label": "Site Tagline",
+        "label": "label.site_tagline",
         "slug": "site-tagline",
         "sensitive": false,
         "restricted": false,
@@ -19,10 +19,10 @@
         "kind": "text",
         "group": "general",
         "severity": null,
-        "description": "label.site_tagline"
+        "description": "description.site_tagline"
     },
     {
-        "label": "Show Site Name In Navbar",
+        "label": "label.site_navbar_show_name",
         "slug": "site-navbar-show-name",
         "sensitive": false,
         "restricted": false,
@@ -30,10 +30,10 @@
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "label.site_navbar_show_name"
+        "description": "description.site_navbar_show_name"
     },
     {
-        "label": "Fixed Navbar",
+        "label": "label.site_navbar_fixed",
         "slug": "site-navbar-fixed",
         "sensitive": false,
         "restricted": false,
@@ -41,10 +41,10 @@
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "label.site_navbar_fixed"
+        "description": "description.site_navbar_fixed"
     },
     {
-        "label": "Site Author",
+        "label": "label.site_author",
         "slug": "site-author",
         "sensitive": false,
         "restricted": false,
@@ -52,10 +52,10 @@
         "kind": "text",
         "group": "general",
         "severity": "info",
-        "description": "label.site_author"
+        "description": "description.site_author"
     },
     {
-        "label": "Site first online date",
+        "label": "label.site_first_online_date",
         "slug": "site-first-online-date",
         "sensitive": true,
         "restricted": false,
@@ -63,10 +63,10 @@
         "kind": "text",
         "group": "general",
         "severity": "info",
-        "description": "label.site_first_online_date"
+        "description": "description.site_first_online_date"
     },
     {
-        "label": "Site URL",
+        "label": "label.site_url",
         "slug": "site-url",
         "sensitive": true,
         "restricted": false,
@@ -74,10 +74,10 @@
         "kind": "text",
         "group": "general",
         "severity": "danger",
-        "description": "label.site_url"
+        "description": "description.site_url"
     },
     {
-        "label": "URL Terms of use",
+        "label": "label.url_terms_of_use",
         "slug": "url-terms-of-use",
         "sensitive": false,
         "restricted": false,
@@ -85,10 +85,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.url_terms_of_use"
+        "description": "description.url_terms_of_use"
     },
     {
-        "label": "Hosted By URL",
+        "label": "label.site_hosted_by_url",
         "slug": "site-hosted-by-url",
         "sensitive": false,
         "restricted": true,
@@ -96,10 +96,10 @@
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "label.site_hosted_by_url"
+        "description": "description.site_hosted_by_url"
     },
     {
-        "label": "Hosted By Logo",
+        "label": "label.site_hosted_by_logo",
         "slug": "site-hosted-by-logo",
         "sensitive": false,
         "restricted": true,
@@ -107,10 +107,10 @@
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "label.site_hosted_by_logo"
+        "description": "description.site_hosted_by_logo"
     },
     {
-        "label": "Made By URL",
+        "label": "label.site_made_by_url",
         "slug": "site-made-by-url",
         "sensitive": false,
         "restricted": true,
@@ -118,10 +118,10 @@
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "label.site_made_by_url"
+        "description": "description.site_made_by_url"
     },
     {
-        "label": "Made By Logo",
+        "label": "label.site_made_by_logo",
         "slug": "site-made-by-logo",
         "sensitive": false,
         "restricted": true,
@@ -129,10 +129,10 @@
         "kind": "text",
         "group": "credits",
         "severity": "info",
-        "description": "label.site_made_by_logo"
+        "description": "description.site_made_by_logo"
     },
     {
-        "label": "URL Cookies Policy",
+        "label": "label.url_cookies_policy",
         "slug": "url-cookies-policy",
         "sensitive": false,
         "restricted": false,
@@ -140,10 +140,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.url_cookies_policy"
+        "description": "description.url_cookies_policy"
     },
     {
-        "label": "Matomo URL",
+        "label": "label.site_matomo_url",
         "slug": "site-matomo-url",
         "sensitive": false,
         "restricted": true,
@@ -151,10 +151,10 @@
         "kind": "text",
         "group": "analytics",
         "severity": "warning",
-        "description": "label.site_matomo_url"
+        "description": "description.site_matomo_url"
     },
     {
-        "label": "Matomo Site ID",
+        "label": "label.site_matomo_id",
         "slug": "site-matomo-id",
         "sensitive": false,
         "restricted": true,
@@ -162,10 +162,10 @@
         "kind": "text",
         "group": "analytics",
         "severity": "warning",
-        "description": "label.site_matomo_id"
+        "description": "description.site_matomo_id"
     },
     {
-        "label": "Preconnect URLs",
+        "label": "label.site_preconnect",
         "slug": "site-preconnect",
         "sensitive": false,
         "restricted": true,
@@ -173,10 +173,10 @@
         "kind": "json",
         "group": "general",
         "severity": null,
-        "description": "label.site_preconnect"
+        "description": "description.site_preconnect"
     },
     {
-        "label": "Backup DB Host",
+        "label": "label.site_backup_db_host",
         "slug": "site-backup-db-host",
         "sensitive": true,
         "restricted": true,
@@ -184,10 +184,10 @@
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "label.site_backup_db_host"
+        "description": "description.site_backup_db_host"
     },
     {
-        "label": "Backup DB User",
+        "label": "label.site_backup_db_user",
         "slug": "site-backup-db-user",
         "sensitive": true,
         "restricted": true,
@@ -195,10 +195,10 @@
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "label.site_backup_db_user"
+        "description": "description.site_backup_db_user"
     },
     {
-        "label": "Backup DB Password",
+        "label": "label.site_backup_db_password",
         "slug": "site-backup-db-password",
         "sensitive": true,
         "restricted": true,
@@ -206,10 +206,10 @@
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "label.site_backup_db_password"
+        "description": "description.site_backup_db_password"
     },
     {
-        "label": "Backup Database",
+        "label": "label.site_backup_database",
         "slug": "site-backup-database",
         "sensitive": true,
         "restricted": true,
@@ -217,10 +217,10 @@
         "kind": "text",
         "group": "backup",
         "severity": "danger",
-        "description": "label.site_backup_database"
+        "description": "description.site_backup_database"
     },
     {
-        "label": "Backup Mailto",
+        "label": "label.site_backup_mailto",
         "slug": "site-backup-mailto",
         "sensitive": true,
         "restricted": true,
@@ -228,10 +228,10 @@
         "kind": "text",
         "group": "backup",
         "severity": "warning",
-        "description": "label.site_backup_mailto"
+        "description": "description.site_backup_mailto"
     },
     {
-        "label": "Contact Email",
+        "label": "label.site_contact_email",
         "slug": "site-contact-email",
         "sensitive": false,
         "restricted": false,
@@ -239,10 +239,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.site_contact_email"
+        "description": "description.site_contact_email"
     },
     {
-        "label": "Contact Phone",
+        "label": "label.site_contact_phone",
         "slug": "site-contact-phone",
         "sensitive": false,
         "restricted": false,
@@ -250,10 +250,10 @@
         "kind": "text",
         "group": "legal",
         "severity": null,
-        "description": "label.site_contact_phone"
+        "description": "description.site_contact_phone"
     },
     {
-        "label": "Director of Publication",
+        "label": "label.site_director",
         "slug": "site-director",
         "sensitive": false,
         "restricted": false,
@@ -261,10 +261,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.site_director"
+        "description": "description.site_director"
     },
     {
-        "label": "Director Location",
+        "label": "label.site_director_location",
         "slug": "site-director-location",
         "sensitive": false,
         "restricted": false,
@@ -272,10 +272,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.site_director_location"
+        "description": "description.site_director_location"
     },
     {
-        "label": "Site Owner",
+        "label": "label.site_owner",
         "slug": "site-owner",
         "sensitive": false,
         "restricted": false,
@@ -283,10 +283,10 @@
         "kind": "html",
         "group": "legal",
         "severity": "warning",
-        "description": "label.site_owner"
+        "description": "description.site_owner"
     },
     {
-        "label": "Site Producer",
+        "label": "label.site_producer",
         "slug": "site-producer",
         "sensitive": false,
         "restricted": true,
@@ -294,10 +294,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "info",
-        "description": "label.site_producer"
+        "description": "description.site_producer"
     },
     {
-        "label": "Site Hosting provider",
+        "label": "label.site_hosting_provider",
         "slug": "site-hosting-provider",
         "sensitive": false,
         "restricted": true,
@@ -305,10 +305,10 @@
         "kind": "html",
         "group": "legal",
         "severity": "info",
-        "description": "label.site_hosting_provider"
+        "description": "description.site_hosting_provider"
     },
     {
-        "label": "Site Other Copyright",
+        "label": "label.site_other_copyright",
         "slug": "site-other-copyright",
         "sensitive": false,
         "restricted": false,
@@ -316,10 +316,10 @@
         "kind": "html",
         "group": "legal",
         "severity": null,
-        "description": "label.site_other_copyright"
+        "description": "description.site_other_copyright"
     },
     {
-        "label": "Site Other Cookies",
+        "label": "label.site_other_cookies",
         "slug": "site-other-cookies",
         "sensitive": false,
         "restricted": false,
@@ -327,10 +327,10 @@
         "kind": "html",
         "group": "legal",
         "severity": null,
-        "description": "label.site_other_cookies"
+        "description": "description.site_other_cookies"
     },
     {
-        "label": "Data Protection Officer (DPO)",
+        "label": "label.site_dpo",
         "slug": "site-dpo",
         "sensitive": false,
         "restricted": false,
@@ -338,10 +338,10 @@
         "kind": "text",
         "group": "legal",
         "severity": "warning",
-        "description": "label.site_dpo"
+        "description": "description.site_dpo"
     },
     {
-        "label": "User Registration Enabled",
+        "label": "label.user_registration_enabled",
         "slug": "user-registration-enabled",
         "sensitive": false,
         "restricted": false,
@@ -349,10 +349,10 @@
         "kind": "bool",
         "group": "security",
         "severity": null,
-        "description": "label.user_registration_enabled"
+        "description": "description.user_registration_enabled"
     },
     {
-        "label": "User Roles Available",
+        "label": "label.user_roles_available",
         "slug": "user-roles-available",
         "sensitive": false,
         "restricted": true,
@@ -360,10 +360,10 @@
         "kind": "json",
         "group": "security",
         "severity": null,
-        "description": "label.user_roles_available"
+        "description": "description.user_roles_available"
     },
     {
-        "label": "Email (from)",
+        "label": "label.email_from",
         "slug": "email-from",
         "sensitive": false,
         "restricted": false,
@@ -371,10 +371,10 @@
         "kind": "text",
         "group": "email",
         "severity": "danger",
-        "description": "label.email_from"
+        "description": "description.email_from"
     },
     {
-        "label": "Email (from) Name",
+        "label": "label.email_from_name",
         "slug": "email-from-name",
         "sensitive": false,
         "restricted": false,
@@ -382,21 +382,10 @@
         "kind": "text",
         "group": "email",
         "severity": null,
-        "description": "label.email_from_name"
+        "description": "description.email_from_name"
     },
     {
-        "label": "Display Footer Social",
-        "slug": "display-footer-social",
-        "sensitive": false,
-        "restricted": false,
-        "value": "true",
-        "kind": "bool",
-        "group": "general",
-        "severity": null,
-        "description": "label.display_footer_social"
-    },
-    {
-        "label": "Display Made By",
+        "label": "label.display_made_by",
         "slug": "display-made-by",
         "sensitive": false,
         "restricted": false,
@@ -404,10 +393,10 @@
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "label.display_made_by"
+        "description": "description.display_made_by"
     },
     {
-        "label": "Display Hosted By",
+        "label": "label.display_hosted_by",
         "slug": "display-hosted-by",
         "sensitive": false,
         "restricted": false,
@@ -415,10 +404,10 @@
         "kind": "bool",
         "group": "general",
         "severity": null,
-        "description": "label.display_hosted_by"
+        "description": "description.display_hosted_by"
     },
     {
-        "label": "Enable Matomo Analytics",
+        "label": "label.site_enable_matomo",
         "slug": "site-enable-matomo",
         "sensitive": false,
         "restricted": true,
@@ -426,10 +415,10 @@
         "kind": "bool",
         "group": "analytics",
         "severity": null,
-        "description": "label.site_enable_matomo"
+        "description": "description.site_enable_matomo"
     },
     {
-        "label": "Enable Cookie Consent",
+        "label": "label.site_enable_cookie_consent",
         "slug": "site-enable-cookie-consent",
         "sensitive": false,
         "restricted": true,
@@ -437,6 +426,6 @@
         "kind": "bool",
         "group": "analytics",
         "severity": null,
-        "description": "label.site_enable_cookie_consent"
+        "description": "description.site_enable_cookie_consent"
     }
 ]

@@ -1,18 +1,13 @@
 {# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
 <footer>
-    <ul class="menu-items">
-        {% for item in menu_items('footer') %}
-            <twig:c975LSite:General:MenuItem item="{{ item }}" />
-        {% endfor %}
+    <div class="menu-items">
+        <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('footer') }}" />
         {% if copyright is defined and copyright is not empty %}
-            <li class="menu-item">
+            <div class="menu-item">
                 <span class="menu-label">{{ copyright }}</span>
-            </li>
+            </div>
         {% endif %}
-    </ul>
-    {% if config('display-footer-social') %}
-        <twig:c975LSocial:SocialLinks />
-    {% endif %}
+    </div>
     {% if config('display-made-by') or config('display-hosted-by') %}
         <div class="made-by">
             {% if config('display-made-by') %}

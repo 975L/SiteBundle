@@ -576,10 +576,6 @@
                 <source>label.footer</source>
                 <target>Footer</target>
             </trans-unit>
-            <trans-unit id="144">
-                <source>label.menu_items</source>
-                <target>Menu items</target>
-            </trans-unit>
             <trans-unit id="145">
                 <source>label.create_page</source>
                 <target>Create page</target>
@@ -590,7 +586,7 @@
             </trans-unit>
             <trans-unit id="147">
                 <source>label.media_used_in_page_block</source>
-                <target>Used in a block on "%page%"</target>
+                <target>Block "%block%" on page "%page%"</target>
             </trans-unit>
             <trans-unit id="148">
                 <source>label.route</source>
@@ -603,10 +599,6 @@
             <trans-unit id="150">
                 <source>label.choose_route</source>
                 <target>Choose a route</target>
-            </trans-unit>
-            <trans-unit id="151">
-                <source>constraint.menu_item_target</source>
-                <target>Choose either a page or a route, not both, not neither.</target>
             </trans-unit>
             <trans-unit id="152">
                 <source>label.export_tables</source>
@@ -775,6 +767,34 @@
             <trans-unit id="193">
                 <source>label.choose_target</source>
                 <target>Choose a page or a route</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>action.duplicate</source>
+                <target>Duplicate</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>confirm.duplicate</source>
+                <target>An unpublished copy of this page and all its content (blocks, medias) will be created. Continue?</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>flash.page_duplicated</source>
+                <target>The page has been duplicated.</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.copy_suffix</source>
+                <target>copy</target>
+            </trans-unit>
+            <trans-unit id="198">
+                <source>label.email_footer</source>
+                <target>Email footer</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>block.menu_link</source>
+                <target>Menu link</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>block.menu_link_description</source>
+                <target>A link to a page or a route, sortable alongside any other block (navbar, footer, email footer)</target>
             </trans-unit>
         </body>
     </file>

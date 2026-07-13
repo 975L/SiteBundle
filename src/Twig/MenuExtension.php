@@ -11,8 +11,11 @@
 namespace c975L\SiteBundle\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
-use c975L\SiteBundle\Entity\MenuItem;
-use c975L\SiteBundle\Repository\MenuItemRepository;
+use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Entity\Block;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
@@ -21,7 +24,8 @@ use Twig\TwigFunction;
 class MenuExtension extends AbstractExtension
 {
     public function __construct(
-        private readonly MenuItemRepository $menuItemRepository,
+        private readonly MenuRepository $menuRepository,
+        private readonly PageRepository $pageRepository,
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly UrlGeneratorInterface $router,
         private readonly TranslatorInterface $translator,
@@ -31,46 +35,54 @@ class MenuExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('menu_items', [$this, 'getMenuItems']),
-            new TwigFunction('menu_item_url', [$this, 'getMenuItemUrl']),
-            new TwigFunction('menu_item_label', [$this, 'getMenuItemLabel']),
+            new TwigFunction('menu_blocks', [$this, 'getMenuBlocks']),
+            new TwigFunction('menu_link_url', [$this, 'getMenuLinkUrl']),
+            new TwigFunction('menu_link_label', [$this, 'getMenuLinkLabel']),
         ];
     }
 
-    // Items for a given location, checked live: a page item disappears once its page is
-    // unpublished/deleted, a route item disappears once its route is no longer registered
-    // (e.g. the contributing bundle got removed) - see LinkableRouteProviderInterface
-    // @return MenuItem[]
-    public function getMenuItems(string $location): array
+    // @return Collection<int, Block>
+    public function getMenuBlocks(string $location): Collection
     {
-        $items = $this->menuItemRepository->findByLocation($location);
-
-        return array_values(array_filter($items, function (MenuItem $item): bool {
-            if (null !== $item->getPage()) {
-                return $item->getPage()->isPublished() && !$item->getPage()->isDeleted();
-            }
-
-            return null !== $item->getRoute() && $this->linkableRouteRegistry->has($item->getRoute());
-        }));
+        return $this->menuRepository->findOneByLocation($location)?->getBlocks() ?? new ArrayCollection();
     }
 
-    public function getMenuItemUrl(MenuItem $item): string
+    // Resolves a "menu_link" block's raw target ("page:ID" or "route:NAME", see MenuLinkType) into an
+    // actual URL - empty string if it no longer resolves (page unpublished/deleted, route no longer
+    // registered by a LinkableRouteProviderInterface), so the template can skip rendering it
+    public function getMenuLinkUrl(string $target): string
     {
-        if (null !== $item->getPage()) {
-            return $this->router->generate('page_display', ['page' => $item->getPage()->getSlug()]);
+        [$type, $value] = array_pad(explode(':', $target, 2), 2, null);
+
+        if ('page' === $type) {
+            $page = $this->pageRepository->find($value);
+
+            return null === $page || !$page->isPublished() || $page->isDeleted()
+                ? ''
+                : $this->router->generate('page_display', ['page' => $page->getSlug()]);
         }
 
-        return $this->router->generate($item->getRoute());
+        return 'route' === $type && null !== $value && $this->linkableRouteRegistry->has($value)
+            ? $this->router->generate($value)
+            : '';
     }
 
-    public function getMenuItemLabel(MenuItem $item): string
+    public function getMenuLinkLabel(string $target): string
     {
-        if (null !== $item->getPage()) {
-            return (string) $item->getPage()->getTitle();
+        [$type, $value] = array_pad(explode(':', $target, 2), 2, null);
+
+        if ('page' === $type) {
+            $page = $this->pageRepository->find($value);
+
+            return null === $page ? '' : (string) $page->getTitle();
         }
 
-        $route = $this->linkableRouteRegistry->get($item->getRoute());
+        if ('route' === $type && null !== $value) {
+            $route = $this->linkableRouteRegistry->get($value);
 
-        return null === $route ? '' : $this->translator->trans($route['label'], [], $route['translation_domain']);
+            return null === $route ? '' : $this->translator->trans($route['label'], [], $route['translation_domain']);
+        }
+
+        return '';
     }
 }

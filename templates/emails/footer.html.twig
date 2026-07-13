@@ -1,1 +1,4 @@
-{# You should override this template in `templates/bundles/c975LSiteBundle/emails/footer.html.twig` #}
+{# Blocks are managed independently from the site footer's, via the "email-footer" Menu location #}
+{% for block in menu_blocks('email-footer') %}
+    {{ render_block(block) }}
+{% endfor %}

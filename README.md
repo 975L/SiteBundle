@@ -15,7 +15,7 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - **Page redirects** and 410 Gone handling
 - **Admin CRUD** for database pages via EasyAdmin
 - **Admin CRUD** for users via EasyAdmin, with role management
-- **Admin CRUD** for the site's navbar/footer menus via EasyAdmin
+- **Admin CRUD** for the site's navbar/footer menus and the email footer via EasyAdmin
 - **Admin CRUD** for the site's graphics (favicon, Apple touch icon, logo, default Open Graph image) via EasyAdmin
 - **Sitemap generation** from both filesystem templates and database pages, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
@@ -213,6 +213,8 @@ Use the `Page` entity to manage pages through the database. Each page supports:
 
 Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` template, which displays the page title, summarySocialNetwork, and its associated blocks.
 
+`PageController::home()`/`display()` don't set an HTTP `Cache-Control: max-age` on the response (dropped in favor of UiBundle's per-block server-side cache, see its README's "Block render cache" section: infinite TTL, invalidated on save, shared by every visitor - rather than a per-browser cache with no way to invalidate it early after an edit).
+
 ### Blocks defined by this bundle
 
 On top of the generic block system provided by [c975L/UiBundle](https://github.com/975L/UiBundle), SiteBundle registers the following blocks (see `config/services.yaml`):
@@ -222,7 +224,6 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
 | `twig_content` | `label.category_migration` | Renders raw Twig content stored in the block's data via `template_from_string()`. Intended as a migration/escape hatch for content that doesn't fit another block type. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
-| `social_links` | `label.category_navigation` | A user-defined, ordered list of links (label, url, icon) — see [Social links](#social-links) below. |
 
 Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias.
 
@@ -234,21 +235,27 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 ## Menus
 
-The site-wide navbar and footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar` or `footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`) owning an ordered collection of `MenuItem` rows, each targeting either:
+The site-wide navbar, footer and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`).
+
+`navbar` and `footer` own an ordered collection of `MenuItem` rows, each targeting either:
 
 - an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
 
+`footer` and `email-footer` also own an ordered collection of `blocks` (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — this is how you compose free-form footer content (e.g. SocialBundle's `social_links_display`), including social icons which are no longer a hardcoded, config-toggled component. `email-footer` doesn't own `MenuItem`s: page/route links resolve to relative URLs, not usable as-is inside an email.
+
 Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle.
 
-Both are rendered by built-in components already wired into the bundle's layout (`navigation`/`footer` blocks) — nothing to add in your app:
+`navbar` and `footer` are rendered by built-in components already wired into the bundle's layout (`navigation`/`footer` blocks) — nothing to add in your app:
 
 ```twig
 <twig:c975LSite:General:Navbar/>
 <twig:c975LSite:General:Footer copyright="{{ copyright }}"/>
 ```
 
-An item disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
+`email-footer` is rendered the same way inside `@c975LSite/emails/footer.html.twig` (see [Email templates](#email-templates)), independently from the site's `footer` — the two locations are edited separately, so the client can keep a simpler footer for emails than for the site (or vice versa).
+
+An item or block disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
 
 ### Navbar: logo, site name, tagline
 
@@ -266,15 +273,7 @@ Deliberately **not** a `ui.block` — a Menu item is site-wide chrome (like the 
 
 ### Social links
 
-The footer's social icons are fully user-defined — no hardcoded list of networks, no dedicated entity/table. `social_links` is a regular `ui.block` kind (see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)): its data is an ordered list of links (`label`, `url`, `icon`), stored like any other block in `c975L\UiBundle\Entity\Block`'s JSON `data` column. Each icon is picked via UiBundle's `IconPickerType` — the same searchable picker used for block buttons, listing every SVG found under `public/icons/` and `public/bundles/*/icons/`. Drop the brand SVGs you need there (e.g. from the [Simple Icons](https://simpleicons.org/) set) and they become selectable immediately, no code change required.
-
-Because a `Block` can normally only be created by attaching it to a Page (there's no page-independent block library in UiBundle), `SocialLinksCrudController` gives it its own small dashboard entry, scoped to `kind = social_links` — so it can be created/edited without needing a host page. Once created, it's picked up automatically by the built-in `Footer` component, already wired in — nothing to add in your app:
-
-```twig
-<twig:c975LSite:General:SocialLinks/>
-```
-
-Under the hood, this looks up the first `social_links` block via `BlockRepository::findOneByKind()` and reuses UiBundle's `render_block()`. `social_links` also stays a normal selectable kind from any page's own block picker — but that always creates a *separate* block instance with its own links (Symfony's `CollectionType` only ever adds brand-new entries, there's no "attach this existing block" option), not the same footer one. Renders nothing if no `social_links` block exists yet.
+Social icons in the footer (site or email) are no longer a dedicated component/config toggle — they're a regular block, dropped into the footer's own `blocks` collection like any other. See [c975L/SocialBundle](https://github.com/975L/SocialBundle)'s README for the `social_links`/`social_links_display` block kinds it registers.
 
 ---
 
@@ -567,9 +566,9 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | --- | --- |
 | `layout.html.twig` | Base email layout |
 | `fullLayout.html.twig` | Full email layout |
-| `footer.html.twig` | Email footer |
+| `footer.html.twig` | Email footer — renders the `email-footer` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site footer |
 
-CSS is inlined automatically via `twig/cssinliner-extra`. Minified stylesheets (`emails.min.css`, `styles.min.css`) are embedded.
+CSS is inlined automatically via `twig/cssinliner-extra`. The minified stylesheet (`emails.min.css`, compiled from `sass/emails.scss`, including its `:root` variables) is embedded.
 
 ---
 

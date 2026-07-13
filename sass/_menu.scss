@@ -121,6 +121,11 @@ body.navbar-fixed {
     }
 }
 
+.menu-items .blocks {
+    display: flex;
+    flex-direction: column;
+}
+
 .menu-item {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 
@@ -178,6 +183,11 @@ body.navbar-fixed {
         flex: 1;
         justify-content: flex-end;
         padding-right: 2rem;
+    }
+
+    .menu-items .blocks {
+        display: flex;
+        flex-direction: row;
     }
 
     .menu-item {

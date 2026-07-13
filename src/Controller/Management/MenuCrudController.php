@@ -12,15 +12,15 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Menu;
-use c975L\SiteBundle\Entity\MenuItem;
-use c975L\SiteBundle\Form\MenuItemType;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -32,14 +32,15 @@ use Symfony\Component\Form\FormEvents;
 
 use function Symfony\Component\Translation\t;
 
-// Manages the site-wide menus (navbar, footer), each owning an ordered collection of MenuItem rows
-// linked to either an existing published Page or a bundle-contributed route - see Menu::LOCATION_*
-// and LinkableRouteProviderInterface
+// Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection
+// of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType),
+// sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
     private const LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
+        Menu::LOCATION_EMAIL_FOOTER => 'label.email_footer',
     ];
 
     public function __construct(
@@ -53,9 +54,9 @@ class MenuCrudController extends AbstractCrudController
         return Menu::class;
     }
 
-    // Removing the very last item also leaves nothing submitted at all for "items" (an HTML form can't
-    // represent an empty array, only an absent key), which has to be normalized to [] below or Symfony
-    // skips add/remove handling entirely for the whole field (see PageCrudController for the same trick)
+    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form
+    // can't represent an empty array, only an absent key), which has to be normalized to [] below or
+    // Symfony skips add/remove handling entirely for the field (see PageCrudController for the same trick)
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -69,16 +70,16 @@ class MenuCrudController extends AbstractCrudController
             $menu = $event->getForm()->getData();
             if ($menu instanceof Menu) {
                 CollectionReconciler::pruneRemoved(
-                    $menu->getItems(),
-                    $data['items'] ?? [],
-                    static fn (MenuItem $item) => $menu->removeItem($item)
+                    $menu->getBlocks(),
+                    $data['blocks'] ?? [],
+                    static fn (Block $block) => $menu->removeBlock($block)
                 );
+                if (!isset($data['blocks'])) {
+                    $data['blocks'] = [];
+                }
             }
 
-            if (!isset($data['items'])) {
-                $data['items'] = [];
-                $event->setData($data);
-            }
+            $event->setData($data);
         });
 
         return $formBuilder;
@@ -132,9 +133,9 @@ class MenuCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', !$isNew)
                 ->setRequired(true),
 
-            CollectionField::new('items')
-                ->setLabel(t('label.menu_items', [], 'site'))
-                ->setEntryType(MenuItemType::class)
+            CollectionField::new('blocks')
+                ->setLabel(t('label.blocks', [], 'ui'))
+                ->setEntryType(BlockType::class)
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)

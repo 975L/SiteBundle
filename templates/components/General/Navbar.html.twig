@@ -5,7 +5,7 @@
 {% set showSiteName = config('site-navbar-show-name') %}
 {% set fixedNavbar = config('site-navbar-fixed') %}
 
-{% if menu_items('navbar') is not empty %}
+{% if menu_blocks('navbar') is not empty %}
     <nav class="hidden-print menu{{ fixedNavbar ? ' menu-fixed' : '' }}" data-controller="menu">
         <div class="menu-header">
             <div class="menu-brand">
@@ -34,18 +34,18 @@
             </button>
         </div>
 
-        <ul class="menu-items" data-menu-target="items">
-            {% for item in menu_items('navbar') %}
-                <twig:c975LSite:General:MenuItem item="{{ item }}" />
-            {% endfor %}
-        </ul>
+        <div class="menu-items" data-menu-target="items">
+            <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
+        </div>
     </nav>
 {% else %}
     <nav class="hidden-print">
-        <p class="text-center">
-            <a href="/" aria-label="image">
-                <img src="https://975l.com/assets/images/og-image-_JAIyMl.svg" class="img  " alt="Web Agency 975L.com" width="300" height="188" loading="lazy">
-            </a>
-        </p>
+        {% if logo is not null %}
+            <p class="text-center">
+                <a href="{{ path('page_home') }}" aria-label="{{ siteName|default('Logo') }}">
+                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" class="img" height="70" loading="lazy">
+                </a>
+            </p>
+        {% endif %}
     </nav>
 {% endif %}

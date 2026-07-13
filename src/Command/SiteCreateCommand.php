@@ -16,11 +16,11 @@ use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\VaultEncryptor;
 use c975L\SiteBundle\Entity\Menu;
-use c975L\SiteBundle\Entity\MenuItem;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Service\ScaffoldInstaller;
+use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -266,7 +266,7 @@ class SiteCreateCommand extends Command
         // Symfony returns the id unchanged when no translation is found for it
         $question = sprintf(
             '%s <fg=gray>(%s) [%s]</>',
-            $this->translator->trans($config->getDescription() ?? $config->getLabel(), [], 'site_config'),
+            $this->translator->trans($config->getDescription() ?? $config->getLabelTranslationKey(), [], 'site_config'),
             $config->getSlug(),
             $kind
         );
@@ -314,41 +314,46 @@ class SiteCreateCommand extends Command
 
     // Offers every bundle-contributed route (e.g. ContactFormBundle's "contact" page, only present if
     // that bundle is installed - see LinkableRouteRegistry) plus the legal pages just imported, in the
-    // fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright).
-    // Re-running the command never creates duplicate items, since existing page/route items are skipped.
+    // fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright),
+    // each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate
+    // entries, since existing targets are skipped.
     private function buildFooterMenu(SymfonyStyle $io): void
     {
         $menu = $this->menuRepository->findOneByLocation(Menu::LOCATION_FOOTER) ?? (new Menu())->setLocation(Menu::LOCATION_FOOTER);
-        $existingPageIds = array_map(static fn (MenuItem $item) => $item->getPage()?->getId(), $menu->getItems()->toArray());
-        $existingRoutes = array_map(static fn (MenuItem $item) => $item->getRoute(), $menu->getItems()->toArray());
-        $position = $menu->getItems()->count();
+        $existingTargets = array_map(
+            static fn (Block $block): ?string => $block->getData()['target'] ?? null,
+            $menu->getBlocks()->toArray()
+        );
+        $position = $menu->getBlocks()->count();
 
         foreach ($this->linkableRouteRegistry->all() as $routeName => $meta) {
-            if (\in_array($routeName, $existingRoutes, true)) {
+            $target = 'route:' . $routeName;
+            if (\in_array($target, $existingTargets, true)) {
                 continue;
             }
 
             $label = $this->translator->trans($meta['label'], [], $meta['translation_domain']);
             if ($io->confirm(sprintf('Ajouter "%s" au menu du footer ?', $label), true)) {
-                $menu->addItem((new MenuItem())->setRoute($routeName)->setPosition($position++));
+                $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
             }
         }
 
         foreach ($this->defaultPagesImporter->getLegalPageSlugsByModel() as $slug) {
             $page = $this->pageRepository->findOneBy(['slug' => $slug]);
-            if (null === $page || \in_array($page->getId(), $existingPageIds, true)) {
+            $target = null === $page ? null : 'page:' . $page->getId();
+            if (null === $page || \in_array($target, $existingTargets, true)) {
                 continue;
             }
 
             if ($io->confirm(sprintf('Ajouter la page "%s" au menu du footer ?', $page->getTitle()), true)) {
-                $menu->addItem((new MenuItem())->setPage($page)->setPosition($position++));
+                $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
             }
         }
 
         $this->em->persist($menu);
         $this->em->flush();
 
-        $io->text(sprintf('  ✓ %d élément(s) dans le menu du footer', $menu->getItems()->count()));
+        $io->text(sprintf('  ✓ %d élément(s) dans le menu du footer', $menu->getBlocks()->count()));
     }
 
     // Writes the marker checked at the top of execute(): committed to the repo so the guard

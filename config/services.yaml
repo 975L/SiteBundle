@@ -6,7 +6,7 @@ services:
 
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity}'
+        exclude: '../src/{DependencyInjection,Entity,Tests}'
 
     # Enables template_from_string(), used by the twig_content block (see below) to render Twig content stored in DB
     Twig\Extension\StringLoaderExtension:
@@ -32,6 +32,8 @@ services:
               form: c975L\SiteBundle\Form\Block\LegalModelType
               template: '@c975LSite/blocks/LegalModel.html.twig'
               category: 'label.category_legal'
+              pickable: true
+              cacheable: true
 
     site.block.twig_content:
         class: stdClass
@@ -44,6 +46,8 @@ services:
               form: c975L\SiteBundle\Form\Block\TwigContentType
               template: '@c975LSite/blocks/TwigContent.html.twig'
               category: 'label.category_migration'
+              pickable: true
+              cacheable: true
 
     site.block.articles_slider:
         class: stdClass
@@ -56,4 +60,24 @@ services:
               form: c975L\SiteBundle\Form\Block\ArticlesSliderType
               template: '@c975LSite/blocks/ArticlesSlider.html.twig'
               category: 'label.category_navigation'
+              pickable: true
+              cacheable: true
+
+    # Replaces MenuItem: navbar/footer/email-footer menu links are now this block kind, sortable
+    # alongside any other block in Menu's single "blocks" collection. Not cacheable: the "active" state
+    # depends on the current request path, which isn't part of render_block()'s cache key (block id +
+    # locale only) - caching it would freeze the "active" link from whichever page rendered it first
+    site.block.menu_link:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: menu_link
+              label: "block.menu_link"
+              description: "block.menu_link_description"
+              translation_domain: 'site'
+              form: c975L\SiteBundle\Form\Block\MenuLinkType
+              template: '@c975LSite/blocks/MenuLink.html.twig'
+              category: 'label.category_navigation'
+              pickable: true
+              cacheable: false
 

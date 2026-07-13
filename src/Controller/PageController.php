@@ -62,7 +62,7 @@ class PageController extends AbstractController
             return $this->render(
                 '@c975LSite/pages/page.html.twig',
                 ['page' => $homePage]
-            )->setMaxAge(3600);
+            );
         }
 
         throw $this->createNotFoundException();
@@ -112,7 +112,7 @@ class PageController extends AbstractController
             return $this->render(
                 '@c975LSite/pages/page.html.twig',
                 ['page' => $pageObject]
-            )->setMaxAge(3600);
+            );
         }
 
         throw $this->createNotFoundException();

@@ -3,164 +3,316 @@
     <file source-language="en" target-language="fr" datatype="plaintext" original="site_config.fr.xlf">
         <body>
             <trans-unit id="1">
-                <source>label.site_name</source>
+                <source>description.site_name</source>
                 <target>Nom du site web : ex. Example.com</target>
             </trans-unit>
             <trans-unit id="2">
-                <source>label.site_tagline</source>
+                <source>description.site_tagline</source>
                 <target>Slogan du site web</target>
             </trans-unit>
             <trans-unit id="3">
-                <source>label.site_navbar_show_name</source>
+                <source>description.site_navbar_show_name</source>
                 <target>Afficher le nom du site (et le slogan) à côté du logo dans la barre de navigation</target>
             </trans-unit>
             <trans-unit id="4">
-                <source>label.site_navbar_fixed</source>
+                <source>description.site_navbar_fixed</source>
                 <target>Garder la barre de navigation fixe en haut de l'écran lors du défilement</target>
             </trans-unit>
             <trans-unit id="5">
-                <source>label.site_author</source>
+                <source>description.site_author</source>
                 <target>L'auteur qui sera renseigné dans les métadonnées</target>
             </trans-unit>
             <trans-unit id="6">
-                <source>label.site_first_online_date</source>
+                <source>description.site_first_online_date</source>
                 <target>Date de mise en ligne du site (AAAA-MM-JJ)</target>
             </trans-unit>
             <trans-unit id="7">
-                <source>label.site_url</source>
+                <source>description.site_url</source>
                 <target>URL du site web, ex. https://example.com</target>
             </trans-unit>
             <trans-unit id="8">
-                <source>label.url_terms_of_use</source>
+                <source>description.url_terms_of_use</source>
                 <target>URL de la page des conditions générales d'utilisation, ex. https://example.com/pages/terms-of-use</target>
             </trans-unit>
             <trans-unit id="9">
-                <source>label.site_hosted_by_url</source>
+                <source>description.site_hosted_by_url</source>
                 <target>URL de l'hébergeur, ex. https://example.com</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>label.site_hosted_by_logo</source>
+                <source>description.site_hosted_by_logo</source>
                 <target>Chemin ou URL du logo de l'hébergeur</target>
             </trans-unit>
             <trans-unit id="11">
-                <source>label.site_made_by_url</source>
+                <source>description.site_made_by_url</source>
                 <target>URL du développeur/de l'agence, ex. https://example.com</target>
             </trans-unit>
             <trans-unit id="12">
-                <source>label.site_made_by_logo</source>
+                <source>description.site_made_by_logo</source>
                 <target>Chemin ou URL du logo du développeur/de l'agence</target>
             </trans-unit>
             <trans-unit id="13">
-                <source>label.url_cookies_policy</source>
+                <source>description.url_cookies_policy</source>
                 <target>URL de la page de politique des cookies, ex. https://example.com/pages/cookies</target>
             </trans-unit>
             <trans-unit id="14">
-                <source>label.site_matomo_url</source>
+                <source>description.site_matomo_url</source>
                 <target>URL de l'instance Matomo, ex. https://matomo.example.com</target>
             </trans-unit>
             <trans-unit id="15">
-                <source>label.site_matomo_id</source>
+                <source>description.site_matomo_id</source>
                 <target>Identifiant du site Matomo (entier)</target>
             </trans-unit>
             <trans-unit id="16">
-                <source>label.site_preconnect</source>
+                <source>description.site_preconnect</source>
                 <target>Origines externes à préconnecter (tableau JSON), ex. ["https://example.com"]. Utile quand les logos des crédits ou Matomo sont hébergés sur un domaine tiers</target>
             </trans-unit>
             <trans-unit id="17">
-                <source>label.site_backup_db_host</source>
+                <source>description.site_backup_db_host</source>
                 <target>Hôte MySQL pour les sauvegardes</target>
             </trans-unit>
             <trans-unit id="18">
-                <source>label.site_backup_db_user</source>
+                <source>description.site_backup_db_user</source>
                 <target>Utilisateur MySQL pour les sauvegardes</target>
             </trans-unit>
             <trans-unit id="19">
-                <source>label.site_backup_db_password</source>
+                <source>description.site_backup_db_password</source>
                 <target>Mot de passe MySQL pour les sauvegardes</target>
             </trans-unit>
             <trans-unit id="20">
-                <source>label.site_backup_database</source>
+                <source>description.site_backup_database</source>
                 <target>Nom de la base de données MySQL à sauvegarder</target>
             </trans-unit>
             <trans-unit id="21">
-                <source>label.site_backup_mailto</source>
+                <source>description.site_backup_mailto</source>
                 <target>Adresse email pour les rapports de sauvegarde et les notifications d'erreur</target>
             </trans-unit>
             <trans-unit id="22">
-                <source>label.site_contact_email</source>
+                <source>description.site_contact_email</source>
                 <target>Adresse email de contact publique affichée sur les pages légales</target>
             </trans-unit>
             <trans-unit id="23">
-                <source>label.site_contact_phone</source>
+                <source>description.site_contact_phone</source>
                 <target>Numéro de téléphone de contact public affiché sur les pages légales</target>
             </trans-unit>
             <trans-unit id="24">
-                <source>label.site_director</source>
+                <source>description.site_director</source>
                 <target>Nom complet du directeur de la publication (requis pour les mentions légales)</target>
             </trans-unit>
             <trans-unit id="25">
-                <source>label.site_director_location</source>
+                <source>description.site_director_location</source>
                 <target>Ville ou département de résidence du directeur de la publication</target>
             </trans-unit>
             <trans-unit id="26">
-                <source>label.site_owner</source>
+                <source>description.site_owner</source>
                 <target>Propriétaire du site web, affiché dans les mentions légales (HTML autorisé)</target>
             </trans-unit>
             <trans-unit id="27">
-                <source>label.site_producer</source>
+                <source>description.site_producer</source>
                 <target>Producteur / développeur du site web affiché dans les mentions légales (HTML autorisé)</target>
             </trans-unit>
             <trans-unit id="28">
-                <source>label.site_hosting_provider</source>
+                <source>description.site_hosting_provider</source>
                 <target>Hébergeur du site web affiché dans les mentions légales (HTML autorisé)</target>
             </trans-unit>
             <trans-unit id="29">
-                <source>label.site_other_copyright</source>
+                <source>description.site_other_copyright</source>
                 <target>Autres informations de copyright affichées dans les mentions légales (HTML autorisé, non traduit - même valeur affichée quelle que soit la langue de la page)</target>
             </trans-unit>
             <trans-unit id="30">
-                <source>label.site_other_cookies</source>
+                <source>description.site_other_cookies</source>
                 <target>Autres informations sur les cookies affichées dans les mentions légales (HTML autorisé, non traduit - même valeur affichée quelle que soit la langue de la page)</target>
             </trans-unit>
             <trans-unit id="31">
-                <source>label.site_dpo</source>
+                <source>description.site_dpo</source>
                 <target>Nom complet du délégué à la protection des données, requis pour la politique de confidentialité</target>
             </trans-unit>
             <trans-unit id="32">
-                <source>label.user_registration_enabled</source>
+                <source>description.user_registration_enabled</source>
                 <target>Active (true) ou désactive (false) la route d'inscription des utilisateurs</target>
             </trans-unit>
             <trans-unit id="33">
-                <source>label.user_roles_available</source>
+                <source>description.user_roles_available</source>
                 <target>Rôles supplémentaires sélectionnables pour les utilisateurs dans le back-office (en plus du ROLE_USER par défaut), sous forme de tableau JSON, ex. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
             </trans-unit>
             <trans-unit id="34">
-                <source>label.email_from</source>
+                <source>description.email_from</source>
                 <target>Adresse email utilisée pour l'envoi des emails, ex. contact@example.com</target>
             </trans-unit>
             <trans-unit id="35">
-                <source>label.email_from_name</source>
+                <source>description.email_from_name</source>
                 <target>Nom utilisé pour l'envoi des notifications depuis le site.</target>
             </trans-unit>
-            <trans-unit id="36">
-                <source>label.display_footer_social</source>
-                <target>Afficher les icônes de réseaux sociaux dans le pied de page</target>
-            </trans-unit>
             <trans-unit id="37">
-                <source>label.display_made_by</source>
+                <source>description.display_made_by</source>
                 <target>Afficher le crédit "Réalisé par" dans le pied de page</target>
             </trans-unit>
             <trans-unit id="38">
-                <source>label.display_hosted_by</source>
+                <source>description.display_hosted_by</source>
                 <target>Afficher le crédit "Hébergé par" dans le pied de page</target>
             </trans-unit>
             <trans-unit id="39">
-                <source>label.site_enable_matomo</source>
+                <source>description.site_enable_matomo</source>
                 <target>Activer Matomo pour le suivi des statistiques</target>
             </trans-unit>
             <trans-unit id="40">
-                <source>label.site_enable_cookie_consent</source>
+                <source>description.site_enable_cookie_consent</source>
                 <target>Activer l'utilisation de cookie consent</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>label.site_name</source>
+                <target>Nom du site</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>label.site_tagline</source>
+                <target>Slogan du site</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>label.site_navbar_show_name</source>
+                <target>Afficher le nom du site dans la barre de navigation</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>label.site_navbar_fixed</source>
+                <target>Barre de navigation fixe</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>label.site_author</source>
+                <target>Auteur du site</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>label.site_first_online_date</source>
+                <target>Date de mise en ligne du site</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>label.site_url</source>
+                <target>URL du site</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>label.url_terms_of_use</source>
+                <target>URL des conditions d'utilisation</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>label.site_hosted_by_url</source>
+                <target>URL de l'hébergeur</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>label.site_hosted_by_logo</source>
+                <target>Logo de l'hébergeur</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>label.site_made_by_url</source>
+                <target>URL du réalisateur</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>label.site_made_by_logo</source>
+                <target>Logo du réalisateur</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>label.url_cookies_policy</source>
+                <target>URL de la politique de cookies</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>label.site_matomo_url</source>
+                <target>URL de Matomo</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>label.site_matomo_id</source>
+                <target>ID du site Matomo</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>label.site_preconnect</source>
+                <target>URLs de préconnexion</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>label.site_backup_db_host</source>
+                <target>Hôte de la base de données de sauvegarde</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>label.site_backup_db_user</source>
+                <target>Utilisateur de la base de données de sauvegarde</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>label.site_backup_db_password</source>
+                <target>Mot de passe de la base de données de sauvegarde</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>label.site_backup_database</source>
+                <target>Base de données de sauvegarde</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>label.site_backup_mailto</source>
+                <target>Email de sauvegarde</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>label.site_contact_email</source>
+                <target>Email de contact</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>label.site_contact_phone</source>
+                <target>Téléphone de contact</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>label.site_director</source>
+                <target>Directeur de la publication</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>label.site_director_location</source>
+                <target>Lieu de résidence du directeur</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>label.site_owner</source>
+                <target>Propriétaire du site</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>label.site_producer</source>
+                <target>Producteur du site</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>label.site_hosting_provider</source>
+                <target>Hébergeur du site</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>label.site_other_copyright</source>
+                <target>Autres droits d'auteur du site</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>label.site_other_cookies</source>
+                <target>Autres informations sur les cookies</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>label.site_dpo</source>
+                <target>Délégué à la protection des données (DPO)</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>label.user_registration_enabled</source>
+                <target>Inscription des utilisateurs activée</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>label.user_roles_available</source>
+                <target>Rôles utilisateur disponibles</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>label.email_from</source>
+                <target>Email (expéditeur)</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>label.email_from_name</source>
+                <target>Nom de l'email (expéditeur)</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>label.display_made_by</source>
+                <target>Afficher le crédit « Réalisé par »</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.display_hosted_by</source>
+                <target>Afficher le crédit « Hébergé par »</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.site_enable_matomo</source>
+                <target>Activer les statistiques Matomo</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>label.site_enable_cookie_consent</source>
+                <target>Activer le consentement aux cookies</target>
             </trans-unit>
         </body>
     </file>

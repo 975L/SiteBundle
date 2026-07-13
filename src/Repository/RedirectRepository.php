@@ -24,4 +24,12 @@ class RedirectRepository extends ServiceEntityRepository
     {
         return $this->findOneBy(['fromPath' => $fromPath]);
     }
+
+    /**
+     * @return Redirect[]
+     */
+    public function findByToUrl(string $toUrl): array
+    {
+        return $this->findBy(['toUrl' => $toUrl]);
+    }
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## v7.3
+
+- Added duplication of page (12/07/2026)
+- Suppressed Redirection to when a page is definitely suppressed (12/07/2026)
+- Added `email-footer` Menu location so the email footer can be defined by the client from the backoffice, independently from the site footer (12/07/2026)
+- Corrected `emails.scss` to compile `:root` variables directly instead of duplicating them by hand in `templates/emails/_variables.scss` (12/07/2026)
+- Added tests (12/07/2026)
+- Corrected scaffold/MaintenanceSchedule.php (12/07/2026)
+- Replaced `MenuItem` by a "menu_link" Block kind - `Menu` (navbar/footer/email-footer) now owns a single sortable `blocks` collection instead of separate `items`/`blocks`, so menu links and other blocks can be freely reordered together (12/07/2026) [BC-Break] [DB-Migration]
+- Corrected logo in navbar (13/07/2026)
+
 ## v7.2.7
 
 - Corrected footer margin to avoid horizontal scroll (11/07/2026)

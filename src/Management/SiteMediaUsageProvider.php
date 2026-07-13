@@ -14,6 +14,7 @@ use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\MediaUsageProviderInterface;
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -71,8 +72,11 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
                 foreach ($page->getBlocks() as $block) {
                     foreach ($blockIdToMediaIds[$block->getId()] ?? [] as $mediaId) {
                         $usages[$mediaId][] = [
-                            'label' => $this->translator->trans('label.media_used_in_page_block', ['%page%' => $page->getTitle()], 'site'),
-                            'url' => $this->pageEditUrl($page),
+                            'label' => $this->translator->trans('label.media_used_in_page_block', [
+                                '%block%' => (string) $block,
+                                '%page%' => $page->getTitle(),
+                            ], 'site'),
+                            'url' => $this->pageEditUrl($page, $block),
                         ];
                     }
                 }
@@ -96,14 +100,20 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
         return $usages;
     }
 
-    private function pageEditUrl(Page $page): string
+    // $block: when given, the URL also opens/scrolls straight to that block's row on the Page edit
+    // form (see BlockFocusController) instead of leaving the user to find it among every other block
+    private function pageEditUrl(Page $page, ?Block $block = null): string
     {
-        return $this->adminUrlGenerator
+        $urlGenerator = $this->adminUrlGenerator
             ->unsetAll()
             ->setController(PageCrudController::class)
             ->setAction(Action::EDIT)
-            ->setEntityId($page->getId())
-            ->generateUrl()
-        ;
+            ->setEntityId($page->getId());
+
+        if (null !== $block) {
+            $urlGenerator->set('focusBlock', $block->getId());
+        }
+
+        return $urlGenerator->generateUrl();
     }
 }

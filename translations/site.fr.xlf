@@ -576,10 +576,6 @@
                 <source>label.footer</source>
                 <target>Pied de page</target>
             </trans-unit>
-            <trans-unit id="144">
-                <source>label.menu_items</source>
-                <target>Éléments du menu</target>
-            </trans-unit>
             <trans-unit id="145">
                 <source>label.create_page</source>
                 <target>Créer une page</target>
@@ -590,7 +586,7 @@
             </trans-unit>
             <trans-unit id="147">
                 <source>label.media_used_in_page_block</source>
-                <target>Utilisé dans un bloc de « %page% »</target>
+                <target>Bloc « %block% » de la page « %page% »</target>
             </trans-unit>
             <trans-unit id="148">
                 <source>label.route</source>
@@ -603,10 +599,6 @@
             <trans-unit id="150">
                 <source>label.choose_route</source>
                 <target>Choisir une route</target>
-            </trans-unit>
-            <trans-unit id="151">
-                <source>constraint.menu_item_target</source>
-                <target>Choisissez soit une page, soit une route, mais pas les deux ni aucune des deux.</target>
             </trans-unit>
             <trans-unit id="152">
                 <source>label.export_tables</source>
@@ -775,6 +767,34 @@
             <trans-unit id="193">
                 <source>label.choose_target</source>
                 <target>Choisir une page ou une route</target>
+            </trans-unit>
+            <trans-unit id="194">
+                <source>action.duplicate</source>
+                <target>Dupliquer</target>
+            </trans-unit>
+            <trans-unit id="195">
+                <source>confirm.duplicate</source>
+                <target>Une copie non publiée de cette page et de tout son contenu (blocs, médias) va être créée. Continuer ?</target>
+            </trans-unit>
+            <trans-unit id="196">
+                <source>flash.page_duplicated</source>
+                <target>La page a été dupliquée.</target>
+            </trans-unit>
+            <trans-unit id="197">
+                <source>label.copy_suffix</source>
+                <target>copie</target>
+            </trans-unit>
+            <trans-unit id="198">
+                <source>label.email_footer</source>
+                <target>Pied de page email</target>
+            </trans-unit>
+            <trans-unit id="199">
+                <source>block.menu_link</source>
+                <target>Lien de menu</target>
+            </trans-unit>
+            <trans-unit id="200">
+                <source>block.menu_link_description</source>
+                <target>Un lien vers une page ou une route, triable avec n'importe quel autre block (navbar, footer, footer email)</target>
             </trans-unit>
         </body>
     </file>

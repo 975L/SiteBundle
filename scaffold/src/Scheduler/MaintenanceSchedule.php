@@ -18,7 +18,7 @@ class MaintenanceSchedule implements ScheduleProviderInterface
 
     public function getSchedule(): Schedule
     {
-        return new SymfonySchedule()
+        return (new Schedule())
             ->stateful($this->cache)
             ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('app:sitemaps:create')))
             ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))

@@ -12,9 +12,11 @@ namespace c975L\SiteBundle\Form\Block;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Form\Block\SliderType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ArticlesSliderType extends AbstractType
@@ -38,16 +40,32 @@ class ArticlesSliderType extends AbstractType
             ])
             ->add('duration', IntegerType::class, [
                 'label' => 'label.duration',
-                'data'  => 3500,
             ])
             ->add('ratio', ChoiceType::class, [
                 'label'              => 'label.ratio',
                 'help'               => 'label.ratio_help',
                 'choices'            => SliderType::RATIO_CHOICES,
                 'translation_domain' => 'ui',
-                'data'               => 'free',
             ])
         ;
+
+        // Defaults only applied to a genuinely new/empty block - using the "data" option instead
+        // would lock the field (Symfony's setDataLocked()), silently discarding the stored value
+        // on edit and resetting it to the default on every save
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (PreSetDataEvent $event): void {
+                $data = $event->getData();
+                if (!is_array($data)) {
+                    $data = [];
+                }
+
+                $data['duration'] ??= 3500;
+                $data['ratio'] ??= 'free';
+
+                $event->setData($data);
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

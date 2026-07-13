@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-07-12",
+        "description": [
+            {
+                "en": "You can now duplicate a whole page, including its content and settings, from the page edit screen",
+                "fr": "Vous pouvez désormais dupliquer une page entière, y compris son contenu et ses paramètres, depuis l'écran d'édition de la page",
+                "es": "Ahora puede duplicar una página completa, incluido su contenido y configuración, desde la pantalla de edición de la página"
+            },
+            {
+                "en": "The site footer can now hold any content block (social links, text, etc.), placed wherever you like from the footer menu's edit screen",
+                "fr": "Le pied de page du site peut désormais contenir n'importe quel bloc de contenu (réseaux sociaux, texte, etc.), placé où vous le souhaitez depuis l'écran d'édition du menu du pied de page",
+                "es": "El pie de página del sitio ahora puede contener cualquier bloque de contenido (redes sociales, texto, etc.), colocado donde usted quiera desde la pantalla de edición del menú del pie de página"
+            },
+            {
+                "en": "You can now define a dedicated footer for your emails, separate from the site footer, edited from the new \"Email footer\" menu",
+                "fr": "Vous pouvez désormais définir un pied de page dédié pour vos emails, indépendant de celui du site, à éditer depuis le nouveau menu « Pied de page email »",
+                "es": "Ahora puede definir un pie de página específico para sus correos, independiente del pie de página del sitio, editable desde el nuevo menú «Pie de página del email»"
+            }
+        ]
+    },
+    {
         "date": "2026-07-11",
         "description": [
             {

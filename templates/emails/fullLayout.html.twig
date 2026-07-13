@@ -40,10 +40,10 @@
             {# Stylesheets #}
             {% block stylesheets %}
                 <style>
-                    {% include('@c975LSite/emails/_variables.scss') %}
+                    {# Defaults (incl. :root variables) come first so app-level overrides below can win the cascade #}
+                    {% include('@c975LSite/emails/emails.min.css') %}
                     {% include('@c975LSite/emails/_user-typography.css') %}
                     {% include('@c975LSite/emails/_user-variables.css') %}
-                    {% include('@c975LSite/emails/emails.min.css') %}
                 </style>
             {% endblock %}
         {% endblock %}

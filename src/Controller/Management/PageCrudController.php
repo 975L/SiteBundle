@@ -16,8 +16,10 @@ use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use Doctrine\DBAL\Connection;
@@ -56,6 +58,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 use function Symfony\Component\Translation\t;
 
@@ -67,6 +70,7 @@ class PageCrudController extends AbstractCrudController
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly TranslatorInterface $translator,
         private readonly RedirectRepository $redirectRepository,
+        private readonly PageRepository $pageRepository,
         private readonly AdminContextProvider $adminContextProvider,
         private readonly RequestStack $requestStack,
         private readonly SluggerInterface $slugger,
@@ -235,15 +239,13 @@ class PageCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         // Permanently removes the page, only shown once already in the trash
+        // askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to
+        // trash") instead of a native confirm() - keeps the UI consistent
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
             ->linkToCrudAction('deletePermanently')
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
-            ->setHtmlAttributes([
-                'onclick' => sprintf(
-                    "return confirm('%s')",
-                    $this->translator->trans('confirm.delete_permanently', [], 'site')
-                ),
-            ])
+            ->askConfirmation(t('confirm.delete_permanently', [], 'site'))
+            ->asDangerAction()
             ->addCssClass('btn btn-danger');
 
         // Restores a page out of the trash, only shown once already in the trash
@@ -266,6 +268,14 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
+        // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved
+        // immediately (see duplicate()), not deferred to a form submit like block duplication is
+        $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'site'), 'fa fa-copy')
+            ->linkToCrudAction('duplicate')
+            ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+            ->askConfirmation(t('confirm.duplicate', [], 'site'))
+            ->addCssClass('btn btn-secondary');
+
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
             ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
@@ -278,14 +288,17 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
+            ->add(Crud::PAGE_INDEX, $duplicateAction)
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_DETAIL, $restoreAction)
             ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
             ->add(Crud::PAGE_DETAIL, $viewOnSiteAction)
+            ->add(Crud::PAGE_DETAIL, $duplicateAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite'])
-            ->reorder(Crud::PAGE_EDIT, ['viewOnSite'])
-            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite'])
+            ->add(Crud::PAGE_EDIT, $duplicateAction)
+            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'duplicate'])
+            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'duplicate'])
+            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'duplicate'])
             ->update(Crud::PAGE_INDEX, Action::DELETE, static function (Action $action): Action {
                 return $action
                     ->setLabel(t('action.move_to_trash', [], 'site'))
@@ -313,6 +326,7 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('restore', $role)
             ->setPermission('deletePermanently', $role)
             ->setPermission('viewOnSite', $role)
+            ->setPermission('duplicate', $role)
             ->setPermission('qrcode', $role)
             ->setPermission('exportSql', $role)
             ->setPermission('exportCsv', $role)
@@ -371,6 +385,11 @@ class PageCrudController extends AbstractCrudController
 
         $page = $context->getEntity()->getInstance();
 
+        // Redirects pointing to this page's slug would otherwise dangle once it's gone
+        foreach ($this->redirectRepository->findByToUrl('/pages/' . $page->getSlug()) as $redirect) {
+            $entityManager->remove($redirect);
+        }
+
         $entityManager->remove($page);
         $entityManager->flush();
 
@@ -406,6 +425,119 @@ class PageCrudController extends AbstractCrudController
                 ->set('trash', 1)
                 ->generateUrl()
         );
+    }
+
+    // Duplicates the page with all its content (blocks, medias, og-image) into a new page, unpublished
+    // and saved immediately - redirects straight to editing the copy
+    #[AdminRoute('/{entityId}/duplicate')]
+    public function duplicate(AdminContext $context, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        $source = $context->getEntity()->getInstance();
+        $user = $this->security->getUser();
+        $now = new \DateTime();
+        $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
+
+        $copy = (new Page())
+            ->setTitle($source->getTitle() . ' (' . $suffix . ')')
+            ->setSlug($this->uniqueSlug($source->getSlug() . '-' . $suffix))
+            ->setSummarySocialNetwork($source->getSummarySocialNetwork())
+            ->setPriority($source->getPriority())
+            ->setChangeFrequency($source->getChangeFrequency())
+            ->setIsPublished(false)
+            ->setCreation($now)
+            ->setModification($now);
+        if (null !== $user) {
+            $copy->setUser($user);
+        }
+
+        if (null !== $source->getOgImage()) {
+            $copy->setOgImage($this->cloneMedia($source->getOgImage(), $user));
+        }
+
+        foreach ($source->getBlocks() as $block) {
+            $copy->addBlock($this->cloneBlock($block, $user));
+        }
+
+        $entityManager->persist($copy);
+        $entityManager->flush();
+
+        $this->addFlash('success', $this->translator->trans('flash.page_duplicated', [], 'site'));
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($copy->getId())
+                ->generateUrl()
+        );
+    }
+
+    // Clones a block (kind, data, animation, position) and its medias - used when duplicating a page
+    private function cloneBlock(Block $source, mixed $user): Block
+    {
+        $copy = (new Block())
+            ->setKind($source->getKind())
+            ->setPosition($source->getPosition())
+            ->setData($source->getData())
+            ->setAnimation($source->getAnimation());
+        if (null !== $user) {
+            $copy->setUser($user);
+        }
+
+        foreach ($source->getMedias() as $media) {
+            $copy->addMedia($this->cloneMedia($media, $user));
+        }
+
+        return $copy;
+    }
+
+    // Clones a media row, including its physical file - reusing the existing file as the new Media's
+    // upload runs it back through Vich's normal pipeline (see UiMediaNamer/VichImageResizeListener),
+    // so the copy ends up with its own independent file rather than sharing the source's.
+    // Needs Vich's own ReplacingFile, not a plain File: UploadHandler::hasUploadedFile() only triggers
+    // the upload for an UploadedFile or a ReplacingFile, silently ignoring a plain File (leaving
+    // filename/size/mimeType null) - ReplacingFile exists precisely for "upload this already-on-disk
+    // file programmatically". removeReplacedFile defaults to false, so the source file is left untouched.
+    private function cloneMedia(Media $source, mixed $user): Media
+    {
+        $copy = (new Media())
+            ->setRole($source->getRole())
+            ->setAlt($source->getAlt())
+            ->setLabel($source->getLabel())
+            ->setWidth($source->getWidth())
+            ->setHeight($source->getHeight())
+            ->setCssClasses($source->getCssClasses())
+            ->setAbove($source->isAbove())
+            ->setCredits($source->getCredits())
+            ->setRightsReserved($source->isRightsReserved())
+            ->setPosition($source->getPosition());
+        if (null !== $user) {
+            $copy->setUser($user);
+        }
+
+        $filename = $source->getFilename();
+        if (null !== $filename) {
+            $path = $this->getParameter('kernel.project_dir') . '/public/' . $filename;
+            if (is_file($path)) {
+                $copy->setFile(new ReplacingFile($path));
+            }
+        }
+
+        return $copy;
+    }
+
+    // Builds a unique slug from a base string (slugified), appending -2, -3... on collision
+    private function uniqueSlug(string $base): string
+    {
+        $slug = strtolower($this->slugger->slug($base)->toString());
+        $candidate = $slug;
+        for ($i = 2; null !== $this->pageRepository->findOneBy(['slug' => $candidate]); $i++) {
+            $candidate = $slug . '-' . $i;
+        }
+
+        return $candidate;
     }
 
     // New page

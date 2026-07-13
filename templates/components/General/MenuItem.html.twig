@@ -1,9 +1,0 @@
-{# <twig:c975LSite:General:MenuItem item="{{ item }}"> #}
-{% set url = menu_item_url(item) %}
-{% set currentPath = app.request.pathinfo %}
-{% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
-<li class="menu-item {{ isActive ? 'active' : '' }}">
-    <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
-        <span class="menu-label">{{ menu_item_label(item) }}</span>
-    </a>
-</li>

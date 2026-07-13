@@ -1,0 +1,13 @@
+{# Adapter for the dynamic Block system — resolves "target" (page:ID / route:NAME, see MenuLinkType)
+   into an actual link. Renders nothing if it no longer resolves (page unpublished/deleted, route no
+   longer registered) - mirrors the silent filtering the former MenuExtension::getMenuItems() did. #}
+{% set url = menu_link_url(target) %}
+{% if url is not empty %}
+    {% set currentPath = app.request.pathinfo %}
+    {% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
+    <div class="menu-item {{ isActive ? 'active' : '' }}">
+        <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
+            <span class="menu-label">{{ menu_link_label(target) }}</span>
+        </a>
+    </div>
+{% endif %}
