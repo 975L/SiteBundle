@@ -25,7 +25,7 @@ class ScaffoldInstaller
 
     // Copies scaffold/{src,templates} from every installed c975L bundle into the project,
     // backing up any file it would overwrite into existingFiles/<same relative path>.old
-    // instead of silently erasing it (replaces the blind `cp -r` previously done by SymfonyNewProject.sh)
+    // instead of silently erasing it
     public function install(): array
     {
         $copied = 0;

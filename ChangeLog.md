@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.3.1
+
+- Moved tests to the right place (13/07/2026)
+- Added dependency to symfonycasts/reset-password-bundle (13/07/2026)
+
 ## v7.3
 
 - Added duplication of page (12/07/2026)
@@ -8,7 +13,7 @@
 - Corrected `emails.scss` to compile `:root` variables directly instead of duplicating them by hand in `templates/emails/_variables.scss` (12/07/2026)
 - Added tests (12/07/2026)
 - Corrected scaffold/MaintenanceSchedule.php (12/07/2026)
-- Replaced `MenuItem` by a "menu_link" Block kind - `Menu` (navbar/footer/email-footer) now owns a single sortable `blocks` collection instead of separate `items`/`blocks`, so menu links and other blocks can be freely reordered together (12/07/2026) [BC-Break] [DB-Migration]
+- `Menu` (navbar/footer/email-footer) now owns a single sortable `blocks` collection, so menu links (a "menu_link" Block kind) and other blocks can be freely reordered together (12/07/2026) [BC-Break] [DB-Migration]
 - Corrected logo in navbar (13/07/2026)
 
 ## v7.2.7

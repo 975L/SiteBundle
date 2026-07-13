@@ -224,8 +224,9 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
 | `twig_content` | `label.category_migration` | Renders raw Twig content stored in the block's data via `template_from_string()`. Intended as a migration/escape hatch for content that doesn't fit another block type. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
+| `menu_link` | `label.category_navigation` | A link to an existing published `Page` or to a route contributed by another bundle - the block kind used to build `navbar`/`footer`/`email-footer` entries, see [Menus](#menus). Not cacheable (`cacheable: false`), since a page can be unpublished/deleted or a route unregistered at any time and the link must reflect that immediately. |
 
-Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias.
+Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias. Like any `ui.block`, `menu_link` is `pickable: true` and has no context restriction, so it also shows up in a `Page`'s own block picker - harmless (it just renders a link) but not the intended use.
 
 ### Admin management
 
@@ -237,12 +238,12 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 The site-wide navbar, footer and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`).
 
-`navbar` and `footer` own an ordered collection of `MenuItem` rows, each targeting either:
+Each `Menu` owns a single ordered `blocks` collection (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — menu links are just another block kind, the `menu_link` kind (`MenuLinkType`), sortable alongside any other block (e.g. `footer`'s `social_links_display`) using the same drag & drop as a `Page`'s blocks. There is no separate `items`/`MenuItem` collection anymore.
+
+A `menu_link` block targets either:
 
 - an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
-
-`footer` and `email-footer` also own an ordered collection of `blocks` (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — this is how you compose free-form footer content (e.g. SocialBundle's `social_links_display`), including social icons which are no longer a hardcoded, config-toggled component. `email-footer` doesn't own `MenuItem`s: page/route links resolve to relative URLs, not usable as-is inside an email.
 
 Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle.
 
@@ -253,9 +254,9 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 <twig:c975LSite:General:Footer copyright="{{ copyright }}"/>
 ```
 
-`email-footer` is rendered the same way inside `@c975LSite/emails/footer.html.twig` (see [Email templates](#email-templates)), independently from the site's `footer` — the two locations are edited separately, so the client can keep a simpler footer for emails than for the site (or vice versa).
+`email-footer` is rendered the same way inside `@c975LSite/emails/footer.html.twig` (see [Email templates](#email-templates)), independently from the site's `footer` — the two locations are edited separately, so the client can keep a simpler footer for emails than for the site (or vice versa). Nothing currently stops a `menu_link` block from being added to `email-footer`, but avoid it: `MenuExtension::getMenuLinkUrl()` resolves page/route targets to relative paths, not usable as-is inside an email.
 
-An item or block disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
+A `menu_link` block disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
 
 ### Navbar: logo, site name, tagline
 
@@ -267,9 +268,7 @@ The navbar can be kept fixed at the top of the viewport while scrolling via the 
 
 ### Linking to a bundle's own route
 
-A `MenuItem` isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
-
-Deliberately **not** a `ui.block` — a Menu item is site-wide chrome (like the navbar/footer themselves), not page content, so it isn't selectable from the page content-block picker.
+A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
 
 ### Social links
 
