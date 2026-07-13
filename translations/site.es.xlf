@@ -106,28 +106,6 @@
                 <source>label.accept_tou</source>
                 <target><![CDATA[Acepto los <a href="%touUrl%" target="_blank">Términos de uso (TDU)</a>]]></target>
             </trans-unit>
-            <trans-unit id="27">
-                <source>text.email_sent_by</source>
-                <target><![CDATA[Este correo electrónico fue enviado por <strong>%site%</strong>.]]></target>
-            </trans-unit>
-            <trans-unit id="28">
-                <source>label.hello</source>
-                <target>Hola</target>
-            </trans-unit>
-            <trans-unit id="29">
-                <source>text.thanks_confidence</source>
-                <target><![CDATA[¡Gracias por su confianza!
-                        Quedamos a su disposición para cualquier petición.]]></target>
-            </trans-unit>
-            <trans-unit id="30">
-                <source>text.no_spam</source>
-                <target>Le recomendamos que guarde nuestra dirección de correo electrónico en su libreta de direcciones para que nuestros mensajes de correo electrónico no están clasificados spam.</target>
-            </trans-unit>
-            <trans-unit id="31">
-                <source>text.regards_team</source>
-                <target><![CDATA[Saludos,
-                        El equipo de <strong>%site%</strong>]]></target>
-            </trans-unit>
             <trans-unit id="32">
                 <source>label.all_rights_reserved</source>
                 <target>© Reservados todos los derechos</target>
@@ -788,6 +766,10 @@
                 <source>label.email_footer</source>
                 <target>Pie de página del email</target>
             </trans-unit>
+            <trans-unit id="202">
+                <source>label.email_header</source>
+                <target>Encabezado del email</target>
+            </trans-unit>
             <trans-unit id="199">
                 <source>block.menu_link</source>
                 <target>Enlace de menú</target>
@@ -795,6 +777,86 @@
             <trans-unit id="200">
                 <source>block.menu_link_description</source>
                 <target>Un enlace a una página o una ruta, ordenable junto con cualquier otro bloque (navbar, pie de página, pie de página del email)</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.info_menu</source>
+                <target>Lista de todos los menús disponibles en el sitio</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>label.messenger_alert_super_admin</source>
+                <target>%count% fallo(s) importante(s) de Messenger</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>description.messenger_alert_super_admin</source>
+                <target>Algunos mensajes no se pudieron enviar por razones distintas a una dirección en lista negra. Haga clic para ver el detalle.</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>label.messenger_alert_admin</source>
+                <target>Se ha notificado automáticamente un problema técnico</target>
+            </trans-unit>
+            <trans-unit id="206">
+                <source>description.messenger_alert_admin</source>
+                <target>Se ha notificado automáticamente un problema técnico al equipo técnico. No se requiere ninguna acción por su parte.</target>
+            </trans-unit>
+            <trans-unit id="207">
+                <source>label.messenger_failed</source>
+                <target>Mensajes fallidos</target>
+            </trans-unit>
+            <trans-unit id="208">
+                <source>description.messenger_failed</source>
+                <target>Lista de mensajes que no se pudieron enviar. Los mensajes menores (dirección en lista negra, spam) se purgan automáticamente tras el período de retención configurado.</target>
+            </trans-unit>
+            <trans-unit id="209">
+                <source>label.messenger_purge_now</source>
+                <target>Purgar ahora</target>
+            </trans-unit>
+            <trans-unit id="210">
+                <source>label.date</source>
+                <target>Fecha</target>
+            </trans-unit>
+            <trans-unit id="211">
+                <source>label.messenger_to</source>
+                <target>Destinatario</target>
+            </trans-unit>
+            <trans-unit id="212">
+                <source>label.messenger_subject</source>
+                <target>Asunto</target>
+            </trans-unit>
+            <trans-unit id="213">
+                <source>label.messenger_error</source>
+                <target>Error</target>
+            </trans-unit>
+            <trans-unit id="214">
+                <source>label.messenger_important</source>
+                <target>Importante</target>
+            </trans-unit>
+            <trans-unit id="215">
+                <source>label.messenger_minor</source>
+                <target>Menor</target>
+            </trans-unit>
+            <trans-unit id="216">
+                <source>label.messenger_none</source>
+                <target>No hay mensajes fallidos</target>
+            </trans-unit>
+            <trans-unit id="217">
+                <source>flash.messenger_purged</source>
+                <target>%count% mensaje(s) purgado(s)</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>label.gallery_showcase_articles_slider</source>
+                <target>Carrusel de artículos</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>label.gallery_showcase_articles_slider_description</source>
+                <target>Carrusel interactivo con los artículos de una página elegida.</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>label.gallery_showcase_menu_link</source>
+                <target>Enlace de menú</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>label.gallery_showcase_menu_link_description</source>
+                <target>Enlace a una página o ruta, usado en los menús del sitio.</target>
             </trans-unit>
         </body>
     </file>

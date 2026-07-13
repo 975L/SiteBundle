@@ -158,6 +158,26 @@
                 <source>description.site_enable_cookie_consent</source>
                 <target>Activer l'utilisation de cookie consent</target>
             </trans-unit>
+            <trans-unit id="81">
+                <source>description.email_text_no_spam</source>
+                <target>Texte "anti-spam" affiché en haut de l'email (HTML autorisé, non traduit - même valeur affichée quelle que soit la langue de l'email). Laisser vide pour ne rien afficher</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>description.email_text_hello</source>
+                <target>Formule de salutation affichée en haut de l'email (HTML autorisé, non traduit). Laisser vide pour ne rien afficher</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>description.email_text_closing</source>
+                <target>Texte de remerciement et de signature affiché en bas de l'email. Utiliser %site% pour insérer le nom du site (HTML autorisé, non traduit). Laisser vide pour ne rien afficher</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>description.email_text_sent_by</source>
+                <target>Mention "Cet email vous a été envoyé par..." affichée en bas de l'email. Utiliser %site% pour insérer le nom du site (HTML autorisé, non traduit). Laisser vide pour ne rien afficher</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>description.email_text_legal</source>
+                <target>Bloc de texte libre affiché en bas de l'email pour des mentions complémentaires (forme juridique, capital social, SIRET...) (HTML autorisé, non traduit). Vide par défaut - n'affiche rien tant que non renseigné</target>
+            </trans-unit>
             <trans-unit id="41">
                 <source>label.site_name</source>
                 <target>Nom du site</target>
@@ -313,6 +333,42 @@
             <trans-unit id="80">
                 <source>label.site_enable_cookie_consent</source>
                 <target>Activer le consentement aux cookies</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.email_text_no_spam</source>
+                <target>Texte anti-spam de l'email</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.email_text_hello</source>
+                <target>Salutation de l'email</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.email_text_closing</source>
+                <target>Texte de remerciement et signature de l'email</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.email_text_sent_by</source>
+                <target>Mention "Envoyé par" de l'email</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.email_text_legal</source>
+                <target>Mentions légales complémentaires de l'email</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>description.site_messenger_cleanup_mailto</source>
+                <target>Adresse email pour être alerté des échecs d'envoi Messenger importants (optionnel)</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>description.site_messenger_cleanup_retention_days</source>
+                <target>Nombre de jours de conservation des messages Messenger en échec avant purge automatique</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.site_messenger_cleanup_mailto</source>
+                <target>Email d'alerte Messenger</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.site_messenger_cleanup_retention_days</source>
+                <target>Rétention des échecs Messenger (jours)</target>
             </trans-unit>
         </body>
     </file>

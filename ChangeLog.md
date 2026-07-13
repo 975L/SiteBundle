@@ -1,5 +1,17 @@
 # Changelog
 
+## v7.3.1
+
+- Added `--button-background-success`/`-danger` styles (13/07/2026)
+- Added gallery showcases for "articles_slider" and "menu_link" blocks (13/07/2026)
+- Corrected Backup Command (13/07/2026)
+- Added help text to the Menu CRUD index (13/07/2026)
+- Added editable email texts and legal mentions Config entries (13/07/2026)
+- Added `email-header` Menu location, mirroring `email-footer` (13/07/2026)
+- Added Command to purge old messenger_messages and alert on failures (13/07/2026)
+- Added `.btn-link` style (13/07/2026)
+- Corrected undefined `--primary`/`--secondary` CSS variables (13/07/2026)
+
 ## v7.3
 
 - Added duplication of page (12/07/2026)

@@ -201,6 +201,7 @@ class PageCrudController extends AbstractCrudController
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
+                ->setFormTypeOption('entry_options.context', 'page')
                 ->hideOnIndex(),
 
             // Dates

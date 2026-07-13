@@ -158,6 +158,26 @@
                 <source>description.site_enable_cookie_consent</source>
                 <target>Enable the use of cookie consent</target>
             </trans-unit>
+            <trans-unit id="81">
+                <source>description.email_text_no_spam</source>
+                <target>"No spam" notice displayed at the top of the email (HTML allowed, not translated - same value shown regardless of the email's language). Leave empty to display nothing</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>description.email_text_hello</source>
+                <target>Greeting displayed at the top of the email (HTML allowed, not translated). Leave empty to display nothing</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>description.email_text_closing</source>
+                <target>Thank-you and signature text displayed at the bottom of the email. Use %site% to insert the site name (HTML allowed, not translated). Leave empty to display nothing</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>description.email_text_sent_by</source>
+                <target>"This email was sent by..." notice displayed at the bottom of the email. Use %site% to insert the site name (HTML allowed, not translated). Leave empty to display nothing</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>description.email_text_legal</source>
+                <target>Free text block displayed at the bottom of the email for extra legal mentions (legal form, share capital, company registration number...) (HTML allowed, not translated). Empty by default - displays nothing until filled in</target>
+            </trans-unit>
             <trans-unit id="41">
                 <source>label.site_name</source>
                 <target>Site Name</target>
@@ -313,6 +333,42 @@
             <trans-unit id="80">
                 <source>label.site_enable_cookie_consent</source>
                 <target>Enable Cookie Consent</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.email_text_no_spam</source>
+                <target>Email No-Spam Text</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.email_text_hello</source>
+                <target>Email Greeting</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.email_text_closing</source>
+                <target>Email Thank-You And Signature Text</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.email_text_sent_by</source>
+                <target>Email "Sent By" Notice</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.email_text_legal</source>
+                <target>Email Extra Legal Mentions</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>description.site_messenger_cleanup_mailto</source>
+                <target>Email address to be alerted of important Messenger sending failures (optional)</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>description.site_messenger_cleanup_retention_days</source>
+                <target>Number of days failed Messenger messages are kept before automatic purge</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.site_messenger_cleanup_mailto</source>
+                <target>Messenger alert email</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.site_messenger_cleanup_retention_days</source>
+                <target>Messenger failure retention (days)</target>
             </trans-unit>
         </body>
     </file>

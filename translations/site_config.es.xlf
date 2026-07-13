@@ -158,6 +158,26 @@
                 <source>description.site_enable_cookie_consent</source>
                 <target>Activar el uso de consentimiento de cookies</target>
             </trans-unit>
+            <trans-unit id="81">
+                <source>description.email_text_no_spam</source>
+                <target>Aviso "anti-spam" mostrado en la parte superior del correo (HTML permitido, no traducido - mismo valor mostrado sea cual sea el idioma del correo). Dejar vacío para no mostrar nada</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>description.email_text_hello</source>
+                <target>Saludo mostrado en la parte superior del correo (HTML permitido, no traducido). Dejar vacío para no mostrar nada</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>description.email_text_closing</source>
+                <target>Texto de agradecimiento y firma mostrado al final del correo. Usar %site% para insertar el nombre del sitio (HTML permitido, no traducido). Dejar vacío para no mostrar nada</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>description.email_text_sent_by</source>
+                <target>Mención "Este correo le fue enviado por..." mostrada al final del correo. Usar %site% para insertar el nombre del sitio (HTML permitido, no traducido). Dejar vacío para no mostrar nada</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>description.email_text_legal</source>
+                <target>Bloque de texto libre mostrado al final del correo para menciones legales adicionales (forma jurídica, capital social, número de registro...) (HTML permitido, no traducido). Vacío por defecto - no muestra nada hasta que se rellene</target>
+            </trans-unit>
             <trans-unit id="41">
                 <source>label.site_name</source>
                 <target>Nombre del sitio</target>
@@ -313,6 +333,42 @@
             <trans-unit id="80">
                 <source>label.site_enable_cookie_consent</source>
                 <target>Activar el consentimiento de cookies</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>label.email_text_no_spam</source>
+                <target>Texto anti-spam del correo</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>label.email_text_hello</source>
+                <target>Saludo del correo</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>label.email_text_closing</source>
+                <target>Texto de agradecimiento y firma del correo</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>label.email_text_sent_by</source>
+                <target>Mención "Enviado por" del correo</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>label.email_text_legal</source>
+                <target>Menciones legales adicionales del correo</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>description.site_messenger_cleanup_mailto</source>
+                <target>Dirección de correo para ser alertado de fallos importantes de envío de Messenger (opcional)</target>
+            </trans-unit>
+            <trans-unit id="92">
+                <source>description.site_messenger_cleanup_retention_days</source>
+                <target>Número de días que se conservan los mensajes de Messenger fallidos antes de la purga automática</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>label.site_messenger_cleanup_mailto</source>
+                <target>Email de alerta de Messenger</target>
+            </trans-unit>
+            <trans-unit id="94">
+                <source>label.site_messenger_cleanup_retention_days</source>
+                <target>Retención de fallos de Messenger (días)</target>
             </trans-unit>
         </body>
     </file>

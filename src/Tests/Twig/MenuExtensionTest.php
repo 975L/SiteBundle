@@ -99,6 +99,20 @@ class MenuExtensionTest extends TestCase
         $this->assertSame($block, $blocks->first());
     }
 
+    // Same as above for email-header - its own Menu row, independent from email-footer's
+    public function testGetMenuBlocksReturnsBlocksOfTheMatchingMenuForEmailHeader(): void
+    {
+        $block = new Block();
+        $menu = (new Menu())->setLocation(Menu::LOCATION_EMAIL_HEADER);
+        $menu->addBlock($block);
+        $extension = $this->createExtension($this->createRegistry([]), [], $this->createMenuRepository($menu));
+
+        $blocks = $extension->getMenuBlocks(Menu::LOCATION_EMAIL_HEADER);
+
+        $this->assertCount(1, $blocks);
+        $this->assertSame($block, $blocks->first());
+    }
+
     // No Menu row yet for that location: an empty collection is returned instead of erroring out
     public function testGetMenuBlocksReturnsEmptyCollectionWhenMenuDoesNotExist(): void
     {

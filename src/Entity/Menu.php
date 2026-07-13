@@ -30,6 +30,7 @@ class Menu implements HasBlocksInterface
     public const LOCATION_NAVBAR = 'navbar';
     public const LOCATION_FOOTER = 'footer';
     public const LOCATION_EMAIL_FOOTER = 'email-footer';
+    public const LOCATION_EMAIL_HEADER = 'email-header';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

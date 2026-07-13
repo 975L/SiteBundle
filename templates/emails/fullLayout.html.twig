@@ -1,5 +1,3 @@
-{% trans_default_domain 'site' %}
-
 {% set site = config('site-name') %}
 {% set author = config('site-author') %}
 {% set firstOnlineDate = config('site-first-online-date') %}
@@ -55,23 +53,22 @@
             {% block header %}
                 {# No Spam info #}
                 {% block noSpam %}
-                    <p class="text-center text-muted small">
-                        {{ 'text.no_spam'|trans }}
-                        <br>
-                    </p>
+                    {% if config('email-text-no-spam') %}
+                        {{ config('email-text-no-spam')|raw }}
+                    {% endif %}
                 {% endblock %}
                 {# Logo #}
                 {% block logo %}
                     <h1 class="text-center">
                         {% if logo is defined %}
                             <img src="{{ logo }}" height="50" alt="logo" />
-                            <br>
-                        {% endif %}
-                        {% if site is defined %}
+                        {% elseif site is defined %}
                             {{ site }}
                         {% endif %}
                     </h1>
                 {% endblock %}
+                {# User's header #}
+                {% include '@c975LSite/emails/header.html.twig' %}
             {% endblock %}
             {# Container #}
             {% block container %}
@@ -79,10 +76,9 @@
                 {% block content %}
                     {# Hello #}
                     {% block hello %}
-                        <p>
-                            {{ 'label.hello'|trans }},
-                            <br>
-                        </p>
+                        {% if config('email-text-hello') %}
+                            {{ config('email-text-hello')|raw }}
+                        {% endif %}
                     {% endblock %}
                     {% block email_content %}
                     {% endblock %}
@@ -91,22 +87,20 @@
             {# Footer #}
             {% block footer %}
                 <hr />
-                {# Thanks confidence #}
-                <p>
-                    {{ 'text.thanks_confidence'|trans|nl2br }}
-                    <br>
-                    <br>
-                    {% if site is defined %}
-                        {{ 'text.regards_team'|trans({'%site%': site})|raw|nl2br }}
-                        <br>
-                    {% endif %}
-                </p>
+                {# Thanks confidence & regards #}
+                {% if config('email-text-closing') %}
+                    {{ config('email-text-closing')|replace({'%site%': site|default('')})|raw }}
+                {% endif %}
                 {# User's footer #}
                 {% include '@c975LSite/emails/footer.html.twig' %}
                 {# Email sent by #}
-                {% if site is defined %}
-                    <p class="text text-muted text-center">
-                        {{ 'text.email_sent_by'|trans({'%site%': site})|raw }}
+                {% if config('email-text-sent-by') %}
+                    {{ config('email-text-sent-by')|replace({'%site%': site|default('')})|raw }}
+                {% endif %}
+                {# Additional legal mentions (legal form, share capital, registration number...) #}
+                {% if config('email-text-legal') %}
+                    <p class="text text-muted text-center small">
+                        {{ config('email-text-legal')|raw }}
                     </p>
                 {% endif %}
                 {# Copyright #}

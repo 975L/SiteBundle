@@ -40,6 +40,7 @@ class MenuCrudController extends AbstractCrudController
     private const LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
+        Menu::LOCATION_EMAIL_HEADER => 'label.email_header',
         Menu::LOCATION_EMAIL_FOOTER => 'label.email_footer',
     ];
 
@@ -88,6 +89,7 @@ class MenuCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
+            ->overrideTemplate('crud/index', '@c975LSite/management/menu_crud_index.html.twig')
             ->setEntityLabelInSingular(t('label.menu', [], 'site'))
             ->setEntityLabelInPlural(t('label.menus', [], 'site'))
             ->setEntityPermission($this->configService->get('site-role-editor'))
@@ -139,6 +141,7 @@ class MenuCrudController extends AbstractCrudController
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
+                ->setFormTypeOption('entry_options.context', 'menu')
                 ->hideOnIndex(),
         ];
     }

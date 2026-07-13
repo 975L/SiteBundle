@@ -15,7 +15,7 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - **Page redirects** and 410 Gone handling
 - **Admin CRUD** for database pages via EasyAdmin
 - **Admin CRUD** for users via EasyAdmin, with role management
-- **Admin CRUD** for the site's navbar/footer menus and the email footer via EasyAdmin
+- **Admin CRUD** for the site's navbar/footer menus and the email header/footer via EasyAdmin
 - **Admin CRUD** for the site's graphics (favicon, Apple touch icon, logo, default Open Graph image) via EasyAdmin
 - **Sitemap generation** from both filesystem templates and database pages, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
@@ -224,6 +224,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
 | `twig_content` | `label.category_migration` | Renders raw Twig content stored in the block's data via `template_from_string()`. Intended as a migration/escape hatch for content that doesn't fit another block type. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
+| `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu` context (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page`. Not cacheable: its "active" state depends on the current request path. |
 
 Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias.
 
@@ -235,14 +236,14 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 ## Menus
 
-The site-wide navbar, footer and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`).
+The site-wide navbar, footer, email header and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer`, `email-header` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`).
 
-`navbar` and `footer` own an ordered collection of `MenuItem` rows, each targeting either:
+Every location owns a single ordered `blocks` collection (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — menu links and any other registered block kind (e.g. SocialBundle's `social_links_display`) are freely sortable together, no separate "items" collection to keep in sync. A menu link is itself a block, of kind `menu_link` (form: `MenuLinkType`), targeting either:
 
 - an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
 
-`footer` and `email-footer` also own an ordered collection of `blocks` (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — this is how you compose free-form footer content (e.g. SocialBundle's `social_links_display`), including social icons which are no longer a hardcoded, config-toggled component. `email-footer` doesn't own `MenuItem`s: page/route links resolve to relative URLs, not usable as-is inside an email.
+`menu_link` resolves to a relative URL (`UrlGeneratorInterface::generate()`), fine for `navbar`/`footer` but not usable as-is inside an email — `email-header`/`email-footer` are meant for content that doesn't need one (e.g. social icons, legal blurbs), not for reusing the site's own links.
 
 Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle.
 
@@ -253,9 +254,9 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 <twig:c975LSite:General:Footer copyright="{{ copyright }}"/>
 ```
 
-`email-footer` is rendered the same way inside `@c975LSite/emails/footer.html.twig` (see [Email templates](#email-templates)), independently from the site's `footer` — the two locations are edited separately, so the client can keep a simpler footer for emails than for the site (or vice versa).
+`email-header` and `email-footer` are rendered the same way inside `@c975LSite/emails/header.html.twig` and `@c975LSite/emails/footer.html.twig` respectively (see [Email templates](#email-templates)), independently from the site's own `navbar`/`footer` — each location is edited separately, so the client can keep different content for emails than for the site.
 
-An item or block disappears from the rendered menu automatically (no dangling link) if its page is later unpublished/deleted, or if its route's contributing bundle is removed.
+A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
 
 ### Navbar: logo, site name, tagline
 
@@ -267,9 +268,7 @@ The navbar can be kept fixed at the top of the viewport while scrolling via the 
 
 ### Linking to a bundle's own route
 
-A `MenuItem` isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
-
-Deliberately **not** a `ui.block` — a Menu item is site-wide chrome (like the navbar/footer themselves), not page content, so it isn't selectable from the page content-block picker.
+A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
 
 ### Social links
 
@@ -566,9 +565,12 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | --- | --- |
 | `layout.html.twig` | Base email layout |
 | `fullLayout.html.twig` | Full email layout |
+| `header.html.twig` | Email header — renders the `email-header` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site navbar |
 | `footer.html.twig` | Email footer — renders the `email-footer` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site footer |
 
 CSS is inlined automatically via `twig/cssinliner-extra`. The minified stylesheet (`emails.min.css`, compiled from `sass/emails.scss`, including its `:root` variables) is embedded.
+
+`fullLayout.html.twig`'s own copy (no-spam notice, "hello", closing/thanks, "sent by", legal mentions) isn't hardcoded translations — it's authored as rich text (`kind: html`) directly in ConfigBundle, under the `email` group: `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`, `email-text-legal`. Each block only renders if its config value is non-empty (`email-text-legal` is empty by default). `email-text-closing` and `email-text-sent-by` support a `%site%` placeholder, replaced with `site-name`. This lets the client rewrite their own email copy, including in `email-text-legal` (share capital, registration number...), from the backoffice without touching translations or templates.
 
 ---
 
@@ -590,6 +592,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
+| `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
 
 ### Create a new site
 
@@ -686,11 +689,17 @@ One page is created per locale — `%kernel.default_locale%` plus every locale l
 
 `home` is always the same slug across locales — `PageController` looks it up literally, so only one homepage can ever exist. All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped, so re-running the command after adding a new `enabled_locales` entry only creates the missing locale's pages.
 
+### Messenger cleanup
+
+Purges failed `messenger_messages` rows (`queue_name = 'failed'`) older than `site-messenger-cleanup-retention-days` days (default 30). Each failure is classified minor (spam/blacklist-related, matched against the exception message) or important; new important failures since the last alert trigger a single digest email to `site-messenger-cleanup-mailto` (both configs `restricted`, the mailto also `sensitive`, same pattern as the backup mailto — see [ROLE_SUPER_ADMIN and restricted configs](#role_super_admin-and-restricted-configs)), never more than once per new batch.
+
+A dashboard alert (ConfigBundle's `AlertProviderInterface`) also surfaces important failures — full detail (recipient, subject, error) to `ROLE_SUPER_ADMIN`, a plain "already reported" message to `ROLE_ADMIN` — linking to a management page listing them, with a "Purge now" button (`ROLE_SUPER_ADMIN` only) that runs the same cleanup immediately.
+
 ---
 
 ## Scheduler
 
-The bundle provides `site:sitemaps:create` and `site:backup` as schedulable commands. The schedule itself is defined in your app so each project controls its own timing.
+The bundle provides `site:sitemaps:create`, `site:backup` and `site:messenger-cleanup` as schedulable commands. The schedule itself is defined in your app so each project controls its own timing.
 
 ### 1. Create the schedule class
 
@@ -721,7 +730,9 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             // Partial backup: every 6 hours (DB regular tables + modified files only)
             ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('site:backup')))
             // Full backup + report: every Monday at 03:07 (archive tables + whole DB + all user files)
-            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --full --report')));
+            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --full --report')))
+            // Messenger cleanup: daily at 03:00
+            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('site:messenger-cleanup')));
     }
 }
 ```

@@ -41,6 +41,38 @@
     background-color: var(--button-background-secondary-dark);
 }
 
+.btn-success {
+    background-color: var(--button-background-success);
+}
+
+.btn-success:hover {
+    background-color: var(--button-background-success-dark);
+}
+
+.btn-danger {
+    background-color: var(--button-background-danger);
+}
+
+.btn-danger:hover {
+    background-color: var(--button-background-danger-dark);
+}
+
+/* No background/shadow - reads as a plain text link, not a filled button. Overrides "a.btn"'s own
+   color rule below via the higher-specificity "a.btn-link" selector. */
+.btn-link,
+a.btn-link {
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--button-background-primary);
+    text-decoration: underline;
+}
+
+.btn-link:hover,
+a.btn-link:hover {
+    background-color: transparent;
+    color: var(--button-background-primary-dark);
+}
+
 .btn-grey {
     background-color: lightgrey;
 }

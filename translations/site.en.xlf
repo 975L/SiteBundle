@@ -106,28 +106,6 @@
                 <source>label.accept_tou</source>
                 <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of use (TOU)</a>]]></target>
             </trans-unit>
-            <trans-unit id="27">
-                <source>text.email_sent_by</source>
-                <target><![CDATA[This email was sent to you by <strong>%site%</strong>.]]></target>
-            </trans-unit>
-            <trans-unit id="28">
-                <source>label.hello</source>
-                <target>Hello</target>
-            </trans-unit>
-            <trans-unit id="29">
-                <source>text.thanks_confidence</source>
-                <target><![CDATA[Thank you for your confidence!
-                        We remain at your disposal for any request.]]></target>
-            </trans-unit>
-            <trans-unit id="30">
-                <source>text.no_spam</source>
-                <target>We Advise you to save our email Address in your Address book so that our emails are not classified as spam.></target>
-            </trans-unit>
-            <trans-unit id="31">
-                <source>text.regards_team</source>
-                <target><![CDATA[Regards,
-                        The <strong>%site%</strong> Team]]></target>
-            </trans-unit>
             <trans-unit id="32">
                 <source>label.all_rights_reserved</source>
                 <target>© All rights reserved</target>
@@ -788,6 +766,10 @@
                 <source>label.email_footer</source>
                 <target>Email footer</target>
             </trans-unit>
+            <trans-unit id="202">
+                <source>label.email_header</source>
+                <target>Email header</target>
+            </trans-unit>
             <trans-unit id="199">
                 <source>block.menu_link</source>
                 <target>Menu link</target>
@@ -795,6 +777,86 @@
             <trans-unit id="200">
                 <source>block.menu_link_description</source>
                 <target>A link to a page or a route, sortable alongside any other block (navbar, footer, email footer)</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.info_menu</source>
+                <target>List of all menus available on the site</target>
+            </trans-unit>
+            <trans-unit id="203">
+                <source>label.messenger_alert_super_admin</source>
+                <target>%count% important Messenger failure(s)</target>
+            </trans-unit>
+            <trans-unit id="204">
+                <source>description.messenger_alert_super_admin</source>
+                <target>Some messages could not be sent for reasons other than a blacklisted address. Click to see the details.</target>
+            </trans-unit>
+            <trans-unit id="205">
+                <source>label.messenger_alert_admin</source>
+                <target>A technical issue has been automatically reported</target>
+            </trans-unit>
+            <trans-unit id="206">
+                <source>description.messenger_alert_admin</source>
+                <target>A technical issue has been automatically reported to the development team. No action is required on your part.</target>
+            </trans-unit>
+            <trans-unit id="207">
+                <source>label.messenger_failed</source>
+                <target>Failed messages</target>
+            </trans-unit>
+            <trans-unit id="208">
+                <source>description.messenger_failed</source>
+                <target>List of messages that could not be sent. Minor messages (blacklisted address, spam) are automatically purged after the configured retention period.</target>
+            </trans-unit>
+            <trans-unit id="209">
+                <source>label.messenger_purge_now</source>
+                <target>Purge now</target>
+            </trans-unit>
+            <trans-unit id="210">
+                <source>label.date</source>
+                <target>Date</target>
+            </trans-unit>
+            <trans-unit id="211">
+                <source>label.messenger_to</source>
+                <target>Recipient</target>
+            </trans-unit>
+            <trans-unit id="212">
+                <source>label.messenger_subject</source>
+                <target>Subject</target>
+            </trans-unit>
+            <trans-unit id="213">
+                <source>label.messenger_error</source>
+                <target>Error</target>
+            </trans-unit>
+            <trans-unit id="214">
+                <source>label.messenger_important</source>
+                <target>Important</target>
+            </trans-unit>
+            <trans-unit id="215">
+                <source>label.messenger_minor</source>
+                <target>Minor</target>
+            </trans-unit>
+            <trans-unit id="216">
+                <source>label.messenger_none</source>
+                <target>No failed messages</target>
+            </trans-unit>
+            <trans-unit id="217">
+                <source>flash.messenger_purged</source>
+                <target>%count% message(s) purged</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>label.gallery_showcase_articles_slider</source>
+                <target>Articles slideshow</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>label.gallery_showcase_articles_slider_description</source>
+                <target>Clickable slideshow of a chosen page's articles.</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>label.gallery_showcase_menu_link</source>
+                <target>Menu link</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>label.gallery_showcase_menu_link_description</source>
+                <target>Link to a page or a route, used in the site's menus.</target>
             </trans-unit>
         </body>
     </file>

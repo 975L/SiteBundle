@@ -61,9 +61,6 @@ class MenuProvider implements MenuProviderInterface
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-bars',
             ],
-            // Lives in UiBundle (Media is defined there), but UiBundle can't register its own menu
-            // entry: ConfigBundle already depends on UiBundle, so the reverse would be circular.
-            // SiteBundle depends on both, so it's the natural place to wire this menu item.
             'media' => [
                 'controller' => MediaCrudController::class,
                 'label' => 'label.media_library',

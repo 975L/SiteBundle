@@ -105,7 +105,9 @@ class BackupCommand extends Command
             $this->startedAt->format('Y-m'),
             $this->startedAt->format('Y-m-d')
         );
-        mkdir($this->finalFolder, 0755, true);
+        if (!is_dir($this->finalFolder)) {
+            mkdir($this->finalFolder, 0755, true);
+        }
 
         $this->credentialsFile = $this->createTempCredentialsFile();
         try {
@@ -375,7 +377,7 @@ class BackupCommand extends Command
         }
 
         $email = (new Email())
-            ->from('backup@' . $this->siteDomain)
+            ->from((string) $this->configService->get('email-from'))
             ->to($this->mailto)
             ->subject('[ERROR] Backup failed - ' . $this->siteDomain)
             ->text(implode("\n", $this->errors) . "\n\nFull report:\n" . $this->report);
@@ -390,7 +392,7 @@ class BackupCommand extends Command
         }
 
         $email = (new Email())
-            ->from('backup@' . $this->siteDomain)
+            ->from((string) $this->configService->get('email-from'))
             ->to($this->mailto)
             ->subject('Backup Report - ' . $this->siteDomain)
             ->text($this->report);

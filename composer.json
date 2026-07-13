@@ -29,6 +29,7 @@
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/mailer": "*",
+        "symfony/messenger": "*",
         "symfony/process": "*",
         "symfony/scheduler": "*",
         "symfony/string": "*",

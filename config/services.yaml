@@ -80,4 +80,5 @@ services:
               category: 'label.category_navigation'
               pickable: true
               cacheable: false
+              contexts: menu
 

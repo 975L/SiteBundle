@@ -1,0 +1,24 @@
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+/* Emails reuse the site's page-level typography/containers rules as-is (see emails.scss), but their
+ * generous margins - meant for full-page sections with a heading followed by paragraphs of body content -
+ * leave excessive whitespace when the same "section > h2" structure (e.g. a text_section block used in
+ * an email footer) only holds a couple of short lines. Tighten them for the email context only. */
+section {
+    margin: 0.5em auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0.25em auto;
+}

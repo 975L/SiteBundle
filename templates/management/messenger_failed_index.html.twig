@@ -1,0 +1,51 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+    <h1>{{ ('label.messenger_failed'|trans({}, 'site')) }}</h1>
+
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <p>{{ ('description.messenger_failed'|trans({}, 'site')) }}</p>
+
+        <form method="post" action="{{ path('management_site_messenger_failed_purge') }}" class="mb-3">
+            <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_purge') }}">
+            <button type="submit" class="btn btn-outline-secondary">
+                {{ ('label.messenger_purge_now'|trans({}, 'site')) }}
+            </button>
+        </form>
+
+        {% if messages|length > 0 %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ ('label.date'|trans({}, 'site')) }}</th>
+                        <th>{{ ('label.messenger_to'|trans({}, 'site')) }}</th>
+                        <th>{{ ('label.messenger_subject'|trans({}, 'site')) }}</th>
+                        <th>{{ ('label.messenger_error'|trans({}, 'site')) }}</th>
+                        <th>{{ ('label.messenger_important'|trans({}, 'site')) }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for message in messages %}
+                    <tr>
+                        <td>{{ message.createdAt|date('Y-m-d H:i') }}</td>
+                        <td>{{ message.to ?? '-' }}</td>
+                        <td>{{ message.subject ?? '-' }}</td>
+                        <td>{{ message.exceptionMessage ?? '-' }}</td>
+                        <td>
+                            {% if message.important %}
+                                <span class="badge badge-danger">{{ ('label.messenger_important'|trans({}, 'site')) }}</span>
+                            {% else %}
+                                <span class="badge badge-secondary">{{ ('label.messenger_minor'|trans({}, 'site')) }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>{{ ('label.messenger_none'|trans({}, 'site')) }}</p>
+        {% endif %}
+    {% else %}
+        <p>{{ ('description.messenger_alert_admin'|trans({}, 'site')) }}</p>
+    {% endif %}
+{% endblock main %}

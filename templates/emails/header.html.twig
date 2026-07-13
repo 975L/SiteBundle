@@ -1,0 +1,4 @@
+{# Blocks are managed independently from the site header's, via the "email-header" Menu location #}
+{% for block in menu_blocks('email-header') %}
+    {{ render_block(block) }}
+{% endfor %}
