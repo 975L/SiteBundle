@@ -6,7 +6,7 @@ services:
 
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Tests}'
+        exclude: '../src/{DependencyInjection,Entity}'
 
     # Enables template_from_string(), used by the twig_content block (see below) to render Twig content stored in DB
     Twig\Extension\StringLoaderExtension:
@@ -63,10 +63,6 @@ services:
               pickable: true
               cacheable: true
 
-    # Replaces MenuItem: navbar/footer/email-footer menu links are now this block kind, sortable
-    # alongside any other block in Menu's single "blocks" collection. Not cacheable: the "active" state
-    # depends on the current request path, which isn't part of render_block()'s cache key (block id +
-    # locale only) - caching it would freeze the "active" link from whichever page rendered it first
     site.block.menu_link:
         class: stdClass
         tags:

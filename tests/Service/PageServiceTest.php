@@ -14,8 +14,6 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageService;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class PageServiceTest extends TestCase
 {
     // findAll() delegates to the repository's position-ordered finder

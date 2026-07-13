@@ -12,14 +12,12 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\SiteBundle\Management\WhatsNewProvider;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class WhatsNewProviderTest extends TestCase
 {
     // Reads the bundle's own config/whatsnew.json and turns each row into a date + description entry
     public function testGetEntriesReturnsOneEntryPerJsonRow(): void
     {
-        $rawEntries = json_decode(file_get_contents(\dirname(__DIR__, 3) . '/config/whatsnew.json'), true);
+        $rawEntries = json_decode(file_get_contents(\dirname(__DIR__, 2) . '/config/whatsnew.json'), true);
 
         $entries = (new WhatsNewProvider())->getEntries();
 

@@ -12,8 +12,6 @@ namespace c975L\SiteBundle\Tests\Service;
 use c975L\SiteBundle\Service\ScaffoldInstaller;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class ScaffoldInstallerTest extends TestCase
 {
     private string $projectDir;

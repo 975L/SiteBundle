@@ -15,8 +15,6 @@ use c975L\SiteBundle\Management\SiteShortcutProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class SiteShortcutProviderTest extends TestCase
 {
     private function createTranslator(): TranslatorInterface

@@ -15,8 +15,6 @@ use c975L\SiteBundle\Repository\PageRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class ArticlesSliderTypeTest extends TypeTestCase
 {
     private PageRepository $pageRepository;

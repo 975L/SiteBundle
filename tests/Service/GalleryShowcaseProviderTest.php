@@ -13,19 +13,17 @@ use c975L\SiteBundle\Service\GalleryShowcaseProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
-use Twig\TemplateWrapper;
+use Twig\Loader\ArrayLoader;
 
 class GalleryShowcaseProviderTest extends TestCase
 {
     private function createProvider(): GalleryShowcaseProvider
     {
-        $twig = $this->createMock(Environment::class);
-        $twig->method('render')->willReturnCallback(
-            static fn (string $template, array $context) => "<!-- {$template} -->"
-        );
-        $wrapper = $this->createStub(TemplateWrapper::class);
-        $wrapper->method('render')->willReturnCallback(static fn (array $context) => "<a>{$context['label']}</a>");
-        $twig->method('createTemplate')->willReturn($wrapper);
+        // TemplateWrapper is final and can't be doubled - use a real Environment (ArrayLoader stubs
+        // the one named template the provider renders) so createTemplate() also works for real
+        $twig = new Environment(new ArrayLoader([
+            '@c975LUi/components/Slider/Slider.html.twig' => '<!-- slider -->',
+        ]));
 
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);

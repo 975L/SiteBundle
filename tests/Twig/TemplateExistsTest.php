@@ -13,8 +13,6 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Twig\TemplateExists;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class TemplateExistsTest extends TestCase
 {
     private string $projectDir;

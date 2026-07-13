@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 // A single flat, alphabetically-sorted, filterable "target" select (pages and routes mixed, EasyAdmin's
 // TomSelect widget via data-ea-widget) - decoded at render time by MenuExtension::getMenuLinkUrl()/
-// getMenuLinkLabel(), same "page:ID" / "route:NAME" convention the former MenuItemType used
+// getMenuLinkLabel(), using the "page:ID" / "route:NAME" convention
 class MenuLinkType extends AbstractType
 {
     public function __construct(

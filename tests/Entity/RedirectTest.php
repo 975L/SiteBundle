@@ -12,8 +12,6 @@ namespace c975L\SiteBundle\Tests\Entity;
 use c975L\SiteBundle\Entity\Redirect;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class RedirectTest extends TestCase
 {
     // A path already starting with a slash is left untouched

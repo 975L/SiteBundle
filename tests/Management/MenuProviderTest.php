@@ -18,8 +18,6 @@ use c975L\SiteBundle\Management\MenuProvider;
 use c975L\UiBundle\Controller\Management\MediaCrudController;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class MenuProviderTest extends TestCase
 {
     // The dashboard section this bundle contributes must carry the 'site' translation domain

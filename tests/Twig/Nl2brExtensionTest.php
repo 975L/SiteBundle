@@ -12,8 +12,6 @@ namespace c975L\SiteBundle\Tests\Twig;
 use c975L\SiteBundle\Twig\Nl2brExtension;
 use PHPUnit\Framework\TestCase;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class Nl2brExtensionTest extends TestCase
 {
     // Newlines are converted to XHTML <br /> tags, without a trailing backslash (is_xhtml=false)

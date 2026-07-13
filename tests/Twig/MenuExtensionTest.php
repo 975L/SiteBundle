@@ -20,8 +20,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Lives under src/Tests (not a sibling tests/ dir) so it stays autoloadable by consuming apps,
-// whose attribute route loader recursively reflects every class under the bundle root
 class MenuExtensionTest extends TestCase
 {
     // Builds a MenuRepository double whose findOneByLocation() answers $menu (null if not given)

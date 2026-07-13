@@ -34,6 +34,7 @@
         "symfony/scheduler": "*",
         "symfony/string": "*",
         "symfony/ux-twig-component": "*",
+        "symfonycasts/reset-password-bundle": "*",
         "twig/cssinliner-extra": "*",
         "vich/uploader-bundle": "*"
     },
@@ -45,6 +46,11 @@
     "autoload": {
         "psr-4": {
             "c975L\\SiteBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "c975L\\SiteBundle\\Tests\\": "tests/"
         }
     },
     "config": {
