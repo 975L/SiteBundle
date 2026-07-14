@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.3.4
+
+- Added scaffold files  (14/07/2026)
+- Corrected emails/fullLayout.html.twig (14/07/2026)
+- Corrected scaffold/RegistrationController (14/07/2026)
+
 ## v7.3.3
 
 - Added LinkableRouteProvider to scaffold to be able to be used in MenuLink Block (14/07/2026)

@@ -592,6 +592,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | Command | Description |
 | --- | --- |
 | `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
+| `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project |
 | `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
@@ -652,6 +653,21 @@ reorder questions:
 A slug can belong to any installed c975L bundle (looked up by slug in the database, regardless
 of which bundle's `configs.json` defined it); slugs that aren't found (bundle not installed, or
 `config:load-all` hasn't run yet) are skipped with a warning.
+
+### Installing a bundle's scaffold on an existing site
+
+`c975l:scaffold:install` is the standalone, re-runnable equivalent of step 1 of `c975l:site:create`
+(the one gated by `.c975l-site-created`). Use it whenever you `composer require` a c975L bundle
+into a site that's already past the one-shot wizard, to pull in that bundle's
+`scaffold/{src,templates,tests,translations}` files:
+
+```bash
+php bin/console c975l:scaffold:install
+```
+
+Same backup behavior as the wizard: any target file it would overwrite is moved to
+`existingFiles/<same path>.old` first (never silently erased), and a target already identical to
+the scaffold source is left untouched — so running it again on an unmodified project is a no-op.
 
 #### Translating the questions
 
