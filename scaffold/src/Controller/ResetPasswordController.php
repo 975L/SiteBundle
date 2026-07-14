@@ -21,8 +21,6 @@ use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
-use function Symfony\Component\Translation\t;
-
 #[Route('/reset-password')]
 class ResetPasswordController extends AbstractController
 {
@@ -96,7 +94,7 @@ class ResetPasswordController extends AbstractController
         $token = $this->getTokenFromSession();
 
         if (null === $token) {
-            throw $this->createNotFoundException(t('label.no_reset_password_token_found', [], 'site'));
+            throw $this->createNotFoundException($translator->trans('label.no_reset_password_token_found', [], 'site'));
         }
 
         try {
@@ -105,8 +103,8 @@ class ResetPasswordController extends AbstractController
         } catch (ResetPasswordExceptionInterface $e) {
             $this->addFlash('reset_password_error', sprintf(
                 '%s - %s',
-                t(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
-                t($e->getReason(), [], 'ResetPasswordBundle')
+                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
+                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
             ));
 
             return $this->redirectToRoute('app_forgot_password_request');
@@ -160,7 +158,7 @@ class ResetPasswordController extends AbstractController
         $email = new TemplatedEmail()
             ->from(new Address($this->configService->get('email-from'), $this->configService->get('email-from-name')))
             ->to((string) $user->getEmail())
-            ->subject(t('label.password_reset_request', [], 'site'))
+            ->subject($translator->trans('label.password_reset_request', [], 'site'))
             ->htmlTemplate('reset_password/email.html.twig')
             ->context([
                 'resetToken' => $resetToken,

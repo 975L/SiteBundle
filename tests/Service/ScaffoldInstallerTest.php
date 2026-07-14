@@ -67,7 +67,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 2, 'backedUp' => 0], $result);
+        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $result);
         $this->assertFileExists($this->projectDir . '/src/Controller/FooController.php');
         $this->assertSame('foo', file_get_contents($this->projectDir . '/src/Controller/FooController.php'));
         $this->assertFileExists($this->projectDir . '/templates/foo.html.twig');
@@ -83,7 +83,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 1, 'backedUp' => 1], $result);
+        $this->assertSame(['copied' => 1, 'backedUp' => 1, 'skipped' => 0], $result);
         $this->assertSame('new-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
         $this->assertSame('original-content', file_get_contents($this->projectDir . '/existingFiles/src/Kernel.php.old'));
     }
@@ -97,7 +97,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 2, 'backedUp' => 0], $result);
+        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $result);
         $this->assertFileExists($this->projectDir . '/templates/a.html.twig');
         $this->assertFileExists($this->projectDir . '/templates/b.html.twig');
     }
@@ -121,6 +121,22 @@ class ScaffoldInstallerTest extends TestCase
     {
         $installer = new ScaffoldInstaller($this->projectDir);
 
-        $this->assertSame(['copied' => 0, 'backedUp' => 0], $installer->install());
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 0], $installer->install());
+    }
+
+    // A target already identical to the scaffold source is left untouched: no backup, no re-copy -
+    // re-running install() on an unmodified project must not litter existingFiles/ with no-op backups
+    public function testInstallSkipsFileAlreadyIdenticalToScaffoldSource(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['src/Kernel.php' => 'same-content']);
+        mkdir($this->projectDir . '/src', 0775, true);
+        file_put_contents($this->projectDir . '/src/Kernel.php', 'same-content');
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $result = $installer->install();
+
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $result);
+        $this->assertSame('same-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
+        $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
 }

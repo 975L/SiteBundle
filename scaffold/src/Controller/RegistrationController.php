@@ -12,13 +12,12 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-
-use function Symfony\Component\Translation\t;
 
 class RegistrationController extends AbstractController
 {
@@ -34,7 +33,7 @@ class RegistrationController extends AbstractController
         name: 'app_register',
         methods: ['GET', 'POST'],
     )]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, TranslatorInterface $translator): Response
     {
         // 403 regardless of authentication state if registration is disabled in the configuration
         if (false === $this->configService->get('user-registration-enabled')) {
@@ -64,7 +63,7 @@ class RegistrationController extends AbstractController
                 (new TemplatedEmail())
                     ->from(new Address($this->configService->get('email-from'), $this->configService->get('email-from-name')))
                     ->to($user->getEmail())
-                    ->subject($this->configService->get('site-name') . ' - ' . t('label.confirm_your_email', [], 'site'))
+                    ->subject($this->configService->get('site-name') . ' - ' . $translator->trans('label.confirm_your_email', [], 'site'))
                     ->htmlTemplate('registration/confirmation_email.html.twig')
             );
 
@@ -104,7 +103,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        $this->addFlash('success', t('label.email_address_verified', [], 'site'));
+        $this->addFlash('success', $translator->trans('label.email_address_verified', [], 'site'));
 
         return $this->redirectToRoute('page_home');
     }

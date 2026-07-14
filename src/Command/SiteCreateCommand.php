@@ -92,7 +92,12 @@ class SiteCreateCommand extends Command
 
         $io->section('1/7 — Installation du scaffold');
         $scaffold = $this->scaffoldInstaller->install();
-        $io->text(sprintf('  ✓ %d fichier(s) copié(s), %d sauvegardé(s) dans existingFiles/', $scaffold['copied'], $scaffold['backedUp']));
+        $io->text(sprintf(
+            '  ✓ %d fichier(s) copié(s), %d sauvegardé(s) dans existingFiles/, %d déjà à jour',
+            $scaffold['copied'],
+            $scaffold['backedUp'],
+            $scaffold['skipped']
+        ));
         $this->ensureUserChecker($io);
 
         $io->section('2/7 — Configuration par défaut');

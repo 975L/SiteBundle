@@ -29,6 +29,13 @@ class c975LSiteBundle extends AbstractBundle
                 ],
             ],
         ]);
+
+        // Registers public/css as a Twig namespace so compiled stylesheets can be embedded raw via source(), e.g. emails.min.css in fullLayout.html.twig
+        $builder->prependExtensionConfig('twig', [
+            'paths' => [
+                __DIR__ . '/../public/css' => 'c975LSiteCss',
+            ],
+        ]);
     }
 
     public function getPath(): string

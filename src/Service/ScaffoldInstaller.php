@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
 
 class ScaffoldInstaller
 {
-    private const SCAFFOLD_DIRS = ['src', 'templates'];
+    private const SCAFFOLD_DIRS = ['src', 'templates', 'tests', 'translations'];
 
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
@@ -23,13 +23,15 @@ class ScaffoldInstaller
     ) {
     }
 
-    // Copies scaffold/{src,templates} from every installed c975L bundle into the project,
-    // backing up any file it would overwrite into existingFiles/<same relative path>.old
-    // instead of silently erasing it
+    // Copies scaffold/{src,templates,tests,translations} from every installed c975L bundle into the
+    // project, backing up any file it would overwrite into existingFiles/<same relative path>.old
+    // instead of silently erasing it - a target already identical to the scaffold source is left
+    // untouched (no backup, no copy), so re-running this on an unmodified project is a no-op
     public function install(): array
     {
         $copied = 0;
         $backedUp = 0;
+        $skipped = 0;
 
         foreach (glob($this->projectDir . '/vendor/c975l/*') ?: [] as $bundleDir) {
             foreach (self::SCAFFOLD_DIRS as $dir) {
@@ -44,6 +46,10 @@ class ScaffoldInstaller
                     $target = $this->projectDir . '/' . $relativePath;
 
                     if (is_file($target)) {
+                        if (file_get_contents($target) === file_get_contents($file->getPathname())) {
+                            $skipped++;
+                            continue;
+                        }
                         $this->backup($relativePath, $target);
                         $backedUp++;
                     }
@@ -59,7 +65,7 @@ class ScaffoldInstaller
 
         $this->ensureGitignored();
 
-        return ['copied' => $copied, 'backedUp' => $backedUp];
+        return ['copied' => $copied, 'backedUp' => $backedUp, 'skipped' => $skipped];
     }
 
     private function backup(string $relativePath, string $target): void

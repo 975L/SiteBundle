@@ -1,13 +1,23 @@
 # Changelog
 
-## v7.3.2
+## v7.3.4
+
+- Added scaffold files  (14/07/2026)
+- Corrected emails/fullLayout.html.twig (14/07/2026)
+- Corrected scaffold/RegistrationController (14/07/2026)
+
+## v7.3.3
 
 - Added LinkableRouteProvider to scaffold to be able to be used in MenuLink Block (14/07/2026)
 
-## v7.3.1
+## v7.3.2
 
 - Moved tests to the right place (13/07/2026)
 - Added dependency to symfonycasts/reset-password-bundle (13/07/2026)
+
+## v7.3.1
+
+- Orphan tag, points to the same commit as v7.3, no distinct content (13/07/2026)
 
 ## v7.3
 
