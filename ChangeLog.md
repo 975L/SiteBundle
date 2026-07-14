@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.3.5
+
+- Suppressed DependencyInjection as not needed (14/07/2026)
+
 ## v7.3.4
 
 - Added scaffold files  (14/07/2026)
