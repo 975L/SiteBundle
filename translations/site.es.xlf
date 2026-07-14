@@ -644,7 +644,7 @@
             </trans-unit>
             <trans-unit id="168">
                 <source>label.login</source>
-                <target>¡Inicia sesión!</target>
+                <target>Iniciar sesión</target>
             </trans-unit>
             <trans-unit id="169">
                 <source>label.please_sign_in</source>
@@ -857,6 +857,10 @@
             <trans-unit id="221">
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Enlace a una página o ruta, usado en los menús del sitio.</target>
+            </trans-unit>
+            <trans-unit id="222">
+                <source>label.logout</source>
+                <target>Cerrar sesión</target>
             </trans-unit>
         </body>
     </file>

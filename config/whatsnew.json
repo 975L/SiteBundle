@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-07-14",
+        "description": [
+            {
+                "en": "You can now link admin pages in the menus",
+                "fr": "Vous pouvez désormais lier les pages d'admin dans les menus",
+                "es": "Ahora puede vincular páginas de administración en los menús"
+            }
+        ]
+    },
+    {
         "date": "2026-07-13",
         "description": [
             {
