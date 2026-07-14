@@ -1,8 +1,11 @@
 # Changelog
 
-## v7.3.2
+## v7.3.3
 
 - Added LinkableRouteProvider to scaffold to be able to be used in MenuLink Block (14/07/2026)
+
+## v7.3.2
+
 - Added `--button-background-success`/`-danger` styles (13/07/2026)
 - Added gallery showcases for "articles_slider" and "menu_link" blocks (13/07/2026)
 - Corrected Backup Command (13/07/2026)
