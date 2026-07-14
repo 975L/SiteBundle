@@ -862,6 +862,78 @@
                 <source>label.logout</source>
                 <target>Cerrar sesión</target>
             </trans-unit>
+            <trans-unit id="223">
+                <source>label.messenger_by_error</source>
+                <target>Resumen por error</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>label.messenger_count</source>
+                <target>Cantidad</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>label.messenger_actions</source>
+                <target>Acciones</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>label.messenger_delete_group</source>
+                <target>Eliminar los %count%</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>label.messenger_delete_group_confirm</source>
+                <target>¿Eliminar permanentemente estos %count% mensaje(s)?</target>
+            </trans-unit>
+            <trans-unit id="228">
+                <source>label.messenger_detail</source>
+                <target>Detalle</target>
+            </trans-unit>
+            <trans-unit id="229">
+                <source>label.messenger_error_code</source>
+                <target>Código</target>
+            </trans-unit>
+            <trans-unit id="230">
+                <source>label.messenger_error_class</source>
+                <target>Clase de error</target>
+            </trans-unit>
+            <trans-unit id="231">
+                <source>label.messenger_retries</source>
+                <target>Reintentos</target>
+            </trans-unit>
+            <trans-unit id="232">
+                <source>label.messenger_transport</source>
+                <target>Transporte original</target>
+            </trans-unit>
+            <trans-unit id="233">
+                <source>label.messenger_retry</source>
+                <target>Reintentar</target>
+            </trans-unit>
+            <trans-unit id="234">
+                <source>label.messenger_delete</source>
+                <target>Eliminar</target>
+            </trans-unit>
+            <trans-unit id="235">
+                <source>label.messenger_delete_confirm</source>
+                <target>¿Eliminar permanentemente este mensaje?</target>
+            </trans-unit>
+            <trans-unit id="236">
+                <source>flash.messenger_not_found</source>
+                <target>Mensaje #%id% no encontrado (¿ya procesado?)</target>
+            </trans-unit>
+            <trans-unit id="237">
+                <source>flash.messenger_retry_success</source>
+                <target>Mensaje #%id% enviado correctamente</target>
+            </trans-unit>
+            <trans-unit id="238">
+                <source>flash.messenger_retry_failed</source>
+                <target>El reintento del mensaje #%id% falló: %error%</target>
+            </trans-unit>
+            <trans-unit id="239">
+                <source>flash.messenger_deleted</source>
+                <target>Mensaje #%id% eliminado</target>
+            </trans-unit>
+            <trans-unit id="240">
+                <source>flash.messenger_group_deleted</source>
+                <target>%count% mensaje(s) eliminado(s)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

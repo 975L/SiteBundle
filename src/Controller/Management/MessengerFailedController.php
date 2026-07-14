@@ -22,6 +22,9 @@ class MessengerFailedController extends AbstractController
 {
     // EasyAdmin prefixes this with the Dashboard's own route name, giving management_XXX
     public const PURGE_ROUTE = 'management_site_messenger_failed_purge';
+    public const RETRY_ROUTE = 'management_site_messenger_failed_retry';
+    public const DELETE_ROUTE = 'management_site_messenger_failed_delete';
+    public const DELETE_GROUP_ROUTE = 'management_site_messenger_failed_delete_group';
 
     public function __construct(
         private readonly MessengerFailedMessageService $messengerFailedMessageService,
@@ -31,8 +34,9 @@ class MessengerFailedController extends AbstractController
     ) {
     }
 
-    // Shows the failed Messenger messages in a readable form to ROLE_SUPER_ADMIN;
-    // ROLE_ADMIN only sees a reassuring "already signaled" message, no technical detail
+    // Shows the failed Messenger messages in a readable form to ROLE_SUPER_ADMIN, grouped by
+    // error so recurring issues can be spotted and bulk-deleted; ROLE_ADMIN only sees a
+    // reassuring "already signaled" message, no technical detail
     #[AdminRoute(
         path: '/site/messenger-failed',
         name: 'site_messenger_failed',
@@ -41,8 +45,11 @@ class MessengerFailedController extends AbstractController
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
+        $messages = $this->messengerFailedMessageService->findAll();
+
         return $this->render('@c975LSite/management/messenger_failed_index.html.twig', [
-            'messages' => $this->messengerFailedMessageService->findAll(),
+            'messages' => $messages,
+            'groups' => $this->messengerFailedMessageService->groupByError($messages),
         ]);
     }
 
@@ -63,6 +70,73 @@ class MessengerFailedController extends AbstractController
                 ['%count%' => $stats['purged']],
                 'site',
             ));
+        }
+
+        return $this->redirectToRoute('management_site_messenger_failed');
+    }
+
+    // Replays a single failed message right away; reports success or the new error so the
+    // admin can decide whether it's worth retrying again or just deleting
+    #[AdminRoute(
+        path: '/site/messenger-failed/{id}/retry',
+        name: 'site_messenger_failed_retry',
+        options: ['methods' => ['POST']]
+    )]
+    public function retry(int $id, Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        if ($this->isCsrfTokenValid(self::RETRY_ROUTE, $request->request->get('_token'))) {
+            $result = $this->messengerFailedMessageService->retry($id);
+
+            if (!$result['found']) {
+                $this->addFlash('warning', $this->translator->trans('flash.messenger_not_found', ['%id%' => $id], 'site'));
+            } elseif ($result['success']) {
+                $this->addFlash('success', $this->translator->trans('flash.messenger_retry_success', ['%id%' => $id], 'site'));
+            } else {
+                $this->addFlash('danger', $this->translator->trans(
+                    'flash.messenger_retry_failed',
+                    ['%id%' => $id, '%error%' => $result['error'] ?? '?'],
+                    'site',
+                ));
+            }
+        }
+
+        return $this->redirectToRoute('management_site_messenger_failed');
+    }
+
+    // Deletes a single failed message without retrying it
+    #[AdminRoute(
+        path: '/site/messenger-failed/{id}/delete',
+        name: 'site_messenger_failed_delete',
+        options: ['methods' => ['POST']]
+    )]
+    public function delete(int $id, Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        if ($this->isCsrfTokenValid(self::DELETE_ROUTE, $request->request->get('_token'))) {
+            $this->messengerFailedMessageService->deleteById($id);
+            $this->addFlash('success', $this->translator->trans('flash.messenger_deleted', ['%id%' => $id], 'site'));
+        }
+
+        return $this->redirectToRoute('management_site_messenger_failed');
+    }
+
+    // Deletes every message sharing the same error at once (see index()'s error groups)
+    #[AdminRoute(
+        path: '/site/messenger-failed/delete-group',
+        name: 'site_messenger_failed_delete_group',
+        options: ['methods' => ['POST']]
+    )]
+    public function deleteGroup(Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+
+        if ($this->isCsrfTokenValid(self::DELETE_GROUP_ROUTE, $request->request->get('_token'))) {
+            $ids = array_map('intval', $request->request->all('ids'));
+            $count = $this->messengerFailedMessageService->deleteByIds($ids);
+            $this->addFlash('success', $this->translator->trans('flash.messenger_group_deleted', ['%count%' => $count], 'site'));
         }
 
         return $this->redirectToRoute('management_site_messenger_failed');

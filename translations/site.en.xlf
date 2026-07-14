@@ -862,6 +862,78 @@
                 <source>label.logout</source>
                 <target>Logout</target>
             </trans-unit>
+            <trans-unit id="223">
+                <source>label.messenger_by_error</source>
+                <target>Summary by error</target>
+            </trans-unit>
+            <trans-unit id="224">
+                <source>label.messenger_count</source>
+                <target>Count</target>
+            </trans-unit>
+            <trans-unit id="225">
+                <source>label.messenger_actions</source>
+                <target>Actions</target>
+            </trans-unit>
+            <trans-unit id="226">
+                <source>label.messenger_delete_group</source>
+                <target>Delete the %count%</target>
+            </trans-unit>
+            <trans-unit id="227">
+                <source>label.messenger_delete_group_confirm</source>
+                <target>Permanently delete these %count% message(s)?</target>
+            </trans-unit>
+            <trans-unit id="228">
+                <source>label.messenger_detail</source>
+                <target>Detail</target>
+            </trans-unit>
+            <trans-unit id="229">
+                <source>label.messenger_error_code</source>
+                <target>Code</target>
+            </trans-unit>
+            <trans-unit id="230">
+                <source>label.messenger_error_class</source>
+                <target>Error class</target>
+            </trans-unit>
+            <trans-unit id="231">
+                <source>label.messenger_retries</source>
+                <target>Retries</target>
+            </trans-unit>
+            <trans-unit id="232">
+                <source>label.messenger_transport</source>
+                <target>Original transport</target>
+            </trans-unit>
+            <trans-unit id="233">
+                <source>label.messenger_retry</source>
+                <target>Retry</target>
+            </trans-unit>
+            <trans-unit id="234">
+                <source>label.messenger_delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="235">
+                <source>label.messenger_delete_confirm</source>
+                <target>Permanently delete this message?</target>
+            </trans-unit>
+            <trans-unit id="236">
+                <source>flash.messenger_not_found</source>
+                <target>Message #%id% not found (already processed?)</target>
+            </trans-unit>
+            <trans-unit id="237">
+                <source>flash.messenger_retry_success</source>
+                <target>Message #%id% sent successfully</target>
+            </trans-unit>
+            <trans-unit id="238">
+                <source>flash.messenger_retry_failed</source>
+                <target>Retry of message #%id% failed: %error%</target>
+            </trans-unit>
+            <trans-unit id="239">
+                <source>flash.messenger_deleted</source>
+                <target>Message #%id% deleted</target>
+            </trans-unit>
+            <trans-unit id="240">
+                <source>flash.messenger_group_deleted</source>
+                <target>%count% message(s) deleted</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -46,7 +46,8 @@ class PageController extends AbstractController
     )]
     public function redirectIndexWrongMethods()
     {
-        return $this->redirectToRoute('page_home');
+        // 303 tells the client to replay the request as GET, unlike 301/302 which are meant to preserve the method
+        return $this->redirectToRoute('page_home', [], 303);
     }
 
 //HOME
@@ -79,7 +80,8 @@ class PageController extends AbstractController
     )]
     public function redirectPagesWrongMethods()
     {
-        return $this->redirectToRoute('page_home');
+        // 303 tells the client to replay the request as GET, unlike 301/302 which are meant to preserve the method
+        return $this->redirectToRoute('page_home', [], 303);
     }
 
 //DISPLAY

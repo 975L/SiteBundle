@@ -6,7 +6,7 @@ services:
 
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity}'
+        exclude: '../src/{DependencyInjection,Entity,Messenger}'
 
     # Enables template_from_string(), used by the twig_content block (see below) to render Twig content stored in DB
     Twig\Extension\StringLoaderExtension:

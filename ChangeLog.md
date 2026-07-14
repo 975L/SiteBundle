@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.3.6
+
+- Modified view for Messenger messages in error (14/07/2026)
+- Added test to trigger deprecations (14/07/2026)
+
 ## v7.3.5.1
 
 - Corrected overflow-x for footer (14/07/2026)
