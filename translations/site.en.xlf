@@ -666,7 +666,7 @@
             </trans-unit>
             <trans-unit id="168">
                 <source>label.login</source>
-                <target>Log in!</target>
+                <target>Login</target>
             </trans-unit>
             <trans-unit id="169">
                 <source>label.please_sign_in</source>
@@ -795,6 +795,10 @@
             <trans-unit id="200">
                 <source>block.menu_link_description</source>
                 <target>A link to a page or a route, sortable alongside any other block (navbar, footer, email footer)</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.logout</source>
+                <target>Logout</target>
             </trans-unit>
         </body>
     </file>

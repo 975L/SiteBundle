@@ -666,7 +666,7 @@
             </trans-unit>
             <trans-unit id="168">
                 <source>label.login</source>
-                <target>¡Inicia sesión!</target>
+                <target>Iniciar sesión</target>
             </trans-unit>
             <trans-unit id="169">
                 <source>label.please_sign_in</source>
@@ -795,6 +795,10 @@
             <trans-unit id="200">
                 <source>block.menu_link_description</source>
                 <target>Un enlace a una página o una ruta, ordenable junto con cualquier otro bloque (navbar, pie de página, pie de página del email)</target>
+            </trans-unit>
+            <trans-unit id="201">
+                <source>label.logout</source>
+                <target>Cerrar sesión</target>
             </trans-unit>
         </body>
     </file>

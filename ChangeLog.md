@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.3.2
+
+- Added LinkableRouteProvider to scaffold to be able to be used in MenuLink Block (14/07/2026)
+
 ## v7.3.1
 
 - Moved tests to the right place (13/07/2026)
