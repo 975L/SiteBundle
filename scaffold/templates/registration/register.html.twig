@@ -9,6 +9,10 @@
 
     {{ form_errors(registrationForm) }}
 
+    <div class="text text-center">
+        {{ 'text.register_help'|trans({}, 'site') }}
+    </div>
+
     {{ form_start(registrationForm) }}
         {{ form_widget(registrationForm) }}
         <button type="submit" class="btn btn-large btn-primary">{{ 'label.register'|trans({}, 'site') }}</button>

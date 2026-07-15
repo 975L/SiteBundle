@@ -10,6 +10,8 @@
 namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Service\GalleryShowcaseProvider;
+use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -28,7 +30,10 @@ class GalleryShowcaseProviderTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        return new GalleryShowcaseProvider($twig, $translator);
+        $mediaAttacher = $this->createStub(BlockFixtureMediaAttacher::class);
+        $mediaAttacher->method('nextPlaceholderImage')->willReturnCallback(static fn () => new Media());
+
+        return new GalleryShowcaseProvider($twig, $translator, $mediaAttacher);
     }
 
     public function testGetShowcasesReturnsArticlesSliderAndMenuLinkSections(): void

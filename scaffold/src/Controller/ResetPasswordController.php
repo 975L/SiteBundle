@@ -6,15 +6,18 @@ use App\Entity\User;
 use App\Form\ChangePasswordFormType;
 use App\Form\ResetPasswordRequestFormType;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Service\FormBotProtection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
@@ -30,6 +33,10 @@ class ResetPasswordController extends AbstractController
         private ResetPasswordHelperInterface $resetPasswordHelper,
         private EntityManagerInterface $entityManager,
         private ConfigServiceInterface $configService,
+        private FormBotProtection $botProtection,
+        // Requires a "reset_password" limiter in config/packages/rate_limiter.yaml (see README)
+        #[Autowire(service: 'limiter.reset_password')]
+        private RateLimiterFactory $resetPasswordLimiter,
     ) {
     }
 
@@ -41,10 +48,24 @@ class ResetPasswordController extends AbstractController
     )]
     public function request(Request $request, MailerInterface $mailer, TranslatorInterface $translator): Response
     {
+        $this->botProtection->startTimer($request, 'reset_password_started_at');
+
         $form = $this->createForm(ResetPasswordRequestFormType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Silently redirect to the same "check your email" page as a real request, without
+            // sending anything - no hint given to the bot that it was caught
+            if ($this->botProtection->isSuspicious($request, $form, 'reset_password_started_at')) {
+                return $this->redirectToRoute('app_check_email');
+            }
+
+            if (!$this->resetPasswordLimiter->create($request->getClientIp())->consume(1)->isAccepted()) {
+                $this->addFlash('warning', $translator->trans('text.too_many_attempts', [], 'site'));
+
+                return $this->redirectToRoute('app_forgot_password_request');
+            }
+
             /** @var string $email */
             $email = $form->get('email')->getData();
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## v7.4
+
+- Added admin-editable theme (colors/fonts/light-dark mode) compiled to CSS custom properties by `ThemeVariablesCssListener`, inlined into emails via the new `theme_variables_css()` Twig function - replaces the old per-app `_user-variables.css`/`_user-typography.css` email override stubs, any app-level override of those two files stops applying (15/07/2026) [BC-Break]
+- Added theme presets (`config/themes/*.json`, `SiteThemePresetProvider`), applicable from the dashboard and previewable per-page via `?preset=<slug>` before committing (15/07/2026)
+- Added page templates (`config/page-templates/*.json`, `SitePageTemplateProvider`, `PageTemplateApplier`), applicable from a page's edit screen or via the new `c975l:site:pages:apply-template` command (15/07/2026)
+- A theme preset's `?preset=` preview can now also demo its associated page template's block arrangement, not just its colors/fonts/shape (15/07/2026)
+- Added page-template "shape" stylesheets (`sass/page-templates/*`, radii/shadows/nav/footer), activated via the `theme-stylesheet` config (15/07/2026)
+- Added `|linkify` Twig filter, turning bare URLs in raw text into safe links (15/07/2026)
+- Added registration/reset-password anti-spam protections: DNS-validated email, honeypot + minimum submit delay, optional GDPR consent checkbox, rate limiting (15/07/2026)
+- Extracted the honeypot field and submission-timing check shared by the registration/reset-password scaffold into `FormBotProtection`, instead of duplicating that logic in each scaffolded Form/Controller (15/07/2026)
+- `DnsEmail`'s DNS/MX lookup is now cached per domain (`cache.app`, 6h TTL) instead of hitting DNS on every validation, including every EasyAdmin edit of an existing user (15/07/2026)
+- The optional GDPR consent checkbox now actually rejects an unchecked submission server-side (`Assert\IsTrue`) - `required => true` alone was HTML5-only and enforced nothing (15/07/2026) [BC-Break]
+- `c975l:site:create` now also wires Symfony's `login_throttling` onto the "main" firewall (15/07/2026)
+- Removed `apple-touch-icon.png`/`favicon.ico` from `BackupCommand`'s standard excludes, now Media rows rather than static files (15/07/2026)
+
 ## v7.3.6
 
 - Modified view for Messenger messages in error (14/07/2026)

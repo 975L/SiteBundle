@@ -3,10 +3,34 @@
 {% set title = page.title %}
 {% set summarySocialNetwork = page.summarySocialNetwork %}
 
+{# Preview-only, request-scoped override of a theme preset's colors/fonts/shape (see
+   PageController::preview()'s ?preset=<slug>) - never writes to site_config, so it never affects
+   any other visitor or page. Rendered after bundle_stylesheets() so it wins the cascade. #}
+{% block stylesheets %}
+    {{ parent() }}
+    {% if previewPreset is defined and previewPreset %}
+        <style>
+            :root {
+                {% for slug, value in previewPreset.values %}
+                    --c975l-{{ slug|replace({'theme-': ''}) }}: {{ value|raw }};
+                {% endfor %}
+            }
+        </style>
+        {% if previewPreset.stylesheet %}
+            <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/page-templates/' ~ previewPreset.stylesheet ~ '.min.css') }}">
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     {% if isPreview|default(false) and not page.isPublished %}
         <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />
     {% endif %}
+    {% if previewPreset is defined and previewPreset %}
+        <twig:c975LUi:Alert:Alert type="info" message="{{ 'label.preview_preset_mode'|trans({'%label%': previewPreset.label|trans({}, 'config')}, 'site') }}" />
+    {% endif %}
     </div>
-    <twig:c975LUi:Blocks:Blocks blocks="{{ page.blocks }}" />
+    {# previewBlocks (set only when the preset carries a demo page-template, see PageController::preview())
+       stands in for the real page's blocks so the preview shows the preset's full intended arrangement #}
+    <twig:c975LUi:Blocks:Blocks blocks="{{ (previewBlocks is defined and previewBlocks) ? previewBlocks : page.blocks }}" />
 {% endblock %}

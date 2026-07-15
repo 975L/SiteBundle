@@ -38,10 +38,9 @@
             {# Stylesheets #}
             {% block stylesheets %}
                 <style>
-                    {# Defaults (incl. :root variables) come first so app-level overrides below can win the cascade #}
+                    {# Defaults (incl. :root variables) come first so the theme overrides below can win the cascade #}
                     {{ source('@c975LSiteCss/emails.min.css') }}
-                    {% include('@c975LSite/emails/_user-typography.css') %}
-                    {% include('@c975LSite/emails/_user-variables.css') %}
+                    {{ theme_variables_css() }}
                 </style>
             {% endblock %}
         {% endblock %}

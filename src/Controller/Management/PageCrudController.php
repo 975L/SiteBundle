@@ -16,6 +16,8 @@ use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
+use c975L\SiteBundle\Management\PageTemplateApplier;
+use c975L\SiteBundle\Management\SitePageTemplateProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -54,6 +56,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -76,6 +79,8 @@ class PageCrudController extends AbstractCrudController
         private readonly SluggerInterface $slugger,
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
+        private readonly SitePageTemplateProvider $pageTemplateProvider,
+        private readonly PageTemplateApplier $pageTemplateApplier,
     ) {
     }
 
@@ -284,6 +289,30 @@ class PageCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
+        // Adds the Blocks of a shipped page-template (config/page-templates/*.json) to the page being
+        // edited - one action per template, only shown once at least one is registered
+        $templates = $this->pageTemplateProvider->getTemplates();
+        $templatesGroup = [] !== $templates
+            ? ActionGroup::new('pageTemplates', t('label.page_templates', [], 'site'), 'fa fa-th-large')
+            : null;
+        foreach ($templates as $id => $template) {
+            $actionName = 'applyTemplate_' . $id;
+            $templatesGroup?->addAction(
+                Action::new($actionName, $this->translator->trans($template['label'], [], 'site'))
+                    ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
+                        ->setController(self::class)
+                        ->setAction('applyTemplate')
+                        ->setEntityId($page->getId())
+                        ->set('template', $id)
+                        ->generateUrl())
+                    ->askConfirmation(t('confirm.apply_page_template', [], 'site'))
+            );
+            $actions->setPermission($actionName, $role);
+        }
+        if (null !== $templatesGroup) {
+            $actions->add(Crud::PAGE_EDIT, $templatesGroup);
+        }
+
         return $actions
             ->add(Crud::PAGE_INDEX, $trashAction)
             ->add(Crud::PAGE_INDEX, $restoreAction)
@@ -471,6 +500,33 @@ class PageCrudController extends AbstractCrudController
                 ->setController(self::class)
                 ->setAction(Action::EDIT)
                 ->setEntityId($copy->getId())
+                ->generateUrl()
+        );
+    }
+
+    // Bulk-adds a page-template's Blocks (kind + example data, in the template's order) to the page
+    // being edited - the admin then edits the pre-filled content, same idea as ConfigBundle's
+    // ThemeCrudController::applyPreset(). Appended after any existing blocks, not replacing them.
+    #[AdminRoute('/{entityId}/apply-template')]
+    public function applyTemplate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        $page = $context->getEntity()->getInstance();
+        $template = $this->pageTemplateProvider->getTemplate((string) $request->query->get('template'));
+
+        if (null !== $template) {
+            $this->pageTemplateApplier->apply($page, $template, $this->security->getUser());
+
+            $entityManager->flush();
+            $this->addFlash('success', $this->translator->trans('flash.page_template_applied', [], 'site'));
+        }
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($page->getId())
                 ->generateUrl()
         );
     }

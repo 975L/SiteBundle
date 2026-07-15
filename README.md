@@ -232,6 +232,12 @@ Each block is registered as a `ui.block`-tagged service, with a dedicated form (
 
 Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-editor` key in ConfigBundle.
 
+### Page templates
+
+`config/page-templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can bulk-add to a `Page` — a starting point to edit from, not a live/synced layout. Listed via `SitePageTemplateProvider`, applied via `PageCrudController`'s per-template "Apply template" action (appends the template's blocks after whatever the page already has, doesn't replace anything) or the `c975l:site:pages:apply-template` command (see [Commands](#commands)) for scripted use across several pages/sites at once. Both share the same `PageTemplateApplier`.
+
+A page template stays independent from a [theme preset](#themes)'s colors/fonts/shape — a preset can optionally reference one (its `pageTemplate` key) purely to demo its full look in `?preset=` preview, but applying either one never touches the other.
+
 ---
 
 ## Menus
@@ -336,6 +342,43 @@ if (false === $this->configService->get('user-registration-enabled')) {
 }
 ```
 
+### Registration anti-spam protections
+
+The scaffolded `RegistrationFormType`/`RegistrationController` and `ResetPasswordRequestFormType`/`ResetPasswordController` reject bots at several layers, so a public form doesn't turn into a way to farm confirmation emails towards throwaway domains:
+
+- **`Assert\Email` + `App\Validator\Constraints\DnsEmail`** on `User::$email` — format check, then a live MX/A DNS lookup (via `egulias/email-validator`, already a transitive dependency of `symfony/mailer`, nothing to install) rejecting domains that can't receive mail at all (e.g. `something@dominatingkeywords.com`). Runs on every entity validation, including the User CRUD in the backoffice.
+- **Honeypot + minimum submit delay** — an invisible `website` field (hidden inline, no CSS dependency) on both forms, and a minimum delay between displaying the form and submitting it, tracked in session. Either one failing silently redirects (home for registration, the usual "check your email" page for the reset request) without creating an account or sending any email, giving no signal back to the bot. The delay is the shared `site-form-delay` ConfigBundle key (seconds, default `3`) - also used by ContactFormBundle's own anti-bot check, so it's one setting for every public form instead of one per bundle.
+- **GDPR consent checkbox** - shown on both forms (unmapped `gdpr` field, reusing ContactFormBundle's `text.gdpr` translation) when the shared `site-form-gdpr` ConfigBundle key (bool, default `true`) is enabled.
+- **Rate limiting by IP** — requires a `registration` and a `reset_password` limiter, not wired automatically since scaffold only copies `src/`/`templates/`/`tests/`/`translations/`, never `config/` (the `symfony/rate-limiter` package itself is already a dependency of this bundle, nothing to install there):
+
+```yaml
+# config/packages/rate_limiter.yaml
+framework:
+    rate_limiter:
+        registration:
+            policy: sliding_window
+            limit: 5
+            interval: '10 minutes'
+        reset_password:
+            policy: sliding_window
+            limit: 5
+            interval: '10 minutes'
+```
+
+Without this config, both controllers fail to boot (`limiter.registration`/`limiter.reset_password` service not found) - add it right after installing the scaffold.
+
+### Login throttling
+
+`c975l:site:create` also inserts `login_throttling: { max_attempts: 5 }` onto the `main` firewall in `config/packages/security.yaml` (same step as `user_checker` above), using Symfony's built-in rate limiter for `/login` - no custom code involved. If your site predates this or uses a differently-named firewall, add it yourself:
+
+```yaml
+security:
+    firewalls:
+        main:
+            login_throttling:
+                max_attempts: 5
+```
+
 ### Account activation (`isEnabled`)
 
 `App\Entity\User::isEnabled` gates login independently from `isVerified`. `EmailVerifier::handleEmailConfirmation` (scaffolded) sets both `isVerified` and `isEnabled` to `true` once the user confirms their email — `c975l:site:create` does the same for the bootstrap admin account, since there's no email to confirm.
@@ -402,6 +445,26 @@ To override it manually for a file-based page:
 The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
 
 Access is controlled by the `site-role-editor` key in ConfigBundle, same as pages.
+
+---
+
+## Themes
+
+The site's colors, fonts and light/dark mode are admin-editable ConfigBundle keys (`group: theme`, see `config/configs-css.json`): `theme-color-primary`, `theme-color-secondary`, `theme-color-primary-dark-mode`, `theme-color-secondary-dark-mode`, `theme-color-background`, `theme-color-text`, `theme-font-family-title`, `theme-font-family-body`, `theme-font-family-accent`, `theme-mode` (`auto`/`light`/`dark`) and `theme-stylesheet` (see below). Managed via ConfigBundle's `ThemeCrudController`, its own dashboard view so it doesn't get mixed up with the general config list.
+
+Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, also a `CacheWarmerInterface` so a fresh `public/bundles/build/site-theme.css` exists after a deploy even without an admin re-saving anything) into `--c975l-*` CSS custom properties, loaded right after `styles.min.css` so they win the cascade over the built-in defaults. The same compiled file is inlined into emails via the `theme_variables_css()` Twig function — no more per-app `_user-variables.css`/`_user-typography.css` override stubs to keep in sync, the backoffice is now the single source of truth for both the site and its emails. Because the real site links UiBundle's concatenated `bundles/build/site.css` rather than `site-theme.css` directly, the listener also calls UiBundle's `StylesheetCacheWarmer::compileAll()` after every regeneration, so a theme change (or applying a preset) is reflected immediately instead of waiting for the next `cache:warmup`.
+
+`theme-mode: dark` (or `auto` following the visitor's OS preference via `prefers-color-scheme`) swaps in a dark palette (see `sass/_theme-dark.scss`); `theme-color-primary-dark-mode`/`-secondary-dark-mode` optionally override just the accent colors for dark mode, falling back to the light-mode ones otherwise.
+
+### Presets
+
+`config/themes/*.json` ships ready-made combinations of the keys above (colors, fonts, and optionally a page-template "shape" stylesheet, see below) as one-click presets, listed via `SiteThemePresetProvider` (implements ConfigBundle's `ThemePresetProviderInterface`). An admin applies one from the Theme dashboard's "Presets" action group — this bulk-overwrites the `theme-*` configs in a single flush, it never touches page content.
+
+Before committing to one, preview it on any page: `/pages/{page}/preview?preset=<slug>` renders that page with the preset's colors/fonts/shape applied for this request only (nothing written to `site_config`). If the preset also declares a `pageTemplate` (a `config/page-templates/*.json` slug, see [Page templates](#page-templates)), the preview additionally swaps in that template's blocks — transient, never persisted — so the preview shows the preset's full intended look rather than just a reskin of the page's actual content.
+
+### Page-template stylesheets ("shape")
+
+A page template (see below) can ship its own `sass/page-templates/<slug>.scss`, overriding non-color "shape" tokens — border radii, shadows, navbar/footer layout — defined in `sass/_variables.scss`. Setting `theme-stylesheet` (done automatically when applying a preset that declares one) loads `bundles/c975lsite/css/page-templates/<slug>.min.css` after `site-theme.css`, so it can override those tokens on top of the admin's colors/fonts.
 
 ---
 
@@ -557,6 +620,8 @@ File names may contain letters (including accented), digits, `-`, `_`, `/`, and 
 | `template_exists('template.html.twig')` | Returns `true` if the template file exists |
 | `asset_exists('path/to/file')` | Returns `true` if the asset exists in `public/` or `assets/` |
 | `\|nl2br` | Applies PHP's `nl2br()` with HTML output safe |
+| `\|linkify` | Turns bare `http(s)://` URLs in a raw string into `<a target="_blank" rel="noopener noreferrer">` links, HTML-escaping the rest |
+| `theme_variables_css()` | Returns the CSS compiled by `ThemeVariablesCssListener` from the admin-editable theme configs (see [Themes](#themes)), for inlining where a `<link>` isn't possible (e.g. emails) |
 
 ---
 
@@ -571,7 +636,7 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | `header.html.twig` | Email header — renders the `email-header` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site navbar |
 | `footer.html.twig` | Email footer — renders the `email-footer` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site footer |
 
-CSS is inlined automatically via `twig/cssinliner-extra`. The minified stylesheet (`emails.min.css`, compiled from `sass/emails.scss`, including its `:root` variables) is embedded.
+CSS is inlined automatically via `twig/cssinliner-extra`. The minified stylesheet (`emails.min.css`, compiled from `sass/emails.scss`, including its `:root` variables) is embedded, followed by the admin-editable [theme](#themes) colors/fonts (`theme_variables_css()`) so they win the cascade.
 
 `fullLayout.html.twig`'s own copy (no-spam notice, "hello", closing/thanks, "sent by", legal mentions) isn't hardcoded translations — it's authored as rich text (`kind: html`) directly in ConfigBundle, under the `email` group: `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`, `email-text-legal`. Each block only renders if its config value is non-empty (`email-text-legal` is empty by default). `email-text-closing` and `email-text-sent-by` support a `%site%` placeholder, replaced with `site-name`. This lets the client rewrite their own email copy, including in `email-text-legal` (share capital, registration number...), from the backoffice without touching translations or templates.
 
@@ -596,6 +661,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
+| `php bin/console c975l:site:pages:apply-template <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
 
 ### Create a new site

@@ -1,10 +1,13 @@
 /* MENU */
 .menu {
-    position: relative;
+    position: var(--navbar-position);
+    top: 0;
+    z-index: var(--navbar-z-index);
     display: flex;
     flex-direction: column;
-    background-color: var(--white);
-    box-shadow: 0 2px 4px var(--primary);
+    background-color: var(--navbar-background);
+    box-shadow: var(--shadow-nav);
+    border-bottom: var(--border-nav);
 }
 
 .menu-fixed {

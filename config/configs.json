@@ -504,5 +504,27 @@
         "group": "analytics",
         "severity": null,
         "description": "description.site_enable_cookie_consent"
+    },
+    {
+        "label": "label.site_form_delay",
+        "slug": "site-form-delay",
+        "sensitive": false,
+        "restricted": true,
+        "value": 3,
+        "kind": "text",
+        "group": "form",
+        "severity": null,
+        "description": "description.site_form_delay"
+    },
+    {
+        "label": "label.site_form_gdpr",
+        "slug": "site-form-gdpr",
+        "sensitive": false,
+        "restricted": true,
+        "value": "true",
+        "kind": "bool",
+        "group": "form",
+        "severity": "warning",
+        "description": "description.site_form_gdpr"
     }
 ]

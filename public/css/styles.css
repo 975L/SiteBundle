@@ -329,11 +329,11 @@ template {
   --button-background-danger: rgb(220, 53, 69);
   --button-background-danger-dark: rgb(220, 53, 69, 0.9);
   --button-background-primary: rgb(11, 55, 178);
-  --button-background-primary-dark: rgb(11, 55, 78, 0.9);
-  --button-background-primary-light: rgb(11, 55, 78, 0.5);
+  --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, black);
+  --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
   --button-background-secondary: rgb(218, 126, 57);
-  --button-background-secondary-dark: rgb(218, 126, 57, 0.9);
-  --button-background-secondary-light: rgb(218, 126, 57, 0.5);
+  --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black);
+  --button-background-secondary-light: color-mix(in srgb, var(--secondary) 50%, white);
   --button-background-success: rgb(40, 167, 69);
   --button-background-success-dark: rgb(40, 167, 69, 0.9);
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -341,16 +341,38 @@ template {
   --button-secondary-color: #000;
   --button-link-color: #fff;
   --card-background: #fff;
-  --primary: var(--button-background-primary);
-  --secondary: var(--button-background-secondary);
+  --primary: var(--c975l-color-primary, var(--button-background-primary));
+  --secondary: var(--c975l-color-secondary, var(--button-background-secondary));
+  --background: var(--c975l-color-background, #fff);
+  --text: var(--c975l-color-text, #000);
+  --surface-accent: color-mix(in srgb, var(--primary) 12%, var(--background));
+  --surface-alt: color-mix(in srgb, var(--background) 94%, var(--text));
+  --border-color: color-mix(in srgb, var(--text) 12%, var(--background));
+  --border-accent: color-mix(in srgb, var(--primary) 35%, var(--background));
+  --surface-inverse: #232323;
+  --text-on-inverse: #d8d8d8;
+  --radius-btn: 5px;
+  --radius-card: 10px;
+  --radius-panel: 16px;
+  --shadow-nav: 0 2px 4px var(--primary);
+  --navbar-background: var(--white);
+  --border-nav: none;
+  --navbar-position: relative;
+  --navbar-z-index: auto;
+  --footer-background: var(--primary);
+  --footer-text: var(--white);
+  --footer-text-hover: var(--footer-text);
+  --footer-items-direction: column;
+  --footer-items-justify: flex-start;
   --disabled: #808080;
-  --font-family-title: "Sans Serif";
-  --font-family-body: "Sans Serif";
+  --font-family-title: var(--c975l-font-family-title, sans-serif);
+  --font-family-body: var(--c975l-font-family-body, sans-serif);
+  --font-family-accent: var(--c975l-font-family-accent, monospace);
   --form-input-color: #555;
   --font-title-weight: normal;
   --font-body-weight: normal;
   --label-color: #808080;
-  --link-color: #0d6efd;
+  --link-color: var(--primary);
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;
   --input-focus-border-color: rgb(24, 115, 200);
@@ -361,6 +383,28 @@ template {
   --white: #fff;
 }
 
+/* DARK MODE */
+:root[data-theme=dark] {
+  --background: #121212;
+  --text: #e0e0e0;
+  --black: #e0e0e0;
+  --white: #1e1e1e;
+  --card-background: #1e1e1e;
+  --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
+  --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #121212;
+    --text: #e0e0e0;
+    --black: #e0e0e0;
+    --white: #1e1e1e;
+    --card-background: #1e1e1e;
+    --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
+    --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
+  }
+}
 /* COLORS */
 .primary {
   color: var(--primary);
@@ -429,6 +473,7 @@ html {
 body {
   max-width: var(--body-max-width);
   margin: 0 auto;
+  background-color: var(--background);
 }
 
 .box-shadow {
@@ -446,7 +491,7 @@ body {
 /* TYPOGRAPHY */
 * {
   font-family: var(--font-family-body);
-  color: var(--black);
+  color: var(--text);
 }
 
 h1,
@@ -707,6 +752,71 @@ a:hover.pullDown {
   animation: fadeOut 1s forwards;
 }
 
+/* BADGES */
+.badge {
+  display: inline-block;
+  border-radius: var(--radius-btn);
+  padding: 0.3em 0.75em;
+  font-family: var(--font-family-accent);
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--button-color);
+  background-color: var(--primary);
+}
+
+.badge-primary {
+  background-color: var(--primary);
+}
+
+.badge-secondary {
+  background-color: var(--secondary);
+  color: var(--button-secondary-color);
+}
+
+.badge-success {
+  background-color: var(--button-background-success);
+}
+
+.badge-danger {
+  background-color: var(--button-background-danger);
+}
+
+.badge-pill {
+  border-radius: 999px;
+}
+
+/* Without these, an <a class="badge ..."> falls back to the global a:hover rule (_links.scss),
+   which sets color to --link-color - itself an alias for --primary, i.e. the same color as
+   .badge-primary's own background, making the text invisible on hover */
+.badge:hover,
+.badge-primary:hover {
+  color: var(--button-color);
+  background-color: var(--button-background-primary-dark);
+  text-decoration: none;
+}
+
+.badge-secondary:hover {
+  color: var(--button-secondary-color);
+  background-color: var(--button-background-secondary-dark);
+  text-decoration: none;
+}
+
+.badge-success:hover {
+  color: var(--button-color);
+  background-color: var(--button-background-success-dark);
+  text-decoration: none;
+}
+
+.badge-danger:hover {
+  color: var(--button-color);
+  background-color: var(--button-background-danger-dark);
+  text-decoration: none;
+}
+
 /* BLOCKQUOTES */
 blockquote {
   padding: 10px 20px;
@@ -950,11 +1060,14 @@ input.success {
 
 /* MENU */
 .menu {
-  position: relative;
+  position: var(--navbar-position);
+  top: 0;
+  z-index: var(--navbar-z-index);
   display: flex;
   flex-direction: column;
-  background-color: var(--white);
-  box-shadow: 0 2px 4px var(--primary);
+  background-color: var(--navbar-background);
+  box-shadow: var(--shadow-nav);
+  border-bottom: var(--border-nav);
 }
 
 .menu-fixed {
@@ -1250,7 +1363,7 @@ tfoot td {
 
 /* FOOTER */
 footer {
-  background-color: var(--primary);
+  background-color: var(--footer-background);
   border-top: solid grey 2px;
   margin-top: 3em;
   margin-left: calc(50% - 50vw);
@@ -1262,25 +1375,26 @@ footer {
 footer .menu-items,
 footer .menu-items .blocks {
   display: flex;
-  flex-direction: column;
+  flex-direction: var(--footer-items-direction);
   align-items: center;
+  justify-content: var(--footer-items-justify);
 }
 
 footer a,
 footer a:visited {
-  color: var(--white);
+  color: var(--footer-text);
   text-decoration: none;
 }
 
 footer a:hover,
 footer a:visited:hover {
-  color: var(--white);
+  color: var(--footer-text-hover);
   text-decoration: underline;
 }
 
 footer .menu-item {
   margin: 0;
-  color: var(--white);
+  color: var(--footer-text);
 }
 
 footer .menu-link {
@@ -1343,4 +1457,6 @@ footer .made-by {
   a[href]::after {
     content: none;
   }
-}/*# sourceMappingURL=styles.css.map */
+}
+
+/*# sourceMappingURL=styles.css.map */

@@ -1,0 +1,11 @@
+{
+    "label": "label.theme_preset_default",
+    "values": {
+        "theme-color-primary": "rgb(11, 55, 178)",
+        "theme-color-secondary": "rgb(218, 126, 57)",
+        "theme-color-background": "#fff",
+        "theme-color-text": "#000",
+        "theme-font-family-title": "sans-serif",
+        "theme-font-family-body": "sans-serif"
+    }
+}

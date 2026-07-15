@@ -1,0 +1,123 @@
+[
+    {
+        "label": "label.theme_color_primary",
+        "slug": "theme-color-primary",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_primary"
+    },
+    {
+        "label": "label.theme_color_secondary",
+        "slug": "theme-color-secondary",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_secondary"
+    },
+    {
+        "label": "label.theme_color_primary_dark_mode",
+        "slug": "theme-color-primary-dark-mode",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_primary_dark_mode"
+    },
+    {
+        "label": "label.theme_color_secondary_dark_mode",
+        "slug": "theme-color-secondary-dark-mode",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_secondary_dark_mode"
+    },
+    {
+        "label": "label.theme_color_background",
+        "slug": "theme-color-background",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_background"
+    },
+    {
+        "label": "label.theme_color_text",
+        "slug": "theme-color-text",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_color_text"
+    },
+    {
+        "label": "label.theme_font_family_title",
+        "slug": "theme-font-family-title",
+        "sensitive": false,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_font_family_title"
+    },
+    {
+        "label": "label.theme_font_family_body",
+        "slug": "theme-font-family-body",
+        "sensitive": false,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_font_family_body"
+    },
+    {
+        "label": "label.theme_font_family_accent",
+        "slug": "theme-font-family-accent",
+        "sensitive": false,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_font_family_accent"
+    },
+    {
+        "label": "label.theme_stylesheet",
+        "slug": "theme-stylesheet",
+        "sensitive": false,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_stylesheet"
+    },
+    {
+        "label": "label.theme_mode",
+        "slug": "theme-mode",
+        "sensitive": false,
+        "restricted": false,
+        "value": "auto",
+        "kind": "text",
+        "group": "theme",
+        "severity": null,
+        "description": "description.theme_mode"
+    }
+]

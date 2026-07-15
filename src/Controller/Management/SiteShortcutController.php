@@ -9,9 +9,11 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Command\ExportTablesCommand;
 use App\Command\SitemapCreateCommand;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -31,6 +33,8 @@ class SiteShortcutController extends AbstractController
     public function __construct(
         private readonly SitemapCreateCommand $sitemapCreateCommand,
         private readonly ExportTablesCommand $exportTablesCommand,
+        private readonly ConfigRepository $configRepository,
+        private readonly EntityManagerInterface $manager,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
         private readonly AdminUrlGenerator $adminUrlGenerator,

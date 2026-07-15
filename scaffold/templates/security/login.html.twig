@@ -9,7 +9,7 @@
         {% endif %}
 
         {% if app.user %}
-            <div>
+            <div class="text text-center">
                 {{ 'text.logged_in_as'|trans({'%user%': app.user.userIdentifier}, 'site') }} <a href="{{ logout_path() }}">{{ 'label.signout'|trans({}, 'site') }}</a>
             </div>
         {% endif %}

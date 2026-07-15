@@ -586,6 +586,10 @@
                 <source>label.register</source>
                 <target>Registrarse</target>
             </trans-unit>
+            <trans-unit id="248">
+                <source>text.register_help</source>
+                <target>Crea tu cuenta indicando tu email y una contraseña.</target>
+            </trans-unit>
             <trans-unit id="154">
                 <source>label.password</source>
                 <target>Contraseña</target>
@@ -818,6 +822,14 @@
                 <source>label.messenger_to</source>
                 <target>Destinatario</target>
             </trans-unit>
+            <trans-unit id="241">
+                <source>label.messenger_from</source>
+                <target>Remitente</target>
+            </trans-unit>
+            <trans-unit id="242">
+                <source>text.too_many_attempts</source>
+                <target>Demasiados intentos, inténtelo de nuevo más tarde.</target>
+            </trans-unit>
             <trans-unit id="212">
                 <source>label.messenger_subject</source>
                 <target>Asunto</target>
@@ -933,6 +945,26 @@
             <trans-unit id="240">
                 <source>flash.messenger_group_deleted</source>
                 <target>%count% mensaje(s) eliminado(s)</target>
+            </trans-unit>
+            <trans-unit id="243">
+                <source>label.page_templates</source>
+                <target>Plantillas de página</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>confirm.apply_page_template</source>
+                <target>Los bloques de la plantilla se añadirán a esta página (contenido de ejemplo, a editar después). Los bloques existentes se conservan. ¿Continuar?</target>
+            </trans-unit>
+            <trans-unit id="245">
+                <source>flash.page_template_applied</source>
+                <target>Los bloques de la plantilla se han añadido a la página.</target>
+            </trans-unit>
+            <trans-unit id="246">
+                <source>label.page_template_agency_home_warm</source>
+                <target>Inicio agencia (cálido)</target>
+            </trans-unit>
+            <trans-unit id="247">
+                <source>label.preview_preset_mode</source>
+                <target>Vista previa del preset "%label%" (colores/fuentes/forma, maquetación de demostración) — nada se ha guardado, solo se aplica a esta vista previa</target>
             </trans-unit>
         </body>
     </file>

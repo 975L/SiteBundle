@@ -1,0 +1,11 @@
+{
+    "label": "label.theme_preset_warm_artisan",
+    "stylesheet": "warm-artisan",
+    "pageTemplate": "agency-home-warm",
+    "values": {
+        "theme-color-primary": "rgb(228, 3, 46)",
+        "theme-font-family-title": "serif",
+        "theme-font-family-body": "sans-serif",
+        "theme-font-family-accent": "monospace"
+    }
+}

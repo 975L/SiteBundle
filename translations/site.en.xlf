@@ -586,6 +586,10 @@
                 <source>label.register</source>
                 <target>Register</target>
             </trans-unit>
+            <trans-unit id="248">
+                <source>text.register_help</source>
+                <target>Create your account by entering your email and a password.</target>
+            </trans-unit>
             <trans-unit id="154">
                 <source>label.password</source>
                 <target>Password</target>
@@ -818,6 +822,14 @@
                 <source>label.messenger_to</source>
                 <target>Recipient</target>
             </trans-unit>
+            <trans-unit id="241">
+                <source>label.messenger_from</source>
+                <target>Sender</target>
+            </trans-unit>
+            <trans-unit id="242">
+                <source>text.too_many_attempts</source>
+                <target>Too many attempts, please try again later.</target>
+            </trans-unit>
             <trans-unit id="212">
                 <source>label.messenger_subject</source>
                 <target>Subject</target>
@@ -933,6 +945,26 @@
             <trans-unit id="240">
                 <source>flash.messenger_group_deleted</source>
                 <target>%count% message(s) deleted</target>
+            </trans-unit>
+            <trans-unit id="243">
+                <source>label.page_templates</source>
+                <target>Page templates</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>confirm.apply_page_template</source>
+                <target>The template's blocks will be added to this page (example content, to be edited afterwards). Existing blocks are kept. Continue?</target>
+            </trans-unit>
+            <trans-unit id="245">
+                <source>flash.page_template_applied</source>
+                <target>The template's blocks have been added to the page.</target>
+            </trans-unit>
+            <trans-unit id="246">
+                <source>label.page_template_agency_home_warm</source>
+                <target>Agency homepage (warm)</target>
+            </trans-unit>
+            <trans-unit id="247">
+                <source>label.preview_preset_mode</source>
+                <target>Previewing the "%label%" preset (colors/fonts/shape, demo layout) - nothing has been saved, this only applies to this preview</target>
             </trans-unit>
         </body>
     </file>

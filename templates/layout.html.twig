@@ -66,7 +66,9 @@
 {% endif %}
 
 <!DOCTYPE html>
-<html lang="{{ locale }}">
+{# theme-mode ("light"/"dark"/"auto"): admin-wide choice, applies to every visitor. "auto" (or unset)
+   leaves data-theme unset, so @media (prefers-color-scheme: dark) in _theme-dark.scss takes over #}
+<html lang="{{ locale }}"{% if config('theme-mode') in ['light', 'dark'] %} data-theme="{{ config('theme-mode') }}"{% endif %}>
 {# Head #}
     <head>
         {% block head %}

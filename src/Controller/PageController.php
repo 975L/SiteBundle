@@ -10,8 +10,12 @@
 namespace c975L\SiteBundle\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Management\PageTemplateApplier;
+use c975L\SiteBundle\Management\SitePageTemplateProvider;
+use c975L\SiteBundle\Management\SiteThemePresetProvider;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 /**
@@ -25,6 +29,9 @@ class PageController extends AbstractController
     public function __construct(
         private readonly PageServiceInterface $pageService,
         private readonly ConfigServiceInterface $configService,
+        private readonly ?SiteThemePresetProvider $themePresetProvider = null,
+        private readonly SitePageTemplateProvider $pageTemplateProvider = new SitePageTemplateProvider(),
+        private readonly PageTemplateApplier $pageTemplateApplier = new PageTemplateApplier(),
     ) {
     }
 
@@ -130,7 +137,7 @@ class PageController extends AbstractController
         methods: ['GET'],
         priority: 1
     )]
-    public function preview($page)
+    public function preview($page, Request $request)
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
@@ -141,9 +148,30 @@ class PageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        // Optional ?preset=<slug>: previews a theme preset's colors/fonts/shape for this request only
+        // (see templates/pages/page.html.twig), without writing anything to site_config - lets an
+        // editor judge a site-wide preset's effect before committing to it via "Apply preset"
+        $previewPreset = $this->themePresetProvider?->getPresets()[(string) $request->query->get('preset')] ?? null;
+
+        // A preset can point to a page-template whose blocks demo its full look (see
+        // SiteThemePresetProvider) - built here as transient, unpersisted Blocks so this request's
+        // render shows the preset's intended arrangement without touching the real page's content
+        $previewBlocks = null;
+        if (null !== $previewPreset && null !== $previewPreset['pageTemplate']) {
+            $template = $this->pageTemplateProvider->getTemplate($previewPreset['pageTemplate']);
+            if (null !== $template) {
+                $previewBlocks = $this->pageTemplateApplier->build($template);
+            }
+        }
+
         return $this->render(
             '@c975LSite/pages/page.html.twig',
-            ['page' => $pageObject, 'isPreview' => true]
+            [
+                'page' => $pageObject,
+                'isPreview' => true,
+                'previewPreset' => $previewPreset,
+                'previewBlocks' => $previewBlocks,
+            ]
         )->setPrivate();
     }
 }

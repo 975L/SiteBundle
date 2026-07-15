@@ -45,10 +45,8 @@ class BackupCommand extends Command
 {
     // Files/dirs in public/ excluded from every backup (framework assets, not user data)
     private const STANDARD_EXCLUDES = [
-        'apple-touch-icon.png',
         'assets',
         'bundles',
-        'favicon.ico',
         'humans.txt',
         'index.php',
         'prepend.inc.php',

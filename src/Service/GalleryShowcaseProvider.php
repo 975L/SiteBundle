@@ -9,8 +9,7 @@
 namespace c975L\SiteBundle\Service;
 
 use c975L\UiBundle\Contract\GalleryShowcaseProviderInterface;
-use c975L\UiBundle\Controller\Management\BlockGalleryController;
-use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
@@ -23,6 +22,7 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
     public function __construct(
         private readonly Environment $twig,
         private readonly TranslatorInterface $translator,
+        private readonly BlockFixtureMediaAttacher $mediaAttacher,
     ) {
     }
 
@@ -47,17 +47,14 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
 
     // "articles_slider" ultimately just feeds a few articles' title/hook/image into the same Slider
     // component "slider" itself uses (see ArticlesSlider.html.twig) - reusing UiBundle's own gallery
-    // placeholder image here too, same as the "slider"/"image" block previews
+    // placeholder images here too, same as the "slider"/"image" block previews. Drawn from
+    // BlockFixtureMediaAttacher's rotating pool, so the 3 articles don't all show the same photo.
     private function articlesSliderVariant(): string
     {
         $slides = [];
         for ($i = 1; $i <= 3; ++$i) {
             $slides[] = [
-                'image' => (new Media())
-                    ->setFilename(BlockGalleryController::PLACEHOLDER_IMAGE)
-                    ->setAlt("Article {$i}")
-                    ->setWidth('800')
-                    ->setHeight('450'),
+                'image' => $this->mediaAttacher->nextPlaceholderImage()->setAlt("Article {$i}"),
                 'title' => "Article {$i}",
                 'text' => 'Extrait de l\'article, tronqué pour l\'aperçu...',
                 'url' => '#',

@@ -1,6 +1,6 @@
 /* BUTTONS */
 .btn {
-    border-radius: 5px;
+    border-radius: var(--radius-btn);
     border: none;
     object-fit: cover;
     box-shadow: var(--button-box-shadow);
@@ -24,7 +24,7 @@
 
 .btn-primary,
 .btn-small {
-    background-color: var(--button-background-primary);
+    background-color: var(--primary);
 }
 
 .btn-primary:hover,
@@ -33,7 +33,7 @@
 }
 
 .btn-secondary {
-    background-color: var(--button-background-secondary);
+    background-color: var(--secondary);
     color: var(--button-secondary-color);
 }
 
@@ -63,7 +63,7 @@
 a.btn-link {
     background-color: transparent;
     box-shadow: none;
-    color: var(--button-background-primary);
+    color: var(--primary);
     text-decoration: underline;
 }
 

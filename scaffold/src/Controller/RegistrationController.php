@@ -7,14 +7,17 @@ use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Service\FormBotProtection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -24,6 +27,10 @@ class RegistrationController extends AbstractController
     public function __construct(
         private EmailVerifier $emailVerifier,
         private ConfigServiceInterface $configService,
+        private FormBotProtection $botProtection,
+        // Requires a "registration" limiter in config/packages/rate_limiter.yaml (see README)
+        #[Autowire(service: 'limiter.registration')]
+        private RateLimiterFactory $registrationLimiter,
     ) {
     }
 
@@ -40,11 +47,26 @@ class RegistrationController extends AbstractController
             throw new HttpException(Response::HTTP_FORBIDDEN);
         }
 
+        $this->botProtection->startTimer($request, 'registration_started_at');
+
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Silently redirect as if it succeeded - no account created, no email sent, and
+            // no hint given to the bot that it was caught
+            if ($this->botProtection->isSuspicious($request, $form, 'registration_started_at')) {
+                return $this->redirectToRoute('page_home');
+            }
+
+            // Rate limit by IP, on top of the bot heuristics above
+            if (!$this->registrationLimiter->create($request->getClientIp())->consume(1)->isAccepted()) {
+                $this->addFlash('warning', $translator->trans('text.too_many_attempts', [], 'site'));
+
+                return $this->redirectToRoute('app_register');
+            }
+
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(

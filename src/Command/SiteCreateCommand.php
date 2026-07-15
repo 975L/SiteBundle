@@ -99,6 +99,7 @@ class SiteCreateCommand extends Command
             $scaffold['skipped']
         ));
         $this->ensureUserChecker($io);
+        $this->ensureLoginThrottling($io);
 
         $io->section('2/7 — Configuration par défaut');
         $this->getApplication()?->find('c975l:config:load-all')->run(new ArrayInput([]), $output);
@@ -184,6 +185,43 @@ class SiteCreateCommand extends Command
         }
 
         $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "user_checker: App\\Security\\UserChecker" toi-même.');
+    }
+
+    // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP,
+    // no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter
+    // package. Same plain-text edit approach as ensureUserChecker(), for the same reason.
+    private function ensureLoginThrottling(SymfonyStyle $io): void
+    {
+        $path = $this->projectDir . '/config/packages/security.yaml';
+        if (!is_file($path)) {
+            $io->text('  ⚠ config/packages/security.yaml introuvable, ajoute "login_throttling: { max_attempts: 5 }" au firewall "main" toi-même.');
+
+            return;
+        }
+
+        $content = file_get_contents($path);
+        if (str_contains($content, 'login_throttling:')) {
+            return;
+        }
+
+        $lines = explode("\n", $content);
+        foreach ($lines as $i => $line) {
+            if (!preg_match('/^(\s*)main:\s*$/', $line, $m)) {
+                continue;
+            }
+
+            $childIndent = preg_match('/^(\s*)\S/', $lines[$i + 1] ?? '', $ci) ? $ci[1] : $m[1] . '    ';
+            array_splice($lines, $i + 1, 0, [
+                $childIndent . 'login_throttling:',
+                $childIndent . '    max_attempts: 5',
+            ]);
+            file_put_contents($path, implode("\n", $lines));
+            $io->text('  ✓ login_throttling enregistré sur le firewall "main" dans security.yaml (nécessite composer require symfony/rate-limiter)');
+
+            return;
+        }
+
+        $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "login_throttling: { max_attempts: 5 }" toi-même.');
     }
 
     // Returns [email, password] (password is intentionally shown in clear text: this account

@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-07-15",
+        "description": [
+            {
+                "en": "You can now set your site's colors, fonts and light/dark mode from the dashboard - your emails now match automatically too",
+                "fr": "Vous pouvez désormais définir les couleurs, polices et le mode clair/sombre de votre site depuis le tableau de bord - vos emails s'accordent désormais automatiquement aussi",
+                "es": "Ahora puede definir los colores, las fuentes y el modo claro/oscuro de su sitio desde el panel de control - sus correos ahora se adaptan automáticamente también"
+            },
+            {
+                "en": "You can now apply a ready-made color/font preset to your site in one click, and preview it on any page before deciding to keep it",
+                "fr": "Vous pouvez désormais appliquer un preset de couleurs/polices prêt à l'emploi à votre site en un clic, et le prévisualiser sur n'importe quelle page avant de l'adopter",
+                "es": "Ahora puede aplicar un preset de colores/fuentes ya preparado a su sitio con un clic, y previsualizarlo en cualquier página antes de decidir conservarlo"
+            },
+            {
+                "en": "You can now add a ready-made page layout to any page in one click, then edit its content to fit your needs",
+                "fr": "Vous pouvez désormais ajouter une mise en page prête à l'emploi à n'importe quelle page en un clic, puis en modifier le contenu selon vos besoins",
+                "es": "Ahora puede añadir un diseño de página ya preparado a cualquier página con un clic, y luego editar su contenido según sus necesidades"
+            },
+            {
+                "en": "Your registration and password reset forms are now better protected against bots and spam, and login attempts are automatically rate-limited",
+                "fr": "Vos formulaires d'inscription et de réinitialisation de mot de passe sont désormais mieux protégés contre les robots et le spam, et les tentatives de connexion sont automatiquement limitées",
+                "es": "Sus formularios de registro y restablecimiento de contraseña ahora están mejor protegidos contra bots y spam, y los intentos de inicio de sesión se limitan automáticamente"
+            }
+        ]
+    },
+    {
         "date": "2026-07-14",
         "description": [
             {

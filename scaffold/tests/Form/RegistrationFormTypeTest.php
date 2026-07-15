@@ -5,9 +5,11 @@ namespace App\Tests\Form;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Service\FormBotProtection;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\Stub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Validation;
@@ -35,7 +37,7 @@ class RegistrationFormTypeTest extends TypeTestCase
     {
         return [
             new ValidatorExtension(Validation::createValidator()),
-            new PreloadedExtension([new RegistrationFormType($this->configService)], []),
+            new PreloadedExtension([new RegistrationFormType($this->configService, new FormBotProtection($this->configService))], []),
         ];
     }
 
@@ -117,5 +119,42 @@ class RegistrationFormTypeTest extends TypeTestCase
 
         $this->assertFalse($form->get('plainPassword')->getConfig()->getMapped());
         $this->assertFalse($form->get('cgu')->getConfig()->getMapped());
+    }
+
+    public function testHoneypotFieldIsNotMappedAndDefaultsToEmpty(): void
+    {
+        $form = $this->factory->create(RegistrationFormType::class, new User());
+
+        $this->assertFalse($form->get('website')->getConfig()->getMapped());
+        $this->assertSame('', $form->get('website')->getData());
+    }
+
+    // 'required' => true on the gdpr CheckboxType is HTML5-only and enforces nothing server-side
+    // on its own - only the explicit IsTrue constraint does, this exercises that it's really there
+    public function testGdprCheckboxIsRequiredServerSideWhenEnabled(): void
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnMap([
+            ['url-terms-of-use', 'https://example.test/terms-of-use'],
+            ['site-form-gdpr', true],
+        ]);
+
+        $factory = Forms::createFormFactoryBuilder()
+            ->addExtension(new ValidatorExtension(Validation::createValidator()))
+            ->addType(new RegistrationFormType($configService, new FormBotProtection($configService)))
+            ->getFormFactory();
+
+        $form = $factory->create(RegistrationFormType::class, new User());
+        $form->submit([
+            'email' => 'user@example.test',
+            'plainPassword' => [
+                'plainPassword' => 'Str0ng!Password',
+                'confirmPassword' => 'Str0ng!Password',
+            ],
+            'cgu' => true,
+            // gdpr intentionally left unchecked
+        ]);
+
+        $this->assertFalse($form->isValid());
     }
 }

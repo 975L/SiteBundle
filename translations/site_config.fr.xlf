@@ -370,6 +370,110 @@
                 <source>label.site_messenger_cleanup_retention_days</source>
                 <target>Rétention des échecs Messenger (jours)</target>
             </trans-unit>
+            <trans-unit id="95">
+                <source>label.theme_color_primary</source>
+                <target>Couleur primaire</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>description.theme_color_primary</source>
+                <target>Couleur principale du site (boutons, titres, liens). Laisser vide pour garder la couleur par défaut</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>label.theme_color_secondary</source>
+                <target>Couleur secondaire</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>description.theme_color_secondary</source>
+                <target>Couleur secondaire du site. Laisser vide pour garder la couleur par défaut</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>label.theme_color_background</source>
+                <target>Couleur de fond</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>description.theme_color_background</source>
+                <target>Couleur de fond du site. Laisser vide pour garder la couleur par défaut</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.theme_color_text</source>
+                <target>Couleur du texte</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>description.theme_color_text</source>
+                <target>Couleur du texte du site. Laisser vide pour garder la couleur par défaut</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.theme_font_family_title</source>
+                <target>Police des titres</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>description.theme_font_family_title</source>
+                <target>Police utilisée pour les titres (h1-h6). Laisser vide pour garder la police par défaut</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.theme_font_family_body</source>
+                <target>Police du texte</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>description.theme_font_family_body</source>
+                <target>Police utilisée pour le texte courant. Laisser vide pour garder la police par défaut</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.theme_mode</source>
+                <target>Mode clair/sombre</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>description.theme_mode</source>
+                <target>Mode d'affichage appliqué à tout le site pour tous les visiteurs</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.theme_color_primary_dark_mode</source>
+                <target>Couleur primaire (mode sombre)</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>description.theme_color_primary_dark_mode</source>
+                <target>Couleur primaire utilisée en mode sombre. Laisser vide pour reprendre la couleur primaire ci-dessus</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.theme_color_secondary_dark_mode</source>
+                <target>Couleur secondaire (mode sombre)</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>description.theme_color_secondary_dark_mode</source>
+                <target>Couleur secondaire utilisée en mode sombre. Laisser vide pour reprendre la couleur secondaire ci-dessus</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.theme_font_family_accent</source>
+                <target>Police d'accent</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>description.theme_font_family_accent</source>
+                <target>Troisième police optionnelle, utilisée pour les badges/étiquettes/textes d'accroche. Laisser vide pour garder la police par défaut</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.theme_stylesheet</source>
+                <target>Feuille de style du template de page</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>description.theme_stylesheet</source>
+                <target>Valeur technique définie automatiquement lors de l'application d'un preset avec un habillage de template de page. Laisser vide pour l'apparence par défaut</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.site_form_delay</source>
+                <target>Délai anti-bot des formulaires publics</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>description.site_form_delay</source>
+                <target>Temps minimum, en secondes, attendu entre l'affichage et la soumission d'un formulaire public (inscription, réinitialisation de mot de passe, contact...) avant de le considérer comme un bot</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>label.site_form_gdpr</source>
+                <target>Afficher la case à cocher RGPD sur les formulaires publics</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>description.site_form_gdpr</source>
+                <target>Ajoute une case à cocher de consentement obligatoire sur les formulaires publics (inscription, réinitialisation de mot de passe, contact...)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,0 +1,64 @@
+/* BADGES */
+.badge {
+    display: inline-block;
+    border-radius: var(--radius-btn);
+    padding: 0.3em 0.75em;
+    font-family: var(--font-family-accent);
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
+    color: var(--button-color);
+    background-color: var(--primary);
+}
+
+.badge-primary {
+    background-color: var(--primary);
+}
+
+.badge-secondary {
+    background-color: var(--secondary);
+    color: var(--button-secondary-color);
+}
+
+.badge-success {
+    background-color: var(--button-background-success);
+}
+
+.badge-danger {
+    background-color: var(--button-background-danger);
+}
+
+.badge-pill {
+    border-radius: 999px;
+}
+
+/* Without these, an <a class="badge ..."> falls back to the global a:hover rule (_links.scss),
+   which sets color to --link-color - itself an alias for --primary, i.e. the same color as
+   .badge-primary's own background, making the text invisible on hover */
+.badge:hover,
+.badge-primary:hover {
+    color: var(--button-color);
+    background-color: var(--button-background-primary-dark);
+    text-decoration: none;
+}
+
+.badge-secondary:hover {
+    color: var(--button-secondary-color);
+    background-color: var(--button-background-secondary-dark);
+    text-decoration: none;
+}
+
+.badge-success:hover {
+    color: var(--button-color);
+    background-color: var(--button-background-success-dark);
+    text-decoration: none;
+}
+
+.badge-danger:hover {
+    color: var(--button-color);
+    background-color: var(--button-background-danger-dark);
+    text-decoration: none;
+}

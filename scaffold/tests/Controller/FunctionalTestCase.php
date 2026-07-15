@@ -45,4 +45,15 @@ abstract class FunctionalTestCase extends WebTestCase
 
         return $client;
     }
+
+    // Simulates a human having spent time filling a form protected by an anti-bot minimum
+    // delay (see RegistrationController/ResetPasswordController), so tests exercising the
+    // legitimate path aren't flaky against that delay. Call right after the GET request that
+    // displays the form, before submitting it.
+    protected function backdateFormTimer(KernelBrowser $client, string $sessionKey): void
+    {
+        $session = $client->getRequest()->getSession();
+        $session->set($sessionKey, time() - 60);
+        $session->save();
+    }
 }

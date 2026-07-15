@@ -370,6 +370,110 @@
                 <source>label.site_messenger_cleanup_retention_days</source>
                 <target>Messenger failure retention (days)</target>
             </trans-unit>
+            <trans-unit id="95">
+                <source>label.theme_color_primary</source>
+                <target>Primary color</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>description.theme_color_primary</source>
+                <target>Main color of the site (buttons, titles, links). Leave empty to keep the default color</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>label.theme_color_secondary</source>
+                <target>Secondary color</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>description.theme_color_secondary</source>
+                <target>Secondary color of the site. Leave empty to keep the default color</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>label.theme_color_background</source>
+                <target>Background color</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>description.theme_color_background</source>
+                <target>Background color of the site. Leave empty to keep the default color</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.theme_color_text</source>
+                <target>Text color</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>description.theme_color_text</source>
+                <target>Text color of the site. Leave empty to keep the default color</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.theme_font_family_title</source>
+                <target>Titles font</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>description.theme_font_family_title</source>
+                <target>Font used for titles (h1-h6). Leave empty to keep the default font</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.theme_font_family_body</source>
+                <target>Body font</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>description.theme_font_family_body</source>
+                <target>Font used for body text. Leave empty to keep the default font</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.theme_mode</source>
+                <target>Light/dark mode</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>description.theme_mode</source>
+                <target>Display mode applied site-wide for every visitor</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.theme_color_primary_dark_mode</source>
+                <target>Primary color (dark mode)</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>description.theme_color_primary_dark_mode</source>
+                <target>Primary color used in dark mode. Leave empty to reuse the primary color above</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.theme_color_secondary_dark_mode</source>
+                <target>Secondary color (dark mode)</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>description.theme_color_secondary_dark_mode</source>
+                <target>Secondary color used in dark mode. Leave empty to reuse the secondary color above</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.theme_font_family_accent</source>
+                <target>Accent font</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>description.theme_font_family_accent</source>
+                <target>Optional third font used for badges/labels/eyebrow text. Leave empty to keep the default font</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.theme_stylesheet</source>
+                <target>Page template stylesheet</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>description.theme_stylesheet</source>
+                <target>Technical value set automatically when applying a preset with a page-template look. Leave empty for the default look</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.site_form_delay</source>
+                <target>Public forms anti-bot delay</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>description.site_form_delay</source>
+                <target>Minimum time, in seconds, expected between displaying and submitting a public form (registration, password reset, contact...) before treating it as a bot</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>label.site_form_gdpr</source>
+                <target>Show GDPR consent checkbox on public forms</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>description.site_form_gdpr</source>
+                <target>Adds a mandatory consent checkbox to public forms (registration, password reset, contact...)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

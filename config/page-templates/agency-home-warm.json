@@ -1,0 +1,95 @@
+{
+    "label": "label.page_template_agency_home_warm",
+    "blocks": [
+        {
+            "kind": "hero",
+            "data": {
+                "badge": "Agence web indépendante · depuis 2018",
+                "title": "Votre site web,<br>fait main et<br><em>sur mesure.</em>",
+                "subtitle": "On ne pose pas de template. On code proprement, avec notre propre CMS et Symfony, un site pensé pour vous — multilingue et hébergé en Suisse.",
+                "primaryLabel": "Parlons de votre projet",
+                "primaryUrl": "/contact",
+                "secondaryLabel": "Voir nos réalisations",
+                "secondaryUrl": "#realisations",
+                "statValue": "12+",
+                "statLabel": "sites en ligne, et le vôtre bientôt"
+            }
+        },
+        {
+            "kind": "feature_bar",
+            "data": {
+                "items": [
+                    {"title": "Code propre", "text": "maintenable dans le temps"},
+                    {"title": "Symfony", "text": "socle robuste & éprouvé"},
+                    {"title": "Notre CMS", "text": "édition simple, à vous"},
+                    {"title": "Suisse", "text": "hébergé chez Infomaniak"},
+                    {"title": "Multilingue", "text": "prêt pour l'international"}
+                ]
+            }
+        },
+        {
+            "kind": "section_cards",
+            "data": {
+                "eyebrow": "Ce que nous faisons",
+                "title": "Des services taillés autour de votre projet, pas l'inverse.",
+                "cards": [
+                    {
+                        "icon": null,
+                        "title": "Sites sur mesure",
+                        "text": "Chaque site est conçu et développé pour vos besoins réels — design, contenu et fonctionnalités."
+                    },
+                    {
+                        "icon": null,
+                        "title": "Notre CMS maison",
+                        "text": "Vous gérez votre contenu vous-même, simplement, sans dépendre de nous au quotidien."
+                    },
+                    {
+                        "icon": null,
+                        "title": "Développement Symfony",
+                        "text": "Un socle technique solide et durable, avec des bundles open-source que nous maintenons."
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "expertise_banner",
+            "data": {
+                "eyebrow": "Notre expertise",
+                "title": "Une technique que nous maîtrisons de bout en bout.",
+                "text": "Pas de sous-traitance, pas de boîte noire. Nous développons, hébergeons et faisons évoluer votre site.",
+                "tags": ["Symfony", "PHP", "CMS 975L", "Multilingue", "Infomaniak · CH", "Open-source"]
+            }
+        },
+        {
+            "kind": "process_steps",
+            "data": {
+                "eyebrow": "Comment ça se passe",
+                "title": "Une méthode claire, du premier échange à la mise en ligne.",
+                "steps": [
+                    {"title": "On s'écoute", "text": "On étudie votre problématique ensemble."},
+                    {"title": "On conçoit", "text": "Structure, design et contenu, validés avec vous."},
+                    {"title": "On développe", "text": "Code propre, testé, et votre CMS prêt à l'emploi."},
+                    {"title": "On accompagne", "text": "Mise en ligne, hébergement et suivi dans la durée."}
+                ]
+            }
+        },
+        {
+            "kind": "portfolio_grid",
+            "data": {
+                "eyebrow": "Réalisations",
+                "title": "Des projets en ligne, bien réels.",
+                "linkLabel": "Tout voir",
+                "linkUrl": "/sites"
+            }
+        },
+        {
+            "kind": "cta_band",
+            "data": {
+                "title": "Racontez-nous votre projet.",
+                "text": "On étudie votre problématique et on voit ensemble comment y répondre au mieux.",
+                "ctaLabel": "Contactez-nous",
+                "ctaUrl": "/contact"
+            }
+        }
+    ]
+}

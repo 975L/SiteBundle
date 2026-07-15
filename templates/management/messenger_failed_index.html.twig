@@ -15,91 +15,109 @@
 
         {% if groups|length > 0 %}
             <h2>{{ ('label.messenger_by_error'|trans({}, 'site')) }}</h2>
-            <table class="table table-sm mb-4">
-                <thead>
-                    <tr>
-                        <th>{{ ('label.messenger_error'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_count'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_actions'|trans({}, 'site')) }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for group in groups %}
-                    <tr>
-                        <td>{{ group.message }}</td>
-                        <td>{{ group.count }}</td>
-                        <td>
-                            <form method="post" action="{{ path('management_site_messenger_failed_delete_group') }}"
-                                  onsubmit="return confirm('{{ ('label.messenger_delete_group_confirm'|trans({'%count%': group.count}, 'site'))|e('js') }}')">
-                                <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_delete_group') }}">
-                                {% for id in group.ids %}
-                                    <input type="hidden" name="ids[]" value="{{ id }}">
-                                {% endfor %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    {{ ('label.messenger_delete_group'|trans({'%count%': group.count}, 'site')) }}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-sm mb-4">
+                    <thead>
+                        <tr>
+                            <th>{{ ('label.messenger_error'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_count'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_actions'|trans({}, 'site')) }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for group in groups %}
+                        <tr>
+                            <td>
+                                <div class="text-break" style="max-width: 32rem;" title="{{ group.message }}">{{ group.message|linkify }}</div>
+                            </td>
+                            <td>{{ group.count }}</td>
+                            <td>
+                                <form method="post" action="{{ path('management_site_messenger_failed_delete_group') }}"
+                                      onsubmit="return confirm('{{ ('label.messenger_delete_group_confirm'|trans({'%count%': group.count}, 'site'))|e('js') }}')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_delete_group') }}">
+                                    {% for id in group.ids %}
+                                        <input type="hidden" name="ids[]" value="{{ id }}">
+                                    {% endfor %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        {{ ('label.messenger_delete_group'|trans({'%count%': group.count}, 'site')) }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
 
         {% if messages|length > 0 %}
             <h2>{{ ('label.messenger_detail'|trans({}, 'site')) }}</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>{{ ('label.date'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_to'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_subject'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_error'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_error_code'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_error_class'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_retries'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_transport'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_important'|trans({}, 'site')) }}</th>
-                        <th>{{ ('label.messenger_actions'|trans({}, 'site')) }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for message in messages %}
-                    <tr>
-                        <td>{{ message.createdAt|date('Y-m-d H:i') }}</td>
-                        <td>{{ message.to ?? '-' }}</td>
-                        <td>{{ message.subject ?? '-' }}</td>
-                        <td>{{ message.exceptionMessage ?? '-' }}</td>
-                        <td>{{ message.exceptionCode ?? '-' }}</td>
-                        <td>{{ message.exceptionClass ?? '-' }}</td>
-                        <td>{{ message.retryCount }}</td>
-                        <td>{{ message.originalTransport ?? '-' }}</td>
-                        <td>
-                            {% if message.important %}
-                                <span class="badge badge-danger">{{ ('label.messenger_important'|trans({}, 'site')) }}</span>
-                            {% else %}
-                                <span class="badge badge-secondary">{{ ('label.messenger_minor'|trans({}, 'site')) }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-nowrap">
-                            <form method="post" action="{{ path('management_site_messenger_failed_retry', {id: message.id}) }}" class="d-inline">
-                                <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_retry') }}">
-                                <button type="submit" class="btn btn-sm btn-outline-primary">
-                                    {{ ('label.messenger_retry'|trans({}, 'site')) }}
-                                </button>
-                            </form>
-                            <form method="post" action="{{ path('management_site_messenger_failed_delete', {id: message.id}) }}" class="d-inline"
-                                  onsubmit="return confirm('{{ ('label.messenger_delete_confirm'|trans({}, 'site'))|e('js') }}')">
-                                <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_delete') }}">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    {{ ('label.messenger_delete'|trans({}, 'site')) }}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>{{ ('label.date'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_from'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_to'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_subject'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_error'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_error_code'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_error_class'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_retries'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_transport'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_important'|trans({}, 'site')) }}</th>
+                            <th>{{ ('label.messenger_actions'|trans({}, 'site')) }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for message in messages %}
+                        <tr>
+                            <td class="text-nowrap">{{ message.createdAt|date('Y-m-d H:i') }}</td>
+                            <td>
+                                <div class="text-break" style="max-width: 12rem;" title="{{ message.from }}">{{ message.from ?? '-' }}</div>
+                            </td>
+                            <td>
+                                <div class="text-break" style="max-width: 12rem;" title="{{ message.to }}">{{ message.to ?? '-' }}</div>
+                            </td>
+                            <td>
+                                <div class="text-break" style="max-width: 12rem;" title="{{ message.subject }}">{{ message.subject ?? '-' }}</div>
+                            </td>
+                            <td>
+                                <div class="text-break" style="max-width: 18rem;" title="{{ message.exceptionMessage }}">{{ message.exceptionMessage|default('-')|linkify }}</div>
+                            </td>
+                            <td>{{ message.exceptionCode ?? '-' }}</td>
+                            <td>
+                                <div class="text-break" style="max-width: 12rem;" title="{{ message.exceptionClass }}">{{ message.exceptionClass ?? '-' }}</div>
+                            </td>
+                            <td>{{ message.retryCount }}</td>
+                            <td>{{ message.originalTransport ?? '-' }}</td>
+                            <td>
+                                {% if message.important %}
+                                    <span class="badge badge-danger">{{ ('label.messenger_important'|trans({}, 'site')) }}</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ ('label.messenger_minor'|trans({}, 'site')) }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-nowrap">
+                                <form method="post" action="{{ path('management_site_messenger_failed_retry', {id: message.id}) }}" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_retry') }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        {{ ('label.messenger_retry'|trans({}, 'site')) }}
+                                    </button>
+                                </form>
+                                <form method="post" action="{{ path('management_site_messenger_failed_delete', {id: message.id}) }}" class="d-inline"
+                                      onsubmit="return confirm('{{ ('label.messenger_delete_confirm'|trans({}, 'site'))|e('js') }}')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('management_site_messenger_failed_delete') }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        {{ ('label.messenger_delete'|trans({}, 'site')) }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
             <p>{{ ('label.messenger_none'|trans({}, 'site')) }}</p>
         {% endif %}

@@ -1,6 +1,6 @@
 /* FOOTER */
 footer {
-    background-color: var(--primary);
+    background-color: var(--footer-background);
     border-top: solid grey 2px;
     margin-top: 3em;
     margin-left: calc(50% - 50vw);
@@ -12,25 +12,26 @@ footer {
 footer .menu-items,
 footer .menu-items .blocks {
     display: flex;
-    flex-direction: column;
+    flex-direction: var(--footer-items-direction);
     align-items: center;
+    justify-content: var(--footer-items-justify);
 }
 
 footer a,
 footer a:visited {
-    color: var(--white);
+    color: var(--footer-text);
     text-decoration: none;
 }
 
 footer a:hover,
 footer a:visited:hover {
-    color: var(--white);
+    color: var(--footer-text-hover);
     text-decoration: underline;
 }
 
 footer .menu-item {
     margin: 0;
-    color: var(--white);
+    color: var(--footer-text);
 }
 
 footer .menu-link {

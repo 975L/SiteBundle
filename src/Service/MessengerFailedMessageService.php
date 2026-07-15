@@ -159,12 +159,33 @@ class MessengerFailedMessageService
     // Decodes a raw messenger_messages row into a readable array
     private function decode(array $row): array
     {
-        $envelope = @unserialize($row['body']);
+        // Symfony's default transport serializer (PhpSerializer) stores serialize($envelope)
+        // wrapped in addslashes(), with a base64 fallback for non-UTF8-safe payloads (see
+        // PhpSerializer::encode()/decode()); this mirrors that exact pre-processing so the
+        // raw SQL body can be unserialized the same way the transport itself would read it
+        $body = $row['body'];
+        if (!str_ends_with($body, '}')) {
+            $body = base64_decode($body);
+        }
+        $body = stripslashes($body);
+
+        // Captures the reason PHP's unserialize() fails (missing/renamed class, corrupted
+        // body, ...) instead of silently swallowing it, so admins see why a row can't be read
+        $decodeError = null;
+        set_error_handler(function (int $errno, string $errstr) use (&$decodeError) {
+            $decodeError = $errstr;
+
+            return true;
+        });
+        $envelope = unserialize($body);
+        restore_error_handler();
+
         $exceptionMessage = null;
         $exceptionClass = null;
         $exceptionCode = null;
         $retryCount = 0;
         $originalTransport = null;
+        $from = null;
         $to = null;
         $subject = null;
 
@@ -181,16 +202,21 @@ class MessengerFailedMessageService
             if ($message instanceof SendEmailMessage) {
                 $rawMessage = $message->getMessage();
                 if ($rawMessage instanceof Email) {
+                    $fromAddresses = $rawMessage->getFrom();
+                    $from = isset($fromAddresses[0]) ? $fromAddresses[0]->getAddress() : null;
                     $addresses = $rawMessage->getTo();
                     $to = isset($addresses[0]) ? $addresses[0]->getAddress() : null;
                     $subject = $rawMessage->getSubject();
                 }
             }
+        } elseif (null !== $decodeError) {
+            $exceptionMessage = 'Unserialize failed: ' . $decodeError;
         }
 
         return [
             'id' => (int) $row['id'],
             'createdAt' => new \DateTimeImmutable($row['created_at']),
+            'from' => $from,
             'to' => $to,
             'subject' => $subject,
             'exceptionMessage' => $exceptionMessage,

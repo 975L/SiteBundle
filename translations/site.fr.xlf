@@ -586,6 +586,10 @@
                 <source>label.register</source>
                 <target>S'inscrire</target>
             </trans-unit>
+            <trans-unit id="248">
+                <source>text.register_help</source>
+                <target>Créez votre compte en indiquant votre email et un mot de passe.</target>
+            </trans-unit>
             <trans-unit id="154">
                 <source>label.password</source>
                 <target>Mot de passe</target>
@@ -818,6 +822,14 @@
                 <source>label.messenger_to</source>
                 <target>Destinataire</target>
             </trans-unit>
+            <trans-unit id="241">
+                <source>label.messenger_from</source>
+                <target>Expéditeur</target>
+            </trans-unit>
+            <trans-unit id="242">
+                <source>text.too_many_attempts</source>
+                <target>Trop de tentatives, veuillez réessayer plus tard.</target>
+            </trans-unit>
             <trans-unit id="212">
                 <source>label.messenger_subject</source>
                 <target>Sujet</target>
@@ -933,6 +945,26 @@
             <trans-unit id="240">
                 <source>flash.messenger_group_deleted</source>
                 <target>%count% message(s) supprimé(s)</target>
+            </trans-unit>
+            <trans-unit id="243">
+                <source>label.page_templates</source>
+                <target>Templates de page</target>
+            </trans-unit>
+            <trans-unit id="244">
+                <source>confirm.apply_page_template</source>
+                <target>Les blocks du template vont être ajoutés à cette page (contenu d'exemple, à modifier ensuite). Les blocks existants sont conservés. Continuer ?</target>
+            </trans-unit>
+            <trans-unit id="245">
+                <source>flash.page_template_applied</source>
+                <target>Les blocks du template ont été ajoutés à la page.</target>
+            </trans-unit>
+            <trans-unit id="246">
+                <source>label.page_template_agency_home_warm</source>
+                <target>Accueil agence (chaleureux)</target>
+            </trans-unit>
+            <trans-unit id="247">
+                <source>label.preview_preset_mode</source>
+                <target>Aperçu du preset "%label%" (couleurs/polices/forme, agencement de démonstration) — rien n'est enregistré, ça ne s'applique qu'à cet aperçu</target>
             </trans-unit>
         </body>
     </file>

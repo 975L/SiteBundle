@@ -30,6 +30,18 @@
                 <source>text.password_max_length</source>
                 <target>Your password should be at most {{ limit }} characters</target>
             </trans-unit>
+            <trans-unit id="8">
+                <source>text.email_not_valid</source>
+                <target>Please enter a valid email address</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>text.email_domain_unreachable</source>
+                <target>This email address' domain does not appear to accept mail</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>text.gdpr_required</source>
+                <target>You should agree to the processing of your data.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

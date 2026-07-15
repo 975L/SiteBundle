@@ -12,9 +12,11 @@ namespace c975L\SiteBundle\Tests\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\PageController;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Management\SiteThemePresetProvider;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -48,8 +50,13 @@ class PageControllerTest extends TestCase
         PageServiceInterface $pageService,
         ConfigServiceInterface $configService,
         bool $isGranted = true,
+        ?SiteThemePresetProvider $themePresetProvider = null,
     ): PageController {
-        $controller = new PageController($pageService, $configService);
+        // Defaults to null (not a real SiteThemePresetProvider): that class implements ConfigBundle's
+        // ThemePresetProviderInterface, which isn't in this bundle's own installed vendor snapshot yet
+        // (same reason SiteThemePresetProviderTest already fails) - tests that don't cover preset
+        // preview don't need to pay that cost, only the ones that pass a real provider explicitly do
+        $controller = new PageController($pageService, $configService, $themePresetProvider);
 
         $twig = $this->createStub(Environment::class);
         $twig->method('render')->willReturnCallback(
@@ -183,7 +190,7 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(), $this->createConfigService(), isGranted: false);
 
         $this->expectException(AccessDeniedException::class);
-        $controller->preview('draft');
+        $controller->preview('draft', new Request());
     }
 
     // An editor can preview a draft (unpublished) page - display() would 404 it, preview() must not
@@ -192,7 +199,7 @@ class PageControllerTest extends TestCase
         $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
         $controller = $this->createController($this->createPageService(forDisplay: $page), $this->createConfigService());
 
-        $response = $controller->preview('draft');
+        $response = $controller->preview('draft', new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertTrue($response->headers->hasCacheControlDirective('private'));
@@ -205,7 +212,7 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(forDisplay: $page), $this->createConfigService());
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->preview('gone');
+        $controller->preview('gone', new Request());
     }
 
     public function testPreviewThrowsNotFoundWhenPageDoesNotExist(): void
@@ -213,6 +220,36 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(forDisplay: null), $this->createConfigService());
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->preview('unknown');
+        $controller->preview('unknown', new Request());
+    }
+
+    // Without a wired SiteThemePresetProvider (optional dependency), ?preset is simply ignored -
+    // graceful degradation rather than a hard failure
+    public function testPreviewResolvesToNullPresetWhenNoneRequested(): void
+    {
+        $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $controller = $this->createController($this->createPageService(forDisplay: $page), $this->createConfigService());
+
+        $twig = $this->createStub(Environment::class);
+        $capturedParameters = null;
+        $twig->method('render')->willReturnCallback(
+            function (string $view, array $parameters = []) use (&$capturedParameters): string {
+                $capturedParameters = $parameters;
+
+                return $view;
+            }
+        );
+        $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
+        $authorizationChecker->method('isGranted')->willReturn(true);
+        $container = new Container();
+        $container->set('twig', $twig);
+        $container->set('router', $this->createStub(UrlGeneratorInterface::class));
+        $container->set('security.authorization_checker', $authorizationChecker);
+        $controller->setContainer($container);
+
+        $controller->preview('draft', new Request(['preset' => 'anything']));
+
+        $this->assertNull($capturedParameters['previewPreset']);
+        $this->assertNull($capturedParameters['previewBlocks']);
     }
 }

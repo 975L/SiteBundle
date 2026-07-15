@@ -370,6 +370,110 @@
                 <source>label.site_messenger_cleanup_retention_days</source>
                 <target>Retención de fallos de Messenger (días)</target>
             </trans-unit>
+            <trans-unit id="95">
+                <source>label.theme_color_primary</source>
+                <target>Color primario</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>description.theme_color_primary</source>
+                <target>Color principal del sitio (botones, títulos, enlaces). Dejar vacío para mantener el color por defecto</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>label.theme_color_secondary</source>
+                <target>Color secundario</target>
+            </trans-unit>
+            <trans-unit id="98">
+                <source>description.theme_color_secondary</source>
+                <target>Color secundario del sitio. Dejar vacío para mantener el color por defecto</target>
+            </trans-unit>
+            <trans-unit id="99">
+                <source>label.theme_color_background</source>
+                <target>Color de fondo</target>
+            </trans-unit>
+            <trans-unit id="100">
+                <source>description.theme_color_background</source>
+                <target>Color de fondo del sitio. Dejar vacío para mantener el color por defecto</target>
+            </trans-unit>
+            <trans-unit id="101">
+                <source>label.theme_color_text</source>
+                <target>Color del texto</target>
+            </trans-unit>
+            <trans-unit id="102">
+                <source>description.theme_color_text</source>
+                <target>Color del texto del sitio. Dejar vacío para mantener el color por defecto</target>
+            </trans-unit>
+            <trans-unit id="103">
+                <source>label.theme_font_family_title</source>
+                <target>Fuente de los títulos</target>
+            </trans-unit>
+            <trans-unit id="104">
+                <source>description.theme_font_family_title</source>
+                <target>Fuente utilizada para los títulos (h1-h6). Dejar vacío para mantener la fuente por defecto</target>
+            </trans-unit>
+            <trans-unit id="105">
+                <source>label.theme_font_family_body</source>
+                <target>Fuente del texto</target>
+            </trans-unit>
+            <trans-unit id="106">
+                <source>description.theme_font_family_body</source>
+                <target>Fuente utilizada para el texto. Dejar vacío para mantener la fuente por defecto</target>
+            </trans-unit>
+            <trans-unit id="107">
+                <source>label.theme_mode</source>
+                <target>Modo claro/oscuro</target>
+            </trans-unit>
+            <trans-unit id="108">
+                <source>description.theme_mode</source>
+                <target>Modo de visualización aplicado a todo el sitio para todos los visitantes</target>
+            </trans-unit>
+            <trans-unit id="109">
+                <source>label.theme_color_primary_dark_mode</source>
+                <target>Color primario (modo oscuro)</target>
+            </trans-unit>
+            <trans-unit id="110">
+                <source>description.theme_color_primary_dark_mode</source>
+                <target>Color primario usado en modo oscuro. Dejar vacío para reutilizar el color primario anterior</target>
+            </trans-unit>
+            <trans-unit id="111">
+                <source>label.theme_color_secondary_dark_mode</source>
+                <target>Color secundario (modo oscuro)</target>
+            </trans-unit>
+            <trans-unit id="112">
+                <source>description.theme_color_secondary_dark_mode</source>
+                <target>Color secundario usado en modo oscuro. Dejar vacío para reutilizar el color secundario anterior</target>
+            </trans-unit>
+            <trans-unit id="113">
+                <source>label.theme_font_family_accent</source>
+                <target>Fuente de acento</target>
+            </trans-unit>
+            <trans-unit id="114">
+                <source>description.theme_font_family_accent</source>
+                <target>Tercera fuente opcional, usada para insignias/etiquetas/texto de introducción. Dejar vacío para mantener la fuente por defecto</target>
+            </trans-unit>
+            <trans-unit id="115">
+                <source>label.theme_stylesheet</source>
+                <target>Hoja de estilo de la plantilla de página</target>
+            </trans-unit>
+            <trans-unit id="116">
+                <source>description.theme_stylesheet</source>
+                <target>Valor técnico definido automáticamente al aplicar un preset con un aspecto de plantilla de página. Dejar vacío para el aspecto por defecto</target>
+            </trans-unit>
+            <trans-unit id="117">
+                <source>label.site_form_delay</source>
+                <target>Retraso anti-bot de los formularios públicos</target>
+            </trans-unit>
+            <trans-unit id="118">
+                <source>description.site_form_delay</source>
+                <target>Tiempo mínimo, en segundos, esperado entre la visualización y el envío de un formulario público (registro, restablecimiento de contraseña, contacto...) antes de considerarlo un bot</target>
+            </trans-unit>
+            <trans-unit id="119">
+                <source>label.site_form_gdpr</source>
+                <target>Mostrar casilla de consentimiento RGPD en los formularios públicos</target>
+            </trans-unit>
+            <trans-unit id="120">
+                <source>description.site_form_gdpr</source>
+                <target>Añade una casilla de consentimiento obligatoria a los formularios públicos (registro, restablecimiento de contraseña, contacto...)</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
