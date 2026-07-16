@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
+use c975L\SiteBundle\Controller\Management\CollectionEntryCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
@@ -66,6 +67,12 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.media_library',
                 'translation_domain' => 'ui',
                 'icon' => 'fas fa-photo-film',
+            ],
+            'collection_entry' => [
+                'controller' => CollectionEntryCrudController::class,
+                'label' => 'label.collection_entries',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-layer-group',
             ],
         ];
     }

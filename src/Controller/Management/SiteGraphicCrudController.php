@@ -11,7 +11,9 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\AlertBuilder;
+use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Form\VichImageOptions;
 use c975L\SiteBundle\Management\SiteGraphicAlertProvider;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Repository\MediaRepository;
@@ -25,7 +27,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Validator\Constraints\File as FileConstraint;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -100,6 +101,14 @@ class SiteGraphicCrudController extends AbstractCrudController
         $role = $this->configService->get('site-role-editor');
 
         return $actions
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
+            ))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
+            ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
@@ -142,15 +151,7 @@ class SiteGraphicCrudController extends AbstractCrudController
                 ->setLabel(t('label.file', [], 'site'))
                 ->setHelp(t('label.site_graphic_file_help', [], 'site'))
                 ->setFormType(VichImageType::class)
-                ->setFormTypeOptions([
-                    'required' => $isNew,
-                    'allow_delete' => true,
-                    'download_uri' => true,
-                    'asset_helper' => true,
-                    'constraints' => [
-                        new FileConstraint(maxSize: '2M'),
-                    ],
-                ])
+                ->setFormTypeOptions(VichImageOptions::default('2M', $isNew))
                 ->onlyOnForms(),
 
             TextField::new('filename')

@@ -9,12 +9,20 @@
 
 namespace c975L\SiteBundle;
 
+use c975L\ConfigBundle\DependencyInjection\Compiler\TaggedInterfacePass;
+use c975L\SiteBundle\Management\PageTemplateProviderInterface;
+use c975L\UiBundle\Namer\UiMediaNamer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class c975LSiteBundle extends AbstractBundle
 {
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new TaggedInterfacePass(PageTemplateProviderInterface::class, 'c975l.page_template_provider'));
+    }
+
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
@@ -36,6 +44,24 @@ class c975LSiteBundle extends AbstractBundle
                 __DIR__ . '/../public/css' => 'c975LSiteCss',
             ],
         ]);
+
+        // CollectionEntry's own uploadable field (not UiBundle\Media) - the global "storage" (Nested
+        // FileSystemStorage) is already set once by UiBundle's own prependExtension(), no need to repeat
+        // it here, same as BookBundle's/ShopBundle's own mappings
+        if ($builder->hasExtension('vich_uploader')) {
+            $builder->prependExtensionConfig('vich_uploader', [
+                'mappings' => [
+                    'collection_entry' => [
+                        'uri_prefix' => '',
+                        'upload_destination' => '%kernel.project_dir%/public',
+                        'namer' => UiMediaNamer::class,
+                        'inject_on_load' => false,
+                        'delete_on_update' => true,
+                        'delete_on_remove' => true,
+                    ],
+                ],
+            ]);
+        }
     }
 
     public function getPath(): string

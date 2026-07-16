@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
@@ -29,6 +30,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
 
@@ -47,6 +49,7 @@ class MenuCrudController extends AbstractCrudController
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly MenuRepository $menuRepository,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -101,6 +104,14 @@ class MenuCrudController extends AbstractCrudController
         $role = $this->configService->get('site-role-editor');
 
         return $actions
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
+            ))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
+            ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)

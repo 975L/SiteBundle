@@ -31,7 +31,7 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
             ],
             'twig_content' => [
                 '' => [
-                    'content' => '<p>Contenu Twig personnalisé, avec accès aux variables et fonctions Twig de l\'application.</p>',
+                    'templatePath' => '@c975LSite/examples/twig_content_example.html.twig',
                 ],
             ],
         ];

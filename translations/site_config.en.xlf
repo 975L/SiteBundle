@@ -152,7 +152,7 @@
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
-                <target>Enable Matomo for statistics tracking</target>
+                <target>Enable Matomo for statistics tracking - deliberately not gated by the cookie-consent banner: only keep this on if your Matomo instance is configured to the CNIL exemption criteria (anonymized IP, no cross-site tracking, cookie ≤13 months, Do Not Track respected)</target>
             </trans-unit>
             <trans-unit id="40">
                 <source>description.site_enable_cookie_consent</source>

@@ -9,6 +9,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\SiteBundle\Controller\Management\CollectionEntryCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
@@ -42,6 +43,7 @@ class MenuProviderTest extends TestCase
         $this->assertSame(MenuCrudController::class, $menus['menu']['controller']);
         $this->assertSame(MediaCrudController::class, $menus['media']['controller']);
         $this->assertSame('ui', $menus['media']['translation_domain']);
+        $this->assertSame(CollectionEntryCrudController::class, $menus['collection_entry']['controller']);
     }
 
     // This provider contributes no standalone links (only CRUD menus)

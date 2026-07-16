@@ -152,7 +152,7 @@
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
-                <target>Activer Matomo pour le suivi des statistiques</target>
+                <target>Activer Matomo pour le suivi des statistiques - volontairement non soumis au bandeau de consentement cookies : ne le laissez actif que si votre instance Matomo est configurée en mode exempté CNIL (IP anonymisée, pas de croisement entre sites, cookie ≤13 mois, Do Not Track respecté)</target>
             </trans-unit>
             <trans-unit id="40">
                 <source>description.site_enable_cookie_consent</source>

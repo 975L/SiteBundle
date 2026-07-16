@@ -1,18 +1,38 @@
 <div class="legal">
 	<div>
-		Las cookies son archivos de texto que se colocan en su ordenador para ayudar al sitio web a analizar el uso que hacen de el sus usuarios. Los datos generados por las cookies sobre su uso del sitio (incluida su direccion IP, que sera truncada) se transmitiran y almacenaran en nuestros servidores. Utilizaremos esta informacion para evaluar el uso del sitio, elaborar informes sobre la actividad del sitio para nuestro uso y proporcionar otros servicios relacionados con la actividad del sitio y el uso de Internet.
+		Este sitio utiliza diferentes cookies y tecnologías similares, agrupadas en tres categorías, cada una tratada de forma distinta con respecto al Reglamento General de Protección de Datos (RGPD):
+	</div>
+
+	<section>
+		<h2>Cookie de sesión</h2>
+		<div class="text text-justify">
+			Se deposita automáticamente una cookie técnica, estrictamente necesaria para el funcionamiento del sitio (navegación, mantenimiento de la conexión). De acuerdo con la normativa vigente, esta cookie no requiere su consentimiento.
+		</div>
+	</section>
+
+	{% set matomoUrl = config('site-matomo-url') %}
+	<section>
+		<h2>Medición de audiencia (Matomo)</h2>
+		<div class="text text-justify">
+			Este sitio puede utilizar Matomo, una herramienta de medición de audiencia autoalojada, para analizar su frecuentación. Configurada conforme a los criterios de exención de la autoridad francesa de protección de datos (CNIL) (dirección IP anonimizada, sin cruce con otros sitios, datos conservados un máximo de 13 meses, respeto de la señal "No rastrear"), su uso tampoco requiere su consentimiento. Solo se utiliza para estadísticas internas, nunca con fines publicitarios ni de reventa a terceros.
+			{% if matomoUrl %}
+				Aún así, puede oponerse en cualquier momento: <a href="{{ matomoUrl }}/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=es" target="_blank" rel="noopener">rechazar el seguimiento de Matomo</a>.
+			{% endif %}
+		</div>
+	</section>
+
+	<section>
+		<h2>Contenidos de terceros incrustados</h2>
+		<div class="text text-justify">
+			Algunas páginas pueden incluir contenido alojado en un sitio de terceros (por ejemplo, un vídeo de YouTube). Este contenido deposita sus propias cookies y requiere su consentimiento explícito, recogido mediante el banner que se muestra en la parte inferior de la página. Mientras no lo acepte, este contenido no se carga.
+		</div>
+	</section>
+
+	<div>
+		Puede modificar en cualquier momento su elección respecto a los contenidos de terceros, o desactivar todas las cookies desde la configuración de su navegador. Para más información, y si tiene alguna duda o necesita una aclaración, no dude en contactarnos.
 	</div>
 	<div>
-		Es posible que comuniquemos estos datos a terceros en caso de obligacion legal. No cruzaremos su direccion IP con ningun otro dato del que dispongamos. Al utilizar este sitio web, usted consiente expresamente el tratamiento de sus datos personales por nuestra parte en las condiciones y para las finalidades descritas anteriormente.
-	</div>
-	<div>
-		Puede desactivar el uso de cookies seleccionando la configuracion apropiada en su navegador. <strong>Sin embargo, dicha desactivacion podria impedir el uso de algunas funcionalidades de este sitio web.</strong>
-	</div>
-	<div>
-		Para mas informacion, y si tiene alguna duda o necesita una aclaracion, no dude en contactarnos.
-	</div>
-	<div>
-		Para ampliar informacion sobre lo que dice la ley en Francia: <a href="http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi">http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi</a>
+		Para ampliar información sobre lo que dice la ley en Francia: <a href="https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi">https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi</a>
 	</div>
 
 	{% if config('site-other-cookies') %}

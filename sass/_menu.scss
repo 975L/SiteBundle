@@ -28,7 +28,7 @@ body.navbar-fixed {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem;
+    padding: 0 15px;
 }
 
 .menu-brand {
@@ -141,7 +141,7 @@ body.navbar-fixed {
     display: flex;
     align-items: center;
     padding: 0.5rem 1rem;
-    color: var(--black);
+    color: var(--navbar-text);
     text-decoration: none;
     transition: background-color 0.2s ease;
 
@@ -157,6 +157,8 @@ body.navbar-fixed {
     flex-shrink: 0;
 }
 
+// White text matches the mobile dropdown's colored (--primary) background - see desktop override
+// below, where the navbar's own (light/translucent) background needs dark text instead
 .menu-label {
     font-family: var(--font-family-title);
     font-size: 1rem;
@@ -181,16 +183,23 @@ body.navbar-fixed {
     .menu .menu-items {
         position: static;
         box-shadow: none;
+        // Reset the mobile fullscreen dropdown's colored background - desktop keeps the navbar's
+        // own flat/translucent (or white) background instead of a solid band behind the links only
+        background-color: transparent;
         display: flex;
         flex-direction: row;
         flex: 1;
         justify-content: flex-end;
-        padding-right: 2rem;
+        padding-right: 15px;
     }
 
     .menu-items .blocks {
         display: flex;
         flex-direction: row;
+    }
+
+    .menu-label {
+        color: var(--navbar-text);
     }
 
     .menu-item {

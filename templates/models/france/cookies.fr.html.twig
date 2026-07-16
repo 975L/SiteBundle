@@ -1,18 +1,38 @@
 <div class="legal">
 	<div>
-		Les cookies sont des fichiers texte placés sur votre ordinateur, pour aider le site internet à analyser l'utilisation du site par ses utilisateurs. Les données générées par les cookies concernant votre utilisation du site (y compris votre adresse IP qui sera tronquée) seront transmises et stockées sur nos serveurs. Nous utiliserons cette information dans le but d'évaluer votre utilisation du site, de compiler des rapports sur l'activité du site à notre destination et de fournir d'autres services relatifs à l'activité du site et à l'utilisation d'Internet.
+		Ce site utilise différents cookies et technologies similaires, selon trois catégories, chacune traitée différemment au regard du Règlement Général sur la Protection des Données (RGPD) :
+	</div>
+
+	<section>
+		<h2>Cookie de session</h2>
+		<div class="text text-justify">
+			Un cookie technique, strictement nécessaire au fonctionnement du site (navigation, maintien de connexion), est déposé automatiquement. Conformément à la réglementation, ce cookie ne nécessite pas votre consentement.
+		</div>
+	</section>
+
+	{% set matomoUrl = config('site-matomo-url') %}
+	<section>
+		<h2>Mesure d'audience (Matomo)</h2>
+		<div class="text text-justify">
+			Ce site peut utiliser Matomo, un outil de mesure d'audience auto-hébergé, pour analyser sa fréquentation. Configuré conformément aux critères d'exemption de la CNIL (adresse IP anonymisée, absence de croisement avec d'autres sites, données conservées 13 mois maximum, respect du signal "Ne pas me pister"), son usage ne nécessite pas non plus votre consentement. Il ne sert qu'à des statistiques internes, jamais à des fins publicitaires ou de revente à des tiers.
+			{% if matomoUrl %}
+				Vous pouvez néanmoins vous y opposer à tout moment : <a href="{{ matomoUrl }}/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=fr" target="_blank" rel="noopener">refuser le suivi Matomo</a>.
+			{% endif %}
+		</div>
+	</section>
+
+	<section>
+		<h2>Contenus tiers intégrés</h2>
+		<div class="text text-justify">
+			Certaines pages peuvent intégrer du contenu hébergé par un site tiers (vidéo YouTube, par exemple). Ce contenu dépose ses propres cookies et nécessite votre consentement explicite, recueilli via le bandeau affiché en bas de page. Tant que vous n'avez pas accepté, ce contenu n'est pas chargé.
+		</div>
+	</section>
+
+	<div>
+		Vous pouvez à tout moment modifier votre choix concernant les contenus tiers, ou désactiver l'ensemble des cookies depuis les paramètres de votre navigateur. Pour plus d'informations et si vous avez un doute ou besoin d'une précision, n'hésitez pas à nous contacter.
 	</div>
 	<div>
-		Nous sommes susceptibles de communiquer ces données à des tiers en cas d'obligation légale. Nous ne recouperons pas votre adresse IP avec toute autre donnée détenue. En utilisant ce site internet, vous consentez expressément au traitement de vos données nominatives par nous-mêmes dans les conditions et pour les finalités décrites ci-dessus.
-	</div>
-	<div>
-		Vous pouvez désactiver l'utilisation de cookies en sélectionnant les paramètres appropriés de votre navigateur. <strong>Cependant, une telle désactivation pourrait empêcher l'utilisation de certaines fonctionnalités de ce site Internet.</strong>
-	</div>
-	<div>
-		Pour plus d'informations et si vous avez un doute ou besoin d'une précision, n'hésitez pas à nous contacter.
-	</div>
-	<div>
-		Pour aller plus loin, ce que dit la loi en France : <a href="http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi">http://www.cnil.fr/vos-obligations/sites-web-cookies-et-autres-traceurs/que-dit-la-loi</a>
+		Pour aller plus loin, ce que dit la loi en France : <a href="https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi">https://www.cnil.fr/fr/cookies-et-autres-traceurs/que-dit-la-loi</a>
 	</div>
 
 	{% if config('site-other-cookies') %}

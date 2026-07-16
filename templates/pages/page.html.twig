@@ -1,24 +1,19 @@
 {% extends '@c975LSite/layout.html.twig' %}
 
-{% set title = page.title %}
+{# detailTitle (see PageController::resolveCollectionDetail()) is the collection item's own title -
+   e.g. "UiBundle" rather than the parent Page's generic "Vitrine des blocks" #}
+{% set title = detailTitle is defined and detailTitle ? detailTitle : page.title %}
 {% set summarySocialNetwork = page.summarySocialNetwork %}
 
-{# Preview-only, request-scoped override of a theme preset's colors/fonts/shape (see
-   PageController::preview()'s ?preset=<slug>) - never writes to site_config, so it never affects
-   any other visitor or page. Rendered after bundle_stylesheets() so it wins the cascade. #}
+{# Preview-only, request-scoped preview of a theme preset's shape (see PageController::preview()'s
+   ?preset=<slug>) - never writes to site_config, so it never affects any other visitor or page.
+   Colors/fonts are never overridden here: they stay whatever the site's own configs say, a preset
+   only ever previews the shape stylesheet on top of them. Rendered after bundle_stylesheets() so
+   it wins the cascade. #}
 {% block stylesheets %}
     {{ parent() }}
-    {% if previewPreset is defined and previewPreset %}
-        <style>
-            :root {
-                {% for slug, value in previewPreset.values %}
-                    --c975l-{{ slug|replace({'theme-': ''}) }}: {{ value|raw }};
-                {% endfor %}
-            }
-        </style>
-        {% if previewPreset.stylesheet %}
-            <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/page-templates/' ~ previewPreset.stylesheet ~ '.min.css') }}">
-        {% endif %}
+    {% if previewPreset is defined and previewPreset and previewPreset.stylesheet %}
+        <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/page-templates/' ~ previewPreset.stylesheet ~ '.min.css') }}">
     {% endif %}
 {% endblock %}
 
@@ -27,10 +22,17 @@
         <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />
     {% endif %}
     {% if previewPreset is defined and previewPreset %}
-        <twig:c975LUi:Alert:Alert type="info" message="{{ 'label.preview_preset_mode'|trans({'%label%': previewPreset.label|trans({}, 'config')}, 'site') }}" />
+        <twig:c975LUi:Alert:Alert type="info" message="{{ 'label.preview_preset_mode'|trans({'%label%': previewPreset.label|trans({}, previewPreset.domain|default('config'))}, 'site') }}" />
     {% endif %}
     </div>
-    {# previewBlocks (set only when the preset carries a demo page-template, see PageController::preview())
-       stands in for the real page's blocks so the preview shows the preset's full intended arrangement #}
-    <twig:c975LUi:Blocks:Blocks blocks="{{ (previewBlocks is defined and previewBlocks) ? previewBlocks : page.blocks }}" />
+    {% if detailHtml is defined and detailHtml %}
+        {# Set only by PageController::resolveCollectionDetail(): this URL's last segment resolved
+           against a "collection" block's own source instead of a real Page - already-rendered HTML,
+           stands in for the Page's own blocks #}
+        {{ detailHtml|raw }}
+    {% else %}
+        {# previewBlocks (set only when the preset carries a demo page-template, see PageController::preview())
+           stands in for the real page's blocks so the preview shows the preset's full intended arrangement #}
+        <twig:c975LUi:Blocks:Blocks blocks="{{ (previewBlocks is defined and previewBlocks) ? previewBlocks : page.blocks }}" />
+    {% endif %}
 {% endblock %}

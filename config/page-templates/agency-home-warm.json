@@ -4,15 +4,15 @@
         {
             "kind": "hero",
             "data": {
-                "badge": "Agence web indépendante · depuis 2018",
+                "badge": "Agence web indépendante",
                 "title": "Votre site web,<br>fait main et<br><em>sur mesure.</em>",
-                "subtitle": "On ne pose pas de template. On code proprement, avec notre propre CMS et Symfony, un site pensé pour vous — multilingue et hébergé en Suisse.",
+                "subtitle": "On ne pose pas de template. On code proprement un site pensé pour vous.",
                 "primaryLabel": "Parlons de votre projet",
-                "primaryUrl": "/contact",
+                "primaryUrl": "#contact",
                 "secondaryLabel": "Voir nos réalisations",
                 "secondaryUrl": "#realisations",
-                "statValue": "12+",
-                "statLabel": "sites en ligne, et le vôtre bientôt"
+                "statValue": "",
+                "statLabel": ""
             }
         },
         {
@@ -20,9 +20,9 @@
             "data": {
                 "items": [
                     {"title": "Code propre", "text": "maintenable dans le temps"},
-                    {"title": "Symfony", "text": "socle robuste & éprouvé"},
-                    {"title": "Notre CMS", "text": "édition simple, à vous"},
-                    {"title": "Suisse", "text": "hébergé chez Infomaniak"},
+                    {"title": "Sur mesure", "text": "pensé pour votre besoin"},
+                    {"title": "Édition simple", "text": "vous gérez votre contenu"},
+                    {"title": "Accompagnement", "text": "suivi dans la durée"},
                     {"title": "Multilingue", "text": "prêt pour l'international"}
                 ]
             }
@@ -40,13 +40,13 @@
                     },
                     {
                         "icon": null,
-                        "title": "Notre CMS maison",
+                        "title": "Un CMS simple",
                         "text": "Vous gérez votre contenu vous-même, simplement, sans dépendre de nous au quotidien."
                     },
                     {
                         "icon": null,
-                        "title": "Développement Symfony",
-                        "text": "Un socle technique solide et durable, avec des bundles open-source que nous maintenons."
+                        "title": "Développement sur mesure",
+                        "text": "Un socle technique solide et durable, entretenu dans la durée."
                     }
                 ]
             }
@@ -57,7 +57,7 @@
                 "eyebrow": "Notre expertise",
                 "title": "Une technique que nous maîtrisons de bout en bout.",
                 "text": "Pas de sous-traitance, pas de boîte noire. Nous développons, hébergeons et faisons évoluer votre site.",
-                "tags": ["Symfony", "PHP", "CMS 975L", "Multilingue", "Infomaniak · CH", "Open-source"]
+                "tags": ["Sur mesure", "Multilingue", "Open-source", "Hébergement", "Accompagnement"]
             }
         },
         {
@@ -68,7 +68,7 @@
                 "steps": [
                     {"title": "On s'écoute", "text": "On étudie votre problématique ensemble."},
                     {"title": "On conçoit", "text": "Structure, design et contenu, validés avec vous."},
-                    {"title": "On développe", "text": "Code propre, testé, et votre CMS prêt à l'emploi."},
+                    {"title": "On développe", "text": "Code propre, testé, et votre site prêt à l'emploi."},
                     {"title": "On accompagne", "text": "Mise en ligne, hébergement et suivi dans la durée."}
                 ]
             }
@@ -79,7 +79,7 @@
                 "eyebrow": "Réalisations",
                 "title": "Des projets en ligne, bien réels.",
                 "linkLabel": "Tout voir",
-                "linkUrl": "/sites"
+                "linkUrl": "#realisations"
             }
         },
         {
@@ -88,7 +88,7 @@
                 "title": "Racontez-nous votre projet.",
                 "text": "On étudie votre problématique et on voit ensemble comment y répondre au mieux.",
                 "ctaLabel": "Contactez-nous",
-                "ctaUrl": "/contact"
+                "ctaUrl": "#contact"
             }
         }
     ]

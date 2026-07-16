@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use App\Entity\User;
+use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
@@ -25,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
 
@@ -35,6 +37,7 @@ class UserCrudController extends AbstractCrudController
         private readonly EntityManagerInterface $entityManager,
         private readonly TableExporter $tableExporter,
         private readonly Security $security,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -106,6 +109,14 @@ class UserCrudController extends AbstractCrudController
             ->disable(Action::NEW)
             ->disable(Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $exportGroup)
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
+            ))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
+            ))
             ->setPermission(Action::INDEX, $this->configService->get('site-role-admin'))
             ->setPermission(Action::EDIT, $this->configService->get('site-role-admin'))
             ->setPermission(Action::DELETE, $this->configService->get('site-role-admin'))

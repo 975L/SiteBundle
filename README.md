@@ -222,7 +222,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | Kind | Category | Description |
 | --- | --- | --- |
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
-| `twig_content` | `label.category_migration` | Renders raw Twig content stored in the block's data via `template_from_string()`. Intended as a migration/escape hatch for content that doesn't fit another block type. |
+| `twig_content` | `label.category_migration` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
 | `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu` context (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page`. Not cacheable: its "active" state depends on the current request path. |
 
@@ -234,7 +234,9 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 ### Page templates
 
-`config/page-templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can bulk-add to a `Page` — a starting point to edit from, not a live/synced layout. Listed via `SitePageTemplateProvider`, applied via `PageCrudController`'s per-template "Apply template" action (appends the template's blocks after whatever the page already has, doesn't replace anything) or the `c975l:site:pages:apply-template` command (see [Commands](#commands)) for scripted use across several pages/sites at once. Both share the same `PageTemplateApplier`.
+`config/page-templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can apply to a `Page` — a starting point to edit from, not a live/synced layout. Listed via `SitePageTemplateProvider` (implements `PageTemplateProviderInterface`) and aggregated with any other bundle's own templates by `PageTemplateRegistry`.
+
+From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. Once happy with the draft's content, its "Publish as replacement" action swaps it in for the original — the original's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). The `c975l:site:pages:apply-template` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `PageTemplateApplier`.
 
 A page template stays independent from a [theme preset](#themes)'s colors/fonts/shape — a preset can optionally reference one (its `pageTemplate` key) purely to demo its full look in `?preset=` preview, but applying either one never touches the other.
 
@@ -448,6 +450,29 @@ Access is controlled by the `site-role-editor` key in ConfigBundle, same as page
 
 ---
 
+## Collection entries
+
+`CollectionEntry` is a generic "title/description/image/link" item, grouped by an arbitrary `group` (e.g. `"projects"`), so a single CRUD/table can back several unrelated collections across a site. Managed via `CollectionEntryCrudController`; access is controlled by the `site-role-editor` key in ConfigBundle.
+
+`CollectionEntrySourceProvider` (implements `c975l/ui-bundle`'s `CollectionSourceProviderInterface`) exposes every distinct `group` found in the table as its own source, keyed `site.collection.{group}` — adding a brand new group via the CRUD is enough to make it pickable in UiBundle's `collection` block, no code change needed.
+
+`c975l:site:collection-entry:import` (see [Commands](#commands)) migrates a legacy hand-maintained JSON array of items into `CollectionEntry` rows for a given group, for an app switching from a JSON-driven list to this CRUD + the `collection` block.
+
+### Item detail pages
+
+A `CollectionSourceProviderInterface` implementation can optionally expose a `detail` callable (see UiBundle's own README) so each item in its source gets a per-item URL, without a dedicated `Page`/`Block` row per item. `CollectionEntrySourceProvider` doesn't implement `detail` itself (its items only ever link out via their own `url`) — this is the generic mechanism any bundle's own provider can opt into.
+
+Unlike the collection listing itself, the detail view is a **real `Page`**, with its own blocks — nothing here is auto-created. Setting it up is two ordinary editorial steps, done once per collection:
+
+1. Create a `Page` for the detail view (any slug you like, e.g. `vitrine-blocks-detail`), and give it whichever blocks the detail view needs — a `twig_content` block for a fully custom template, native blocks like `card`/`text_section` for a simpler layout, or a mix. Nothing is special-cased: this is a `Page` like any other, managed the same way (`PageCrudController`).
+2. On the **other** `Page` that carries the `collection` block (the listing), fill that block's own `detailPage` field with the detail Page's slug from step 1.
+
+From then on, requesting `/pages/{page}/{itemSlug}` (an unknown slug one level under the listing page) calls the source's `detail($itemSlug)`; a non-null result makes the detail Page's own blocks render as usual, with a `collectionItem` Twig global exposing that result to any of them for the duration of this one render (see `CollectionItemContext`) — a `twig_content` block reads it via its own `templatePath` field (`{% include templatePath with collectionItem.get() %}`), but any other block kind could read it too. The item's own `title` (by convention) becomes that URL's `<title>` instead of the listing page's. A `null` result (unknown item slug, no `detail` callable, no `detailPage` set, or that Page not found) falls through to a normal 404.
+
+Nothing is persisted per item — see `PageController::resolveCollectionDetail()`.
+
+---
+
 ## Themes
 
 The site's colors, fonts and light/dark mode are admin-editable ConfigBundle keys (`group: theme`, see `config/configs-css.json`): `theme-color-primary`, `theme-color-secondary`, `theme-color-primary-dark-mode`, `theme-color-secondary-dark-mode`, `theme-color-background`, `theme-color-text`, `theme-font-family-title`, `theme-font-family-body`, `theme-font-family-accent`, `theme-mode` (`auto`/`light`/`dark`) and `theme-stylesheet` (see below). Managed via ConfigBundle's `ThemeCrudController`, its own dashboard view so it doesn't get mixed up with the general config list.
@@ -459,6 +484,8 @@ Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, al
 ### Presets
 
 `config/themes/*.json` ships ready-made combinations of the keys above (colors, fonts, and optionally a page-template "shape" stylesheet, see below) as one-click presets, listed via `SiteThemePresetProvider` (implements ConfigBundle's `ThemePresetProviderInterface`). An admin applies one from the Theme dashboard's "Presets" action group — this bulk-overwrites the `theme-*` configs in a single flush, it never touches page content.
+
+A preset's `values` don't need to repeat every `theme-*` key — only list the ones it actually wants to change. Every `theme-color-*`/`theme-font-family-*` custom property already has a built-in CSS fallback (see `sass/_variables.scss`, e.g. `var(--c975l-color-background, #fff)`), and a config left unset by the preset simply isn't emitted into the compiled stylesheet rather than overwriting it with an empty value. `warm`, for instance, only recolors the accent and swaps fonts, relying on the fallback for background/text; `default` covers everything except the accent font. A preset needs to declare a key explicitly only when it must override the fallback itself (e.g. a dark preset's background/text, since the built-in fallback is a light `#fff`/`#000`).
 
 Before committing to one, preview it on any page: `/pages/{page}/preview?preset=<slug>` renders that page with the preset's colors/fonts/shape applied for this request only (nothing written to `site_config`). If the preset also declares a `pageTemplate` (a `config/page-templates/*.json` slug, see [Page templates](#page-templates)), the preview additionally swaps in that template's blocks — transient, never persisted — so the preview shows the preset's full intended look rather than just a reskin of the page's actual content.
 
@@ -480,7 +507,7 @@ Set `site-matomo-url` and `site-matomo-id` in ConfigBundle, then place the compo
 <twig:c975LSite:General:Matomo/>
 ```
 
-The component renders nothing if either config value is missing.
+The component renders nothing if either config value is missing. **Deliberately not gated by CookieConsent below** — it's meant to run in CNIL-exempt mode (self-hosted, anonymized IP, no cross-site tracking, cookie ≤13 months, Do Not Track respected), see `description.site_enable_matomo`. If your Matomo instance isn't configured that way, gate it yourself before enabling `site-enable-matomo`.
 
 ### CookieConsent
 
@@ -490,7 +517,16 @@ Set `url-cookies-policy` in ConfigBundle (optional — links the banner to your 
 <twig:c975LSite:General:CookieConsent/>
 ```
 
-The `message`, `dismiss`, and `link` texts are loaded from the `site` translation domain.
+Wraps [`vanilla-cookieconsent`](https://cookieconsent.orestbida.com/) v3, loaded from CDN only when
+the component is actually rendered (never as a blanket request on every page). Deliberately
+binary — one non-essential category (`content`), two buttons (accept/reject) — no preferences
+panel to build or maintain. The `message`, `cookies_accept`, `cookies_reject`, and `cookies_policy`
+texts are loaded from the `site` translation domain.
+
+If `c975l/ui-bundle` is installed, its `<twig:c975LUi:Video:Iframe/>` (the `video_iframe` block)
+automatically gates on the resulting consent state — nothing else to wire up. It reacts to a
+documented `window.CookieConsent` contract rather than a hard dependency on this component (see
+UiBundle's own README), so it works the same even if you swap this banner for your own.
 
 ### HostedBy / MadeBy
 
@@ -663,6 +699,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
 | `php bin/console c975l:site:pages:apply-template <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
+| `php bin/console c975l:site:collection-entry:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionEntry`](#collection-entries) rows for a given group (`--images-dir`, `--dry-run` options) |
 
 ### Create a new site
 
@@ -915,4 +952,10 @@ $bots = file(
 
 ---
 
-If this project **helps you save development time**, consider sponsoring via the **Sponsor** button at the top of the GitHub page. Thank you!
+> [!TIP]
+> If this project **helps you save development time**:
+>
+> - [**star** it on GitHub](https://github.com/975L/SiteBundle) — helps others find it
+> - [**open an issue**](https://github.com/975L/SiteBundle/issues/new) to share how you use it — genuinely useful feedback
+>
+> And if you'd like to support the work directly, the **Sponsor** button at the top of the GitHub page is there for that. Thank you!

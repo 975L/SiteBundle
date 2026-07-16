@@ -76,6 +76,19 @@ class Page implements HasBlocksInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isDeleted = false;
 
+    // Id of the page this one is meant to take over once approved (see PageCrudController::applyTemplate()
+    // / publishAsReplacement()) - an id, not the slug, so the lookup stays correct even if that page's
+    // slug changes (e.g. archived by another draft's own publishAsReplacement()) in the meantime. Null
+    // once published as a replacement, or for any page not created that way.
+    #[ORM\Column(nullable: true)]
+    private ?int $replaces = null;
+
+    // The real slug this page held before publishAsReplacement() archived it under a technical one -
+    // lets restore() try to reclaim it. Null once restored (or reclaim failed), or for any page never
+    // archived this way.
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $archivedSlug = null;
+
     // Falls back to the site-wide default og-image (see MediaExtension::getSiteMedia) when not set.
     // cascade: remove - this Media is exclusively owned by this Page (not shared), so deleting the
     // Page must also delete its file, same as Block's own medias
@@ -214,6 +227,30 @@ class Page implements HasBlocksInterface
     public function setIsDeleted(bool $isDeleted): self
     {
         $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    public function getReplaces(): ?int
+    {
+        return $this->replaces;
+    }
+
+    public function setReplaces(?int $replaces): self
+    {
+        $this->replaces = $replaces;
+
+        return $this;
+    }
+
+    public function getArchivedSlug(): ?string
+    {
+        return $this->archivedSlug;
+    }
+
+    public function setArchivedSlug(?string $archivedSlug): self
+    {
+        $this->archivedSlug = $archivedSlug;
 
         return $this;
     }

@@ -9,10 +9,16 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ThemePresetProviderInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // Reads every config/themes/*.json shipped by SiteBundle into the theme preset catalog (see readme)
 class SiteThemePresetProvider implements ThemePresetProviderInterface
 {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
+
     public function getPresets(): array
     {
         $presets = [];
@@ -23,14 +29,26 @@ class SiteThemePresetProvider implements ThemePresetProviderInterface
 
             $presets[$id] = [
                 'label' => $data['label'],
-                'values' => $data['values'],
+                // These presets are SiteBundle's own, translated in SiteBundle's own domain -
+                // ThemeCrudController (ConfigBundle) must never assume its own 'config' domain here
+                'domain' => 'site',
                 // Slug of the page-template stylesheet to activate with this preset (see
-                // StylesheetProvider), null if this preset only carries colors/fonts
+                // StylesheetProvider) - the only thing a preset ever controls: colors/fonts stay
+                // entirely admin-owned (see ThemeCrudController::applyPreset()), a preset never
+                // overwrites them
                 'stylesheet' => $data['stylesheet'] ?? null,
                 // Id of a config/page-templates/*.json (see SitePageTemplateProvider) whose blocks
                 // demo this preset's look in ?preset=X preview only (PageController::preview()) -
                 // applyPreset() never touches page content, so this never gets persisted either
                 'pageTemplate' => $data['pageTemplate'] ?? null,
+                // A closure, not an eagerly-generated string: ThemePresetRegistry (ConfigBundle) is a
+                // constructor dependency of ThemeCrudController, which EasyAdmin instantiates just to
+                // enumerate its routes while the router is still building its own route collection -
+                // calling generate() eagerly here deadlocks that (Router::generate() needs the very
+                // collection this call chain is in the middle of assembling). ThemeCrudController's own
+                // ->linkToUrl() already accepts a callable (see its "apply preset" action, same file) and
+                // only invokes it while rendering the CRUD page, long after routes are actually ready.
+                'previewUrl' => fn () => $this->urlGenerator->generate('page_preview', ['page' => 'home', 'preset' => $id]),
             ];
         }
 

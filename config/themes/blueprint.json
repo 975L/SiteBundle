@@ -1,0 +1,5 @@
+{
+    "label": "label.theme_preset_blueprint",
+    "stylesheet": "blueprint",
+    "pageTemplate": "portfolio-blueprint"
+}

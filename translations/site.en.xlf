@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>text.cookies_banner</source>
-                <target>By continuing my visit to this site, I accept the use of cookies to make statistics of visits, and the session ID.</target>
+                <target>This site uses a session cookie required for it to work, and may embed third-party content (videos, etc.) requiring your consent.</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>label.cookies_policy</source>
@@ -39,8 +39,8 @@
                 <target>We have detected an internal error :-( We ask you to excuse us.</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>text.cookies_dismiss</source>
-                <target>OK</target>
+                <source>label.cookies_reject</source>
+                <target>Reject</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.latest_update</source>
@@ -412,7 +412,7 @@
             </trans-unit>
             <trans-unit id="108">
                 <source>block.twig_content_description</source>
-                <target>Raw Twig content, for migrating legacy pages</target>
+                <target>Includes an existing Twig template by its path</target>
             </trans-unit>
             <trans-unit id="109">
                 <source>block.legal_model</source>
@@ -962,9 +962,77 @@
                 <source>label.page_template_agency_home_warm</source>
                 <target>Agency homepage (warm)</target>
             </trans-unit>
+            <trans-unit id="259">
+                <source>label.page_template_portfolio_blueprint</source>
+                <target>Portfolio (blueprint)</target>
+            </trans-unit>
             <trans-unit id="247">
                 <source>label.preview_preset_mode</source>
-                <target>Previewing the "%label%" preset (colors/fonts/shape, demo layout) - nothing has been saved, this only applies to this preview</target>
+                <target>Previewing the "%label%" preset's shape and demo layout - your own colors and fonts are shown as-is, nothing has been saved</target>
+            </trans-unit>
+            <trans-unit id="249">
+                <source>flash.page_template_applied_to_copy</source>
+                <target>An unpublished copy has been created with the template's blocks added.</target>
+            </trans-unit>
+            <trans-unit id="250">
+                <source>action.publish_as_replacement</source>
+                <target>Publish as replacement</target>
+            </trans-unit>
+            <trans-unit id="251">
+                <source>confirm.publish_as_replacement</source>
+                <target>This page will be published in place of the page it replaces: it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>
+            </trans-unit>
+            <trans-unit id="252">
+                <source>flash.page_replaced</source>
+                <target>The page has been published in place of the original, now in the trash.</target>
+            </trans-unit>
+            <trans-unit id="253">
+                <source>flash.page_to_replace_not_found</source>
+                <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
+            </trans-unit>
+            <trans-unit id="254">
+                <source>flash.page_restored_slug_taken</source>
+                <target>The page has been restored, but its original address (%slug%) is now taken: it kept its technical address, rename it manually if needed.</target>
+            </trans-unit>
+            <trans-unit id="255">
+                <source>label.collection_entry</source>
+                <target>Collection item</target>
+            </trans-unit>
+            <trans-unit id="256">
+                <source>label.collection_entries</source>
+                <target>Collections</target>
+            </trans-unit>
+            <trans-unit id="257">
+                <source>label.group</source>
+                <target>Group</target>
+            </trans-unit>
+            <trans-unit id="258">
+                <source>label.collection_entry_group_help</source>
+                <target>Identifies which collection this item belongs to (e.g. "projects") - this is the name picked as the source in the "Collection" block</target>
+            </trans-unit>
+            <trans-unit id="260">
+                <source>label.cookies_accept</source>
+                <target>Accept</target>
+            </trans-unit>
+            <trans-unit id="261">
+                <source>label.theme_preset_default</source>
+                <target>Default</target>
+            </trans-unit>
+            <trans-unit id="262">
+                <source>label.theme_preset_warm</source>
+                <target>Warm</target>
+            </trans-unit>
+            <trans-unit id="263">
+                <source>label.theme_preset_blueprint</source>
+                <target>Blueprint</target>
+            </trans-unit>
+            <trans-unit id="264">
+                <source>label.template_path</source>
+                <target>Detail template path</target>
+            </trans-unit>
+            <trans-unit id="265">
+                <source>label.template_path_help</source>
+                <target>Twig template path (e.g. "block_showcase/bundle.html.twig") used to render one item's detail view for the collection declared by a "Collection" block on this same page. Leave empty for plain Twig content via the Content field above.</target>
             </trans-unit>
         </body>
     </file>

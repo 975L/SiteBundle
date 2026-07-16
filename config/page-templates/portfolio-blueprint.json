@@ -1,0 +1,121 @@
+{
+    "label": "label.page_template_portfolio_blueprint",
+    "blocks": [
+        {
+            "kind": "hero",
+            "data": {
+                "badge": "Disponible pour un stage",
+                "title": "De l'idée<br>au <em>prototype.</em>",
+                "subtitle": "Élève en filière technique, je conçois, je modélise, je fabrique.",
+                "primaryLabel": "Me contacter pour un stage",
+                "primaryUrl": "#contact",
+                "secondaryLabel": "Voir mes projets",
+                "secondaryUrl": "#projets",
+                "statValue": "",
+                "statLabel": ""
+            }
+        },
+        {
+            "kind": "image",
+            "data": []
+        },
+        {
+            "kind": "progress_bar",
+            "data": {
+                "label": "Logiciel A",
+                "progressPercent": 80,
+                "text": true
+            }
+        },
+        {
+            "kind": "progress_bar",
+            "data": {
+                "label": "Logiciel B",
+                "progressPercent": 60,
+                "text": true
+            }
+        },
+        {
+            "kind": "progress_bar",
+            "data": {
+                "label": "Compétence C",
+                "progressPercent": 75,
+                "text": true
+            }
+        },
+        {
+            "kind": "card",
+            "data": {
+                "id": "",
+                "title": "Projet 01",
+                "level": "h3",
+                "content": "<p>Description courte du projet.</p>",
+                "url": "",
+                "target": "",
+                "buttonLabel": "",
+                "class": []
+            }
+        },
+        {
+            "kind": "card",
+            "data": {
+                "id": "",
+                "title": "Projet 02",
+                "level": "h3",
+                "content": "<p>Description courte du projet.</p>",
+                "url": "",
+                "target": "",
+                "buttonLabel": "",
+                "class": []
+            }
+        },
+        {
+            "kind": "card",
+            "data": {
+                "id": "",
+                "title": "Projet 03",
+                "level": "h3",
+                "content": "<p>Description courte du projet.</p>",
+                "url": "",
+                "target": "",
+                "buttonLabel": "",
+                "class": []
+            }
+        },
+        {
+            "kind": "text_section",
+            "data": {
+                "title": "À propos",
+                "slug": "a-propos",
+                "content": "<p>Passionné par la conception technique, je souhaite mettre mes compétences au service d'une entreprise pour découvrir le monde professionnel. Motivé, sérieux et curieux d'apprendre.</p>",
+                "image": ""
+            }
+        },
+        {
+            "kind": "document_download",
+            "data": {
+                "label": "Mon CV",
+                "buttonLabel": ""
+            }
+        },
+        {
+            "kind": "document_download",
+            "data": {
+                "label": "Lettre de motivation",
+                "buttonLabel": ""
+            }
+        },
+        {
+            "kind": "button",
+            "data": {
+                "label": "Me contacter",
+                "url": "#contact",
+                "type": "primary",
+                "target": "",
+                "icon": "",
+                "download": false,
+                "inline": false
+            }
+        }
+    ]
+}

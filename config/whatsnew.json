@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-07-16",
+        "description": [
+            {
+                "en": "Applying a page layout to an already-published page is now safe: it creates a draft copy for you to review, and only replaces the live page once you confirm - the original is kept in the trash, recoverable at any time",
+                "fr": "Appliquer une mise en page à une page déjà publiée est désormais sans risque : un brouillon est créé pour relecture, et ne remplace la page en ligne qu'après votre confirmation - l'originale est conservée dans la corbeille, récupérable à tout moment",
+                "es": "Aplicar un diseño de página a una página ya publicada ahora es seguro: se crea un borrador para revisión, y solo reemplaza la página en línea tras su confirmación - la original se conserva en la papelera, recuperable en cualquier momento"
+            },
+            {
+                "en": "A new \"Collections\" feature lets you manage a reusable list of items (title, description, image, link) from the dashboard, ready to display on your pages",
+                "fr": "Une nouvelle fonctionnalité « Collections » permet de gérer depuis le tableau de bord une liste réutilisable d'éléments (titre, description, image, lien), prête à afficher sur vos pages",
+                "es": "Una nueva función de «Colecciones» le permite gestionar desde el panel de control una lista reutilizable de elementos (título, descripción, imagen, enlace), lista para mostrar en sus páginas"
+            },
+            {
+                "en": "A new \"Blueprint\" theme (dark, technical style) is now available to apply in one click from the dashboard",
+                "fr": "Un nouveau thème « Blueprint » (sombre, technique) est désormais disponible en un clic depuis le tableau de bord",
+                "es": "Un nuevo tema «Blueprint» (oscuro, técnico) ya está disponible para aplicar con un clic desde el panel de control"
+            },
+            {
+                "en": "The cookie banner has been redesigned with clear Accept/Reject buttons, and the cookies information page now clearly explains how each type of cookie is used",
+                "fr": "Le bandeau de cookies a été retravaillé avec des boutons Accepter/Refuser clairs, et la page d'information sur les cookies explique désormais précisément comment chaque type de cookie est utilisé",
+                "es": "El banner de cookies se ha rediseñado con botones claros de Aceptar/Rechazar, y la página de información sobre cookies ahora explica claramente cómo se usa cada tipo de cookie"
+            }
+        ]
+    },
+    {
         "date": "2026-07-15",
         "description": [
             {

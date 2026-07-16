@@ -14,7 +14,6 @@ use c975L\UiBundle\Entity\Media;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
 // Embeds a single Media upload (c975L\UiBundle\Entity\Media, role=null) for Page::$ogImage
@@ -22,16 +21,7 @@ class OgImageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('file', VichImageType::class, [
-            'label' => false,
-            'required' => false,
-            'allow_delete' => true,
-            'download_uri' => true,
-            'asset_helper' => true,
-            'constraints' => [
-                new File(maxSize: '2M'),
-            ],
-        ]);
+        $builder->add('file', VichImageType::class, ['label' => false] + VichImageOptions::default('2M'));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

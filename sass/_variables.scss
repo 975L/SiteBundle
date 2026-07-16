@@ -54,6 +54,10 @@
     --radius-panel: 16px;
     --shadow-nav: 0 2px 4px var(--primary);
     --navbar-background: var(--white);
+    // Fixed --black default matches this base --navbar-background being a fixed white too - a
+    // template whose --navbar-background instead follows --background (warm/blueprint) overrides
+    // this to var(--text) so nav links stay readable whatever the admin sets theme-color-text to
+    --navbar-text: var(--black);
     --border-nav: none;
     // "fixed" (position:fixed) stays the admin's own site-navbar-fixed config toggle (.menu-fixed,
     // see Navbar.html.twig) and always wins when active - this is a template's own default instead,

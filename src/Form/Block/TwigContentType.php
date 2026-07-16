@@ -10,7 +10,7 @@
 namespace c975L\SiteBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,12 +19,14 @@ class TwigContentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', TextareaType::class, [
-                'label' => 'label.content',
-                'help'  => 'label.content_help',
-                'attr'  => [
-                    'rows' => 20,
-                ],
+            // A Twig template path/name (e.g. "block_showcase/bundle.html.twig"), always included as-is
+            // - not limited to a collection's detail Page: any Page can use this block to include an
+            // arbitrary template. When it does sit on a detail Page, "collectionItem" (see
+            // TwigContent.html.twig, PageController::resolveCollectionDetail()) is passed to it - see
+            // SiteBundle's README ("Item detail pages", under "Collection entries") for that recipe.
+            ->add('templatePath', TextType::class, [
+                'label' => 'label.template_path',
+                'help'  => 'label.template_path_help',
             ])
         ;
     }

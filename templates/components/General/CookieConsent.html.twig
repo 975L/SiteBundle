@@ -1,10 +1,12 @@
 {# <twig:c975LSite:General:CookieConsent/> #}
 {% set cookiesPolicyUrl = config('url-cookies-policy') %}
 <div data-controller="cookieConsent"
-     data-message="{{ 'text.cookies_banner'|trans({}, 'site') }}"
-     data-dismiss="{{ 'text.cookies_dismiss'|trans({}, 'site') }}"
-     data-link="{{ 'label.cookies_policy'|trans({}, 'site') }}"
+     data-cookie-consent-message-value="{{ 'text.cookies_banner'|trans({}, 'site') }}"
+     data-cookie-consent-accept-value="{{ 'label.cookies_accept'|trans({}, 'site') }}"
+     data-cookie-consent-reject-value="{{ 'label.cookies_reject'|trans({}, 'site') }}"
      {% if cookiesPolicyUrl %}
-         data-href="{{ cookiesPolicyUrl }}"
-     {% endif %}>
+         data-cookie-consent-policy-url-value="{{ cookiesPolicyUrl }}"
+         data-cookie-consent-policy-label-value="{{ 'label.cookies_policy'|trans({}, 'site') }}"
+     {% endif %}
+     data-cookie-consent-lang-value="{{ app.request.locale }}">
 </div>

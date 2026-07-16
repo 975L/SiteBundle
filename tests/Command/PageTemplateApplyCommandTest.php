@@ -12,7 +12,7 @@ namespace c975L\SiteBundle\Tests\Command;
 use c975L\SiteBundle\Command\PageTemplateApplyCommand;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\SitePageTemplateProvider;
+use c975L\SiteBundle\Management\PageTemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,11 +35,11 @@ class PageTemplateApplyCommandTest extends TestCase
 
     private function createTester(
         ?Page $existingPage = null,
-        ?SitePageTemplateProvider $templateProvider = null,
+        ?PageTemplateRegistry $templateProvider = null,
         ?EntityManagerInterface $entityManager = null,
     ): CommandTester {
-        $templateProvider ??= $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => null,
+        $templateProvider ??= $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => null,
         ]);
 
         $pageRepository = $this->createStub(PageRepository::class);
@@ -71,8 +71,8 @@ class PageTemplateApplyCommandTest extends TestCase
 
     public function testExecuteFailsWhenPageDoesNotExistAndNoTitleGiven(): void
     {
-        $templateProvider = $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => $this->template(),
+        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => $this->template(),
         ]);
         $tester = $this->createTester(templateProvider: $templateProvider);
 
@@ -84,8 +84,8 @@ class PageTemplateApplyCommandTest extends TestCase
 
     public function testExecuteCreatesAnUnpublishedPageWithTheTemplatesBlocks(): void
     {
-        $templateProvider = $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => $this->template(),
+        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $persisted = null;
@@ -110,8 +110,8 @@ class PageTemplateApplyCommandTest extends TestCase
 
     public function testExecutePublishesTheNewPageWhenPublishOptionIsSet(): void
     {
-        $templateProvider = $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => $this->template(),
+        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $persisted = null;
@@ -134,8 +134,8 @@ class PageTemplateApplyCommandTest extends TestCase
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
         $page->addBlock((new Block())->setKind('legacy_content')->setPosition(0));
-        $templateProvider = $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => $this->template(),
+        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => $this->template(),
         ]);
         $tester = $this->createTester(existingPage: $page, templateProvider: $templateProvider);
 
@@ -150,8 +150,8 @@ class PageTemplateApplyCommandTest extends TestCase
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
         $page->addBlock((new Block())->setKind('legacy_content')->setPosition(0));
-        $templateProvider = $this->createConfiguredStub(SitePageTemplateProvider::class, [
-            'getTemplate' => $this->template(),
+        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+            'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
         $removed = [];

@@ -1,0 +1,30 @@
+/* DEFAULT - page template shape stylesheet
+   Overrides only the "shape" design tokens (see ../_variables.scss) - colors/fonts stay controlled
+   by the "default" theme preset (config/themes/default.json). Loaded after site-theme.css
+   (see StylesheetProvider), so these win the cascade for --radius-*, restyling buttons/cards/panels
+   AND header/navbar/footer uniformly since they all already consume the same tokens.
+   Agnostic of any color: every token below is either a pure shape value (radius, position, shadow)
+   or derived from --primary/--white, so it stays consistent whatever the admin sets theme-color-*
+   to. These values intentionally match _variables.scss's own base tokens exactly: this is the
+   "classic" shape (colored shadowed navbar, solid colored footer band) that used to apply silently
+   whenever theme-stylesheet was empty - materialized here as a real preset, on equal footing with
+   warm/blueprint, instead of being an implicit fallback. */
+:root {
+    --radius-btn: 5px;
+    --radius-card: 10px;
+    --radius-panel: 16px;
+
+    /* Navbar: solid header with a colored drop shadow, not sticky */
+    --navbar-background: var(--white);
+    --shadow-nav: 0 2px 4px var(--primary);
+    --border-nav: none;
+    --navbar-position: relative;
+    --navbar-z-index: auto;
+
+    /* Footer: solid colored band (the site's primary color), classic contrast look */
+    --footer-background: var(--primary);
+    --footer-text: var(--white);
+    --footer-text-hover: var(--footer-text);
+    --footer-items-direction: column;
+    --footer-items-justify: flex-start;
+}

@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
@@ -17,7 +18,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
 use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\SitePageTemplateProvider;
+use c975L\SiteBundle\Management\PageTemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -79,7 +80,7 @@ class PageCrudController extends AbstractCrudController
         private readonly SluggerInterface $slugger,
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
-        private readonly SitePageTemplateProvider $pageTemplateProvider,
+        private readonly PageTemplateRegistry $pageTemplateRegistry,
         private readonly PageTemplateApplier $pageTemplateApplier,
     ) {
     }
@@ -141,10 +142,12 @@ class PageCrudController extends AbstractCrudController
             // Data
             // Confirms with the user before letting them change the title, since it will also change the slug (see updateEntity)
             // Handled by the "titleConfirm" Stimulus controller (assets/js/title-confirm.js), loaded admin-wide via admin.js
+            // Not needed on a new page: there's no existing slug/redirect to preserve yet, and the
+            // confirmation modal isn't even rendered on the "new" crud page (only edit/index/detail)
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'site'))
                 ->setRequired(true)
-                ->setFormTypeOption('attr', $isHomePage ? [] : [
+                ->setFormTypeOption('attr', ($isHomePage || Crud::PAGE_NEW === $pageName) ? [] : [
                     'data-controller' => 'titleConfirm',
                     'data-action' => 'focus->titleConfirm#confirm click->titleConfirm#confirm',
                     'data-title-confirm-message-value' => $this->translator->trans('confirm.title_change', [], 'site'),
@@ -260,18 +263,20 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
-        // Opens the page on the public site if published, or a preview (admin-only, works even unpublished) otherwise
-        // In a new tab - hidden for trashed pages (they 410 on the site)
-        $viewOnSiteAction = Action::new(
-            'viewOnSite',
-            static fn (Page $page) => $page->isPublished()
-                ? t('action.view_on_site', [], 'site')
-                : t('action.preview', [], 'site'),
-            'fa fa-external-link-alt'
-        )
+        // Opens the published page on the public site, in a new tab - hidden for unpublished/trashed pages
+        // Split from the preview action (rather than one action with a dynamic label) so each keeps its
+        // own icon - the only way to tell them apart once icon-only on the index
+        $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'site'), 'fa fa-external-link-alt')
             ->linkToUrl(fn (Page $page) => $this->pagePath($page))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+            ->displayIf(static fn (Page $page): bool => $page->isPublished() && !$page->isDeleted())
+            ->addCssClass('btn btn-secondary');
+
+        // Opens an admin-only preview of an unpublished page (works even though it isn't public yet), in a new tab
+        $previewAction = Action::new('preview', t('action.preview', [], 'site'), 'fa fa-eye')
+            ->linkToUrl(fn (Page $page) => $this->pagePath($page))
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->displayIf(static fn (Page $page): bool => !$page->isPublished() && !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
         // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved
@@ -282,6 +287,14 @@ class PageCrudController extends AbstractCrudController
             ->askConfirmation(t('confirm.duplicate', [], 'site'))
             ->addCssClass('btn btn-secondary');
 
+        // Swaps this draft in for the page it was created to replace (see applyTemplate()) - only shown
+        // on such a draft, never on a page with no pending replacement
+        $publishAsReplacementAction = Action::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
+            ->linkToCrudAction('publishAsReplacement')
+            ->displayIf(static fn (Page $page): bool => null !== $page->getReplaces() && !$page->isDeleted())
+            ->askConfirmation(t('confirm.publish_as_replacement', [], 'site'))
+            ->addCssClass('btn btn-primary');
+
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
             ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
@@ -291,14 +304,19 @@ class PageCrudController extends AbstractCrudController
 
         // Adds the Blocks of a shipped page-template (config/page-templates/*.json) to the page being
         // edited - one action per template, only shown once at least one is registered
-        $templates = $this->pageTemplateProvider->getTemplates();
+        $templates = $this->pageTemplateRegistry->all();
         $templatesGroup = [] !== $templates
             ? ActionGroup::new('pageTemplates', t('label.page_templates', [], 'site'), 'fa fa-th-large')
             : null;
         foreach ($templates as $id => $template) {
+            // 'label' belongs to whichever bundle contributed the template (see
+            // PageTemplateProviderInterface) - 'site' is only the fallback for a provider that
+            // hasn't declared one
+            $domain = $template['domain'] ?? 'site';
+
             $actionName = 'applyTemplate_' . $id;
             $templatesGroup?->addAction(
-                Action::new($actionName, $this->translator->trans($template['label'], [], 'site'))
+                Action::new($actionName, $this->translator->trans($template['label'], [], $domain))
                     ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
                         ->setController(self::class)
                         ->setAction('applyTemplate')
@@ -318,35 +336,54 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
+            ->add(Crud::PAGE_INDEX, $previewAction)
             ->add(Crud::PAGE_INDEX, $duplicateAction)
+            ->add(Crud::PAGE_INDEX, $publishAsReplacementAction)
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_DETAIL, $restoreAction)
             ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
             ->add(Crud::PAGE_DETAIL, $viewOnSiteAction)
+            ->add(Crud::PAGE_DETAIL, $previewAction)
             ->add(Crud::PAGE_DETAIL, $duplicateAction)
+            ->add(Crud::PAGE_DETAIL, $publishAsReplacementAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
+            ->add(Crud::PAGE_EDIT, $previewAction)
             ->add(Crud::PAGE_EDIT, $duplicateAction)
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'duplicate'])
-            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'duplicate'])
-            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'duplicate'])
-            ->update(Crud::PAGE_INDEX, Action::DELETE, static function (Action $action): Action {
-                return $action
-                    ->setLabel(t('action.move_to_trash', [], 'site'))
+            ->add(Crud::PAGE_EDIT, $publishAsReplacementAction)
+            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
+            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
+            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action
                     ->setIcon('fa fa-box-archive')
-                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
-            })
+                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
+                $this->translator->trans('action.move_to_trash', [], 'site'),
+            ))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static function (Action $action): Action {
                 return $action
                     ->setLabel(t('action.move_to_trash', [], 'site'))
                     ->setIcon('fa fa-box-archive')
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
             })
-            ->update(Crud::PAGE_INDEX, Action::EDIT, static function (Action $action): Action {
-                return $action->displayIf(static fn (Page $page): bool => !$page->isDeleted());
-            })
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
+                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
+            ))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, static function (Action $action): Action {
                 return $action->displayIf(static fn (Page $page): bool => !$page->isDeleted());
             })
+            ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.view_on_site', [], 'site'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'preview', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.preview', [], 'site'),
+            ))
+            ->update(Crud::PAGE_INDEX, 'duplicate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans('action.duplicate', [], 'site'),
+            ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
@@ -356,7 +393,9 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('restore', $role)
             ->setPermission('deletePermanently', $role)
             ->setPermission('viewOnSite', $role)
+            ->setPermission('preview', $role)
             ->setPermission('duplicate', $role)
+            ->setPermission('publishAsReplacement', $role)
             ->setPermission('qrcode', $role)
             ->setPermission('exportSql', $role)
             ->setPermission('exportCsv', $role)
@@ -434,13 +473,25 @@ class PageCrudController extends AbstractCrudController
         );
     }
 
-    // Restores a page out of the trash - keeps its content untouched
+    // Restores a page out of the trash - keeps its content untouched. If it was archived by
+    // publishAsReplacement(), tries to reclaim its real slug (free unless something else has since
+    // taken it), otherwise keeps the technical one and warns the admin to rename it manually.
     #[AdminRoute('/{entityId}/restore')]
     public function restore(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         $page = $context->getEntity()->getInstance();
+
+        $archivedSlug = $page->getArchivedSlug();
+        if (null !== $archivedSlug) {
+            if (null === $this->pageRepository->findOneBy(['slug' => $archivedSlug])) {
+                $page->setSlug($archivedSlug);
+            } else {
+                $this->addFlash('warning', $this->translator->trans('flash.page_restored_slug_taken', ['%slug%' => $archivedSlug], 'site'));
+            }
+            $page->setArchivedSlug(null);
+        }
 
         $page->setIsDeleted(false);
         $page->setModification(new \DateTime());
@@ -464,7 +515,26 @@ class PageCrudController extends AbstractCrudController
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
-        $source = $context->getEntity()->getInstance();
+        $copy = $this->clonePage($context->getEntity()->getInstance());
+
+        $entityManager->persist($copy);
+        $entityManager->flush();
+
+        $this->addFlash('success', $this->translator->trans('flash.page_duplicated', [], 'site'));
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($copy->getId())
+                ->generateUrl()
+        );
+    }
+
+    // Builds (but does not persist) a clone of a page and all its content (blocks, medias, og-image),
+    // unpublished - shared by duplicate() and applyTemplate(), so both stay consistent
+    private function clonePage(Page $source): Page
+    {
         $user = $this->security->getUser();
         $now = new \DateTime();
         $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
@@ -490,10 +560,40 @@ class PageCrudController extends AbstractCrudController
             $copy->addBlock($this->cloneBlock($block, $user));
         }
 
+        return $copy;
+    }
+
+    // Applies a page-template's Blocks (kind + example data, in the template's order) to a fresh,
+    // unpublished copy of the page being edited - never mutates the live page in place, so this is
+    // safe to use on an already-published page (see clonePage()). The admin then edits the copy's
+    // pre-filled content and, once happy with it, uses publishAsReplacement() to swap it in for the
+    // original. Same idea as ConfigBundle's ThemeCrudController::applyPreset(), but via a copy instead
+    // of in place - PageTemplateApplyCommand (CLI) still applies in place, deliberately, for scripted use.
+    #[AdminRoute('/{entityId}/apply-template')]
+    public function applyTemplate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        $source = $context->getEntity()->getInstance();
+        $template = $this->pageTemplateRegistry->get((string) $request->query->get('template'));
+
+        if (null === $template) {
+            return $this->redirect(
+                $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::EDIT)
+                    ->setEntityId($source->getId())
+                    ->generateUrl()
+            );
+        }
+
+        $copy = $this->clonePage($source)->setReplaces($source->getId());
+        $this->pageTemplateApplier->apply($copy, $template, $this->security->getUser());
+
         $entityManager->persist($copy);
         $entityManager->flush();
 
-        $this->addFlash('success', $this->translator->trans('flash.page_duplicated', [], 'site'));
+        $this->addFlash('success', $this->translator->trans('flash.page_template_applied_to_copy', [], 'site'));
 
         return $this->redirect(
             $this->adminUrlGenerator
@@ -504,29 +604,68 @@ class PageCrudController extends AbstractCrudController
         );
     }
 
-    // Bulk-adds a page-template's Blocks (kind + example data, in the template's order) to the page
-    // being edited - the admin then edits the pre-filled content, same idea as ConfigBundle's
-    // ThemeCrudController::applyPreset(). Appended after any existing blocks, not replacing them.
-    #[AdminRoute('/{entityId}/apply-template')]
-    public function applyTemplate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
+    // Swaps this (unpublished) page in for the one it replaces: the original's slug is archived, this
+    // page takes it over and gets published, and the original is moved to trash (recoverable, see
+    // restore()). Looked up by id, not slug - the original's slug may have changed since this copy was
+    // created (e.g. archived by another draft's own publishAsReplacement()), and an id stays correct
+    // regardless. Since the public slug is never held by both rows at once, and never reassigned back
+    // to the trashed original, visitors are never routed to a deleted page (no 410) - two separate
+    // flushes so the unique constraint on slug is never violated by the swap itself, wrapped in one
+    // transaction so a failure between them can't leave neither row holding the live slug.
+    #[AdminRoute('/{entityId}/publish-as-replacement')]
+    public function publishAsReplacement(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
-        $page = $context->getEntity()->getInstance();
-        $template = $this->pageTemplateProvider->getTemplate((string) $request->query->get('template'));
+        $copy = $context->getEntity()->getInstance();
+        $originalId = $copy->getReplaces();
+        $original = null !== $originalId ? $this->pageRepository->find($originalId) : null;
 
-        if (null !== $template) {
-            $this->pageTemplateApplier->apply($page, $template, $this->security->getUser());
-
-            $entityManager->flush();
-            $this->addFlash('success', $this->translator->trans('flash.page_template_applied', [], 'site'));
+        // Already archived by another draft's own publishAsReplacement() (non-null archivedSlug, not
+        // yet restored) - its current slug is the mangled "-archived" one, not the live one this copy
+        // was meant to take over, so treat it the same as "not found" rather than publishing under it
+        if (null !== $original && null !== $original->getArchivedSlug()) {
+            $original = null;
         }
+
+        if (null === $original) {
+            $this->addFlash('danger', $this->translator->trans('flash.page_to_replace_not_found', [], 'site'));
+
+            return $this->redirect(
+                $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::EDIT)
+                    ->setEntityId($copy->getId())
+                    ->generateUrl()
+            );
+        }
+
+        $originalSlug = $original->getSlug();
+
+        $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug): void {
+            $original
+                ->setArchivedSlug($originalSlug)
+                ->setSlug($this->uniqueSlug($originalSlug . '-archived'))
+                ->setIsPublished(false)
+                ->setIsDeleted(true)
+                ->setModification(new \DateTime());
+            $entityManager->flush();
+
+            $copy
+                ->setSlug($originalSlug)
+                ->setIsPublished(true)
+                ->setReplaces(null)
+                ->setModification(new \DateTime());
+            $entityManager->flush();
+        });
+
+        $this->addFlash('success', $this->translator->trans('flash.page_replaced', [], 'site'));
 
         return $this->redirect(
             $this->adminUrlGenerator
                 ->setController(self::class)
                 ->setAction(Action::EDIT)
-                ->setEntityId($page->getId())
+                ->setEntityId($copy->getId())
                 ->generateUrl()
         );
     }

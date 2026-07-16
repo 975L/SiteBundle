@@ -35,8 +35,6 @@ class StylesheetProvider implements BundleStylesheetProviderInterface
             $stylesheets[] = 'bundles/c975lsite/css/page-templates/' . $stylesheet . '.min.css';
         }
 
-        $stylesheets[] = 'https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css';
-
         return $stylesheets;
     }
 }

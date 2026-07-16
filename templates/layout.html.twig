@@ -77,6 +77,10 @@
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <meta name="viewport" content="width=device-width initial-scale=1.0">
                 <meta name="format-detection" content="telephone=no">
+{# Turbo reads this to nonce the inline <script>/<style> tags it re-executes on page visits/frame
+   loads - without it, Turbo recreates them without a nonce and NelmioSecurityBundle's CSP blocks
+   them, since a nonce being present at all makes 'unsafe-inline' ignored by the browser #}
+                <meta name="csp-nonce" content="{{ csp_nonce('script') }}">
 {# Base #}
                 <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
 {# Display for html #}

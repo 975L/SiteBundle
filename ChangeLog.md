@@ -1,5 +1,18 @@
 # Changelog
 
+## v7.5
+
+- Index-page inline row actions now icon-only with hover-title label (16/07/2026)
+- Theme presets simplified to shape only, colors/fonts removed; `warm-artisan` renamed to `warm` (16/07/2026) [BC-Break]
+- Added `blueprint` theme preset and a per-preset preview action (16/07/2026)
+- Added `portfolio-blueprint` page template, demoed by the `blueprint` preset's preview (16/07/2026)
+- Applying a page template now creates a draft copy instead of editing the live page (16/07/2026) [BC-Break]
+- Added `PageTemplateProviderInterface`/`PageTemplateRegistry` for bundle-contributed page templates (16/07/2026) [BC-Break]
+- Fixed `articles_slider` cache invalidation; added `CollectionEntry` and its import command (16/07/2026)
+- Added per-item detail pages for a `collection` block, rendered by a real `Page` referenced via its new `detailPage` field (16/07/2026)
+- Replaced `agency-home-warm`'s real 975L copy with generic placeholder content (16/07/2026)
+- Replaced cookie consent with `vanilla-cookieconsent` v3.1.0, gating `video_iframe` and rewriting the cookies legal copy (16/07/2026) [BC-Break]
+
 ## v7.4
 
 - Added admin-editable theme (colors/fonts/light-dark mode) compiled to CSS custom properties by `ThemeVariablesCssListener`, inlined into emails via the new `theme_variables_css()` Twig function - replaces the old per-app `_user-variables.css`/`_user-typography.css` email override stubs, any app-level override of those two files stops applying (15/07/2026) [BC-Break]

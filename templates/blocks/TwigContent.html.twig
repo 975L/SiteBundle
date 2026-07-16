@@ -1,1 +1,7 @@
-{{ include(template_from_string(content)) }}
+{# Always includes "templatePath" as-is - not limited to a collection's detail Page. When one is
+   available (see CollectionItemContext, PageController::resolveCollectionDetail()), the current
+   collection item's data is passed along too, so the included template can use it. "templatePath is
+   defined" guards a Block saved before this field existed, rather than a hard error. #}
+{% if templatePath is defined and templatePath %}
+    {% include templatePath with (collectionItem is defined ? (collectionItem.get() ?: {}) : {}) %}
+{% endif %}

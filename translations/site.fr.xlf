@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>text.cookies_banner</source>
-                <target>En poursuivant ma navigation sur ce site, j'accepte l’utilisation de Cookies pour réaliser des statistiques de visites, ainsi que l'identification de session.</target>
+                <target>Ce site utilise un cookie de session nécessaire à son fonctionnement et peut intégrer du contenu tiers (vidéos, etc.) nécessitant votre consentement.</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>label.cookies_policy</source>
@@ -39,8 +39,8 @@
                 <target>Nous avons détecté une erreur interne :-( Nous vous prions de nous en excuser.</target>
             </trans-unit>
             <trans-unit id="10">
-                <source>text.cookies_dismiss</source>
-                <target>OK</target>
+                <source>label.cookies_reject</source>
+                <target>Refuser</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>label.latest_update</source>
@@ -412,7 +412,7 @@
             </trans-unit>
             <trans-unit id="108">
                 <source>block.twig_content_description</source>
-                <target>Contenu Twig brut, pour migrer d'anciennes pages</target>
+                <target>Inclut un template Twig existant par son chemin</target>
             </trans-unit>
             <trans-unit id="109">
                 <source>block.legal_model</source>
@@ -962,9 +962,77 @@
                 <source>label.page_template_agency_home_warm</source>
                 <target>Accueil agence (chaleureux)</target>
             </trans-unit>
+            <trans-unit id="259">
+                <source>label.page_template_portfolio_blueprint</source>
+                <target>Portfolio (blueprint)</target>
+            </trans-unit>
             <trans-unit id="247">
                 <source>label.preview_preset_mode</source>
-                <target>Aperçu du preset "%label%" (couleurs/polices/forme, agencement de démonstration) — rien n'est enregistré, ça ne s'applique qu'à cet aperçu</target>
+                <target>Aperçu de la forme et de l'agencement de démonstration du preset "%label%" - vos couleurs et polices restent inchangées, rien n'est enregistré</target>
+            </trans-unit>
+            <trans-unit id="249">
+                <source>flash.page_template_applied_to_copy</source>
+                <target>Une copie non publiée a été créée avec les blocks du template ajoutés.</target>
+            </trans-unit>
+            <trans-unit id="250">
+                <source>action.publish_as_replacement</source>
+                <target>Publier à la place de...</target>
+            </trans-unit>
+            <trans-unit id="251">
+                <source>confirm.publish_as_replacement</source>
+                <target>Cette page va être publiée à la place de la page qu'elle remplace : elle reprendra son adresse, l'originale sera mise à la corbeille (récupérable). Continuer ?</target>
+            </trans-unit>
+            <trans-unit id="252">
+                <source>flash.page_replaced</source>
+                <target>La page a été publiée à la place de l'originale, désormais dans la corbeille.</target>
+            </trans-unit>
+            <trans-unit id="253">
+                <source>flash.page_to_replace_not_found</source>
+                <target>La page à remplacer est introuvable (déjà supprimée ou renommée) : rien n'a été publié.</target>
+            </trans-unit>
+            <trans-unit id="254">
+                <source>flash.page_restored_slug_taken</source>
+                <target>La page a été restaurée, mais son adresse d'origine (%slug%) est désormais prise : elle a conservé son adresse technique, à renommer manuellement si besoin.</target>
+            </trans-unit>
+            <trans-unit id="255">
+                <source>label.collection_entry</source>
+                <target>Élément de collection</target>
+            </trans-unit>
+            <trans-unit id="256">
+                <source>label.collection_entries</source>
+                <target>Collections</target>
+            </trans-unit>
+            <trans-unit id="257">
+                <source>label.group</source>
+                <target>Groupe</target>
+            </trans-unit>
+            <trans-unit id="258">
+                <source>label.collection_entry_group_help</source>
+                <target>Identifie la collection à laquelle appartient cet élément (ex. "projects") - c'est ce nom qui est choisi comme source dans le block "Collection"</target>
+            </trans-unit>
+            <trans-unit id="260">
+                <source>label.cookies_accept</source>
+                <target>Accepter</target>
+            </trans-unit>
+            <trans-unit id="261">
+                <source>label.theme_preset_default</source>
+                <target>Par défaut</target>
+            </trans-unit>
+            <trans-unit id="262">
+                <source>label.theme_preset_warm</source>
+                <target>Chaleureux</target>
+            </trans-unit>
+            <trans-unit id="263">
+                <source>label.theme_preset_blueprint</source>
+                <target>Blueprint</target>
+            </trans-unit>
+            <trans-unit id="264">
+                <source>label.template_path</source>
+                <target>Chemin du template de détail</target>
+            </trans-unit>
+            <trans-unit id="265">
+                <source>label.template_path_help</source>
+                <target>Chemin du template Twig (ex. "block_showcase/bundle.html.twig") utilisé pour afficher le détail d'un item de la collection déclarée par un block "Collection" sur cette même page. Laisser vide pour un contenu Twig classique via le champ Contenu ci-dessus.</target>
             </trans-unit>
         </body>
     </file>

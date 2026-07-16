@@ -11,7 +11,7 @@ namespace c975L\SiteBundle\Command;
 
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\SitePageTemplateProvider;
+use c975L\SiteBundle\Management\PageTemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -37,7 +37,7 @@ class PageTemplateApplyCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly PageRepository $pageRepository,
-        private readonly SitePageTemplateProvider $pageTemplateProvider,
+        private readonly PageTemplateRegistry $pageTemplateRegistry,
         private readonly PageTemplateApplier $pageTemplateApplier,
         private readonly Security $security,
     ) {
@@ -64,7 +64,7 @@ class PageTemplateApplyCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $templateArg = (string) $input->getArgument('template');
-        $template = $this->pageTemplateProvider->getTemplate($templateArg) ?? $this->loadTemplateFromFile($templateArg);
+        $template = $this->pageTemplateRegistry->get($templateArg) ?? $this->loadTemplateFromFile($templateArg);
         if (null === $template) {
             $io->error(sprintf(
                 'No page template found for "%s" (not a known slug in config/page-templates/, nor a valid JSON file).',

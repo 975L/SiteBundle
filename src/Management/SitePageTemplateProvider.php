@@ -11,8 +11,9 @@ namespace c975L\SiteBundle\Management;
 // Reads every config/page-templates/*.json shipped by SiteBundle into the page template catalog -
 // each one is a reusable, ordered arrangement of blocks (kind + example data) an admin can apply to
 // a Page (see PageCrudController::applyTemplate()), independent of the site's design (colors/fonts/
-// shape), which stays controlled by ConfigBundle's theme presets (see SiteThemePresetProvider)
-class SitePageTemplateProvider
+// shape), which stays controlled by ConfigBundle's theme presets (see SiteThemePresetProvider).
+// Aggregated with any satellite bundle's own templates by PageTemplateRegistry.
+class SitePageTemplateProvider implements PageTemplateProviderInterface
 {
     public function getTemplates(): array
     {
@@ -24,15 +25,11 @@ class SitePageTemplateProvider
 
             $templates[$id] = [
                 'label' => $data['label'],
+                'domain' => 'site',
                 'blocks' => $data['blocks'],
             ];
         }
 
         return $templates;
-    }
-
-    public function getTemplate(string $id): ?array
-    {
-        return $this->getTemplates()[$id] ?? null;
     }
 }

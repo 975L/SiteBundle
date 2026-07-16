@@ -8,9 +8,13 @@ services:
         resource: '../src/'
         exclude: '../src/{DependencyInjection,Entity,Messenger}'
 
-    # Enables template_from_string(), used by the twig_content block (see below) to render Twig content stored in DB
-    Twig\Extension\StringLoaderExtension:
-        tags: ['twig.extension']
+    # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own
+    # interface - CollectionEntrySourceProvider autowires against the interface for testability
+    Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
+
+    c975L\SiteBundle\Management\PageTemplateRegistry:
+        arguments:
+            $providers: !tagged_iterator c975l.page_template_provider
 
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:
@@ -47,7 +51,11 @@ services:
               template: '@c975LSite/blocks/TwigContent.html.twig'
               category: 'label.category_migration'
               pickable: true
-              cacheable: true
+              # Not cacheable: on a collection's detail Page, its output varies per request with
+              # "collectionItem" (see CollectionItemContext) - a persisted Block's id-keyed cache
+              # (BlockExtension::renderBlock()) has no way to see that, and would otherwise serve
+              # whichever item first got cached to every other item's URL
+              cacheable: false
 
     site.block.articles_slider:
         class: stdClass
