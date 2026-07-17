@@ -10,8 +10,8 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
 
-// Sample data for SiteBundle's block kinds, shown in UiBundle's block gallery
-// (c975L\UiBundle\Controller\Management\BlockGalleryController).
+// Sample data for SiteBundle's block kinds, shown in a block gallery/showcase (see UiBundle's
+// BlockFixtureRegistry, consumed by 975l.com's public /vitrine-blocks).
 // "articles_slider" and "menu_link" are deliberately left out: both only render something once
 // resolved against a real Page/route ("articles_slider" pulls the "article" blocks of a real Page,
 // "menu_link" resolves a real "page:ID"/"route:NAME" target) - there's no fake id/route this

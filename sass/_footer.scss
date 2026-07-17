@@ -1,12 +1,12 @@
 /* FOOTER */
 footer {
     background-color: var(--footer-background);
-    border-top: solid grey 2px;
+    border-top: var(--footer-border);
     margin-top: 3em;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    padding: 2em 15px 3em 15px;
-    width: 100vw;
+    margin-left: var(--footer-margin-x);
+    margin-right: var(--footer-margin-x);
+    padding: var(--footer-padding);
+    width: var(--footer-width);
 }
 
 footer .menu-items,
@@ -38,6 +38,14 @@ footer .menu-item {
 
 footer .menu-link {
     padding: 0.25rem;
+}
+
+// .menu-link's own hover/focus background (_menu.scss, meant for the colored navbar dropdown) isn't
+// scoped to it - this footer-scoped rule wins on specificity alone (0,2,1) > (0,2,0) regardless of
+// stylesheet order, so a plain/minimal footer template can turn it off (transparent) independently
+footer .menu-link:hover,
+footer .menu-link:focus {
+    background-color: var(--footer-link-hover-background);
 }
 
 footer .menu-label {

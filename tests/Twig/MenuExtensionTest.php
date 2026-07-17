@@ -155,6 +155,16 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('', $extension->getMenuLinkUrl('route:gone'));
     }
 
+    // A "page:ID#anchor-blockId" target (see MenuLinkType's anchor choices, UiBundle's
+    // BlockAnchorSlugger) resolves the page normally and appends the fragment as-is
+    public function testGetMenuLinkUrlAppendsFragmentForPageTargetWithAnchor(): void
+    {
+        $page = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('/page_display/home#services-7', $extension->getMenuLinkUrl('page:42#services-7'));
+    }
+
     // A "page:ID" target's label is the page's own title
     public function testGetMenuLinkLabelReturnsPageTitle(): void
     {
@@ -179,5 +189,61 @@ class MenuExtensionTest extends TestCase
         $extension = $this->createExtension($this->createRegistry([]));
 
         $this->assertSame('', $extension->getMenuLinkLabel('route:gone'));
+    }
+
+    // A "page:ID#anchor-blockId" target resolves to that section's own label (its block's title, see
+    // MenuLinkType's picker), not the page's own title - otherwise two different anchored links on the
+    // same page would render with the same identical label
+    public function testGetMenuLinkLabelReturnsTheSectionsOwnTitleForTargetWithAnchor(): void
+    {
+        $block = new Block();
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 7);
+        $block->setData(['anchor' => 'services', 'title' => 'Our services']);
+
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page->addBlock($block);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('Our services', $extension->getMenuLinkLabel('page:42#services-7'));
+    }
+
+    // No title set on the block (e.g. a kind whose "title" isn't a TrixEditorType) falls back to the
+    // raw anchor, same fallback as MenuLinkType's own picker choices
+    public function testGetMenuLinkLabelFallsBackToTheAnchorWhenBlockHasNoTitle(): void
+    {
+        $block = new Block();
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 7);
+        $block->setData(['anchor' => 'contact']);
+
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page->addBlock($block);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('contact', $extension->getMenuLinkLabel('page:42#contact-7'));
+    }
+
+    // The section's block was since removed/moved off the page - falls back to the page's own title
+    // rather than an empty/broken label
+    public function testGetMenuLinkLabelFallsBackToPageTitleWhenAnchoredBlockNoLongerExists(): void
+    {
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('Home', $extension->getMenuLinkLabel('page:42#services-7'));
+    }
+
+    // The matched block still exists but had both its title and anchor cleared since the menu_link
+    // was saved - must fall back to the page's own title, not render an empty label
+    public function testGetMenuLinkLabelFallsBackToPageTitleWhenAnchoredBlockHasNoTitleOrAnchor(): void
+    {
+        $block = new Block();
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 7);
+        $block->setData([]);
+
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page->addBlock($block);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('Home', $extension->getMenuLinkLabel('page:42#services-7'));
     }
 }

@@ -8,6 +8,12 @@
     background-color: var(--navbar-background);
     box-shadow: var(--shadow-nav);
     border-bottom: var(--border-nav);
+    // Breaks out of body's max-width (_general.scss) so the bar spans the full viewport,
+    // same technique already used by footer (_footer.scss) - .menu-header/.menu-items keep
+    // their own gutter, so only the background/shadow/border reach the edges
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
 }
 
 .menu-fixed {
@@ -16,6 +22,9 @@
     left: 0;
     right: 0;
     width: 100%;
+    // left/right already pin this edge to edge - the full-bleed margin above would over-constrain it
+    margin-left: 0;
+    margin-right: 0;
     z-index: 1000;
 }
 

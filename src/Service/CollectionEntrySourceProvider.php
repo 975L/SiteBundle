@@ -39,6 +39,7 @@ class CollectionEntrySourceProvider implements CollectionSourceProviderInterface
                 'label' => $group,
                 'count' => fn (): int => $this->countByGroup($group),
                 'items' => fn (?int $limit): array => $this->itemsByGroup($group, $limit),
+                'detail' => fn (string $slug): ?array => $this->detail($group, $slug),
             ];
         }
 
@@ -65,10 +66,28 @@ class CollectionEntrySourceProvider implements CollectionSourceProviderInterface
     private function toCollectionItem(CollectionEntry $entry): CollectionItem
     {
         return new CollectionItem(
-            (string) $entry->getTitle(),
-            $entry->getDescription(),
-            $this->uploaderHelper->asset($entry, 'file'),
-            $entry->getUrl()
+            title: (string) $entry->getTitle(),
+            description: $entry->getDescription(),
+            imageUrl: $this->uploaderHelper->asset($entry, 'file'),
+            url: $entry->getUrl(),
+            slug: $entry->getSlug(),
         );
+    }
+
+    // Backs this source's "detail" capability (see CollectionSourceProviderInterface) - resolves one
+    // entry by its own slug, scoped to this group so the same slug can be reused across different groups
+    private function detail(string $group, string $slug): ?array
+    {
+        $entry = $this->collectionEntryRepository->findOneByGroupAndSlug($group, $slug);
+        if (null === $entry) {
+            return null;
+        }
+
+        return [
+            'title' => $entry->getTitle(),
+            'description' => $entry->getDescription(),
+            'imageUrl' => $this->uploaderHelper->asset($entry, 'file'),
+            'url' => $entry->getUrl(),
+        ];
     }
 }

@@ -1,5 +1,29 @@
 # Changelog
 
+## v7.5.3
+
+- Renamed `site-navbar-fixed` (`bool`) config key to `site-navbar-position` (`text`, free CSS position value: relative/sticky/fixed/static...) (17/07/2026) [BC-Break]
+- Navbar now bleeds full-viewport-width like the footer already did (17/07/2026)
+- `menu_link` targets can now point at a page's own in-page anchor (`page:ID#anchor-blockId`), listed right under that page's entry in `MenuLinkType`'s picker (17/07/2026)
+- `menu_link` targets can now be an unpublished page too, flagged "(draft)" in the picker instead of being filtered out (17/07/2026)
+- "Publish as replacement" is now a per-page action group listing every other page as a target, no longer limited to a template-created draft's own pre-filled target; removed from the index/detail row actions, edit screen only (17/07/2026) [BC-Break]
+- `CollectionEntry` now has its own `slug`, unique within its `group`, auto-filled/de-duplicated by `CollectionEntryCrudController` (17/07/2026) [DB-Migration]
+- `CollectionEntrySourceProvider` now implements `detail`, so the `collection` block can link an item straight to its own detail page (17/07/2026)
+- `PageController::home()` now sets the `page` request attribute so a `collection` block on the home page can still resolve its items' detail links (17/07/2026)
+- Removed `GalleryShowcaseProvider`: SiteBundle no longer contributes a `articles_slider`/`menu_link` showcase to UiBundle's block gallery (17/07/2026) [BC-Break]
+- Fixed `c975l:site:collection-entry:import` never setting the entry's new required `slug`, crashing on flush (17/07/2026)
+- Fixed drag-and-drop reorder corrupting a group's order once it spans more than one index page, by keeping `CollectionEntry`'s index on a single page (17/07/2026)
+- Fixed an anchored `menu_link` rendering a blank label instead of falling back to the page's own title when its target block's title/anchor were both since cleared (17/07/2026)
+
+## v7.5.2
+
+- Footer's full-bleed width/margin and border are now `--footer-width`/`--footer-margin-x`/`--footer-border` (defaults unchanged) instead of hardcoded, so a plain/minimal footer template can realign it with the rest of the page instead of overriding raw CSS (17/07/2026)
+- Added `site_copyright()` Twig function, replacing the "© firstYear - currentYear" logic duplicated in `layout.html.twig`/`emails/fullLayout.html.twig` - keeps both languages' own punctuation before the site name (French/Spanish's space before ":", English's none) instead of picking one (17/07/2026)
+- A `menu_link` block can now be flagged "asCopyright" (`MenuLinkType`) to show the live computed copyright as its label instead of its target page's title - lets a footer's "Copyright" page link double as the copyright notice instead of showing both side by side (17/07/2026)
+- Added `--footer-link-hover-background` (defaults to today's `rgba(0, 0, 0, .1)`) - `.menu-link:hover`'s background wasn't scoped to the navbar dropdown it was meant for and was leaking into the footer; a plain/minimal footer template now sets it to `transparent` instead (17/07/2026)
+- `site_copyright()` now also collapses to a single year in emails when `site-first-online-date` is unset or matches the current year, instead of always showing a redundant range there (17/07/2026)
+- `site-navbar-position` now only accepts `relative`/`sticky`/`fixed`/`static`/`absolute`, any other value is ignored instead of being inlined verbatim into the navbar's `style` attribute (17/07/2026)
+
 ## v7.5.1
 
 - Renamed "page templates" to "templates", decoupled from theme presets (see UPGRADE) [BC-Break]

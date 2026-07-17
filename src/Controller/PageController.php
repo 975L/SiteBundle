@@ -66,10 +66,15 @@ class PageController extends AbstractController
         name: 'page_home',
         methods: ['GET']
     )]
-    public function home()
+    public function home(Request $request)
     {
         $homePage = $this->pageService->findOneBySlug('home');
         if ($homePage) {
+            // No "page" route parameter on "/" (unlike page_display's "/pages/{page}") - set it
+            // manually so a "collection" block rendered on the home page can still resolve its own
+            // items' detail links (see UiBundle's CollectionExtension::buildDetailUrl())
+            $request->attributes->set('page', 'home');
+
             return $this->render(
                 '@c975LSite/pages/page.html.twig',
                 ['page' => $homePage]

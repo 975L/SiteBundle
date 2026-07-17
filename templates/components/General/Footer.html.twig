@@ -1,8 +1,12 @@
 {# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
+{% set footerBlocks = menu_blocks('footer') %}
+{# A menu_link already flagged "asCopyright" (see MenuLinkType) renders its own live copyright text
+   as its label - showing the plain $copyright span too would just duplicate it #}
+{% set hasCopyrightLink = footerBlocks|filter(block => block.data.asCopyright ?? false)|length > 0 %}
 <footer>
     <div class="menu-items">
-        <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('footer') }}" />
-        {% if copyright is defined and copyright is not empty %}
+        <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
+        {% if not hasCopyrightLink and copyright is defined and copyright is not empty %}
             <div class="menu-item">
                 <span class="menu-label">{{ copyright }}</span>
             </div>

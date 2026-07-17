@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Form\Block;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,15 +34,37 @@ class MenuLinkType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $targetChoices = [];
+        // Eager-joins blocks so building each page's anchor choices below doesn't trigger one extra
+        // query per page (getBlocks() would otherwise lazy-load its ManyToMany collection on each access)
         $pages = $this->pageRepository->createQueryBuilder('p')
-            ->andWhere('p.isPublished = :published')
+            ->leftJoin('p.blocks', 'b')
+            ->addSelect('b')
             ->andWhere('p.isDeleted = :deleted')
-            ->setParameter('published', true)
             ->setParameter('deleted', false)
             ->getQuery()
             ->getResult();
         foreach ($pages as $page) {
-            $targetChoices[$page->getTitle()] = 'page:' . $page->getId();
+            // Unpublished pages stay pickable (editors need to wire menu links while still drafting a
+            // page) but are flagged: MenuExtension::getMenuLinkUrl() already resolves them to an empty
+            // URL until the page is published, so the entry just stays inert rather than ever breaking
+            $pageLabel = $page->getTitle() . ($page->isPublished() ? '' : ' (' . $this->translator->trans('label.draft', [], 'site') . ')');
+            $targetChoices[$pageLabel] = 'page:' . $page->getId();
+
+            // Flat entries for each of the page's own in-page anchors (see UiBundle's
+            // BlockAnchorSlugger/HasAnchorFieldTrait) - "page:ID#anchor-blockId", decoded by
+            // MenuExtension::getMenuLinkUrl(). No cascading/JS select needed: this stays a single
+            // filterable autocomplete list like the rest of $targetChoices.
+            foreach ($page->getBlocks() as $block) {
+                $anchor = $block->getData()['anchor'] ?? null;
+                if (null === $anchor || '' === $anchor) {
+                    continue;
+                }
+
+                // strip_tags: some kinds (hero, cta_band) use a TrixEditorType title, which may carry
+                // inline markup that must not leak into this plain-text select option label
+                $sectionLabel = strip_tags((string) ($block->getData()['title'] ?? $anchor));
+                $targetChoices[$pageLabel . ' → ' . $sectionLabel] = 'page:' . $page->getId() . '#' . $anchor . '-' . $block->getId();
+            }
         }
 
         foreach ($this->linkableRouteRegistry->all() as $name => $route) {
@@ -50,14 +73,22 @@ class MenuLinkType extends AbstractType
 
         ksort($targetChoices, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $builder->add('target', ChoiceType::class, [
-            'label' => 'label.menu_item_target',
-            'required' => true,
-            'placeholder' => 'label.choose_target',
-            'choices' => $targetChoices,
-            'choice_translation_domain' => false,
-            'attr' => ['data-ea-widget' => 'ea-autocomplete'],
-        ]);
+        $builder
+            ->add('target', ChoiceType::class, [
+                'label' => 'label.menu_item_target',
+                'required' => true,
+                'placeholder' => 'label.choose_target',
+                'choices' => $targetChoices,
+                'choice_translation_domain' => false,
+                'attr' => ['data-ea-widget' => 'ea-autocomplete'],
+            ])
+            // Swaps the target page's own title for the live "© firstYear - currentYear" computed by
+            // site_copyright() (see MenuLink.html.twig) - lets a "Copyright" page's link double as the
+            // site's copyright notice instead of showing both side by side
+            ->add('asCopyright', CheckboxType::class, [
+                'label' => 'label.menu_link_as_copyright',
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

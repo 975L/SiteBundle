@@ -1,0 +1,10 @@
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{# Marks each row with the data JS needs to drag-and-drop reorder it (see assets/js/collection-entry-sort.js
+   and CollectionEntryCrudController::reorder()) - the index lists every group in one flat table, ordered
+   by group then position, so rows sharing the same data-group are already contiguous. #}
+{% block entity_row_attributes %}
+    data-group="{{ entity.instance.group }}"
+    data-reorder-url="{{ ea_url().setAction('reorder') }}"
+    data-reorder-token="{{ csrf_token('collection_entry_reorder') }}"
+{% endblock %}

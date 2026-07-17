@@ -63,9 +63,9 @@
     // somewhere to point this that isn't invisible against its own background
     --navbar-active-color: var(--primary);
     --border-nav: none;
-    // "fixed" (position:fixed) stays the admin's own site-navbar-fixed config toggle (.menu-fixed,
-    // see Navbar.html.twig) and always wins when active - this is a template's own default instead,
-    // for a design that wants a sticky header without the admin having to enable that config
+    // The admin's own site-navbar-position config (Navbar.html.twig) sets --navbar-position inline
+    // and always wins when non-empty - this is only the template's own fallback, for a design that
+    // wants e.g. a sticky header without the admin having to set that config
     --navbar-position: relative;
     --navbar-z-index: auto;
     // Footer layout/look - defaults match today's colored-band footer; a template can flip these
@@ -75,6 +75,16 @@
     --footer-text-hover: var(--footer-text);
     --footer-items-direction: column;
     --footer-items-justify: flex-start;
+    --footer-border: solid grey 2px;
+    // The colored-band footer above is meant to bleed full-viewport-width regardless of --body-max-width
+    // (see body's own max-width in _general.scss) - a template going for a plain/minimal footer instead
+    // sets both of these to auto/0 so the footer's content realigns with the rest of the page
+    --footer-width: 100vw;
+    --footer-margin-x: calc(50% - 50vw);
+    --footer-padding: 2em 15px 3em 15px;
+    // Matches .menu-link's own default hover/focus background (_menu.scss) - a template going for a
+    // plain/minimal footer sets this to transparent instead
+    --footer-link-hover-background: rgba(0, 0, 0, 0.1);
     --disabled: #808080;
     --font-family-title: var(--c975l-font-family-title, sans-serif);
     --font-family-body: var(--c975l-font-family-body, sans-serif);

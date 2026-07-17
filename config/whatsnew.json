@@ -11,6 +11,36 @@
                 "en": "The \"Warm\" and \"Blueprint\" looks have been removed to keep the design options simple - if either was applied to your site, it now uses the default look",
                 "fr": "Les habillages « Chaleureux » et « Blueprint » ont été retirés pour simplifier les choix de design - si l'un des deux était appliqué à votre site, il utilise désormais l'habillage par défaut",
                 "es": "Los estilos «Cálido» y «Blueprint» se han eliminado para simplificar las opciones de diseño - si alguno estaba aplicado a su sitio, ahora usa el estilo por defecto"
+            },
+            {
+                "en": "You can now choose exactly how your navigation bar behaves when scrolling (stays fixed at top, sticks, or scrolls away with the page), not just on/off",
+                "fr": "Vous pouvez désormais choisir précisément le comportement de votre barre de navigation au défilement (fixe en haut, collante, ou qui défile avec la page), et non plus seulement activé/désactivé",
+                "es": "Ahora puede elegir exactamente cómo se comporta su barra de navegación al desplazarse (fija arriba, pegajosa, o que se desplaza con la página), y no solo activado/desactivado"
+            },
+            {
+                "en": "A menu link can now point directly to a section of a page (e.g. \"Contact\" or \"Services\"), not just the page as a whole",
+                "fr": "Un lien de menu peut désormais pointer directement vers une section d'une page (par ex. « Contact » ou « Services »), et non plus seulement vers la page entière",
+                "es": "Un enlace de menú ahora puede apuntar directamente a una sección de una página (por ejemplo, «Contacto» o «Servicios»), y no solo a la página completa"
+            },
+            {
+                "en": "A menu link to a page that's still a draft can now be set up in advance - it will start working automatically as soon as the page is published",
+                "fr": "Un lien de menu vers une page encore à l'état de brouillon peut désormais être préparé à l'avance - il fonctionnera automatiquement dès que la page sera publiée",
+                "es": "Un enlace de menú hacia una página que aún es un borrador ahora puede prepararse con antelación - empezará a funcionar automáticamente en cuanto se publique la página"
+            },
+            {
+                "en": "A menu link can now automatically display your site's up-to-date copyright notice as its own label, instead of showing it twice in the footer",
+                "fr": "Un lien de menu peut désormais afficher automatiquement la mention de copyright à jour de votre site comme son propre libellé, au lieu de l'afficher deux fois dans le pied de page",
+                "es": "Un enlace de menú ahora puede mostrar automáticamente el aviso de copyright actualizado de su sitio como su propia etiqueta, en lugar de mostrarlo dos veces en el pie de página"
+            },
+            {
+                "en": "You can now publish any page in place of another one directly from its edit screen, not only right after applying a template",
+                "fr": "Vous pouvez désormais publier n'importe quelle page à la place d'une autre directement depuis son écran d'édition, et non plus seulement juste après l'application d'un template",
+                "es": "Ahora puede publicar cualquier página en lugar de otra directamente desde su pantalla de edición, y no solo justo después de aplicar un template"
+            },
+            {
+                "en": "Each item in a collection can now have its own web address, used for its detail page",
+                "fr": "Chaque élément d'une collection peut désormais avoir sa propre adresse web, utilisée pour sa page de détail",
+                "es": "Cada elemento de una colección ahora puede tener su propia dirección web, utilizada para su página de detalle"
             }
         ]
     },

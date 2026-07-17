@@ -12,9 +12,13 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionEntry;
 use c975L\SiteBundle\Form\VichImageOptions;
+use c975L\SiteBundle\Repository\CollectionEntryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -22,8 +26,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -34,9 +42,13 @@ use function Symfony\Component\Translation\t;
 // exposing one CollectionSourceProviderInterface source per group to UiBundle's "collection" block.
 class CollectionEntryCrudController extends AbstractCrudController
 {
+    use UniqueSlugTrait;
+
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
+        private readonly SluggerInterface $slugger,
+        private readonly CollectionEntryRepository $collectionEntryRepository,
     ) {
     }
 
@@ -60,6 +72,12 @@ class CollectionEntryCrudController extends AbstractCrudController
             ->setEntityLabelInPlural(t('label.collection_entries', [], 'site'))
             ->setEntityPermission($this->configService->get('site-role-editor'))
             ->setDefaultSort(['group' => 'ASC', 'position' => 'ASC'])
+            ->showEntityActionsInlined()
+            ->overrideTemplate('crud/index', '@c975LSite/management/collection_entry_crud_index.html.twig')
+            // Drag-and-drop reorder (see collection-entry-sort.js) only ever sees the rows on the
+            // current page - keeping every group on a single page is what keeps a reorder from
+            // colliding with another page's positions
+            ->setPaginatorPageSize(100)
         ;
     }
 
@@ -84,6 +102,39 @@ class CollectionEntryCrudController extends AbstractCrudController
         ;
     }
 
+    // Persists a new drag-and-drop order for one group's entries (see collection_entry_crud_index.html.twig
+    // and assets/js/collection-entry-sort.js). The index lists every group in the same flat table sorted by
+    // group then position, so the submitted ids are re-checked against $group here rather than trusted as-is.
+    #[AdminRoute(path: '/reorder', options: ['methods' => ['POST']])]
+    public function reorder(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        $payload = json_decode($request->getContent(), true) ?? [];
+        if (!$this->isCsrfTokenValid('collection_entry_reorder', $payload['_token'] ?? null)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $group = (string) ($payload['group'] ?? '');
+        $ids = array_map('intval', (array) ($payload['ids'] ?? []));
+
+        $entriesById = [];
+        foreach ($this->collectionEntryRepository->findBy(['id' => $ids]) as $entry) {
+            if ($entry->getGroup() !== $group) {
+                throw $this->createAccessDeniedException();
+            }
+            $entriesById[$entry->getId()] = $entry;
+        }
+
+        foreach (array_values($ids) as $position => $id) {
+            $entriesById[$id]?->setPosition($position);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -95,6 +146,12 @@ class CollectionEntryCrudController extends AbstractCrudController
 
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'ui')),
+
+            SlugField::new('slug')
+                ->setLabel(t('label.slug', [], 'site'))
+                ->setTargetFieldName('title')
+                ->setRequired(true)
+                ->setHelp(t('label.collection_entry_slug_help', [], 'site')),
 
             TextareaField::new('description')
                 ->setLabel(t('label.description', [], 'ui'))
@@ -118,5 +175,47 @@ class CollectionEntryCrudController extends AbstractCrudController
                 ->setLabel(t('label.image', [], 'site'))
                 ->onlyOnIndex(),
         ];
+    }
+
+    // New entry
+    public function persistEntity(EntityManagerInterface $entityManager, mixed $collectionEntry): void
+    {
+        $this->slugifyEntry($collectionEntry);
+
+        parent::persistEntity($entityManager, $collectionEntry);
+    }
+
+    // Updated entry - re-slugifies in case the slug was hand-edited into something colliding within its group
+    public function updateEntity(EntityManagerInterface $entityManager, mixed $collectionEntry): void
+    {
+        $this->slugifyEntry($collectionEntry);
+
+        parent::updateEntity($entityManager, $collectionEntry);
+    }
+
+    // Normalizes the slug (removes accents, spaces, uppercase...) and appends -2, -3... on collision -
+    // scoped to the entry's own "group", unlike Page::$slug which is unique site-wide
+    private function slugifyEntry(CollectionEntry $collectionEntry): void
+    {
+        $slug = $collectionEntry->getSlug();
+        if (null === $slug) {
+            return;
+        }
+
+        $collectionEntry->setSlug($this->uniqueSlug(
+            $this->slugger,
+            $slug,
+            fn (string $candidate): bool => $this->slugCollides($collectionEntry, $candidate)
+        ));
+    }
+
+    private function slugCollides(CollectionEntry $collectionEntry, string $candidate): bool
+    {
+        $existing = $this->collectionEntryRepository->findOneByGroupAndSlug(
+            (string) $collectionEntry->getGroup(),
+            $candidate
+        );
+
+        return null !== $existing && $existing->getId() !== $collectionEntry->getId();
     }
 }

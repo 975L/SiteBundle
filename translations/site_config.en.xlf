@@ -15,8 +15,8 @@
                 <target>Display the site name (and tagline) next to the logo in the navbar</target>
             </trans-unit>
             <trans-unit id="4">
-                <source>description.site_navbar_fixed</source>
-                <target>Keep the navbar fixed at the top of the viewport while scrolling</target>
+                <source>description.site_navbar_position</source>
+                <target>CSS position of the navbar: relative (default), sticky, fixed, static...</target>
             </trans-unit>
             <trans-unit id="5">
                 <source>description.site_author</source>
@@ -191,8 +191,8 @@
                 <target>Show Site Name In Navbar</target>
             </trans-unit>
             <trans-unit id="44">
-                <source>label.site_navbar_fixed</source>
-                <target>Fixed Navbar</target>
+                <source>label.site_navbar_position</source>
+                <target>Navbar position</target>
             </trans-unit>
             <trans-unit id="45">
                 <source>label.site_author</source>

@@ -15,6 +15,7 @@ use c975L\UiBundle\Contract\VichImageResizableInterface;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
@@ -27,7 +28,9 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 // domain owning its own uploadable field.
 #[ORM\Entity(repositoryClass: CollectionEntryRepository::class)]
 #[ORM\Table(name: 'site_collection_entry')]
+#[ORM\UniqueConstraint(name: 'UNIQ_COLLECTION_ENTRY_GROUP_SLUG', columns: ['group', 'slug'])]
 #[Vich\Uploadable]
+#[UniqueEntity(fields: ['group', 'slug'])]
 class CollectionEntry implements VichImageResizableInterface, VichMediaNamableInterface
 {
     private const IMAGE_WIDTH = 800;
@@ -37,7 +40,10 @@ class CollectionEntry implements VichImageResizableInterface, VichMediaNamableIn
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
+    // Backtick-quoted: "group" is a reserved word in MySQL/MariaDB, unlike Doctrine's own quoting
+    // strategy which only auto-escapes identifiers matching *known* reserved words at the time it
+    // shipped - explicit quoting here is the only way that's guaranteed to survive engine version bumps
+    #[ORM\Column(name: '`group`', length: 100)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 100)]
     private ?string $group = null;
@@ -46,6 +52,14 @@ class CollectionEntry implements VichImageResizableInterface, VichMediaNamableIn
     #[Assert\NotBlank]
     #[Assert\Length(max: 150)]
     private ?string $title = null;
+
+    // Unique within its own "group" (not globally, unlike Page::$slug) - builds the item's detail URL,
+    // /pages/{page}/{slug}, resolved by CollectionEntrySourceProvider's "detail" callable (see
+    // PageController::resolveCollectionDetail())
+    #[ORM\Column(length: 150)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 150)]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -106,6 +120,18 @@ class CollectionEntry implements VichImageResizableInterface, VichMediaNamableIn
     public function setTitle(?string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }

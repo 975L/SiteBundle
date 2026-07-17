@@ -33,15 +33,15 @@
         "description": "description.site_navbar_show_name"
     },
     {
-        "label": "label.site_navbar_fixed",
-        "slug": "site-navbar-fixed",
+        "label": "label.site_navbar_position",
+        "slug": "site-navbar-position",
         "sensitive": false,
         "restricted": false,
-        "value": "false",
-        "kind": "bool",
+        "value": null,
+        "kind": "text",
         "group": "general",
         "severity": null,
-        "description": "description.site_navbar_fixed"
+        "description": "description.site_navbar_position"
     },
     {
         "label": "label.site_author",

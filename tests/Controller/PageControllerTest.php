@@ -125,7 +125,7 @@ class PageControllerTest extends TestCase
         $page = (new Page())->setTitle('Home')->setSlug('home');
         $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
 
-        $response = $controller->home();
+        $response = $controller->home(new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('@c975LSite/pages/page.html.twig:Home', $response->getContent());
@@ -137,7 +137,20 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(bySlug: null), $this->createConfigService());
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->home();
+        $controller->home(new Request());
+    }
+
+    // A "collection" block rendered on the home page (route "/", no "{page}" route parameter unlike
+    // page_display's "/pages/{page}") must still be able to resolve its own items' detail links
+    public function testHomeSetsPageRequestAttributeToHomeForCollectionBlockDetailLinks(): void
+    {
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
+
+        $request = new Request();
+        $controller->home($request);
+
+        $this->assertSame('home', $request->attributes->get('page'));
     }
 
     // The 'home' slug has one canonical URL: the site root, not /pages/home

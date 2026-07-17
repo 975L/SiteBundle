@@ -9,6 +9,7 @@
 
 namespace c975L\SiteBundle\Command;
 
+use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionEntry;
 use c975L\SiteBundle\Repository\CollectionEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // One-off migration helper: imports a legacy JSON array of items (e.g. 975l.com's hand-maintained
@@ -32,9 +34,12 @@ use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 )]
 class CollectionEntryImportCommand extends Command
 {
+    use UniqueSlugTrait;
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly CollectionEntryRepository $collectionEntryRepository,
+        private readonly SluggerInterface $slugger,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
     ) {
@@ -85,10 +90,11 @@ class CollectionEntryImportCommand extends Command
             : '<info>LIVE — changes will be flushed</info>');
         $io->newLine();
 
-        $existingTitles = array_map(
-            static fn (CollectionEntry $entry): string => $entry->getTitle(),
-            $this->collectionEntryRepository->findByGroup($group)
-        );
+        $existingEntries = $this->collectionEntryRepository->findByGroup($group);
+        $existingTitles = array_map(static fn (CollectionEntry $entry): string => $entry->getTitle(), $existingEntries);
+        // Tracks slugs assigned so far in this run too, since two different titles imported in the
+        // same batch could still normalize to the same slug before either is flushed to the DB
+        $usedSlugs = array_map(static fn (CollectionEntry $entry): string => (string) $entry->getSlug(), $existingEntries);
         $position = $this->collectionEntryRepository->countByGroup($group);
         $created = 0;
         $skipped = 0;
@@ -108,9 +114,17 @@ class CollectionEntryImportCommand extends Command
                 continue;
             }
 
+            $slug = $this->uniqueSlug(
+                $this->slugger,
+                $title,
+                static fn (string $candidate): bool => in_array($candidate, $usedSlugs, true)
+            );
+            $usedSlugs[] = $slug;
+
             $entry = (new CollectionEntry())
                 ->setGroup($group)
                 ->setTitle($title)
+                ->setSlug($slug)
                 ->setDescription($row['description'] ?? null)
                 ->setUrl($row['url'] ?? null)
                 ->setPosition($position)

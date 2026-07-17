@@ -4,9 +4,6 @@
 {% if config('site-author') != null %}
     {% set author = config('site-author') %}
 {% endif %}
-{% if config('site-first-online-date') != null %}
-    {% set firstOnlineDate = config('site-first-online-date') %}
-{% endif %}
 {% if site_media('logo') is not null %}
     {% set logo = absolute_url(asset('/' ~ site_media('logo').filename)) ~ (site_media('logo').updatedAt ? '?v=' ~ site_media('logo').updatedAt.timestamp : '') %}
 {% endif %}
@@ -18,19 +15,7 @@
 {% endif %}
 
 {# Copyright #}
-{% if firstOnlineDate is defined %}
-    {% if firstOnlineDate|date('Y') == 'now'|date('Y') %}
-        {% set copyright = '© ' ~  'now'|date('Y') %}
-    {% else %}
-        {% set copyright = '© ' ~ firstOnlineDate|date('Y') ~ ' - ' ~  'now'|date('Y') %}
-    {% endif %}
-{% endif %}
-{% if copyright is not defined %}
-    {% set copyright = '© ' ~  'now'|date('Y') %}
-{% endif %}
-{% if site is defined %}
-    {% set copyright = copyright ~ ' : ' ~ site %}
-{% endif %}
+{% set copyright = site_copyright() %}
 
 {# ogImage: page-specific override, then the site's default og-image, then the logo #}
 {% if ogImage is not defined or ogImage == null %}
@@ -169,7 +154,7 @@
         {% endblock %}
     </head>
 {# Body #}
-    <body id="top" class="{{ config('site-navbar-fixed') ? 'navbar-fixed' : '' }}" data-controller="basic">
+    <body id="top" class="{{ config('site-navbar-position') == 'fixed' ? 'navbar-fixed' : '' }}" data-controller="basic">
 {# jQuery #}
         {% block jquery %}
         {% endblock %}

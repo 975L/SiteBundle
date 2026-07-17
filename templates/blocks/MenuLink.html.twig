@@ -5,9 +5,12 @@
 {% if url is not empty %}
     {% set currentPath = app.request.pathinfo %}
     {% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
+    {# asCopyright (see MenuLinkType): shows the live "© firstYear - currentYear" instead of the
+       target page's own title - not cached (menu_link is cacheable: false), so the year stays fresh #}
+    {% set label = asCopyright|default(false) ? site_copyright(false) : menu_link_label(target) %}
     <div class="menu-item {{ isActive ? 'active' : '' }}">
         <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
-            <span class="menu-label">{{ menu_link_label(target) }}</span>
+            <span class="menu-label">{{ label }}</span>
         </a>
     </div>
 {% endif %}

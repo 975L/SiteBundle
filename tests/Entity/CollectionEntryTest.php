@@ -56,12 +56,14 @@ class CollectionEntryTest extends TestCase
         $entry = (new CollectionEntry())
             ->setGroup('projects')
             ->setTitle('Papa Câlin')
+            ->setSlug('papa-calin')
             ->setDescription('Des histoires inventées')
             ->setUrl('https://papa-calin.com')
             ->setPosition(3);
 
         $this->assertSame('projects', $entry->getGroup());
         $this->assertSame('Papa Câlin', $entry->getTitle());
+        $this->assertSame('papa-calin', $entry->getSlug());
         $this->assertSame('Des histoires inventées', $entry->getDescription());
         $this->assertSame('https://papa-calin.com', $entry->getUrl());
         $this->assertSame(3, $entry->getPosition());

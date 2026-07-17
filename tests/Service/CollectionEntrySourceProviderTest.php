@@ -48,6 +48,7 @@ class CollectionEntrySourceProviderTest extends TestCase
         $entry = (new CollectionEntry())
             ->setGroup('projects')
             ->setTitle('Papa Câlin')
+            ->setSlug('papa-calin')
             ->setDescription("Des histoires inventées à partir des idées d'enfants.")
             ->setUrl('https://papa-calin.com');
 
@@ -63,9 +64,51 @@ class CollectionEntrySourceProviderTest extends TestCase
 
         $this->assertCount(1, $items);
         $this->assertSame('Papa Câlin', $items[0]->title);
+        $this->assertSame('papa-calin', $items[0]->slug);
         $this->assertSame("Des histoires inventées à partir des idées d'enfants.", $items[0]->description);
         $this->assertSame('/medias/site/collection-projects-42-abc.webp', $items[0]->imageUrl);
         $this->assertSame('https://papa-calin.com', $items[0]->url);
+    }
+
+    // The "collection" block's title-link feature (see UiBundle's CollectionExtension) relies on this
+    // "detail" callable resolving the same slug items() exposed on the CollectionItem
+    public function testDetailResolvesAnEntryScopedToItsOwnGroup(): void
+    {
+        $entry = (new CollectionEntry())
+            ->setGroup('projects')
+            ->setTitle('Papa Câlin')
+            ->setSlug('papa-calin')
+            ->setDescription("Des histoires inventées à partir des idées d'enfants.")
+            ->setUrl('https://papa-calin.com');
+
+        $repository = $this->createMock(CollectionEntryRepository::class);
+        $repository->method('findDistinctGroups')->willReturn(['projects']);
+        $repository->expects($this->once())->method('findOneByGroupAndSlug')->with('projects', 'papa-calin')->willReturn($entry);
+
+        $uploaderHelper = $this->createStub(UploaderHelperInterface::class);
+        $uploaderHelper->method('asset')->willReturn('/medias/site/collection-projects-42-abc.webp');
+
+        $sources = (new CollectionEntrySourceProvider($repository, $uploaderHelper))->getSources();
+        $detail = ($sources['site.collection.projects']['detail'])('papa-calin');
+
+        $this->assertSame([
+            'title'       => 'Papa Câlin',
+            'description' => "Des histoires inventées à partir des idées d'enfants.",
+            'imageUrl'    => '/medias/site/collection-projects-42-abc.webp',
+            'url'         => 'https://papa-calin.com',
+        ], $detail);
+    }
+
+    // By convention, an unresolved slug falls through to null so the caller (PageController) can 404
+    public function testDetailReturnsNullWhenSlugDoesNotResolve(): void
+    {
+        $repository = $this->createStub(CollectionEntryRepository::class);
+        $repository->method('findDistinctGroups')->willReturn(['projects']);
+        $repository->method('findOneByGroupAndSlug')->willReturn(null);
+
+        $sources = (new CollectionEntrySourceProvider($repository, $this->createStub(UploaderHelperInterface::class)))->getSources();
+
+        $this->assertNull(($sources['site.collection.projects']['detail'])('unknown-slug'));
     }
 
     // The unlimited list is fetched once and sliced in-memory for a given $limit, rather than passing

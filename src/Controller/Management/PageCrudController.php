@@ -19,6 +19,7 @@ use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
 use c975L\SiteBundle\Management\TemplateApplier;
 use c975L\SiteBundle\Management\TemplateRegistry;
+use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -68,6 +69,8 @@ use function Symfony\Component\Translation\t;
 
 class PageCrudController extends AbstractCrudController
 {
+    use UniqueSlugTrait;
+
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -287,13 +290,57 @@ class PageCrudController extends AbstractCrudController
             ->askConfirmation(t('confirm.duplicate', [], 'site'))
             ->addCssClass('btn btn-secondary');
 
-        // Swaps this draft in for the page it was created to replace (see applyTemplate()) - only shown
-        // on such a draft, never on a page with no pending replacement
-        $publishAsReplacementAction = Action::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
-            ->linkToCrudAction('publishAsReplacement')
-            ->displayIf(static fn (Page $page): bool => null !== $page->getReplaces() && !$page->isDeleted())
-            ->askConfirmation(t('confirm.publish_as_replacement', [], 'site'))
-            ->addCssClass('btn btn-primary');
+        // Publishes this (non-deleted) page in place of another one, picked from this dropdown - one
+        // sub-action per existing other page, same pattern as $templatesGroup below. No longer requires
+        // having gone through applyTemplate()'s getReplaces() pre-fill: that field is now only a
+        // convenience default (see publishAsReplacement()), the actual target is always the id carried by
+        // the link
+        //
+        // Only queried/built on the edit screen (the only place this group is ever added, see below) -
+        // skips a full "every non-deleted page" query and one Action/closure per page on every index/
+        // detail render, where the dropdown couldn't be shown anyway
+        $isEditPage = Crud::PAGE_EDIT === $this->adminContextProvider->getContext()?->getCrud()?->getCurrentPage();
+        $replaceableTargets = $isEditPage
+            ? $this->pageRepository->createQueryBuilder('p')
+                ->andWhere('p.isDeleted = :deleted')
+                ->setParameter('deleted', false)
+                ->getQuery()
+                ->getResult()
+            : [];
+        $publishAsReplacementSubActions = [];
+        foreach ($replaceableTargets as $target) {
+            $targetId = $target->getId();
+            $subActionName = 'publishAsReplacement_' . $targetId;
+            $publishAsReplacementSubActions[] = Action::new($subActionName, $target->getTitle())
+                ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('publishAsReplacement')
+                    ->setEntityId($page->getId())
+                    ->set('replaces', $targetId)
+                    ->generateUrl())
+                ->displayIf(static fn (Page $page): bool => $page->getId() !== $targetId)
+                ->askConfirmation($this->translator->trans('confirm.publish_as_replacement', ['%title%' => $target->getTitle()], 'site'));
+            $actions->setPermission($subActionName, $role);
+        }
+
+        // Edit screen only, not among the row/detail inline actions - it's a rarer, deliberate act (swaps
+        // a live page out), warranting its own visual weight rather than sitting next to
+        // preview/duplicate. asWarningActionGroup() (not a raw addCssClass('btn-warning'), which would
+        // just sit alongside the group's own default "btn-secondary" and lose out to it in the cascade)
+        // flags that weight without implying danger the way asDangerActionGroup()'s red would.
+        //
+        // Not built/added at all when there's no other page to offer - an EasyAdmin ActionGroup can't be
+        // added with zero actions
+        if ([] !== $publishAsReplacementSubActions) {
+            $publishAsReplacementGroup = array_reduce(
+                $publishAsReplacementSubActions,
+                static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
+                ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
+                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+                    ->asWarningActionGroup()
+            );
+            $actions->add(Crud::PAGE_EDIT, $publishAsReplacementGroup);
+        }
 
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
@@ -338,21 +385,18 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
             ->add(Crud::PAGE_INDEX, $previewAction)
             ->add(Crud::PAGE_INDEX, $duplicateAction)
-            ->add(Crud::PAGE_INDEX, $publishAsReplacementAction)
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_DETAIL, $restoreAction)
             ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
             ->add(Crud::PAGE_DETAIL, $viewOnSiteAction)
             ->add(Crud::PAGE_DETAIL, $previewAction)
             ->add(Crud::PAGE_DETAIL, $duplicateAction)
-            ->add(Crud::PAGE_DETAIL, $publishAsReplacementAction)
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
             ->add(Crud::PAGE_EDIT, $previewAction)
             ->add(Crud::PAGE_EDIT, $duplicateAction)
-            ->add(Crud::PAGE_EDIT, $publishAsReplacementAction)
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
-            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
-            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate', 'publishAsReplacement'])
+            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
+            ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
+            ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate'])
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action
                     ->setIcon('fa fa-box-archive')
@@ -541,7 +585,11 @@ class PageCrudController extends AbstractCrudController
 
         $copy = (new Page())
             ->setTitle($source->getTitle() . ' (' . $suffix . ')')
-            ->setSlug($this->uniqueSlug($source->getSlug() . '-' . $suffix))
+            ->setSlug($this->uniqueSlug(
+                $this->slugger,
+                $source->getSlug() . '-' . $suffix,
+                fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
+            ))
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
@@ -612,19 +660,30 @@ class PageCrudController extends AbstractCrudController
     // to the trashed original, visitors are never routed to a deleted page (no 410) - two separate
     // flushes so the unique constraint on slug is never violated by the swap itself, wrapped in one
     // transaction so a failure between them can't leave neither row holding the live slug.
+    // The target's id comes from the "replaces" query param (picked from the $publishAsReplacementGroup
+    // dropdown in configureActions()), falling back to getReplaces() for a page created via
+    // applyTemplate() that hasn't had its dropdown target overridden.
     #[AdminRoute('/{entityId}/publish-as-replacement')]
-    public function publishAsReplacement(AdminContext $context, EntityManagerInterface $entityManager): Response
+    public function publishAsReplacement(AdminContext $context, EntityManagerInterface $entityManager, ?Request $request = null): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         $copy = $context->getEntity()->getInstance();
-        $originalId = $copy->getReplaces();
+        $originalId = $request?->query->getInt('replaces') ?: $copy->getReplaces();
         $original = null !== $originalId ? $this->pageRepository->find($originalId) : null;
 
         // Already archived by another draft's own publishAsReplacement() (non-null archivedSlug, not
         // yet restored) - its current slug is the mangled "-archived" one, not the live one this copy
         // was meant to take over, so treat it the same as "not found" rather than publishing under it
         if (null !== $original && null !== $original->getArchivedSlug()) {
+            $original = null;
+        }
+
+        // A page can't replace itself - the dropdown's own displayIf() already hides this option, but
+        // the route itself must also refuse it (e.g. a stale/crafted "?replaces=<own id>" link), since
+        // $original and $copy would then be the very same entity and the two-flush swap below would
+        // leave it both published and deleted at once
+        if (null !== $original && $original->getId() === $copy->getId()) {
             $original = null;
         }
 
@@ -645,7 +704,11 @@ class PageCrudController extends AbstractCrudController
         $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug): void {
             $original
                 ->setArchivedSlug($originalSlug)
-                ->setSlug($this->uniqueSlug($originalSlug . '-archived'))
+                ->setSlug($this->uniqueSlug(
+                    $this->slugger,
+                    $originalSlug . '-archived',
+                    fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
+                ))
                 ->setIsPublished(false)
                 ->setIsDeleted(true)
                 ->setModification(new \DateTime());
@@ -725,17 +788,6 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Builds a unique slug from a base string (slugified), appending -2, -3... on collision
-    private function uniqueSlug(string $base): string
-    {
-        $slug = strtolower($this->slugger->slug($base)->toString());
-        $candidate = $slug;
-        for ($i = 2; null !== $this->pageRepository->findOneBy(['slug' => $candidate]); $i++) {
-            $candidate = $slug . '-' . $i;
-        }
-
-        return $candidate;
-    }
-
     // New page
     public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
     {

@@ -15,8 +15,8 @@
                 <target>Afficher le nom du site (et le slogan) à côté du logo dans la barre de navigation</target>
             </trans-unit>
             <trans-unit id="4">
-                <source>description.site_navbar_fixed</source>
-                <target>Garder la barre de navigation fixe en haut de l'écran lors du défilement</target>
+                <source>description.site_navbar_position</source>
+                <target>Position CSS de la barre de navigation : relative (défaut), sticky, fixed, static...</target>
             </trans-unit>
             <trans-unit id="5">
                 <source>description.site_author</source>
@@ -191,8 +191,8 @@
                 <target>Afficher le nom du site dans la barre de navigation</target>
             </trans-unit>
             <trans-unit id="44">
-                <source>label.site_navbar_fixed</source>
-                <target>Barre de navigation fixe</target>
+                <source>label.site_navbar_position</source>
+                <target>Position de la barre de navigation</target>
             </trans-unit>
             <trans-unit id="45">
                 <source>label.site_author</source>

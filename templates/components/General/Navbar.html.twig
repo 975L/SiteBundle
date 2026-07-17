@@ -3,10 +3,16 @@
 {% set siteName = config('site-name') %}
 {% set siteTagline = config('site-tagline') %}
 {% set showSiteName = config('site-navbar-show-name') %}
-{% set fixedNavbar = config('site-navbar-fixed') %}
+{# Whitelisted rather than passed through as-is: this value is interpolated straight into an inline
+   style="--navbar-position: ...;" attribute below, and CSS custom properties aren't escaped by Twig's
+   html_attr context the way quotes/angle brackets are #}
+{% set navbarPosition = config('site-navbar-position') in ['relative', 'sticky', 'fixed', 'static', 'absolute'] ? config('site-navbar-position') : null %}
 
 {% if menu_blocks('navbar') is not empty %}
-    <nav class="hidden-print menu{{ fixedNavbar ? ' menu-fixed' : '' }}" data-controller="menu">
+    {# navbarPosition is free text (relative/sticky/fixed/static...) - empty leaves the template's
+       own --navbar-position default (_variables.scss) in place; "fixed" additionally needs the
+       .menu-fixed class for its edge-to-edge/z-index treatment (see _menu.scss) #}
+    <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}"{% if navbarPosition %} style="--navbar-position: {{ navbarPosition }};"{% endif %} data-controller="menu">
         <div class="menu-header">
             <div class="menu-brand">
                 <div class="menu-brand-top">

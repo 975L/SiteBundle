@@ -270,6 +270,10 @@
                 <source>label.is_published</source>
                 <target>Is published</target>
             </trans-unit>
+            <trans-unit id="268">
+                <source>label.draft</source>
+                <target>draft</target>
+            </trans-unit>
             <trans-unit id="73">
                 <source>label.website</source>
                 <target>Website</target>
@@ -750,6 +754,10 @@
                 <source>label.choose_target</source>
                 <target>Choose a page or a route</target>
             </trans-unit>
+            <trans-unit id="269">
+                <source>label.menu_link_as_copyright</source>
+                <target>Use the computed copyright (© year) as the label</target>
+            </trans-unit>
             <trans-unit id="194">
                 <source>action.duplicate</source>
                 <target>Duplicate</target>
@@ -853,22 +861,6 @@
             <trans-unit id="217">
                 <source>flash.messenger_purged</source>
                 <target>%count% message(s) purged</target>
-            </trans-unit>
-            <trans-unit id="218">
-                <source>label.gallery_showcase_articles_slider</source>
-                <target>Articles slideshow</target>
-            </trans-unit>
-            <trans-unit id="219">
-                <source>label.gallery_showcase_articles_slider_description</source>
-                <target>Clickable slideshow of a chosen page's articles.</target>
-            </trans-unit>
-            <trans-unit id="220">
-                <source>label.gallery_showcase_menu_link</source>
-                <target>Menu link</target>
-            </trans-unit>
-            <trans-unit id="221">
-                <source>label.gallery_showcase_menu_link_description</source>
-                <target>Link to a page or a route, used in the site's menus.</target>
             </trans-unit>
             <trans-unit id="222">
                 <source>label.logout</source>
@@ -980,7 +972,7 @@
             </trans-unit>
             <trans-unit id="251">
                 <source>confirm.publish_as_replacement</source>
-                <target>This page will be published in place of the page it replaces: it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>
+                <target>This page will be published in place of "%title%": it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>
             </trans-unit>
             <trans-unit id="252">
                 <source>flash.page_replaced</source>
@@ -1009,6 +1001,10 @@
             <trans-unit id="258">
                 <source>label.collection_entry_group_help</source>
                 <target>Identifies which collection this item belongs to (e.g. "projects") - this is the name picked as the source in the "Collection" block</target>
+            </trans-unit>
+            <trans-unit id="267">
+                <source>label.collection_entry_slug_help</source>
+                <target>Identifies this item within its group, used for its detail URL if the "Collection" block defines one - unique within the group, no need to be unique across different groups.</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.cookies_accept</source>

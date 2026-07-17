@@ -366,6 +366,11 @@ template {
   --footer-text-hover: var(--footer-text);
   --footer-items-direction: column;
   --footer-items-justify: flex-start;
+  --footer-border: solid grey 2px;
+  --footer-width: 100vw;
+  --footer-margin-x: calc(50% - 50vw);
+  --footer-padding: 2em 15px 3em 15px;
+  --footer-link-hover-background: rgba(0, 0, 0, 0.1);
   --disabled: #808080;
   --font-family-title: var(--c975l-font-family-title, sans-serif);
   --font-family-body: var(--c975l-font-family-body, sans-serif);
@@ -1070,6 +1075,9 @@ input.success {
   background-color: var(--navbar-background);
   box-shadow: var(--shadow-nav);
   border-bottom: var(--border-nav);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
 }
 
 .menu-fixed {
@@ -1078,6 +1086,8 @@ input.success {
   left: 0;
   right: 0;
   width: 100%;
+  margin-left: 0;
+  margin-right: 0;
   z-index: 1000;
 }
 
@@ -1370,12 +1380,12 @@ tfoot td {
 /* FOOTER */
 footer {
   background-color: var(--footer-background);
-  border-top: solid grey 2px;
+  border-top: var(--footer-border);
   margin-top: 3em;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 2em 15px 3em 15px;
-  width: 100vw;
+  margin-left: var(--footer-margin-x);
+  margin-right: var(--footer-margin-x);
+  padding: var(--footer-padding);
+  width: var(--footer-width);
 }
 
 footer .menu-items,
@@ -1407,6 +1417,11 @@ footer .menu-item {
 
 footer .menu-link {
   padding: 0.25rem;
+}
+
+footer .menu-link:hover,
+footer .menu-link:focus {
+  background-color: var(--footer-link-hover-background);
 }
 
 footer .menu-label {

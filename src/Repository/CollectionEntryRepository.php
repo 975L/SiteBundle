@@ -50,6 +50,20 @@ class CollectionEntryRepository extends ServiceEntityRepository
         ;
     }
 
+    // Used both to enforce the group-scoped slug uniqueness (see CollectionEntryCrudController) and to
+    // resolve a "collection" block item's detail view (see CollectionEntrySourceProvider's "detail" key)
+    public function findOneByGroupAndSlug(string $group, string $slug): ?CollectionEntry
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.group = :group')
+            ->andWhere('c.slug = :slug')
+            ->setParameter('group', $group)
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // Every distinct group currently in use - CollectionEntrySourceProvider exposes one
     // CollectionSourceProviderInterface source per group found here
     public function findDistinctGroups(): array

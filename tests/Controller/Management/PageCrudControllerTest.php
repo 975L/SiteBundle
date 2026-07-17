@@ -24,6 +24,7 @@ use c975L\UiBundle\Entity\Media;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\UnitOfWork;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -38,6 +39,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityRepositoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Registry\AdminControllerRegistryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
@@ -617,6 +619,34 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($copy->isPublished());
     }
 
+    // A page can't replace itself - only reachable via a crafted/stale "?replaces=<own id>" URL (the
+    // dropdown's own displayIf() already hides this option) - without this guard, $original and $copy
+    // resolve to the same entity and the two-flush swap would leave it both published and deleted at once
+    public function testPublishAsReplacementFlashesErrorWhenTargetIsItself(): void
+    {
+        $page = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 7);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('find')->willReturn($page);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('flush');
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $request = new Request(['replaces' => '7']);
+        $response = $controller->publishAsReplacement($this->createAdminContext($page), $manager, $request);
+
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertTrue($page->isPublished());
+        $this->assertFalse($page->isDeleted());
+    }
+
     // Two drafts created (via applyTemplate) from the same original before either is published: the
     // first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own
     // publishAsReplacement() must not take over that mangled slug - it's treated the same as "original
@@ -654,8 +684,9 @@ class PageCrudControllerTest extends TestCase
         $pageRepository->method('findOneBy')->willReturn(null);
 
         $controller = $this->createController(pageRepository: $pageRepository);
+        $collides = static fn (string $candidate): bool => null !== $pageRepository->findOneBy(['slug' => $candidate]);
 
-        $this->assertSame('my-page', $this->invokePrivate($controller, 'uniqueSlug', ['My Page']));
+        $this->assertSame('my-page', $this->invokePrivate($controller, 'uniqueSlug', [new AsciiSlugger(), 'My Page', $collides]));
     }
 
     // Appends -2, -3... on collision, matching the class comment's own documented behavior
@@ -668,8 +699,9 @@ class PageCrudControllerTest extends TestCase
         ]);
 
         $controller = $this->createController(pageRepository: $pageRepository);
+        $collides = static fn (string $candidate): bool => null !== $pageRepository->findOneBy(['slug' => $candidate]);
 
-        $this->assertSame('my-page-2', $this->invokePrivate($controller, 'uniqueSlug', ['My Page']));
+        $this->assertSame('my-page-2', $this->invokePrivate($controller, 'uniqueSlug', [new AsciiSlugger(), 'My Page', $collides]));
     }
 
     // --- slugifyPage (private) -------------------------------------------------------------------------
@@ -764,11 +796,104 @@ class PageCrudControllerTest extends TestCase
 
     // --- configureActions / configureFields / configureFilters / createIndexQueryBuilder ------------------
 
+    // AdminContextProvider simulating being on a given EasyAdmin CRUD page (INDEX/EDIT/DETAIL...) - the
+    // "publishAsReplacement" dropdown's own every-non-deleted-page query only ever runs on PAGE_EDIT
+    // (see configureActions()), so tests need to simulate which page they're on
+    private function createAdminContextProviderOnPage(string $pageName): AdminContextProvider
+    {
+        $crudDto = new CrudDto();
+        $crudDto->setPageName($pageName);
+
+        return $this->createAdminContextProvider(
+            AdminContext::forTesting(crudContext: CrudContext::forTesting(crudDto: $crudDto))
+        );
+    }
+
     public function testConfigureActionsBuildsWithoutError(): void
     {
         // A real EasyAdmin runtime pre-populates default actions (EDIT, DELETE...) before calling
         // configureActions() - reorder()/update() below assume EDIT already exists on PAGE_INDEX
         $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $this->assertInstanceOf(Actions::class, $actions);
+    }
+
+    // Not on the edit screen: the "publishAsReplacement" dropdown is never shown there (only added to
+    // Crud::PAGE_EDIT, see configureActions()), so its every-non-deleted-page query must not even run
+    public function testConfigureActionsSkipsPublishAsReplacementQueryWhenNotOnEditPage(): void
+    {
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->never())->method('createQueryBuilder');
+
+        $actions = $this->createController(
+            pageRepository: $pageRepository,
+            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_INDEX)
+        )->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $this->assertInstanceOf(Actions::class, $actions);
+    }
+
+    // On the edit screen, but no other page to offer as a target: the dropdown is built from
+    // pageRepository's own query (see configureActions()), which must come back an empty array, not
+    // PHPUnit's default null-for-mixed-return-type - otherwise the group would end up with zero
+    // actions, which EasyAdmin's ActionGroup rejects
+    public function testConfigureActionsBuildsWithoutErrorOnEditPageWithNoOtherPage(): void
+    {
+        $queryBuilder = $this->createStub(QueryBuilder::class);
+        $queryBuilder->method('andWhere')->willReturnSelf();
+        $queryBuilder->method('setParameter')->willReturnSelf();
+        $query = $this->createStub(Query::class);
+        $query->method('getResult')->willReturn([]);
+        $queryBuilder->method('getQuery')->willReturn($query);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
+
+        $actions = $this->createController(
+            pageRepository: $pageRepository,
+            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_EDIT)
+        )->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $this->assertInstanceOf(Actions::class, $actions);
+    }
+
+    // On the edit screen, with at least one other page to offer - covers the group actually being built
+    // and added, instead of skipped
+    public function testConfigureActionsBuildsWithoutErrorWhenAnotherPageExists(): void
+    {
+        $other = (new Page())->setTitle('Other')->setSlug('other');
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($other, 99);
+
+        $queryBuilder = $this->createStub(QueryBuilder::class);
+        $queryBuilder->method('andWhere')->willReturnSelf();
+        $queryBuilder->method('setParameter')->willReturnSelf();
+        $query = $this->createStub(Query::class);
+        $query->method('getResult')->willReturn([$other]);
+        $queryBuilder->method('getQuery')->willReturn($query);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
+
+        $actions = $this->createController(
+            pageRepository: $pageRepository,
+            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_EDIT)
+        )->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)

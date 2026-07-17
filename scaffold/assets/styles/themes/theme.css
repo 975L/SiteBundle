@@ -16,4 +16,9 @@
     --footer-text-hover: var(--footer-text);
     --footer-items-direction: column;
     --footer-items-justify: flex-start;
+    --footer-border: solid grey 2px;
+    --footer-width: 100vw;
+    --footer-margin-x: calc(50% - 50vw);
+    --footer-padding: 2em 15px 3em 15px;
+    --footer-link-hover-background: rgba(0, 0, 0, 0.1);
 }

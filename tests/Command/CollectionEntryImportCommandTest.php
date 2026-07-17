@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 class CollectionEntryImportCommandTest extends TestCase
 {
@@ -61,7 +62,7 @@ class CollectionEntryImportCommandTest extends TestCase
         EntityManagerInterface $em,
         CollectionEntryRepository $repository
     ): CommandTester {
-        return new CommandTester(new CollectionEntryImportCommand($em, $repository, $this->projectDir));
+        return new CommandTester(new CollectionEntryImportCommand($em, $repository, new AsciiSlugger(), $this->projectDir));
     }
 
     public function testExecuteFailsWhenGroupOptionIsMissing(): void
@@ -100,8 +101,13 @@ class CollectionEntryImportCommandTest extends TestCase
         $repository->method('findByGroup')->willReturn([]);
         $repository->method('countByGroup')->willReturn(0);
 
+        $persisted = null;
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())->method('persist')->with($this->isInstanceOf(CollectionEntry::class));
+        $em->expects($this->once())->method('persist')
+            ->with($this->isInstanceOf(CollectionEntry::class))
+            ->willReturnCallback(function (CollectionEntry $entry) use (&$persisted): void {
+                $persisted = $entry;
+            });
         $em->expects($this->once())->method('flush');
 
         $tester = $this->createTester($em, $repository);
@@ -109,6 +115,34 @@ class CollectionEntryImportCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $statusCode);
         $this->assertStringContainsString('1 entries created and flushed. 0 skipped.', $tester->getDisplay());
+        $this->assertSame('papa-calin', $persisted->getSlug());
+    }
+
+    // Two different titles that normalize to the same slug within one run must still end up unique -
+    // neither is flushed yet, so a DB-only collision check (findByGroup, snapshotted before the loop)
+    // alone wouldn't catch this
+    public function testExecuteDeduplicatesSlugsWithinTheSameRun(): void
+    {
+        $this->writeJson([
+            ['title' => 'Papa Câlin'],
+            ['title' => 'Papa Calin'],
+        ]);
+
+        $repository = $this->createStub(CollectionEntryRepository::class);
+        $repository->method('findByGroup')->willReturn([]);
+        $repository->method('countByGroup')->willReturn(0);
+
+        $persistedSlugs = [];
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->exactly(2))->method('persist')
+            ->willReturnCallback(function (CollectionEntry $entry) use (&$persistedSlugs): void {
+                $persistedSlugs[] = $entry->getSlug();
+            });
+
+        $tester = $this->createTester($em, $repository);
+        $tester->execute(['--group' => 'projects', '--json-file' => 'entries.json']);
+
+        $this->assertSame(['papa-calin', 'papa-calin-2'], $persistedSlugs);
     }
 
     // A title already present in the group (per findByGroup) is skipped, so re-running the command

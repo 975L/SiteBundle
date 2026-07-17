@@ -236,7 +236,9 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 `config/templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can apply to a `Page` — a starting point to edit from, not a live/synced layout. `default` is a generic, content-agnostic one meant as a sane starting point regardless of the site's theme; `agency-home`/`portfolio-showcase` are fuller demo arrangements. Listed via `SiteTemplateProvider` (implements `TemplateProviderInterface`) and aggregated with any other bundle's — or the consuming app's own — templates by `TemplateRegistry`: an app that wants its own templates implements `TemplateProviderInterface` in its own service (auto-tagged), no change needed here.
 
-From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. Once happy with the draft's content, its "Publish as replacement" action swaps it in for the original — the original's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). The `c975l:site:templates:apply` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `TemplateApplier`.
+From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. The `c975l:site:templates:apply` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `TemplateApplier`.
+
+Any non-deleted page's edit screen carries its own "Publish as replacement" action group, listing every other page as a target — picking one swaps the current page in for it: the target's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). This works for any page, not just a template-created draft (above) — that draft's "replaces" origin is now only a fallback default, no longer a requirement.
 
 A page template is entirely independent from the site's [theme](#themes) (colors/fonts/shape): neither ever references the other, and applying one never touches the other.
 
@@ -248,7 +250,7 @@ The site-wide navbar, footer, email header and email footer are managed entirely
 
 Every location owns a single ordered `blocks` collection (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — menu links and any other registered block kind (e.g. SocialBundle's `social_links_display`) are freely sortable together, no separate "items" collection to keep in sync. A menu link is itself a block, of kind `menu_link` (form: `MenuLinkType`), targeting either:
 
-- an existing **published** `Page` (linked by its id, so renaming the page's slug never breaks the link) or
+- an existing `Page` (linked by its id, so renaming the page's slug never breaks the link) — unpublished pages stay pickable too, flagged "(draft)" in the picker, and simply resolve to no URL until published, or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
 
 `menu_link` resolves to a relative URL (`UrlGeneratorInterface::generate()`), fine for `navbar`/`footer` but not usable as-is inside an email — `email-header`/`email-footer` are meant for content that doesn't need one (e.g. social icons, legal blurbs), not for reusing the site's own links.
@@ -266,17 +268,28 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 
 A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
 
+### Linking to a section of a page (anchors)
+
+A `menu_link`'s target can also point at a specific **section** of a page, not just the page itself - useful for a one-page nav (`#services`, `#contact`...). Any UiBundle "Page sections" block kind (`hero`, `feature_bar`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection` - see UiBundle's README, "Anchors (in-page navigation)") can carry an anchor; once at least one block on a page has one, `MenuLinkType`'s target select lists it right under that page's own entry (e.g. `Home → Services`), with no extra step - it's still the same flat, filterable list, just with more rows.
+
+Under the hood, the target is stored as `page:<id>#<anchor>-<blockId>` and resolved by `MenuExtension::getMenuLinkUrl()` into `/home#services-42` - the trailing `#fragment` is only added when present, so a plain `page:<id>` target keeps working exactly as before.
+
+### Copyright
+
+The "© firstYear - currentYear[ : siteName]" copyright notice (built from the `site-first-online-date`/`site-name` ConfigBundle keys) is computed by the `site_copyright(bool $withSiteName = true)` Twig function, shared by `layout.html.twig` and `emails/fullLayout.html.twig`.
+
+A `menu_link` block can also be flagged "asCopyright" (`MenuLinkType`) to show this live-computed text as its own label instead of its target page's title — lets a footer's "Copyright" page link double as the copyright notice instead of showing both side by side.
+
 ### Navbar: logo, site name, tagline
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).
 
-The navbar can be kept fixed at the top of the viewport while scrolling via the `site-navbar-fixed` ConfigBundle key (`bool`, default `false`). When enabled, `.menu-fixed` is added on the `<nav>` and a `navbar-fixed` class is added on `<body>` to compensate the space it frees from the normal flow.
+The navbar's CSS `position` is set via the `site-navbar-position` ConfigBundle key (`text`, one of `relative` (default), `sticky`, `fixed`, `static`, `absolute` — any other value is ignored), inlined as the `--navbar-position` custom property. `fixed` additionally adds `.menu-fixed` on the `<nav>` and a `navbar-fixed` class on `<body>` to compensate the space it frees from the normal flow; other values are left to the theme's own `--navbar-position` fallback.
 
 `site-tagline` is authored as rich text in the backoffice (Trix wraps the value in its own `<div>`), so it's rendered with `|raw` — style `.menu-site-tagline` in your own SCSS if you need to adjust it.
 
 ### Linking to a bundle's own route
 
-A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
 A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
 
 Since login/register/logout/forgot-password aren't SiteBundle routes but scaffolded straight into `App\Controller` (see [Users](#users) below), the scaffold also ships `App\Management\LinkableRouteProvider`, so `app_login`, `app_logout`, `app_register` and `app_forgot_password_request` show up in the `menu_link` picker out of the box — re-run the scaffold install (or copy the file by hand) on sites that predate it. `app_verify_email`, `app_check_email` and `app_reset_password` are deliberately left out: they only make sense reached through a signed link, not as a standalone menu target.
@@ -452,7 +465,7 @@ Access is controlled by the `site-role-editor` key in ConfigBundle, same as page
 
 ## Collection entries
 
-`CollectionEntry` is a generic "title/description/image/link" item, grouped by an arbitrary `group` (e.g. `"projects"`), so a single CRUD/table can back several unrelated collections across a site. Managed via `CollectionEntryCrudController`; access is controlled by the `site-role-editor` key in ConfigBundle.
+`CollectionEntry` is a generic "title/description/image/link" item, grouped by an arbitrary `group` (e.g. `"projects"`), so a single CRUD/table can back several unrelated collections across a site. Its own `slug` (via EasyAdmin's `SlugField`, auto-filled from `title` but editable) is unique **within its group only** (`UNIQ_COLLECTION_ENTRY_GROUP_SLUG`, not globally like `Page::$slug`) — normalized and de-duplicated server-side (`-2`, `-3`... on collision) by `CollectionEntryCrudController`, same recipe as `PageCrudController`'s own slug handling. Managed via `CollectionEntryCrudController`; access is controlled by the `site-role-editor` key in ConfigBundle.
 
 `CollectionEntrySourceProvider` (implements `c975l/ui-bundle`'s `CollectionSourceProviderInterface`) exposes every distinct `group` found in the table as its own source, keyed `site.collection.{group}` — adding a brand new group via the CRUD is enough to make it pickable in UiBundle's `collection` block, no code change needed.
 
@@ -460,7 +473,7 @@ Access is controlled by the `site-role-editor` key in ConfigBundle, same as page
 
 ### Item detail pages
 
-A `CollectionSourceProviderInterface` implementation can optionally expose a `detail` callable (see UiBundle's own README) so each item in its source gets a per-item URL, without a dedicated `Page`/`Block` row per item. `CollectionEntrySourceProvider` doesn't implement `detail` itself (its items only ever link out via their own `url`) — this is the generic mechanism any bundle's own provider can opt into.
+A `CollectionSourceProviderInterface` implementation can optionally expose a `detail` callable (see UiBundle's own README) so each item in its source gets a per-item URL, without a dedicated `Page`/`Block` row per item. `CollectionEntrySourceProvider` implements it: each `CollectionEntry`'s own `slug` (scoped to its `group`) is what `detail($slug)` resolves against, and it's also what UiBundle's `collection` block uses to link an item's title straight to its detail page once the block's `detailPage` field is set (see UiBundle's README, "Item detail pages") — no extra wiring needed beyond filling in `detailPage`.
 
 Unlike the collection listing itself, the detail view is a **real `Page`**, with its own blocks — nothing here is auto-created. Setting it up is two ordinary editorial steps, done once per collection:
 
