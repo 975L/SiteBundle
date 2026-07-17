@@ -1,0 +1,28 @@
+{
+    "label": "label.template_default",
+    "blocks": [
+        {
+            "kind": "hero",
+            "data": {
+                "badge": "",
+                "title": "Titre de la page",
+                "subtitle": "Un sous-titre pour présenter votre contenu en quelques mots.",
+                "primaryLabel": "En savoir plus",
+                "primaryUrl": "#",
+                "secondaryLabel": "",
+                "secondaryUrl": "",
+                "statValue": "",
+                "statLabel": ""
+            }
+        },
+        {
+            "kind": "text_section",
+            "data": {
+                "title": "À propos",
+                "slug": "a-propos",
+                "content": "<p>Remplacez ce texte par le contenu de votre page.</p>",
+                "image": ""
+            }
+        }
+    ]
+}

@@ -17,8 +17,8 @@ use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
-use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
+use c975L\SiteBundle\Management\TemplateApplier;
+use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -80,8 +80,8 @@ class PageCrudController extends AbstractCrudController
         private readonly SluggerInterface $slugger,
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
-        private readonly PageTemplateRegistry $pageTemplateRegistry,
-        private readonly PageTemplateApplier $pageTemplateApplier,
+        private readonly TemplateRegistry $templateRegistry,
+        private readonly TemplateApplier $templateApplier,
     ) {
     }
 
@@ -302,15 +302,15 @@ class PageCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
-        // Adds the Blocks of a shipped page-template (config/page-templates/*.json) to the page being
-        // edited - one action per template, only shown once at least one is registered
-        $templates = $this->pageTemplateRegistry->all();
+        // Adds the Blocks of a shipped template (config/templates/*.json) to the page being edited -
+        // one action per template, only shown once at least one is registered
+        $templates = $this->templateRegistry->all();
         $templatesGroup = [] !== $templates
-            ? ActionGroup::new('pageTemplates', t('label.page_templates', [], 'site'), 'fa fa-th-large')
+            ? ActionGroup::new('templates', t('label.templates', [], 'site'), 'fa fa-th-large')
             : null;
         foreach ($templates as $id => $template) {
             // 'label' belongs to whichever bundle contributed the template (see
-            // PageTemplateProviderInterface) - 'site' is only the fallback for a provider that
+            // TemplateProviderInterface) - 'site' is only the fallback for a provider that
             // hasn't declared one
             $domain = $template['domain'] ?? 'site';
 
@@ -323,7 +323,7 @@ class PageCrudController extends AbstractCrudController
                         ->setEntityId($page->getId())
                         ->set('template', $id)
                         ->generateUrl())
-                    ->askConfirmation(t('confirm.apply_page_template', [], 'site'))
+                    ->askConfirmation(t('confirm.apply_template', [], 'site'))
             );
             $actions->setPermission($actionName, $role);
         }
@@ -563,19 +563,19 @@ class PageCrudController extends AbstractCrudController
         return $copy;
     }
 
-    // Applies a page-template's Blocks (kind + example data, in the template's order) to a fresh,
+    // Applies a template's Blocks (kind + example data, in the template's order) to a fresh,
     // unpublished copy of the page being edited - never mutates the live page in place, so this is
     // safe to use on an already-published page (see clonePage()). The admin then edits the copy's
     // pre-filled content and, once happy with it, uses publishAsReplacement() to swap it in for the
     // original. Same idea as ConfigBundle's ThemeCrudController::applyPreset(), but via a copy instead
-    // of in place - PageTemplateApplyCommand (CLI) still applies in place, deliberately, for scripted use.
+    // of in place - TemplateApplyCommand (CLI) still applies in place, deliberately, for scripted use.
     #[AdminRoute('/{entityId}/apply-template')]
     public function applyTemplate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         $source = $context->getEntity()->getInstance();
-        $template = $this->pageTemplateRegistry->get((string) $request->query->get('template'));
+        $template = $this->templateRegistry->get((string) $request->query->get('template'));
 
         if (null === $template) {
             return $this->redirect(
@@ -588,12 +588,12 @@ class PageCrudController extends AbstractCrudController
         }
 
         $copy = $this->clonePage($source)->setReplaces($source->getId());
-        $this->pageTemplateApplier->apply($copy, $template, $this->security->getUser());
+        $this->templateApplier->apply($copy, $template, $this->security->getUser());
 
         $entityManager->persist($copy);
         $entityManager->flush();
 
-        $this->addFlash('success', $this->translator->trans('flash.page_template_applied_to_copy', [], 'site'));
+        $this->addFlash('success', $this->translator->trans('flash.template_applied_to_copy', [], 'site'));
 
         return $this->redirect(
             $this->adminUrlGenerator

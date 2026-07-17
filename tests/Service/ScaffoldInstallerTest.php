@@ -139,4 +139,57 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertSame('same-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
+
+    // Unlike src/templates/tests/translations, an existing "assets" file is never backed up/overwritten
+    // again once it's there, even if the bundle's own copy has since changed - it's the app's own
+    // editable file from the first install onward (e.g. a customized assets/styles/themes/theme.css)
+    public function testInstallNeverOverwritesAnExistingAssetsFileEvenWhenContentDiffers(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['assets/styles/themes/theme.css' => ':root { --radius-btn: 0; }']);
+        mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
+        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root { --radius-btn: 999px; }');
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $result = $installer->install();
+
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $result);
+        $this->assertSame(':root { --radius-btn: 999px; }', file_get_contents($this->projectDir . '/assets/styles/themes/theme.css'));
+        $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
+    }
+
+    // Both theme.css and app.css present, app.css doesn't import it yet: the caller gets a reminder to
+    // add it by hand - install() itself never writes to app.css
+    public function testThemeImportReminderIsReturnedWhenNotYetWired(): void
+    {
+        mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
+        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/styles/app.css', "body { color: red; }\n");
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $reminder = $installer->themeImportReminder();
+
+        $this->assertNotNull($reminder);
+        $this->assertStringContainsString('themes/theme.css', $reminder);
+        $this->assertSame("body { color: red; }\n", file_get_contents($this->projectDir . '/assets/styles/app.css'));
+    }
+
+    // Already wired: no reminder needed
+    public function testThemeImportReminderIsNullWhenAlreadyWired(): void
+    {
+        mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
+        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/styles/app.css', "@import url(\"./themes/theme.css\");\n");
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $this->assertNull($installer->themeImportReminder());
+    }
+
+    // No app.css at all (e.g. a bundle-only test fixture, or a project not using AssetMapper for CSS),
+    // or no scaffolded theme.css yet: nothing to remind about
+    public function testThemeImportReminderIsNullWhenEitherFileIsMissing(): void
+    {
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $this->assertNull($installer->themeImportReminder());
+    }
 }

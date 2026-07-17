@@ -27,12 +27,12 @@ class StylesheetProvider implements BundleStylesheetProviderInterface
             'bundles/build/site-theme.css',
         ];
 
-        // "Shape" stylesheet of the active page template (radii/shadows/fonts, see
-        // sass/page-templates/*), set by ThemeCrudController::applyPreset() - loaded after
-        // site-theme.css so it can override the design tokens defined there
+        // "Shape" stylesheet of the active theme (radii/shadows/fonts, see sass/themes/*), set by
+        // ThemeCrudController::applyPreset() - loaded after site-theme.css so it can override the
+        // design tokens defined there
         $stylesheet = $this->configService->get('theme-stylesheet');
         if (null !== $stylesheet && '' !== $stylesheet) {
-            $stylesheets[] = 'bundles/c975lsite/css/page-templates/' . $stylesheet . '.min.css';
+            $stylesheets[] = 'bundles/c975lsite/css/themes/' . $stylesheet . '.min.css';
         }
 
         return $stylesheets;

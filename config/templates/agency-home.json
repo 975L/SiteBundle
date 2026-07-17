@@ -1,5 +1,5 @@
 {
-    "label": "label.page_template_agency_home_warm",
+    "label": "label.template_agency_home",
     "blocks": [
         {
             "kind": "hero",

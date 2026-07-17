@@ -208,7 +208,7 @@ body.navbar-fixed {
 
         &.active {
             background-color: transparent;
-            border-bottom-color: var(--primary);
+            border-bottom-color: var(--navbar-active-color);
         }
     }
 }

@@ -13,7 +13,7 @@
 {% block stylesheets %}
     {{ parent() }}
     {% if previewPreset is defined and previewPreset and previewPreset.stylesheet %}
-        <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/page-templates/' ~ previewPreset.stylesheet ~ '.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/themes/' ~ previewPreset.stylesheet ~ '.min.css') }}">
     {% endif %}
 {% endblock %}
 
@@ -31,8 +31,6 @@
            stands in for the Page's own blocks #}
         {{ detailHtml|raw }}
     {% else %}
-        {# previewBlocks (set only when the preset carries a demo page-template, see PageController::preview())
-           stands in for the real page's blocks so the preview shows the preset's full intended arrangement #}
-        <twig:c975LUi:Blocks:Blocks blocks="{{ (previewBlocks is defined and previewBlocks) ? previewBlocks : page.blocks }}" />
+        <twig:c975LUi:Blocks:Blocks blocks="{{ page.blocks }}" />
     {% endif %}
 {% endblock %}

@@ -8,18 +8,18 @@
  */
 namespace c975L\SiteBundle\Management;
 
-// Reads every config/page-templates/*.json shipped by SiteBundle into the page template catalog -
-// each one is a reusable, ordered arrangement of blocks (kind + example data) an admin can apply to
-// a Page (see PageCrudController::applyTemplate()), independent of the site's design (colors/fonts/
-// shape), which stays controlled by ConfigBundle's theme presets (see SiteThemePresetProvider).
-// Aggregated with any satellite bundle's own templates by PageTemplateRegistry.
-class SitePageTemplateProvider implements PageTemplateProviderInterface
+// Reads every config/templates/*.json shipped by SiteBundle into the template catalog - each one is a
+// reusable, ordered arrangement of blocks (kind + example data) an admin can apply to a Page (see
+// PageCrudController::applyTemplate()), independent of the site's design (colors/fonts/shape), which
+// stays controlled by the site's own theme (see ConfigBundle's theme presets).
+// Aggregated with any satellite bundle's (or app's) own templates by TemplateRegistry.
+class SiteTemplateProvider implements TemplateProviderInterface
 {
     public function getTemplates(): array
     {
         $templates = [];
 
-        foreach (glob(\dirname(__DIR__, 2) . '/config/page-templates/*.json') ?: [] as $file) {
+        foreach (glob(\dirname(__DIR__, 2) . '/config/templates/*.json') ?: [] as $file) {
             $id = basename($file, '.json');
             $data = json_decode(file_get_contents($file), true);
 

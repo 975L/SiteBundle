@@ -31,4 +31,18 @@ class ScaffoldInstallCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $statusCode);
         $this->assertStringContainsString('3 fichier(s) copié(s), 1 sauvegardé(s) dans existingFiles/, 5 déjà à jour.', $tester->getDisplay());
     }
+
+    // themeImportReminder() non-null: the app.css @import still needs to be added by hand
+    public function testExecuteDisplaysTheThemeImportReminderWhenPresent(): void
+    {
+        $scaffoldInstaller = $this->createConfiguredStub(ScaffoldInstaller::class, [
+            'install' => ['copied' => 1, 'backedUp' => 0, 'skipped' => 0],
+            'themeImportReminder' => 'Add @import url("./themes/theme.css"); to assets/styles/app.css.',
+        ]);
+        $tester = new CommandTester(new ScaffoldInstallCommand($scaffoldInstaller));
+
+        $tester->execute([]);
+
+        $this->assertStringContainsString('themes/theme.css', $tester->getDisplay());
+    }
 }

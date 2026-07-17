@@ -208,24 +208,24 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/page.html.twig:About', $response->getContent());
     }
 
-    // No exact Page for "vitrine-blocks/ui", but "vitrine-blocks" exists with a "collection" block
+    // No exact Page for "catalog/item-1", but "catalog" exists with a "collection" block
     // (source + detailPage) - the item slug resolves against the source's own "detail" callable, then
     // the SEPARATE detail Page's own blocks render normally, with no dedicated Page/Block per item
     public function testDisplayResolvesCollectionDetailFromASeparateDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
-            'detailPage' => 'vitrine-blocks-detail',
+            'detailPage' => 'catalog-detail',
         ]));
 
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('vitrine-blocks-detail')->setIsPublished(true);
+        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
         $detailPage->addBlock((new Block())->setKind('twig_content')->setData(['templatePath' => 'demo/detail.html.twig']));
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturnCallback(
-            static fn (string $source, string $slug): ?array => 'app.collection.demo' === $source && 'ui' === $slug
-                ? ['title' => 'UiBundle', 'bundle' => 'Ui']
+            static fn (string $source, string $slug): ?array => 'app.collection.demo' === $source && 'item-1' === $slug
+                ? ['title' => 'Item One']
                 : null
         );
 
@@ -246,15 +246,15 @@ class PageControllerTest extends TestCase
 
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
-                'vitrine-blocks-detail' => $detailPage,
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
             ]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
             twig: $twig,
         );
 
-        $response = $controller->display('vitrine-blocks/ui');
+        $response = $controller->display('catalog/item-1');
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:1', $capturedPageParameters['detailHtml']);
@@ -265,7 +265,7 @@ class PageControllerTest extends TestCase
     // (the matching block is deliberately NOT last here, so a "last one wins" regression would 404)
     public function testDisplayResolvesTheCollectionBlockWhoseSourceMatchesWhenThePageHasSeveral(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.team',
             'detailPage' => 'team-detail',
@@ -280,8 +280,8 @@ class PageControllerTest extends TestCase
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturnCallback(
-            static fn (string $source, string $slug): ?array => 'app.collection.team' === $source && 'laurent' === $slug
-                ? ['title' => 'Laurent']
+            static fn (string $source, string $slug): ?array => 'app.collection.team' === $source && 'member-1' === $slug
+                ? ['title' => 'Member One']
                 : null
         );
 
@@ -301,7 +301,7 @@ class PageControllerTest extends TestCase
 
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
+                'catalog' => $parent,
                 'project-detail' => $projectDetailPage,
                 'team-detail' => $teamDetailPage,
             ]),
@@ -310,26 +310,26 @@ class PageControllerTest extends TestCase
             twig: $twig,
         );
 
-        $response = $controller->display('vitrine-blocks/laurent');
+        $response = $controller->display('catalog/member-1');
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('Laurent', $capturedPageParameters['detailTitle']);
+        $this->assertSame('Member One', $capturedPageParameters['detailTitle']);
     }
 
     // The item's data is exposed to the detail Page's own blocks via the "collectionItem" Twig global
     // (CollectionItemContext), not passed as this render's own $context
     public function testDisplaySetsTheCollectionItemContextBeforeRenderingTheDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
-            'detailPage' => 'vitrine-blocks-detail',
+            'detailPage' => 'catalog-detail',
         ]));
 
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('vitrine-blocks-detail')->setIsPublished(true);
+        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
-        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'UiBundle', 'bundle' => 'Ui']);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
 
         $collectionItemContext = new CollectionItemContext();
         $capturedItem = null;
@@ -346,8 +346,8 @@ class PageControllerTest extends TestCase
 
         $controller = new PageController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
-                'vitrine-blocks-detail' => $detailPage,
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
             ]),
             $this->createConfigService(),
             $collectionSourceRegistry,
@@ -360,25 +360,24 @@ class PageControllerTest extends TestCase
         $container->set('router', $router);
         $controller->setContainer($container);
 
-        $controller->display('vitrine-blocks/ui');
+        $controller->display('catalog/item-1');
 
-        $this->assertSame(['title' => 'UiBundle', 'bundle' => 'Ui'], $capturedItem);
+        $this->assertSame(['title' => 'Item One'], $capturedItem);
     }
 
-    // The item slug's title (from the source's own "detail" data) is forwarded to page.html.twig as
-    // "detailTitle", so that URL's <title> reflects the item ("UiBundle"), not the parent Page's own
-    // generic one - see resolveCollectionDetail()'s 3rd return value
+    // The item slug's title (from the source's own "detail" data) is forwarded as "detailTitle", so
+    // that URL's <title> reflects the item, not the parent Page's own generic one
     public function testDisplayForwardsTheItemsOwnTitleAsDetailTitle(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
-            'detailPage' => 'vitrine-blocks-detail',
+            'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('vitrine-blocks-detail')->setIsPublished(true);
+        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
-        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'UiBundle']);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
 
         $capturedPageParameters = null;
         $twig = $this->createStub(Environment::class);
@@ -394,86 +393,86 @@ class PageControllerTest extends TestCase
 
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
-                'vitrine-blocks-detail' => $detailPage,
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
             ]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
             twig: $twig,
         );
 
-        $controller->display('vitrine-blocks/ui');
+        $controller->display('catalog/item-1');
 
-        $this->assertSame('UiBundle', $capturedPageParameters['detailTitle']);
+        $this->assertSame('Item One', $capturedPageParameters['detailTitle']);
     }
 
     // No "detailPage" set on the "collection" block: nothing tells resolveCollectionDetail() which Page
     // renders the detail view, so this falls through to a plain 404 - same as an unknown parent slug
     public function testDisplayThrowsNotFoundWhenTheCollectionBlockHasNoDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData(['source' => 'app.collection.demo']));
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
-        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'UiBundle']);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
 
         $controller = $this->createController(
-            $this->createPageService(forDisplayBySlug: ['vitrine-blocks' => $parent]),
+            $this->createPageService(forDisplayBySlug: ['catalog' => $parent]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('vitrine-blocks/ui');
+        $controller->display('catalog/item-1');
     }
 
     // "detailPage" is set but no Page exists with that slug (e.g. a typo, or it was deleted): falls
     // through to a 404 rather than an error
     public function testDisplayThrowsNotFoundWhenTheDetailPageDoesNotExist(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'does-not-exist',
         ]));
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
-        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'UiBundle']);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
 
         $controller = $this->createController(
-            $this->createPageService(forDisplayBySlug: ['vitrine-blocks' => $parent]),
+            $this->createPageService(forDisplayBySlug: ['catalog' => $parent]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('vitrine-blocks/ui');
+        $controller->display('catalog/item-1');
     }
 
-    // The source resolves no item for this slug (e.g. an unknown bundle): falls through to a 404
+    // The source resolves no item for this slug: falls through to a 404
     public function testDisplayThrowsNotFoundWhenTheSourceResolvesNoItem(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(true);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
-            'detailPage' => 'vitrine-blocks-detail',
+            'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('vitrine-blocks-detail')->setIsPublished(true);
+        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(null);
 
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
-                'vitrine-blocks-detail' => $detailPage,
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
             ]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('vitrine-blocks/unknown');
+        $controller->display('catalog/unknown');
     }
 
     // Preview is gated behind the configurable "site-role-editor" role - a visitor without it is denied
@@ -525,15 +524,15 @@ class PageControllerTest extends TestCase
     // publishing anything - same resolveCollectionDetail() fallback as display()
     public function testPreviewResolvesCollectionDetailForAnUnpublishedParentPage(): void
     {
-        $parent = (new Page())->setTitle('Vitrine')->setSlug('vitrine-blocks')->setIsPublished(false);
+        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(false);
         $parent->addBlock((new Block())->setKind('collection')->setData([
             'source' => 'app.collection.demo',
-            'detailPage' => 'vitrine-blocks-detail',
+            'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('vitrine-blocks-detail')->setIsPublished(true);
+        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
-        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'UiBundle', 'bundle' => 'Ui']);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
 
         $capturedPageParameters = null;
         $twig = $this->createStub(Environment::class);
@@ -551,15 +550,15 @@ class PageControllerTest extends TestCase
 
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: [
-                'vitrine-blocks' => $parent,
-                'vitrine-blocks-detail' => $detailPage,
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
             ]),
             $this->createConfigService(),
             collectionSourceRegistry: $collectionSourceRegistry,
             twig: $twig,
         );
 
-        $response = $controller->preview('vitrine-blocks/ui', new Request());
+        $response = $controller->preview('catalog/item-1', new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:0', $capturedPageParameters['detailHtml']);
@@ -595,6 +594,5 @@ class PageControllerTest extends TestCase
         $controller->preview('draft', new Request(['preset' => 'anything']));
 
         $this->assertNull($capturedParameters['previewPreset']);
-        $this->assertNull($capturedParameters['previewBlocks']);
     }
 }

@@ -456,7 +456,7 @@
             </trans-unit>
             <trans-unit id="116">
                 <source>description.theme_stylesheet</source>
-                <target>Technical value set automatically when applying a preset with a page-template look. Leave empty for the default look</target>
+                <target>Technical value set automatically when applying a preset with its own shape. Leave empty for the default look</target>
             </trans-unit>
             <trans-unit id="117">
                 <source>label.site_form_delay</source>

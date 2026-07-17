@@ -46,6 +46,8 @@
   --radius-panel: 16px;
   --shadow-nav: 0 2px 4px var(--primary);
   --navbar-background: var(--white);
+  --navbar-text: var(--black);
+  --navbar-active-color: var(--primary);
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
@@ -652,7 +654,7 @@ footer {
   margin-top: 3em;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
-  padding: 2em 0 3em 0;
+  padding: 2em 15px 3em 15px;
   width: 100vw;
 }
 
@@ -662,6 +664,8 @@ footer .menu-items .blocks {
   flex-direction: var(--footer-items-direction);
   align-items: center;
   justify-content: var(--footer-items-justify);
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
 }
 
 footer a,
@@ -687,6 +691,12 @@ footer .menu-link {
 
 footer .menu-label {
   font-family: var(--font-family-body);
+  color: var(--footer-text);
+}
+
+footer a:hover .menu-label,
+footer a:visited:hover .menu-label {
+  color: var(--footer-text-hover);
 }
 
 footer .made-by {
@@ -695,6 +705,15 @@ footer .made-by {
   justify-content: center;
   align-items: stretch;
   gap: 2em;
+}
+
+footer .img-above {
+  color: var(--footer-text);
+}
+
+footer a:hover .img-above,
+footer a:visited:hover .img-above {
+  color: var(--footer-text-hover);
 }
 
 /*

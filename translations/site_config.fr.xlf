@@ -456,7 +456,7 @@
             </trans-unit>
             <trans-unit id="116">
                 <source>description.theme_stylesheet</source>
-                <target>Valeur technique définie automatiquement lors de l'application d'un preset avec un habillage de template de page. Laisser vide pour l'apparence par défaut</target>
+                <target>Valeur technique définie automatiquement lors de l'application d'un preset avec sa propre forme. Laisser vide pour l'apparence par défaut</target>
             </trans-unit>
             <trans-unit id="117">
                 <source>label.site_form_delay</source>

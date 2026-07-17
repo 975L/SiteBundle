@@ -947,31 +947,31 @@
                 <target>%count% message(s) supprimé(s)</target>
             </trans-unit>
             <trans-unit id="243">
-                <source>label.page_templates</source>
-                <target>Templates de page</target>
+                <source>label.templates</source>
+                <target>Templates</target>
             </trans-unit>
             <trans-unit id="244">
-                <source>confirm.apply_page_template</source>
+                <source>confirm.apply_template</source>
                 <target>Les blocks du template vont être ajoutés à cette page (contenu d'exemple, à modifier ensuite). Les blocks existants sont conservés. Continuer ?</target>
             </trans-unit>
             <trans-unit id="245">
-                <source>flash.page_template_applied</source>
+                <source>flash.template_applied</source>
                 <target>Les blocks du template ont été ajoutés à la page.</target>
             </trans-unit>
             <trans-unit id="246">
-                <source>label.page_template_agency_home_warm</source>
-                <target>Accueil agence (chaleureux)</target>
+                <source>label.template_agency_home</source>
+                <target>Accueil agence</target>
             </trans-unit>
             <trans-unit id="259">
-                <source>label.page_template_portfolio_blueprint</source>
-                <target>Portfolio (blueprint)</target>
+                <source>label.template_portfolio_showcase</source>
+                <target>Portfolio</target>
             </trans-unit>
             <trans-unit id="247">
                 <source>label.preview_preset_mode</source>
-                <target>Aperçu de la forme et de l'agencement de démonstration du preset "%label%" - vos couleurs et polices restent inchangées, rien n'est enregistré</target>
+                <target>Aperçu de la forme du preset "%label%" - vos couleurs et polices restent inchangées, rien n'est enregistré</target>
             </trans-unit>
             <trans-unit id="249">
-                <source>flash.page_template_applied_to_copy</source>
+                <source>flash.template_applied_to_copy</source>
                 <target>Une copie non publiée a été créée avec les blocks du template ajoutés.</target>
             </trans-unit>
             <trans-unit id="250">
@@ -1018,14 +1018,6 @@
                 <source>label.theme_preset_default</source>
                 <target>Par défaut</target>
             </trans-unit>
-            <trans-unit id="262">
-                <source>label.theme_preset_warm</source>
-                <target>Chaleureux</target>
-            </trans-unit>
-            <trans-unit id="263">
-                <source>label.theme_preset_blueprint</source>
-                <target>Blueprint</target>
-            </trans-unit>
             <trans-unit id="264">
                 <source>label.template_path</source>
                 <target>Chemin du template de détail</target>
@@ -1033,6 +1025,10 @@
             <trans-unit id="265">
                 <source>label.template_path_help</source>
                 <target>Chemin du template Twig (ex. "block_showcase/bundle.html.twig") utilisé pour afficher le détail d'un item de la collection déclarée par un block "Collection" sur cette même page. Laisser vide pour un contenu Twig classique via le champ Contenu ci-dessus.</target>
+            </trans-unit>
+            <trans-unit id="266">
+                <source>label.template_default</source>
+                <target>Générique</target>
             </trans-unit>
         </body>
     </file>

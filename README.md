@@ -234,11 +234,11 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 ### Page templates
 
-`config/page-templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can apply to a `Page` — a starting point to edit from, not a live/synced layout. Listed via `SitePageTemplateProvider` (implements `PageTemplateProviderInterface`) and aggregated with any other bundle's own templates by `PageTemplateRegistry`.
+`config/templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can apply to a `Page` — a starting point to edit from, not a live/synced layout. `default` is a generic, content-agnostic one meant as a sane starting point regardless of the site's theme; `agency-home`/`portfolio-showcase` are fuller demo arrangements. Listed via `SiteTemplateProvider` (implements `TemplateProviderInterface`) and aggregated with any other bundle's — or the consuming app's own — templates by `TemplateRegistry`: an app that wants its own templates implements `TemplateProviderInterface` in its own service (auto-tagged), no change needed here.
 
-From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. Once happy with the draft's content, its "Publish as replacement" action swaps it in for the original — the original's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). The `c975l:site:pages:apply-template` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `PageTemplateApplier`.
+From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. Once happy with the draft's content, its "Publish as replacement" action swaps it in for the original — the original's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). The `c975l:site:templates:apply` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `TemplateApplier`.
 
-A page template stays independent from a [theme preset](#themes)'s colors/fonts/shape — a preset can optionally reference one (its `pageTemplate` key) purely to demo its full look in `?preset=` preview, but applying either one never touches the other.
+A page template is entirely independent from the site's [theme](#themes) (colors/fonts/shape): neither ever references the other, and applying one never touches the other.
 
 ---
 
@@ -464,7 +464,7 @@ A `CollectionSourceProviderInterface` implementation can optionally expose a `de
 
 Unlike the collection listing itself, the detail view is a **real `Page`**, with its own blocks — nothing here is auto-created. Setting it up is two ordinary editorial steps, done once per collection:
 
-1. Create a `Page` for the detail view (any slug you like, e.g. `vitrine-blocks-detail`), and give it whichever blocks the detail view needs — a `twig_content` block for a fully custom template, native blocks like `card`/`text_section` for a simpler layout, or a mix. Nothing is special-cased: this is a `Page` like any other, managed the same way (`PageCrudController`).
+1. Create a `Page` for the detail view (any slug you like, e.g. `catalog-detail`), and give it whichever blocks the detail view needs — a `twig_content` block for a fully custom template, native blocks like `card`/`text_section` for a simpler layout, or a mix. Nothing is special-cased: this is a `Page` like any other, managed the same way (`PageCrudController`).
 2. On the **other** `Page` that carries the `collection` block (the listing), fill that block's own `detailPage` field with the detail Page's slug from step 1.
 
 From then on, requesting `/pages/{page}/{itemSlug}` (an unknown slug one level under the listing page) calls the source's `detail($itemSlug)`; a non-null result makes the detail Page's own blocks render as usual, with a `collectionItem` Twig global exposing that result to any of them for the duration of this one render (see `CollectionItemContext`) — a `twig_content` block reads it via its own `templatePath` field (`{% include templatePath with collectionItem.get() %}`), but any other block kind could read it too. The item's own `title` (by convention) becomes that URL's `<title>` instead of the listing page's. A `null` result (unknown item slug, no `detail` callable, no `detailPage` set, or that Page not found) falls through to a normal 404.
@@ -483,15 +483,17 @@ Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, al
 
 ### Presets
 
-`config/themes/*.json` ships ready-made combinations of the keys above (colors, fonts, and optionally a page-template "shape" stylesheet, see below) as one-click presets, listed via `SiteThemePresetProvider` (implements ConfigBundle's `ThemePresetProviderInterface`). An admin applies one from the Theme dashboard's "Presets" action group — this bulk-overwrites the `theme-*` configs in a single flush, it never touches page content.
+`config/themes/*.json` ships ready-made "shape" stylesheets (see below) as one-click presets, listed via `SiteThemePresetProvider` (implements ConfigBundle's `ThemePresetProviderInterface`). An admin applies one from the Theme dashboard's "Presets" action group — this only ever overwrites the `theme-stylesheet` config in a single flush; colors/fonts stay entirely admin-owned (edited directly, above) and page content is never touched.
 
-A preset's `values` don't need to repeat every `theme-*` key — only list the ones it actually wants to change. Every `theme-color-*`/`theme-font-family-*` custom property already has a built-in CSS fallback (see `sass/_variables.scss`, e.g. `var(--c975l-color-background, #fff)`), and a config left unset by the preset simply isn't emitted into the compiled stylesheet rather than overwriting it with an empty value. `warm`, for instance, only recolors the accent and swaps fonts, relying on the fallback for background/text; `default` covers everything except the accent font. A preset needs to declare a key explicitly only when it must override the fallback itself (e.g. a dark preset's background/text, since the built-in fallback is a light `#fff`/`#000`).
+Before committing to one, preview it on any page: `/pages/{page}/preview?preset=<slug>` renders that page with the preset's shape applied for this request only (nothing written to `site_config`) — your own colors/fonts are shown as-is. A preset never references a page template (see [Page templates](#page-templates)): the two are entirely independent, applying one never affects the other.
 
-Before committing to one, preview it on any page: `/pages/{page}/preview?preset=<slug>` renders that page with the preset's colors/fonts/shape applied for this request only (nothing written to `site_config`). If the preset also declares a `pageTemplate` (a `config/page-templates/*.json` slug, see [Page templates](#page-templates)), the preview additionally swaps in that template's blocks — transient, never persisted — so the preview shows the preset's full intended look rather than just a reskin of the page's actual content.
+### Theme shape stylesheets
 
-### Page-template stylesheets ("shape")
+A theme preset (see above) can ship its own `sass/themes/<slug>.scss`, overriding non-color "shape" tokens — border radii, shadows, navbar/footer layout — defined in `sass/_variables.scss`. Setting `theme-stylesheet` (done automatically when applying a preset that declares one) loads `bundles/c975lsite/css/themes/<slug>.min.css` after `site-theme.css`, so it can override those tokens on top of the admin's colors/fonts. `default` is the only one shipped by the bundle itself (matching `_variables.scss`'s own base tokens, materialized as a real preset rather than an implicit fallback) — a satellite bundle can contribute more via its own `ThemePresetProviderInterface` implementation (see `SiteThemePresetProvider` for the pattern), aggregated by ConfigBundle's `ThemePresetRegistry`.
 
-A page template (see below) can ship its own `sass/page-templates/<slug>.scss`, overriding non-color "shape" tokens — border radii, shadows, navbar/footer layout — defined in `sass/_variables.scss`. Setting `theme-stylesheet` (done automatically when applying a preset that declares one) loads `bundles/c975lsite/css/page-templates/<slug>.min.css` after `site-theme.css`, so it can override those tokens on top of the admin's colors/fonts.
+### A site's own one-off theme
+
+For a fully custom site design that doesn't need switching between presets, `c975l:scaffold:install` copies an editable `assets/styles/themes/theme.css` into the app (same shape tokens as the `default` preset, as a starting point) — edit it freely, it's the app's own file, never synced back from the bundle after that first copy. Add `@import url("./themes/theme.css");` to `assets/styles/app.css` yourself (the command reminds you if it's still missing); since `app.css` loads last, it then overrides whatever `theme-stylesheet` preset is active.
 
 ---
 
@@ -697,7 +699,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
-| `php bin/console c975l:site:pages:apply-template <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
+| `php bin/console c975l:site:templates:apply <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
 | `php bin/console c975l:site:collection-entry:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionEntry`](#collection-entries) rows for a given group (`--images-dir`, `--dry-run` options) |
 
@@ -762,7 +764,7 @@ of which bundle's `configs.json` defined it); slugs that aren't found (bundle no
 `c975l:scaffold:install` is the standalone, re-runnable equivalent of step 1 of `c975l:site:create`
 (the one gated by `.c975l-site-created`). Use it whenever you `composer require` a c975L bundle
 into a site that's already past the one-shot wizard, to pull in that bundle's
-`scaffold/{src,templates,tests,translations}` files:
+`scaffold/{src,templates,tests,translations,assets}` files:
 
 ```bash
 php bin/console c975l:scaffold:install
@@ -771,6 +773,9 @@ php bin/console c975l:scaffold:install
 Same backup behavior as the wizard: any target file it would overwrite is moved to
 `existingFiles/<same path>.old` first (never silently erased), and a target already identical to
 the scaffold source is left untouched — so running it again on an unmodified project is a no-op.
+`assets/` files are the one exception: once a target exists there, it's left alone for good (no
+backup, no overwrite, even if the bundle's own copy later changes) since it's meant to become the
+app's own editable file from that first copy onward — see [A site's own one-off theme](#a-sites-own-one-off-theme).
 
 #### Translating the questions
 

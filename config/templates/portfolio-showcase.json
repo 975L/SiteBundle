@@ -1,5 +1,5 @@
 {
-    "label": "label.page_template_portfolio_blueprint",
+    "label": "label.template_portfolio_showcase",
     "blocks": [
         {
             "kind": "hero",

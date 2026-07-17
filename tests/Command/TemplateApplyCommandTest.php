@@ -9,10 +9,10 @@
 
 namespace c975L\SiteBundle\Tests\Command;
 
-use c975L\SiteBundle\Command\PageTemplateApplyCommand;
+use c975L\SiteBundle\Command\TemplateApplyCommand;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
+use c975L\SiteBundle\Management\TemplateApplier;
+use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,7 +21,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class PageTemplateApplyCommandTest extends TestCase
+class TemplateApplyCommandTest extends TestCase
 {
     private function template(): array
     {
@@ -35,10 +35,10 @@ class PageTemplateApplyCommandTest extends TestCase
 
     private function createTester(
         ?Page $existingPage = null,
-        ?PageTemplateRegistry $templateProvider = null,
+        ?TemplateRegistry $templateProvider = null,
         ?EntityManagerInterface $entityManager = null,
     ): CommandTester {
-        $templateProvider ??= $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider ??= $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => null,
         ]);
 
@@ -50,11 +50,11 @@ class PageTemplateApplyCommandTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
 
-        return new CommandTester(new PageTemplateApplyCommand(
+        return new CommandTester(new TemplateApplyCommand(
             $entityManager,
             $pageRepository,
             $templateProvider,
-            new PageTemplateApplier(),
+            new TemplateApplier(),
             $security,
         ));
     }
@@ -66,17 +66,17 @@ class PageTemplateApplyCommandTest extends TestCase
         $statusCode = $tester->execute(['template' => 'does-not-exist', 'page' => 'home']);
 
         $this->assertSame(Command::FAILURE, $statusCode);
-        $this->assertStringContainsString('No page template found', $tester->getDisplay());
+        $this->assertStringContainsString('No template found', $tester->getDisplay());
     }
 
     public function testExecuteFailsWhenPageDoesNotExistAndNoTitleGiven(): void
     {
-        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider = $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => $this->template(),
         ]);
         $tester = $this->createTester(templateProvider: $templateProvider);
 
-        $statusCode = $tester->execute(['template' => 'agency-home-warm', 'page' => 'home-copy']);
+        $statusCode = $tester->execute(['template' => 'agency-home', 'page' => 'home-copy']);
 
         $this->assertSame(Command::FAILURE, $statusCode);
         $this->assertStringContainsString('pass --title to create it', $tester->getDisplay());
@@ -84,7 +84,7 @@ class PageTemplateApplyCommandTest extends TestCase
 
     public function testExecuteCreatesAnUnpublishedPageWithTheTemplatesBlocks(): void
     {
-        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider = $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
@@ -95,7 +95,7 @@ class PageTemplateApplyCommandTest extends TestCase
         $tester = $this->createTester(templateProvider: $templateProvider, entityManager: $entityManager);
 
         $statusCode = $tester->execute([
-            'template' => 'agency-home-warm',
+            'template' => 'agency-home',
             'page' => 'home-copy',
             '--title' => 'Accueil (aperçu)',
         ]);
@@ -110,7 +110,7 @@ class PageTemplateApplyCommandTest extends TestCase
 
     public function testExecutePublishesTheNewPageWhenPublishOptionIsSet(): void
     {
-        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider = $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
@@ -121,7 +121,7 @@ class PageTemplateApplyCommandTest extends TestCase
         $tester = $this->createTester(templateProvider: $templateProvider, entityManager: $entityManager);
 
         $tester->execute([
-            'template' => 'agency-home-warm',
+            'template' => 'agency-home',
             'page' => 'home-copy',
             '--title' => 'Accueil',
             '--publish' => true,
@@ -134,12 +134,12 @@ class PageTemplateApplyCommandTest extends TestCase
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
         $page->addBlock((new Block())->setKind('legacy_content')->setPosition(0));
-        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider = $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => $this->template(),
         ]);
         $tester = $this->createTester(existingPage: $page, templateProvider: $templateProvider);
 
-        $statusCode = $tester->execute(['template' => 'agency-home-warm', 'page' => 'home']);
+        $statusCode = $tester->execute(['template' => 'agency-home', 'page' => 'home']);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
         $this->assertCount(2, $page->getBlocks());
@@ -150,7 +150,7 @@ class PageTemplateApplyCommandTest extends TestCase
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
         $page->addBlock((new Block())->setKind('legacy_content')->setPosition(0));
-        $templateProvider = $this->createConfiguredStub(PageTemplateRegistry::class, [
+        $templateProvider = $this->createConfiguredStub(TemplateRegistry::class, [
             'get' => $this->template(),
         ]);
         $entityManager = $this->createStub(EntityManagerInterface::class);
@@ -160,7 +160,7 @@ class PageTemplateApplyCommandTest extends TestCase
         });
         $tester = $this->createTester(existingPage: $page, templateProvider: $templateProvider, entityManager: $entityManager);
 
-        $tester->execute(['template' => 'agency-home-warm', 'page' => 'home', '--replace' => true]);
+        $tester->execute(['template' => 'agency-home', 'page' => 'home', '--replace' => true]);
 
         $this->assertCount(1, $removed);
         $this->assertSame('legacy_content', $removed[0]->getKind());
@@ -168,10 +168,10 @@ class PageTemplateApplyCommandTest extends TestCase
         $this->assertSame('hero', $page->getBlocks()->first()->getKind());
     }
 
-    // Not a known config/page-templates/ slug, but a real JSON file with the same shape
+    // Not a known config/templates/ slug, but a real JSON file with the same shape
     public function testExecuteLoadsTheTemplateFromAFilePathWhenNotAKnownSlug(): void
     {
-        $path = tempnam(sys_get_temp_dir(), 'page-template-');
+        $path = tempnam(sys_get_temp_dir(), 'template-');
         file_put_contents($path, json_encode($this->template()));
 
         try {

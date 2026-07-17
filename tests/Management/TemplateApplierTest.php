@@ -10,10 +10,10 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\PageTemplateApplier;
+use c975L\SiteBundle\Management\TemplateApplier;
 use PHPUnit\Framework\TestCase;
 
-class PageTemplateApplierTest extends TestCase
+class TemplateApplierTest extends TestCase
 {
     private function template(): array
     {
@@ -30,7 +30,7 @@ class PageTemplateApplierTest extends TestCase
     {
         $page = new Page();
 
-        $count = (new PageTemplateApplier())->apply($page, $this->template());
+        $count = (new TemplateApplier())->apply($page, $this->template());
 
         $this->assertSame(2, $count);
         $blocks = $page->getBlocks()->toArray();
@@ -49,7 +49,7 @@ class PageTemplateApplierTest extends TestCase
         $page = new Page();
         $page->addBlock((new \c975L\UiBundle\Entity\Block())->setKind('legacy_content')->setPosition(0));
 
-        (new PageTemplateApplier())->apply($page, $this->template());
+        (new TemplateApplier())->apply($page, $this->template());
 
         $blocks = $page->getBlocks()->toArray();
         $this->assertCount(3, $blocks);
@@ -61,16 +61,15 @@ class PageTemplateApplierTest extends TestCase
 
     public function testApplyReturnsTheNumberOfBlocksAdded(): void
     {
-        $count = (new PageTemplateApplier())->apply(new Page(), $this->template());
+        $count = (new TemplateApplier())->apply(new Page(), $this->template());
 
         $this->assertSame(2, $count);
     }
 
-    // build() is the transient counterpart used by ?preset=X's demo preview (PageController::preview()):
-    // same Block objects as apply(), but attached to no Page
+    // build() is the transient counterpart used by a caller that needs Block objects without a Page
     public function testBuildReturnsTransientBlocksInOrderWithoutAPage(): void
     {
-        $blocks = (new PageTemplateApplier())->build($this->template());
+        $blocks = (new TemplateApplier())->build($this->template());
 
         $this->assertCount(2, $blocks);
         $this->assertSame('hero', $blocks[0]->getKind());
@@ -83,7 +82,7 @@ class PageTemplateApplierTest extends TestCase
     // startPosition lets a caller offset the built blocks, same as apply() does internally
     public function testBuildHonoursStartPosition(): void
     {
-        $blocks = (new PageTemplateApplier())->build($this->template(), 5);
+        $blocks = (new TemplateApplier())->build($this->template(), 5);
 
         $this->assertSame(5, $blocks[0]->getPosition());
         $this->assertSame(6, $blocks[1]->getPosition());

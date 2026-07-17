@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-07-17",
+        "description": [
+            {
+                "en": "A new generic template is now available when creating a page - a clean starting point that suits any theme",
+                "fr": "Un nouveau template générique est désormais disponible à la création d'une page - un point de départ sobre qui convient à tous les thèmes",
+                "es": "Ahora hay disponible un nuevo template genérico al crear una página - un punto de partida sobrio que se adapta a cualquier tema"
+            },
+            {
+                "en": "The \"Warm\" and \"Blueprint\" looks have been removed to keep the design options simple - if either was applied to your site, it now uses the default look",
+                "fr": "Les habillages « Chaleureux » et « Blueprint » ont été retirés pour simplifier les choix de design - si l'un des deux était appliqué à votre site, il utilise désormais l'habillage par défaut",
+                "es": "Los estilos «Cálido» y «Blueprint» se han eliminado para simplificar las opciones de diseño - si alguno estaba aplicado a su sitio, ahora usa el estilo por defecto"
+            }
+        ]
+    },
+    {
         "date": "2026-07-16",
         "description": [
             {

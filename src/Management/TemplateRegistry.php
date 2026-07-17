@@ -10,17 +10,17 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ProviderMerger;
 
-// Merges the page templates contributed by every PageTemplateProviderInterface (SiteBundle's own
-// shipped ones via SitePageTemplateProvider, plus any satellite bundle's) - same pattern as
-// ConfigBundle's ThemePresetRegistry
-class PageTemplateRegistry
+// Merges the templates contributed by every TemplateProviderInterface (SiteBundle's own shipped ones
+// via SiteTemplateProvider, plus any satellite bundle's or app's own) - same pattern as ConfigBundle's
+// ThemePresetRegistry
+class TemplateRegistry
 {
     private array $templates;
 
-    // @param iterable<PageTemplateProviderInterface> $providers
+    // @param iterable<TemplateProviderInterface> $providers
     public function __construct(iterable $providers)
     {
-        $this->templates = ProviderMerger::merge($providers, fn (PageTemplateProviderInterface $provider) => $provider->getTemplates());
+        $this->templates = ProviderMerger::merge($providers, fn (TemplateProviderInterface $provider) => $provider->getTemplates());
     }
 
     public function has(string $id): bool

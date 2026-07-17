@@ -11,8 +11,6 @@ namespace c975L\SiteBundle\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
 use c975L\SiteBundle\Management\SiteThemePresetProvider;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Twig\CollectionItemContext;
@@ -37,8 +35,6 @@ class PageController extends AbstractController
         private readonly Environment $twig,
         private readonly CollectionItemContext $collectionItemContext,
         private readonly ?SiteThemePresetProvider $themePresetProvider = null,
-        private readonly ?PageTemplateRegistry $pageTemplateRegistry = null,
-        private readonly PageTemplateApplier $pageTemplateApplier = new PageTemplateApplier(),
     ) {
     }
 
@@ -120,9 +116,8 @@ class PageController extends AbstractController
         $detailHtml = null;
         $detailTitle = null;
 
-        // No exact Page for this slug: the last segment may still be an item slug of a "collection"
-        // block carried by the Page one level up (e.g. /pages/vitrine-blocks/ui) - see
-        // resolveCollectionDetail() for why this needs no Page/Block row per item
+        // No exact Page for this slug: the last segment may be a "collection" block's item slug,
+        // carried by the Page one level up (see resolveCollectionDetail())
         if (null === $pageObject && str_contains($slug, '/')) {
             [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
         }
@@ -143,16 +138,12 @@ class PageController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-    // Tries the slug's last "/" segment as an item slug of a "collection" block on the Page found at
-    // everything before it - e.g. "vitrine-blocks/ui" resolves against the real "vitrine-blocks" Page's
-    // collection source, then renders a SEPARATE, real Page (the collection block's own "detailPage"
-    // slug) as this item's detail view: that Page's own blocks render normally, with "collectionItem"
-    // (see CollectionItemContext) set to the item's data for the duration of this render - not just a
-    // single hardcoded template, any block on that Page can use it. No Page/Block row is persisted per
-    // item - see SiteBundle's README ("Item detail pages", under "Collection entries"). Tries each
-    // "collection" block on the page independently (a page can carry several, each with its own
-    // source/detailPage) rather than merging their fields, so only the block whose source actually
-    // resolves this item slug wins.
+    // Tries the slug's last segment as a "collection" block's item slug, resolved against the
+    // block's own source, then rendered via a separate Page (the block's "detailPage") whose own
+    // blocks render normally, with "collectionItem" (see CollectionItemContext) set for the
+    // duration of this render - no Page/Block row persisted per item (see README, "Item detail
+    // pages"). Tries each "collection" block on the page independently, so only the one whose
+    // source resolves this item slug wins.
     // @return array{0: ?Page, 1: ?string, 2: ?string}
     private function resolveCollectionDetail(string $slug): array
     {
@@ -215,7 +206,7 @@ class PageController extends AbstractController
         $detailTitle = null;
 
         // Same fallback as display(): lets an editor preview an unpublished Page's own collection
-        // detail views (e.g. /pages/vitrine-blocks/ui/preview) before publishing
+        // detail views before publishing
         if (null === $pageObject && str_contains($slug, '/')) {
             [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
         }
@@ -226,19 +217,10 @@ class PageController extends AbstractController
 
         // Optional ?preset=<slug>: previews a theme preset's colors/fonts/shape for this request only
         // (see templates/pages/page.html.twig), without writing anything to site_config - lets an
-        // editor judge a site-wide preset's effect before committing to it via "Apply preset"
+        // editor judge a site-wide preset's effect before committing to it via "Apply preset". Only
+        // ever previews the design, never the page's blocks - a template is applied independently
+        // (see PageCrudController::applyTemplate())
         $previewPreset = $this->themePresetProvider?->getPresets()[(string) $request->query->get('preset')] ?? null;
-
-        // A preset can point to a page-template whose blocks demo its full look (see
-        // SiteThemePresetProvider) - built here as transient, unpersisted Blocks so this request's
-        // render shows the preset's intended arrangement without touching the real page's content
-        $previewBlocks = null;
-        if (null !== $previewPreset && null !== $previewPreset['pageTemplate']) {
-            $template = $this->pageTemplateRegistry?->get($previewPreset['pageTemplate']);
-            if (null !== $template) {
-                $previewBlocks = $this->pageTemplateApplier->build($template);
-            }
-        }
 
         return $this->render(
             '@c975LSite/pages/page.html.twig',
@@ -246,7 +228,6 @@ class PageController extends AbstractController
                 'page' => $pageObject,
                 'isPreview' => true,
                 'previewPreset' => $previewPreset,
-                'previewBlocks' => $previewBlocks,
                 'detailHtml' => $detailHtml,
                 'detailTitle' => $detailTitle,
             ]

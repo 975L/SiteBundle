@@ -947,31 +947,31 @@
                 <target>%count% message(s) deleted</target>
             </trans-unit>
             <trans-unit id="243">
-                <source>label.page_templates</source>
-                <target>Page templates</target>
+                <source>label.templates</source>
+                <target>Templates</target>
             </trans-unit>
             <trans-unit id="244">
-                <source>confirm.apply_page_template</source>
+                <source>confirm.apply_template</source>
                 <target>The template's blocks will be added to this page (example content, to be edited afterwards). Existing blocks are kept. Continue?</target>
             </trans-unit>
             <trans-unit id="245">
-                <source>flash.page_template_applied</source>
+                <source>flash.template_applied</source>
                 <target>The template's blocks have been added to the page.</target>
             </trans-unit>
             <trans-unit id="246">
-                <source>label.page_template_agency_home_warm</source>
-                <target>Agency homepage (warm)</target>
+                <source>label.template_agency_home</source>
+                <target>Agency homepage</target>
             </trans-unit>
             <trans-unit id="259">
-                <source>label.page_template_portfolio_blueprint</source>
-                <target>Portfolio (blueprint)</target>
+                <source>label.template_portfolio_showcase</source>
+                <target>Portfolio</target>
             </trans-unit>
             <trans-unit id="247">
                 <source>label.preview_preset_mode</source>
-                <target>Previewing the "%label%" preset's shape and demo layout - your own colors and fonts are shown as-is, nothing has been saved</target>
+                <target>Previewing the "%label%" preset's shape - your own colors and fonts are shown as-is, nothing has been saved</target>
             </trans-unit>
             <trans-unit id="249">
-                <source>flash.page_template_applied_to_copy</source>
+                <source>flash.template_applied_to_copy</source>
                 <target>An unpublished copy has been created with the template's blocks added.</target>
             </trans-unit>
             <trans-unit id="250">
@@ -1018,14 +1018,6 @@
                 <source>label.theme_preset_default</source>
                 <target>Default</target>
             </trans-unit>
-            <trans-unit id="262">
-                <source>label.theme_preset_warm</source>
-                <target>Warm</target>
-            </trans-unit>
-            <trans-unit id="263">
-                <source>label.theme_preset_blueprint</source>
-                <target>Blueprint</target>
-            </trans-unit>
             <trans-unit id="264">
                 <source>label.template_path</source>
                 <target>Detail template path</target>
@@ -1033,6 +1025,10 @@
             <trans-unit id="265">
                 <source>label.template_path_help</source>
                 <target>Twig template path (e.g. "block_showcase/bundle.html.twig") used to render one item's detail view for the collection declared by a "Collection" block on this same page. Leave empty for plain Twig content via the Content field above.</target>
+            </trans-unit>
+            <trans-unit id="266">
+                <source>label.template_default</source>
+                <target>Generic</target>
             </trans-unit>
         </body>
     </file>

@@ -46,6 +46,11 @@ class ScaffoldInstallCommand extends Command
             $result['skipped']
         ));
 
+        $reminder = $this->scaffoldInstaller->themeImportReminder();
+        if (null !== $reminder) {
+            $io->note($reminder);
+        }
+
         return Command::SUCCESS;
     }
 }

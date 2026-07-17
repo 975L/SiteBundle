@@ -8,15 +8,15 @@
  */
 namespace c975L\SiteBundle\Tests\Management;
 
-use c975L\SiteBundle\Management\PageTemplateProviderInterface;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
+use c975L\SiteBundle\Management\TemplateProviderInterface;
+use c975L\SiteBundle\Management\TemplateRegistry;
 use PHPUnit\Framework\TestCase;
 
-class PageTemplateRegistryTest extends TestCase
+class TemplateRegistryTest extends TestCase
 {
-    private function createProvider(array $templates): PageTemplateProviderInterface
+    private function createProvider(array $templates): TemplateProviderInterface
     {
-        $provider = $this->createStub(PageTemplateProviderInterface::class);
+        $provider = $this->createStub(TemplateProviderInterface::class);
         $provider->method('getTemplates')->willReturn($templates);
 
         return $provider;
@@ -24,18 +24,18 @@ class PageTemplateRegistryTest extends TestCase
 
     public function testHasAndGetReflectTemplatesMergedAcrossProviders(): void
     {
-        $providerA = $this->createProvider(['agency-home-warm' => ['label' => 'label.a', 'blocks' => [['kind' => 'hero', 'data' => []]]]]);
+        $providerA = $this->createProvider(['agency-home' => ['label' => 'label.a', 'blocks' => [['kind' => 'hero', 'data' => []]]]]);
         $providerB = $this->createProvider(['shop-landing' => ['label' => 'label.b', 'blocks' => [['kind' => 'products', 'data' => []]]]]);
-        $registry = new PageTemplateRegistry([$providerA, $providerB]);
+        $registry = new TemplateRegistry([$providerA, $providerB]);
 
-        $this->assertTrue($registry->has('agency-home-warm'));
+        $this->assertTrue($registry->has('agency-home'));
         $this->assertTrue($registry->has('shop-landing'));
-        $this->assertSame(['label' => 'label.a', 'blocks' => [['kind' => 'hero', 'data' => []]]], $registry->get('agency-home-warm'));
+        $this->assertSame(['label' => 'label.a', 'blocks' => [['kind' => 'hero', 'data' => []]]], $registry->get('agency-home'));
     }
 
     public function testHasReturnsFalseAndGetReturnsNullForUnknownTemplate(): void
     {
-        $registry = new PageTemplateRegistry([$this->createProvider([])]);
+        $registry = new TemplateRegistry([$this->createProvider([])]);
 
         $this->assertFalse($registry->has('unknown'));
         $this->assertNull($registry->get('unknown'));
@@ -45,7 +45,7 @@ class PageTemplateRegistryTest extends TestCase
     {
         $providerA = $this->createProvider(['template-a' => ['label' => 'a', 'blocks' => []]]);
         $providerB = $this->createProvider(['template-b' => ['label' => 'b', 'blocks' => []]]);
-        $registry = new PageTemplateRegistry([$providerA, $providerB]);
+        $registry = new TemplateRegistry([$providerA, $providerB]);
 
         $this->assertSame([
             'template-a' => ['label' => 'a', 'blocks' => []],

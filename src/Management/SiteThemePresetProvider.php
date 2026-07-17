@@ -32,15 +32,12 @@ class SiteThemePresetProvider implements ThemePresetProviderInterface
                 // These presets are SiteBundle's own, translated in SiteBundle's own domain -
                 // ThemeCrudController (ConfigBundle) must never assume its own 'config' domain here
                 'domain' => 'site',
-                // Slug of the page-template stylesheet to activate with this preset (see
+                // Slug of the theme's shape stylesheet to activate with this preset (see
                 // StylesheetProvider) - the only thing a preset ever controls: colors/fonts stay
                 // entirely admin-owned (see ThemeCrudController::applyPreset()), a preset never
-                // overwrites them
+                // overwrites them. Independent from page templates (see TemplateProviderInterface):
+                // a preset no longer references one, applying either never touches the other.
                 'stylesheet' => $data['stylesheet'] ?? null,
-                // Id of a config/page-templates/*.json (see SitePageTemplateProvider) whose blocks
-                // demo this preset's look in ?preset=X preview only (PageController::preview()) -
-                // applyPreset() never touches page content, so this never gets persisted either
-                'pageTemplate' => $data['pageTemplate'] ?? null,
                 // A closure, not an eagerly-generated string: ThemePresetRegistry (ConfigBundle) is a
                 // constructor dependency of ThemeCrudController, which EasyAdmin instantiates just to
                 // enumerate its routes while the router is still building its own route collection -

@@ -46,27 +46,8 @@ class SiteThemePresetProviderTest extends TestCase
         $this->assertSame('site', $presets['default']['domain']);
     }
 
-    // "default" carries no demo page-template: preview()'s previewBlocks stays null for it, page
-    // content is left untouched
-    public function testGetPresetsResolvesPageTemplateToNullWhenNotDeclared(): void
-    {
-        $presets = $this->createProvider()->getPresets();
-
-        $this->assertNull($presets['default']['pageTemplate']);
-    }
-
-    // "warm" declares a demo page-template (config/page-templates/agency-home-warm.json) so
-    // ?preset=warm previews its full intended arrangement, not just colors/fonts/shape
-    public function testGetPresetsResolvesPageTemplateWhenDeclared(): void
-    {
-        $presets = $this->createProvider()->getPresets();
-
-        $this->assertSame('agency-home-warm', $presets['warm']['pageTemplate']);
-    }
-
-    // "default" is a real theme like "warm"/"blueprint", not just an empty fallback: it has its own
-    // shape stylesheet (sass/page-templates/default.scss), so applying it after "warm"/"blueprint"
-    // switches to that shape instead of leaving the previous one stuck
+    // "default" is a real theme, not just an empty fallback: it has its own shape stylesheet
+    // (sass/themes/default.scss), materialized as a real preset instead of an implicit fallback
     public function testDefaultPresetDeclaresItsOwnStylesheet(): void
     {
         $presets = $this->createProvider()->getPresets();
@@ -81,7 +62,7 @@ class SiteThemePresetProviderTest extends TestCase
     {
         $presets = $this->createProvider()->getPresets();
 
-        $this->assertIsCallable($presets['blueprint']['previewUrl']);
-        $this->assertSame('/pages/home/preview?preset=blueprint', ($presets['blueprint']['previewUrl'])());
+        $this->assertIsCallable($presets['default']['previewUrl']);
+        $this->assertSame('/pages/home/preview?preset=default', ($presets['default']['previewUrl'])());
     }
 }

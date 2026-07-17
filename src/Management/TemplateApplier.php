@@ -12,13 +12,12 @@ use App\Entity\User;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
 
-// Turns a page template's "blocks" array (see SitePageTemplateProvider / config/page-templates/*.json)
-// into real Block entities on a Page - shared by PageCrudController::applyTemplate() (admin action)
-// and PageTemplateApplyCommand (CLI), so both stay in sync with a single implementation
-class PageTemplateApplier
+// Turns a template's "blocks" array (see SiteTemplateProvider / config/templates/*.json) into real
+// Block entities on a Page - shared by PageCrudController::applyTemplate() (admin action) and
+// TemplateApplyCommand (CLI), so both stay in sync with a single implementation
+class TemplateApplier
 {
-    // Builds transient Block objects from a template's block specs, attached to no Page - shared by
-    // apply() (persisted) and PageController::preview() (?preset=X's demo arrangement, never persisted)
+    // Builds transient Block objects from a template's block specs, attached to no Page
     public function build(array $template, int $startPosition = 0): array
     {
         $blocks = [];

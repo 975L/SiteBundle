@@ -12,9 +12,9 @@ services:
     # interface - CollectionEntrySourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
 
-    c975L\SiteBundle\Management\PageTemplateRegistry:
+    c975L\SiteBundle\Management\TemplateRegistry:
         arguments:
-            $providers: !tagged_iterator c975l.page_template_provider
+            $providers: !tagged_iterator c975l.template_provider
 
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:

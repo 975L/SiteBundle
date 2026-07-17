@@ -98,6 +98,10 @@ class SiteCreateCommand extends Command
             $scaffold['backedUp'],
             $scaffold['skipped']
         ));
+        $themeImportReminder = $this->scaffoldInstaller->themeImportReminder();
+        if (null !== $themeImportReminder) {
+            $io->note($themeImportReminder);
+        }
         $this->ensureUserChecker($io);
         $this->ensureLoginThrottling($io);
 

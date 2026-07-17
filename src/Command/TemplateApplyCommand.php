@@ -10,8 +10,8 @@
 namespace c975L\SiteBundle\Command;
 
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
+use c975L\SiteBundle\Management\TemplateApplier;
+use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -23,22 +23,22 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-// Creates or updates a page from a page template (config/page-templates/*.json, or an arbitrary JSON
-// file with the same {"label", "blocks":[{"kind","data"}]} shape) - the CLI counterpart of
+// Creates or updates a page from a template (config/templates/*.json, or an arbitrary JSON file with
+// the same {"label", "blocks":[{"kind","data"}]} shape) - the CLI counterpart of
 // PageCrudController::applyTemplate(), for scripted use when redesigning several pages/sites at once
-// (see PageTemplateApplier, shared by both). The page is left unpublished unless --publish is passed,
-// so it can be previewed first (see PageController::preview(), ?preset=<slug> for the design too).
+// (see TemplateApplier, shared by both). The page is left unpublished unless --publish is passed, so
+// it can be previewed first (see PageController::preview()).
 #[AsCommand(
-    name: 'c975l:site:pages:apply-template',
-    description: 'Creates or updates a page from a page template (config/page-templates/*.json or a JSON file path)'
+    name: 'c975l:site:templates:apply',
+    description: 'Creates or updates a page from a template (config/templates/*.json or a JSON file path)'
 )]
-class PageTemplateApplyCommand extends Command
+class TemplateApplyCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly PageRepository $pageRepository,
-        private readonly PageTemplateRegistry $pageTemplateRegistry,
-        private readonly PageTemplateApplier $pageTemplateApplier,
+        private readonly TemplateRegistry $templateRegistry,
+        private readonly TemplateApplier $templateApplier,
         private readonly Security $security,
     ) {
         parent::__construct();
@@ -50,7 +50,7 @@ class PageTemplateApplyCommand extends Command
             ->addArgument(
                 'template',
                 InputArgument::REQUIRED,
-                'Page template slug (config/page-templates/<slug>.json) or a path to a JSON file with the same shape'
+                'Template slug (config/templates/<slug>.json) or a path to a JSON file with the same shape'
             )
             ->addArgument('page', InputArgument::REQUIRED, 'Slug of the page to create or update')
             ->addOption('title', null, InputOption::VALUE_REQUIRED, "Title for the page, required only if it doesn't exist yet")
@@ -64,10 +64,10 @@ class PageTemplateApplyCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $templateArg = (string) $input->getArgument('template');
-        $template = $this->pageTemplateRegistry->get($templateArg) ?? $this->loadTemplateFromFile($templateArg);
+        $template = $this->templateRegistry->get($templateArg) ?? $this->loadTemplateFromFile($templateArg);
         if (null === $template) {
             $io->error(sprintf(
-                'No page template found for "%s" (not a known slug in config/page-templates/, nor a valid JSON file).',
+                'No template found for "%s" (not a known slug in config/templates/, nor a valid JSON file).',
                 $templateArg
             ));
 
@@ -108,7 +108,7 @@ class PageTemplateApplyCommand extends Command
             $page->setUser($user);
         }
 
-        $count = $this->pageTemplateApplier->apply($page, $template, $user);
+        $count = $this->templateApplier->apply($page, $template, $user);
         $this->entityManager->flush();
 
         $io->success(sprintf(
@@ -122,7 +122,7 @@ class PageTemplateApplyCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Falls back to an arbitrary JSON file when $templateArg isn't a known config/page-templates/ slug -
+    // Falls back to an arbitrary JSON file when $templateArg isn't a known config/templates/ slug -
     // lets a one-off Claude design be applied without shipping it as a permanent bundle asset
     private function loadTemplateFromFile(string $path): ?array
     {

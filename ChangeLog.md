@@ -1,5 +1,16 @@
 # Changelog
 
+## v7.5.1
+
+- Renamed "page templates" to "templates", decoupled from theme presets (see UPGRADE) [BC-Break]
+- Theme presets no longer reference a template; `?preset=` preview only shows the shape now [BC-Break]
+- Renamed `agency-home-warm` template to `agency-home`, `portfolio-blueprint` to `portfolio-showcase` [BC-Break]
+- Added a generic `default` template
+- Scaffold now also ships an editable `assets/styles/themes/theme.css`
+- `c975l:scaffold:install`/`c975l:site:create` remind you to wire its `@import` into `app.css` yourself
+- Removed the `warm`/`blueprint` theme presets (see UPGRADE) [BC-Break]
+- Renamed `sass/page-templates/` to `sass/themes/` [BC-Break]
+
 ## v7.5
 
 - Index-page inline row actions now icon-only with hover-title label (16/07/2026)

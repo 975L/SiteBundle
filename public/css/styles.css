@@ -357,6 +357,7 @@ template {
   --shadow-nav: 0 2px 4px var(--primary);
   --navbar-background: var(--white);
   --navbar-text: var(--black);
+  --navbar-active-color: var(--primary);
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
@@ -1248,7 +1249,7 @@ body.navbar-fixed {
   }
   .menu-item.active {
     background-color: transparent;
-    border-bottom-color: var(--primary);
+    border-bottom-color: var(--navbar-active-color);
   }
 }
 nav {

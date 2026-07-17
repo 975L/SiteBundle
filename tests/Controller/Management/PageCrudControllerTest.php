@@ -15,8 +15,8 @@ use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
-use c975L\SiteBundle\Management\PageTemplateApplier;
-use c975L\SiteBundle\Management\PageTemplateRegistry;
+use c975L\SiteBundle\Management\TemplateApplier;
+use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -144,8 +144,8 @@ class PageCrudControllerTest extends TestCase
         ?SluggerInterface $slugger = null,
         ?Connection $connection = null,
         ?TableExporter $tableExporter = null,
-        ?PageTemplateRegistry $pageTemplateRegistry = null,
-        ?PageTemplateApplier $pageTemplateApplier = null,
+        ?TemplateRegistry $templateRegistry = null,
+        ?TemplateApplier $templateApplier = null,
     ): PageCrudController {
         $translatorStub = $translator ?? $this->createStub(TranslatorInterface::class);
         if (null === $translator) {
@@ -164,8 +164,8 @@ class PageCrudControllerTest extends TestCase
             $slugger ?? new AsciiSlugger(),
             $connection ?? $this->createStub(Connection::class),
             $tableExporter ?? $this->createStub(TableExporter::class),
-            $pageTemplateRegistry ?? new PageTemplateRegistry([]),
-            $pageTemplateApplier ?? new PageTemplateApplier(),
+            $templateRegistry ?? new TemplateRegistry([]),
+            $templateApplier ?? new TemplateApplier(),
         );
     }
 
@@ -468,8 +468,8 @@ class PageCrudControllerTest extends TestCase
         $source = (new Page())->setTitle('Home')->setSlug('home');
         (new \ReflectionProperty(Page::class, 'id'))->setValue($source, 42);
 
-        $pageTemplateRegistry = $this->createMock(PageTemplateRegistry::class);
-        $pageTemplateRegistry->expects($this->once())->method('get')->with('agency-home-warm')->willReturn([
+        $templateRegistry = $this->createMock(TemplateRegistry::class);
+        $templateRegistry->expects($this->once())->method('get')->with('agency-home')->willReturn([
             'label' => 'label.test',
             'blocks' => [
                 ['kind' => 'hero', 'data' => ['title' => 'Hello']],
@@ -488,7 +488,7 @@ class PageCrudControllerTest extends TestCase
         );
         $manager->expects($this->once())->method('flush');
 
-        $controller = $this->createController(pageRepository: $pageRepository, pageTemplateRegistry: $pageTemplateRegistry);
+        $controller = $this->createController(pageRepository: $pageRepository, templateRegistry: $templateRegistry);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -496,7 +496,7 @@ class PageCrudControllerTest extends TestCase
 
         $response = $controller->applyTemplate(
             $this->createAdminContext($source),
-            new Request(['template' => 'agency-home-warm']),
+            new Request(['template' => 'agency-home']),
             $manager
         );
 
@@ -515,14 +515,14 @@ class PageCrudControllerTest extends TestCase
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
 
-        $pageTemplateRegistry = $this->createStub(PageTemplateRegistry::class);
-        $pageTemplateRegistry->method('get')->willReturn(null);
+        $templateRegistry = $this->createStub(TemplateRegistry::class);
+        $templateRegistry->method('get')->willReturn(null);
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('persist');
         $manager->expects($this->never())->method('flush');
 
-        $controller = $this->createController(pageTemplateRegistry: $pageTemplateRegistry);
+        $controller = $this->createController(templateRegistry: $templateRegistry);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
