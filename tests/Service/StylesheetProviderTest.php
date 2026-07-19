@@ -15,10 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class StylesheetProviderTest extends TestCase
 {
-    // The bundle's own stylesheet and the compiled theme variables file are contributed, in that
-    // order (theme variables must come after styles.min.css to win the cascade), when no theme
-    // shape stylesheet is active. The cookie-consent library's own CSS is loaded dynamically by its
-    // Stimulus controller instead (see assets/js/cookie-consent.js), not listed here.
+    // The bundle's own stylesheet and the compiled theme variables file are contributed, in that order (theme variables must come after styles.min.css to win the cascade), when no theme shape stylesheet is active. The cookie-consent library's own CSS is loaded dynamically by its Stimulus controller instead (see assets/js/cookie-consent.js), not listed here.
     public function testGetStylesheetsReturnsBundleAndThemeStylesheetsWhenNoShapeActive(): void
     {
         $configService = $this->createMock(ConfigServiceInterface::class);
@@ -33,8 +30,7 @@ class StylesheetProviderTest extends TestCase
         );
     }
 
-    // The active theme's shape stylesheet is inserted after site-theme.css, so it can override the
-    // design tokens defined there
+    // The active theme's shape stylesheet is inserted after site-theme.css, so it can override the design tokens defined there
     public function testGetStylesheetsInsertsActiveThemeStylesheet(): void
     {
         $configService = $this->createMock(ConfigServiceInterface::class);

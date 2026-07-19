@@ -161,8 +161,7 @@ class ExportTablesCommand extends Command
         return [$tables, null];
     }
 
-    // Dumps data only, wrapped in FK-checks-off + a TRUNCATE per table so the file can be replayed
-    // as-is on a target that already has (possibly wrong) data in these tables
+    // Dumps data only, wrapped in FK-checks-off + a TRUNCATE per table so the file can be replayed as-is on a target that already has (possibly wrong) data in these tables
     private function dumpTables(string $database, array $tables, string $credentialsFile, string $outputPath): bool
     {
         $process = new Process(array_merge(

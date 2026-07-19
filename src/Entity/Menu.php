@@ -24,9 +24,7 @@ class Menu implements HasBlocksInterface
 {
     use HasBlocksTrait;
 
-    // Site-wide menus, one row per location - enforced at the DB level (see $location). Each owns a
-    // single ordered $blocks collection: menu links are the "menu_link" Block kind (see
-    // MenuLinkType/MenuExtension::getMenuLinkUrl()), sortable alongside any other block
+    // Site-wide menus, one row per location - enforced at the DB level (see $location). Each owns a single ordered $blocks collection: menu links are the "menu_link" Block kind (see MenuLinkType/MenuExtension::getMenuLinkUrl()), sortable alongside any other block
     public const LOCATION_NAVBAR = 'navbar';
     public const LOCATION_FOOTER = 'footer';
     public const LOCATION_EMAIL_FOOTER = 'email-footer';

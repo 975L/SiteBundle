@@ -3,35 +3,38 @@
 {% set title = 'label.please_sign_in'|trans({}, 'site') %}
 
 {% block content %}
-    <form method="post">
-        {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-        {% endif %}
+    {% if app.user %}
+        <div class="alert alert-info text text-center">
+            {{ 'text.logged_in_as'|trans({'%user%': app.user.userIdentifier}, 'site') }} <a href="{{ logout_path() }}">{{ 'label.signout'|trans({}, 'site') }}</a>
+        </div>
+    {% else %}
+        <form method="post">
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
 
-        {% if app.user %}
-            <div class="text text-center">
-                {{ 'text.logged_in_as'|trans({'%user%': app.user.userIdentifier}, 'site') }} <a href="{{ logout_path() }}">{{ 'label.signout'|trans({}, 'site') }}</a>
+            <div>
+                <label for="username" class="required">{{ 'label.email'|trans({}, 'site') }}</label>
+                <input type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus>
             </div>
-        {% endif %}
+            <div>
+                <label for="password" class="required">{{ 'label.password'|trans({}, 'site') }}</label>
+                <input type="password" name="_password" id="password" autocomplete="current-password" required>
+            </div>
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
-        <div>
-            <label for="username" class="required">{{ 'label.email'|trans({}, 'site') }}</label>
-            <input type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus>
-        </div>
-        <div>
-            <label for="password" class="required">{{ 'label.password'|trans({}, 'site') }}</label>
-            <input type="password" name="_password" id="password" autocomplete="current-password" required>
-        </div>
-        <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+            <button class="btn btn-large btn-primary" type="submit">
+                {{ 'label.sign_in'|trans({}, 'site') }}
+            </button>
 
-        <button class="btn btn-large btn-primary" type="submit">
-            {{ 'label.sign_in'|trans({}, 'site') }}
-        </button>
-
-        <div class="text text-center">
-            <a href="{{ path('app_forgot_password_request') }}">{{ 'label.forgot_password'|trans({}, 'site') }}</a>
-            -
-            <a href="{{ path('app_register') }}">{{ 'label.create_account'|trans({}, 'site') }}</a>
-        </div>
-    </form>
+            {# register/reset-password-request are Pages with an admin-editable, per-locale slug (carrying a "form" Block), not fixed routes - resolve the real Page, falling back to the generic bare-form route if the admin removed it #}
+            {% set resetPasswordPage = site_page_for_form_block('reset_password_request') %}
+            {% set registerPage = site_page_for_form_block('register') %}
+            <div class="text text-center">
+                <a href="{{ resetPasswordPage ? path('page_display', {'page': resetPasswordPage.slug}) : path('ui_form_submit', {'name': 'reset_password_request'}) }}">{{ 'label.forgot_password'|trans({}, 'site') }}</a>
+                -
+                <a href="{{ registerPage ? path('page_display', {'page': registerPage.slug}) : path('ui_form_submit', {'name': 'register'}) }}">{{ 'label.create_account'|trans({}, 'site') }}</a>
+            </div>
+        </form>
+    {% endif %}
 {% endblock %}

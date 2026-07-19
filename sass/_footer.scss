@@ -40,9 +40,7 @@ footer .menu-link {
     padding: 0.25rem;
 }
 
-// .menu-link's own hover/focus background (_menu.scss, meant for the colored navbar dropdown) isn't
-// scoped to it - this footer-scoped rule wins on specificity alone (0,2,1) > (0,2,0) regardless of
-// stylesheet order, so a plain/minimal footer template can turn it off (transparent) independently
+// .menu-link's own hover/focus background (_menu.scss, meant for the colored navbar dropdown) isn't scoped to it - this footer-scoped rule wins on specificity alone (0,2,1) > (0,2,0) regardless of stylesheet order, so a plain/minimal footer template can turn it off (transparent) independently
 footer .menu-link:hover,
 footer .menu-link:focus {
     background-color: var(--footer-link-hover-background);
@@ -66,8 +64,7 @@ footer .made-by {
     gap: 2em;
 }
 
-// img-above has no color of its own, so the "*" reset (_general.scss) wins over the inherited
-// footer a color - a specified value always beats an inherited one, whatever their specificity
+// img-above has no color of its own, so the "*" reset (_general.scss) wins over the inherited footer a color - a specified value always beats an inherited one, whatever their specificity
 footer .img-above {
     color: var(--footer-text);
 }

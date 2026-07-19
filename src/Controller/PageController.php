@@ -70,9 +70,7 @@ class PageController extends AbstractController
     {
         $homePage = $this->pageService->findOneBySlug('home');
         if ($homePage) {
-            // No "page" route parameter on "/" (unlike page_display's "/pages/{page}") - set it
-            // manually so a "collection" block rendered on the home page can still resolve its own
-            // items' detail links (see UiBundle's CollectionExtension::buildDetailUrl())
+            // No "page" route parameter on "/" (unlike page_display's "/pages/{page}") - set it manually so a "collection" block rendered on the home page can still resolve its own items' detail links (see UiBundle's CollectionExtension::buildDetailUrl())
             $request->attributes->set('page', 'home');
 
             return $this->render(
@@ -121,8 +119,7 @@ class PageController extends AbstractController
         $detailHtml = null;
         $detailTitle = null;
 
-        // No exact Page for this slug: the last segment may be a "collection" block's item slug,
-        // carried by the Page one level up (see resolveCollectionDetail())
+        // No exact Page for this slug: the last segment may be a "collection" block's item slug, carried by the Page one level up (see resolveCollectionDetail())
         if (null === $pageObject && str_contains($slug, '/')) {
             [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
         }
@@ -143,13 +140,7 @@ class PageController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-    // Tries the slug's last segment as a "collection" block's item slug, resolved against the
-    // block's own source, then rendered via a separate Page (the block's "detailPage") whose own
-    // blocks render normally, with "collectionItem" (see CollectionItemContext) set for the
-    // duration of this render - no Page/Block row persisted per item (see README, "Item detail
-    // pages"). Tries each "collection" block on the page independently, so only the one whose
-    // source resolves this item slug wins.
-    // @return array{0: ?Page, 1: ?string, 2: ?string}
+    // Tries the slug's last segment as a "collection" block's item slug, resolved against the block's own source, then rendered via a separate Page (the block's "detailPage") whose own blocks render normally, with "collectionItem" (see CollectionItemContext) set for the duration of this render - no Page/Block row persisted per item (see README, "Item detail pages"); tries each "collection" block on the page independently, so only the one whose source resolves this item slug wins; @return array{0: ?Page, 1: ?string, 2: ?string}
     private function resolveCollectionDetail(string $slug): array
     {
         $lastSlash = strrpos($slug, '/');
@@ -210,8 +201,7 @@ class PageController extends AbstractController
         $detailHtml = null;
         $detailTitle = null;
 
-        // Same fallback as display(): lets an editor preview an unpublished Page's own collection
-        // detail views before publishing
+        // Same fallback as display(): lets an editor preview an unpublished Page's own collection detail views before publishing
         if (null === $pageObject && str_contains($slug, '/')) {
             [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
         }
@@ -220,11 +210,7 @@ class PageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Optional ?preset=<slug>: previews a theme preset's colors/fonts/shape for this request only
-        // (see templates/pages/page.html.twig), without writing anything to site_config - lets an
-        // editor judge a site-wide preset's effect before committing to it via "Apply preset". Only
-        // ever previews the design, never the page's blocks - a template is applied independently
-        // (see PageCrudController::applyTemplate())
+        // Optional ?preset=<slug>: previews a theme preset's colors/fonts/shape for this request only (see templates/pages/page.html.twig), without writing anything to site_config - lets an editor judge a site-wide preset's effect before committing to it via "Apply preset". Only ever previews the design, never the page's blocks - a template is applied independently (see PageCrudController::applyTemplate())
         $previewPreset = $this->themePresetProvider?->getPresets()[(string) $request->query->get('preset')] ?? null;
 
         return $this->render(

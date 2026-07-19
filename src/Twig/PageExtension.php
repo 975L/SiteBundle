@@ -26,6 +26,7 @@ class PageExtension extends AbstractExtension
         return [
             new TwigFunction('site_page', $this->getPage(...)),
             new TwigFunction('site_legal_pages', $this->getLegalPages(...)),
+            new TwigFunction('site_page_for_form_block', $this->getPageForFormBlock(...)),
         ];
     }
 
@@ -33,6 +34,12 @@ class PageExtension extends AbstractExtension
     public function getPage(?int $id): ?Page
     {
         return null !== $id ? $this->pageRepository->findOneByIdWithBlocks($id) : null;
+    }
+
+    // Resolves the published Page carrying a "form" Block pointing at the given Form name (e.g. "register") - used to link a generic/bare route's own cross-references to the real Page instead, see PageRepository::findOneByFormBlockName()
+    public function getPageForFormBlock(string $formName): ?Page
+    {
+        return $this->pageRepository->findOneByFormBlockName($formName);
     }
 
     // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section)

@@ -46,10 +46,7 @@ class PageControllerTest extends TestCase
         return $service;
     }
 
-    // Wires a minimal container providing only the services AbstractController touches in this class:
-    // 'twig' (render), 'router' (redirectToRoute/generateUrl) and 'security.authorization_checker'
-    // (preview) - the same Environment stub is also passed as the constructor's own $twig (used by
-    // resolveCollectionDetail()), matching real DI where both resolve to the same "twig" service
+    // Wires a minimal container providing only the services AbstractController touches in this class: 'twig' (render), 'router' (redirectToRoute/generateUrl) and 'security.authorization_checker' (preview) - the same Environment stub is also passed as the constructor's own $twig (used by resolveCollectionDetail()), matching real DI where both resolve to the same "twig" service
     private function createController(
         PageServiceInterface $pageService,
         ConfigServiceInterface $configService,
@@ -65,10 +62,7 @@ class PageControllerTest extends TestCase
             );
         }
 
-        // Defaults to null (not a real SiteThemePresetProvider): that class implements ConfigBundle's
-        // ThemePresetProviderInterface, which isn't in this bundle's own installed vendor snapshot yet
-        // (same reason SiteThemePresetProviderTest already fails) - tests that don't cover preset
-        // preview don't need to pay that cost, only the ones that pass a real provider explicitly do
+        // Defaults to null (not a real SiteThemePresetProvider): that class implements ConfigBundle's ThemePresetProviderInterface, which isn't in this bundle's own installed vendor snapshot yet (same reason SiteThemePresetProviderTest already fails) - tests that don't cover preset preview don't need to pay that cost, only the ones that pass a real provider explicitly do
         $controller = new PageController(
             $pageService,
             $configService,
@@ -140,8 +134,7 @@ class PageControllerTest extends TestCase
         $controller->home(new Request());
     }
 
-    // A "collection" block rendered on the home page (route "/", no "{page}" route parameter unlike
-    // page_display's "/pages/{page}") must still be able to resolve its own items' detail links
+    // A "collection" block rendered on the home page (route "/", no "{page}" route parameter unlike page_display's "/pages/{page}") must still be able to resolve its own items' detail links
     public function testHomeSetsPageRequestAttributeToHomeForCollectionBlockDetailLinks(): void
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
@@ -221,9 +214,7 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/page.html.twig:About', $response->getContent());
     }
 
-    // No exact Page for "catalog/item-1", but "catalog" exists with a "collection" block
-    // (source + detailPage) - the item slug resolves against the source's own "detail" callable, then
-    // the SEPARATE detail Page's own blocks render normally, with no dedicated Page/Block per item
+    // No exact Page for "catalog/item-1", but "catalog" exists with a "collection" block (source + detailPage) - the item slug resolves against the source's own "detail" callable, then the SEPARATE detail Page's own blocks render normally, with no dedicated Page/Block per item
     public function testDisplayResolvesCollectionDetailFromASeparateDetailPage(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -273,9 +264,7 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:1', $capturedPageParameters['detailHtml']);
     }
 
-    // A page can carry more than one "collection" block, each with its own source/detailPage - only
-    // the one whose source actually resolves the item slug must win, not just the last one on the page
-    // (the matching block is deliberately NOT last here, so a "last one wins" regression would 404)
+    // A page can carry more than one "collection" block, each with its own source/detailPage - only the one whose source actually resolves the item slug must win, not just the last one on the page (the matching block is deliberately NOT last here, so a "last one wins" regression would 404)
     public function testDisplayResolvesTheCollectionBlockWhoseSourceMatchesWhenThePageHasSeveral(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -329,8 +318,7 @@ class PageControllerTest extends TestCase
         $this->assertSame('Member One', $capturedPageParameters['detailTitle']);
     }
 
-    // The item's data is exposed to the detail Page's own blocks via the "collectionItem" Twig global
-    // (CollectionItemContext), not passed as this render's own $context
+    // The item's data is exposed to the detail Page's own blocks via the "collectionItem" Twig global (CollectionItemContext), not passed as this render's own $context
     public function testDisplaySetsTheCollectionItemContextBeforeRenderingTheDetailPage(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -378,8 +366,7 @@ class PageControllerTest extends TestCase
         $this->assertSame(['title' => 'Item One'], $capturedItem);
     }
 
-    // The item slug's title (from the source's own "detail" data) is forwarded as "detailTitle", so
-    // that URL's <title> reflects the item, not the parent Page's own generic one
+    // The item slug's title (from the source's own "detail" data) is forwarded as "detailTitle", so that URL's <title> reflects the item, not the parent Page's own generic one
     public function testDisplayForwardsTheItemsOwnTitleAsDetailTitle(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -419,8 +406,7 @@ class PageControllerTest extends TestCase
         $this->assertSame('Item One', $capturedPageParameters['detailTitle']);
     }
 
-    // No "detailPage" set on the "collection" block: nothing tells resolveCollectionDetail() which Page
-    // renders the detail view, so this falls through to a plain 404 - same as an unknown parent slug
+    // No "detailPage" set on the "collection" block: nothing tells resolveCollectionDetail() which Page renders the detail view, so this falls through to a plain 404 - same as an unknown parent slug
     public function testDisplayThrowsNotFoundWhenTheCollectionBlockHasNoDetailPage(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -439,8 +425,7 @@ class PageControllerTest extends TestCase
         $controller->display('catalog/item-1');
     }
 
-    // "detailPage" is set but no Page exists with that slug (e.g. a typo, or it was deleted): falls
-    // through to a 404 rather than an error
+    // "detailPage" is set but no Page exists with that slug (e.g. a typo, or it was deleted): falls through to a 404 rather than an error
     public function testDisplayThrowsNotFoundWhenTheDetailPageDoesNotExist(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
@@ -533,8 +518,7 @@ class PageControllerTest extends TestCase
         $controller->preview('unknown', new Request());
     }
 
-    // An editor can preview an unpublished parent Page's own collection detail views too, before
-    // publishing anything - same resolveCollectionDetail() fallback as display()
+    // An editor can preview an unpublished parent Page's own collection detail views too, before publishing anything - same resolveCollectionDetail() fallback as display()
     public function testPreviewResolvesCollectionDetailForAnUnpublishedParentPage(): void
     {
         $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(false);
@@ -577,8 +561,7 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:0', $capturedPageParameters['detailHtml']);
     }
 
-    // Without a wired SiteThemePresetProvider (optional dependency), ?preset is simply ignored -
-    // graceful degradation rather than a hard failure
+    // Without a wired SiteThemePresetProvider (optional dependency), ?preset is simply ignored - graceful degradation rather than a hard failure
     public function testPreviewResolvesToNullPresetWhenNoneRequested(): void
     {
         $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);

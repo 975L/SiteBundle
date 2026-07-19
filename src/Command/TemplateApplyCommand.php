@@ -23,11 +23,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-// Creates or updates a page from a template (config/templates/*.json, or an arbitrary JSON file with
-// the same {"label", "blocks":[{"kind","data"}]} shape) - the CLI counterpart of
-// PageCrudController::applyTemplate(), for scripted use when redesigning several pages/sites at once
-// (see TemplateApplier, shared by both). The page is left unpublished unless --publish is passed, so
-// it can be previewed first (see PageController::preview()).
+// Creates or updates a page from a template (config/templates/*.json, or an arbitrary JSON file with the same {"label", "blocks":[{"kind","data"}]} shape) - the CLI counterpart of PageCrudController::applyTemplate(), for scripted use when redesigning several pages/sites at once (see TemplateApplier, shared by both). The page is left unpublished unless --publish is passed, so it can be previewed first (see PageController::preview()).
 #[AsCommand(
     name: 'c975l:site:templates:apply',
     description: 'Creates or updates a page from a template (config/templates/*.json or a JSON file path)'
@@ -122,8 +118,7 @@ class TemplateApplyCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Falls back to an arbitrary JSON file when $templateArg isn't a known config/templates/ slug -
-    // lets a one-off Claude design be applied without shipping it as a permanent bundle asset
+    // Falls back to an arbitrary JSON file when $templateArg isn't a known config/templates/ slug - lets a one-off Claude design be applied without shipping it as a permanent bundle asset
     private function loadTemplateFromFile(string $path): ?array
     {
         if (!is_file($path)) {

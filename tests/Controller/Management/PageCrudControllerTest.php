@@ -33,13 +33,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Context\CrudContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityRepositoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Registry\AdminControllerRegistryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\CrudDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
@@ -60,9 +60,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// App\Entity\User (the type Page::setUser() actually requires) belongs to the consuming application,
-// not to this standalone bundle checkout - so Security::getUser() is always stubbed to null here,
-// covering the "nobody logged in" branch only, same limitation as UiBundle's BlockUserListenerTest
+// App\Entity\User (the type Page::setUser() actually requires) belongs to the consuming application, not to this standalone bundle checkout - so Security::getUser() is always stubbed to null here, covering the "nobody logged in" branch only, same limitation as UiBundle's BlockUserListenerTest
 class PageCrudControllerTest extends TestCase
 {
     private function createContainer(array $services): Container
@@ -96,8 +94,7 @@ class PageCrudControllerTest extends TestCase
         return $requestStack;
     }
 
-    // AdminUrlGenerator is final - can't be mocked, so it's built for real with stubbed interface
-    // collaborators, matching how the framework itself wires it
+    // AdminUrlGenerator is final - can't be mocked, so it's built for real with stubbed interface collaborators, matching how the framework itself wires it
     private function createAdminUrlGenerator(string $generatedUrl = '/management/pages'): AdminUrlGenerator
     {
         $adminControllers = $this->createStub(AdminControllerRegistryInterface::class);
@@ -120,8 +117,7 @@ class PageCrudControllerTest extends TestCase
         );
     }
 
-    // AdminContextProvider is final too, but trivial enough (just reads a request attribute) to
-    // build for real instead - avoids needing to mock it
+    // AdminContextProvider is final too, but trivial enough (just reads a request attribute) to build for real instead - avoids needing to mock it
     private function createAdminContextProvider(?AdminContext $context = null): AdminContextProvider
     {
         $requestStack = new RequestStack();
@@ -249,8 +245,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($page->getModification());
     }
 
-    // Resyncs the slug from the new title, mirroring SlugField's own JS behavior server-side
-    // (see the "titleConfirm" Stimulus controller referenced in configureFields)
+    // Resyncs the slug from the new title, mirroring SlugField's own JS behavior server-side (see the "title-confirm" Stimulus controller referenced in configureFields)
     public function testUpdateEntityResyncsSlugWhenTitleChanges(): void
     {
         $page = (new Page())->setTitle('Renamed Page')->setSlug('old-title');
@@ -279,8 +274,7 @@ class PageCrudControllerTest extends TestCase
         $page = (new Page())->setTitle('Same Title')->setSlug('new-slug');
 
         $manager = $this->createManagerWithOriginalData(['slug' => 'old-slug', 'title' => 'Same Title']);
-        // parent::updateEntity() also persists the Page itself - capture every persisted entity
-        // rather than asserting a single call, since a Redirect is persisted in addition to it
+        // parent::updateEntity() also persists the Page itself - capture every persisted entity rather than asserting a single call, since a Redirect is persisted in addition to it
         $persisted = [];
         $manager->method('persist')->willReturnCallback(function (object $entity) use (&$persisted): void {
             $persisted[] = $entity;
@@ -463,8 +457,7 @@ class PageCrudControllerTest extends TestCase
         );
     }
 
-    // Never mutates the live/source page - builds an unpublished copy carrying the template's blocks
-    // and marked as replacing the source, then redirects to editing the copy, not the source
+    // Never mutates the live/source page - builds an unpublished copy carrying the template's blocks and marked as replacing the source, then redirects to editing the copy, not the source
     public function testApplyTemplateCreatesAnUnpublishedCopyMarkedAsReplacingTheSource(): void
     {
         $source = (new Page())->setTitle('Home')->setSlug('home');
@@ -511,8 +504,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame(42, $capturedCopy->getReplaces());
     }
 
-    // An unknown ?template=<slug> is a no-op: no copy created, nothing persisted/flushed, redirects
-    // back to the source page itself (there is no copy to redirect to)
+    // An unknown ?template=<slug> is a no-op: no copy created, nothing persisted/flushed, redirects back to the source page itself (there is no copy to redirect to)
     public function testApplyTemplateRedirectsToSourceWhenTemplateUnknown(): void
     {
         $page = (new Page())->setTitle('Home')->setSlug('home');
@@ -557,9 +549,7 @@ class PageCrudControllerTest extends TestCase
         );
     }
 
-    // The original is looked up by id (not slug, since a concurrent draft's own publishAsReplacement()
-    // may have since changed it), its slug is archived first (own flush) so the unique constraint on
-    // slug is never violated, then the copy takes it over, gets published, and "replaces" is cleared
+    // The original is looked up by id (not slug, since a concurrent draft's own publishAsReplacement() may have since changed it), its slug is archived first (own flush) so the unique constraint on slug is never violated, then the copy takes it over, gets published, and "replaces" is cleared
     public function testPublishAsReplacementSwapsSlugsPublishesCopyAndTrashesOriginal(): void
     {
         $original = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
@@ -595,8 +585,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertNull($copy->getReplaces());
     }
 
-    // The original may already be gone (deleted/renamed since the copy was created) - aborts safely,
-    // flashes an error, never touches the copy
+    // The original may already be gone (deleted/renamed since the copy was created) - aborts safely, flashes an error, never touches the copy
     public function testPublishAsReplacementFlashesErrorWhenOriginalNotFound(): void
     {
         $copy = (new Page())->setTitle('Draft')->setSlug('draft')->setReplaces(999);
@@ -619,9 +608,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($copy->isPublished());
     }
 
-    // A page can't replace itself - only reachable via a crafted/stale "?replaces=<own id>" URL (the
-    // dropdown's own displayIf() already hides this option) - without this guard, $original and $copy
-    // resolve to the same entity and the two-flush swap would leave it both published and deleted at once
+    // A page can't replace itself - only reachable via a crafted/stale "?replaces=<own id>" URL (the dropdown's own displayIf() already hides this option) - without this guard, $original and $copy resolve to the same entity and the two-flush swap would leave it both published and deleted at once
     public function testPublishAsReplacementFlashesErrorWhenTargetIsItself(): void
     {
         $page = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
@@ -647,10 +634,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($page->isDeleted());
     }
 
-    // Two drafts created (via applyTemplate) from the same original before either is published: the
-    // first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own
-    // publishAsReplacement() must not take over that mangled slug - it's treated the same as "original
-    // not found" instead of silently publishing under a garbage URL
+    // Two drafts created (via applyTemplate) from the same original before either is published: the first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own publishAsReplacement() must not take over that mangled slug - it's treated the same as "original not found" instead of silently publishing under a garbage URL
     public function testPublishAsReplacementFlashesErrorWhenOriginalAlreadyArchivedByAnotherDraft(): void
     {
         $original = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home');
@@ -796,23 +780,21 @@ class PageCrudControllerTest extends TestCase
 
     // --- configureActions / configureFields / configureFilters / createIndexQueryBuilder ------------------
 
-    // AdminContextProvider simulating being on a given EasyAdmin CRUD page (INDEX/EDIT/DETAIL...) - the
-    // "publishAsReplacement" dropdown's own every-non-deleted-page query only ever runs on PAGE_EDIT
-    // (see configureActions()), so tests need to simulate which page they're on
-    private function createAdminContextProviderOnPage(string $pageName): AdminContextProvider
+    // RequestStack simulating being on a given EasyAdmin CRUD page (INDEX/EDIT/DETAIL...) - the "publishAsReplacement" dropdown's own every-non-deleted-page query only ever runs on PAGE_EDIT (see configureActions(), which reads the crudAction request attribute directly since the AdminContext isn't attached to the request yet at that point). It's a route default merged into attributes by Symfony's router itself, not a query param
+    private function createRequestStackOnPage(string $pageName): RequestStack
     {
-        $crudDto = new CrudDto();
-        $crudDto->setPageName($pageName);
+        $request = new Request();
+        $request->attributes->set(EA::CRUD_ACTION, $pageName);
 
-        return $this->createAdminContextProvider(
-            AdminContext::forTesting(crudContext: CrudContext::forTesting(crudDto: $crudDto))
-        );
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        return $requestStack;
     }
 
     public function testConfigureActionsBuildsWithoutError(): void
     {
-        // A real EasyAdmin runtime pre-populates default actions (EDIT, DELETE...) before calling
-        // configureActions() - reorder()/update() below assume EDIT already exists on PAGE_INDEX
+        // A real EasyAdmin runtime pre-populates default actions (EDIT, DELETE...) before calling configureActions() - reorder()/update() below assume EDIT already exists on PAGE_INDEX
         $actions = $this->createController()->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
@@ -824,8 +806,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
-    // Not on the edit screen: the "publishAsReplacement" dropdown is never shown there (only added to
-    // Crud::PAGE_EDIT, see configureActions()), so its every-non-deleted-page query must not even run
+    // Not on the edit screen: the "publishAsReplacement" dropdown is never shown there (only added to Crud::PAGE_EDIT, see configureActions()), so its every-non-deleted-page query must not even run
     public function testConfigureActionsSkipsPublishAsReplacementQueryWhenNotOnEditPage(): void
     {
         $pageRepository = $this->createMock(PageRepository::class);
@@ -833,7 +814,7 @@ class PageCrudControllerTest extends TestCase
 
         $actions = $this->createController(
             pageRepository: $pageRepository,
-            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_INDEX)
+            requestStack: $this->createRequestStackOnPage(Crud::PAGE_INDEX)
         )->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
@@ -845,10 +826,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
-    // On the edit screen, but no other page to offer as a target: the dropdown is built from
-    // pageRepository's own query (see configureActions()), which must come back an empty array, not
-    // PHPUnit's default null-for-mixed-return-type - otherwise the group would end up with zero
-    // actions, which EasyAdmin's ActionGroup rejects
+    // On the edit screen, but no other page to offer as a target: the dropdown is built from pageRepository's own query (see configureActions()), which must come back an empty array, not PHPUnit's default null-for-mixed-return-type - otherwise the group would end up with zero actions, which EasyAdmin's ActionGroup rejects
     public function testConfigureActionsBuildsWithoutErrorOnEditPageWithNoOtherPage(): void
     {
         $queryBuilder = $this->createStub(QueryBuilder::class);
@@ -862,7 +840,7 @@ class PageCrudControllerTest extends TestCase
 
         $actions = $this->createController(
             pageRepository: $pageRepository,
-            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_EDIT)
+            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
         )->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
@@ -874,8 +852,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
-    // On the edit screen, with at least one other page to offer - covers the group actually being built
-    // and added, instead of skipped
+    // On the edit screen, with at least one other page to offer - covers the group actually being built and added, instead of skipped
     public function testConfigureActionsBuildsWithoutErrorWhenAnotherPageExists(): void
     {
         $other = (new Page())->setTitle('Other')->setSlug('other');
@@ -892,7 +869,7 @@ class PageCrudControllerTest extends TestCase
 
         $actions = $this->createController(
             pageRepository: $pageRepository,
-            adminContextProvider: $this->createAdminContextProviderOnPage(Crud::PAGE_EDIT)
+            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
         )->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
@@ -929,9 +906,7 @@ class PageCrudControllerTest extends TestCase
         return null;
     }
 
-    // The titleConfirm Stimulus controller (assets/js/title-confirm.js) reuses EasyAdmin's confirmation
-    // modal, which isn't rendered on the "new" crud page (only edit/index/detail) - and there's no
-    // existing slug to preserve yet anyway, so the field must stay plain there
+    // The "title-confirm" Stimulus controller (assets/js/title-confirm.js) reuses EasyAdmin's confirmation modal, which isn't rendered on the "new" crud page (only edit/index/detail) - and there's no existing slug to preserve yet anyway, so the field must stay plain there
     public function testConfigureFieldsDoesNotAddTitleConfirmAttributesOnNewPage(): void
     {
         $fields = $this->createController()->configureFields(Crud::PAGE_NEW);
@@ -945,7 +920,7 @@ class PageCrudControllerTest extends TestCase
         $fields = $this->createController()->configureFields(Crud::PAGE_EDIT);
         $title = $this->findFieldByProperty($fields, 'title');
 
-        $this->assertSame('titleConfirm', $title->getAsDto()->getFormTypeOptions()['attr']['data-controller'] ?? null);
+        $this->assertSame('title-confirm', $title->getAsDto()->getFormTypeOptions()['attr']['data-controller'] ?? null);
     }
 
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void
@@ -998,8 +973,7 @@ class PageCrudControllerTest extends TestCase
         $controller->restore($this->createAdminContext(new Page()), $this->createStub(EntityManagerInterface::class));
     }
 
-    // A page archived by publishAsReplacement() reclaims its real slug on restore if nothing else has
-    // taken it since, and archivedSlug is cleared
+    // A page archived by publishAsReplacement() reclaims its real slug on restore if nothing else has taken it since, and archivedSlug is cleared
     public function testRestoreReclaimsArchivedSlugWhenFree(): void
     {
         $page = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);
@@ -1020,8 +994,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($page->isDeleted());
     }
 
-    // Someone else has taken the archived slug since - keeps the technical slug instead, still clears
-    // archivedSlug (no dangling reference to retry indefinitely)
+    // Someone else has taken the archived slug since - keeps the technical slug instead, still clears archivedSlug (no dangling reference to retry indefinitely)
     public function testRestoreKeepsTechnicalSlugWhenArchivedSlugIsTaken(): void
     {
         $page = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);

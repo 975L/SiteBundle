@@ -1,0 +1,47 @@
+<?php
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+namespace c975L\SiteBundle\Tests\Service;
+
+use c975L\SiteBundle\Service\EmailVerifier;
+use c975L\SiteBundle\Service\UserRegistrar;
+use c975L\SiteBundle\Tests\Fixtures\UserStub;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+class UserRegistrarTest extends TestCase
+{
+    public function testRegisterHashesPersistsAndSendsConfirmation(): void
+    {
+        $user = new UserStub('new-user@example.test');
+
+        $passwordHasher = $this->createStub(UserPasswordHasherInterface::class);
+        $passwordHasher->method('hashPassword')->willReturn('hashed-password');
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())->method('persist')->with($user);
+        $entityManager->expects($this->once())->method('flush');
+
+        $emailVerifier = $this->createMock(EmailVerifier::class);
+        $email = new TemplatedEmail();
+        $emailVerifier->expects($this->once())
+            ->method('sendEmailConfirmation')
+            ->with('app_verify_email', $user, $email)
+        ;
+
+        $registrar = new UserRegistrar($passwordHasher, $entityManager, $emailVerifier);
+        $registrar->register($user, 'Str0ngPassword!', 'app_verify_email', $email);
+
+        $this->assertSame('hashed-password', $user->getPassword());
+        $this->assertNotNull($user->getCreation());
+        $this->assertNotNull($user->getModification());
+    }
+}

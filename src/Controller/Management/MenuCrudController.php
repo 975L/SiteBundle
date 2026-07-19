@@ -34,9 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
 
-// Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection
-// of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType),
-// sortable alongside any other block
+// Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
     private const LOCATION_LABELS = [
@@ -58,9 +56,7 @@ class MenuCrudController extends AbstractCrudController
         return Menu::class;
     }
 
-    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form
-    // can't represent an empty array, only an absent key), which has to be normalized to [] below or
-    // Symfony skips add/remove handling entirely for the field (see PageCrudController for the same trick)
+    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling entirely for the field (see PageCrudController for the same trick)
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -124,8 +120,7 @@ class MenuCrudController extends AbstractCrudController
     {
         $isNew = Crud::PAGE_NEW === $pageName;
 
-        // Only locations not yet used can be picked when creating a new row - avoids ever hitting the
-        // DB-level unique constraint on Menu::$location
+        // Only locations not yet used can be picked when creating a new row - avoids ever hitting the DB-level unique constraint on Menu::$location
         $usedLocations = $this->menuRepository->createQueryBuilder('m')
             ->select('m.location')
             ->getQuery()

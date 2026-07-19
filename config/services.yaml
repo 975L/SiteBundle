@@ -9,7 +9,7 @@ services:
         exclude: '../src/{DependencyInjection,Entity,Messenger}'
 
     # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own
-    # interface - CollectionEntrySourceProvider autowires against the interface for testability
+    # interface - CollectionItemSourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
 
     c975L\SiteBundle\Management\TemplateRegistry:
@@ -85,4 +85,3 @@ services:
               pickable: true
               cacheable: false
               contexts: menu
-

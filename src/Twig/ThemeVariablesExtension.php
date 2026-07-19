@@ -13,9 +13,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-// Exposes the CSS file compiled by ThemeVariablesCssListener from the admin-editable "theme" group
-// configs, so it can be inlined in emails (no <link> possible there) instead of duplicated by hand
-// in the previous _user-variables.css/_user-typography.css override stubs
+// Exposes the CSS file compiled by ThemeVariablesCssListener from the admin-editable "theme" group configs, so it can be inlined in emails (no <link> possible there) instead of duplicated by hand in the previous _user-variables.css/_user-typography.css override stubs
 class ThemeVariablesExtension extends AbstractExtension
 {
     public function __construct(

@@ -10,14 +10,7 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\UiBundle\Contract\BlockFixtureProviderInterface;
 
-// Sample data for SiteBundle's block kinds, shown in a block gallery/showcase (see UiBundle's
-// BlockFixtureRegistry, consumed by 975l.com's public /vitrine-blocks).
-// "articles_slider" and "menu_link" are deliberately left out: both only render something once
-// resolved against a real Page/route ("articles_slider" pulls the "article" blocks of a real Page,
-// "menu_link" resolves a real "page:ID"/"route:NAME" target) - there's no fake id/route this
-// provider could fabricate that would actually render visible content, and both templates already
-// render nothing at all for an unresolved target (see ArticlesSlider.html.twig/MenuLink.html.twig),
-// so a fixture here would just show an empty box instead of the gallery's clearer "no example yet".
+// Sample data for SiteBundle's block kinds, shown in a block gallery/showcase (see UiBundle's BlockFixtureRegistry, consumed by the public block showcase). "articles_slider" and "menu_link" are deliberately left out: both only render something once resolved against a real Page/route ("articles_slider" pulls the "article" blocks of a real Page, "menu_link" resolves a real "page:ID"/"route:NAME" target) - there's no fake id/route this provider could fabricate that would actually render visible content, and both templates already render nothing at all for an unresolved target (see ArticlesSlider.html.twig/MenuLink.html.twig), so a fixture here would just show an empty box instead of the gallery's clearer "no example yet".
 class BlockFixtureProvider implements BlockFixtureProviderInterface
 {
     public function getFixtures(): array

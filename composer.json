@@ -21,7 +21,7 @@
         "php": ">=8.1",
         "c975l/config-bundle": "*",
         "c975l/social-bundle": "*",
-        "c975l/ui-bundle": "*",
+        "c975l/ui-bundle": "dev-dev",
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",
         "easycorp/easyadmin-bundle": "*",
@@ -36,7 +36,9 @@
         "symfony/string": "*",
         "symfony/ux-twig-component": "*",
         "symfonycasts/reset-password-bundle": "*",
+        "symfonycasts/verify-email-bundle": "*",
         "twig/cssinliner-extra": "*",
+        "twig/intl-extra": "*",
         "vich/uploader-bundle": "*"
     },
     "require-dev": {

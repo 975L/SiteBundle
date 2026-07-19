@@ -27,19 +27,15 @@ use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
 use Symfony\Component\Messenger\Worker;
 use Symfony\Component\Mime\Email;
 
-// Reads/purges/retries the Doctrine Messenger failure transport ("messenger_messages" table,
-// queue_name = 'failed'), used by MessengerCleanupCommand, MessengerAlertProvider
-// and MessengerFailedController so the logic to decode a failed Envelope lives in one place
+// Reads/purges/retries the Doctrine Messenger failure transport ("messenger_messages" table, queue_name = 'failed'), used by MessengerCleanupCommand, MessengerAlertProvider and MessengerFailedController so the logic to decode a failed Envelope lives in one place
 class MessengerFailedMessageService
 {
-    // Exception message keywords indicating the failure is caused by the recipient's own
-    // reputation (blacklisted spammer domain, ...) rather than an issue worth an admin's attention
+    // Exception message keywords indicating the failure is caused by the recipient's own reputation (blacklisted spammer domain, ...) rather than an issue worth an admin's attention
     private const MINOR_KEYWORDS = ['blacklist', 'blocklist', 'block-listed', 'rbl', 'spam', 'reputation'];
 
     public function __construct(
         private readonly Connection $connection,
-        // Matches the "failed" transport name assumed by the raw SQL below, per the Symfony
-        // Messenger recipe default (framework.messenger.failure_transport: failed)
+        // Matches the "failed" transport name assumed by the raw SQL below, per the Symfony Messenger recipe default (framework.messenger.failure_transport: failed)
         #[Autowire(service: 'messenger.transport.failed')]
         private readonly ReceiverInterface&ListableReceiverInterface $failureReceiver,
         private readonly MessageBusInterface $messageBus,
@@ -63,8 +59,7 @@ class MessengerFailedMessageService
         return count(array_filter($this->findAll(), fn (array $message) => $message['important']));
     }
 
-    // Groups already-decoded messages (see findAll()) by their error message, most frequent first,
-    // so the dashboard can offer a "delete all N messages with this error" action
+    // Groups already-decoded messages (see findAll()) by their error message, most frequent first, so the dashboard can offer a "delete all N messages with this error" action
     public function groupByError(array $messages): array
     {
         $groups = [];
@@ -113,10 +108,7 @@ class MessengerFailedMessageService
         );
     }
 
-    // Replays a single failed message through the real message bus (same handler, same routing
-    // as a fresh dispatch), exactly like "messenger:failed:retry" does for one id. On success the
-    // message leaves the failure transport; on failure it is re-queued there by Symfony's own
-    // retry-strategy listener, and the new error is returned so the caller can display it
+    // Replays a single failed message through the real message bus (same handler, same routing as a fresh dispatch), exactly like "messenger:failed:retry" does for one id. On success the message leaves the failure transport; on failure it is re-queued there by Symfony's own retry-strategy listener, and the new error is returned so the caller can display it
     public function retry(int $id): array
     {
         $envelope = $this->failureReceiver->find($id);
@@ -159,18 +151,14 @@ class MessengerFailedMessageService
     // Decodes a raw messenger_messages row into a readable array
     private function decode(array $row): array
     {
-        // Symfony's default transport serializer (PhpSerializer) stores serialize($envelope)
-        // wrapped in addslashes(), with a base64 fallback for non-UTF8-safe payloads (see
-        // PhpSerializer::encode()/decode()); this mirrors that exact pre-processing so the
-        // raw SQL body can be unserialized the same way the transport itself would read it
+        // Symfony's default transport serializer (PhpSerializer) stores serialize($envelope) wrapped in addslashes(), with a base64 fallback for non-UTF8-safe payloads (see PhpSerializer::encode()/decode()); this mirrors that exact pre-processing so the raw SQL body can be unserialized the same way the transport itself would read it
         $body = $row['body'];
         if (!str_ends_with($body, '}')) {
             $body = base64_decode($body);
         }
         $body = stripslashes($body);
 
-        // Captures the reason PHP's unserialize() fails (missing/renamed class, corrupted
-        // body, ...) instead of silently swallowing it, so admins see why a row can't be read
+        // Captures the reason PHP's unserialize() fails (missing/renamed class, corrupted body, ...) instead of silently swallowing it, so admins see why a row can't be read
         $decodeError = null;
         set_error_handler(function (int $errno, string $errstr) use (&$decodeError) {
             $decodeError = $errstr;

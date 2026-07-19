@@ -61,8 +61,7 @@ class MessengerCleanupCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Purges old failed messages and sends a digest email if new important failures appeared
-    // since the last alert; called both by execute() and MessengerFailedController's "purge now" action
+    // Purges old failed messages and sends a digest email if new important failures appeared since the last alert; called both by execute() and MessengerFailedController's "purge now" action
     public function cleanup(): array
     {
         $markerFile = $this->parameterBag->get('kernel.project_dir') . '/var/MessengerAlertDateTimeFile';

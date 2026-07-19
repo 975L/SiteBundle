@@ -12,8 +12,7 @@
     --button-background-danger: rgb(220, 53, 69);
     --button-background-danger-dark: rgb(220, 53, 69, 0.9);
     --button-background-primary: rgb(11, 55, 178);
-    // Derived from --primary/--secondary (not from the -primary/-secondary base value above) so
-    // hover/light shades follow theme-color-primary/-secondary when an admin changes them
+    // Derived from --primary/--secondary (not from the -primary/-secondary base value above) so hover/light shades follow theme-color-primary/-secondary when an admin changes them
     --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, black);
     --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
     --button-background-secondary: rgb(218, 126, 57);
@@ -26,64 +25,45 @@
     --button-secondary-color: #000;
     --button-link-color: #fff;
     --card-background: #fff;
-    // Admin-editable via ThemeCrudController (site_config, group "theme"), compiled by
-    // ThemeVariablesCssListener into --c975l-* custom properties, loaded after this file - the
-    // var(..., fallback) indirection lets an admin override win the cascade without editing this
-    // file, while every other file keeps consuming --primary/--secondary/--font-family-* as before
+    // Admin-editable via ThemeCrudController (site_config, group "theme"), compiled by ThemeVariablesCssListener into --c975l-* custom properties, loaded after this file - the var(..., fallback) indirection lets an admin override win the cascade without editing this file, while every other file keeps consuming --primary/--secondary/--font-family-* as before
     --primary: var(--c975l-color-primary, var(--button-background-primary));
     --secondary: var(--c975l-color-secondary, var(--button-background-secondary));
     --background: var(--c975l-color-background, #fff);
     --text: var(--c975l-color-text, #000);
-    // Derived surface/border tokens - not admin-editable, computed from the colors above so any
-    // block family (UiBundle's _page-sections.scss, future ones) gets a consistent, on-brand
-    // "tinted surface"/"muted border" vocabulary without each one re-deriving its own
+    // Derived surface/border tokens - not admin-editable, computed from the colors above so any block family (UiBundle's _page-sections.scss, future ones) gets a consistent, on-brand "tinted surface"/"muted border" vocabulary without each one re-deriving its own
     --surface-accent: color-mix(in srgb, var(--primary) 12%, var(--background));
     --surface-alt: color-mix(in srgb, var(--background) 94%, var(--text));
     --border-color: color-mix(in srgb, var(--text) 12%, var(--background));
     --border-accent: color-mix(in srgb, var(--primary) 35%, var(--background));
-    // Deliberately NOT derived from --text/--background above (those flip in dark mode, see
-    // _theme-dark.scss): a handful of block designs use a permanently-dark contrast panel
-    // regardless of the site's current light/dark theme - these stay fixed neutrals on purpose
+    // Deliberately NOT derived from --text/--background above (those flip in dark mode, see _theme-dark.scss): a handful of block designs use a permanently-dark contrast panel regardless of the site's current light/dark theme - these stay fixed neutrals on purpose
     --surface-inverse: #232323;
     --text-on-inverse: #d8d8d8;
-    // Shape tokens - defaults match today's look exactly (nothing changes until a page template
-    // overrides them), but header/navbar/footer/buttons/cards all read from here so a template's
-    // stylesheet can reskin the whole site's "shape" (radii, nav shadow) in one place
+    // Shape tokens - defaults match today's look exactly (nothing changes until a page template overrides them), but header/navbar/footer/buttons/cards all read from here so a template's stylesheet can reskin the whole site's "shape" (radii, nav shadow) in one place
     --radius-btn: 5px;
     --radius-card: 10px;
     --radius-panel: 16px;
     --shadow-nav: 0 2px 4px var(--primary);
     --navbar-background: var(--white);
-    // Fixed --black default matches this base --navbar-background being a fixed white too - a
-    // theme whose --navbar-background instead follows --background overrides this to var(--text)
-    // so nav links stay readable whatever the admin sets theme-color-text to
+    // Fixed --black default matches this base --navbar-background being a fixed white too - a theme whose --navbar-background instead follows --background overrides this to var(--text) so nav links stay readable whatever the admin sets theme-color-text to
     --navbar-text: var(--black);
-    // Active-page underline (desktop nav, see _menu.scss) - defaults to --primary like before this
-    // token existed, but a template whose --navbar-background follows --primary itself now has
-    // somewhere to point this that isn't invisible against its own background
+    // Active-page underline (desktop nav, see _menu.scss) - defaults to --primary like before this token existed, but a template whose --navbar-background follows --primary itself now has somewhere to point this that isn't invisible against its own background
     --navbar-active-color: var(--primary);
     --border-nav: none;
-    // The admin's own site-navbar-position config (Navbar.html.twig) sets --navbar-position inline
-    // and always wins when non-empty - this is only the template's own fallback, for a design that
-    // wants e.g. a sticky header without the admin having to set that config
+    // The admin's own site-navbar-position config (Navbar.html.twig) sets --navbar-position inline and always wins when non-empty - this is only the template's own fallback, for a design that wants e.g. a sticky header without the admin having to set that config
     --navbar-position: relative;
     --navbar-z-index: auto;
-    // Footer layout/look - defaults match today's colored-band footer; a template can flip these
-    // to a plain, minimal footer (transparent background, muted text, items in a row) instead
+    // Footer layout/look - defaults match today's colored-band footer; a template can flip these to a plain, minimal footer (transparent background, muted text, items in a row) instead
     --footer-background: var(--primary);
     --footer-text: var(--white);
     --footer-text-hover: var(--footer-text);
     --footer-items-direction: column;
     --footer-items-justify: flex-start;
     --footer-border: solid grey 2px;
-    // The colored-band footer above is meant to bleed full-viewport-width regardless of --body-max-width
-    // (see body's own max-width in _general.scss) - a template going for a plain/minimal footer instead
-    // sets both of these to auto/0 so the footer's content realigns with the rest of the page
+    // The colored-band footer above is meant to bleed full-viewport-width regardless of --body-max-width (see body's own max-width in _general.scss) - a template going for a plain/minimal footer instead sets both of these to auto/0 so the footer's content realigns with the rest of the page
     --footer-width: 100vw;
     --footer-margin-x: calc(50% - 50vw);
     --footer-padding: 2em 15px 3em 15px;
-    // Matches .menu-link's own default hover/focus background (_menu.scss) - a template going for a
-    // plain/minimal footer sets this to transparent instead
+    // Matches .menu-link's own default hover/focus background (_menu.scss) - a template going for a plain/minimal footer sets this to transparent instead
     --footer-link-hover-background: rgba(0, 0, 0, 0.1);
     --disabled: #808080;
     --font-family-title: var(--c975l-font-family-title, sans-serif);
@@ -94,8 +74,7 @@
     --font-title-weight: normal;
     --font-body-weight: normal;
     --label-color: #808080;
-    // Follows theme-color-primary by default; apps that want a distinct link color can still
-    // override --link-color directly in their own _variables.css, same as any other variable here
+    // Follows theme-color-primary by default; apps that want a distinct link color can still override --link-color directly in their own _variables.css, same as any other variable here
     --link-color: var(--primary);
     --input-border-bottom-color: #bfbfbf;
     --input-border-color: #4d4d4d;

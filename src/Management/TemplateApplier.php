@@ -12,9 +12,7 @@ use App\Entity\User;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
 
-// Turns a template's "blocks" array (see SiteTemplateProvider / config/templates/*.json) into real
-// Block entities on a Page - shared by PageCrudController::applyTemplate() (admin action) and
-// TemplateApplyCommand (CLI), so both stay in sync with a single implementation
+// Turns a template's "blocks" array (see SiteTemplateProvider / config/templates/*.json) into real Block entities on a Page - shared by PageCrudController::applyTemplate() (admin action) and TemplateApplyCommand (CLI), so both stay in sync with a single implementation
 class TemplateApplier
 {
     // Builds transient Block objects from a template's block specs, attached to no Page

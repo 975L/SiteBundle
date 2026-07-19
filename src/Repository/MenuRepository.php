@@ -21,8 +21,16 @@ class MenuRepository extends ServiceEntityRepository
         parent::__construct($registry, Menu::class);
     }
 
+    // Eager-joins blocks so MenuExtension::getMenuBlocks() doesn't trigger a second query for the lazy-loaded ManyToMany collection (see PageRepository's own findOneBySlugForDisplay(), same pattern) - ordering comes from Menu::$blocks' own #[ORM\OrderBy], applied automatically to the joined collection
     public function findOneByLocation(string $location): ?Menu
     {
-        return $this->findOneBy(['location' => $location]);
+        return $this->createQueryBuilder('m')
+            ->select('m, b')
+            ->leftJoin('m.blocks', 'b')
+            ->andWhere('m.location = :location')
+            ->setParameter('location', $location)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 }

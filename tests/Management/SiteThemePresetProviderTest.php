@@ -37,8 +37,7 @@ class SiteThemePresetProviderTest extends TestCase
         $this->assertSame('label.theme_preset_default', $presets['default']['label']);
     }
 
-    // These presets are SiteBundle's own: ThemeCrudController (ConfigBundle) must translate their
-    // label in SiteBundle's domain, not its own 'config' domain
+    // These presets are SiteBundle's own: ThemeCrudController (ConfigBundle) must translate their label in SiteBundle's domain, not its own 'config' domain
     public function testGetPresetsDeclaresOwnTranslationDomain(): void
     {
         $presets = $this->createProvider()->getPresets();
@@ -46,8 +45,7 @@ class SiteThemePresetProviderTest extends TestCase
         $this->assertSame('site', $presets['default']['domain']);
     }
 
-    // "default" is a real theme, not just an empty fallback: it has its own shape stylesheet
-    // (sass/themes/default.scss), materialized as a real preset instead of an implicit fallback
+    // "default" is a real theme, not just an empty fallback: it has its own shape stylesheet (sass/themes/default.scss), materialized as a real preset instead of an implicit fallback
     public function testDefaultPresetDeclaresItsOwnStylesheet(): void
     {
         $presets = $this->createProvider()->getPresets();
@@ -55,9 +53,7 @@ class SiteThemePresetProviderTest extends TestCase
         $this->assertSame('default', $presets['default']['stylesheet']);
     }
 
-    // Every preset gets a ready-to-use preview link (page_preview route on the home page) so an
-    // editor can judge its look before committing to "Apply preset" - a callable, not an
-    // already-generated string, so the router is never called eagerly (see ThemePresetProviderInterface)
+    // Every preset gets a ready-to-use preview link (page_preview route on the home page) so an editor can judge its look before committing to "Apply preset" - a callable, not an already-generated string, so the router is never called eagerly (see ThemePresetProviderInterface)
     public function testGetPresetsBuildsPreviewUrl(): void
     {
         $presets = $this->createProvider()->getPresets();

@@ -13,6 +13,7 @@ export default class extends Controller {
         // Execute immediately for Turbo compatibility
         this.htmlBoilerPlate();
         this.externalLinks();
+        this.smoothAnchorScroll();
         this.togglePasswordVisibility();
         this.validatePasswordFormat();
         this.validatePassword();
@@ -51,6 +52,34 @@ export default class extends Controller {
             if (anchor.getAttribute("href") && anchor.getAttribute("rel") === "external") {
                 anchor.target = "_blank";
             }
+        });
+    }
+
+    // Scrolls to an in-page anchor (menu_link targets, "backTop"/"pullDown" buttons...) ourselves
+    // instead of letting Turbo Drive handle the click: Turbo treats a same-page "#anchor" href as a
+    // full page visit, which briefly pushes the hash to the address bar then drops it once the
+    // re-rendered page settles. Calling preventDefault() here also stops Turbo's own click handling,
+    // since it bubbles from this link up through this "basic"-controlled body to Turbo's document listener
+    smoothAnchorScroll() {
+        this.element.addEventListener("click", (event) => {
+            const link = event.target.closest('a[href*="#"]');
+            if (!link) {
+                return;
+            }
+
+            const url = new URL(link.href, window.location.href);
+            if (url.pathname !== window.location.pathname || url.hash === "") {
+                return;
+            }
+
+            const target = document.getElementById(url.hash.slice(1));
+            if (!target) {
+                return;
+            }
+
+            event.preventDefault();
+            history.pushState(null, "", url.hash);
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     }
 
@@ -105,8 +134,7 @@ export default class extends Controller {
                 return;
             }
 
-            // Wraps only the input (not its label/help text) so the toggle
-            // icon stays vertically centered on the input itself
+            // Wraps only the input (not its label/help text) so the toggle icon stays vertically centered on the input itself
             let wrapper = document.createElement("div");
             wrapper.classList.add("has-toggle");
             passwordInput.parentNode.insertBefore(wrapper, passwordInput);

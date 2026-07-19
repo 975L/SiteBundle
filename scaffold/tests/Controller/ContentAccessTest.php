@@ -37,8 +37,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    //Checks every stored redirect points to its target, plus a fabricated temporary one
-    //(no permanent=0 row currently exists, DAMA rolls this back after the test)
+    // Checks every stored redirect points to its target, plus a fabricated temporary one (no permanent=0 row currently exists, DAMA rolls this back after the test)
     public function testAllRedirectsPointToTheirTarget(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -71,8 +70,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    //Checks every deleted page returns 410 Gone: real ones (if any) plus a fabricated one, so this code
-    //path is always exercised even on a site with no deleted page right now
+    // Checks every deleted page returns 410 Gone: real ones (if any) plus a fabricated one, so this code path is always exercised even on a site with no deleted page right now
     public function testDeletedPagesReturn410(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -101,8 +99,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    //Checks every draft (unpublished, not deleted) page returns 404: real ones (if any) plus a fabricated one,
-    //so this code path is always exercised even once every real draft has been published
+    // Checks every draft (unpublished, not deleted) page returns 404: real ones (if any) plus a fabricated one, so this code path is always exercised even once every real draft has been published
     public function testUnpublishedPagesReturn404(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);

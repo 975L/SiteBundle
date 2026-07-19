@@ -363,17 +363,6 @@
         "description": "description.site_dpo"
     },
     {
-        "label": "label.user_registration_enabled",
-        "slug": "user-registration-enabled",
-        "sensitive": false,
-        "restricted": false,
-        "value": "true",
-        "kind": "bool",
-        "group": "security",
-        "severity": null,
-        "description": "description.user_registration_enabled"
-    },
-    {
         "label": "label.user_roles_available",
         "slug": "user-roles-available",
         "sensitive": false,
@@ -482,6 +471,17 @@
         "group": "general",
         "severity": null,
         "description": "description.display_hosted_by"
+    },
+    {
+        "label": "label.site_menu_link_copyright_auto",
+        "slug": "site-menu-link-copyright-auto",
+        "sensitive": false,
+        "restricted": false,
+        "value": "true",
+        "kind": "bool",
+        "group": "general",
+        "severity": null,
+        "description": "description.site_menu_link_copyright_auto"
     },
     {
         "label": "label.site_enable_matomo",

@@ -34,8 +34,7 @@ class MessengerFailedMessageServiceTest extends TestCase
         );
     }
 
-    // Mirrors Symfony's default PhpSerializer::encode(): serialize($envelope) wrapped in addslashes(),
-    // exactly what ends up stored in messenger_messages.body
+    // Mirrors Symfony's default PhpSerializer::encode(): serialize($envelope) wrapped in addslashes(), exactly what ends up stored in messenger_messages.body
     private function encode(Envelope $envelope): string
     {
         return addslashes(serialize($envelope));
@@ -81,8 +80,7 @@ class MessengerFailedMessageServiceTest extends TestCase
         $this->assertTrue($message['important']);
     }
 
-    // A body that fails to unserialize (renamed class, corruption...) doesn't crash the listing -
-    // the failure reason itself becomes the readable "exceptionMessage" instead
+    // A body that fails to unserialize (renamed class, corruption...) doesn't crash the listing - the failure reason itself becomes the readable "exceptionMessage" instead
     public function testFindAllReportsAnUnserializableBodyInsteadOfCrashing(): void
     {
         $row = ['id' => '2', 'body' => addslashes('not a valid serialized payload'), 'created_at' => '2026-07-15 10:00:00'];
@@ -97,8 +95,7 @@ class MessengerFailedMessageServiceTest extends TestCase
         $this->assertTrue($messages[0]['important']);
     }
 
-    // A blacklist/reputation-related error on an identified email is classified as minor, so it
-    // doesn't count towards countImportant()
+    // A blacklist/reputation-related error on an identified email is classified as minor, so it doesn't count towards countImportant()
     public function testCountImportantExcludesBlacklistFailures(): void
     {
         $email = (new Email())->from('sender@example.com')->to('recipient@example.com')->subject('Hi');

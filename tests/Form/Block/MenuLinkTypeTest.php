@@ -34,8 +34,7 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->translator = $this->createStub(TranslatorInterface::class);
         $this->translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
-        // TypeTestCase would otherwise create a bare, unconfigured mock for this - PHPUnit 13 flags
-        // that as a notice ("no expectations configured"); a stub is the correct double for it anyway
+        // TypeTestCase would otherwise create a bare, unconfigured mock for this - PHPUnit 13 flags that as a notice ("no expectations configured"); a stub is the correct double for it anyway
         $this->dispatcher = $this->createStub(EventDispatcherInterface::class);
 
         parent::setUp();
@@ -85,8 +84,7 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertSame(['Home' => 'page:1'], $form->get('target')->getConfig()->getOption('choices'));
     }
 
-    // Editors need to wire menu links while still drafting a page - it stays pickable, just flagged so
-    // it's not mistaken for a live link (MenuExtension::getMenuLinkUrl() resolves it to '' meanwhile)
+    // Editors need to wire menu links while still drafting a page - it stays pickable, just flagged so it's not mistaken for a live link (MenuExtension::getMenuLinkUrl() resolves it to '' meanwhile)
     public function testUnpublishedPageChoiceIsFlaggedAsDraft(): void
     {
         $page = $this->withId((new Page())->setTitle('Coming soon')->setIsPublished(false), 2);
@@ -97,8 +95,7 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertSame(['Coming soon (label.draft)' => 'page:2'], $form->get('target')->getConfig()->getOption('choices'));
     }
 
-    // A block carrying an "anchor" in its data (see UiBundle's BlockAnchorSlugger) adds a second, flat
-    // choice for that in-page section, alongside the page's own entry
+    // A block carrying an "anchor" in its data (see UiBundle's BlockAnchorSlugger) adds a second, flat choice for that in-page section, alongside the page's own entry
     public function testPageWithAnchoredBlockAddsASectionChoice(): void
     {
         $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
@@ -155,14 +152,14 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertSame(['Home' => 'page:1'], $form->get('target')->getConfig()->getOption('choices'));
     }
 
-    // The "asCopyright" checkbox (see MenuLink.html.twig) is always present, unrelated to target choices
-    public function testAsCopyrightCheckboxIsPresent(): void
+    // The "label" field (see MenuLink.html.twig) overrides the auto-derived page/section title - optional, always present
+    public function testLabelFieldIsPresentAndOptional(): void
     {
         $this->withPages([]);
 
         $form = $this->factory->create(MenuLinkType::class);
 
-        $this->assertTrue($form->has('asCopyright'));
-        $this->assertFalse($form->get('asCopyright')->getConfig()->getRequired());
+        $this->assertTrue($form->has('label'));
+        $this->assertFalse($form->get('label')->getConfig()->getRequired());
     }
 }

@@ -1,5 +1,53 @@
 # Changelog
 
+## v7.6
+
+- Added "Email templates" admin menu entry (19/07/2026)
+- Fixed `SiteMediaUsageProvider`/`SiteBlockEditUrlProvider` duplicating the same block-focus URL building, now shared via `BlockFocusUrlTrait` (19/07/2026)
+- Fixed `security/login.html.twig` still showing the sign-in form below the "already logged in" notice instead of hiding it (19/07/2026)
+- Removed `app_logout` from scaffold's `LinkableRouteProvider` linkable routes (19/07/2026)
+- Fixed `ArticleBlockCacheInvalidationListener`/`MenuCacheInvalidationListener` duplicating the same Doctrine listener skeleton, now shared via `AbstractBlockCacheInvalidationListener` (19/07/2026)
+- Fixed `MenuExtension`'s "page:ID(#fragment)" target-parsing duplicated across 4 methods, now shared via `parseTarget()` (19/07/2026)
+- Fixed `CollectionItemSourceProvider::detail()` re-deriving fields already computed by `toCollectionItemModel()` (19/07/2026)
+- Fixed `EmailVerifier`'s `getId()` duck-typing check repeated 3x, now a shared `getUserId()` helper (19/07/2026)
+- "register"'s CGU checkbox links to the site's real terms-of-use page again, via UiBundle's new `FormField::$url` - see UPGRADE.md (19/07/2026)
+- "register"/"reset_password_request" Forms now show an "already logged in" notice instead of the form to an authenticated visitor, via UiBundle's `RequiresAnonymousInterface` (19/07/2026)
+- Moved `scaffold/templates/registration/confirmation_email.html.twig`/`reset_password/email.html.twig` to bundle-owned `templates/emails/confirmation_email.html.twig`/`reset_password_email.html.twig`, same as `contact_notification.html.twig` - see UPGRADE.md (19/07/2026) [BC-Break]
+- Fixed `security/login.html.twig`'s "forgot password"/"create account" links pointing at the removed `app_register`/`app_forgot_password_request` routes - see UPGRADE.md (19/07/2026) [BC-Break]
+- Unified register/reset-password-request onto the generic "form" Block mechanism - see UPGRADE.md (19/07/2026) [BC-Break]
+- Removed `user-registration-enabled` config, replaced by `Form::$enabled` - see UPGRADE.md (19/07/2026) [BC-Break]
+- Renamed `findOneByBlockKind()`/`site_page_for_block()` to `findOneByFormBlockName()`/`site_page_for_form_block()` - see UPGRADE.md (19/07/2026) [BC-Break]
+- Rate limiting on register/reset-password-request now uses the shared `limiter.ui_form` - see UPGRADE.md (19/07/2026) [BC-Break]
+- Renamed `CollectionEntry` to `CollectionItem` - see UPGRADE.md (19/07/2026) [BC-Break] [DB-Migration]
+- `CollectionItemCrudController` index is now a two-step group-then-items screen (19/07/2026)
+- Fixed `DefaultPagesImporter` never backfilling the "contact" Form/EmailTemplate on existing sites (19/07/2026)
+- `c975l:site:create` now also runs `c975l:ui:form-field-template:import-defaults` (19/07/2026)
+- Removed `register.html.twig`/`reset_password/request.html.twig` templates - see UPGRADE.md (19/07/2026) [BC-Break]
+- Added `PageRepository::findOneByBlockKind()`/`site_page_for_block()` Twig function (19/07/2026)
+- Fixed "register" Block showing blank instead of a "registration is not open" notice (19/07/2026)
+- Added `SiteBlockEditUrlProvider` for UiBundle's front-end "Edit this block" button (19/07/2026)
+- Added `EmailVerifier`/`UserRegistrar`/`PasswordResetter` bundle services, moved out of scaffold - see UPGRADE.md (18/07/2026) [BC-Break]
+- Added `register`/`reset_password_request` Block kinds - see UPGRADE.md (19/07/2026)
+- Added "Forms" admin menu entry (19/07/2026)
+- `DefaultPagesImporter` now also seeds "register"/"forgot password"/"contact" pages - see UPGRADE.md (19/07/2026)
+- Menu rendering now eager-joins and caches blocks instead of querying per link/menu (19/07/2026)
+- Page's "Summary for social networks" field now supports UiBundle's AI rephrase button (19/07/2026)
+- Moved `FormBotProtection` to UiBundle, shared with its `form` Block - see UPGRADE.md (19/07/2026) [BC-Break]
+- Fixed "Publish as replacement" never showing on the page edit screen (19/07/2026)
+- Fixed title-change confirmation modal showing an empty message (Stimulus controller id casing) (19/07/2026)
+- Added optional `label` field to `menu_link` (19/07/2026)
+- Fixed in-page anchor links losing their `#...` on click (Turbo Drive re-visit) (19/07/2026)
+- Removed `RegistrationFormType`/`ResetPasswordRequestFormType`, now built from UiBundle `Form` rows - see UPGRADE.md (19/07/2026) [BC-Break]
+- Moved `DnsEmail`/`DnsEmailValidator` to UiBundle - see UPGRADE.md (19/07/2026) [BC-Break]
+- Added `password`/`password_repeated`/`url`/`tel`/`number`/`date` field types to `FormField` (19/07/2026)
+- Fixed required checkbox fields silently accepting an unchecked box (19/07/2026)
+- Fixed `FormFieldNamer` silently renaming a restricted field's stable key on label edit (19/07/2026)
+- Fixed `label.accept_tou` English translation using the wrong placeholder (19/07/2026)
+- Removed `menu_link`'s `asCopyright` checkbox, replaced by `site-menu-link-copyright-auto` config - see UPGRADE.md (19/07/2026) [BC-Break]
+- Fixed footer copyright notice being inconsistent with/without a "Copyright" menu link (19/07/2026)
+- `DefaultPagesImporter` now also seeds `contact_notification`/`account_validation`/`password_reset` EmailTemplate rows (19/07/2026)
+- Emails now compose via `email_template_body()` and share one layout, editable from admin - see UPGRADE.md (19/07/2026) [BC-Break]
+
 ## v7.5.3
 
 - Renamed `site-navbar-fixed` (`bool`) config key to `site-navbar-position` (`text`, free CSS position value: relative/sticky/fixed/static...) (17/07/2026) [BC-Break]

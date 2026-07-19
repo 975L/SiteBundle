@@ -45,8 +45,7 @@ class ChangePasswordFormType extends AbstractType
                     'label' => 'label.password_confirm',
                 ],
                 'invalid_message' => 'text.password_mismatch',
-                // Instead of being set onto the object directly,
-                // this is read and encoded in the controller
+                // Instead of being set onto the object directly, this is read and encoded in the controller
                 'mapped' => false,
             ])
         ;

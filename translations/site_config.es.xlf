@@ -126,10 +126,6 @@
                 <source>description.site_dpo</source>
                 <target>Nombre completo del Delegado de Protección de Datos, requerido para la política de privacidad</target>
             </trans-unit>
-            <trans-unit id="32">
-                <source>description.user_registration_enabled</source>
-                <target>Activa (true) o desactiva (false) la ruta de registro de usuarios</target>
-            </trans-unit>
             <trans-unit id="33">
                 <source>description.user_roles_available</source>
                 <target>Roles adicionales seleccionables para los usuarios en el backoffice (además del ROLE_USER por defecto), como array JSON, ej. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
@@ -137,6 +133,10 @@
             <trans-unit id="34">
                 <source>description.email_from</source>
                 <target>Dirección de correo utilizada para enviar los correos, ej. contact@example.com</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>description.email_debug</source>
+                <target>Si está activado, un ROLE_SUPER_ADMIN ve una vista previa del email en lugar de que se envíe realmente</target>
             </trans-unit>
             <trans-unit id="35">
                 <source>description.email_from_name</source>
@@ -149,6 +149,10 @@
             <trans-unit id="38">
                 <source>description.display_hosted_by</source>
                 <target>Mostrar el crédito "Hospedado por" en el pie de página</target>
+            </trans-unit>
+            <trans-unit id="121">
+                <source>description.site_menu_link_copyright_auto</source>
+                <target>Mostrar automáticamente el copyright calculado (© año) como etiqueta del enlace de menú que apunta a su página "Copyright", en lugar de su título</target>
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
@@ -302,10 +306,6 @@
                 <source>label.site_dpo</source>
                 <target>Delegado de Protección de Datos (DPO)</target>
             </trans-unit>
-            <trans-unit id="72">
-                <source>label.user_registration_enabled</source>
-                <target>Registro de usuarios activado</target>
-            </trans-unit>
             <trans-unit id="73">
                 <source>label.user_roles_available</source>
                 <target>Roles de usuario disponibles</target>
@@ -313,6 +313,10 @@
             <trans-unit id="74">
                 <source>label.email_from</source>
                 <target>Correo (remitente)</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>label.email_debug</source>
+                <target>Modo debug de emails</target>
             </trans-unit>
             <trans-unit id="75">
                 <source>label.email_from_name</source>
@@ -325,6 +329,10 @@
             <trans-unit id="78">
                 <source>label.display_hosted_by</source>
                 <target>Mostrar el crédito «Alojado por»</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.site_menu_link_copyright_auto</source>
+                <target>Copyright automático en el enlace de menú "Copyright"</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.site_enable_matomo</source>

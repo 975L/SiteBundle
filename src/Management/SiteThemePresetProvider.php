@@ -29,22 +29,11 @@ class SiteThemePresetProvider implements ThemePresetProviderInterface
 
             $presets[$id] = [
                 'label' => $data['label'],
-                // These presets are SiteBundle's own, translated in SiteBundle's own domain -
-                // ThemeCrudController (ConfigBundle) must never assume its own 'config' domain here
+                // These presets are SiteBundle's own, translated in SiteBundle's own domain - ThemeCrudController (ConfigBundle) must never assume its own 'config' domain here
                 'domain' => 'site',
-                // Slug of the theme's shape stylesheet to activate with this preset (see
-                // StylesheetProvider) - the only thing a preset ever controls: colors/fonts stay
-                // entirely admin-owned (see ThemeCrudController::applyPreset()), a preset never
-                // overwrites them. Independent from page templates (see TemplateProviderInterface):
-                // a preset no longer references one, applying either never touches the other.
+                // Slug of the theme's shape stylesheet to activate with this preset (see StylesheetProvider) - the only thing a preset ever controls: colors/fonts stay entirely admin-owned (see ThemeCrudController::applyPreset()), a preset never overwrites them. Independent from page templates (see TemplateProviderInterface): a preset no longer references one, applying either never touches the other.
                 'stylesheet' => $data['stylesheet'] ?? null,
-                // A closure, not an eagerly-generated string: ThemePresetRegistry (ConfigBundle) is a
-                // constructor dependency of ThemeCrudController, which EasyAdmin instantiates just to
-                // enumerate its routes while the router is still building its own route collection -
-                // calling generate() eagerly here deadlocks that (Router::generate() needs the very
-                // collection this call chain is in the middle of assembling). ThemeCrudController's own
-                // ->linkToUrl() already accepts a callable (see its "apply preset" action, same file) and
-                // only invokes it while rendering the CRUD page, long after routes are actually ready.
+                // A closure, not an eagerly-generated string: ThemePresetRegistry (ConfigBundle) is a constructor dependency of ThemeCrudController, which EasyAdmin instantiates just to enumerate its routes while the router is still building its own route collection - calling generate() eagerly here deadlocks that (Router::generate() needs the very collection this call chain is in the middle of assembling). ThemeCrudController's own ->linkToUrl() already accepts a callable (see its "apply preset" action, same file) and only invokes it while rendering the CRUD page, long after routes are actually ready.
                 'previewUrl' => fn () => $this->urlGenerator->generate('page_preview', ['page' => 'home', 'preset' => $id]),
             ];
         }

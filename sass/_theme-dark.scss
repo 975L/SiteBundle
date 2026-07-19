@@ -5,10 +5,7 @@
     --black: #e0e0e0;
     --white: #1e1e1e;
     --card-background: #1e1e1e;
-    // Only takes effect if the admin filled theme-color-primary/-secondary-dark-mode; otherwise falls
-    // back to the same chain --primary/--secondary use in _variables.scss. Can't write
-    // "var(--primary)" as the fallback here - since this rule can itself win the cascade for
-    // --primary, that would be a self-reference (cyclic = invalid), not a fallback to the light value
+    // Only takes effect if the admin filled theme-color-primary/-secondary-dark-mode; otherwise falls back to the same chain --primary/--secondary use in _variables.scss. Can't write "var(--primary)" as the fallback here - since this rule can itself win the cascade for --primary, that would be a self-reference (cyclic = invalid), not a fallback to the light value
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
 }

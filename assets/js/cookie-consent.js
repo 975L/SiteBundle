@@ -18,9 +18,7 @@ export default class extends Controller {
     };
 
     connect() {
-        // https://cookieconsent.orestbida.com/ - CSS+JS loaded here (not via a static bundle
-        // stylesheet list) so the CDN is only contacted on pages that actually render this
-        // component, i.e. sites with `site-enable-cookie-consent` on
+        // https://cookieconsent.orestbida.com/ - CSS+JS loaded here (not via a static bundle stylesheet list) so the CDN is only contacted on pages that actually render this component, i.e. sites with `site-enable-cookie-consent` on
         this.loadStylesheet("https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3.1.0/dist/cookieconsent.css");
         this.loadScript("https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3.1.0/dist/cookieconsent.umd.js", () => {
             if (!window.CookieConsent) {
@@ -37,10 +35,7 @@ export default class extends Controller {
                 consentModal.footer = `<a href="${this.policyUrlValue}" target="_blank" rel="noopener">${this.policyLabelValue}</a>`;
             }
 
-            // A single non-essential category ("content") on purpose - covers any third-party
-            // embed (e.g. c975l/ui-bundle's video_iframe block, which reacts to window.CookieConsent
-            // on its own, see its README) - matches the binary Accept/Reject UI below, no
-            // preferences panel to build or maintain
+            // A single non-essential category ("content") on purpose - covers any third-party embed (e.g. c975l/ui-bundle's video_iframe block, which reacts to window.CookieConsent on its own, see its README) - matches the binary Accept/Reject UI below, no preferences panel to build or maintain
             window.CookieConsent.run({
                 categories: {
                     necessary: {

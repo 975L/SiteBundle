@@ -34,14 +34,6 @@
                 <source>text.email_not_valid</source>
                 <target>Introduzca una dirección de correo electrónico válida</target>
             </trans-unit>
-            <trans-unit id="9">
-                <source>text.email_domain_unreachable</source>
-                <target>El dominio de esta dirección de correo electrónico no parece aceptar correo</target>
-            </trans-unit>
-            <trans-unit id="10">
-                <source>text.gdpr_required</source>
-                <target>Debe aceptar el tratamiento de sus datos.</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

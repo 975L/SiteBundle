@@ -20,15 +20,8 @@ use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
-// Fires for any Config flushed through the EntityManager, regardless of which controller or app
-// code triggered the change - filters down to the "theme" group (colors/fonts editable by the admin
-// in ThemeCrudController) and regenerates the compiled CSS file every time one of them changes, so
-// there is a single source of truth (site_config) for both the site's stylesheet and the email layout
-// (see ThemeVariablesExtension for the email side)
-// Also a CacheWarmer: Config rows persisted before this listener existed (or restored from a backup)
-// never fire a Doctrine event again on their own, so without this the compiled file could stay
-// missing/stale until an admin happens to re-save a theme config - warming up on every
-// cache:warmup/cache:clear guarantees it always reflects the current site_config, deploy or not
+// Fires for any Config flushed through the EntityManager, regardless of which controller or app code triggered the change - filters down to the "theme" group (colors/fonts editable by the admin in ThemeCrudController) and regenerates the compiled CSS file every time one of them changes, so there is a single source of truth (site_config) for both the site's stylesheet and the email layout (see ThemeVariablesExtension for the email side)
+// Also a CacheWarmer: Config rows persisted before this listener existed (or restored from a backup) never fire a Doctrine event again on their own, so without this the compiled file could stay missing/stale until an admin happens to re-save a theme config - warming up on every cache:warmup/cache:clear guarantees it always reflects the current site_config, deploy or not
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::postRemove)]
@@ -90,8 +83,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
                 continue;
             }
 
-            // Mechanical mapping, e.g. "theme-color-primary" -> "--c975l-color-primary": no lookup
-            // table to maintain when a new theme variable is added to SiteBundle/config/configs-css.json
+            // Mechanical mapping, e.g. "theme-color-primary" -> "--c975l-color-primary": no lookup table to maintain when a new theme variable is added to SiteBundle/config/configs-css.json
             $variable = '--c975l-' . substr($config->getSlug(), strlen('theme-'));
             $lines[] = sprintf('    %s: %s;', $variable, $value);
         }
@@ -104,10 +96,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
         $css = [] === $lines ? '' : ":root {\n" . implode("\n", $lines) . "\n}\n";
         file_put_contents($buildDir . '/site-theme.css', $css);
 
-        // In prod, the real site never reads this file directly - it links UiBundle's concatenated
-        // bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on
-        // cache:warmup. Without this, an admin applying a preset would regenerate site-theme.css but
-        // still see the previous theme until the next deploy/warmup
+        // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, an admin applying a preset would regenerate site-theme.css but still see the previous theme until the next deploy/warmup
         $this->stylesheetCacheWarmer->compileAll();
     }
 }

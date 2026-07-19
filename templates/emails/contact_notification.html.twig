@@ -1,0 +1,11 @@
+{% extends "@c975LSite/emails/layout.html.twig" %}
+
+{# Content is composed via the "contact_notification" EmailTemplate, editable from the admin (see
+   c975L\UiBundle\Controller\Management\EmailTemplateCrudController) - seeded by DefaultPagesImporter, referenced
+   by the "contact" Form's actionConfig.template - see UPGRADE.md #}
+{% block content %}
+    {{ email_template_body('contact_notification', {
+        form_name: form.name,
+        fields: fields,
+    }) }}
+{% endblock %}

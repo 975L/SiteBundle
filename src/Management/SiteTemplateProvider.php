@@ -8,11 +8,7 @@
  */
 namespace c975L\SiteBundle\Management;
 
-// Reads every config/templates/*.json shipped by SiteBundle into the template catalog - each one is a
-// reusable, ordered arrangement of blocks (kind + example data) an admin can apply to a Page (see
-// PageCrudController::applyTemplate()), independent of the site's design (colors/fonts/shape), which
-// stays controlled by the site's own theme (see ConfigBundle's theme presets).
-// Aggregated with any satellite bundle's (or app's) own templates by TemplateRegistry.
+// Reads every config/templates/*.json shipped by SiteBundle into the template catalog - each one is a reusable, ordered arrangement of blocks (kind + example data) an admin can apply to a Page (see PageCrudController::applyTemplate()), independent of the site's design (colors/fonts/shape), which stays controlled by the site's own theme (see ConfigBundle's theme presets). Aggregated with any satellite bundle's (or app's) own templates by TemplateRegistry.
 class SiteTemplateProvider implements TemplateProviderInterface
 {
     public function getTemplates(): array

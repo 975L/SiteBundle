@@ -114,8 +114,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringContainsString('--c975l-font-family-title: "Georgia", serif;', $css);
     }
 
-    // Empty/null values are skipped, so the SCSS fallback default keeps applying instead of an
-    // empty custom property value
+    // Empty/null values are skipped, so the SCSS fallback default keeps applying instead of an empty custom property value
     public function testRegenerateSkipsEmptyAndNullValues(): void
     {
         $listener = $this->createListener([
@@ -195,9 +194,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertSame('', file_get_contents($this->cssPath));
     }
 
-    // Guards against configs persisted before this listener existed (or restored from a backup)
-    // that never fire another Doctrine event on their own - cache:warmup/cache:clear must still
-    // produce an up-to-date file
+    // Guards against configs persisted before this listener existed (or restored from a backup) that never fire another Doctrine event on their own - cache:warmup/cache:clear must still produce an up-to-date file
     public function testWarmUpRegeneratesFileFromCurrentConfigs(): void
     {
         $listener = $this->createListener([
@@ -211,9 +208,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertSame([], $result);
     }
 
-    // Regression test: in prod, the real site links UiBundle's concatenated bundles/build/site.css,
-    // not site-theme.css directly - without this call, applying a preset would regenerate
-    // site-theme.css but the live site would keep serving the stale site.css until the next warmup
+    // Regression test: in prod, the real site links UiBundle's concatenated bundles/build/site.css, not site-theme.css directly - without this call, applying a preset would regenerate site-theme.css but the live site would keep serving the stale site.css until the next warmup
     public function testRegenerateRecompilesTheConcatenatedStylesheet(): void
     {
         $repository = $this->createStub(ConfigRepository::class);

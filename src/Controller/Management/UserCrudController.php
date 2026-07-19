@@ -46,12 +46,7 @@ class UserCrudController extends AbstractCrudController
         return User::class;
     }
 
-    // Relies on EasyAdmin's auto-discovery of App\Entity\User's own fields (which vary per app), except for:
-    // - the hashed password, excluded so it's never displayed or overwritten from the backoffice
-    // - creation/modification, made readonly since they're set automatically
-    // - isVerified, made readonly since it must only be set by EmailVerifier upon email confirmation
-    // "roles" is excluded by EasyAdmin's own auto-discovery (JSON columns are never auto-discovered),
-    // so it's added explicitly as a proper multiple-choice field
+    // Relies on EasyAdmin's auto-discovery of App\Entity\User's own fields (which vary per app), except for: the hashed password (excluded so it's never displayed or overwritten from the backoffice), creation/modification (made readonly since they're set automatically), isVerified (made readonly since it must only be set by EmailVerifier upon email confirmation); "roles" is excluded by EasyAdmin's own auto-discovery (JSON columns are never auto-discovered), so it's added explicitly as a proper multiple-choice field
     public function configureFields(string $pageName): iterable
     {
         foreach (parent::configureFields($pageName) as $field) {
@@ -70,8 +65,7 @@ class UserCrudController extends AbstractCrudController
             yield $field;
         }
 
-        // ROLE_USER is excluded, it's already granted by default to every user (see User::getRoles())
-        // Not required, since having none selected simply means the user only has that default role
+        // ROLE_USER is excluded, it's already granted by default to every user (see User::getRoles()); not required, since having none selected simply means the user only has that default role
         yield ChoiceField::new('roles')
             ->setLabel(t('label.roles', [], 'site'))
             ->setChoices($this->roleChoices())
@@ -80,11 +74,7 @@ class UserCrudController extends AbstractCrudController
             ->setRequired(false);
     }
 
-    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array)
-    // ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too,
-    // Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it —
-    // otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's
-    // "restricted" configs entirely
+    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array) ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too, Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it — otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's "restricted" configs entirely
     private function roleChoices(): array
     {
         $roles = (array) $this->configService->get('user-roles-available');

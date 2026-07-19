@@ -102,10 +102,6 @@
                 <source>text.gdpr</source>
                 <target>Acepto que este sitio web almacena los datos enviados para que pueda responder a mi solicitud</target>
             </trans-unit>
-            <trans-unit id="26">
-                <source>label.accept_tou</source>
-                <target><![CDATA[Acepto los <a href="%touUrl%" target="_blank">Términos de uso (TDU)</a>]]></target>
-            </trans-unit>
             <trans-unit id="32">
                 <source>label.all_rights_reserved</source>
                 <target>© Reservados todos los derechos</target>
@@ -590,10 +586,6 @@
                 <source>label.register</source>
                 <target>Registrarse</target>
             </trans-unit>
-            <trans-unit id="248">
-                <source>text.register_help</source>
-                <target>Crea tu cuenta indicando tu email y una contraseña.</target>
-            </trans-unit>
             <trans-unit id="154">
                 <source>label.password</source>
                 <target>Contraseña</target>
@@ -618,21 +610,9 @@
                 <source>text.link_expires_in</source>
                 <target>Este enlace caducará en</target>
             </trans-unit>
-            <trans-unit id="160">
-                <source>label.password_reset_email_sent</source>
-                <target>Email de restablecimiento de contraseña enviado</target>
-            </trans-unit>
-            <trans-unit id="161">
-                <source>text.password_reset_email_sent_info</source>
-                <target>Si existe una cuenta que coincide con tu email, se te acaba de enviar un email con un enlace para restablecer tu contraseña.</target>
-            </trans-unit>
             <trans-unit id="162">
                 <source>text.no_email_received</source>
                 <target>Si no recibes ningún email, revisa tu carpeta de spam o</target>
-            </trans-unit>
-            <trans-unit id="163">
-                <source>label.try_again</source>
-                <target>inténtalo de nuevo</target>
             </trans-unit>
             <trans-unit id="164">
                 <source>text.reset_password_instructions</source>
@@ -641,14 +621,6 @@
             <trans-unit id="165">
                 <source>label.reset_password</source>
                 <target>Restablecer tu contraseña</target>
-            </trans-unit>
-            <trans-unit id="166">
-                <source>text.reset_password_help</source>
-                <target>Introduce tu dirección de email y te enviaremos un enlace para restablecer tu contraseña.</target>
-            </trans-unit>
-            <trans-unit id="167">
-                <source>label.send_password_reset_email</source>
-                <target>Enviar email de restablecimiento</target>
             </trans-unit>
             <trans-unit id="168">
                 <source>label.login</source>
@@ -754,9 +726,13 @@
                 <source>label.choose_target</source>
                 <target>Elegir una página o una ruta</target>
             </trans-unit>
-            <trans-unit id="269">
-                <source>label.menu_link_as_copyright</source>
-                <target>Usar el copyright calculado (© año) como etiqueta</target>
+            <trans-unit id="278">
+                <source>label.menu_link_label</source>
+                <target>Etiqueta (opcional)</target>
+            </trans-unit>
+            <trans-unit id="279">
+                <source>help.menu_link_label</source>
+                <target>Dejar vacío para usar automáticamente el título de la página o de la sección seleccionada (o el copyright calculado para la página "Copyright")</target>
             </trans-unit>
             <trans-unit id="194">
                 <source>action.duplicate</source>
@@ -987,11 +963,11 @@
                 <target>La página se ha restaurado, pero su dirección original (%slug%) ya está ocupada: conservó su dirección técnica, renómbrela manualmente si es necesario.</target>
             </trans-unit>
             <trans-unit id="255">
-                <source>label.collection_entry</source>
+                <source>label.collection_item</source>
                 <target>Elemento de colección</target>
             </trans-unit>
             <trans-unit id="256">
-                <source>label.collection_entries</source>
+                <source>label.collection_items</source>
                 <target>Colecciones</target>
             </trans-unit>
             <trans-unit id="257">
@@ -999,12 +975,20 @@
                 <target>Grupo</target>
             </trans-unit>
             <trans-unit id="258">
-                <source>label.collection_entry_group_help</source>
+                <source>label.collection_item_group_help</source>
                 <target>Identifica a qué colección pertenece este elemento (ej. "projects") - este nombre es el que se elige como fuente en el bloque "Collection"</target>
             </trans-unit>
             <trans-unit id="267">
-                <source>label.collection_entry_slug_help</source>
+                <source>label.collection_item_slug_help</source>
                 <target>Identifica este elemento dentro de su grupo, usado para su URL de detalle si el bloque "Collection" define una - único dentro del grupo, no es necesario que sea único entre grupos diferentes.</target>
+            </trans-unit>
+            <trans-unit id="281">
+                <source>label.collection_items_count</source>
+                <target>Número de elementos</target>
+            </trans-unit>
+            <trans-unit id="282">
+                <source>label.collection_items_none</source>
+                <target>Todavía no hay colecciones.</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
@@ -1025,6 +1009,34 @@
             <trans-unit id="266">
                 <source>label.template_default</source>
                 <target>Genérico</target>
+            </trans-unit>
+            <trans-unit id="270">
+                <source>block.register</source>
+                <target>Formulario de registro</target>
+            </trans-unit>
+            <trans-unit id="271">
+                <source>block.register_description</source>
+                <target>Inserta el formulario de creación de cuenta</target>
+            </trans-unit>
+            <trans-unit id="274">
+                <source>block.reset_password_request</source>
+                <target>Formulario de contraseña olvidada</target>
+            </trans-unit>
+            <trans-unit id="275">
+                <source>block.reset_password_request_description</source>
+                <target>Inserta el formulario de "contraseña olvidada"</target>
+            </trans-unit>
+            <trans-unit id="280">
+                <source>text.registration_disabled</source>
+                <target>El registro no está abierto en este momento.</target>
+            </trans-unit>
+            <trans-unit id="284">
+                <source>label.info_collection_item_list</source>
+                <target>Elementos genéricos de título/descripción/imagen/enlace, agrupados por "group" - cada grupo alimenta un bloque "collection" del sitio. Arrastre las filas para reordenarlas dentro de un grupo.</target>
+            </trans-unit>
+            <trans-unit id="285">
+                <source>label.info_collection_item_groups</source>
+                <target>Elija un grupo para ver y gestionar sus elementos, o cree uno nuevo. Cada grupo alimenta un bloque "collection" del sitio.</target>
             </trans-unit>
         </body>
     </file>

@@ -11,9 +11,7 @@ namespace c975L\SiteBundle\Messenger;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
 
-// Wraps a receiver to replay a single, already-fetched Envelope through a Worker
-// (used by MessengerFailedMessageService::retry() to retry one failed message without
-// consuming the rest of the failure transport)
+// Wraps a receiver to replay a single, already-fetched Envelope through a Worker (used by MessengerFailedMessageService::retry() to retry one failed message without consuming the rest of the failure transport)
 class SingleEnvelopeReceiver implements ReceiverInterface
 {
     private bool $hasReceived = false;

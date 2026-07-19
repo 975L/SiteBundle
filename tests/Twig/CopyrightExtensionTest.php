@@ -66,8 +66,7 @@ class CopyrightExtensionTest extends TestCase
         $this->assertSame('© 2018 - ' . $this->currentYear . ': 975L', $extension->getCopyright());
     }
 
-    // French/Spanish typographic convention adds a space before the colon - matches the old
-    // layout.html.twig convention
+    // French/Spanish typographic convention adds a space before the colon - matches the old layout.html.twig convention
     public function testGetCopyrightWithSiteNameInFrenchHasASpaceBeforeColon(): void
     {
         $extension = $this->createExtension('2018-10-18', '975L', 'fr');

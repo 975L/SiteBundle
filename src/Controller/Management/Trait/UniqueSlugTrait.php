@@ -10,9 +10,7 @@ namespace c975L\SiteBundle\Controller\Management\Trait;
 
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-// Normalizes a raw slug (accents, spaces, case) and appends -2, -3... until $collides() reports the
-// candidate free - shared by PageCrudController (uniqueness site-wide) and CollectionEntryCrudController
-// (uniqueness scoped to the entry's own group), so the suffixing algorithm only needs fixing once
+// Normalizes a raw slug (accents, spaces, case) and appends -2, -3... until $collides() reports the candidate free - shared by PageCrudController (uniqueness site-wide) and CollectionItemCrudController (uniqueness scoped to the item's own group), so the suffixing algorithm only needs fixing once
 trait UniqueSlugTrait
 {
     private function uniqueSlug(SluggerInterface $slugger, string $base, callable $collides): string

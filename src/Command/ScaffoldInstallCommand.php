@@ -17,10 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-// Standalone, re-runnable equivalent of the scaffold-install step of c975l:site:create (which is
-// gated by a one-time lock file). Meant to pull in a bundle's scaffold/{src,templates,tests,translations}
-// after installing it into an *existing* site (e.g. "composer require c975l/contactform-bundle" later on) -
-// ScaffoldInstaller is idempotent, so running this again on an unmodified project is a no-op.
+// Standalone, re-runnable equivalent of the scaffold-install step of c975l:site:create (which is gated by a one-time lock file). Meant to pull in a bundle's scaffold/{src,templates,tests,translations} after installing it into an *existing* site (e.g. "composer require c975l/contactform-bundle" later on) - ScaffoldInstaller is idempotent, so running this again on an unmodified project is a no-op.
 #[AsCommand(
     name: 'c975l:scaffold:install',
     description: 'Installs (or refreshes) every installed c975L bundle\'s scaffold files into the project'

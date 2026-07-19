@@ -21,9 +21,7 @@ class LinkifyExtension extends AbstractExtension
         ];
     }
 
-    // Splits the RAW string around http(s) URLs first (so a literal quote right after a URL
-    // still stops the match, instead of being turned into "&quot;" by an earlier escaping pass
-    // and swallowed into the link), then HTML-escapes each part separately
+    // Splits the RAW string around http(s) URLs first (so a literal quote right after a URL still stops the match, instead of being turned into "&quot;" by an earlier escaping pass and swallowed into the link), then HTML-escapes each part separately
     public static function linkify(?string $string): string
     {
         $parts = preg_split('#(https?://[^\s"\'<>]+)#', $string ?? '', -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -36,8 +34,7 @@ class LinkifyExtension extends AbstractExtension
                 continue;
             }
 
-            // Trailing punctuation (end-of-sentence period, comma, closing parenthesis, ...)
-            // belongs to the surrounding text, not the URL itself
+            // Trailing punctuation (end-of-sentence period, comma, closing parenthesis, ...) belongs to the surrounding text, not the URL itself
             $url = rtrim($part, '.,;:!?)');
             $trailing = substr($part, \strlen($url));
             $escapedUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');

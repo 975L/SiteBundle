@@ -2,87 +2,67 @@
 
 namespace App\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
+use c975L\SiteBundle\Entity\Page;
+use c975L\UiBundle\Entity\Block;
+use Doctrine\ORM\EntityManagerInterface;
 
+// The reset-password *request* (the "reset_password_request" Form/FormAction) is now covered by
+// ResetPasswordRequestFormActionTest - this controller only keeps the signed reset-token link, see ResetPasswordController
 class ResetPasswordControllerTest extends FunctionalTestCase
 {
-    use MailerAssertionsTrait;
-
-    public function testRequestPageIsSuccessful(): void
+    // No token stored in session (e.g. /reset-password/reset/{token} visited a second time, after the
+    // token-in-URL redirect already consumed it into session, then the session itself expired)
+    public function testResetThrowsNotFoundWhenNoTokenIsStoredInSession(): void
     {
         $client = $this->createAuthenticatedClient();
-        $client->request('GET', '/reset-password');
 
-        $this->assertResponseIsSuccessful();
+        $client->request('GET', '/reset-password/reset');
+
+        $this->assertResponseStatusCodeSame(404);
     }
 
-    public function testCheckEmailPageIsSuccessful(): void
+    // A token in the URL is stored in session and stripped from the URL via redirect, before ever being validated
+    public function testResetWithATokenInTheUrlRedirectsToStripIt(): void
     {
         $client = $this->createAuthenticatedClient();
-        $client->request('GET', '/reset-password/check-email');
 
-        $this->assertResponseIsSuccessful();
+        $client->request('GET', '/reset-password/reset/some-token');
+
+        $this->assertResponseRedirects('/reset-password/reset');
     }
 
-    // Whether or not the email matches an account, the controller redirects to check-email
-    // without revealing which - see ResetPasswordController::processSendingPasswordResetEmail()
-    public function testSubmittingRequestFormRedirectsToCheckEmail(): void
+    // A token that was never really issued by ResetPasswordHelper (e.g. tampered/expired) fails validateTokenAndFetchUser() - redirectToRequestPage()'s fallback then sends the visitor to the home page, since no Page currently carries the "reset_password_request" form Block
+    public function testResetRedirectsToHomeWhenTokenIsInvalid(): void
     {
         $client = $this->createAuthenticatedClient();
-        $crawler = $client->request('GET', '/reset-password');
-        $this->backdateFormTimer($client, 'reset_password_started_at');
 
-        $form = $crawler->filter('form')->form();
-        $formName = $form->getName();
-        $form[$formName . '[email]'] = 'unknown-email@example.test';
-        if ($form->has($formName . '[gdpr]')) {
-            $form[$formName . '[gdpr]'] = '1';
-        }
+        $client->request('GET', '/reset-password/reset/some-invalid-token');
+        $client->request('GET', '/reset-password/reset');
 
-        $client->submit($form);
-
-        $this->assertResponseRedirects('/reset-password/check-email');
+        $this->assertResponseRedirects('/');
     }
 
-    // A filled honeypot field ("website") must still redirect to check-email (same response as
-    // a real request, no hint given to the bot) without ever calling the mailer
-    public function testHoneypotFilledRedirectsToCheckEmailWithoutSendingMail(): void
+    // Once a real Page carries the "reset_password_request" form Block (see PageRepository::findOneByFormBlockName()), redirectToRequestPage() sends the visitor there instead of the bare home page
+    public function testResetRedirectsToThePageCarryingTheResetPasswordRequestFormBlockWhenTokenIsInvalid(): void
     {
         $client = $this->createAuthenticatedClient();
-        $crawler = $client->request('GET', '/reset-password');
-        $this->backdateFormTimer($client, 'reset_password_started_at');
 
-        $form = $crawler->filter('form')->form();
-        $formName = $form->getName();
-        $form[$formName . '[email]'] = $this->authenticatedUser->getEmail();
-        if ($form->has($formName . '[gdpr]')) {
-            $form[$formName . '[gdpr]'] = '1';
-        }
-        $form[$formName . '[website]'] = 'https://spam.example';
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $block = (new Block())->setKind('form')->setData(['name' => 'reset_password_request']);
+        $page = (new Page())
+            ->setTitle('Forgot password')
+            ->setSlug('forgot-password-test')
+            ->setCreation(new \DateTime())
+            ->setModification(new \DateTime())
+            ->setIsPublished(true)
+        ;
+        $page->addBlock($block);
+        $entityManager->persist($page);
+        $entityManager->flush();
 
-        $client->submit($form);
+        $client->request('GET', '/reset-password/reset/some-invalid-token');
+        $client->request('GET', '/reset-password/reset');
 
-        $this->assertResponseRedirects('/reset-password/check-email');
-        $this->assertQueuedEmailCount(0);
-    }
-
-    // Submitting right after the form was displayed (no time elapsed, unlike the tests above
-    // which call backdateFormTimer()) looks like a scripted bot, not a human
-    public function testSubmittingTooQuicklyRedirectsWithoutSendingMail(): void
-    {
-        $client = $this->createAuthenticatedClient();
-        $crawler = $client->request('GET', '/reset-password');
-
-        $form = $crawler->filter('form')->form();
-        $formName = $form->getName();
-        $form[$formName . '[email]'] = $this->authenticatedUser->getEmail();
-        if ($form->has($formName . '[gdpr]')) {
-            $form[$formName . '[gdpr]'] = '1';
-        }
-
-        $client->submit($form);
-
-        $this->assertResponseRedirects('/reset-password/check-email');
-        $this->assertQueuedEmailCount(0);
+        $this->assertResponseRedirects('/pages/forgot-password-test');
     }
 }

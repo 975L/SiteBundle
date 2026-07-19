@@ -25,8 +25,7 @@ class ArticlesSliderTypeTest extends TypeTestCase
         $this->pageRepository = $this->createStub(PageRepository::class);
         $this->pageRepository->method('findAllOrdered')->willReturn([$page]);
 
-        // TypeTestCase would otherwise create a bare, unconfigured mock for this - PHPUnit 13 flags
-        // that as a notice ("no expectations configured"); a stub is the correct double for it anyway
+        // TypeTestCase would otherwise create a bare, unconfigured mock for this - PHPUnit 13 flags that as a notice ("no expectations configured"); a stub is the correct double for it anyway
         $this->dispatcher = $this->createStub(EventDispatcherInterface::class);
 
         parent::setUp();
@@ -37,8 +36,7 @@ class ArticlesSliderTypeTest extends TypeTestCase
         return [new ArticlesSliderType($this->pageRepository)];
     }
 
-    // A genuinely new/empty block gets sane defaults - using the "data" form option instead would
-    // silently reset these on every save (see the comment in ArticlesSliderType)
+    // A genuinely new/empty block gets sane defaults - using the "data" form option instead would silently reset these on every save (see the comment in ArticlesSliderType)
     public function testEmptyDataGetsDefaultDurationAndRatio(): void
     {
         $form = $this->factory->create(ArticlesSliderType::class, []);

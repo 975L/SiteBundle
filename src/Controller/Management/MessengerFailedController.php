@@ -34,9 +34,7 @@ class MessengerFailedController extends AbstractController
     ) {
     }
 
-    // Shows the failed Messenger messages in a readable form to ROLE_SUPER_ADMIN, grouped by
-    // error so recurring issues can be spotted and bulk-deleted; ROLE_ADMIN only sees a
-    // reassuring "already signaled" message, no technical detail
+    // Shows the failed Messenger messages in a readable form to ROLE_SUPER_ADMIN, grouped by error so recurring issues can be spotted and bulk-deleted; ROLE_ADMIN only sees a reassuring "already signaled" message, no technical detail
     #[AdminRoute(
         path: '/site/messenger-failed',
         name: 'site_messenger_failed',
@@ -75,8 +73,7 @@ class MessengerFailedController extends AbstractController
         return $this->redirectToRoute('management_site_messenger_failed');
     }
 
-    // Replays a single failed message right away; reports success or the new error so the
-    // admin can decide whether it's worth retrying again or just deleting
+    // Replays a single failed message right away; reports success or the new error so the admin can decide whether it's worth retrying again or just deleting
     #[AdminRoute(
         path: '/site/messenger-failed/{id}/retry',
         name: 'site_messenger_failed_retry',

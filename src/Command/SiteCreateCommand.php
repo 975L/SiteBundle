@@ -50,8 +50,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SiteCreateCommand extends Command
 {
     private const QUESTIONS_FILE = __DIR__ . '/../../config/site-create-questions.json';
-    // Committed to the site's own repo (not gitignored): the guard must survive git clone/deploy,
-    // not just protect the machine it was first run on.
+    // Committed to the site's own repo (not gitignored): the guard must survive git clone/deploy, not just protect the machine it was first run on.
     private const LOCK_FILE = '.c975l-site-created';
 
     public function __construct(
@@ -120,6 +119,8 @@ class SiteCreateCommand extends Command
 
         $io->section('5/7 — Pages par défaut');
         $this->importPages($io);
+        // Same pattern as "c975l:config:load-all" above - lets a new site start with UiBundle's FormFieldTemplate catalog (email, phone, cgu...) already filled in, instead of every field being composed by hand the first time
+        $this->getApplication()?->find('c975l:ui:form-field-template:import-defaults')->run(new ArrayInput([]), $output);
 
         $io->section('6/7 — Menu du footer');
         $this->buildFooterMenu($io);
@@ -137,9 +138,7 @@ class SiteCreateCommand extends Command
         $io->block(['', '  c975L — Création interactive du site  ', ''], null, 'fg=white;bg=blue;options=bold', '  ', true);
     }
 
-    // Regenerates C975L_VAULT_KEY into .env.local if missing. The VaultEncryptor injected by
-    // the container already froze the (empty) env value at boot, so a freshly-built instance
-    // is needed to actually use the new key within this same run.
+    // Regenerates C975L_VAULT_KEY into .env.local if missing. The VaultEncryptor injected by the container already froze the (empty) env value at boot, so a freshly-built instance is needed to actually use the new key within this same run.
     private function ensureVaultKey(SymfonyStyle $io): VaultEncryptor
     {
         if ($this->vaultEncryptor->isKeyDefined()) {
@@ -156,9 +155,7 @@ class SiteCreateCommand extends Command
         return new VaultEncryptor($key);
     }
 
-    // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is
-    // false, see README "Account activation") onto the "main" firewall. Edits the file as plain
-    // text rather than through the Yaml component, so existing comments/formatting survive.
+    // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is false, see README "Account activation") onto the "main" firewall. Edits the file as plain text rather than through the Yaml component, so existing comments/formatting survive.
     private function ensureUserChecker(SymfonyStyle $io): void
     {
         $path = $this->projectDir . '/config/packages/security.yaml';
@@ -191,9 +188,7 @@ class SiteCreateCommand extends Command
         $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "user_checker: App\\Security\\UserChecker" toi-même.');
     }
 
-    // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP,
-    // no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter
-    // package. Same plain-text edit approach as ensureUserChecker(), for the same reason.
+    // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP, no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter package. Same plain-text edit approach as ensureUserChecker(), for the same reason.
     private function ensureLoginThrottling(SymfonyStyle $io): void
     {
         $path = $this->projectDir . '/config/packages/security.yaml';
@@ -228,8 +223,7 @@ class SiteCreateCommand extends Command
         $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "login_throttling: { max_attempts: 5 }" toi-même.');
     }
 
-    // Returns [email, password] (password is intentionally shown in clear text: this account
-    // is created outside any email-verification flow, so echoing it avoids losing it)
+    // Returns [email, password] (password is intentionally shown in clear text: this account is created outside any email-verification flow, so echoing it avoids losing it)
     private function createAdminUser(SymfonyStyle $io): array
     {
         $email = $io->ask('Email de l\'administrateur', null, function (?string $answer): string {
@@ -265,8 +259,7 @@ class SiteCreateCommand extends Command
         $user = new \App\Entity\User();
         $user->setEmail($email);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
-        // Bootstrap user is the site's owner (producer or self-hoster), so it also gets ROLE_SUPER_ADMIN,
-        // the only role allowed to see/edit the "backup" config group (DB credentials, see ConfigCrudController)
+        // Bootstrap user is the site's owner (producer or self-hoster), so it also gets ROLE_SUPER_ADMIN, the only role allowed to see/edit the "backup" config group (DB credentials, see ConfigCrudController)
         $user->setRoles(['ROLE_ADMIN', 'ROLE_SUPER_ADMIN']);
         $user->setIsVerified(true);
         $user->setIsEnabled(true);
@@ -309,8 +302,7 @@ class SiteCreateCommand extends Command
     {
         $kind = $config->getKind();
         $currentValue = $this->configService->get($config->getSlug());
-        // Safe even if the description isn't a translation key yet (bundle not migrated):
-        // Symfony returns the id unchanged when no translation is found for it
+        // Safe even if the description isn't a translation key yet (bundle not migrated): Symfony returns the id unchanged when no translation is found for it
         $question = sprintf(
             '%s <fg=gray>(%s) [%s]</>',
             $this->translator->trans($config->getDescription() ?? $config->getLabelTranslationKey(), [], 'site_config'),
@@ -359,11 +351,7 @@ class SiteCreateCommand extends Command
         $io->text(sprintf('  ✓ %d page(s) créée(s), %d déjà existante(s) ignorée(s)', $result['created'], $result['skipped']));
     }
 
-    // Offers every bundle-contributed route (e.g. ContactFormBundle's "contact" page, only present if
-    // that bundle is installed - see LinkableRouteRegistry) plus the legal pages just imported, in the
-    // fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright),
-    // each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate
-    // entries, since existing targets are skipped.
+    // Offers every bundle-contributed route (e.g. ContactFormBundle's "contact" page, only present if that bundle is installed - see LinkableRouteRegistry) plus the legal pages just imported, in the fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright), each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate entries, since existing targets are skipped.
     private function buildFooterMenu(SymfonyStyle $io): void
     {
         $menu = $this->menuRepository->findOneByLocation(Menu::LOCATION_FOOTER) ?? (new Menu())->setLocation(Menu::LOCATION_FOOTER);
@@ -403,8 +391,7 @@ class SiteCreateCommand extends Command
         $io->text(sprintf('  ✓ %d élément(s) dans le menu du footer', $menu->getBlocks()->count()));
     }
 
-    // Writes the marker checked at the top of execute(): committed to the repo so the guard
-    // survives git clone/deploy, not just a re-run on the same machine.
+    // Writes the marker checked at the top of execute(): committed to the repo so the guard survives git clone/deploy, not just a re-run on the same machine.
     private function lockSite(): void
     {
         file_put_contents(

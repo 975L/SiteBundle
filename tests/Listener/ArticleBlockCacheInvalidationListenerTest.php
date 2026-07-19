@@ -40,9 +40,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         return $page;
     }
 
-    // articles_slider resolves another Page's "article" blocks live at render time (see
-    // ArticlesSliderCacheTagProvider) - editing an article block must invalidate every page
-    // referencing it, so any articles_slider pointing there re-renders fresh next time
+    // articles_slider resolves another Page's "article" blocks live at render time (see ArticlesSliderCacheTagProvider) - editing an article block must invalidate every page referencing it, so any articles_slider pointing there re-renders fresh next time
     public function testPostUpdateInvalidatesEveryPageOwningTheChangedArticleBlock(): void
     {
         $block = $this->createBlock('article', 12);

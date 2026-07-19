@@ -20,8 +20,7 @@ class SiteTemplateProviderTest extends TestCase
         $this->assertInstanceOf(TemplateProviderInterface::class, new SiteTemplateProvider());
     }
 
-    // Reads every config/templates/*.json shipped by the bundle into one template per file,
-    // keyed by filename
+    // Reads every config/templates/*.json shipped by the bundle into one template per file, keyed by filename
     public function testGetTemplatesReturnsOneEntryPerJsonFile(): void
     {
         $files = glob(\dirname(__DIR__, 2) . '/config/templates/*.json') ?: [];

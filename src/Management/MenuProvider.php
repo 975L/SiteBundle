@@ -11,12 +11,14 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
-use c975L\SiteBundle\Controller\Management\CollectionEntryCrudController;
+use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
 use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Controller\Management\UserCrudController;
+use c975L\UiBundle\Controller\Management\EmailTemplateCrudController;
+use c975L\UiBundle\Controller\Management\FormCrudController;
 use c975L\UiBundle\Controller\Management\MediaCrudController;
 
 class MenuProvider implements MenuProviderInterface
@@ -68,11 +70,23 @@ class MenuProvider implements MenuProviderInterface
                 'translation_domain' => 'ui',
                 'icon' => 'fas fa-photo-film',
             ],
-            'collection_entry' => [
-                'controller' => CollectionEntryCrudController::class,
-                'label' => 'label.collection_entries',
+            'collection_item' => [
+                'controller' => CollectionItemCrudController::class,
+                'label' => 'label.collection_items',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-layer-group',
+            ],
+            'form' => [
+                'controller' => FormCrudController::class,
+                'label' => 'label.forms',
+                'translation_domain' => 'ui',
+                'icon' => 'fas fa-wpforms',
+            ],
+            'email_template' => [
+                'controller' => EmailTemplateCrudController::class,
+                'label' => 'label.email_templates',
+                'translation_domain' => 'ui',
+                'icon' => 'fas fa-envelope-open-text',
             ],
         ];
     }

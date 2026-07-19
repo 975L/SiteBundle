@@ -9,10 +9,10 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
-use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Command\ExportTablesCommand;
 use App\Command\SitemapCreateCommand;
+use c975L\UiBundle\Repository\FormRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -33,7 +33,7 @@ class SiteShortcutController extends AbstractController
     public function __construct(
         private readonly SitemapCreateCommand $sitemapCreateCommand,
         private readonly ExportTablesCommand $exportTablesCommand,
-        private readonly ConfigRepository $configRepository,
+        private readonly FormRepository $formRepository,
         private readonly EntityManagerInterface $manager,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
@@ -63,7 +63,7 @@ class SiteShortcutController extends AbstractController
         return $this->redirectToRoute('management');
     }
 
-    // Flips the 'user-registration-enabled' config value;
+    // Flips the "register" c975L\UiBundle\Entity\Form's $enabled flag - same lever RegisterFormAction's Form is checked against by FormController before building/submitting it
     #[AdminRoute(
         path: '/site/user-registration-enabled-toggle',
         name: 'site_user_registration_enabled_toggle',
@@ -73,13 +73,11 @@ class SiteShortcutController extends AbstractController
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
-        $config = $this->configRepository->findOneBySlug('user-registration-enabled');
-        if (null !== $config && $this->isCsrfTokenValid(self::REGISTRATION_ENABLED_TOGGLE_ROUTE, $request->request->get('_token'))) {
-            $enabled = !$this->configService->getBool($config->getValue());
-            $config->setValue($enabled);
-            $config->setModification(new \DateTime());
+        $form = $this->formRepository->findOneBy(['name' => 'register']);
+        if (null !== $form && $this->isCsrfTokenValid(self::REGISTRATION_ENABLED_TOGGLE_ROUTE, $request->request->get('_token'))) {
+            $enabled = !$form->isEnabled();
+            $form->setEnabled($enabled);
             $this->manager->flush();
-            $this->configService->invalidateCache();
 
             $this->addFlash('success', $this->translator->trans(
                 $enabled ? 'flash.user_registration_enabled' : 'flash.user_registration_disabled',

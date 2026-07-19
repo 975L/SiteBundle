@@ -223,7 +223,10 @@
             {% endblock %}
 {# Footer #}
             {% block footer %}
-                <twig:c975LSite:General:Footer copyright="{{ copyright is defined ? copyright : '' }}" />
+                {# No site name here (unlike the "copyright" meta tag above): matches the live-computed
+                   copyright a "Copyright"-page menu_link shows instead (see MenuExtension), so the
+                   footer reads the same whether that page is linked in the footer menu or not #}
+                <twig:c975LSite:General:Footer copyright="{{ site_copyright(false) }}" />
             {% endblock %}
         {% endblock %}
         <span id="bottom"></span>

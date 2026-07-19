@@ -7,11 +7,7 @@
  */
 import { Controller } from '@hotwired/stimulus';
 
-// Confirms with the user before letting them edit the field, since it will also change the page's slug
-// (see PageCrudController). Reuses EasyAdmin's own action-confirmation modal (unconditionally rendered
-// on every crud/edit page, see vendor/easycorp/easyadmin-bundle .../_action_confirmation_modal.html.twig)
-// instead of a native confirm() - same look as the "move to trash" confirmation, and window.bootstrap is
-// already exposed globally by EasyAdmin's own admin.js.
+// Confirms with the user before letting them edit the field, since it will also change the page's slug (see PageCrudController). Reuses EasyAdmin's own action-confirmation modal (unconditionally rendered on every crud/edit page, see vendor/easycorp/easyadmin-bundle .../_action_confirmation_modal.html.twig) instead of a native confirm() - same look as the "move to trash" confirmation, and window.bootstrap is already exposed globally by EasyAdmin's own admin.js.
 export default class extends Controller {
     static values = { message: String };
 

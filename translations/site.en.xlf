@@ -102,10 +102,6 @@
                 <source>text.gdpr</source>
                 <target>I agree that this website stores the submitted data so that it can answer my request</target>
             </trans-unit>
-            <trans-unit id="26">
-                <source>label.accept_tou</source>
-                <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of use (TOU)</a>]]></target>
-            </trans-unit>
             <trans-unit id="32">
                 <source>label.all_rights_reserved</source>
                 <target>© All rights reserved</target>
@@ -590,10 +586,6 @@
                 <source>label.register</source>
                 <target>Register</target>
             </trans-unit>
-            <trans-unit id="248">
-                <source>text.register_help</source>
-                <target>Create your account by entering your email and a password.</target>
-            </trans-unit>
             <trans-unit id="154">
                 <source>label.password</source>
                 <target>Password</target>
@@ -618,21 +610,9 @@
                 <source>text.link_expires_in</source>
                 <target>This link will expire in</target>
             </trans-unit>
-            <trans-unit id="160">
-                <source>label.password_reset_email_sent</source>
-                <target>Password Reset Email Sent</target>
-            </trans-unit>
-            <trans-unit id="161">
-                <source>text.password_reset_email_sent_info</source>
-                <target>If an account matching your email exists, then an email was just sent that contains a link that you can use to reset your password.</target>
-            </trans-unit>
             <trans-unit id="162">
                 <source>text.no_email_received</source>
                 <target>If you don't receive an email please check your spam folder or</target>
-            </trans-unit>
-            <trans-unit id="163">
-                <source>label.try_again</source>
-                <target>try again</target>
             </trans-unit>
             <trans-unit id="164">
                 <source>text.reset_password_instructions</source>
@@ -641,14 +621,6 @@
             <trans-unit id="165">
                 <source>label.reset_password</source>
                 <target>Reset your password</target>
-            </trans-unit>
-            <trans-unit id="166">
-                <source>text.reset_password_help</source>
-                <target>Enter your email address, and we will send you a link to reset your password.</target>
-            </trans-unit>
-            <trans-unit id="167">
-                <source>label.send_password_reset_email</source>
-                <target>Send password reset email</target>
             </trans-unit>
             <trans-unit id="168">
                 <source>label.login</source>
@@ -754,9 +726,13 @@
                 <source>label.choose_target</source>
                 <target>Choose a page or a route</target>
             </trans-unit>
-            <trans-unit id="269">
-                <source>label.menu_link_as_copyright</source>
-                <target>Use the computed copyright (© year) as the label</target>
+            <trans-unit id="278">
+                <source>label.menu_link_label</source>
+                <target>Label (optional)</target>
+            </trans-unit>
+            <trans-unit id="279">
+                <source>help.menu_link_label</source>
+                <target>Leave empty to automatically use the target page's or section's title (or the computed copyright for the "Copyright" page)</target>
             </trans-unit>
             <trans-unit id="194">
                 <source>action.duplicate</source>
@@ -987,11 +963,11 @@
                 <target>The page has been restored, but its original address (%slug%) is now taken: it kept its technical address, rename it manually if needed.</target>
             </trans-unit>
             <trans-unit id="255">
-                <source>label.collection_entry</source>
+                <source>label.collection_item</source>
                 <target>Collection item</target>
             </trans-unit>
             <trans-unit id="256">
-                <source>label.collection_entries</source>
+                <source>label.collection_items</source>
                 <target>Collections</target>
             </trans-unit>
             <trans-unit id="257">
@@ -999,12 +975,20 @@
                 <target>Group</target>
             </trans-unit>
             <trans-unit id="258">
-                <source>label.collection_entry_group_help</source>
+                <source>label.collection_item_group_help</source>
                 <target>Identifies which collection this item belongs to (e.g. "projects") - this is the name picked as the source in the "Collection" block</target>
             </trans-unit>
             <trans-unit id="267">
-                <source>label.collection_entry_slug_help</source>
+                <source>label.collection_item_slug_help</source>
                 <target>Identifies this item within its group, used for its detail URL if the "Collection" block defines one - unique within the group, no need to be unique across different groups.</target>
+            </trans-unit>
+            <trans-unit id="281">
+                <source>label.collection_items_count</source>
+                <target>Item count</target>
+            </trans-unit>
+            <trans-unit id="282">
+                <source>label.collection_items_none</source>
+                <target>No collections yet.</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
@@ -1025,6 +1009,34 @@
             <trans-unit id="266">
                 <source>label.template_default</source>
                 <target>Generic</target>
+            </trans-unit>
+            <trans-unit id="270">
+                <source>block.register</source>
+                <target>Registration form</target>
+            </trans-unit>
+            <trans-unit id="271">
+                <source>block.register_description</source>
+                <target>Embeds the account registration form</target>
+            </trans-unit>
+            <trans-unit id="274">
+                <source>block.reset_password_request</source>
+                <target>Password reset request form</target>
+            </trans-unit>
+            <trans-unit id="275">
+                <source>block.reset_password_request_description</source>
+                <target>Embeds the "forgot my password" form</target>
+            </trans-unit>
+            <trans-unit id="280">
+                <source>text.registration_disabled</source>
+                <target>Registration is not currently open.</target>
+            </trans-unit>
+            <trans-unit id="284">
+                <source>label.info_collection_item_list</source>
+                <target>Generic title/description/image/link items, grouped by "group" - each group feeds a "collection" Block on the site. Drag rows to reorder them within a group.</target>
+            </trans-unit>
+            <trans-unit id="285">
+                <source>label.info_collection_item_groups</source>
+                <target>Pick a group to see and manage its items, or create a new one. Each group feeds a "collection" Block on the site.</target>
             </trans-unit>
         </body>
     </file>

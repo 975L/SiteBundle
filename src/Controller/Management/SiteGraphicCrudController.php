@@ -32,11 +32,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 use function Symfony\Component\Translation\t;
 
-// Manages the site-wide graphics (favicon, apple-touch-icon, default og-image, logo), stored as
-// c975L\UiBundle\Entity\Media rows carrying a "role" instead of being attached to a Block. For singleton
-// roles the file is always saved at a fixed name at the root of public/ (see UiMediaNamer), so it stays
-// reachable at its well-known URL (e.g. /favicon.ico) whatever gets re-uploaded. The error-image role is
-// repeatable: several rows can share it, forming the pool the error pages pick a random image from.
+// Manages the site-wide graphics (favicon, apple-touch-icon, default og-image, logo), stored as c975L\UiBundle\Entity\Media rows carrying a "role" instead of being attached to a Block. For singleton roles the file is always saved at a fixed name at the root of public/ (see UiMediaNamer), so it stays reachable at its well-known URL (e.g. /favicon.ico) whatever gets re-uploaded. The error-image role is repeatable: several rows can share it, forming the pool the error pages pick a random image from.
 class SiteGraphicCrudController extends AbstractCrudController
 {
     private const ROLE_LABELS = [
@@ -121,8 +117,7 @@ class SiteGraphicCrudController extends AbstractCrudController
     {
         $isNew = Crud::PAGE_NEW === $pageName;
 
-        // Only singleton roles not yet used can be picked when creating a new row - repeatable roles
-        // (e.g. error-image) stay selectable even after already being used elsewhere
+        // Only singleton roles not yet used can be picked when creating a new row - repeatable roles (e.g. error-image) stay selectable even after already being used elsewhere
         $usedSingletonRoles = array_diff(
             $this->mediaRepository->createQueryBuilder('m')
                 ->select('m.role')

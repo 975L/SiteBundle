@@ -15,8 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Alerts on important (non-spam) failed Messenger messages, with more detail shown to
-// ROLE_SUPER_ADMIN than to ROLE_ADMIN, who cannot act on it (see MessengerFailedController)
+// Alerts on important (non-spam) failed Messenger messages, with more detail shown to ROLE_SUPER_ADMIN than to ROLE_ADMIN, who cannot act on it (see MessengerFailedController)
 class MessengerAlertProvider implements AlertProviderInterface
 {
     public function __construct(

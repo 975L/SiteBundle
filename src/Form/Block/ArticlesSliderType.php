@@ -49,9 +49,7 @@ class ArticlesSliderType extends AbstractType
             ])
         ;
 
-        // Defaults only applied to a genuinely new/empty block - using the "data" option instead
-        // would lock the field (Symfony's setDataLocked()), silently discarding the stored value
-        // on edit and resetting it to the default on every save
+        // Defaults only applied to a genuinely new/empty block - using the "data" option instead would lock the field (Symfony's setDataLocked()), silently discarding the stored value on edit and resetting it to the default on every save
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (PreSetDataEvent $event): void {

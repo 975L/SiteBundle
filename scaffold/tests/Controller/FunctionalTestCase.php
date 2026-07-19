@@ -8,18 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-// If "site-maintenance" is enabled (real dev/prod config), anonymous visitors get a 503 on every
-// front page. Logging in as an admin bypasses it, same as a real admin would, so tests relying on
-// this base class stay true regardless of that toggle.
+// If "site-maintenance" is enabled (real dev/prod config), anonymous visitors get a 503 on every front page. Logging in as an admin bypasses it, same as a real admin would, so tests relying on this base class stay true regardless of that toggle.
 abstract class FunctionalTestCase extends WebTestCase
 {
-    // Exposed so a test can call $client->loginUser($this->authenticatedUser) again mid-scenario,
-    // after a route with a session side effect (e.g. app_logout) runs in the same test.
+    // Exposed so a test can call $client->loginUser($this->authenticatedUser) again mid-scenario, after a route with a session side effect (e.g. app_logout) runs in the same test.
     protected ?User $authenticatedUser = null;
 
-    // The user needs a real id (EntityUserProvider::refreshUser() requires one to
-    // reload it from the session on the next request), so it's persisted - dama/doctrine-test-bundle
-    // rolls the whole test's transaction back, it never actually reaches the dev database.
+    // The user needs a real id (EntityUserProvider::refreshUser() requires one to reload it from the session on the next request), so it's persisted - dama/doctrine-test-bundle rolls the whole test's transaction back, it never actually reaches the dev database.
     protected function createAuthenticatedClient(): KernelBrowser
     {
         $client = static::createClient();
@@ -44,16 +39,5 @@ abstract class FunctionalTestCase extends WebTestCase
         $client->loginUser($user);
 
         return $client;
-    }
-
-    // Simulates a human having spent time filling a form protected by an anti-bot minimum
-    // delay (see RegistrationController/ResetPasswordController), so tests exercising the
-    // legitimate path aren't flaky against that delay. Call right after the GET request that
-    // displays the form, before submitting it.
-    protected function backdateFormTimer(KernelBrowser $client, string $sessionKey): void
-    {
-        $session = $client->getRequest()->getSession();
-        $session->set($sessionKey, time() - 60);
-        $session->save();
     }
 }

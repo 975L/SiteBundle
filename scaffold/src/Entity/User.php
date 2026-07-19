@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use App\Validator\Constraints\DnsEmail;
+use c975L\UiBundle\Validator\Constraints\DnsEmail;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;

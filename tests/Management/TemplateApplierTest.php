@@ -42,8 +42,7 @@ class TemplateApplierTest extends TestCase
         $this->assertSame(1, $blocks[1]->getPosition());
     }
 
-    // Appends after whatever the page already has, instead of replacing it - positions continue
-    // from the existing block count
+    // Appends after whatever the page already has, instead of replacing it - positions continue from the existing block count
     public function testApplyAppendsAfterExistingBlocksWithoutTouchingThem(): void
     {
         $page = new Page();

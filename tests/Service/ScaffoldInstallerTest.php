@@ -124,8 +124,7 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 0], $installer->install());
     }
 
-    // A target already identical to the scaffold source is left untouched: no backup, no re-copy -
-    // re-running install() on an unmodified project must not litter existingFiles/ with no-op backups
+    // A target already identical to the scaffold source is left untouched: no backup, no re-copy - re-running install() on an unmodified project must not litter existingFiles/ with no-op backups
     public function testInstallSkipsFileAlreadyIdenticalToScaffoldSource(): void
     {
         $this->addScaffoldBundle('site-bundle', ['src/Kernel.php' => 'same-content']);
@@ -140,9 +139,7 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
 
-    // Unlike src/templates/tests/translations, an existing "assets" file is never backed up/overwritten
-    // again once it's there, even if the bundle's own copy has since changed - it's the app's own
-    // editable file from the first install onward (e.g. a customized assets/styles/themes/theme.css)
+    // Unlike src/templates/tests/translations, an existing "assets" file is never backed up/overwritten again once it's there, even if the bundle's own copy has since changed - it's the app's own editable file from the first install onward (e.g. a customized assets/styles/themes/theme.css)
     public function testInstallNeverOverwritesAnExistingAssetsFileEvenWhenContentDiffers(): void
     {
         $this->addScaffoldBundle('site-bundle', ['assets/styles/themes/theme.css' => ':root { --radius-btn: 0; }']);
@@ -157,8 +154,7 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
 
-    // Both theme.css and app.css present, app.css doesn't import it yet: the caller gets a reminder to
-    // add it by hand - install() itself never writes to app.css
+    // Both theme.css and app.css present, app.css doesn't import it yet: the caller gets a reminder to add it by hand - install() itself never writes to app.css
     public function testThemeImportReminderIsReturnedWhenNotYetWired(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
@@ -184,8 +180,7 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertNull($installer->themeImportReminder());
     }
 
-    // No app.css at all (e.g. a bundle-only test fixture, or a project not using AssetMapper for CSS),
-    // or no scaffolded theme.css yet: nothing to remind about
+    // No app.css at all (e.g. a bundle-only test fixture, or a project not using AssetMapper for CSS), or no scaffolded theme.css yet: nothing to remind about
     public function testThemeImportReminderIsNullWhenEitherFileIsMissing(): void
     {
         $installer = new ScaffoldInstaller($this->projectDir);

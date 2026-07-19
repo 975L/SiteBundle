@@ -25,8 +25,7 @@ class UserRepositoryTest extends TestCase
 
     public function testUpgradePasswordThrowsForUnsupportedUser(): void
     {
-        // The exception is thrown before the entity manager is ever touched,
-        // so an empty registry stub is enough here.
+        // The exception is thrown before the entity manager is ever touched, so an empty registry stub is enough here.
         $repository = new UserRepository($this->createStub(ManagerRegistry::class));
 
         $unsupportedUser = $this->createStub(PasswordAuthenticatedUserInterface::class);

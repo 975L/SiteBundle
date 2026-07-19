@@ -22,8 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SiteMediaUsageProviderTest extends TestCase
 {
-    // Builds a PageRepository double: findByBlockIds() answers $pagesOwningBlocks, and the
-    // createQueryBuilder()->...->getResult() chain (og-image lookup) answers $pagesWithOgImage
+    // Builds a PageRepository double: findByBlockIds() answers $pagesOwningBlocks, and the createQueryBuilder()->...->getResult() chain (og-image lookup) answers $pagesWithOgImage
     private function createPageRepository(array $pagesOwningBlocks, array $pagesWithOgImage): PageRepository
     {
         $query = $this->createStub(Query::class);

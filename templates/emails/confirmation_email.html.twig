@@ -1,0 +1,13 @@
+{% extends "@c975LSite/emails/layout.html.twig" %}
+
+{% set title = 'label.confirm_email_title'|trans({}, 'site') %}
+
+{# Content is composed via the "account_validation" EmailTemplate, editable from the admin (see
+   c975L\UiBundle\Controller\Management\EmailTemplateCrudController) - seeded by
+   DefaultPagesImporter::ensureFormAndEmailTemplateExist(), self-healing here on every request #}
+{% block content %}
+    {{ email_template_body('account_validation', {
+        signed_url: signedUrl,
+        expires_at: 'text.link_expires_in'|trans({}, 'site') ~ ' ' ~ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle'),
+    }) }}
+{% endblock %}

@@ -8,13 +8,9 @@
  */
 namespace c975L\SiteBundle\Management;
 
-// Implement to contribute page templates (see SiteTemplateProvider for SiteBundle's own shipped ones,
-// config/templates/*.json) - collected by TemplateRegistry, same pattern as ConfigBundle's
-// ThemePresetProviderInterface. A site-specific template lives in the app instead (its own service
-// implementing this interface), not necessarily in this bundle.
+// Implement to contribute page templates (see SiteTemplateProvider for SiteBundle's own shipped ones, config/templates/*.json) - collected by TemplateRegistry, same pattern as ConfigBundle's ThemePresetProviderInterface. A site-specific template lives in the app instead (its own service implementing this interface), not necessarily in this bundle.
 interface TemplateProviderInterface
 {
-    // Each entry: id => ['label' => string, 'domain' => string, 'blocks' => [['kind' => string, 'data' => array], ...]]
-    // 'domain' is the translation domain owning 'label' (the provider's own bundle)
+    // Each entry: id => ['label' => string, 'domain' => string, 'blocks' => [['kind' => string, 'data' => array], ...]]; 'domain' is the translation domain owning 'label' (the provider's own bundle)
     public function getTemplates(): array;
 }

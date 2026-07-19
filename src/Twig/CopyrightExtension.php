@@ -27,12 +27,7 @@ class CopyrightExtension extends AbstractExtension
         ];
     }
 
-    // "© firstYear - currentYear" (or just "© currentYear" if the site went online this year, or
-    // site-first-online-date isn't set), optionally suffixed with a locale-punctuated " : siteName"/
-    // ": siteName" - was duplicated between layout.html.twig and emails/fullLayout.html.twig (using
-    // French/Spanish's own space-before-colon and English's own no-space convention respectively), now
-    // shared so a menu_link block (see MenuLinkType's "asCopyright") can also reuse it as a live-computed
-    // link label
+    // "© firstYear - currentYear" (or just "© currentYear" if the site went online this year, or site-first-online-date isn't set), optionally suffixed with a locale-punctuated " : siteName"/": siteName" - was duplicated between layout.html.twig and emails/fullLayout.html.twig (using French/Spanish's own space-before-colon and English's own no-space convention respectively), now shared so a "Copyright"-page menu_link (see MenuExtension::isCopyrightPage()) can also reuse it as a live-computed link label
     public function getCopyright(bool $withSiteName = true): string
     {
         $firstOnlineDate = $this->configService->get('site-first-online-date');

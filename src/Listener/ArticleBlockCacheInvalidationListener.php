@@ -12,20 +12,13 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\Event\PostPersistEventArgs;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
-use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-// UiBundle's BlockCacheInvalidationListener only invalidates the directly changed Block's own
-// "block_{id}" tag - it has no idea that an articles_slider block elsewhere depends on this Page's
-// "article" blocks (see ArticlesSliderCacheTagProvider for the matching "page_{id}" tag applied at
-// render time). This listener closes that gap: whenever an "article" block changes, it invalidates
-// every Page that owns it, so any articles_slider pointing at that page re-renders fresh next time
+// UiBundle's BlockCacheInvalidationListener only invalidates the directly changed Block's own "block_{id}" tag - it has no idea that an articles_slider block elsewhere depends on this Page's "article" blocks (see ArticlesSliderCacheTagProvider for the matching "page_{id}" tag applied at render time). This listener closes that gap: whenever an "article" block changes, it invalidates every Page that owns it, so any articles_slider pointing at that page re-renders fresh next time
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
-class ArticleBlockCacheInvalidationListener
+class ArticleBlockCacheInvalidationListener extends AbstractBlockCacheInvalidationListener
 {
     public function __construct(
         private PageRepository $pageRepository,
@@ -33,22 +26,7 @@ class ArticleBlockCacheInvalidationListener
     ) {
     }
 
-    public function postPersist(PostPersistEventArgs $args): void
-    {
-        $this->invalidate($args->getObject());
-    }
-
-    public function postUpdate(PostUpdateEventArgs $args): void
-    {
-        $this->invalidate($args->getObject());
-    }
-
-    public function preRemove(PreRemoveEventArgs $args): void
-    {
-        $this->invalidate($args->getObject());
-    }
-
-    private function invalidate(object $entity): void
+    protected function invalidate(object $entity): void
     {
         if (!$entity instanceof Block || 'article' !== $entity->getKind() || null === $entity->getId()) {
             return;

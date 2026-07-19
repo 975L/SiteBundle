@@ -1,5 +1,85 @@
 [
     {
+        "date": "2026-07-19",
+        "description": [
+            {
+                "en": "Registration, login and password-reset forms can now be added as a block to any page, letting you place them wherever fits your site instead of only as a fixed page",
+                "fr": "Les formulaires d'inscription, de connexion et de réinitialisation de mot de passe peuvent désormais être ajoutés comme bloc sur n'importe quelle page, pour les placer où vous le souhaitez au lieu d'une page figée",
+                "es": "Los formularios de registro, inicio de sesión y restablecimiento de contraseña ahora se pueden añadir como bloque en cualquier página, para colocarlos donde mejor convenga en lugar de una página fija"
+            },
+            {
+                "en": "A new \"Forms\" section is now available in the dashboard menu to manage your forms",
+                "fr": "Une nouvelle section « Formulaires » est désormais disponible dans le menu du tableau de bord pour gérer vos formulaires",
+                "es": "Una nueva sección «Formularios» ya está disponible en el menú del panel de control para gestionar sus formularios"
+            },
+            {
+                "en": "The AI rephrase button is now also available on a page's social network summary field",
+                "fr": "Le bouton de reformulation par IA est désormais aussi disponible sur le champ résumé pour les réseaux sociaux d'une page",
+                "es": "El botón de reformulación por IA ahora también está disponible en el campo de resumen para redes sociales de una página"
+            },
+            {
+                "en": "A menu link now has an optional custom label, so you can shorten it instead of always showing the full page or section title",
+                "fr": "Un lien de menu dispose désormais d'un libellé personnalisé optionnel, pour le raccourcir au lieu d'afficher toujours le titre complet de la page ou de la section",
+                "es": "Un enlace de menú ahora tiene una etiqueta personalizada opcional, para acortarlo en lugar de mostrar siempre el título completo de la página o sección"
+            },
+            {
+                "en": "A menu link now automatically shows your site's up-to-date copyright as its label when it points to your \"Copyright\" page - no more checkbox to remember, toggle it off in the settings if you'd rather keep the page's own title",
+                "fr": "Un lien de menu affiche désormais automatiquement le copyright à jour de votre site comme libellé lorsqu'il pointe vers votre page « Copyright » - plus besoin de case à cocher, désactivez-le dans les réglages si vous préférez garder le titre de la page",
+                "es": "Un enlace de menú ahora muestra automáticamente el copyright actualizado de su sitio como etiqueta cuando apunta a su página «Copyright» - ya no hay que recordar una casilla, desactívelo en los ajustes si prefiere mantener el título de la página"
+            },
+            {
+                "en": "Your registration confirmation, password-reset and contact-notification emails now share one common design, which you can edit block by block from the back office",
+                "fr": "Vos emails de confirmation d'inscription, de réinitialisation de mot de passe et de notification de contact partagent désormais un même modèle, que vous pouvez modifier bloc par bloc depuis le tableau de bord",
+                "es": "Sus correos de confirmación de registro, restablecimiento de contraseña y notificación de contacto ahora comparten un mismo diseño, que puede editar bloque a bloque desde el panel de control"
+            },
+            {
+                "en": "While browsing your site as an editor, you can now click \"Edit this block\" directly on the page to jump straight to editing it in the back office",
+                "fr": "En naviguant sur votre site en tant qu'éditeur, vous pouvez désormais cliquer sur « Modifier ce bloc » directement sur la page pour accéder immédiatement à son édition dans le tableau de bord",
+                "es": "Al navegar por su sitio como editor, ahora puede hacer clic en «Editar este bloque» directamente en la página para acceder de inmediato a su edición en el panel de control"
+            },
+            {
+                "en": "The Collections screen in the dashboard now starts by asking which group to manage, making it easier to find your way when you have several collections",
+                "fr": "L'écran « Collections » du tableau de bord commence désormais par demander quel groupe gérer, pour s'y retrouver plus facilement lorsque vous avez plusieurs collections",
+                "es": "La pantalla de «Colecciones» del panel de control ahora empieza preguntando qué grupo gestionar, para orientarse más fácilmente cuando tiene varias colecciones"
+            },
+            {
+                "en": "Clicking a link that jumps to a section of a page (or the \"back to top\" button) now scrolls there smoothly and keeps the correct web address afterwards",
+                "fr": "Cliquer sur un lien qui mène à une section d'une page (ou sur le bouton « retour en haut ») y fait désormais défiler en douceur tout en conservant la bonne adresse web ensuite",
+                "es": "Al hacer clic en un enlace que lleva a una sección de una página (o en el botón «volver arriba») ahora se desplaza suavemente hasta allí y conserva la dirección web correcta después"
+            },
+            {
+                "en": "Changing a page's title now shows a proper confirmation message instead of a blank one",
+                "fr": "Modifier le titre d'une page affiche désormais un message de confirmation correct au lieu d'un message vide",
+                "es": "Cambiar el título de una página ahora muestra un mensaje de confirmación correcto en lugar de uno vacío"
+            },
+            {
+                "en": "A visitor who is already logged in now sees a clear notice instead of the registration or password-reset form",
+                "fr": "Un visiteur déjà connecté voit désormais un message clair à la place du formulaire d'inscription ou de réinitialisation de mot de passe",
+                "es": "Un visitante que ya ha iniciado sesión ahora ve un mensaje claro en lugar del formulario de registro o de restablecimiento de contraseña"
+            },
+            {
+                "en": "When building a form, you can now add password, confirm-password, website, phone number and date fields, on top of text and email",
+                "fr": "Lors de la création d'un formulaire, vous pouvez désormais ajouter des champs mot de passe, confirmation de mot de passe, site web, téléphone et date, en plus du texte et de l'email",
+                "es": "Al crear un formulario, ahora puede añadir campos de contraseña, confirmación de contraseña, sitio web, teléfono y fecha, además de texto y correo electrónico"
+            },
+            {
+                "en": "A required checkbox in a form (e.g. accepting your terms of use) can no longer be submitted left unchecked",
+                "fr": "Une case à cocher obligatoire dans un formulaire (par ex. l'acceptation des conditions d'utilisation) ne peut désormais plus être validée sans être cochée",
+                "es": "Una casilla obligatoria en un formulario (por ejemplo, aceptar las condiciones de uso) ya no puede enviarse sin marcar"
+            },
+            {
+                "en": "The registration form's terms-of-use checkbox now correctly links to your terms-of-use page",
+                "fr": "La case des conditions d'utilisation du formulaire d'inscription pointe désormais correctement vers votre page de conditions d'utilisation",
+                "es": "La casilla de condiciones de uso del formulario de registro ahora enlaza correctamente con su página de condiciones de uso"
+            },
+            {
+                "en": "The copyright notice in your site's footer is now always consistent, whether or not you also have a \"Copyright\" menu link",
+                "fr": "La mention de copyright dans le pied de page de votre site est désormais toujours cohérente, que vous ayez ou non également un lien de menu « Copyright »",
+                "es": "El aviso de copyright en el pie de página de su sitio ahora siempre es coherente, tenga o no también un enlace de menú «Copyright»"
+            }
+        ]
+    },
+    {
         "date": "2026-07-17",
         "description": [
             {

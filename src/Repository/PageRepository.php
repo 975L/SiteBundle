@@ -86,6 +86,33 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
+    // Find the first published page carrying a "form" Block pointing at the given Form name (e.g. "register"/"reset_password_request", picked by name in the admin same as "contact") - used to link a generic/bare route's own cross-references (login form's "forgot password"/"create account") to the real, translated-slug Page instead. Block::$data is JSON, so matching on its "name" key is done in PHP after narrowing to "form"-kind blocks (few per site)
+    public function findOneByFormBlockName(string $formName): ?Page
+    {
+        $pages = $this->createQueryBuilder('p')
+            ->select('p, b')
+            ->innerJoin('p.blocks', 'b')
+            ->andWhere('b.kind = :kind')
+            ->andWhere('p.isPublished = :published')
+            ->andWhere('p.isDeleted = :deleted')
+            ->setParameter('kind', 'form')
+            ->setParameter('published', true)
+            ->setParameter('deleted', false)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        foreach ($pages as $page) {
+            foreach ($page->getBlocks() as $block) {
+                if ('form' === $block->getKind() && $formName === ($block->getData()['name'] ?? null)) {
+                    return $page;
+                }
+            }
+        }
+
+        return null;
+    }
+
     // Find pages owning any of the given blocks (used by SiteMediaUsageProvider to resolve a Block's owning Page)
     public function findByBlockIds(array $blockIds): array
     {

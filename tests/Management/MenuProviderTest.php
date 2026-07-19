@@ -9,13 +9,15 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
-use c975L\SiteBundle\Controller\Management\CollectionEntryCrudController;
+use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
 use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Controller\Management\UserCrudController;
 use c975L\SiteBundle\Management\MenuProvider;
+use c975L\UiBundle\Controller\Management\EmailTemplateCrudController;
+use c975L\UiBundle\Controller\Management\FormCrudController;
 use c975L\UiBundle\Controller\Management\MediaCrudController;
 use PHPUnit\Framework\TestCase;
 
@@ -30,8 +32,7 @@ class MenuProviderTest extends TestCase
         $this->assertSame('site', $section['translation_domain']);
     }
 
-    // Every CRUD entry this bundle contributes to the dashboard, including UiBundle's media library
-    // (wired here because UiBundle can't register its own menu item without a circular dependency)
+    // Every CRUD entry this bundle contributes to the dashboard, including UiBundle's media library (wired here because UiBundle can't register its own menu item without a circular dependency)
     public function testGetMenusReturnsEveryContributedControllerEntry(): void
     {
         $menus = (new MenuProvider())->getMenus();
@@ -43,7 +44,11 @@ class MenuProviderTest extends TestCase
         $this->assertSame(MenuCrudController::class, $menus['menu']['controller']);
         $this->assertSame(MediaCrudController::class, $menus['media']['controller']);
         $this->assertSame('ui', $menus['media']['translation_domain']);
-        $this->assertSame(CollectionEntryCrudController::class, $menus['collection_entry']['controller']);
+        $this->assertSame(CollectionItemCrudController::class, $menus['collection_item']['controller']);
+        $this->assertSame(FormCrudController::class, $menus['form']['controller']);
+        $this->assertSame('ui', $menus['form']['translation_domain']);
+        $this->assertSame(EmailTemplateCrudController::class, $menus['email_template']['controller']);
+        $this->assertSame('ui', $menus['email_template']['translation_domain']);
     }
 
     // This provider contributes no standalone links (only CRUD menus)

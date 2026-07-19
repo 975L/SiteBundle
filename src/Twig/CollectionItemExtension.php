@@ -11,9 +11,7 @@ namespace c975L\SiteBundle\Twig;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
 
-// Registers "collectionItem" as a stable Twig global pointing at CollectionItemContext - the object
-// itself never changes after Twig boots, only its internal state does (see CollectionItemContext), so
-// this sidesteps Environment::addGlobal()'s "already initialized" restriction entirely
+// Registers "collectionItem" as a stable Twig global pointing at CollectionItemContext - the object itself never changes after Twig boots, only its internal state does (see CollectionItemContext), so this sidesteps Environment::addGlobal()'s "already initialized" restriction entirely
 class CollectionItemExtension extends AbstractExtension implements GlobalsInterface
 {
     public function __construct(private readonly CollectionItemContext $collectionItemContext)

@@ -126,10 +126,6 @@
                 <source>description.site_dpo</source>
                 <target>Full name of the Data Protection Officer, required for privacy policy</target>
             </trans-unit>
-            <trans-unit id="32">
-                <source>description.user_registration_enabled</source>
-                <target>Enable (true) or disable (false) the user registration route</target>
-            </trans-unit>
             <trans-unit id="33">
                 <source>description.user_roles_available</source>
                 <target>Extra roles selectable for users in the backoffice (besides the default ROLE_USER), as a JSON array i.e. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
@@ -137,6 +133,10 @@
             <trans-unit id="34">
                 <source>description.email_from</source>
                 <target>Email address used to send the emails: i.e. contact@example.com</target>
+            </trans-unit>
+            <trans-unit id="123">
+                <source>description.email_debug</source>
+                <target>When enabled, a ROLE_SUPER_ADMIN sees a preview of the email instead of it being actually sent</target>
             </trans-unit>
             <trans-unit id="35">
                 <source>description.email_from_name</source>
@@ -149,6 +149,10 @@
             <trans-unit id="38">
                 <source>description.display_hosted_by</source>
                 <target>Display the "Hosted by" credit in the footer</target>
+            </trans-unit>
+            <trans-unit id="121">
+                <source>description.site_menu_link_copyright_auto</source>
+                <target>Automatically show the computed copyright (© year) as the label of the menu link pointing to your "Copyright" page, instead of its title</target>
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
@@ -302,10 +306,6 @@
                 <source>label.site_dpo</source>
                 <target>Data Protection Officer (DPO)</target>
             </trans-unit>
-            <trans-unit id="72">
-                <source>label.user_registration_enabled</source>
-                <target>User Registration Enabled</target>
-            </trans-unit>
             <trans-unit id="73">
                 <source>label.user_roles_available</source>
                 <target>User Roles Available</target>
@@ -313,6 +313,10 @@
             <trans-unit id="74">
                 <source>label.email_from</source>
                 <target>Email (from)</target>
+            </trans-unit>
+            <trans-unit id="124">
+                <source>label.email_debug</source>
+                <target>Email debug mode</target>
             </trans-unit>
             <trans-unit id="75">
                 <source>label.email_from_name</source>
@@ -325,6 +329,10 @@
             <trans-unit id="78">
                 <source>label.display_hosted_by</source>
                 <target>Display Hosted By</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.site_menu_link_copyright_auto</source>
+                <target>Automatic copyright on the "Copyright" page menu link</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.site_enable_matomo</source>

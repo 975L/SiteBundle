@@ -20,10 +20,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Resolves, for UiBundle's generic Media library, where a Media is used within SiteBundle's own
-// entities: as a site-wide graphic role, as a Page's og-image, or attached to a Block owned by a Page
+// Resolves, for UiBundle's generic Media library, where a Media is used within SiteBundle's own entities: as a site-wide graphic role, as a Page's og-image, or attached to a Block owned by a Page
 class SiteMediaUsageProvider implements MediaUsageProviderInterface
 {
+    use BlockFocusUrlTrait;
+
     private const ROLE_LABELS = [
         Media::ROLE_FAVICON => 'label.favicon',
         Media::ROLE_APPLE_TOUCH_ICON => 'label.apple_touch_icon',
@@ -100,20 +101,9 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
         return $usages;
     }
 
-    // $block: when given, the URL also opens/scrolls straight to that block's row on the Page edit
-    // form (see BlockFocusController) instead of leaving the user to find it among every other block
+    // $block: when given, the URL also opens/scrolls straight to that block's row on the Page edit form (see BlockFocusController) instead of leaving the user to find it among every other block
     private function pageEditUrl(Page $page, ?Block $block = null): string
     {
-        $urlGenerator = $this->adminUrlGenerator
-            ->unsetAll()
-            ->setController(PageCrudController::class)
-            ->setAction(Action::EDIT)
-            ->setEntityId($page->getId());
-
-        if (null !== $block) {
-            $urlGenerator->set('focusBlock', $block->getId());
-        }
-
-        return $urlGenerator->generateUrl();
+        return $this->blockFocusUrl($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
     }
 }

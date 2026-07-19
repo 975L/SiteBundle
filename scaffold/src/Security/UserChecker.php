@@ -10,8 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserChecker implements UserCheckerInterface
 {
-    // Refuses login before the password is even checked if the account isn't enabled yet
-    // (set to true by EmailVerifier once the user confirms their email, see User::isEnabled)
+    // Refuses login before the password is even checked if the account isn't enabled yet (set to true by EmailVerifier once the user confirms their email, see User::isEnabled)
     public function checkPreAuth(UserInterface $user): void
     {
         if ($user instanceof User && !$user->isEnabled()) {

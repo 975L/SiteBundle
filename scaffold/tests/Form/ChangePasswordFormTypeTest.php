@@ -11,14 +11,11 @@ use Symfony\Component\Validator\ConstraintValidatorFactory;
 use Symfony\Component\Validator\Constraints\NotCompromisedPasswordValidator;
 use Symfony\Component\Validator\Validation;
 
-// TypeTestCase::setUp() creates an EventDispatcherInterface mock without
-// expectations; opt out of PHPUnit's stub-instead-of-mock notice for it.
+// TypeTestCase::setUp() creates an EventDispatcherInterface mock without expectations; opt out of PHPUnit's stub-instead-of-mock notice for it.
 #[AllowMockObjectsWithoutExpectations]
 class ChangePasswordFormTypeTest extends TypeTestCase
 {
-    // Uses a real validator so the Length constraint is actually exercised,
-    // but with NotCompromisedPassword disabled to avoid a real HTTP call to
-    // the haveibeenpwned API during tests.
+    // Uses a real validator so the Length constraint is actually exercised, but with NotCompromisedPassword disabled to avoid a real HTTP call to the haveibeenpwned API during tests.
     protected function getExtensions(): array
     {
         $validator = Validation::createValidatorBuilder()

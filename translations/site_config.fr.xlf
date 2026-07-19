@@ -126,10 +126,6 @@
                 <source>description.site_dpo</source>
                 <target>Nom complet du délégué à la protection des données, requis pour la politique de confidentialité</target>
             </trans-unit>
-            <trans-unit id="32">
-                <source>description.user_registration_enabled</source>
-                <target>Active (true) ou désactive (false) la route d'inscription des utilisateurs</target>
-            </trans-unit>
             <trans-unit id="33">
                 <source>description.user_roles_available</source>
                 <target>Rôles supplémentaires sélectionnables pour les utilisateurs dans le back-office (en plus du ROLE_USER par défaut), sous forme de tableau JSON, ex. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
@@ -142,6 +138,10 @@
                 <source>description.email_from_name</source>
                 <target>Nom utilisé pour l'envoi des notifications depuis le site.</target>
             </trans-unit>
+            <trans-unit id="123">
+                <source>description.email_debug</source>
+                <target>Si activé, un ROLE_SUPER_ADMIN voit un aperçu de l'email au lieu qu'il soit réellement envoyé</target>
+            </trans-unit>
             <trans-unit id="37">
                 <source>description.display_made_by</source>
                 <target>Afficher le crédit "Réalisé par" dans le pied de page</target>
@@ -149,6 +149,10 @@
             <trans-unit id="38">
                 <source>description.display_hosted_by</source>
                 <target>Afficher le crédit "Hébergé par" dans le pied de page</target>
+            </trans-unit>
+            <trans-unit id="121">
+                <source>description.site_menu_link_copyright_auto</source>
+                <target>Afficher automatiquement le copyright calculé (© année) comme libellé du lien de menu pointant vers votre page "Copyright", au lieu de son titre</target>
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
@@ -302,10 +306,6 @@
                 <source>label.site_dpo</source>
                 <target>Délégué à la protection des données (DPO)</target>
             </trans-unit>
-            <trans-unit id="72">
-                <source>label.user_registration_enabled</source>
-                <target>Inscription des utilisateurs activée</target>
-            </trans-unit>
             <trans-unit id="73">
                 <source>label.user_roles_available</source>
                 <target>Rôles utilisateur disponibles</target>
@@ -318,6 +318,10 @@
                 <source>label.email_from_name</source>
                 <target>Nom de l'email (expéditeur)</target>
             </trans-unit>
+            <trans-unit id="124">
+                <source>label.email_debug</source>
+                <target>Mode debug des emails</target>
+            </trans-unit>
             <trans-unit id="77">
                 <source>label.display_made_by</source>
                 <target>Afficher le crédit « Réalisé par »</target>
@@ -325,6 +329,10 @@
             <trans-unit id="78">
                 <source>label.display_hosted_by</source>
                 <target>Afficher le crédit « Hébergé par »</target>
+            </trans-unit>
+            <trans-unit id="122">
+                <source>label.site_menu_link_copyright_auto</source>
+                <target>Copyright automatique sur le lien de menu vers la page "Copyright"</target>
             </trans-unit>
             <trans-unit id="79">
                 <source>label.site_enable_matomo</source>
