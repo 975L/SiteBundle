@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.6.1
+
+- Corrected dependency (20/07/2026)
+
 ## v7.6
 
 - Added "Email templates" admin menu entry (19/07/2026)
