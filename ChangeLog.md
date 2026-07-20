@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.6.6
+
+- `ThemeVariablesCssListener` now throws on write failure instead of failing silently (20/07/2026)
+
 ## v7.6.5
 
 - Corrected scaffold files (20/07/2026)

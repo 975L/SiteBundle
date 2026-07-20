@@ -89,12 +89,16 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
         }
 
         $buildDir = $this->projectDir . '/public/bundles/build';
-        if (!is_dir($buildDir)) {
-            mkdir($buildDir, 0775, true);
+        if (!is_dir($buildDir) && !@mkdir($buildDir, 0775, true) && !is_dir($buildDir)) {
+            throw new \RuntimeException(sprintf('Unable to create the "%s" directory.', $buildDir));
         }
 
         $css = [] === $lines ? '' : ":root {\n" . implode("\n", $lines) . "\n}\n";
-        file_put_contents($buildDir . '/site-theme.css', $css);
+        $path = $buildDir . '/site-theme.css';
+        $tmpPath = $path . '.' . uniqid('', true) . '.tmp';
+        if (false === @file_put_contents($tmpPath, $css) || !@rename($tmpPath, $path)) {
+            throw new \RuntimeException(sprintf('Unable to write "%s".', $path));
+        }
 
         // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, an admin applying a preset would regenerate site-theme.css but still see the previous theme until the next deploy/warmup
         $this->stylesheetCacheWarmer->compileAll();
