@@ -192,7 +192,7 @@ class DefaultPagesImporterTest extends TestCase
         return null;
     }
 
-    // The contact page gets a generic "form" Block pointing at the "contact" Form by name, and seeds that Form (restricted core fields, send_email action) since it doesn't require c975l/contactform-bundle to be installed
+    // The contact page gets a generic "form" Block pointing at the "contact" Form by name, and seeds that Form itself (restricted core fields, send_email action)
     public function testImportAttachesFormBlockToContactPageAndSeedsTheContactForm(): void
     {
         $persisted = [];
@@ -214,7 +214,7 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertCount(4, $form->getFields());
     }
 
-    // Re-running the import must not touch the "contact" Form if it already exists with the expected action (e.g. c975l/contactform-bundle's own DefaultFormsImporter already created it)
+    // Re-running the import must not touch the "contact" Form if it already exists with the expected action
     public function testImportDoesNotReSeedContactFormWhenAlreadyExisting(): void
     {
         $persisted = [];

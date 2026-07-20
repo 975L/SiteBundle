@@ -294,7 +294,7 @@ The navbar's CSS `position` is set via the `site-navbar-position` ConfigBundle k
 
 ### Linking to a bundle's own route
 
-A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes (e.g. ContactFormBundle's `/contact`) as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. This is how ContactFormBundle exposes its contact page; the same approach will apply to ShopBundle and BookBundle.
+A `menu_link` block isn't limited to database pages. Any bundle can expose one of its own front-end routes as a selectable target by implementing ConfigBundle's `LinkableRouteProviderInterface` — see [ConfigBundle's README](https://github.com/975L/ConfigBundle#contributing-linkable-routes-for-sitebundle-menus) for how to write the provider. The same approach will apply to ShopBundle and BookBundle.
 
 Since login isn't a SiteBundle route but scaffolded straight into `App\Controller` (see [Users](#users) below), the scaffold also ships `App\Management\LinkableRouteProvider`, so `app_login` shows up in the `menu_link` picker out of the box — re-run the scaffold install (or copy the file by hand) on sites that predate it. Register and reset-password aren't routes to link to anymore: they're the ordinary database `Page`s seeded by `DefaultPagesImporter` (see [Import default pages](#import-default-pages)), picked from the `menu_link` picker like any other page. `app_verify_email` and `app_reset_password` are deliberately left out of `LinkableRouteProvider`: they only make sense reached through a signed link, not as a standalone menu target.
 
@@ -360,7 +360,7 @@ Registration/reset-password-request reject bots at several layers, so a public f
 
 - **`Assert\Email` + `c975L\UiBundle\Validator\Constraints\DnsEmail`** on every email-typed field — format check, then a live MX/A DNS lookup (via `egulias/email-validator`) rejecting domains that can't receive mail at all (e.g. `something@dominatingkeywords.com`). Applies to any generic Form's email field (contact/register/reset-password-request alike), plus `User::$email` itself on every entity validation (including the User CRUD in the backoffice, which still carries its own `#[DnsEmail]`).
 - **Honeypot + minimum submit delay** — an invisible rotating-name field (hidden inline, no CSS dependency), and a minimum delay between displaying the form and submitting it, tracked in session. Either one failing silently redirects back (same "form_submitted" flash as a real submission) without creating an account or sending any email, giving no signal back to the bot. The delay is the shared `site-form-delay` ConfigBundle key (seconds, default `3`) - one setting for every public form (contact, register, reset-password-request) instead of one per bundle.
-- **GDPR consent checkbox** - shown on both forms (unmapped `gdpr` field, reusing ContactFormBundle's `text.gdpr` translation) when the shared `site-form-gdpr` ConfigBundle key (bool, default `true`) is enabled. The registration form also carries a `cgu` field (terms-of-use acceptance), enforced the same way.
+- **GDPR consent checkbox** - shown on both forms (unmapped `gdpr` field, using the bundle's own `text.gdpr` translation) when the shared `site-form-gdpr` ConfigBundle key (bool, default `true`) is enabled. The registration form also carries a `cgu` field (terms-of-use acceptance), enforced the same way.
 - **Rate limiting by IP** — shared with every other generic Form (`limiter.ui_form`, optional), not a dedicated `registration`/`reset_password` limiter anymore:
 
 ```yaml
@@ -758,10 +758,9 @@ It walks through, in order:
 6. **Default pages** — same as `c975l:site:pages:import-defaults` below, but page by page:
    confirms the import and the initial `isPublished` state for each page not already in database.
 7. **Footer menu** — offers to add, one by one (yes by default), every bundle-contributed route
-   registered via `LinkableRouteProviderInterface` (e.g. ContactFormBundle's contact page, only
-   proposed if that bundle is installed), then the legal pages just imported, in a fixed order
-   (mentions légales, règles de confidentialité, CGU, CGV, cookies, copyright). Re-running the
-   command never creates duplicate items.
+   registered via `LinkableRouteProviderInterface`, then the legal pages just imported, in a fixed
+   order (mentions légales, règles de confidentialité, CGU, CGV, cookies, copyright). Re-running
+   the command never creates duplicate items.
 
 #### `config/site-create-questions.json`
 
@@ -834,7 +833,7 @@ One page is created per locale — `%kernel.default_locale%` plus every locale l
 | `mot-de-passe-oublie` | `forgot-password` | `contrasena-olvidada` | Mot de passe oublié | `form` → `reset_password_request` |
 | `contact` | `contact` | `contacto` | Contact | `form` → `contact` |
 
-The last three each carry a generic `form` Block pointing at their matching `c975L\UiBundle\Entity\Form` by name (see [Registration anti-spam protections](#registration-anti-spam-protections)) — `DefaultPagesImporter` seeds that `Form` (and its `EmailTemplate`, for register/reset-password-request) alongside the page itself if not already present. If `c975l/contactform-bundle` is also installed, its own dedicated `/contact` route takes precedence over this "contact" page for the `fr`/`en` locale slugs (both literally `contact`).
+The last three each carry a generic `form` Block pointing at their matching `c975L\UiBundle\Entity\Form` by name (see [Registration anti-spam protections](#registration-anti-spam-protections)) — `DefaultPagesImporter` seeds that `Form` (and its `EmailTemplate`, for register/reset-password-request) alongside the page itself if not already present.
 
 `home` is always the same slug across locales — `PageController` looks it up literally, so only one homepage can ever exist. All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped, so re-running the command after adding a new `enabled_locales` entry only creates the missing locale's pages.
 

@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DefaultPagesImporter
 {
-    // name => [type, label, placeholder, url], one set per locale - unlike ContactFormBundle's own DefaultFormsImporter (whose labels are translation keys, rendered by its own ContactFormType with a real translation_domain), the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
+    // name => [type, label, placeholder, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
     private const CONTACT_CORE_FIELDS = [
         'fr' => [
             'name' => [FormField::TYPE_TEXT, 'Nom', 'Jean Dupont', null],

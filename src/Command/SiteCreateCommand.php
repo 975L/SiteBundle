@@ -351,7 +351,7 @@ class SiteCreateCommand extends Command
         $io->text(sprintf('  ✓ %d page(s) créée(s), %d déjà existante(s) ignorée(s)', $result['created'], $result['skipped']));
     }
 
-    // Offers every bundle-contributed route (e.g. ContactFormBundle's "contact" page, only present if that bundle is installed - see LinkableRouteRegistry) plus the legal pages just imported, in the fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright), each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate entries, since existing targets are skipped.
+    // Offers every bundle-contributed route (see LinkableRouteRegistry, only present if the contributing bundle is installed) plus the legal pages just imported, in the fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright), each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate entries, since existing targets are skipped.
     private function buildFooterMenu(SymfonyStyle $io): void
     {
         $menu = $this->menuRepository->findOneByLocation(Menu::LOCATION_FOOTER) ?? (new Menu())->setLocation(Menu::LOCATION_FOOTER);

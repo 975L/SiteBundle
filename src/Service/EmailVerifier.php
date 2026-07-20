@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
-// Moved from the app-copied scaffold (previously App\Security\EmailVerifier) so it's shared, tested bundle code instead of duplicated per app - see UPGRADE.md. Only relies on UserInterface::getUserIdentifier() (guaranteed) plus method_exists() duck-typing for getId()/setIsVerified()/setIsEnabled(), which aren't part of any Security interface - App\Entity\User (app-space, this bundle can't reference it directly) is expected to expose them, exactly as c975L\ContactFormBundle\Service\ContactFormService already duck-types the logged-in Security user.
+// Moved from the app-copied scaffold (previously App\Security\EmailVerifier) so it's shared, tested bundle code instead of duplicated per app - see UPGRADE.md. Only relies on UserInterface::getUserIdentifier() (guaranteed) plus method_exists() duck-typing for getId()/setIsVerified()/setIsEnabled(), which aren't part of any Security interface - App\Entity\User (app-space, this bundle can't reference it directly) is expected to expose them.
 class EmailVerifier
 {
     public function __construct(

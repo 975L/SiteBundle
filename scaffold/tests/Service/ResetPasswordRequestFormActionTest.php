@@ -7,7 +7,7 @@ use App\Service\ResetPasswordRequestFormAction;
 use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\TooManyPasswordRequestsException;
@@ -18,11 +18,13 @@ class ResetPasswordRequestFormActionTest extends TestCase
 {
     private function createEntityManager(?User $user): EntityManagerInterface
     {
-        $repository = $this->createStub(ObjectRepository::class);
+        $repository = $this->createStub(EntityRepository::class);
         $repository->method('findOneBy')->willReturn($user);
 
         $entityManager = $this->createStub(EntityManagerInterface::class);
-        $entityManager->method('getRepository')->with(User::class)->willReturn($repository);
+        $entityManager->method('getRepository')->willReturnMap([
+            [User::class, $repository],
+        ]);
 
         return $entityManager;
     }
@@ -84,7 +86,7 @@ class ResetPasswordRequestFormActionTest extends TestCase
     public function testHandleSendsResetEmailAndReturnsTrueWhenUserIsFound(): void
     {
         $resetPasswordHelper = $this->createStub(ResetPasswordHelperInterface::class);
-        $resetPasswordHelper->method('generateResetToken')->willReturn(new ResetPasswordToken('token', new \DateTime('+1 hour')));
+        $resetPasswordHelper->method('generateResetToken')->willReturn(new ResetPasswordToken('token', new \DateTime('+1 hour'), time()));
 
         $emailService = $this->createMock(EmailService::class);
         $emailService->expects($this->once())->method('send');

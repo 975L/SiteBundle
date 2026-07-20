@@ -57,7 +57,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "c975L\\SiteBundle\\Tests\\": "tests/"
+            "c975L\\SiteBundle\\Tests\\": "tests/",
+            "App\\": "scaffold/src/",
+            "App\\Tests\\": "scaffold/tests/"
         }
     },
     "config": {

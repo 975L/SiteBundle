@@ -31,10 +31,15 @@ class ResetPasswordControllerTest extends FunctionalTestCase
         $this->assertResponseRedirects('/reset-password/reset');
     }
 
-    // A token that was never really issued by ResetPasswordHelper (e.g. tampered/expired) fails validateTokenAndFetchUser() - redirectToRequestPage()'s fallback then sends the visitor to the home page, since no Page currently carries the "reset_password_request" form Block
+    // A token that was never really issued by ResetPasswordHelper (e.g. tampered/expired) fails validateTokenAndFetchUser() - redirectToRequestPage()'s fallback then sends the visitor to the home page. The real "Mot de passe oublié" Page (see DefaultPagesImporter) normally carries the "reset_password_request" form Block - unpublishing it within the test transaction (rolled back after) genuinely reproduces that fallback
     public function testResetRedirectsToHomeWhenTokenIsInvalid(): void
     {
         $client = $this->createAuthenticatedClient();
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $page = $entityManager->getRepository(Page::class)->findOneByFormBlockName('reset_password_request');
+        $page?->setIsPublished(false);
+        $entityManager->flush();
 
         $client->request('GET', '/reset-password/reset/some-invalid-token');
         $client->request('GET', '/reset-password/reset');

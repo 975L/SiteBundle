@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.6.5
+
+- Corrected scaffold files (20/07/2026)
+- Cleaned ContactForm references (20/07/2026)
+
 ## v7.6.4
 
 - Modified scaffold SitemapCreateCommand as specific files not needed anymore (20/07/2026)

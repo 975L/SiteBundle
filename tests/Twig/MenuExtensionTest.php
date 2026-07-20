@@ -303,10 +303,10 @@ class MenuExtensionTest extends TestCase
     // A "route:NAME" target resolves via the router directly, using its route name
     public function testGetMenuLinkUrlResolvesDirectRouteForRouteTargets(): void
     {
-        $registry = $this->createRegistry(['contactform_display' => ['label' => 'label.contact', 'translation_domain' => 'contactform']]);
+        $registry = $this->createRegistry(['some_bundle_route' => ['label' => 'label.contact', 'translation_domain' => 'some_bundle']]);
         $extension = $this->createExtension($registry);
 
-        $this->assertSame('/contactform_display', $extension->getMenuLinkUrl('route:contactform_display'));
+        $this->assertSame('/some_bundle_route', $extension->getMenuLinkUrl('route:some_bundle_route'));
     }
 
     // A "route:NAME" target whose route disappeared from the registry (contributing bundle removed) no longer resolves
@@ -338,10 +338,10 @@ class MenuExtensionTest extends TestCase
     // A "route:NAME" target's label is translated using the label/domain declared by the contributing provider
     public function testGetMenuLinkLabelTranslatesRegisteredRouteLabel(): void
     {
-        $registry = $this->createRegistry(['contactform_display' => ['label' => 'label.contact', 'translation_domain' => 'contactform']]);
+        $registry = $this->createRegistry(['some_bundle_route' => ['label' => 'label.contact', 'translation_domain' => 'some_bundle']]);
         $extension = $this->createExtension($registry);
 
-        $this->assertSame('label.contact', $extension->getMenuLinkLabel('route:contactform_display'));
+        $this->assertSame('label.contact', $extension->getMenuLinkLabel('route:some_bundle_route'));
     }
 
     // A "route:NAME" target whose route disappeared from the registry yields an empty label
@@ -476,8 +476,8 @@ class MenuExtensionTest extends TestCase
 
     public function testIsMenuLinkCopyrightReturnsFalseForARouteTarget(): void
     {
-        $extension = $this->createExtension($this->createRegistry(['contactform_display' => ['label' => 'label.contact', 'translation_domain' => 'contactform']]));
+        $extension = $this->createExtension($this->createRegistry(['some_bundle_route' => ['label' => 'label.contact', 'translation_domain' => 'some_bundle']]));
 
-        $this->assertFalse($extension->isMenuLinkCopyright('route:contactform_display'));
+        $this->assertFalse($extension->isMenuLinkCopyright('route:some_bundle_route'));
     }
 }

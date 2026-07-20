@@ -9,10 +9,18 @@ use Doctrine\ORM\EntityManagerInterface;
 // Registration itself (the "register" Form/FormAction) is now covered by RegisterFormActionTest - this controller only keeps the signed email-verification link, see RegistrationController
 class RegistrationControllerTest extends FunctionalTestCase
 {
-    // No Page currently carries a "form" Block pointing at "register" (redirectAfterVerification()'s fallback) - lands on the home page
+    // The real "Créer un compte" Page (see DefaultPagesImporter) normally carries the "register" form Block - unpublishing it within the test transaction (rolled back after) genuinely reproduces redirectAfterVerification()'s fallback to the home page
+    private function unpublishRegisterPage(EntityManagerInterface $entityManager): void
+    {
+        $page = $entityManager->getRepository(Page::class)->findOneByFormBlockName('register');
+        $page?->setIsPublished(false);
+        $entityManager->flush();
+    }
+
     public function testVerifyUserEmailRedirectsWhenIdIsMissing(): void
     {
         $client = $this->createAuthenticatedClient();
+        $this->unpublishRegisterPage(static::getContainer()->get(EntityManagerInterface::class));
 
         $client->request('GET', '/verification/email');
 
@@ -22,6 +30,7 @@ class RegistrationControllerTest extends FunctionalTestCase
     public function testVerifyUserEmailRedirectsWhenUserIsNotFound(): void
     {
         $client = $this->createAuthenticatedClient();
+        $this->unpublishRegisterPage(static::getContainer()->get(EntityManagerInterface::class));
 
         $client->request('GET', '/verification/email?id=999999');
 

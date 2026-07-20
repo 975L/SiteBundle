@@ -25,36 +25,6 @@ class SitemapCreateCommandTest extends TestCase
         @rmdir($this->projectDir);
     }
 
-    public function testCreateSitemapSiteWritesPagesSitemapFile(): void
-    {
-        $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturnMap([
-            ['site-url', 'https://example.test'],
-        ]);
-        $configService->method('getContainerParameter')->willReturnMap([
-            ['kernel.project_dir', $this->projectDir],
-        ]);
-
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->once())
-            ->method('render')
-            ->with('@c975LSite/sitemap.xml.twig', $this->callback(function (array $context) {
-                return $context['urls'][0]['loc'] === 'https://example.test/contact'
-                    && $context['urls'][0]['changefreq'] === 'monthly'
-                    && $context['urls'][0]['priority'] === '0.4';
-            }))
-            ->willReturn('<urlset><url><loc>https://example.test/contact</loc></url></urlset>');
-
-        $command = new SitemapCreateCommand($configService, $environment, $this->createStub(KernelInterface::class));
-        $command->createSitemapSite();
-
-        $this->assertFileExists($this->projectDir . '/public/sitemap-pages.xml');
-        $this->assertSame(
-            '<urlset><url><loc>https://example.test/contact</loc></url></urlset>',
-            file_get_contents($this->projectDir . '/public/sitemap-pages.xml')
-        );
-    }
-
     public function testCreateSitemapIndexWritesIndexFile(): void
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
