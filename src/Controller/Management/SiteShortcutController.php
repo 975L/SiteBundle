@@ -20,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SiteShortcutController extends AbstractController
@@ -89,29 +90,37 @@ class SiteShortcutController extends AbstractController
         return $this->redirectToRoute('management');
     }
 
-    // Exports all tables to SQL files in the var/export directory, with a flash message indicating success or failure
+    // Downloads the export of all "site_*" tables directly, same non-file-persisting approach as
+    // ConfigShortcutController::exportSql; writeFile is set to false so nothing lingers in var/export
     #[AdminRoute(
         path: '/site/export-tables',
         name: 'site_export_tables',
         options: ['methods' => ['POST']]
     )]
-    public function exportTables(Request $request): RedirectResponse
+    public function exportTables(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
-        if ($this->isCsrfTokenValid(self::EXPORT_TABLES_ROUTE, $request->request->get('_token'))) {
-            $result = $this->exportTablesCommand->exportTables();
-
-            if ($result['error'] !== null) {
-                $this->addFlash('danger', $result['error']);
-            } elseif (empty($result['tables'])) {
-                $this->addFlash('warning', $result['message']);
-            } else {
-                $this->addFlash('success', $result['message']);
-            }
+        if (!$this->isCsrfTokenValid(self::EXPORT_TABLES_ROUTE, $request->request->get('_token'))) {
+            return $this->redirectToRoute('management');
         }
 
-        return $this->redirectToRoute('management');
+        $result = $this->exportTablesCommand->exportTables(writeFile: false);
+
+        if ($result['error'] !== null) {
+            $this->addFlash('danger', $result['error']);
+            return $this->redirectToRoute('management');
+        }
+
+        if (empty($result['tables'])) {
+            $this->addFlash('warning', $result['message']);
+            return $this->redirectToRoute('management');
+        }
+
+        return new Response($result['content'], Response::HTTP_OK, [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="site_' . date('Ymd_His') . '.sql"',
+        ]);
     }
 
     // Calls the creation of sitemaps

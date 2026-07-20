@@ -83,12 +83,14 @@ class ExportTablesCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Exports table data to a SQL file; public so it can also be triggered from the dashboard (see SiteShortcutController)
-    public function exportTables(string $prefix = 'site_', ?string $outputPath = null): array
+    // Exports table data to SQL; public so it can also be triggered from the dashboard (see SiteShortcutController).
+    // $writeFile controls whether the dump is also persisted to var/export (CLI usage); the dashboard shortcut
+    // sets it to false since it streams the "content" straight back to the browser as a download instead
+    public function exportTables(string $prefix = 'site_', ?string $outputPath = null, bool $writeFile = true): array
     {
         $database = (string) $this->configService->get('site-backup-database');
         if (empty($database)) {
-            return ['error' => 'site-backup-database is not configured in ConfigBundle.', 'tables' => [], 'path' => null, 'message' => null];
+            return ['error' => 'site-backup-database is not configured in ConfigBundle.', 'tables' => [], 'path' => null, 'content' => null, 'message' => null];
         }
 
         $credentialsFile = $this->createTempCredentialsFile();
@@ -96,17 +98,22 @@ class ExportTablesCommand extends Command
         try {
             [$tables, $listError] = $this->getTableList($database, $prefix, $credentialsFile);
             if ($listError !== null) {
-                return ['error' => "mysql failed while listing tables: {$listError}", 'tables' => [], 'path' => null, 'message' => null];
+                return ['error' => "mysql failed while listing tables: {$listError}", 'tables' => [], 'path' => null, 'content' => null, 'message' => null];
             }
             if (empty($tables)) {
-                return ['error' => null, 'tables' => [], 'path' => null, 'message' => sprintf('No table found matching prefix "%s" in "%s".', $prefix, $database)];
+                return ['error' => null, 'tables' => [], 'path' => null, 'content' => null, 'message' => sprintf('No table found matching prefix "%s" in "%s".', $prefix, $database)];
             }
 
-            $outputPath = $this->resolveOutputPath($outputPath ?? '', $prefix);
-            @mkdir(\dirname($outputPath), 0755, true);
+            $content = $this->dumpTables($database, $tables, $credentialsFile);
+            if ($content === null) {
+                return ['error' => 'mysqldump failed while exporting table data.', 'tables' => [], 'path' => null, 'content' => null, 'message' => null];
+            }
 
-            if (!$this->dumpTables($database, $tables, $credentialsFile, $outputPath)) {
-                return ['error' => 'mysqldump failed while exporting table data.', 'tables' => [], 'path' => null, 'message' => null];
+            $path = null;
+            if ($writeFile) {
+                $path = $this->resolveOutputPath($outputPath ?? '', $prefix);
+                @mkdir(\dirname($path), 0755, true);
+                file_put_contents($path, $content);
             }
         } finally {
             unlink($credentialsFile);
@@ -115,8 +122,11 @@ class ExportTablesCommand extends Command
         return [
             'error' => null,
             'tables' => $tables,
-            'path' => $outputPath,
-            'message' => sprintf('Exported %d table(s) matching "%s%%" to %s', count($tables), $prefix, $outputPath),
+            'path' => $path,
+            'content' => $content,
+            'message' => $writeFile
+                ? sprintf('Exported %d table(s) matching "%s%%" to %s', count($tables), $prefix, $path)
+                : sprintf('Exported %d table(s) matching "%s%%"', count($tables), $prefix),
         ];
     }
 
@@ -166,7 +176,7 @@ class ExportTablesCommand extends Command
     }
 
     // Dumps data only, wrapped in FK-checks-off + a TRUNCATE per table so the file can be replayed as-is on a target that already has (possibly wrong) data in these tables
-    private function dumpTables(string $database, array $tables, string $credentialsFile, string $outputPath): bool
+    private function dumpTables(string $database, array $tables, string $credentialsFile): ?string
     {
         $process = new Process(array_merge(
             ['mysqldump',
@@ -182,7 +192,7 @@ class ExportTablesCommand extends Command
         $process->run();
 
         if (!$process->isSuccessful()) {
-            return false;
+            return null;
         }
 
         $sql = "SET FOREIGN_KEY_CHECKS=0;\n\n";
@@ -192,8 +202,7 @@ class ExportTablesCommand extends Command
         $sql .= "\n" . $process->getOutput() . "\n";
         $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
-        file_put_contents($outputPath, $sql);
-        return true;
+        return $sql;
     }
 
     private function resolveOutputPath(string $output, string $prefix): string

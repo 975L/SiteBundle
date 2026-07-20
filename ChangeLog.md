@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.6.3
+
+- Harmonized SQL exports (20/07/2026)
+
 ## v7.6.2
 
 - Added `MenuLinkType`'s `primary` checkbox for filled-button menu links (20/07/2026)
