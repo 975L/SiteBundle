@@ -66,34 +66,6 @@ class SitemapCreateCommand extends Command
             $inputArray = new ArrayInput([]);
             $command->run($inputArray, new NullOutput());
         }
-
-        $this->createSitemapSite();
-    }
-
-    // Creates the sitemap for pages specific to site
-    public function createSitemapSite(): void
-    {
-        //Defines main pages
-        $urls = [];
-        $urlsList = [
-            'contact' => 'monthly, 0.4'
-        ];
-        foreach ($urlsList as $key => $value) {
-            $values = explode(',', $value);
-            $urls[] = [
-                'loc' => $this->configService->get('site-url') . '/' . $key,
-                'lastmod' => null,
-                'changefreq' => trim($values[0]),
-                'priority' => trim($values[1])
-            ];
-        }
-
-        $this->sitemaps[] = $this->configService->get('site-url') . '/sitemap-pages.xml';
-
-        //Writes file
-        $sitemapContent = $this->environment->render('@c975LSite/sitemap.xml.twig', ['urls' => $urls]);
-        $sitemapFile = $this->configService->getContainerParameter('kernel.project_dir') . '/public/sitemap-pages.xml';
-        file_put_contents($sitemapFile, $sitemapContent);
     }
 
     // Creates sitemap index
