@@ -162,4 +162,15 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertTrue($form->has('label'));
         $this->assertFalse($form->get('label')->getConfig()->getRequired());
     }
+
+    // The "primary" field (see MenuLink.html.twig / _menu.scss's .menu-item--primary) renders the link as a filled button - optional, always present
+    public function testPrimaryFieldIsPresentAndOptional(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertTrue($form->has('primary'));
+        $this->assertFalse($form->get('primary')->getConfig()->getRequired());
+    }
 }

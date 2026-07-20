@@ -24,7 +24,8 @@ use DateTimeImmutable;
  * single SQL file, meant to be reloaded one-shot into an environment where the schema already
  * exists (e.g. building data in dev then exporting it to prod after migrations already ran there).
  * The file truncates each table and disables FK checks around the inserts, so it can be replayed
- * as-is even if the target tables already contain data.
+ * as-is even if the target tables already contain data. site_config is always excluded, since
+ * ConfigBundle has its own dedicated non-destructive export (see ConfigCrudController::exportSql).
  * Uses the same DB credentials as c975l:site:backup (site-backup-db-* config keys), so it works
  * even when the DB user used by external GUI tools (DBeaver...) lacks export privileges.
  *
@@ -134,10 +135,13 @@ class ExportTablesCommand extends Command
     }
 
     // Returns [tables, error]: error is null on success, the mysql stderr otherwise
+    // site_config is excluded: ConfigBundle has its own dedicated export (ConfigCrudController::exportSql) with
+    // upsert semantics that preserve sensitive values already set in production, which a TRUNCATE would destroy
     private function getTableList(string $database, string $prefix, string $credentialsFile): array
     {
         $query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
-            . "WHERE TABLE_SCHEMA = '{$database}' AND TABLE_NAME LIKE '{$prefix}%' AND TABLE_TYPE != 'VIEW'";
+            . "WHERE TABLE_SCHEMA = '{$database}' AND TABLE_NAME LIKE '{$prefix}%' AND TABLE_TYPE != 'VIEW' "
+            . "AND TABLE_NAME != 'site_config'";
 
         $process = new Process([
             'mysql',

@@ -10,7 +10,6 @@
 namespace c975L\SiteBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -28,7 +27,7 @@ class UserRegistrar
     /**
      * @param PasswordAuthenticatedUserInterface&UserInterface $user
      */
-    public function register(PasswordAuthenticatedUserInterface&UserInterface $user, string $plainPassword, string $verifyEmailRouteName, TemplatedEmail $email): void
+    public function register(PasswordAuthenticatedUserInterface&UserInterface $user, string $plainPassword, string $verifyEmailRouteName, string $subject, string $template, string $to): bool
     {
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
@@ -43,6 +42,6 @@ class UserRegistrar
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $this->emailVerifier->sendEmailConfirmation($verifyEmailRouteName, $user, $email);
+        return $this->emailVerifier->sendEmailConfirmation($verifyEmailRouteName, $user, $subject, $template, $to);
     }
 }

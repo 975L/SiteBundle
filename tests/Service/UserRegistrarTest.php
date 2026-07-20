@@ -14,7 +14,6 @@ use c975L\SiteBundle\Service\UserRegistrar;
 use c975L\SiteBundle\Tests\Fixtures\UserStub;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserRegistrarTest extends TestCase
@@ -31,15 +30,16 @@ class UserRegistrarTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
 
         $emailVerifier = $this->createMock(EmailVerifier::class);
-        $email = new TemplatedEmail();
         $emailVerifier->expects($this->once())
             ->method('sendEmailConfirmation')
-            ->with('app_verify_email', $user, $email)
+            ->with('app_verify_email', $user, 'Confirm your email', '@c975LSite/emails/confirmation_email.html.twig', 'new-user@example.test')
+            ->willReturn(true)
         ;
 
         $registrar = new UserRegistrar($passwordHasher, $entityManager, $emailVerifier);
-        $registrar->register($user, 'Str0ngPassword!', 'app_verify_email', $email);
+        $result = $registrar->register($user, 'Str0ngPassword!', 'app_verify_email', 'Confirm your email', '@c975LSite/emails/confirmation_email.html.twig', 'new-user@example.test');
 
+        $this->assertTrue($result);
         $this->assertSame('hashed-password', $user->getPassword());
         $this->assertNotNull($user->getCreation());
         $this->assertNotNull($user->getModification());

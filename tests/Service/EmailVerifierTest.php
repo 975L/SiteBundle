@@ -11,19 +11,21 @@ namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Service\EmailVerifier;
 use c975L\SiteBundle\Tests\Fixtures\UserStub;
+use c975L\UiBundle\Model\EmailSendRequest;
+use c975L\UiBundle\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Model\VerifyEmailSignatureComponents;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
 // Moved from the app-copied scaffold (previously App\Tests\Security\EmailVerifierTest) alongside the class it tests - see UPGRADE.md
 class EmailVerifierTest extends TestCase
 {
-    public function testSendEmailConfirmationSignsAndSendsEmail(): void
+    // Sent through EmailService (not MailerInterface directly), so ROLE_SUPER_ADMIN "email-debug" also
+    // previews the registration confirmation email, same as every other c975L email
+    public function testSendEmailConfirmationSignsAndSendsThroughEmailService(): void
     {
         $user = (new UserStub('user@example.test'))->withId(42);
 
@@ -39,21 +41,25 @@ class EmailVerifierTest extends TestCase
             ->with('app_verify_email', '42', 'user@example.test', ['id' => 42])
             ->willReturn($signature);
 
-        $mailer = $this->createMock(MailerInterface::class);
-        $mailer->expects($this->once())
+        $emailService = $this->createMock(EmailService::class);
+        $emailService->expects($this->once())
             ->method('send')
-            ->with($this->callback(function (TemplatedEmail $email) use ($signature) {
-                $context = $email->getContext();
-
-                return $context['signedUrl'] === $signature->getSignedUrl()
-                    && $context['expiresAtMessageKey'] === $signature->getExpirationMessageKey()
-                    && $context['expiresAtMessageData'] === $signature->getExpirationMessageData();
-            }));
+            ->with($this->callback(function (EmailSendRequest $request) use ($signature) {
+                return $request->subject === 'Confirm your email'
+                    && $request->template === '@c975LSite/emails/confirmation_email.html.twig'
+                    && $request->to === 'user@example.test'
+                    && $request->context['signedUrl'] === $signature->getSignedUrl()
+                    && $request->context['expiresAtMessageKey'] === $signature->getExpirationMessageKey()
+                    && $request->context['expiresAtMessageData'] === $signature->getExpirationMessageData();
+            }))
+            ->willReturn(true);
 
         $entityManager = $this->createStub(EntityManagerInterface::class);
 
-        $emailVerifier = new EmailVerifier($verifyEmailHelper, $mailer, $entityManager);
-        $emailVerifier->sendEmailConfirmation('app_verify_email', $user, new TemplatedEmail());
+        $emailVerifier = new EmailVerifier($verifyEmailHelper, $emailService, $entityManager);
+        $result = $emailVerifier->sendEmailConfirmation('app_verify_email', $user, 'Confirm your email', '@c975LSite/emails/confirmation_email.html.twig', 'user@example.test');
+
+        $this->assertTrue($result);
     }
 
     public function testHandleEmailConfirmationMarksUserAsVerifiedAndEnabled(): void
@@ -91,13 +97,13 @@ class EmailVerifierTest extends TestCase
             }
         };
 
-        $mailer = $this->createStub(MailerInterface::class);
+        $emailService = $this->createStub(EmailService::class);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())->method('persist')->with($user);
         $entityManager->expects($this->once())->method('flush');
 
-        $emailVerifier = new EmailVerifier($verifyEmailHelper, $mailer, $entityManager);
+        $emailVerifier = new EmailVerifier($verifyEmailHelper, $emailService, $entityManager);
         $emailVerifier->handleEmailConfirmation($request, $user);
 
         $this->assertSame(1, $verifyEmailHelper->calls);

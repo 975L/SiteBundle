@@ -216,7 +216,7 @@
             </trans-unit>
             <trans-unit id="60">
                 <source>label.position_help</source>
-                <target>Orden de visualización en la página (1 = primero, utilice un incremento de 5 para facilitar las modificaciones posteriores)</target>
+                <target>Orden de visualización (1 = primero); use incrementos de 5 para dejar margen.</target>
             </trans-unit>
             <trans-unit id="61">
                 <source>text.no_articles</source>
@@ -320,7 +320,7 @@
             </trans-unit>
             <trans-unit id="85">
                 <source>label.summary_social_network_help</source>
-                <target>Este contenido será utilizado por las redes sociales al compartir la página</target>
+                <target>Usado por las redes sociales al compartir la página</target>
             </trans-unit>
             <trans-unit id="86">
                 <source>label.is_deleted</source>
@@ -392,7 +392,7 @@
             </trans-unit>
             <trans-unit id="103">
                 <source>label.slug_help</source>
-                <target>Es importante que el slug corresponda al título de la página (sin acentos, mayúsculas ni espacios). Puede modificarlo haciendo clic en el candado, se establecerá una redirección para mantener el SEO.</target>
+                <target>Idealmente cercano al título (sin acentos, mayúsculas ni espacios). Editable con el candado; una redirección conserva el SEO.</target>
             </trans-unit>
             <trans-unit id="104">
                 <source>confirm.title_change</source>
@@ -404,7 +404,7 @@
             </trans-unit>
             <trans-unit id="106">
                 <source>label.content_help</source>
-                <target>Pegue aquí el contenido Twig del antiguo archivo .html.twig (el archivo puede eliminarse después). El contenido se interpreta como Twig: puede usar las funciones/filtros habituales (config(), path(), etc.).</target>
+                <target>Pegue aquí el contenido del antiguo archivo .html.twig - interpretado como Twig (config(), path(), etc.).</target>
             </trans-unit>
             <trans-unit id="107">
                 <source>block.twig_content</source>
@@ -464,7 +464,7 @@
             </trans-unit>
             <trans-unit id="121">
                 <source>label.preview_mode</source>
-                <target>Está viendo una vista previa de esta página, todavía no está publicada y no es visible para el público.</target>
+                <target>Vista previa sin publicar - no visible para el público.</target>
             </trans-unit>
             <trans-unit id="122">
                 <source>label.export</source>
@@ -488,7 +488,7 @@
             </trans-unit>
             <trans-unit id="127">
                 <source>label.qrcode_help</source>
-                <target>Clic derecho en el código QR, guarde la imagen y utilícela donde quiera</target>
+                <target>Clic derecho para guardar la imagen, úsela donde quiera</target>
             </trans-unit>
             <trans-unit id="128">
                 <source>label.site_graphics</source>
@@ -524,7 +524,7 @@
             </trans-unit>
             <trans-unit id="136">
                 <source>label.og_image_help</source>
-                <target>Imagen mostrada al compartir esta página en redes sociales. Si se deja vacío, se usa la og-image o el logo por defecto del sitio.</target>
+                <target>Imagen mostrada al compartir la página. Vacío = og-image o logo por defecto.</target>
             </trans-unit>
             <trans-unit id="137">
                 <source>label.site_graphic_missing</source>
@@ -532,7 +532,7 @@
             </trans-unit>
             <trans-unit id="138">
                 <source>label.info_site_graphic</source>
-                <target>Los gráficos globales del sitio: favicon, icono Apple Touch, og-image por defecto y logo</target>
+                <target>Gráficos globales: favicon, icono Apple Touch, og-image y logo por defecto</target>
             </trans-unit>
             <trans-unit id="139">
                 <source>label.menus</source>
@@ -672,7 +672,7 @@
             </trans-unit>
             <trans-unit id="180">
                 <source>label.password_help</source>
-                <target>Su contraseña debe tener al menos 8 caracteres e incluir una minúscula, una mayúscula, un dígito y un carácter especial</target>
+                <target>Mínimo 8 caracteres, con minúscula, mayúscula, dígito y carácter especial</target>
             </trans-unit>
             <trans-unit id="181">
                 <source>label.confirm_your_email</source>
@@ -692,7 +692,7 @@
             </trans-unit>
             <trans-unit id="185">
                 <source>label.site_graphic_file_help</source>
-                <target>El favicon se redimensionará automáticamente a 48×48 px (.ico). El icono Apple Touch se redimensionará automáticamente a 114×114 px (.png).</target>
+                <target>Redimensionado automático: favicon a 48×48 px (.ico), icono Apple Touch a 114×114 px (.png).</target>
             </trans-unit>
             <trans-unit id="186">
                 <source>flash.user_registration_enabled</source>
@@ -732,7 +732,7 @@
             </trans-unit>
             <trans-unit id="279">
                 <source>help.menu_link_label</source>
-                <target>Dejar vacío para usar automáticamente el título de la página o de la sección seleccionada (o el copyright calculado para la página "Copyright")</target>
+                <target>Vacío = título de la página/sección elegida (o copyright calculado para la página "Copyright").</target>
             </trans-unit>
             <trans-unit id="194">
                 <source>action.duplicate</source>
@@ -764,7 +764,7 @@
             </trans-unit>
             <trans-unit id="200">
                 <source>block.menu_link_description</source>
-                <target>Un enlace a una página o una ruta, ordenable junto con cualquier otro bloque (navbar, pie de página, pie de página del email)</target>
+                <target>Enlace a una página o ruta, ordenable con otros bloques (navbar, pie de página, email)</target>
             </trans-unit>
             <trans-unit id="201">
                 <source>label.info_menu</source>
@@ -776,7 +776,7 @@
             </trans-unit>
             <trans-unit id="204">
                 <source>description.messenger_alert_super_admin</source>
-                <target>Algunos mensajes no se pudieron enviar por razones distintas a una dirección en lista negra. Haga clic para ver el detalle.</target>
+                <target>Fallos de envío ajenos a una lista negra. Clic para más detalle.</target>
             </trans-unit>
             <trans-unit id="205">
                 <source>label.messenger_alert_admin</source>
@@ -784,7 +784,7 @@
             </trans-unit>
             <trans-unit id="206">
                 <source>description.messenger_alert_admin</source>
-                <target>Se ha notificado automáticamente un problema técnico al equipo técnico. No se requiere ninguna acción por su parte.</target>
+                <target>Problema técnico notificado automáticamente al equipo. No requiere ninguna acción.</target>
             </trans-unit>
             <trans-unit id="207">
                 <source>label.messenger_failed</source>
@@ -792,7 +792,7 @@
             </trans-unit>
             <trans-unit id="208">
                 <source>description.messenger_failed</source>
-                <target>Lista de mensajes que no se pudieron enviar. Los mensajes menores (dirección en lista negra, spam) se purgan automáticamente tras el período de retención configurado.</target>
+                <target>Mensajes no enviados; los casos menores (lista negra, spam) se purgan tras la retención.</target>
             </trans-unit>
             <trans-unit id="209">
                 <source>label.messenger_purge_now</source>
@@ -837,6 +837,22 @@
             <trans-unit id="217">
                 <source>flash.messenger_purged</source>
                 <target>%count% mensaje(s) purgado(s)</target>
+            </trans-unit>
+            <trans-unit id="218">
+                <source>label.gallery_showcase_articles_slider</source>
+                <target>Carrusel de artículos</target>
+            </trans-unit>
+            <trans-unit id="219">
+                <source>label.gallery_showcase_articles_slider_description</source>
+                <target>Carrusel interactivo con los artículos de una página elegida.</target>
+            </trans-unit>
+            <trans-unit id="220">
+                <source>label.gallery_showcase_menu_link</source>
+                <target>Enlace de menú</target>
+            </trans-unit>
+            <trans-unit id="221">
+                <source>label.gallery_showcase_menu_link_description</source>
+                <target>Enlace a una página o ruta, usado en los menús del sitio.</target>
             </trans-unit>
             <trans-unit id="222">
                 <source>label.logout</source>
@@ -936,7 +952,7 @@
             </trans-unit>
             <trans-unit id="247">
                 <source>label.preview_preset_mode</source>
-                <target>Vista previa de la forma del preset "%label%" - tus colores y fuentes se muestran tal cual, nada se ha guardado</target>
+                <target>Vista previa del preset "%label%" - tus colores y fuentes no cambian, nada se guarda</target>
             </trans-unit>
             <trans-unit id="249">
                 <source>flash.template_applied_to_copy</source>
@@ -976,11 +992,11 @@
             </trans-unit>
             <trans-unit id="258">
                 <source>label.collection_item_group_help</source>
-                <target>Identifica a qué colección pertenece este elemento (ej. "projects") - este nombre es el que se elige como fuente en el bloque "Collection"</target>
+                <target>Colección a la que pertenece este elemento (ej. "projects") - elegida como fuente en el bloque "Collection"</target>
             </trans-unit>
             <trans-unit id="267">
                 <source>label.collection_item_slug_help</source>
-                <target>Identifica este elemento dentro de su grupo, usado para su URL de detalle si el bloque "Collection" define una - único dentro del grupo, no es necesario que sea único entre grupos diferentes.</target>
+                <target>Identifica el elemento en su grupo, usado en su URL de detalle si el bloque "Collection" define una - único solo por grupo.</target>
             </trans-unit>
             <trans-unit id="281">
                 <source>label.collection_items_count</source>
@@ -1004,7 +1020,7 @@
             </trans-unit>
             <trans-unit id="265">
                 <source>label.template_path_help</source>
-                <target>Ruta de la plantilla Twig (ej. "block_showcase/bundle.html.twig") usada para mostrar el detalle de un elemento de la colección declarada por un bloque "Collection" en esta misma página. Dejar vacío para un contenido Twig clásico mediante el campo Contenido de arriba.</target>
+                <target>Plantilla Twig (ej. "block_showcase/bundle.html.twig") para el detalle de un item del bloque "Collection". Vacío = campo Contenido clásico.</target>
             </trans-unit>
             <trans-unit id="266">
                 <source>label.template_default</source>
@@ -1032,11 +1048,27 @@
             </trans-unit>
             <trans-unit id="284">
                 <source>label.info_collection_item_list</source>
-                <target>Elementos genéricos de título/descripción/imagen/enlace, agrupados por "group" - cada grupo alimenta un bloque "collection" del sitio. Arrastre las filas para reordenarlas dentro de un grupo.</target>
+                <target>Elementos de título/descripción/imagen/enlace agrupados por "group", cada uno alimenta un bloque "collection". Arrastre para reordenar.</target>
             </trans-unit>
             <trans-unit id="285">
                 <source>label.info_collection_item_groups</source>
-                <target>Elija un grupo para ver y gestionar sus elementos, o cree uno nuevo. Cada grupo alimenta un bloque "collection" del sitio.</target>
+                <target>Elija un grupo para gestionar sus elementos, o cree uno nuevo. Cada grupo alimenta un bloque "collection".</target>
+            </trans-unit>
+            <trans-unit id="286">
+                <source>label.info_user_roles</source>
+                <target>Los roles de abajo (aparte de ROLE_SUPER_ADMIN) vienen de %link_open%esta clave%link_close%.</target>
+            </trans-unit>
+            <trans-unit id="287">
+                <source>label.info_user_registration</source>
+                <target>El registro de visitantes se activa con un clic desde %link_open%el panel%link_close% (solo administradores).</target>
+            </trans-unit>
+            <trans-unit id="288">
+                <source>label.menu_link_primary</source>
+                <target>Destacar como un botón</target>
+            </trans-unit>
+            <trans-unit id="289">
+                <source>help.menu_link_primary</source>
+                <target>Se muestra como botón relleno de color primario en vez de enlace - úsese con moderación (ej. "Contacto")</target>
             </trans-unit>
         </body>
     </file>

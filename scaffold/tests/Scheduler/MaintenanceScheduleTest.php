@@ -42,7 +42,7 @@ class MaintenanceScheduleTest extends TestCase
             [0, '5 0 * * *', 'app:sitemaps:create'],
             [1, '7 */6 * * *', 'c975l:site:backup'],
             [2, '0 3 * * *', 'c975l:site:messenger-cleanup'],
-            [3, '7 3 * * 1', 'c975l:site:backup --full --report'],
+            [3, '7 3 * * 1', 'c975l:site:backup --report'],
         ];
     }
 }

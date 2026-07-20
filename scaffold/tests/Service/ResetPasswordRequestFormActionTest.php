@@ -4,12 +4,11 @@ namespace App\Tests\Service;
 
 use App\Entity\User;
 use App\Service\ResetPasswordRequestFormAction;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Entity\Form;
+use c975L\UiBundle\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\TooManyPasswordRequestsException;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken;
@@ -28,20 +27,6 @@ class ResetPasswordRequestFormActionTest extends TestCase
         return $entityManager;
     }
 
-    private function createConfigService(): ConfigServiceInterface
-    {
-        $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturnCallback(
-            static fn (string $key) => match ($key) {
-                'email-from' => 'noreply@example.test',
-                'email-from-name' => 'Example',
-                default => null,
-            }
-        );
-
-        return $configService;
-    }
-
     private function createTranslator(): TranslatorInterface
     {
         $translator = $this->createStub(TranslatorInterface::class);
@@ -55,8 +40,7 @@ class ResetPasswordRequestFormActionTest extends TestCase
         $action = new ResetPasswordRequestFormAction(
             $this->createEntityManager(null),
             $this->createStub(ResetPasswordHelperInterface::class),
-            $this->createConfigService(),
-            $this->createStub(MailerInterface::class),
+            $this->createStub(EmailService::class),
             $this->createTranslator(),
         );
 
@@ -66,14 +50,13 @@ class ResetPasswordRequestFormActionTest extends TestCase
     // Never reveals whether an account exists - same generic "form_submitted" flash either way
     public function testHandleReturnsTrueWithoutSendingWhenUserIsNotFound(): void
     {
-        $mailer = $this->createMock(MailerInterface::class);
-        $mailer->expects($this->never())->method('send');
+        $emailService = $this->createMock(EmailService::class);
+        $emailService->expects($this->never())->method('send');
 
         $action = new ResetPasswordRequestFormAction(
             $this->createEntityManager(null),
             $this->createStub(ResetPasswordHelperInterface::class),
-            $this->createConfigService(),
-            $mailer,
+            $emailService,
             $this->createTranslator(),
         );
 
@@ -85,14 +68,13 @@ class ResetPasswordRequestFormActionTest extends TestCase
         $resetPasswordHelper = $this->createStub(ResetPasswordHelperInterface::class);
         $resetPasswordHelper->method('generateResetToken')->willThrowException(new TooManyPasswordRequestsException(new \DateTime()));
 
-        $mailer = $this->createMock(MailerInterface::class);
-        $mailer->expects($this->never())->method('send');
+        $emailService = $this->createMock(EmailService::class);
+        $emailService->expects($this->never())->method('send');
 
         $action = new ResetPasswordRequestFormAction(
             $this->createEntityManager(new User()),
             $resetPasswordHelper,
-            $this->createConfigService(),
-            $mailer,
+            $emailService,
             $this->createTranslator(),
         );
 
@@ -104,14 +86,13 @@ class ResetPasswordRequestFormActionTest extends TestCase
         $resetPasswordHelper = $this->createStub(ResetPasswordHelperInterface::class);
         $resetPasswordHelper->method('generateResetToken')->willReturn(new ResetPasswordToken('token', new \DateTime('+1 hour')));
 
-        $mailer = $this->createMock(MailerInterface::class);
-        $mailer->expects($this->once())->method('send');
+        $emailService = $this->createMock(EmailService::class);
+        $emailService->expects($this->once())->method('send');
 
         $action = new ResetPasswordRequestFormAction(
             $this->createEntityManager((new User())->setEmail('someone@example.test')),
             $resetPasswordHelper,
-            $this->createConfigService(),
-            $mailer,
+            $emailService,
             $this->createTranslator(),
         );
 

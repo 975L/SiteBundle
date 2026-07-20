@@ -12,7 +12,7 @@
             </trans-unit>
             <trans-unit id="3">
                 <source>description.site_navbar_show_name</source>
-                <target>Display the site name (and tagline) next to the logo in the navbar</target>
+                <target>Show the site name (and tagline) next to the logo in the navbar</target>
             </trans-unit>
             <trans-unit id="4">
                 <source>description.site_navbar_position</source>
@@ -32,7 +32,7 @@
             </trans-unit>
             <trans-unit id="8">
                 <source>description.url_terms_of_use</source>
-                <target>URL of the terms of use page i.e. https://example.com/pages/terms-of-use</target>
+                <target>Terms of use page URL, e.g. https://example.com/pages/terms-of-use</target>
             </trans-unit>
             <trans-unit id="9">
                 <source>description.site_hosted_by_url</source>
@@ -52,7 +52,7 @@
             </trans-unit>
             <trans-unit id="13">
                 <source>description.url_cookies_policy</source>
-                <target>URL of the cookies policy page i.e. https://example.com/pages/cookies</target>
+                <target>Cookies policy page URL, e.g. https://example.com/pages/cookies</target>
             </trans-unit>
             <trans-unit id="14">
                 <source>description.site_matomo_url</source>
@@ -64,7 +64,7 @@
             </trans-unit>
             <trans-unit id="16">
                 <source>description.site_preconnect</source>
-                <target>External origins to preconnect to (JSON array), i.e. ["https://example.com"]. Useful when credits logos or Matomo are hosted on a third-party domain</target>
+                <target>Origins to preconnect (JSON array), e.g. ["https://example.com"] - useful when credits/Matomo logos are on a third-party domain</target>
             </trans-unit>
             <trans-unit id="17">
                 <source>description.site_backup_db_host</source>
@@ -84,7 +84,11 @@
             </trans-unit>
             <trans-unit id="21">
                 <source>description.site_backup_mailto</source>
-                <target>Email address for backup reports and error notifications</target>
+                <target>Email address for backup reports and errors</target>
+            </trans-unit>
+            <trans-unit id="125">
+                <source>description.site_backup_full_interval_months</source>
+                <target>Number of calendar months between two complete file backups (partial, modified-files-only backups run in between)</target>
             </trans-unit>
             <trans-unit id="22">
                 <source>description.site_contact_email</source>
@@ -96,7 +100,7 @@
             </trans-unit>
             <trans-unit id="24">
                 <source>description.site_director</source>
-                <target>Full name of the director of publication (required for legal notice)</target>
+                <target>Director of publication's full name (required for legal notice)</target>
             </trans-unit>
             <trans-unit id="25">
                 <source>description.site_director_location</source>
@@ -104,39 +108,39 @@
             </trans-unit>
             <trans-unit id="26">
                 <source>description.site_owner</source>
-                <target>Owner of the website, displayed in the legal notice (HTML allowed)</target>
+                <target>Website owner, shown in the legal notice (HTML allowed)</target>
             </trans-unit>
             <trans-unit id="27">
                 <source>description.site_producer</source>
-                <target>Producer / developer of the website displayed in the legal notice (HTML allowed)</target>
+                <target>Producer/developer of the site, shown in the legal notice (HTML allowed)</target>
             </trans-unit>
             <trans-unit id="28">
                 <source>description.site_hosting_provider</source>
-                <target>Hosting provider of the website displayed in the legal notice (HTML allowed)</target>
+                <target>Hosting provider, shown in the legal notice (HTML allowed)</target>
             </trans-unit>
             <trans-unit id="29">
                 <source>description.site_other_copyright</source>
-                <target>Other copyright information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)</target>
+                <target>Other copyright info for the legal notice (HTML allowed, not translated)</target>
             </trans-unit>
             <trans-unit id="30">
                 <source>description.site_other_cookies</source>
-                <target>Other cookies information displayed in the legal notice (HTML allowed, not translated - same value shown regardless of the page language)</target>
+                <target>Other cookies info for the legal notice (HTML allowed, not translated)</target>
             </trans-unit>
             <trans-unit id="31">
                 <source>description.site_dpo</source>
-                <target>Full name of the Data Protection Officer, required for privacy policy</target>
+                <target>DPO's full name, required for the privacy policy</target>
             </trans-unit>
             <trans-unit id="33">
                 <source>description.user_roles_available</source>
-                <target>Extra roles selectable for users in the backoffice (besides the default ROLE_USER), as a JSON array i.e. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
+                <target>Extra selectable roles (besides ROLE_USER), JSON array, e.g. ["ROLE_ADMIN","ROLE_EDITOR"]</target>
             </trans-unit>
             <trans-unit id="34">
                 <source>description.email_from</source>
-                <target>Email address used to send the emails: i.e. contact@example.com</target>
+                <target>Email address used to send emails, e.g. contact@example.com</target>
             </trans-unit>
             <trans-unit id="123">
                 <source>description.email_debug</source>
-                <target>When enabled, a ROLE_SUPER_ADMIN sees a preview of the email instead of it being actually sent</target>
+                <target>When enabled, a ROLE_SUPER_ADMIN sees a preview instead of a real send</target>
             </trans-unit>
             <trans-unit id="35">
                 <source>description.email_from_name</source>
@@ -152,11 +156,11 @@
             </trans-unit>
             <trans-unit id="121">
                 <source>description.site_menu_link_copyright_auto</source>
-                <target>Automatically show the computed copyright (© year) as the label of the menu link pointing to your "Copyright" page, instead of its title</target>
+                <target>Show the computed copyright (© year) as the menu link label for the "Copyright" page, instead of its title</target>
             </trans-unit>
             <trans-unit id="39">
                 <source>description.site_enable_matomo</source>
-                <target>Enable Matomo for statistics tracking - deliberately not gated by the cookie-consent banner: only keep this on if your Matomo instance is configured to the CNIL exemption criteria (anonymized IP, no cross-site tracking, cookie ≤13 months, Do Not Track respected)</target>
+                <target>Enables Matomo, deliberately outside the cookie banner - only for a CNIL-exempt setup (anonymized IP, no cross-site tracking, cookie ≤13 months, DNT respected)</target>
             </trans-unit>
             <trans-unit id="40">
                 <source>description.site_enable_cookie_consent</source>
@@ -164,23 +168,23 @@
             </trans-unit>
             <trans-unit id="81">
                 <source>description.email_text_no_spam</source>
-                <target>"No spam" notice displayed at the top of the email (HTML allowed, not translated - same value shown regardless of the email's language). Leave empty to display nothing</target>
+                <target>"No spam" notice at the top of the email (HTML allowed, not translated). Empty = nothing.</target>
             </trans-unit>
             <trans-unit id="82">
                 <source>description.email_text_hello</source>
-                <target>Greeting displayed at the top of the email (HTML allowed, not translated). Leave empty to display nothing</target>
+                <target>Greeting at the top of the email (HTML allowed, not translated). Empty = nothing.</target>
             </trans-unit>
             <trans-unit id="83">
                 <source>description.email_text_closing</source>
-                <target>Thank-you and signature text displayed at the bottom of the email. Use %site% to insert the site name (HTML allowed, not translated). Leave empty to display nothing</target>
+                <target>Thank-you/signature at the bottom of the email. %site% inserts the site name (HTML allowed, not translated). Empty = nothing.</target>
             </trans-unit>
             <trans-unit id="84">
                 <source>description.email_text_sent_by</source>
-                <target>"This email was sent by..." notice displayed at the bottom of the email. Use %site% to insert the site name (HTML allowed, not translated). Leave empty to display nothing</target>
+                <target>"Sent by..." notice at the bottom of the email. %site% inserts the site name (HTML allowed, not translated).</target>
             </trans-unit>
             <trans-unit id="89">
                 <source>description.email_text_legal</source>
-                <target>Free text block displayed at the bottom of the email for extra legal mentions (legal form, share capital, company registration number...) (HTML allowed, not translated). Empty by default - displays nothing until filled in</target>
+                <target>Free text at the bottom of the email for legal mentions (legal form, share capital, reg. number...) (HTML allowed, not translated). Empty = nothing.</target>
             </trans-unit>
             <trans-unit id="41">
                 <source>label.site_name</source>
@@ -265,6 +269,10 @@
             <trans-unit id="61">
                 <source>label.site_backup_mailto</source>
                 <target>Backup Mailto</target>
+            </trans-unit>
+            <trans-unit id="126">
+                <source>label.site_backup_full_interval_months</source>
+                <target>Backup Full Interval (months)</target>
             </trans-unit>
             <trans-unit id="62">
                 <source>label.site_contact_email</source>
@@ -364,11 +372,11 @@
             </trans-unit>
             <trans-unit id="91">
                 <source>description.site_messenger_cleanup_mailto</source>
-                <target>Email address to be alerted of important Messenger sending failures (optional)</target>
+                <target>Email address alerted of important Messenger send failures (optional)</target>
             </trans-unit>
             <trans-unit id="92">
                 <source>description.site_messenger_cleanup_retention_days</source>
-                <target>Number of days failed Messenger messages are kept before automatic purge</target>
+                <target>Days failed Messenger messages are kept before purge</target>
             </trans-unit>
             <trans-unit id="93">
                 <source>label.site_messenger_cleanup_mailto</source>
@@ -384,7 +392,7 @@
             </trans-unit>
             <trans-unit id="96">
                 <source>description.theme_color_primary</source>
-                <target>Main color of the site (buttons, titles, links). Leave empty to keep the default color</target>
+                <target>Main color (buttons, titles, links). Empty = default color</target>
             </trans-unit>
             <trans-unit id="97">
                 <source>label.theme_color_secondary</source>
@@ -392,7 +400,7 @@
             </trans-unit>
             <trans-unit id="98">
                 <source>description.theme_color_secondary</source>
-                <target>Secondary color of the site. Leave empty to keep the default color</target>
+                <target>Secondary color. Empty = default color</target>
             </trans-unit>
             <trans-unit id="99">
                 <source>label.theme_color_background</source>
@@ -400,7 +408,7 @@
             </trans-unit>
             <trans-unit id="100">
                 <source>description.theme_color_background</source>
-                <target>Background color of the site. Leave empty to keep the default color</target>
+                <target>Background color. Empty = default color</target>
             </trans-unit>
             <trans-unit id="101">
                 <source>label.theme_color_text</source>
@@ -408,7 +416,7 @@
             </trans-unit>
             <trans-unit id="102">
                 <source>description.theme_color_text</source>
-                <target>Text color of the site. Leave empty to keep the default color</target>
+                <target>Text color. Empty = default color</target>
             </trans-unit>
             <trans-unit id="103">
                 <source>label.theme_font_family_title</source>
@@ -416,7 +424,7 @@
             </trans-unit>
             <trans-unit id="104">
                 <source>description.theme_font_family_title</source>
-                <target>Font used for titles (h1-h6). Leave empty to keep the default font</target>
+                <target>Font for titles (h1-h6). Empty = default font</target>
             </trans-unit>
             <trans-unit id="105">
                 <source>label.theme_font_family_body</source>
@@ -424,7 +432,7 @@
             </trans-unit>
             <trans-unit id="106">
                 <source>description.theme_font_family_body</source>
-                <target>Font used for body text. Leave empty to keep the default font</target>
+                <target>Font for body text. Empty = default font</target>
             </trans-unit>
             <trans-unit id="107">
                 <source>label.theme_mode</source>
@@ -440,7 +448,7 @@
             </trans-unit>
             <trans-unit id="110">
                 <source>description.theme_color_primary_dark_mode</source>
-                <target>Primary color used in dark mode. Leave empty to reuse the primary color above</target>
+                <target>Primary color in dark mode. Empty = reuses the primary color above</target>
             </trans-unit>
             <trans-unit id="111">
                 <source>label.theme_color_secondary_dark_mode</source>
@@ -448,7 +456,7 @@
             </trans-unit>
             <trans-unit id="112">
                 <source>description.theme_color_secondary_dark_mode</source>
-                <target>Secondary color used in dark mode. Leave empty to reuse the secondary color above</target>
+                <target>Secondary color in dark mode. Empty = reuses the secondary color above</target>
             </trans-unit>
             <trans-unit id="113">
                 <source>label.theme_font_family_accent</source>
@@ -456,7 +464,7 @@
             </trans-unit>
             <trans-unit id="114">
                 <source>description.theme_font_family_accent</source>
-                <target>Optional third font used for badges/labels/eyebrow text. Leave empty to keep the default font</target>
+                <target>Optional font for badges/labels/eyebrow text. Empty = default font</target>
             </trans-unit>
             <trans-unit id="115">
                 <source>label.theme_stylesheet</source>
@@ -464,7 +472,7 @@
             </trans-unit>
             <trans-unit id="116">
                 <source>description.theme_stylesheet</source>
-                <target>Technical value set automatically when applying a preset with its own shape. Leave empty for the default look</target>
+                <target>Technical value set when a preset is applied. Empty = default look</target>
             </trans-unit>
             <trans-unit id="117">
                 <source>label.site_form_delay</source>
@@ -472,7 +480,7 @@
             </trans-unit>
             <trans-unit id="118">
                 <source>description.site_form_delay</source>
-                <target>Minimum time, in seconds, expected between displaying and submitting a public form (registration, password reset, contact...) before treating it as a bot</target>
+                <target>Minimum delay, in seconds, between showing and submitting a public form before treating it as a bot</target>
             </trans-unit>
             <trans-unit id="119">
                 <source>label.site_form_gdpr</source>
@@ -480,7 +488,7 @@
             </trans-unit>
             <trans-unit id="120">
                 <source>description.site_form_gdpr</source>
-                <target>Adds a mandatory consent checkbox to public forms (registration, password reset, contact...)</target>
+                <target>Adds a mandatory GDPR consent checkbox to public forms</target>
             </trans-unit>
         </body>
     </file>

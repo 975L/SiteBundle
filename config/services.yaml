@@ -6,7 +6,12 @@ services:
 
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Messenger}'
+        exclude: '../src/{DependencyInjection,Entity,Messenger,Service/Security}'
+
+    # Only decorates NelmioSecurityBundle's nonce generator if the app installed it (SiteBundle doesn't require it) - see SessionNonceGenerator for why. decoration_on_invalid: ignore drops this definition entirely when nelmio_security.nonce_generator doesn't exist, so it's a no-op otherwise
+    c975L\SiteBundle\Service\Security\SessionNonceGenerator:
+        decorates: nelmio_security.nonce_generator
+        decoration_on_invalid: ignore
 
     # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own
     # interface - CollectionItemSourceProvider autowires against the interface for testability

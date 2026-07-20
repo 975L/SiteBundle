@@ -9,10 +9,10 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\UiBundle\Model\EmailSendRequest;
+use c975L\UiBundle\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 
@@ -21,12 +21,14 @@ class EmailVerifier
 {
     public function __construct(
         private readonly VerifyEmailHelperInterface $verifyEmailHelper,
-        private readonly MailerInterface $mailer,
+        private readonly EmailService $emailService,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
+    // Sent through EmailService (not MailerInterface directly) so registration confirmation gets the same
+    // ROLE_SUPER_ADMIN "email-debug" preview as every other c975L email, instead of always really sending
+    public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, string $subject, string $template, string $to): bool
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
@@ -35,14 +37,16 @@ class EmailVerifier
             ['id' => $this->getUserId($user)]
         );
 
-        $context = $email->getContext();
-        $context['signedUrl'] = $signatureComponents->getSignedUrl();
-        $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
-        $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
-
-        $email->context($context);
-
-        $this->mailer->send($email);
+        return $this->emailService->send(new EmailSendRequest(
+            subject: $subject,
+            context: [
+                'signedUrl' => $signatureComponents->getSignedUrl(),
+                'expiresAtMessageKey' => $signatureComponents->getExpirationMessageKey(),
+                'expiresAtMessageData' => $signatureComponents->getExpirationMessageData(),
+            ],
+            template: $template,
+            to: $to,
+        ));
     }
 
     public function handleEmailConfirmation(Request $request, UserInterface $user): void

@@ -1,0 +1,9 @@
+{% extends "@c975LSite/emails/layout.html.twig" %}
+
+{# Wraps an EmailTemplateRenderer body (already-rendered <table> of blocks) in the site's own branded layout -
+   see c975L\SiteBundle\Service\EmailLayoutProvider. Overrides "content" (not "email_content"), same as
+   confirmation_email.html.twig/reset_password_email.html.twig, since an EmailTemplate's own blocks replace
+   the generic "hello" text #}
+{% block content %}
+    {{ bodyHtml|raw }}
+{% endblock %}

@@ -1,5 +1,35 @@
 [
     {
+        "date": "2026-07-20",
+        "description": [
+            {
+                "en": "A menu link can now be highlighted as a filled button - handy to make one stand out, like a \"Contact\" link in your navbar",
+                "fr": "Un lien de menu peut désormais être mis en avant comme un bouton plein - pratique pour en faire ressortir un, comme un lien « Contact » dans votre barre de navigation",
+                "es": "Un enlace de menú ahora se puede destacar como un botón relleno - útil para resaltar uno, como un enlace «Contacto» en su barra de navegación"
+            },
+            {
+                "en": "Fixed a menu link's text not changing color on hover in the navbar",
+                "fr": "Correction du texte d'un lien de menu qui ne changeait pas de couleur au survol dans la barre de navigation",
+                "es": "Corregido el texto de un enlace de menú que no cambiaba de color al pasar el cursor en la barra de navegación"
+            },
+            {
+                "en": "Your email templates now preview and send with your site's own design (header, footer) instead of a plain, unstyled document",
+                "fr": "Vos modèles d'emails s'affichent et s'envoient désormais avec le design de votre site (en-tête, pied de page) au lieu d'un document brut sans mise en forme",
+                "es": "Sus plantillas de correo ahora se previsualizan y envían con el diseño de su sitio (cabecera, pie de página) en lugar de un documento sin formato"
+            },
+            {
+                "en": "The Users screen now points you to where available roles are configured and how to open or close visitor registration in one click",
+                "fr": "L'écran Utilisateurs indique désormais où configurer les rôles disponibles et comment ouvrir ou fermer l'inscription des visiteurs en un clic",
+                "es": "La pantalla de Usuarios ahora indica dónde configurar los roles disponibles y cómo abrir o cerrar el registro de visitantes en un clic"
+            },
+            {
+                "en": "When email preview mode is on, the registration confirmation email is now previewed like your other emails instead of always being sent for real",
+                "fr": "Quand le mode aperçu des emails est activé, l'email de confirmation d'inscription est désormais prévisualisé comme vos autres emails au lieu d'être toujours réellement envoyé",
+                "es": "Cuando el modo de vista previa de correos está activado, el correo de confirmación de registro ahora se previsualiza como sus demás correos en lugar de enviarse siempre de verdad"
+            }
+        ]
+    },
+    {
         "date": "2026-07-19",
         "description": [
             {

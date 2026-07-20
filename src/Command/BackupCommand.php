@@ -9,6 +9,7 @@
 namespace c975L\SiteBundle\Command;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,8 +28,10 @@ use DateTime;
  * Console command to back up the database and user files in public/, replacing BackupServer.sh.
  *
  * Usage:
- *   php bin/console site:backup           # partial backup (files modified since last run)
- *   php bin/console site:backup --full    # complete backup (all files + archive tables)
+ *   php bin/console site:backup           # DB dumped table by table (always); files: complete on the
+ *                                          # first run and every site-backup-full-interval-months
+ *                                          # calendar months after that (default 1, see ConfigBundle),
+ *                                          # modified-since-last-run only in between
  *   php bin/console site:backup --report  # also send a summary email after backup
  *
  * All settings are managed via ConfigBundle (site-backup-* keys).
@@ -43,6 +46,8 @@ use DateTime;
 )]
 class BackupCommand extends Command
 {
+    private const DEFAULT_FULL_INTERVAL_MONTHS = 1;
+
     // Files/dirs in public/ excluded from every backup (framework assets, not user data)
     private const STANDARD_EXCLUDES = [
         'assets',
@@ -68,6 +73,7 @@ class BackupCommand extends Command
         private readonly ParameterBagInterface $parameterBag,
         private readonly ConfigServiceInterface $configService,
         private readonly MailerInterface $mailer,
+        private readonly Connection $connection,
     ) {
         parent::__construct();
     }
@@ -75,14 +81,12 @@ class BackupCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('full', null, InputOption::VALUE_NONE, 'Complete backup: all files + archive tables + whole DB dump')
             ->addOption('report', null, InputOption::VALUE_NONE, 'Send a summary email after the backup');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $isFull = $input->getOption('full');
         $sendReport = $input->getOption('report');
 
         $this->projectDir = $this->parameterBag->get('kernel.project_dir');
@@ -109,12 +113,16 @@ class BackupCommand extends Command
 
         $this->credentialsFile = $this->createTempCredentialsFile();
         try {
-            $this->backupMySql($isFull);
-            $this->backupFolders($isFull);
+            $this->backupMySql();
+            $this->backupFolders();
             $this->cleanup();
         } finally {
             unlink($this->credentialsFile);
         }
+
+        // mysqldump/tar can run for a long time; MySQL may have closed the idle Doctrine connection meanwhile (wait_timeout),
+        // so force a reconnect before the config reads/mailer dispatch below touch the database again
+        $this->connection->close();
 
         if (!empty($this->errors)) {
             $this->sendErrorReport();
@@ -130,7 +138,7 @@ class BackupCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function backupMySql(bool $isFull): void
+    private function backupMySql(): void
     {
         $db = $this->database;
         $dateTime = $this->startedAt->format('Y-m-d_-_H-i');
@@ -138,28 +146,13 @@ class BackupCommand extends Command
         $this->report .= sprintf("\nMySQL backup for \"%s\": %s\n", $db, $this->startedAt->format('Y-m-d H:i:s'));
 
         $tables = $this->getMySqlTableList(
-            "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$db}' AND TABLE_NAME NOT LIKE '%_archives' AND TABLE_TYPE != 'VIEW'"
+            "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$db}' AND TABLE_TYPE != 'VIEW'"
         );
         foreach ($tables as $table) {
             $this->report .= "- {$table}\n";
             $this->dumpTable($db, $table, $this->finalFolder . "/{$db}_-_{$table}.sql");
         }
         $this->compressSqlFiles("MYSQL_-_{$db}_-_{$dateTime}_-_Tables.sql.tar.bz2");
-
-        if ($isFull) {
-            $this->report .= "\n> Tables *_archives in \"{$db}\"\n";
-            $archiveTables = $this->getMySqlTableList(
-                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{$db}' AND TABLE_NAME LIKE '%_archives'"
-            );
-            foreach ($archiveTables as $table) {
-                $this->report .= "- {$table}\n";
-                $this->dumpTable($db, $table, $this->finalFolder . "/{$db}_-_{$table}.sql");
-            }
-
-            $this->report .= "\n> WHOLE database {$db}\n";
-            $this->dumpDatabase($db, $this->finalFolder . "/{$db}_-_WHOLE_DATABASE.sql");
-            $this->compressSqlFiles("MYSQL_-_{$db}_-_{$dateTime}_-_Archives.sql.tar.bz2");
-        }
     }
 
     private function createTempCredentialsFile(): string
@@ -215,27 +208,8 @@ class BackupCommand extends Command
             return;
         }
 
-        file_put_contents($outFile, $process->getOutput());
-    }
-
-    private function dumpDatabase(string $db, string $outFile): void
-    {
-        $process = new Process([
-            'mysqldump',
-            '--defaults-extra-file=' . $this->credentialsFile,
-            '--skip-comments', '--compact', '--force', '--lock-tables',
-            '--quick', '--single-transaction', '--triggers', '--hex-blob',
-            $db,
-        ]);
-        $process->setTimeout(3600);
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            $this->errors[] = "mysqldump failed for whole database {$db}: " . $process->getErrorOutput();
-            return;
-        }
-
-        file_put_contents($outFile, $process->getOutput());
+        // Tables are dumped one by one, so restoring a single file in isolation must not fail on FK constraints referencing a table restored later (or not at all)
+        file_put_contents($outFile, "SET FOREIGN_KEY_CHECKS=0;\n" . $process->getOutput() . "SET FOREIGN_KEY_CHECKS=1;\n");
     }
 
     private function compressSqlFiles(string $archiveName): void
@@ -257,16 +231,22 @@ class BackupCommand extends Command
         }
     }
 
-    private function backupFolders(bool $isFull): void
+    private function backupFolders(): void
     {
         $dateTime = $this->startedAt->format('Y-m-d_-_H-i');
         $publicFolder = $this->projectDir . '/public';
         $excludeFile = $this->projectDir . '/config/backup_exclude.cnf';
         $dateTimeFile = $this->projectDir . '/var/BackupDateTimeFile';
+        $fullDateTimeFile = $this->projectDir . '/var/BackupFullDateTimeFile';
 
         $this->report .= sprintf("\nFolders backup for \"%s\": %s\n", $this->siteDomain, $this->startedAt->format('Y-m-d H:i:s'));
 
-        $doFull = $isFull || !file_exists($dateTimeFile);
+        // Complete on the very first run (no marker file yet), or once site-backup-full-interval-months
+        // calendar months have passed since the last complete run - modified-since-last-run only otherwise
+        $fullIntervalMonths = (int) ($this->configService->get('site-backup-full-interval-months') ?: self::DEFAULT_FULL_INTERVAL_MONTHS);
+        $doFull = !file_exists($dateTimeFile)
+            || !file_exists($fullDateTimeFile)
+            || $this->monthsElapsedSince($fullDateTimeFile) >= $fullIntervalMonths;
 
         if ($doFull) {
             $this->report .= "COMPLETE Folders backup\n";
@@ -335,6 +315,25 @@ class BackupCommand extends Command
 
         // Record start time so the next partial backup only captures newer files
         touch($dateTimeFile, $this->startedAt->getTimestamp());
+        if ($doFull) {
+            touch($fullDateTimeFile, $this->startedAt->getTimestamp());
+        }
+    }
+
+    // Whole calendar months elapsed since $markerFile's mtime - day-of-month aware (not a fixed
+    // day-count), so a marker set on e.g. the 31st only counts a month elapsed once that day (or the
+    // last day of a shorter month) is reached again, rather than drifting earlier/later as month lengths vary
+    private function monthsElapsedSince(string $markerFile): int
+    {
+        $from = (new \DateTimeImmutable())->setTimestamp(filemtime($markerFile));
+        $to = $this->startedAt;
+
+        $months = ((int) $to->format('Y') - (int) $from->format('Y')) * 12 + ((int) $to->format('n') - (int) $from->format('n'));
+        if ((int) $to->format('j') < (int) $from->format('j')) {
+            $months--;
+        }
+
+        return $months;
     }
 
     private function cleanup(): void

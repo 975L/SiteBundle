@@ -9,8 +9,6 @@ use c975L\SiteBundle\Service\UserRegistrar;
 use c975L\UiBundle\Contract\FormActionInterface;
 use c975L\UiBundle\Contract\RequiresAnonymousInterface;
 use c975L\UiBundle\Entity\Form;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // FormActionInterface provider (key "register") for the generic "form" Block/c975L\UiBundle\Controller\FormController - register is now a plain c975L\UiBundle\Entity\Form row (site_form/site_form_field) processed the same way as any admin-built form like "contact", seeded by DefaultPagesImporter. Auto-registered by UiBundle's FormActionProviderPass (scans every service implementing FormActionInterface), nothing to wire in services.yaml. Also implements RequiresAnonymousInterface: an already-authenticated visitor gets an "already logged in" notice instead of the form.
@@ -39,17 +37,13 @@ class RegisterFormAction implements FormActionInterface, RequiresAnonymousInterf
 
         $user = (new User())->setEmail($submittedData['email']);
 
-        $this->userRegistrar->register(
+        return $this->userRegistrar->register(
             $user,
             $submittedData['plainPassword'],
             'app_verify_email',
-            (new TemplatedEmail())
-                ->from(new Address($this->configService->get('email-from'), $this->configService->get('email-from-name')))
-                ->to($user->getEmail())
-                ->subject($this->configService->get('site-name') . ' - ' . $this->translator->trans('label.confirm_your_email', [], 'site'))
-                ->htmlTemplate('@c975LSite/emails/confirmation_email.html.twig')
+            $this->configService->get('site-name') . ' - ' . $this->translator->trans('label.confirm_your_email', [], 'site'),
+            '@c975LSite/emails/confirmation_email.html.twig',
+            (string) $user->getEmail(),
         );
-
-        return true;
     }
 }

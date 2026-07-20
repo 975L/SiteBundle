@@ -42,6 +42,8 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - symfony/ux-twig-component
 - twig/cssinliner-extra
 
+Optional: [nelmio/security-bundle](https://github.com/nelmio/NelmioSecurityBundle), if installed, has its CSP nonce generator decorated by `SessionNonceGenerator` — keeps the nonce stable for the whole session instead of per-request, so Turbo Drive/Frames/Streams re-executing `<script>` tags from a fetched page doesn't get them blocked by a mismatched nonce. A no-op if the bundle isn't installed.
+
 ---
 
 ## Installation
@@ -279,6 +281,8 @@ Under the hood, the target is stored as `page:<id>#<anchor>-<blockId>` and resol
 The "© firstYear - currentYear[ : siteName]" copyright notice (built from the `site-first-online-date`/`site-name` ConfigBundle keys) is computed by the `site_copyright(bool $withSiteName = true)` Twig function, shared by `layout.html.twig` and `emails/fullLayout.html.twig`.
 
 A `menu_link` targeting the site's own "Copyright" page (the one `DefaultPagesImporter` seeds under the `france/copyright` model — `copyright`/`copyright-notice`/`aviso-de-copyright` depending on locale) automatically shows this live-computed text as its label instead of the page's own title, gated by the `site-menu-link-copyright-auto` ConfigBundle key (`bool`, default `true`) — lets a footer's "Copyright" page link double as the copyright notice instead of showing both side by side. `menu_link` also has an optional `label` field (`MenuLinkType`) that always overrides the auto-derived label (page/section title or computed copyright) when filled in.
+
+A `menu_link` also has an optional `primary` checkbox (`MenuLinkType`) that renders it as a filled, primary-color button (`.menu-item--primary`, see `sass/_menu.scss`) instead of a plain text link — meant for a single stand-out item (e.g. a "Contact" link in the navbar), not for every item in a `Menu`.
 
 ### Navbar: logo, site name, tagline
 
@@ -681,12 +685,15 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | `confirmation_email.html.twig` | Registration email-confirmation email, sent by `App\Service\RegisterFormAction` (scaffold) |
 | `reset_password_email.html.twig` | Reset-password email, sent by `App\Service\ResetPasswordRequestFormAction` (scaffold) |
 | `contact_notification.html.twig` | "contact" Form's notification email |
+| `emailTemplateLayout.html.twig` | Wraps an admin-authored `EmailTemplate`'s rendered body (see below) |
 
 CSS is inlined automatically via `twig/cssinliner-extra`. The minified stylesheet (`emails.min.css`, compiled from `sass/emails.scss`, including its `:root` variables) is embedded, followed by the admin-editable [theme](#themes) colors/fonts (`theme_variables_css()`) so they win the cascade.
 
 `fullLayout.html.twig`'s own copy (no-spam notice, "hello", closing/thanks, "sent by", legal mentions) isn't hardcoded translations — it's authored as rich text (`kind: html`) directly in ConfigBundle, under the `email` group: `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`, `email-text-legal`. Each block only renders if its config value is non-empty (`email-text-legal` is empty by default). `email-text-closing` and `email-text-sent-by` support a `%site%` placeholder, replaced with `site-name`. This lets the client rewrite their own email copy, including in `email-text-legal` (share capital, registration number...), from the backoffice without touching translations or templates.
 
 `confirmation_email.html.twig`, `reset_password_email.html.twig` and `contact_notification.html.twig` each just `extend '@c975LSite/emails/layout.html.twig'` and render their actual content via [c975L/UiBundle](https://github.com/975L/UiBundle)'s `email_template_body('account_validation'|'password_reset'|'contact_notification', {...})` Twig function — their body is an admin-editable `c975L\UiBundle\Entity\EmailTemplate` row (`EmailTemplateCrudController`, "Email templates" dashboard entry) rather than hardcoded markup. `DefaultPagesImporter` seeds the three `EmailTemplate` rows the first time pages are imported. See UiBundle's own README for the `EmailTemplate`/`EmailBlock` mechanism.
+
+`EmailLayoutProvider` implements UiBundle's `EmailLayoutProviderInterface` (auto-discovered), wrapping any other `EmailTemplate`'s rendered body (`EmailTemplateCrudController`'s preview, a real send via `SendEmailFormAction`...) in `emailTemplateLayout.html.twig`, itself extending `layout.html.twig` — so it renders with the exact same header/footer/theme as the rest of the site's emails, instead of UiBundle's bare standalone document.
 
 ---
 
@@ -869,10 +876,10 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             ->stateful($this->cache)
             // Sitemap: daily at 00:05
             ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('site:sitemaps:create')))
-            // Partial backup: every 6 hours (DB regular tables + modified files only)
+            // Backup: every 6 hours (DB dumped table by table; files: complete on the first run and every site-backup-full-interval-months after that, modified-since-last-run in between)
             ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('site:backup')))
-            // Full backup + report: every Monday at 03:07 (archive tables + whole DB + all user files)
-            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --full --report')))
+            // Same backup + a summary email: every Monday at 03:07
+            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --report')))
             // Messenger cleanup: daily at 03:00
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('site:messenger-cleanup')));
     }

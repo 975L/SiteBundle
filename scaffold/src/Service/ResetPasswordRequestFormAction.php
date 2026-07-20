@@ -3,14 +3,12 @@
 namespace App\Service;
 
 use App\Entity\User;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\UiBundle\Contract\FormActionInterface;
 use c975L\UiBundle\Contract\RequiresAnonymousInterface;
 use c975L\UiBundle\Entity\Form;
+use c975L\UiBundle\Model\EmailSendRequest;
+use c975L\UiBundle\Service\EmailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -21,8 +19,7 @@ class ResetPasswordRequestFormAction implements FormActionInterface, RequiresAno
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
-        private readonly ConfigServiceInterface $configService,
-        private readonly MailerInterface $mailer,
+        private readonly EmailService $emailService,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -46,17 +43,12 @@ class ResetPasswordRequestFormAction implements FormActionInterface, RequiresAno
             return true;
         }
 
-        $email = new TemplatedEmail()
-            ->from(new Address($this->configService->get('email-from'), $this->configService->get('email-from-name')))
-            ->to((string) $user->getEmail())
-            ->subject($this->translator->trans('label.password_reset_request', [], 'site'))
-            ->htmlTemplate('@c975LSite/emails/reset_password_email.html.twig')
-            ->context([
-                'resetToken' => $resetToken,
-            ])
-        ;
-
-        $this->mailer->send($email);
+        $this->emailService->send(new EmailSendRequest(
+            subject: $this->translator->trans('label.password_reset_request', [], 'site'),
+            context: ['resetToken' => $resetToken],
+            template: '@c975LSite/emails/reset_password_email.html.twig',
+            to: (string) $user->getEmail(),
+        ));
 
         return true;
     }

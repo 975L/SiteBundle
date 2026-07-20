@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Form\Block;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -78,6 +79,12 @@ class MenuLinkType extends AbstractType
                 'label' => 'label.menu_link_label',
                 'required' => false,
                 'help' => 'help.menu_link_label',
+            ])
+            // Renders as a filled "primary" button (var(--primary), see _menu.scss's .menu-item--primary) instead of a plain text link - meant for a single stand-out item (e.g. "Contact") among a Menu's otherwise plain links
+            ->add('primary', CheckboxType::class, [
+                'label' => 'label.menu_link_primary',
+                'required' => false,
+                'help' => 'help.menu_link_primary',
             ]);
     }
 

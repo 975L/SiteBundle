@@ -1,5 +1,19 @@
 # Changelog
 
+## v7.6.2
+
+- Added `MenuLinkType`'s `primary` checkbox for filled-button menu links (20/07/2026)
+- Fixed navbar `.menu-link:hover`/`:focus` not changing text color (20/07/2026)
+- `BackupCommand` dropped the `--full` option - see UPGRADE.md (20/07/2026) [BC-Break]
+- Fixed `BackupCommand::dumpTable()`'s FK constraint order and `_archives` table handling (20/07/2026)
+- `BackupCommand`'s complete file backup now also re-runs periodically (20/07/2026)
+- Added `SessionNonceGenerator` for a stable per-session CSP nonce (20/07/2026)
+- Added `EmailLayoutProvider` for branded email preview/send (20/07/2026)
+- Added info paragraphs to the User CRUD index (20/07/2026)
+- Restored `GalleryShowcaseProvider` (20/07/2026)
+- `EmailVerifier`/`UserRegistrar` now send the registration confirmation email through `EmailService` - see UPGRADE.md (20/07/2026) [BC-Break]
+- Fixed `ExportTablesCommand` truncating `site_config` on export (20/07/2026)
+
 ## v7.6.1
 
 - Corrected dependency (20/07/2026)

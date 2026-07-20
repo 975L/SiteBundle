@@ -231,6 +231,17 @@
         "description": "description.site_backup_mailto"
     },
     {
+        "label": "label.site_backup_full_interval_months",
+        "slug": "site-backup-full-interval-months",
+        "sensitive": false,
+        "restricted": true,
+        "value": "1",
+        "kind": "text",
+        "group": "backup",
+        "severity": null,
+        "description": "description.site_backup_full_interval_months"
+    },
+    {
         "label": "label.site_messenger_cleanup_mailto",
         "slug": "site-messenger-cleanup-mailto",
         "sensitive": true,

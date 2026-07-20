@@ -42,7 +42,11 @@
         "vich/uploader-bundle": "*"
     },
     "require-dev": {
+        "nelmio/security-bundle": "^3.9",
         "phpunit/phpunit": "^13.2"
+    },
+    "suggest": {
+        "nelmio/security-bundle": "Enables layout.html.twig's CSP nonce on Turbo-executed scripts, and a Turbo-safe session-based nonce generator instead of Nelmio's default per-request one"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

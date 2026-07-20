@@ -11,7 +11,7 @@
        the site's own "Copyright" page - see "site-menu-link-copyright-auto") - not cached (menu_link
        is cacheable: false), so the computed copyright's year stays fresh. #}
     {% set resolvedLabel = label|default('') is not empty ? label : menu_link_label(target) %}
-    <div class="menu-item {{ isActive ? 'active' : '' }}">
+    <div class="{{ ['menu-item', isActive ? 'active' : null, primary|default(false) ? 'menu-item--primary' : null]|filter(v => v is not null)|join(' ') }}">
         <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
             <span class="menu-label">{{ resolvedLabel }}</span>
         </a>

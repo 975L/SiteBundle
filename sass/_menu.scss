@@ -154,14 +154,44 @@ body.navbar-fixed {
 
     &:hover,
     &:focus {
-        background-color: rgba(0, 0, 0, 0.1);
         outline: none;
     }
+}
+
+// .menu-label always sets its own explicit color (mobile/desktop, below) - hovering .menu-link alone
+// has no visible effect on the label text, so the color change has to target the label itself here
+.menu-link:hover .menu-label,
+.menu-link:focus .menu-label {
+    color: var(--navbar-active-color);
 }
 
 .menu-icon {
     margin-right: 0.75rem;
     flex-shrink: 0;
+}
+
+// A single stand-out item (e.g. "Contact") among a Menu's otherwise plain links - see MenuLinkType's
+// "primary" field. Reuses the same design tokens as UiBundle's .btn-primary rather than that class
+// itself, whose display:block/max-width/margin:auto layout isn't meant for an inline flex nav item
+.menu-item--primary .menu-link {
+    background-color: var(--primary);
+    border-radius: var(--radius-btn);
+    padding: 0.5rem 1.2rem;
+    transition: background-color 0.2s ease;
+
+    &:hover,
+    &:focus {
+        background-color: var(--button-background-primary-dark);
+    }
+}
+
+.menu-item--primary .menu-label {
+    color: var(--button-color);
+}
+
+.menu-item--primary .menu-link:hover .menu-label,
+.menu-item--primary .menu-link:focus .menu-label {
+    color: var(--button-color);
 }
 
 // White text matches the mobile dropdown's colored (--primary) background - see desktop override below, where the navbar's own (light/translucent) background needs dark text instead
@@ -214,6 +244,16 @@ body.navbar-fixed {
         &.active {
             background-color: transparent;
             border-bottom-color: var(--navbar-active-color);
+        }
+    }
+
+    // The underline treatment above doesn't suit a filled pill button - and it reads better set apart from the plain links
+    .menu-item--primary {
+        margin-left: 0.75rem;
+        border-bottom: none;
+
+        &.active {
+            border-bottom: none;
         }
     }
 }

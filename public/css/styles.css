@@ -1210,13 +1210,36 @@ body.navbar-fixed {
   transition: background-color 0.2s ease;
 }
 .menu-link:hover, .menu-link:focus {
-  background-color: rgba(0, 0, 0, 0.1);
   outline: none;
+}
+
+.menu-link:hover .menu-label,
+.menu-link:focus .menu-label {
+  color: var(--navbar-active-color);
 }
 
 .menu-icon {
   margin-right: 0.75rem;
   flex-shrink: 0;
+}
+
+.menu-item--primary .menu-link {
+  background-color: var(--primary);
+  border-radius: var(--radius-btn);
+  padding: 0.5rem 1.2rem;
+  transition: background-color 0.2s ease;
+}
+.menu-item--primary .menu-link:hover, .menu-item--primary .menu-link:focus {
+  background-color: var(--button-background-primary-dark);
+}
+
+.menu-item--primary .menu-label {
+  color: var(--button-color);
+}
+
+.menu-item--primary .menu-link:hover .menu-label,
+.menu-item--primary .menu-link:focus .menu-label {
+  color: var(--button-color);
 }
 
 .menu-label {
@@ -1260,6 +1283,13 @@ body.navbar-fixed {
   .menu-item.active {
     background-color: transparent;
     border-bottom-color: var(--navbar-active-color);
+  }
+  .menu-item--primary {
+    margin-left: 0.75rem;
+    border-bottom: none;
+  }
+  .menu-item--primary.active {
+    border-bottom: none;
   }
 }
 nav {

@@ -72,7 +72,10 @@ class RegisterFormActionTest extends TestCase
             $this->callback(static fn (User $user): bool => 'new@example.test' === $user->getEmail()),
             'Str0ng!Password',
             'app_verify_email',
-        );
+            'Example - label.confirm_your_email',
+            '@c975LSite/emails/confirmation_email.html.twig',
+            'new@example.test',
+        )->willReturn(true);
 
         $action = new RegisterFormAction($userRepository, $userRegistrar, $this->createConfigService(), $this->createTranslator());
 
