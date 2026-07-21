@@ -361,6 +361,8 @@ template {
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
+  --navbar-background-scrolled: var(--navbar-background);
+  --navbar-text-scrolled: var(--navbar-text);
   --footer-background: var(--primary);
   --footer-text: var(--white);
   --footer-text-hover: var(--footer-text);
@@ -720,7 +722,7 @@ section {
 /* ADDONS */
 .external {
   padding: 0 13px 0 0;
-  background: url("../images/external.png") no-repeat scroll center right;
+  background: url("/bundles/c975lsite/images/external.png") no-repeat scroll center right;
 }
 
 a.pullDown,
@@ -738,12 +740,12 @@ a.backTop {
 
 a.backTop {
   right: 25px;
-  background: var(--back-pull-background-color) url("../images/up-arrow.png") no-repeat center 40%;
+  background: var(--back-pull-background-color) url("/bundles/c975lsite/images/up-arrow.png") no-repeat center 40%;
 }
 
 a.pullDown {
   left: 25px;
-  background: var(--back-pull-background-color) url("../images/down-arrow.png") no-repeat center 40%;
+  background: var(--back-pull-background-color) url("/bundles/c975lsite/images/down-arrow.png") no-repeat center 40%;
 }
 
 a:hover.backTop,
@@ -1162,9 +1164,22 @@ body.navbar-fixed {
   display: block;
   width: 2rem;
   height: 2rem;
-  color: var(--primary);
+  color: var(--navbar-text);
   fill: currentColor;
   transition: all 0.3s linear;
+}
+
+.menu-toggle-icon * {
+  color: inherit;
+}
+
+.menu.is-scrolled {
+  background-color: var(--navbar-background-scrolled);
+}
+
+.menu.is-scrolled .menu-toggle-icon,
+.menu.is-scrolled .menu-link {
+  color: var(--navbar-text-scrolled);
 }
 
 .menu-items {
@@ -1275,6 +1290,9 @@ body.navbar-fixed {
   }
   .menu-label {
     color: var(--navbar-text);
+  }
+  .menu.is-scrolled .menu-label {
+    color: var(--navbar-text-scrolled);
   }
   .menu-item {
     border-top: none;

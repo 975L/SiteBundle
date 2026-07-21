@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.6.7
+
+- Added `ProcedureProvider`, contributing admin help procedures to ConfigBundle's dashboard AI assistant
+- Added `--navbar-background-scrolled`/`--navbar-text-scrolled` CSS variables and `.menu.is-scrolled` styling
+- Fixed menu toggle icon color to follow `--navbar-text` instead of `--primary`
+
 ## v7.6.6
 
 - `ThemeVariablesCssListener` now throws on write failure instead of failing silently (20/07/2026)

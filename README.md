@@ -29,6 +29,7 @@ Symfony bundle that provides a complete foundation for building websites — lay
 - **File download** controller (forced download, access-protected)
 - **Twig extensions**: `route_exists`, `template_exists`, `asset_exists`, `nl2br`
 - **File lists**: `extensions.txt` and `bots.txt`
+- **Admin help procedures** contributed to the dashboard AI assistant, describing how to create pages, redirects, menus, etc.
 
 ---
 
@@ -454,6 +455,12 @@ To override it manually for a file-based page:
 The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
 
 Access is controlled by the `site-role-editor` key in ConfigBundle, same as pages.
+
+---
+
+## Admin help procedures
+
+`ProcedureProvider` (implements ConfigBundle's `ProcedureProviderInterface`) reads `config/procedures.json` and contributes one entry per documented admin workflow (creating a page, a redirect, a menu, a user, site graphics, collection items) to ConfigBundle's `ProcedureBuilder`, which aggregates every bundle's procedures for the dashboard AI assistant. Each entry ships `fr`/`en`/`es` translations, resolved to the current locale by `ProcedureJsonReader` (falling back to English, then to whichever translation comes first).
 
 ---
 

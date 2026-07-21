@@ -52,6 +52,9 @@
     // The admin's own site-navbar-position config (Navbar.html.twig) sets --navbar-position inline and always wins when non-empty - this is only the template's own fallback, for a design that wants e.g. a sticky header without the admin having to set that config
     --navbar-position: relative;
     --navbar-z-index: auto;
+    // Optional "scrolled" state, toggled by UiBundle's menu.js (.menu.is-scrolled once window.scrollY passes a small threshold) - defaults to the same colors so nothing changes unless a site overrides them (e.g. a transparent/colored navbar over a hero that turns solid once scrolled)
+    --navbar-background-scrolled: var(--navbar-background);
+    --navbar-text-scrolled: var(--navbar-text);
     // Footer layout/look - defaults match today's colored-band footer; a template can flip these to a plain, minimal footer (transparent background, muted text, items in a row) instead
     --footer-background: var(--primary);
     --footer-text: var(--white);

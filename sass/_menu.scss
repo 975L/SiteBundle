@@ -101,9 +101,28 @@ body.navbar-fixed {
     display: block;
     width: 2rem;
     height: 2rem;
-    color: var(--primary);
+    color: var(--navbar-text);
     fill: currentColor;
     transition: all 0.3s linear;
+}
+
+// The global "* { color: var(--text) }" rule (_general.scss) targets the <path> directly too - SVG's
+// inherited "fill: currentColor" re-resolves per-element, so without this the <path>'s own clobbered
+// color would paint instead of the navbar color above (same fix as footer/slider links, applied to an
+// SVG child instead of an <a>) - also covers the .is-scrolled state below for free, since it only
+// changes the ancestor's color and this always re-inherits it
+.menu-toggle-icon * {
+    color: inherit;
+}
+
+// Optional "scrolled" state - see UiBundle's menu.js; a no-op by default since --navbar-*-scrolled fall back to the normal navbar tokens above
+.menu.is-scrolled {
+    background-color: var(--navbar-background-scrolled);
+}
+
+.menu.is-scrolled .menu-toggle-icon,
+.menu.is-scrolled .menu-link {
+    color: var(--navbar-text-scrolled);
 }
 
 // Menu items
@@ -235,6 +254,10 @@ body.navbar-fixed {
 
     .menu-label {
         color: var(--navbar-text);
+    }
+
+    .menu.is-scrolled .menu-label {
+        color: var(--navbar-text-scrolled);
     }
 
     .menu-item {

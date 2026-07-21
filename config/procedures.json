@@ -1,0 +1,80 @@
+[
+    {
+        "slug": "creer-page",
+        "title": {
+            "fr": "Créer une page avec des blocks",
+            "en": "Create a page with blocks",
+            "es": "Crear una página con blocks"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Pages**, bouton **Créer Page**. Remplir le Titre (le Slug se génère automatiquement, modifiable). Dans la section **Blocs**, cliquer sur **Ajouter un nouvel élément** pour chaque bloc à insérer : choisir son **Type de bloc** dans la liste déroulante (le sous-formulaire propre au type apparaît alors), puis remplir ses champs. Réordonner les blocs par glisser-déposer si besoin, puis enregistrer.\nAstuce : sur une page déjà créée, l'action **Templates** du menu d'actions applique d'un coup les blocs d'un gabarit prédéfini (contenu d'exemple à modifier ensuite) sur une copie brouillon de la page.",
+            "en": "Menu **Management → Pages**, **Create Page** button. Fill in the Title (the Slug is generated automatically, and can be edited). In the **Blocks** section, click **Add new item** for each block to insert: pick its **Block type** from the dropdown (the type's own subform then appears), then fill in its fields. Reorder blocks by drag-and-drop if needed, then save.\nTip: on an already-created page, the **Templates** action in the actions menu applies all the blocks of a predefined template (sample content to edit afterwards) at once, on a draft copy of the page.",
+            "es": "Menú **Gestión → Páginas**, botón **Crear Página**. Rellenar el Título (el Slug se genera automáticamente y se puede modificar). En la sección **Bloques**, hacer clic en **Añadir nuevo elemento** para cada bloque a insertar: elegir su **Tipo de bloque** en la lista desplegable (aparece entonces el subformulario propio del tipo), y rellenar sus campos. Reordenar los bloques arrastrándolos si es necesario, y guardar.\nConsejo: en una página ya creada, la acción **Plantillas** del menú de acciones aplica de golpe los bloques de una plantilla predefinida (contenido de ejemplo a modificar después) sobre una copia borrador de la página."
+        }
+    },
+    {
+        "slug": "creer-redirection",
+        "title": {
+            "fr": "Créer une redirection",
+            "en": "Create a redirect",
+            "es": "Crear una redirección"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Redirections**, bouton de création. Renseigner le **Chemin source** (ex. /ancienne-page) et l'**URL de destination** (absolue ou chemin relatif), puis cocher **Permanent (301)** pour une redirection SEO permanente (décoché = temporaire 302). Enregistrer.\nQuand une Page existante est renommée (changement de slug), une redirection 301 de l'ancien slug vers le nouveau est créée automatiquement - inutile de la créer à la main dans ce cas. En revanche, supprimer une Page ne crée aucune redirection automatique.",
+            "en": "Menu **Management → Redirects**, create button. Fill in the **Source path** (e.g. /old-page) and the **Destination URL** (absolute or relative path), then check **Permanent (301)** for a permanent SEO redirect (unchecked = temporary 302). Save.\nWhen an existing Page is renamed (slug change), a 301 redirect from the old slug to the new one is created automatically - no need to create it by hand in that case. Deleting a Page, however, doesn't create any redirect automatically.",
+            "es": "Menú **Gestión → Redirecciones**, botón de creación. Rellenar la **Ruta de origen** (p. ej. /pagina-antigua) y la **URL de destino** (absoluta o ruta relativa), y marcar **Permanente (301)** para una redirección SEO permanente (sin marcar = temporal 302). Guardar.\nCuando se renombra una Página existente (cambio de slug), se crea automáticamente una redirección 301 del slug antiguo al nuevo - no hace falta crearla a mano en ese caso. En cambio, eliminar una Página no crea ninguna redirección automática."
+        }
+    },
+    {
+        "slug": "gerer-utilisateur",
+        "title": {
+            "fr": "Gérer un utilisateur (rôles, activation)",
+            "en": "Manage a user (roles, enabling)",
+            "es": "Gestionar un usuario (roles, activación)"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Utilisateurs**. Cet écran ne permet pas de créer un compte (l'inscription se fait côté public, avec vérification d'email) : il sert uniquement à modifier ou supprimer un compte existant. Cliquer sur **Modifier** pour changer les **Rôles** (ROLE_EDITOR, ROLE_ADMIN, et ROLE_SUPER_ADMIN si vous êtes vous-même Super Admin) ou décocher **Is enabled** pour bloquer la connexion d'un compte sans le supprimer. Le mot de passe n'est jamais visible ni modifiable depuis cet écran.",
+            "en": "Menu **Management → Users**. This screen doesn't let you create an account (registration happens on the public side, with email verification): it only lets you edit or delete an existing account. Click **Edit** to change the **Roles** (ROLE_EDITOR, ROLE_ADMIN, and ROLE_SUPER_ADMIN if you're a Super Admin yourself) or uncheck **Is enabled** to block an account's login without deleting it. The password is never visible or editable from this screen.",
+            "es": "Menú **Gestión → Usuarios**. Esta pantalla no permite crear una cuenta (el registro se hace en el lado público, con verificación de email): solo sirve para editar o eliminar una cuenta ya existente. Hacer clic en **Editar** para cambiar los **Roles** (ROLE_EDITOR, ROLE_ADMIN, y ROLE_SUPER_ADMIN si usted mismo es Super Admin) o desmarcar **Is enabled** para bloquear el inicio de sesión de una cuenta sin eliminarla. La contraseña nunca es visible ni editable desde esta pantalla."
+        }
+    },
+    {
+        "slug": "graphiques-du-site",
+        "title": {
+            "fr": "Changer le favicon, le logo ou l'image Open Graph",
+            "en": "Change the favicon, logo, or Open Graph image",
+            "es": "Cambiar el favicon, el logo o la imagen Open Graph"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Graphiques du site**. Créer une fiche, choisir le **Rôle** (Favicon, Icône Apple Touch, Image Open Graph, Logo, ou Error image), puis téléverser le **Fichier** directement dans ce formulaire (pas via la Bibliothèque de médias). Chaque rôle sauf « Error image » est un singleton : une fois pris, il n'apparaît plus dans la liste des rôles disponibles à la création - pour le changer, modifier la fiche existante plutôt que d'en créer une nouvelle.",
+            "en": "Menu **Management → Site graphics**. Create a record, pick the **Role** (Favicon, Apple Touch Icon, Open Graph Image, Logo, or Error image), then upload the **File** directly in this form (not through the Media library). Every role except « Error image » is a singleton: once taken, it no longer appears in the list of roles available at creation - to change it, edit the existing record instead of creating a new one.",
+            "es": "Menú **Gestión → Gráficos del sitio**. Crear una ficha, elegir el **Rol** (Favicon, Icono Apple Touch, Imagen Open Graph, Logo, o Error image), y subir el **Archivo** directamente en este formulario (no a través de la Biblioteca de medios). Cada rol excepto « Error image » es único: una vez asignado, ya no aparece en la lista de roles disponibles al crear - para cambiarlo, editar la ficha existente en lugar de crear una nueva."
+        }
+    },
+    {
+        "slug": "creer-menu",
+        "title": {
+            "fr": "Construire un menu de navigation",
+            "en": "Build a navigation menu",
+            "es": "Construir un menú de navegación"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Menus**. Un seul menu par **Emplacement** (Navigation, Pied de page, En-tête e-mail, Pied de page e-mail). Dans la collection **Blocs** du menu, ajouter un bloc **Lien de menu** par item : choisir sa **Cible** (une Page du site, une de ses sections, ou une route technique comme les mentions légales), avec un **Libellé** optionnel pour remplacer le titre affiché, et éventuellement le mettre en avant comme un bouton. Réordonner les items par glisser-déposer.\nIl n'y a pas de champ pour un lien externe libre : seules les Pages et routes déclarées du site sont proposées comme cible.",
+            "en": "Menu **Management → Menus**. Only one menu per **Location** (Navigation, Footer, Email header, Email footer). In the menu's **Blocks** collection, add one **Menu link** block per item: pick its **Target** (a Page on the site, one of its sections, or a technical route like the legal notice), with an optional **Label** to override the displayed title, and optionally highlight it as a button. Reorder items by drag-and-drop.\nThere's no field for a free external link: only the site's Pages and declared routes are offered as a target.",
+            "es": "Menú **Gestión → Menús**. Un solo menú por **Ubicación** (Navegación, Pie de página, Cabecera de email, Pie de página de email). En la colección **Bloques** del menú, añadir un bloque **Enlace de menú** por elemento: elegir su **Destino** (una Página del sitio, una de sus secciones, o una ruta técnica como el aviso legal), con una **Etiqueta** opcional para sustituir el título mostrado, y opcionalmente destacarlo como un botón. Reordenar los elementos arrastrándolos.\nNo hay campo para un enlace externo libre: solo se ofrecen como destino las Páginas y rutas declaradas del sitio."
+        }
+    },
+    {
+        "slug": "alimenter-collection-items",
+        "title": {
+            "fr": "Alimenter un block Collection avec des éléments",
+            "en": "Feed a Collection block with items",
+            "es": "Alimentar un bloque Colección con elementos"
+        },
+        "body": {
+            "fr": "Menu **Gestion → Collection items**. Choisir ou créer un **Groupe** (ex. \"projects\") : chaque groupe distinct devient automatiquement une source utilisable par le bloc **Collection** d'une Page. Pour chaque élément : **Titre**, **Slug** (généré automatiquement, unique par groupe), **Description**, **URL**, **Image**, et **Position** (ordre d'affichage, réordonnable). Attention à l'orthographe du Groupe : une faute de frappe crée silencieusement un nouveau groupe au lieu de rejoindre l'existant.\nLe rattachement à une Page se fait ensuite dans l'éditeur du bloc Collection de cette page, en choisissant ce groupe comme source.",
+            "en": "Menu **Management → Collection items**. Pick or create a **Group** (e.g. \"projects\"): each distinct group automatically becomes a source usable by a page's **Collection** block. For each item: **Title**, **Slug** (generated automatically, unique per group), **Description**, **URL**, **Image**, and **Position** (display order, reorderable). Watch the Group's spelling: a typo silently creates a new group instead of joining the existing one.\nAttaching it to a Page then happens in that page's Collection block editor, by picking this group as the source.",
+            "es": "Menú **Gestión → Elementos de colección**. Elegir o crear un **Grupo** (p. ej. \"projects\"): cada grupo distinto se convierte automáticamente en una fuente utilizable por el bloque **Colección** de una página. Para cada elemento: **Título**, **Slug** (generado automáticamente, único por grupo), **Descripción**, **URL**, **Imagen**, y **Posición** (orden de visualización, reordenable). Cuidado con la ortografía del Grupo: una errata crea silenciosamente un nuevo grupo en lugar de unirse al existente.\nLa vinculación a una Página se hace después en el editor del bloque Colección de esa página, eligiendo este grupo como fuente."
+        }
+    }
+]

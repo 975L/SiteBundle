@@ -1,7 +1,7 @@
 /* ADDONS */
 .external {
     padding:0 13px 0 0;
-    background: url('../images/external.png') no-repeat scroll center right;
+    background: url('/bundles/c975lsite/images/external.png') no-repeat scroll center right;
 }
 
 a.pullDown,
@@ -19,12 +19,12 @@ a.backTop {
 
 a.backTop {
     right: 25px;
-    background: var(--back-pull-background-color) url('../images/up-arrow.png') no-repeat center 40%;
+    background: var(--back-pull-background-color) url('/bundles/c975lsite/images/up-arrow.png') no-repeat center 40%;
 }
 
 a.pullDown {
     left: 25px;
-    background: var(--back-pull-background-color) url('../images/down-arrow.png') no-repeat center 40%;
+    background: var(--back-pull-background-color) url('/bundles/c975lsite/images/down-arrow.png') no-repeat center 40%;
 }
 
 a:hover.backTop,

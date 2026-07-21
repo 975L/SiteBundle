@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-07-21",
+        "description": [
+            {
+                "en": "Fixed the navbar menu icon sometimes showing the wrong color",
+                "fr": "Correction de l'icône du menu de la barre de navigation qui affichait parfois la mauvaise couleur",
+                "es": "Corregido el icono del menú de la barra de navegación que a veces mostraba el color incorrecto"
+            }
+        ]
+    },
+    {
         "date": "2026-07-20",
         "description": [
             {
