@@ -1,0 +1,13 @@
+/* This site's own font declarations - one @font-face block per font file, matched by the
+   "site-fonts-face-file" config (defaults to this very path). The font-family names below
+   become the choices offered by the theme-font-family-title/body/accent config selects.
+   Freely editable: not synced back from c975l/site-bundle after this first copy. */
+
+/*
+@font-face {
+    font-family: "Example Sans";
+    src: url("./fonts/example-sans.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+*/

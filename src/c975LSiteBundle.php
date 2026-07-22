@@ -45,11 +45,20 @@ class c975LSiteBundle extends AbstractBundle
             ],
         ]);
 
-        // CollectionItem's own uploadable field (not UiBundle\Media) - the global "storage" (Nested FileSystemStorage) is already set once by UiBundle's own prependExtension(), no need to repeat it here, same as BookBundle's/ShopBundle's own mappings
+        // CollectionItem's/Font's own uploadable field (not UiBundle\Media) - the global "storage" (Nested FileSystemStorage) is already set once by UiBundle's own prependExtension(), no need to repeat it here, same as BookBundle's/ShopBundle's own mappings
         if ($builder->hasExtension('vich_uploader')) {
             $builder->prependExtensionConfig('vich_uploader', [
                 'mappings' => [
                     'collection_item' => [
+                        'uri_prefix' => '',
+                        'upload_destination' => '%kernel.project_dir%/public',
+                        'namer' => UiMediaNamer::class,
+                        'inject_on_load' => false,
+                        'delete_on_update' => true,
+                        'delete_on_remove' => true,
+                    ],
+                    // Admin-uploaded font files (ttf/woff/woff2), stored under public/medias/fonts (see Font::getVichMediaPath) - see FontCssListener for the generated @font-face rules
+                    'site_font' => [
                         'uri_prefix' => '',
                         'upload_destination' => '%kernel.project_dir%/public',
                         'namer' => UiMediaNamer::class,

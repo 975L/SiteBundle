@@ -103,6 +103,8 @@ class CollectionItemCrudController extends AbstractCrudController
             ->setDefaultSort(['position' => 'ASC'])
             ->showEntityActionsInlined()
             ->overrideTemplate('crud/index', '@c975LSite/management/collection_item_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LSite/management/collection_item_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LSite/management/collection_item_crud_new.html.twig')
             // Drag-and-drop reorder (see collection-item-sort.js) only ever sees the rows on the current page - the index is always filtered to a single group (see index()/createIndexQueryBuilder()), 100 is just a safety margin should one group ever grow past that
             ->setPaginatorPageSize(100)
         ;
@@ -122,8 +124,15 @@ class CollectionItemCrudController extends AbstractCrudController
             ->createAsGlobalAction()
         ;
 
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
             ->add(Crud::PAGE_INDEX, $backToGroupsAction)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
@@ -137,7 +146,8 @@ class CollectionItemCrudController extends AbstractCrudController
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
-            ->setPermission(Action::DETAIL, $role)
+            // Detail adds no information beyond what edit already shows
+            ->disable(Action::DETAIL)
         ;
     }
 
@@ -197,8 +207,12 @@ class CollectionItemCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->setHelp(t('label.collection_item_slug_help', [], 'site')),
 
+            // "data-ai-rephrase" opts this plain textarea into UiBundle's rephrase button (see its
+            // block_theme.html.twig's textarea_widget) - off by default there since a plain textarea is
+            // also used for non-prose values (e.g. ConfigBundle's JSON config values) that must never get it
             TextareaField::new('description')
                 ->setLabel(t('label.description', [], 'ui'))
+                ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true'])
                 ->hideOnIndex(),
 
             TextField::new('url')

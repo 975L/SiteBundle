@@ -407,6 +407,50 @@
         "description": "description.email_from_name"
     },
     {
+        "label": "label.email_to",
+        "slug": "email-to",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": "danger",
+        "description": "description.email_to"
+    },
+    {
+        "label": "label.email_to_name",
+        "slug": "email-to-name",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": null,
+        "description": "description.email_to_name"
+    },
+    {
+        "label": "label.email_reply_to",
+        "slug": "email-reply-to",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": null,
+        "description": "description.email_reply_to"
+    },
+    {
+        "label": "label.email_reply_to_name",
+        "slug": "email-reply-to-name",
+        "sensitive": false,
+        "restricted": false,
+        "value": null,
+        "kind": "text",
+        "group": "email",
+        "severity": null,
+        "description": "description.email_reply_to_name"
+    },
+    {
         "label": "label.email_text_no_spam",
         "slug": "email-text-no-spam",
         "sensitive": false,

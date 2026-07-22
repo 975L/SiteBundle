@@ -95,10 +95,16 @@ class UserCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
+        // Lets the admin back out of an edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
             ->disable(Action::NEW)
             ->disable(Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $exportGroup)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
@@ -122,6 +128,7 @@ class UserCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-admin'))
             ->overrideTemplate('crud/index', '@c975LSite/management/user_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LSite/management/user_crud_edit.html.twig')
         ;
     }
 

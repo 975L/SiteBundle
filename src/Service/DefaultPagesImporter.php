@@ -267,6 +267,15 @@ class DefaultPagesImporter
         return $def['block']['data']['name'] ?? null;
     }
 
+    // Public wrapper around ensureFormAndEmailTemplateExist(), for a single {kind, data} block array (as found in a Page content export - see PageImportProvider) rather than this class' own $def['block'] shape. Lets a Page pushed from another environment keep a working "contact"/"register"/"reset_password_request" Form even though only the Page+Blocks themselves were exported, not the Form/EmailTemplate content
+    public function ensureFormBlockDependenciesExist(array $blockData): void
+    {
+        $formName = 'form' === ($blockData['kind'] ?? null) ? ($blockData['data']['name'] ?? null) : null;
+        if (null !== $formName) {
+            $this->ensureFormAndEmailTemplateExist($formName);
+        }
+    }
+
     // Idempotent - there's no per-app scaffold controller calling this on every request anymore (register/reset_password_request/contact are all rendered by UiBundle's generic FormController, not a dedicated controller), so import() itself is the only thing that can seed/backfill a Form+EmailTemplate, on both the "page newly created" and "page already exists" paths - otherwise a site whose page already existed before a given Form/EmailTemplate was introduced would never get backfilled, no matter how many times the import command is re-run
     private function ensureFormAndEmailTemplateExist(string $formName): void
     {

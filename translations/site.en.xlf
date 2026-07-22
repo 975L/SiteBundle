@@ -472,15 +472,15 @@
             </trans-unit>
             <trans-unit id="123">
                 <source>label.info_page</source>
-                <target>List of all pages available on the site</target>
+                <target>List of all the site's pages. You can create, edit, duplicate, publish, preview, move to trash or permanently delete a page; a deleted page can only be recovered from the trash until it's permanently deleted.</target>
             </trans-unit>
             <trans-unit id="124">
                 <source>label.info_redirect</source>
-                <target>List of all redirects available on the site</target>
+                <target>List of the site's URL redirects. You can create, edit or delete a redirect; double-check the source and target URLs, a mistake can break a link or cause a redirect loop.</target>
             </trans-unit>
             <trans-unit id="125">
                 <source>label.info_user</source>
-                <target>List of all users on the site</target>
+                <target>List of the site's users. You can edit a user's roles or delete them; be careful, changing roles immediately changes their back-office access rights.</target>
             </trans-unit>
             <trans-unit id="126">
                 <source>label.qrcode</source>
@@ -532,7 +532,7 @@
             </trans-unit>
             <trans-unit id="138">
                 <source>label.info_site_graphic</source>
-                <target>Site-wide graphics: favicon, apple-touch-icon, default og-image and logo</target>
+                <target>Site-wide graphics: favicon, Apple Touch icon, default Open Graph image, logo and error images. Each role (except error image) can only be used once; replace the file to update it.</target>
             </trans-unit>
             <trans-unit id="139">
                 <source>label.menus</source>
@@ -768,7 +768,7 @@
             </trans-unit>
             <trans-unit id="201">
                 <source>label.info_menu</source>
-                <target>List of all menus available on the site</target>
+                <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
             </trans-unit>
             <trans-unit id="203">
                 <source>label.messenger_alert_super_admin</source>
@@ -1048,7 +1048,7 @@
             </trans-unit>
             <trans-unit id="284">
                 <source>label.info_collection_item_list</source>
-                <target>Title/description/image/link items grouped by "group", each feeding a "collection" block. Drag to reorder.</target>
+                <target>Title/description/image/link items grouped by "group", each feeding a "collection" block on the site. Drag to reorder, or create/edit/delete an item from this list.</target>
             </trans-unit>
             <trans-unit id="285">
                 <source>label.info_collection_item_groups</source>
@@ -1069,6 +1069,90 @@
             <trans-unit id="289">
                 <source>help.menu_link_primary</source>
                 <target>Renders as a filled primary-color button instead of a link - use sparingly (e.g. "Contact")</target>
+            </trans-unit>
+            <trans-unit id="290">
+                <source>label.font</source>
+                <target>Font</target>
+            </trans-unit>
+            <trans-unit id="291">
+                <source>label.fonts</source>
+                <target>Fonts</target>
+            </trans-unit>
+            <trans-unit id="292">
+                <source>label.font_name</source>
+                <target>Font name</target>
+            </trans-unit>
+            <trans-unit id="293">
+                <source>label.font_weight</source>
+                <target>Weight</target>
+            </trans-unit>
+            <trans-unit id="294">
+                <source>label.font_style</source>
+                <target>Style</target>
+            </trans-unit>
+            <trans-unit id="295">
+                <source>label.font_style_normal</source>
+                <target>Normal</target>
+            </trans-unit>
+            <trans-unit id="296">
+                <source>label.font_style_italic</source>
+                <target>Italic</target>
+            </trans-unit>
+            <trans-unit id="297">
+                <source>label.font_file_help</source>
+                <target>Accepted formats: TTF, WOFF, WOFF2 (max 5 MB). Stored in public/medias/fonts and turned into a @font-face rule offered by the theme's font pickers.</target>
+            </trans-unit>
+            <trans-unit id="298">
+                <source>label.font_file_invalid_extension</source>
+                <target>Invalid file: only TTF, WOFF and WOFF2 fonts are accepted.</target>
+            </trans-unit>
+            <trans-unit id="299">
+                <source>label.font_weight_thin</source>
+                <target>Thin</target>
+            </trans-unit>
+            <trans-unit id="300">
+                <source>label.font_weight_extra_light</source>
+                <target>Extra Light</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>label.font_weight_light</source>
+                <target>Light</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>label.font_weight_regular</source>
+                <target>Regular</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>label.font_weight_medium</source>
+                <target>Medium</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>label.font_weight_semibold</source>
+                <target>SemiBold</target>
+            </trans-unit>
+            <trans-unit id="305">
+                <source>label.font_weight_bold</source>
+                <target>Bold</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>label.font_weight_extra_bold</source>
+                <target>Extra Bold</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>label.font_weight_black</source>
+                <target>Black</target>
+            </trans-unit>
+            <trans-unit id="308">
+                <source>label.font_weight_variable</source>
+                <target>Variable (100-900)</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>action.export_selection</source>
+                <target>Export selection</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>label.info_font</source>
+                <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
             </trans-unit>
         </body>
     </file>

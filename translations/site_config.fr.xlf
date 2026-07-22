@@ -142,6 +142,22 @@
                 <source>description.email_from_name</source>
                 <target>Nom utilisé pour l'envoi des notifications depuis le site.</target>
             </trans-unit>
+            <trans-unit id="129">
+                <source>description.email_to</source>
+                <target>Adresse email utilisée pour recevoir les notifications (contact, commandes...), ex. contact@example.com</target>
+            </trans-unit>
+            <trans-unit id="130">
+                <source>description.email_to_name</source>
+                <target>Nom utilisé pour recevoir les notifications depuis le site.</target>
+            </trans-unit>
+            <trans-unit id="133">
+                <source>description.email_reply_to</source>
+                <target>Adresse email pour les réponses (optionnel, sinon celle d'envoi est utilisée)</target>
+            </trans-unit>
+            <trans-unit id="134">
+                <source>description.email_reply_to_name</source>
+                <target>Nom associé à l'adresse email de réponse</target>
+            </trans-unit>
             <trans-unit id="123">
                 <source>description.email_debug</source>
                 <target>Si activé, un ROLE_SUPER_ADMIN voit un aperçu au lieu de l'envoi réel</target>
@@ -326,6 +342,22 @@
                 <source>label.email_from_name</source>
                 <target>Nom de l'email (expéditeur)</target>
             </trans-unit>
+            <trans-unit id="131">
+                <source>label.email_to</source>
+                <target>Email (destinataire)</target>
+            </trans-unit>
+            <trans-unit id="132">
+                <source>label.email_to_name</source>
+                <target>Nom de l'email (destinataire)</target>
+            </trans-unit>
+            <trans-unit id="135">
+                <source>label.email_reply_to</source>
+                <target>Email (réponse à)</target>
+            </trans-unit>
+            <trans-unit id="136">
+                <source>label.email_reply_to_name</source>
+                <target>Nom de l'email (réponse à)</target>
+            </trans-unit>
             <trans-unit id="124">
                 <source>label.email_debug</source>
                 <target>Mode debug des emails</target>
@@ -465,6 +497,14 @@
             <trans-unit id="114">
                 <source>description.theme_font_family_accent</source>
                 <target>Police optionnelle pour badges/étiquettes/accroches. Vide = police par défaut</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.site_fonts_face_file</source>
+                <target>Fichier de déclaration des polices</target>
+            </trans-unit>
+            <trans-unit id="128">
+                <source>description.site_fonts_face_file</source>
+                <target>Chemin (depuis la racine du projet) du fichier CSS déclarant les polices via @font-face, utilisé pour remplir les sélecteurs de police ci-dessus</target>
             </trans-unit>
             <trans-unit id="115">
                 <source>label.theme_stylesheet</source>

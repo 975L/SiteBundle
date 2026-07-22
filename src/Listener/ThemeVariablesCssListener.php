@@ -27,8 +27,20 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 #[AsDoctrineListener(event: Events::postRemove)]
 class ThemeVariablesCssListener implements CacheWarmerInterface
 {
-    // Drives the data-theme HTML attribute server-side (see layout.html.twig), not a CSS value itself
-    private const EXCLUDED_SLUG = 'theme-mode';
+    // Theme-group configs that are never a CSS value themselves, so must stay out of the compiled :root block:
+    // "theme-mode" drives the data-theme HTML attribute server-side (see layout.html.twig); "site-fonts-face-file"
+    // is a PHP-side file path read by FontService, never consumed via var(--c975l-...) - also not "theme-"-prefixed,
+    // which would otherwise corrupt the mechanical slug->variable mapping below
+    private const EXCLUDED_SLUGS = ['theme-mode', 'site-fonts-face-file'];
+
+    // Generic CSS family each font-family slug falls back to if the chosen custom font fails to load at runtime -
+    // same defaults already baked into _variables.scss's var(..., fallback) for the "config left empty" case,
+    // reused here for the "a font is set but its @font-face 404s/is slow" case
+    private const FONT_FALLBACKS = [
+        'theme-font-family-title' => 'sans-serif',
+        'theme-font-family-body' => 'sans-serif',
+        'theme-font-family-accent' => 'monospace',
+    ];
 
     public function __construct(
         private readonly ConfigRepository $configRepository,
@@ -79,12 +91,22 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
         $lines = [];
         foreach ($this->configRepository->findByGroup(Config::GROUP_THEME) as $config) {
             $value = $config->getValue();
-            if (self::EXCLUDED_SLUG === $config->getSlug() || null === $value || '' === $value) {
+            if (in_array($config->getSlug(), self::EXCLUDED_SLUGS, true) || null === $value || '' === $value) {
                 continue;
             }
 
             // Mechanical mapping, e.g. "theme-color-primary" -> "--c975l-color-primary": no lookup table to maintain when a new theme variable is added to SiteBundle/config/configs-css.json
-            $variable = '--c975l-' . substr($config->getSlug(), strlen('theme-'));
+            $slug = $config->getSlug();
+            $variable = '--c975l-' . (str_starts_with($slug, 'theme-') ? substr($slug, strlen('theme-')) : $slug);
+
+            // A bare custom font name (from the new ChoiceField) gets its generic fallback appended. A value already
+            // containing a comma is left untouched - it's either a generic keyword's own fallback-free case, or a
+            // full stack an admin already typed by hand before this kind existed (e.g. '"Georgia", serif')
+            $fallback = self::FONT_FALLBACKS[$config->getSlug()] ?? null;
+            if (null !== $fallback && !str_contains($value, ',') && !in_array($value, Config::GENERIC_FONT_FAMILIES, true)) {
+                $value .= ', ' . $fallback;
+            }
+
             $lines[] = sprintf('    %s: %s;', $variable, $value);
         }
 

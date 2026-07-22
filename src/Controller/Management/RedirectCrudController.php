@@ -78,9 +78,15 @@ class RedirectCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
         return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $exportGroup)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
@@ -89,18 +95,15 @@ class RedirectCrudController extends AbstractCrudController
                 $action,
                 $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.detail', [], 'EasyAdminBundle'),
-            ))
             ->setPermission(Action::INDEX, $this->configService->get('site-role-editor'))
             ->setPermission(Action::NEW, $this->configService->get('site-role-editor'))
             ->setPermission(Action::EDIT, $this->configService->get('site-role-editor'))
             ->setPermission(Action::DELETE, $this->configService->get('site-role-admin'))
-            ->setPermission(Action::DETAIL, $this->configService->get('site-role-editor'))
             ->setPermission('exportSql', 'ROLE_SUPER_ADMIN')
             ->setPermission('exportCsv', $this->configService->get('site-role-admin'))
             ->setPermission('exportJson', 'ROLE_SUPER_ADMIN')
+            // Detail adds no information beyond what edit already shows
+            ->disable(Action::DETAIL)
         ;
     }
 
@@ -110,6 +113,8 @@ class RedirectCrudController extends AbstractCrudController
             ->showEntityActionsInlined()
             ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/redirect_crud_index.html.twig')
+            ->overrideTemplate('crud/edit', '@c975LSite/management/redirect_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LSite/management/redirect_crud_new.html.twig')
         ;
     }
 

@@ -472,15 +472,15 @@
             </trans-unit>
             <trans-unit id="123">
                 <source>label.info_page</source>
-                <target>Liste de toutes le pages disponibles sur le site</target>
+                <target>Liste de toutes les pages du site. Vous pouvez créer, modifier, dupliquer, publier, prévisualiser, mettre à la corbeille ou supprimer définitivement une page ; une page supprimée n'est récupérable que depuis la corbeille tant qu'elle n'est pas effacée définitivement.</target>
             </trans-unit>
             <trans-unit id="124">
                 <source>label.info_redirect</source>
-                <target>Liste de toutes les redirections disponibles sur le site</target>
+                <target>Liste des redirections d'URL du site. Vous pouvez créer, modifier ou supprimer une redirection ; vérifiez l'URL de départ et de destination, une erreur peut casser un lien ou provoquer une boucle de redirection.</target>
             </trans-unit>
             <trans-unit id="125">
                 <source>label.info_user</source>
-                <target>Liste de tous les utilisateurs du site</target>
+                <target>Liste des utilisateurs du site. Vous pouvez modifier les rôles d'un utilisateur ou le supprimer ; soyez prudent, changer les rôles modifie immédiatement ses droits d'accès au back-office.</target>
             </trans-unit>
             <trans-unit id="126">
                 <source>label.qrcode</source>
@@ -532,7 +532,7 @@
             </trans-unit>
             <trans-unit id="138">
                 <source>label.info_site_graphic</source>
-                <target>Graphiques globaux : favicon, icône Apple Touch, og-image et logo par défaut</target>
+                <target>Graphiques globaux du site : favicon, icône Apple Touch, image Open Graph par défaut, logo et images d'erreur. Chaque rôle (sauf image d'erreur) ne peut être utilisé qu'une seule fois ; remplacez le fichier pour le mettre à jour.</target>
             </trans-unit>
             <trans-unit id="139">
                 <source>label.menus</source>
@@ -768,7 +768,7 @@
             </trans-unit>
             <trans-unit id="201">
                 <source>label.info_menu</source>
-                <target>Liste de tous les menus disponibles sur le site</target>
+                <target>Liste des menus du site (navigation, pied de page, en-tête et pied d'e-mail). Modifiez un menu pour ajouter, retirer ou réordonner ses liens ; chaque emplacement (navbar, footer...) ne peut être utilisé qu'une seule fois.</target>
             </trans-unit>
             <trans-unit id="203">
                 <source>label.messenger_alert_super_admin</source>
@@ -1048,7 +1048,7 @@
             </trans-unit>
             <trans-unit id="284">
                 <source>label.info_collection_item_list</source>
-                <target>Éléments titre/description/image/lien groupés par "group", chacun alimentant un bloc "collection". Glissez pour réordonner.</target>
+                <target>Éléments titre/description/image/lien groupés par « group », chacun alimentant un bloc « collection » du site. Glissez pour réordonner, ou créez/modifiez/supprimez un élément depuis cette liste.</target>
             </trans-unit>
             <trans-unit id="285">
                 <source>label.info_collection_item_groups</source>
@@ -1069,6 +1069,90 @@
             <trans-unit id="289">
                 <source>help.menu_link_primary</source>
                 <target>Bouton plein couleur primaire au lieu d'un simple lien - à réserver à un élément marquant (ex. "Contact")</target>
+            </trans-unit>
+            <trans-unit id="290">
+                <source>label.font</source>
+                <target>Police</target>
+            </trans-unit>
+            <trans-unit id="291">
+                <source>label.fonts</source>
+                <target>Polices</target>
+            </trans-unit>
+            <trans-unit id="292">
+                <source>label.font_name</source>
+                <target>Nom de la police</target>
+            </trans-unit>
+            <trans-unit id="293">
+                <source>label.font_weight</source>
+                <target>Graisse</target>
+            </trans-unit>
+            <trans-unit id="294">
+                <source>label.font_style</source>
+                <target>Style</target>
+            </trans-unit>
+            <trans-unit id="295">
+                <source>label.font_style_normal</source>
+                <target>Normal</target>
+            </trans-unit>
+            <trans-unit id="296">
+                <source>label.font_style_italic</source>
+                <target>Italique</target>
+            </trans-unit>
+            <trans-unit id="297">
+                <source>label.font_file_help</source>
+                <target>Formats acceptés : TTF, WOFF, WOFF2 (5 Mo max). Stocké dans public/medias/fonts et transformé en règle @font-face, proposée dans les sélecteurs de police du thème.</target>
+            </trans-unit>
+            <trans-unit id="298">
+                <source>label.font_file_invalid_extension</source>
+                <target>Fichier invalide : seules les polices TTF, WOFF et WOFF2 sont acceptées.</target>
+            </trans-unit>
+            <trans-unit id="299">
+                <source>label.font_weight_thin</source>
+                <target>Fin</target>
+            </trans-unit>
+            <trans-unit id="300">
+                <source>label.font_weight_extra_light</source>
+                <target>Extra-léger</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>label.font_weight_light</source>
+                <target>Léger</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>label.font_weight_regular</source>
+                <target>Normal</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>label.font_weight_medium</source>
+                <target>Moyen</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>label.font_weight_semibold</source>
+                <target>Demi-gras</target>
+            </trans-unit>
+            <trans-unit id="305">
+                <source>label.font_weight_bold</source>
+                <target>Gras</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>label.font_weight_extra_bold</source>
+                <target>Extra-gras</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>label.font_weight_black</source>
+                <target>Noir</target>
+            </trans-unit>
+            <trans-unit id="308">
+                <source>label.font_weight_variable</source>
+                <target>Variable (100-900)</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>action.export_selection</source>
+                <target>Exporter la sélection</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>label.info_font</source>
+                <target>Polices personnalisées téléversées pour le site (ttf, woff, woff2). Ajoutez, modifiez ou supprimez une police ; chaque poids et style compose une variante distincte utilisable dans la configuration du thème.</target>
             </trans-unit>
         </body>
     </file>

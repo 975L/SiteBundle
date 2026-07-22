@@ -12,11 +12,13 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
+use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\TemplateApplier;
 use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
@@ -42,6 +44,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -62,6 +65,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -84,6 +88,7 @@ class PageCrudController extends AbstractCrudController
         private readonly SluggerInterface $slugger,
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
+        private readonly ContentExporter $contentExporter,
         private readonly TemplateRegistry $templateRegistry,
         private readonly TemplateApplier $templateApplier,
     ) {
@@ -326,6 +331,16 @@ class PageCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
+            ->linkToCrudAction(Action::INDEX)
+            ->addCssClass('btn btn-secondary');
+
+        // Exports the checked pages with their Blocks (see exportSelection()/PageImportProvider) as a zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController - restricted to site-role-admin since it's a heavier/less common action than the regular editor permissions
+        $exportSelectionAction = Action::new('exportSelection', t('action.export_selection', [], 'site'), 'fa fa-file-export')
+            ->createAsBatchAction()
+            ->linkToCrudAction('exportSelection');
+
         // Adds the Blocks of a shipped template (config/templates/*.json) to the page being edited - one action per template, only shown once at least one is registered
         $templates = $this->templateRegistry->all();
         $templatesGroup = [] !== $templates
@@ -352,6 +367,9 @@ class PageCrudController extends AbstractCrudController
             $actions->add(Crud::PAGE_EDIT, $templatesGroup);
         }
 
+        $actions->add(Crud::PAGE_INDEX, $exportSelectionAction);
+        $actions->setPermission('exportSelection', $this->configService->get('site-role-admin'));
+
         return $actions
             ->add(Crud::PAGE_INDEX, $trashAction)
             ->add(Crud::PAGE_INDEX, $restoreAction)
@@ -368,6 +386,8 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $viewOnSiteAction)
             ->add(Crud::PAGE_EDIT, $previewAction)
             ->add(Crud::PAGE_EDIT, $duplicateAction)
+            ->add(Crud::PAGE_NEW, $cancelAction)
+            ->add(Crud::PAGE_EDIT, $cancelAction)
             ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate'])
@@ -443,6 +463,7 @@ class PageCrudController extends AbstractCrudController
             ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
+            ->overrideTemplate('crud/new', '@c975LSite/management/page_crud_new.html.twig')
         ;
     }
 
@@ -866,5 +887,89 @@ class PageCrudController extends AbstractCrudController
     private function fetchExportRows(): array
     {
         return $this->connection->fetchAllAssociative('SELECT * FROM `site_page` ORDER BY `id`');
+    }
+
+    // Exports the checked pages (title/slug/blocks, Media files bundled in the archive) as a downloadable zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController (see PageImportProvider) - restricted to site-role-admin, see configureActions(). Unlike exportSql/exportCsv/exportJson above (a raw site_page table dump), this walks each Page's actual Blocks so a page can be moved between environments without its ids ever needing to match
+    #[AdminRoute]
+    public function exportSelection(AdminContext $context, BatchActionDto $batchActionDto): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
+
+        if (Page::class !== $batchActionDto->getEntityFqcn()) {
+            throw new BadRequestHttpException();
+        }
+
+        if (!$this->isCsrfTokenValid('ea-batch-action-exportSelection-' . $batchActionDto->getEntityFqcn(), $batchActionDto->getCsrfToken())) {
+            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
+
+        $pages = $this->pageRepository->findBy(['id' => $batchActionDto->getEntityIds()]);
+
+        $files = [];
+        $items = [];
+        foreach ($pages as $page) {
+            $blocks = [];
+            foreach ($page->getBlocks() as $block) {
+                $medias = [];
+                foreach ($block->getMedias() as $media) {
+                    $mediaData = $this->exportMediaData($media, $files);
+                    if (null !== $mediaData) {
+                        $medias[] = $mediaData;
+                    }
+                }
+
+                $blocks[] = [
+                    'kind' => $block->getKind(),
+                    'position' => $block->getPosition(),
+                    'data' => $block->getData(),
+                    'medias' => $medias,
+                ];
+            }
+
+            $items[] = [
+                'title' => $page->getTitle(),
+                'slug' => $page->getSlug(),
+                'changeFrequency' => $page->getChangeFrequency(),
+                'priority' => $page->getPriority(),
+                'isPublished' => $page->isPublished(),
+                'blocks' => $blocks,
+            ];
+        }
+
+        return $this->contentExporter->export(PageImportProvider::KIND, $items, $files);
+    }
+
+    // Reads the Media's physical file from disk and registers it for the zip archive (&$files: archive-relative path => disk path), returning the metadata entry with a 'file' reference instead of embedding its bytes - same disk-path convention as cloneMedia(). Returns null (skipped by the caller) when there is no file or it can't be read, rather than exporting a broken reference
+    private function exportMediaData(Media $media, array &$files): ?array
+    {
+        $filename = $media->getFilename();
+        if (null === $filename) {
+            return null;
+        }
+
+        $path = $this->getParameter('kernel.project_dir') . '/public/' . $filename;
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $archivePath = 'files/' . bin2hex(random_bytes(8)) . '_' . basename($filename);
+        $files[$archivePath] = $path;
+
+        return [
+            'role' => $media->getRole(),
+            'alt' => $media->getAlt(),
+            'label' => $media->getLabel(),
+            'width' => $media->getWidth(),
+            'height' => $media->getHeight(),
+            'cssClasses' => $media->getCssClasses(),
+            'above' => $media->isAbove(),
+            'credits' => $media->getCredits(),
+            'rightsReserved' => $media->isRightsReserved(),
+            'position' => $media->getPosition(),
+            'url' => $media->getUrl(),
+            'description' => $media->getDescription(),
+            'originalFilename' => basename($filename),
+            'file' => $archivePath,
+        ];
     }
 }

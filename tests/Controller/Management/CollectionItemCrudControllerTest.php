@@ -183,6 +183,20 @@ class CollectionItemCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
+    // Detail adds no information beyond what edit already shows - disabled entirely, and a Cancel action lets the admin back out of a create/edit without saving
+    public function testConfigureActionsDisablesDetailAndAddsCancelOnNewAndEdit(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertContains(Action::DETAIL, $actions->getAsDto(null)->getDisabledActions());
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, 'cancel'));
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
+    }
+
     // --- persistEntity / updateEntity ----------------------------------------------------------------
 
     public function testPersistEntitySlugifiesAndDelegatesToParent(): void

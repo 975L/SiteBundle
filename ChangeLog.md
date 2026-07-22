@@ -1,5 +1,21 @@
 # Changelog
 
+## v7.6.8
+
+- Expanded the explanatory text on the Page/Redirect/Menu/Site graphics/User/Font/Collection item index and edit screens (22/07/2026)
+- Removed the detail/view page on Redirect, Menu, Site graphics, Font and Collection item (22/07/2026)
+- Added a Cancel action on every create/edit screen (22/07/2026)
+- Added `Font` entity/`FontCrudController`, letting an admin upload their own TTF/WOFF/WOFF2 font files (22/07/2026)
+- Added `FontCssListener`, compiling uploaded fonts into `public/bundles/build/site-fonts-uploaded.css` (22/07/2026)
+- `FontService` now also offers admin-uploaded font names alongside the dev-declared ones (22/07/2026)
+- Added `FontService`, exposing `@font-face` font-family names to ConfigBundle's `font`-kind config fields (21/07/2026)
+- Added `site-fonts-face-file` config key, pointing to the CSS file declaring `@font-face` fonts (21/07/2026)
+- `theme-font-family-title`/`-body`/`-accent` are no longer `restricted` - any `ROLE_ADMIN` can edit them (21/07/2026)
+- `ThemeVariablesCssListener` now appends a generic font fallback (`sans-serif`/`monospace`) to a bare custom font name (21/07/2026)
+- Added a scaffolded `assets/styles/_fonts.css` starter file with an example `@font-face` declaration (21/07/2026)
+- Page/Font "Export selection" now works in production, no longer dev-only (22/07/2026)
+- Lowered the Page/Font "Export selection" permission from `site-role-editor` to `site-role-admin` (22/07/2026)
+
 ## v7.6.7
 
 - Added `ProcedureProvider`, contributing admin help procedures to ConfigBundle's dashboard AI assistant

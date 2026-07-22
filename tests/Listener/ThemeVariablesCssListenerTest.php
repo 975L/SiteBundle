@@ -114,6 +114,59 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringContainsString('--c975l-font-family-title: "Georgia", serif;', $css);
     }
 
+    // A bare custom font name (as chosen via the new ChoiceField) gets its slug's generic fallback appended, so the
+    // browser has somewhere to go if the @font-face 404s/is slow instead of falling through to no font at all
+    public function testRegenerateAppendsGenericFallbackToABareCustomFontName(): void
+    {
+        $listener = $this->createListener([
+            $this->config('theme-font-family-title', 'Roboto'),
+            $this->config('theme-font-family-accent', 'Fira Code'),
+        ]);
+
+        $listener->postPersist(new PostPersistEventArgs(
+            $this->config('theme-font-family-title', 'Roboto'),
+            $this->createStub(EntityManagerInterface::class),
+        ));
+
+        $css = file_get_contents($this->cssPath);
+        $this->assertStringContainsString('--c975l-font-family-title: Roboto, sans-serif;', $css);
+        $this->assertStringContainsString('--c975l-font-family-accent: Fira Code, monospace;', $css);
+    }
+
+    // A value already picked as one of Config::GENERIC_FONT_FAMILIES never needs a fallback suffix appended to itself
+    public function testRegenerateDoesNotAppendFallbackWhenValueIsAlreadyAGeneric(): void
+    {
+        $listener = $this->createListener([
+            $this->config('theme-font-family-body', 'sans-serif'),
+        ]);
+
+        $listener->postPersist(new PostPersistEventArgs(
+            $this->config('theme-font-family-body', 'sans-serif'),
+            $this->createStub(EntityManagerInterface::class),
+        ));
+
+        $css = file_get_contents($this->cssPath);
+        $this->assertStringContainsString('--c975l-font-family-body: sans-serif;', $css);
+        $this->assertStringNotContainsString('sans-serif, sans-serif', $css);
+    }
+
+    // A value already containing a comma is a full stack an admin already typed by hand before this kind existed
+    // (e.g. '"Georgia", serif') - left untouched, not doubled up with another fallback
+    public function testRegenerateDoesNotAppendFallbackWhenValueAlreadyHasOne(): void
+    {
+        $listener = $this->createListener([
+            $this->config('theme-font-family-title', '"Georgia", serif'),
+        ]);
+
+        $listener->postPersist(new PostPersistEventArgs(
+            $this->config('theme-font-family-title', '"Georgia", serif'),
+            $this->createStub(EntityManagerInterface::class),
+        ));
+
+        $css = file_get_contents($this->cssPath);
+        $this->assertStringContainsString('--c975l-font-family-title: "Georgia", serif;', $css);
+    }
+
     // Empty/null values are skipped, so the SCSS fallback default keeps applying instead of an empty custom property value
     public function testRegenerateSkipsEmptyAndNullValues(): void
     {
@@ -150,6 +203,25 @@ class ThemeVariablesCssListenerTest extends TestCase
         $css = file_get_contents($this->cssPath);
         $this->assertStringNotContainsString('theme-mode', $css);
         $this->assertStringNotContainsString('--c975l-mode', $css);
+    }
+
+    // site-fonts-face-file is a PHP-side path read by FontService, never a CSS custom property - also not
+    // "theme-"-prefixed, exercising the mechanical slug->variable mapping's non-prefixed branch
+    public function testRegenerateExcludesSiteFontsFaceFileSlug(): void
+    {
+        $listener = $this->createListener([
+            $this->config('site-fonts-face-file', '/assets/styles/_fonts.css'),
+            $this->config('theme-color-primary', '#ff0000'),
+        ]);
+
+        $listener->postUpdate(new PostUpdateEventArgs(
+            $this->config('theme-color-primary', '#ff0000'),
+            $this->createStub(EntityManagerInterface::class),
+        ));
+
+        $css = file_get_contents($this->cssPath);
+        $this->assertStringNotContainsString('_fonts.css', $css);
+        $this->assertStringNotContainsString('site-fonts-face-file', $css);
     }
 
     public function testPostRemoveRegeneratesFileReflectingTheRemainingConfigs(): void

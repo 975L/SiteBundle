@@ -399,6 +399,42 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertNull($this->findPersistedEmailTemplate($persisted, 'password_reset'));
     }
 
+    // Lets a Page pushed from another environment (see PageImportProvider) keep a working "contact" Form even though
+    // only the Page+Blocks themselves were exported, not the Form/EmailTemplate content
+    public function testEnsureFormBlockDependenciesExistSeedsTheFormForAFormBlock(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->ensureFormBlockDependenciesExist(['kind' => 'form', 'data' => ['name' => 'contact']]);
+
+        $form = $this->findPersistedForm($persisted, 'contact');
+        $this->assertNotNull($form);
+        $this->assertSame('send_email', $form->getAction());
+    }
+
+    // A non-"form" block (e.g. plain text/image) never has a Form/EmailTemplate to backfill
+    public function testEnsureFormBlockDependenciesExistIsNoopForNonFormBlocks(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->ensureFormBlockDependenciesExist(['kind' => 'text', 'data' => ['content' => 'hello']]);
+
+        $this->assertSame([], $persisted);
+    }
+
+    // A "form" block without its "data.name" (malformed/partial export payload) is left alone rather than erroring
+    public function testEnsureFormBlockDependenciesExistIsNoopWhenFormNameIsMissing(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->ensureFormBlockDependenciesExist(['kind' => 'form', 'data' => []]);
+
+        $this->assertSame([], $persisted);
+    }
+
     // SiteCreateCommand offers legal pages as footer menu items, in a fixed reading order rather than definition order
     public function testGetLegalPageSlugsByModelReturnsSlugsInFixedOrder(): void
     {

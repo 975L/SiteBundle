@@ -1,11 +1,46 @@
 [
     {
+        "date": "2026-07-22",
+        "description": [
+            {
+                "en": "You can now upload your own font files (TTF, WOFF, WOFF2) from the dashboard - no developer needed, it's ready to pick in the theme's font settings right away",
+                "fr": "Vous pouvez désormais téléverser vos propres fichiers de police (TTF, WOFF, WOFF2) depuis le tableau de bord - sans intervention du développeur, elle est aussitôt disponible dans les réglages de police du thème",
+                "es": "Ahora puede subir sus propios archivos de fuente (TTF, WOFF, WOFF2) desde el panel de administración - sin necesidad del desarrollador, queda disponible de inmediato en los ajustes de fuente del tema"
+            },
+            {
+                "en": "The Pages, Redirects, Menus, Site graphics, Users, Fonts and Collection items screens now explain what they're for and what to watch out for",
+                "fr": "Les écrans Pages, Redirections, Menus, Graphiques du site, Utilisateurs, Polices et Éléments de collection expliquent désormais à quoi ils servent et les précautions à prendre",
+                "es": "Las pantallas Páginas, Redirecciones, Menús, Gráficos del sitio, Usuarios, Fuentes y Elementos de colección ahora explican para qué sirven y qué precauciones tomar"
+            },
+            {
+                "en": "Removed the separate view page on Redirects, Menus, Site graphics, Fonts and Collection items - edit now shows everything",
+                "fr": "Suppression de la page de consultation séparée sur les redirections, menus, graphiques du site, polices et éléments de collection : la page de modification affiche désormais tout",
+                "es": "Se eliminó la página de consulta independiente en redirecciones, menús, gráficos del sitio, fuentes y elementos de colección: la página de edición ahora lo muestra todo"
+            },
+            {
+                "en": "Added a Cancel button when creating or editing an entry across the back office",
+                "fr": "Ajout d'un bouton Annuler lors de la création ou de la modification d'une entrée dans tout le back-office",
+                "es": "Añadido un botón Cancelar al crear o modificar una entrada en todo el back-office"
+            },
+            {
+                "en": "The Pages and Fonts \"Export selection\" button is now also available on your live site, not just for testing",
+                "fr": "Le bouton \"Exporter la sélection\" des Pages et Polices est désormais aussi disponible sur votre site en production, pas seulement pour les tests",
+                "es": "El botón \"Exportar selección\" de Páginas y Fuentes ahora también está disponible en su sitio en producción, no solo para pruebas"
+            }
+        ]
+    },
+    {
         "date": "2026-07-21",
         "description": [
             {
                 "en": "Fixed the navbar menu icon sometimes showing the wrong color",
                 "fr": "Correction de l'icône du menu de la barre de navigation qui affichait parfois la mauvaise couleur",
                 "es": "Corregido el icono del menú de la barra de navegación que a veces mostraba el color incorrecto"
+            },
+            {
+                "en": "Theme font settings can now be edited by any administrator, not just the super-administrator",
+                "fr": "Les réglages de police du thème sont désormais modifiables par tout administrateur, plus seulement le super-administrateur",
+                "es": "Los ajustes de fuente del tema ahora pueden ser editados por cualquier administrador, no solo por el superadministrador"
             }
         ]
     },

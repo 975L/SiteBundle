@@ -25,6 +25,7 @@ class StylesheetProviderTest extends TestCase
             [
                 'bundles/c975lsite/css/styles.min.css',
                 'bundles/build/site-theme.css',
+                'bundles/build/site-fonts-uploaded.css',
             ],
             (new StylesheetProvider($configService))->getStylesheets()
         );
@@ -40,6 +41,7 @@ class StylesheetProviderTest extends TestCase
             [
                 'bundles/c975lsite/css/styles.min.css',
                 'bundles/build/site-theme.css',
+                'bundles/build/site-fonts-uploaded.css',
                 'bundles/c975lsite/css/themes/default.min.css',
             ],
             (new StylesheetProvider($configService))->getStylesheets()

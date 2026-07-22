@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
 use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
+use c975L\SiteBundle\Controller\Management\FontCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
@@ -75,6 +76,12 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.collection_items',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-layer-group',
+            ],
+            'font' => [
+                'controller' => FontCrudController::class,
+                'label' => 'label.fonts',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-font',
             ],
             'form' => [
                 'controller' => FormCrudController::class,

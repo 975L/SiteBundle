@@ -146,6 +146,22 @@
                 <source>description.email_from_name</source>
                 <target>Nombre utilizado para enviar las notificaciones desde el sitio.</target>
             </trans-unit>
+            <trans-unit id="129">
+                <source>description.email_to</source>
+                <target>Dirección de correo utilizada para recibir las notificaciones (contacto, pedidos...), ej. contact@example.com</target>
+            </trans-unit>
+            <trans-unit id="130">
+                <source>description.email_to_name</source>
+                <target>Nombre utilizado para recibir las notificaciones desde el sitio.</target>
+            </trans-unit>
+            <trans-unit id="133">
+                <source>description.email_reply_to</source>
+                <target>Dirección de correo para las respuestas (opcional, si no se usa la de envío)</target>
+            </trans-unit>
+            <trans-unit id="134">
+                <source>description.email_reply_to_name</source>
+                <target>Nombre asociado a la dirección de correo de respuesta</target>
+            </trans-unit>
             <trans-unit id="37">
                 <source>description.display_made_by</source>
                 <target>Mostrar el crédito "Realizado por" en el pie de página</target>
@@ -330,6 +346,22 @@
                 <source>label.email_from_name</source>
                 <target>Nombre del correo (remitente)</target>
             </trans-unit>
+            <trans-unit id="131">
+                <source>label.email_to</source>
+                <target>Correo (destinatario)</target>
+            </trans-unit>
+            <trans-unit id="132">
+                <source>label.email_to_name</source>
+                <target>Nombre del correo (destinatario)</target>
+            </trans-unit>
+            <trans-unit id="135">
+                <source>label.email_reply_to</source>
+                <target>Correo (responder a)</target>
+            </trans-unit>
+            <trans-unit id="136">
+                <source>label.email_reply_to_name</source>
+                <target>Nombre del correo (responder a)</target>
+            </trans-unit>
             <trans-unit id="77">
                 <source>label.display_made_by</source>
                 <target>Mostrar el crédito «Realizado por»</target>
@@ -465,6 +497,14 @@
             <trans-unit id="114">
                 <source>description.theme_font_family_accent</source>
                 <target>Fuente opcional para insignias/etiquetas/introducción. Vacío = fuente por defecto</target>
+            </trans-unit>
+            <trans-unit id="127">
+                <source>label.site_fonts_face_file</source>
+                <target>Archivo de declaración de fuentes</target>
+            </trans-unit>
+            <trans-unit id="128">
+                <source>description.site_fonts_face_file</source>
+                <target>Ruta (desde la raíz del proyecto) del archivo CSS que declara las fuentes vía @font-face, usado para rellenar los selectores de fuente anteriores</target>
             </trans-unit>
             <trans-unit id="115">
                 <source>label.theme_stylesheet</source>

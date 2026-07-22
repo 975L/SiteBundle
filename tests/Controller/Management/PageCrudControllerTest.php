@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
@@ -40,6 +41,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Orm\EntityRepositoryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Registry\AdminControllerRegistryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
@@ -48,14 +50,18 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -142,6 +148,7 @@ class PageCrudControllerTest extends TestCase
         ?SluggerInterface $slugger = null,
         ?Connection $connection = null,
         ?TableExporter $tableExporter = null,
+        ?ContentExporter $contentExporter = null,
         ?TemplateRegistry $templateRegistry = null,
         ?TemplateApplier $templateApplier = null,
     ): PageCrudController {
@@ -162,6 +169,7 @@ class PageCrudControllerTest extends TestCase
             $slugger ?? new AsciiSlugger(),
             $connection ?? $this->createStub(Connection::class),
             $tableExporter ?? $this->createStub(TableExporter::class),
+            $contentExporter ?? $this->createStub(ContentExporter::class),
             $templateRegistry ?? new TemplateRegistry([]),
             $templateApplier ?? new TemplateApplier(),
         );
@@ -806,6 +814,22 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
+    // A Cancel action lets the admin back out of a create/edit without saving, and "Export selection" is a batch action on the index gated by site-role-admin
+    public function testConfigureActionsAddsCancelOnNewAndEditAndExportSelectionOnIndex(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, 'cancel'));
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'exportSelection'));
+    }
+
     // Not on the edit screen: the "publishAsReplacement" dropdown is never shown there (only added to Crud::PAGE_EDIT, see configureActions()), so its every-non-deleted-page query must not even run
     public function testConfigureActionsSkipsPublishAsReplacementQueryWhenNotOnEditPage(): void
     {
@@ -1084,5 +1108,174 @@ class PageCrudControllerTest extends TestCase
         ]));
 
         $controller->exportCsv($this->createAdminContext(new Page()));
+    }
+
+    public function testExportSelectionDeniesAccessBelowSiteRoleAdmin(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(false),
+        ]));
+
+        $controller->exportSelection(
+            $this->createAdminContext(new Page()),
+            new BatchActionDto('exportSelection', [1], Page::class, 'token'),
+        );
+    }
+
+    public function testExportSelectionThrowsBadRequestWhenEntityFqcnMismatches(): void
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+        ]));
+
+        $controller->exportSelection(
+            $this->createAdminContext(new Page()),
+            new BatchActionDto('exportSelection', [1], Redirect::class, 'token'),
+        );
+    }
+
+    public function testExportSelectionRedirectsWhenCsrfTokenIsInvalid(): void
+    {
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->never())->method('findBy');
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
+        ]));
+
+        $response = $controller->exportSelection(
+            $this->createAdminContext(new Page()),
+            new BatchActionDto('exportSelection', [1], Page::class, 'invalid'),
+        );
+
+        $this->assertSame('/management/pages', $response->getTargetUrl());
+    }
+
+    public function testExportSelectionExportsSelectedPagesWithTheirBlocks(): void
+    {
+        $block = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'hello']);
+        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page->addBlock($block);
+
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1]])
+            ->willReturn([$page]);
+
+        $expectedItems = [[
+            'title' => 'About',
+            'slug' => 'about',
+            'changeFrequency' => null,
+            'priority' => null,
+            'isPublished' => true,
+            'blocks' => [[
+                'kind' => 'text',
+                'position' => 0,
+                'data' => ['content' => 'hello'],
+                'medias' => [],
+            ]],
+        ]];
+
+        $expectedResponse = new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_'));
+        $contentExporter = $this->createMock(ContentExporter::class);
+        $contentExporter->expects($this->once())
+            ->method('export')
+            ->with('site_page', $expectedItems, [])
+            ->willReturn($expectedResponse);
+
+        $controller = $this->createController(pageRepository: $pageRepository, contentExporter: $contentExporter);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+        ]));
+
+        $response = $controller->exportSelection(
+            $this->createAdminContext(new Page()),
+            new BatchActionDto('exportSelection', [1], Page::class, 'valid'),
+        );
+
+        $this->assertSame($expectedResponse, $response);
+    }
+
+    public function testExportSelectionRegistersMediaFilesAlongsideTheirMetadata(): void
+    {
+        $projectDir = sys_get_temp_dir() . '/page_export_test_' . bin2hex(random_bytes(4));
+        mkdir($projectDir . '/public/uploads', 0777, true);
+        $filename = 'uploads/photo.jpg';
+        file_put_contents($projectDir . '/public/' . $filename, 'fake-image-bytes');
+
+        $media = (new Media())
+            ->setFilename($filename)
+            ->setRole('illustration')
+            ->setAlt('A photo')
+            ->setPosition(0);
+        $block = (new Block())->setKind('image')->setPosition(0)->setData([]);
+        $block->addMedia($media);
+        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page->addBlock($block);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findBy')->willReturn([$page]);
+
+        $contentExporter = $this->createMock(ContentExporter::class);
+        $contentExporter->expects($this->once())
+            ->method('export')
+            ->with('site_page', $this->callback(function (array $items) use ($filename): bool {
+                $medias = $items[0]['blocks'][0]['medias'];
+                $this->assertCount(1, $medias);
+                $this->assertSame('illustration', $medias[0]['role']);
+                $this->assertSame('A photo', $medias[0]['alt']);
+                $this->assertSame(basename($filename), $medias[0]['originalFilename']);
+                $this->assertArrayHasKey('file', $medias[0]);
+                $this->assertArrayNotHasKey('content', $medias[0]);
+
+                return true;
+            }), $this->callback(function (array $files) use ($projectDir, $filename): bool {
+                $this->assertCount(1, $files);
+                $diskPath = array_values($files)[0];
+                $this->assertSame($projectDir . '/public/' . $filename, $diskPath);
+
+                return true;
+            }))
+            ->willReturn(new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_')));
+
+        $parameterBag = $this->createStub(ContainerBagInterface::class);
+        $parameterBag->method('get')->willReturnCallback(
+            static fn (string $name) => 'kernel.project_dir' === $name ? $projectDir : null,
+        );
+
+        $controller = $this->createController(pageRepository: $pageRepository, contentExporter: $contentExporter);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+            'parameter_bag' => $parameterBag,
+        ]));
+
+        $controller->exportSelection(
+            $this->createAdminContext(new Page()),
+            new BatchActionDto('exportSelection', [1], Page::class, 'valid'),
+        );
+
+        unlink($projectDir . '/public/' . $filename);
+        rmdir($projectDir . '/public/uploads');
+        rmdir($projectDir . '/public');
+        rmdir($projectDir);
+    }
+
+    private function createCsrfTokenManager(bool $valid): CsrfTokenManagerInterface
+    {
+        $manager = $this->createStub(CsrfTokenManagerInterface::class);
+        $manager->method('isTokenValid')->willReturn($valid);
+
+        return $manager;
     }
 }

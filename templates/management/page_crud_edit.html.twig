@@ -1,6 +1,8 @@
 {% extends '@EasyAdmin/crud/edit.html.twig' %}
 
 {% block main %}
+    <p>{{ ('label.info_page'|trans({}, 'site')) }}</p>
+
     {{ parent() }}
 
     <legend class="col-form-label">{{ 'label.qrcode'|trans({}, 'site') }}</legend>
