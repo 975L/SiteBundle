@@ -1402,6 +1402,34 @@
                 <source>label.health_check_sitemap_index_ok</source>
                 <target>sitemap-index.xml is reachable and references %count% sitemap(s)</target>
             </trans-unit>
+            <trans-unit id="383">
+                <source>action.font_bulk_import</source>
+                <target>Bulk import</target>
+            </trans-unit>
+            <trans-unit id="384">
+                <source>label.font_bulk_import</source>
+                <target>Bulk font import</target>
+            </trans-unit>
+            <trans-unit id="385">
+                <source>label.font_bulk_import_help</source>
+                <target>Select several TTF, WOFF or WOFF2 files at once (max 5 MB each) - each file's name, weight and style are guessed from its filename (eg. "OpenSans-Bold.ttf", "Roboto-ExtraLightItalic.woff2"). Review the imported fonts afterward and fix any wrong guess.</target>
+            </trans-unit>
+            <trans-unit id="386">
+                <source>flash.font_bulk_import_invalid_token</source>
+                <target>Invalid or expired form, please try again.</target>
+            </trans-unit>
+            <trans-unit id="387">
+                <source>flash.font_bulk_import_no_files</source>
+                <target>No font file selected.</target>
+            </trans-unit>
+            <trans-unit id="388">
+                <source>flash.font_bulk_import_success</source>
+                <target>%count% font(s) imported.</target>
+            </trans-unit>
+            <trans-unit id="389">
+                <source>flash.font_bulk_import_skipped</source>
+                <target>Skipped (invalid format or too large): %files%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

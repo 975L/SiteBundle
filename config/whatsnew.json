@@ -76,6 +76,11 @@
                 "en": "Fixed importing collection items failing when the collection they belong to didn't exist yet",
                 "fr": "Correction de l'import d'éléments de collection qui échouait lorsque la collection à laquelle ils appartiennent n'existait pas encore",
                 "es": "Corregida la importación de elementos de colección que fallaba cuando la colección a la que pertenecen aún no existía"
+            },
+            {
+                "en": "You can now upload several fonts at once from the Fonts list, with their name, weight and style guessed automatically from each file's name",
+                "fr": "Vous pouvez désormais importer plusieurs polices en une fois depuis la liste des Polices, avec leur nom, graisse et style devinés automatiquement à partir du nom de chaque fichier",
+                "es": "Ahora puede importar varias fuentes a la vez desde la lista de Fuentes, con su nombre, grosor y estilo adivinados automáticamente a partir del nombre de cada archivo"
             }
         ]
     },

@@ -1398,6 +1398,34 @@
                 <source>label.health_check_sitemap_index_empty</source>
                 <target>sitemap-index.xml no referencia ningún sitemap</target>
             </trans-unit>
+            <trans-unit id="383">
+                <source>action.font_bulk_import</source>
+                <target>Importación masiva</target>
+            </trans-unit>
+            <trans-unit id="384">
+                <source>label.font_bulk_import</source>
+                <target>Importación masiva de fuentes</target>
+            </trans-unit>
+            <trans-unit id="385">
+                <source>label.font_bulk_import_help</source>
+                <target>Seleccione varios archivos TTF, WOFF o WOFF2 a la vez (5 MB máx. cada uno) - el nombre, el peso y el estilo de cada archivo se deducen de su nombre de archivo (ej. «OpenSans-Bold.ttf», «Roboto-ExtraLightItalic.woff2»). Revise después las fuentes importadas y corrija cualquier deducción errónea.</target>
+            </trans-unit>
+            <trans-unit id="386">
+                <source>flash.font_bulk_import_invalid_token</source>
+                <target>Formulario no válido o expirado, inténtelo de nuevo.</target>
+            </trans-unit>
+            <trans-unit id="387">
+                <source>flash.font_bulk_import_no_files</source>
+                <target>Ningún archivo de fuente seleccionado.</target>
+            </trans-unit>
+            <trans-unit id="388">
+                <source>flash.font_bulk_import_success</source>
+                <target>%count% fuente(s) importada(s).</target>
+            </trans-unit>
+            <trans-unit id="389">
+                <source>flash.font_bulk_import_skipped</source>
+                <target>Omitido (formato no válido o demasiado grande): %files%</target>
+            </trans-unit>
             <trans-unit id="382">
                 <source>label.health_check_sitemap_index_ok</source>
                 <target>sitemap-index.xml es accesible y referencia %count% sitemap(s)</target>

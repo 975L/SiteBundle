@@ -94,6 +94,7 @@ class BlockDataExporterTest extends TestCase
         $media = (new Media())
             ->setFilename($filename)
             ->setRole('illustration')
+            ->setName('rapport-annuel')
             ->setAlt('A photo')
             ->setPosition(0);
 
@@ -102,6 +103,7 @@ class BlockDataExporterTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertSame('illustration', $data['role']);
+        $this->assertSame('rapport-annuel', $data['name']);
         $this->assertSame('A photo', $data['alt']);
         $this->assertSame('photo.jpg', $data['originalFilename']);
         $this->assertCount(1, $files);

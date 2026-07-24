@@ -86,6 +86,7 @@ class BlockDataImporterTest extends TestCase
             'data' => [],
             'medias' => [[
                 'role' => 'illustration',
+                'name' => 'rapport-annuel',
                 'alt' => 'A photo',
                 'position' => 0,
             ]],
@@ -93,6 +94,7 @@ class BlockDataImporterTest extends TestCase
 
         $this->assertCount(1, $blocks[0]->getMedias());
         $this->assertSame('illustration', $blocks[0]->getMedias()->first()->getRole());
+        $this->assertSame('rapport-annuel', $blocks[0]->getMedias()->first()->getName());
         $this->assertSame('A photo', $blocks[0]->getMedias()->first()->getAlt());
     }
 

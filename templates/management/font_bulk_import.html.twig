@@ -1,0 +1,14 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+    <h1>{{ ('label.font_bulk_import'|trans({}, 'site')) }}</h1>
+    <p>{{ ('label.font_bulk_import_help'|trans({}, 'site')) }}</p>
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" name="_token" value="{{ csrf_token('management_site_font_bulk_import') }}">
+        <div class="mb-3">
+            <input type="file" name="files[]" accept=".ttf,.woff,.woff2" multiple required class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">{{ ('action.font_bulk_import'|trans({}, 'site')) }}</button>
+    </form>
+{% endblock main %}

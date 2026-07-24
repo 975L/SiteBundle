@@ -102,6 +102,12 @@ class FontCrudController extends AbstractCrudController
             ->linkToCrudAction('exportSelection'));
         $actions->setPermission('exportSelection', $this->configService->get('site-role-admin'));
 
+        // Uploads several font files at once, guessing each one's name/weight/style from its filename - see FontBulkImportController
+        $actions->add(Crud::PAGE_INDEX, Action::new('bulkImport', t('action.font_bulk_import', [], 'site'), 'fa fa-upload')
+            ->createAsGlobalAction()
+            ->linkToRoute(FontBulkImportController::ROUTE));
+        $actions->setPermission('bulkImport', $role);
+
         // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
         $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
             ->linkToCrudAction(Action::INDEX)

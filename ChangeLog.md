@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.7.3
+
+- Fixed `BlockDataExporter`/`BlockDataImporter` silently dropping a Media's `name` from Sync exports/imports
+- Added `FontBulkImportController`, letting an admin upload several font files at once from the Font list
+- Added `FontFilenameParser`, guessing each font's name/weight/style from its filename
+
 ## v7.7.2
 
 - Fixed `CollectionItemImportProvider` failing to import items into a newly created collection (24/07/2026)

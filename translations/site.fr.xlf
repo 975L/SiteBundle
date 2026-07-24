@@ -1398,6 +1398,34 @@
                 <source>label.health_check_sitemap_index_empty</source>
                 <target>sitemap-index.xml ne référence aucun sitemap</target>
             </trans-unit>
+            <trans-unit id="383">
+                <source>action.font_bulk_import</source>
+                <target>Import en masse</target>
+            </trans-unit>
+            <trans-unit id="384">
+                <source>label.font_bulk_import</source>
+                <target>Import de polices en masse</target>
+            </trans-unit>
+            <trans-unit id="385">
+                <source>label.font_bulk_import_help</source>
+                <target>Sélectionnez plusieurs fichiers TTF, WOFF ou WOFF2 en une fois (5 Mo max chacun) - le nom, la graisse et le style de chaque fichier sont déduits de son nom de fichier (ex. « OpenSans-Bold.ttf », « Roboto-ExtraLightItalic.woff2 »). Vérifiez ensuite les polices importées et corrigez une éventuelle erreur de déduction.</target>
+            </trans-unit>
+            <trans-unit id="386">
+                <source>flash.font_bulk_import_invalid_token</source>
+                <target>Formulaire invalide ou expiré, veuillez réessayer.</target>
+            </trans-unit>
+            <trans-unit id="387">
+                <source>flash.font_bulk_import_no_files</source>
+                <target>Aucun fichier de police sélectionné.</target>
+            </trans-unit>
+            <trans-unit id="388">
+                <source>flash.font_bulk_import_success</source>
+                <target>%count% police(s) importée(s).</target>
+            </trans-unit>
+            <trans-unit id="389">
+                <source>flash.font_bulk_import_skipped</source>
+                <target>Ignoré (format invalide ou trop volumineux) : %files%</target>
+            </trans-unit>
             <trans-unit id="382">
                 <source>label.health_check_sitemap_index_ok</source>
                 <target>sitemap-index.xml est accessible et référence %count% sitemap(s)</target>

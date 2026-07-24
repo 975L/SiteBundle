@@ -76,6 +76,7 @@ class BlockDataExporter
 
         return [
             'role' => $media->getRole(),
+            'name' => $media->getName(),
             'alt' => $media->getAlt(),
             'label' => $media->getLabel(),
             'width' => $media->getWidth(),

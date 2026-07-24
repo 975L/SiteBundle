@@ -225,4 +225,18 @@ class FontCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, 'cancel'));
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
     }
+
+    // The index toolbar links to FontBulkImportController, letting the admin upload several font files at once
+    public function testConfigureActionsAddsBulkImportGlobalAction(): void
+    {
+        $controller = $this->createController();
+
+        $actions = $controller->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'bulkImport'));
+    }
 }

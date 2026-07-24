@@ -67,6 +67,7 @@ class BlockDataImporter
     {
         $media = (new Media())
             ->setRole($mediaData['role'] ?? null)
+            ->setName($mediaData['name'] ?? null)
             ->setAlt($mediaData['alt'] ?? null)
             ->setLabel($mediaData['label'] ?? null)
             ->setWidth($mediaData['width'] ?? null)
