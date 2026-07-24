@@ -57,7 +57,7 @@
     {
         "label": "label.site_first_online_date",
         "slug": "site-first-online-date",
-        "sensitive": true,
+        "sensitive": false,
         "restricted": false,
         "value": null,
         "kind": "text",
@@ -222,7 +222,7 @@
     {
         "label": "label.site_backup_mailto",
         "slug": "site-backup-mailto",
-        "sensitive": true,
+        "sensitive": false,
         "restricted": true,
         "value": null,
         "kind": "text",

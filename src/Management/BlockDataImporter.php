@@ -84,6 +84,12 @@ class BlockDataImporter
             $media->setFile(new ReplacingFile($filesDir . '/' . $mediaData['file'], true, true, true));
         }
 
+        // Read by VichPdfThumbnailListener once the file above is actually uploaded (on flush), so it can reuse
+        // this thumbnail instead of running Ghostscript - see BlockDataExporter for how it got into the archive
+        if (null !== $filesDir && isset($mediaData['thumbnail'])) {
+            $media->setImportedThumbnailPath($filesDir . '/' . $mediaData['thumbnail']);
+        }
+
         return $media;
     }
 }

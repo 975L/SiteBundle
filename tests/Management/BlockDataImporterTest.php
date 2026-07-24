@@ -134,4 +134,47 @@ class BlockDataImporterTest extends TestCase
 
         $this->assertNull($media->getFile());
     }
+
+    public function testBuildMediaSetsImportedThumbnailPathFromTheExtractedZipWhenPresent(): void
+    {
+        $filesDir = sys_get_temp_dir() . '/block_data_importer_test_' . bin2hex(random_bytes(4));
+        mkdir($filesDir . '/files', 0777, true);
+        file_put_contents($filesDir . '/files/photo.pdf', 'fake-pdf-bytes');
+        file_put_contents($filesDir . '/files/photo.webp', 'fake-webp-bytes');
+
+        $em = $this->createStub(EntityManagerInterface::class);
+        $media = (new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)))->buildMedia([
+            'role' => 'illustration',
+            'originalFilename' => 'photo.pdf',
+            'file' => 'files/photo.pdf',
+            'thumbnail' => 'files/photo.webp',
+        ], $filesDir);
+
+        $this->assertSame($filesDir . '/files/photo.webp', $media->getImportedThumbnailPath());
+
+        unlink($filesDir . '/files/photo.pdf');
+        unlink($filesDir . '/files/photo.webp');
+        rmdir($filesDir . '/files');
+        rmdir($filesDir);
+    }
+
+    public function testBuildMediaDoesNotSetImportedThumbnailPathWhenAbsentFromTheExportedData(): void
+    {
+        $filesDir = sys_get_temp_dir() . '/block_data_importer_test_' . bin2hex(random_bytes(4));
+        mkdir($filesDir . '/files', 0777, true);
+        file_put_contents($filesDir . '/files/photo.jpg', 'fake-image-bytes');
+
+        $em = $this->createStub(EntityManagerInterface::class);
+        $media = (new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)))->buildMedia([
+            'role' => 'illustration',
+            'originalFilename' => 'photo.jpg',
+            'file' => 'files/photo.jpg',
+        ], $filesDir);
+
+        $this->assertNull($media->getImportedThumbnailPath());
+
+        unlink($filesDir . '/files/photo.jpg');
+        rmdir($filesDir . '/files');
+        rmdir($filesDir);
+    }
 }

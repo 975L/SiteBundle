@@ -12,6 +12,8 @@ Symfony bundle that provides a complete foundation for building websites — lay
 
 Add SiteBundle on top of the shared [UiBundle](https://github.com/975L/UiBundle) + [ConfigBundle](https://github.com/975L/ConfigBundle) foundation and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
 
+See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bundle), and browse every block kind live in the [block gallery](https://975l.com/pages/blocks).
+
 ---
 
 ## Features

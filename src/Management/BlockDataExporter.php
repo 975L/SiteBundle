@@ -11,6 +11,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\SiteBundle\Management\Trait\ArchiveFileTrait;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Listener\VichPdfThumbnailListener;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 // Shared Block/Media serialization for every Sync export carrying a Block collection (Page, Menu) - keeps the recursive container-slot walk in one place instead of duplicated per entity. Mirrors BlockDataImporter on the way back in
@@ -74,6 +75,17 @@ class BlockDataExporter
             return null;
         }
 
+        // A PDF's own .webp thumbnail (see VichPdfThumbnailListener) is a sidecar file on disk, never a Media
+        // of its own - carried alongside so a Sync import doesn't have to regenerate it via Ghostscript, which
+        // isn't available on every host (e.g. Infomaniak). null when there's no thumbnail (not a PDF, or one
+        // was never generated - Ghostscript missing at upload time)
+        $thumbnail = null;
+        $webpFilename = VichPdfThumbnailListener::toWebpPath($filename);
+        if ($webpFilename !== $filename) {
+            $registeredThumbnail = $this->registerArchiveFile($this->projectDir, $webpFilename, $files);
+            $thumbnail = $registeredThumbnail['archivePath'] ?? null;
+        }
+
         return [
             'role' => $media->getRole(),
             'name' => $media->getName(),
@@ -90,6 +102,7 @@ class BlockDataExporter
             'description' => $media->getDescription(),
             'originalFilename' => $registered['originalFilename'],
             'file' => $registered['archivePath'],
+            'thumbnail' => $thumbnail,
         ];
     }
 }

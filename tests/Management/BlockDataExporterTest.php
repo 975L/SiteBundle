@@ -106,9 +106,57 @@ class BlockDataExporterTest extends TestCase
         $this->assertSame('rapport-annuel', $data['name']);
         $this->assertSame('A photo', $data['alt']);
         $this->assertSame('photo.jpg', $data['originalFilename']);
+        $this->assertNull($data['thumbnail']);
         $this->assertCount(1, $files);
         $this->assertSame($projectDir . '/public/' . $filename, array_values($files)[0]);
         $this->assertSame(array_key_first($files), $data['file']);
+
+        unlink($projectDir . '/public/' . $filename);
+        rmdir($projectDir . '/public/uploads');
+        rmdir($projectDir . '/public');
+        rmdir($projectDir);
+    }
+
+    public function testExportMediaRegistersAPdfsCompanionWebpThumbnailWhenItExistsOnDisk(): void
+    {
+        $projectDir = sys_get_temp_dir() . '/block_data_exporter_test_' . bin2hex(random_bytes(4));
+        mkdir($projectDir . '/public/uploads', 0777, true);
+        $filename = 'uploads/rapport.pdf';
+        file_put_contents($projectDir . '/public/' . $filename, 'fake-pdf-bytes');
+        file_put_contents($projectDir . '/public/uploads/rapport.webp', 'fake-webp-bytes');
+
+        $media = (new Media())->setFilename($filename);
+
+        $files = [];
+        $data = (new BlockDataExporter($projectDir))->exportMedia($media, $files);
+
+        $this->assertNotNull($data);
+        $this->assertNotNull($data['thumbnail']);
+        $this->assertCount(2, $files);
+        $this->assertSame($projectDir . '/public/uploads/rapport.webp', $files[$data['thumbnail']]);
+
+        unlink($projectDir . '/public/' . $filename);
+        unlink($projectDir . '/public/uploads/rapport.webp');
+        rmdir($projectDir . '/public/uploads');
+        rmdir($projectDir . '/public');
+        rmdir($projectDir);
+    }
+
+    public function testExportMediaLeavesThumbnailNullWhenThePdfHasNoCompanionWebpYet(): void
+    {
+        $projectDir = sys_get_temp_dir() . '/block_data_exporter_test_' . bin2hex(random_bytes(4));
+        mkdir($projectDir . '/public/uploads', 0777, true);
+        $filename = 'uploads/rapport.pdf';
+        file_put_contents($projectDir . '/public/' . $filename, 'fake-pdf-bytes');
+
+        $media = (new Media())->setFilename($filename);
+
+        $files = [];
+        $data = (new BlockDataExporter($projectDir))->exportMedia($media, $files);
+
+        $this->assertNotNull($data);
+        $this->assertNull($data['thumbnail']);
+        $this->assertCount(1, $files);
 
         unlink($projectDir . '/public/' . $filename);
         rmdir($projectDir . '/public/uploads');
