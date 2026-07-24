@@ -98,13 +98,7 @@ php bin/console assets:install --symlink
 
 This bundle ships Stimulus controllers (basic, matomo, cookieConsent). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace.
 
-**Add one entry to `importmap.php`** (one-time, at installation):
-
-```php
-'@c975l/site-bundle/controllers.js' => [
-    'path' => './vendor/c975l/site-bundle/assets/controllers.js',
-],
-```
+Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
 **Add two lines to `assets/bootstrap.js`** (or `assets/stimulus_bootstrap.js`):
 

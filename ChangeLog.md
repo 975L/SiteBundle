@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.7.1
+
+- Added `ImportmapProvider`, declaring `controllers-admin.js`/`controllers.js`'s importmap.php entries for ConfigBundle's `c975l:config:check-importmap` (24/07/2026)
+
 ## v7.7
 
 - Fixed the cookie consent banner showing the same text twice, once as title and once as description (24/07/2026)
