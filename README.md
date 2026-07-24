@@ -77,7 +77,7 @@ Add the bundle routes to `config/routes.yaml`:
 
 ```yaml
 c975_l_site:
-    resource: "@c975LSiteBundle/Controller/"
+    resource: "@c975LSiteBundle/src/Controller/"
     type: attribute
     prefix: /
     # For multilingual websites:
@@ -210,6 +210,8 @@ To **hint the sitemap generator**, add metadata in a Twig comment at the top of 
 | `templates/pages/redirected/{slug}.html.twig` | Redirects to the slug written inside the file |
 | `templates/pages/deleted/{slug}.html.twig` | Throws a 410 Gone exception |
 
+Database-managed redirects (`Redirect` entity, `fromPath`/`toUrl`/`permanent`) go through `RedirectExportProvider`/`RedirectImportProvider`, plugging them into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `fromPath`, `Redirect`'s own unique constraint.
+
 ### Database pages
 
 Use the `Page` entity to manage pages through the database. Each page supports:
@@ -231,7 +233,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | Kind | Category | Description |
 | --- | --- | --- |
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
-| `twig_content` | `label.category_migration` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
+| `twig_content` | `label.category_twig` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
 | `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu` context (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page`. Not cacheable: its "active" state depends on the current request path. |
 
@@ -241,7 +243,7 @@ Each block is registered as a `ui.block`-tagged service, with a dedicated form (
 
 Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-editor` key in ConfigBundle.
 
-Selected pages can also be exported as a zip (title/slug/blocks, any Block's Media files bundled in) via the index's "Export selection" batch action, gated by `site-role-admin` — meant to be re-uploaded on another site/environment through ConfigBundle's **Import content** dashboard screen (see `PageImportProvider`, and ConfigBundle's README, "Contributing import providers from other bundles"). Ids never need to match between the two sites: pages/media are matched by slug on import.
+Selected pages can also be exported as a zip (title/slug/blocks, any Block's Media files bundled in) via the index's "Export selection" batch action, gated by `site-role-admin` — meant to be re-uploaded on another site/environment through ConfigBundle's **Import content** dashboard screen (see `PageImportProvider`, and ConfigBundle's README, "Contributing import providers from other bundles"). Ids never need to match between the two sites: pages/media are matched by slug on import. `PageExportProvider` (the same serialization, every non-deleted page) also plugs Pages into ConfigBundle's **Export sync (everything)** dashboard shortcut.
 
 ### Page templates
 
@@ -278,6 +280,8 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 `email-header` and `email-footer` are rendered the same way inside `@c975LSite/emails/header.html.twig` and `@c975LSite/emails/footer.html.twig` respectively (see [Email templates](#email-templates)), independently from the site's own `navbar`/`footer` — each location is edited separately, so the client can keep different content for emails than for the site.
 
 A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
+
+`MenuExportProvider`/`MenuImportProvider` plug all four locations into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `location` on import, same "whole Block collection replaced" approach as `PageImportProvider`.
 
 ### Linking to a section of a page (anchors)
 
@@ -458,11 +462,35 @@ To override it manually for a file-based page:
 
 ---
 
+## Health check
+
+SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
+
+| Provider | `getKind()` | Checks | API key |
+| --- | --- | --- | --- |
+| `SitePageHealthCheckProvider` | `pagespeed` | Lighthouse performance/accessibility/best-practices/SEO scores + console errors, via Google's PageSpeed Insights v5 API | Optional (`healthcheck-pagespeed-api-key`) - works without one, but Google's anonymous quota is shared worldwide and easily exhausted (HTTP 429); a key raises it |
+| `SecurityHeadersHealthCheckProvider` | `security-headers` | HSTS, CSP (or its `frame-ancestors` in place of X-Frame-Options), X-Content-Type-Options, Referrer-Policy, Permissions-Policy, wildcard CORS - reimplemented directly against the page's own response headers (no securityheaders.com dependency, it has no public API for automated use). These headers are set once for the whole site, never per-page, so only the homepage is fetched | None |
+| `W3cHtmlHealthCheckProvider` | `w3c-html` | HTML markup (W3C Nu Html Checker) - skips a page outright (single "not tested" row) if it doesn't resolve on the checked environment, instead of forwarding a 404 to the validator | None |
+| `W3cCssHealthCheckProvider` | `w3c-css` | CSS markup (W3C CSS Validator) - same not-deployed guard as `W3cHtmlHealthCheckProvider`. Split from HTML into its own kind/row so each shows its own count (eg. "51 CSS warnings") without being buried in one combined line, and each gets its own direct link to its validator's report for the page | None |
+| `ContentQualityHealthCheckProvider` | `content-quality` | Missing meta description, missing `<h1>`, images without `alt`, broken internal links (`<a href>` pointing at this site's own host, each unique link checked once per run regardless of how many pages link to it) - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider` | None |
+| `SslCertificateHealthCheckProvider` | `ssl-certificate` | TLS certificate expiry (warns at 30 days left, errors at 7) - one check for the whole site, since the certificate is issued for the host, not per-page. Skipped entirely if `site-url` isn't `https://` | None |
+| `MixedContentHealthCheckProvider` | `mixed-content` | `http://` images/scripts/stylesheets loaded from an `https://` page, per published page - skipped entirely if `site-url` isn't `https://` | None |
+| `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable and well-formed, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
+| `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
+
+`W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) to skip a page that doesn't resolve on the checked environment with a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - not a warning/error, there's nothing to act on until the page is actually deployed), instead of forwarding a confusing raw HTTP error to the actual check. `'home'` maps to the site root, any other slug to `/pages/{slug}/`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
+
+**Run this against production's own database**, same constraint as `c975l:site:sitemaps:create`/`c975l:site:backup`: the page list comes from `PageRepository::findAllOrdered()` against whichever database the command is connected to, while the urls it builds always point at `site-url` (production). Run it from a dev/staging environment whose database has pages not yet synced to production (see [Contributing export providers](https://github.com/975L/ConfigBundle#contributing-export-providers-from-other-bundles)'s "Sync" zip) and you'll get failures for pages that simply aren't live yet - not a bug, just the wrong database for the question being asked. In normal operation this is a non-issue: the scheduler consumer already runs on production.
+
+**On WCAG/accessibility specifically**: there is no free, pure-PHP equivalent to a real WCAG scanner (tools like axe-core need a headless browser, i.e. Node) - `SitePageHealthCheckProvider`'s `accessibility` score is the only automated signal here, a rougher one than an itemized audit (it's the same axe-core engine under the hood, but reports one score, not per-criterion detail). A prior version of this bundle called WebAIM's WAVE API for itemized RGAA/WCAG detail; it was removed as credit-based pricing (~$0.04/page) doesn't scale to checking many pages across many sites. If you need an itemized audit trail for an accessibility declaration (RGAA 4.1's 106 criteria map to WCAG 2.1 AA, EAA enforceable since June 2025), run WAVE's own browser extension manually per page, or reintroduce a paid provider on your own `HealthCheckProviderInterface` implementation.
+
 ## Site graphics
 
 The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
 
 Access is controlled by the `site-role-editor` key in ConfigBundle, same as pages.
+
+`SiteGraphicExportProvider`/`SiteGraphicImportProvider` plug site graphics into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — a singleton role (favicon, apple-touch-icon, og-image, logo) matches by its own role on import, while the repeatable `error-image` pool is replaced wholesale (no natural key of its own to match against).
 
 ---
 
@@ -470,17 +498,22 @@ Access is controlled by the `site-role-editor` key in ConfigBundle, same as page
 
 `ProcedureProvider` (implements ConfigBundle's `ProcedureProviderInterface`) reads `config/procedures.json` and contributes one entry per documented admin workflow (creating a page, a redirect, a menu, a user, site graphics, collection items) to ConfigBundle's `ProcedureBuilder`, which aggregates every bundle's procedures for the dashboard AI assistant. Each entry ships `fr`/`en`/`es` translations, resolved to the current locale by `ProcedureJsonReader` (falling back to English, then to whichever translation comes first).
 
+`SiteEssentialActionProvider` (implements ConfigBundle's `EssentialActionProviderInterface`) contributes a homepage/navbar+footer menus/at-least-one-font entry to the dashboard's "Essential actions" checklist (see ConfigBundle's README, "Contributing essential actions from other bundles").
+
 ---
 
-## Collection items
+## Collections
 
-`CollectionItem` is a generic "title/description/image/link" item, grouped by an arbitrary `group` (e.g. `"projects"`), so a single CRUD/table can back several unrelated collections across a site. Its own `slug` (via EasyAdmin's `SlugField`, auto-filled from `title` but editable) is unique **within its group only** (`UNIQ_COLLECTION_ITEM_GROUP_SLUG`, not globally like `Page::$slug`) — normalized and de-duplicated server-side (`-2`, `-3`... on collision) by `CollectionItemCrudController`, same recipe as `PageCrudController`'s own slug handling. Managed via `CollectionItemCrudController`; access is controlled by the `site-role-editor` key in ConfigBundle.
+A `CollectionGroup` (e.g. "Projects") is a named, slugified container of `CollectionItem` rows — a generic "title/description/image/link" item. One `CollectionItem` table backs every collection across a site; what separates "Projects" from "Team" is only which `CollectionGroup` each item belongs to. Managed via two CRUDs, on purpose kept as two separate steps:
 
-The CRUD's own index is a two-step screen rather than one flat table of every group's items mixed together: opening it first lists every distinct `group` (with its item count), and picking one filters the familiar EasyAdmin grid (drag-and-drop reorder included) down to just that group's items — a "← Collections" action switches back. Creating a new item from within an already-filtered group prefills its `group` field, so there's no need to retype the exact string by hand (a typo there would silently create a brand-new group instead of joining the existing one).
+1. **`CollectionCrudController`** ("Collections" in the dashboard menu) creates/renames/deletes the collections themselves — just a `name` and its `slug` (via EasyAdmin's `SlugField`, auto-filled from `name` but editable, unique site-wide like `Page::$slug`, normalized and de-duplicated server-side by the same recipe as `PageCrudController`). Its index row exposes an "Items" action.
+2. **`CollectionItemCrudController`** manages one collection's items at a time, reached only via that "Items" action (`?collectionGroup=<id>`) — never a free-typed field on the item itself, so a typo can no longer silently spawn a brand-new, unrelated collection. The familiar EasyAdmin grid (drag-and-drop reorder included) is filtered to that one collection; a "← Collections" action switches back. An item's own `slug` is unique **within its collection only** (`UNIQ_COLLECTION_ITEM_GROUP_SLUG`, not globally like `Page::$slug`).
 
-`CollectionItemSourceProvider` (implements `c975l/ui-bundle`'s `CollectionSourceProviderInterface`) exposes every distinct `group` found in the table as its own source, keyed `site.collection.{group}` — adding a brand new group via the CRUD is enough to make it pickable in UiBundle's `collection` block, no code change needed.
+Access to both is controlled by the `site-role-editor` key in ConfigBundle.
 
-`c975l:site:collection-item:import` (see [Commands](#commands)) migrates a legacy hand-maintained JSON array of items into `CollectionItem` rows for a given group, for an app switching from a JSON-driven list to this CRUD + the `collection` block.
+`CollectionItemSourceProvider` (implements `c975l/ui-bundle`'s `CollectionSourceProviderInterface`) exposes every `CollectionGroup` as its own source, keyed `site.collection.{slug}` — creating a brand new collection via `CollectionCrudController` is enough to make it pickable in UiBundle's `collection` block, no code change needed.
+
+`c975l:site:collection-item:import` (see [Commands](#commands)) migrates a legacy hand-maintained JSON array of items into `CollectionItem` rows for a given collection (`--group`, matched/created by name if it doesn't exist yet), for an app switching from a JSON-driven list to this CRUD + the `collection` block. `CollectionItemExportProvider`/`CollectionItemImportProvider` plug Collection items into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen, doing the same collection auto-creation on import.
 
 ### Item detail pages
 
@@ -505,7 +538,7 @@ The 3 `theme-font-family-*` keys are `kind: font` (ConfigBundle), rendering a `<
 
 An admin can also upload their own font files straight from the dashboard (`FontCrudController`, TTF/WOFF/WOFF2, 5 MB max) — no dev/deploy needed. Each upload is one `Font` row (name/weight/style + the file, stored under `public/medias/fonts`); `FontCssListener` (Doctrine listener + `CacheWarmerInterface`, same pattern as `ThemeVariablesCssListener`) compiles every row into `public/bundles/build/site-fonts-uploaded.css`, one `@font-face` block per row, loaded via `StylesheetProvider` alongside `site-theme.css`. No format conversion happens server-side (WOFF2 encoding needs Brotli + glyph-table transforms that plain PHP can't do without a system binary) — an admin wanting broad browser fallback just uploads the same font in more than one format, producing several `@font-face` rules with identical `font-family`/weight/style that the browser picks between.
 
-Selected fonts can be exported the same way as pages (see [Admin management](#admin-management)): an "Export selection" batch action, `site-role-admin`-gated, producing a zip re-importable via ConfigBundle's **Import content** screen (`FontImportProvider`).
+Selected fonts can be exported the same way as pages (see [Admin management](#admin-management)): an "Export selection" batch action, `site-role-admin`-gated, producing a zip re-importable via ConfigBundle's **Import content** screen (`FontImportProvider`). `FontExportProvider` also plugs Fonts into ConfigBundle's **Export sync (everything)** dashboard shortcut.
 
 Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, also a `CacheWarmerInterface` so a fresh `public/bundles/build/site-theme.css` exists after a deploy even without an admin re-saving anything) into `--c975l-*` CSS custom properties, loaded right after `styles.min.css` so they win the cascade over the built-in defaults. A bare custom font name picked for `theme-font-family-title`/`-body`/`-accent` also gets a generic fallback appended (`sans-serif`/`sans-serif`/`monospace` respectively) so the browser has somewhere to go if the `@font-face` fails to load. The same compiled file is inlined into emails via the `theme_variables_css()` Twig function — no more per-app `_user-variables.css`/`_user-typography.css` override stubs to keep in sync, the backoffice is now the single source of truth for both the site and its emails. Because the real site links UiBundle's concatenated `bundles/build/site.css` rather than `site-theme.css` directly, the listener also calls UiBundle's `StylesheetCacheWarmer::compileAll()` after every regeneration, so a theme change (or applying a preset) is reflected immediately instead of waiting for the next `cache:warmup`.
 
@@ -739,7 +772,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
 | `php bin/console c975l:site:templates:apply <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
-| `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collection-items) rows for a given group (`--images-dir`, `--dry-run` options) |
+| `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collections) rows for a given collection (`--images-dir`, `--dry-run` options) |
 
 ### Create a new site
 
@@ -926,12 +959,16 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             // Same backup + a summary email: every Monday at 03:07
             ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --report')))
             // Messenger cleanup: daily at 03:00
-            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('site:messenger-cleanup')));
+            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('site:messenger-cleanup')))
+            // Health check (see below): every registered provider is free, weekly is plenty
+            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains')));
     }
 }
 ```
 
 The `stateful()` call persists the last-run time via Symfony Cache so tasks are not re-run if the worker restarts.
+
+This class is scaffolded once (`c975l:scaffold:install`, or `c975l:site:create` on a brand new site) into your app's own `src/Scheduler/MaintenanceSchedule.php` — a bundle upgrade that changes the *scaffold* (like the health check cron entries above) never touches your already-scaffolded copy. Re-apply the diff by hand, or re-run `c975l:scaffold:install` and merge the moved-aside `existingFiles/*.old` copy back in.
 
 ### 2. Start the worker
 

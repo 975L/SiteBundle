@@ -427,8 +427,8 @@
                 <target>Legal</target>
             </trans-unit>
             <trans-unit id="112">
-                <source>label.category_migration</source>
-                <target>Migration</target>
+                <source>label.category_twig</source>
+                <target>Twig</target>
             </trans-unit>
             <trans-unit id="113">
                 <source>label.model</source>
@@ -984,27 +984,11 @@
             </trans-unit>
             <trans-unit id="256">
                 <source>label.collection_items</source>
-                <target>Collections</target>
-            </trans-unit>
-            <trans-unit id="257">
-                <source>label.group</source>
-                <target>Group</target>
-            </trans-unit>
-            <trans-unit id="258">
-                <source>label.collection_item_group_help</source>
-                <target>Which collection this item belongs to (e.g. "projects") - picked as source in the "Collection" block</target>
+                <target>Items</target>
             </trans-unit>
             <trans-unit id="267">
                 <source>label.collection_item_slug_help</source>
-                <target>Identifies the item within its group, used for its detail URL if the "Collection" block defines one - unique per group only.</target>
-            </trans-unit>
-            <trans-unit id="281">
-                <source>label.collection_items_count</source>
-                <target>Item count</target>
-            </trans-unit>
-            <trans-unit id="282">
-                <source>label.collection_items_none</source>
-                <target>No collections yet.</target>
+                <target>Identifies the item within its own collection, used for its detail URL if the "Collection" block defines one - unique per collection only.</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
@@ -1048,11 +1032,31 @@
             </trans-unit>
             <trans-unit id="284">
                 <source>label.info_collection_item_list</source>
-                <target>Title/description/image/link items grouped by "group", each feeding a "collection" block on the site. Drag to reorder, or create/edit/delete an item from this list.</target>
+                <target>Title/description/image/link items belonging to this collection, displayed by its "Collection" block on a page. Drag to reorder, or create/edit/delete an item from this list.</target>
             </trans-unit>
             <trans-unit id="285">
-                <source>label.info_collection_item_groups</source>
-                <target>Pick a group to manage its items, or create a new one. Each group feeds a "collection" block.</target>
+                <source>label.info_collections</source>
+                <target>Create a collection, then click "Items" to add content to it. Once created, a collection becomes available as a source in the "Collection" block on any page.</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>label.collection</source>
+                <target>Collection</target>
+            </trans-unit>
+            <trans-unit id="318">
+                <source>label.collections</source>
+                <target>Collections</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>label.collection_name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>label.collection_name_help</source>
+                <target>The collection's displayed name - its technical identifier (below) is generated from it automatically.</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>label.collection_slug_help</source>
+                <target>The collection's technical identifier, generated from its name - this is what shows up in a page's "Collection" block source list, to display its content.</target>
             </trans-unit>
             <trans-unit id="286">
                 <source>label.info_user_roles</source>
@@ -1153,6 +1157,250 @@
             <trans-unit id="310">
                 <source>label.info_font</source>
                 <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>label.essential_action_pages</source>
+                <target>Homepage</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>description.essential_action_pages</source>
+                <target>The page every visitor lands on first</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>label.essential_action_menus</source>
+                <target>Navbar &amp; footer menus</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>description.essential_action_menus</source>
+                <target>The navigation links shown at the top and bottom of every page</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>label.essential_action_fonts</source>
+                <target>Fonts</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>description.essential_action_fonts</source>
+                <target>At least one typeface for your site's text</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>label.health_check_summary_pagespeed</source>
+                <target>Performance %performance% · Accessibility %accessibility% · Best practices %bestPractices% · SEO %seo%</target>
+            </trans-unit>
+            <trans-unit id="323">
+                <source>label.health_check_console_errors</source>
+                <target>%count% console error(s)</target>
+            </trans-unit>
+            <trans-unit id="324">
+                <source>label.health_check_pagespeed_call_failed</source>
+                <target>PageSpeed Insights call failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="325">
+                <source>label.health_check_pagespeed_api_key_missing</source>
+                <target>No PageSpeed Insights API key configured - Google's anonymous quota is shared worldwide and easily exhausted (HTTP 429)</target>
+            </trans-unit>
+            <trans-unit id="326">
+                <source>label.health_check_summary_security_headers</source>
+                <target>%present%/%total% security headers present</target>
+            </trans-unit>
+            <trans-unit id="327">
+                <source>label.health_check_security_headers_missing</source>
+                <target>missing: %headers%</target>
+            </trans-unit>
+            <trans-unit id="328">
+                <source>label.health_check_security_headers_cors_wildcard</source>
+                <target>CORS allows any origin (*)</target>
+            </trans-unit>
+            <trans-unit id="329">
+                <source>label.health_check_security_headers_call_failed</source>
+                <target>Security headers check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="330">
+                <source>label.health_check_summary_w3c_html</source>
+                <target>%errors% error(s), %warnings% warning(s)</target>
+            </trans-unit>
+            <trans-unit id="331">
+                <source>label.health_check_w3c_html_call_failed</source>
+                <target>W3C HTML validation failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="335">
+                <source>label.health_check_content_quality_call_failed</source>
+                <target>Content check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="336">
+                <source>label.health_check_content_quality_no_description</source>
+                <target>missing meta description</target>
+            </trans-unit>
+            <trans-unit id="337">
+                <source>label.health_check_content_quality_no_h1</source>
+                <target>missing &lt;h1&gt;</target>
+            </trans-unit>
+            <trans-unit id="338">
+                <source>label.health_check_content_quality_images_without_alt</source>
+                <target>%count% image(s) without alt text</target>
+            </trans-unit>
+            <trans-unit id="339">
+                <source>label.health_check_content_quality_broken_links</source>
+                <target>%count% broken internal link(s)</target>
+            </trans-unit>
+            <trans-unit id="340">
+                <source>label.health_check_content_quality_ok</source>
+                <target>No content issues found</target>
+            </trans-unit>
+            <trans-unit id="341">
+                <source>label.health_check_page_not_found</source>
+                <target>Page not found (not tested)</target>
+            </trans-unit>
+            <trans-unit id="342">
+                <source>label.health_check_security_headers_scope</source>
+                <target>these headers apply to the whole site, checked once via the homepage</target>
+            </trans-unit>
+            <trans-unit id="343">
+                <source>label.tab_data</source>
+                <target>Data</target>
+            </trans-unit>
+            <trans-unit id="344">
+                <source>label.tab_health_check</source>
+                <target>Health check</target>
+            </trans-unit>
+            <trans-unit id="345">
+                <source>label.health_check_panel_empty</source>
+                <target>No health check results yet for this page.</target>
+            </trans-unit>
+            <trans-unit id="347">
+                <source>label.health_check_advice_pagespeed</source>
+                <target>Improve %category% (score: %score%) - run Lighthouse locally for a full breakdown</target>
+            </trans-unit>
+            <trans-unit id="348">
+                <source>label.health_check_advice_security_headers</source>
+                <target>Configure the missing security headers: %headers%</target>
+            </trans-unit>
+            <trans-unit id="349">
+                <source>label.health_check_advice_security_headers_cors</source>
+                <target>Restrict CORS instead of allowing any origin (*)</target>
+            </trans-unit>
+            <trans-unit id="350">
+                <source>label.health_check_advice_w3c_html_errors</source>
+                <target>Fix %count% HTML validation error(s)</target>
+            </trans-unit>
+            <trans-unit id="351">
+                <source>label.health_check_advice_w3c_css_errors</source>
+                <target>Fix %count% CSS validation error(s)</target>
+            </trans-unit>
+            <trans-unit id="352">
+                <source>label.health_check_advice_w3c_html_warnings</source>
+                <target>Review %count% HTML validation warning(s)</target>
+            </trans-unit>
+            <trans-unit id="353">
+                <source>label.health_check_advice_w3c_css_warnings</source>
+                <target>Review %count% CSS validation warning(s)</target>
+            </trans-unit>
+            <trans-unit id="354">
+                <source>label.health_check_advice_no_description</source>
+                <target>Add a meta description (about 50-160 characters)</target>
+            </trans-unit>
+            <trans-unit id="355">
+                <source>label.health_check_advice_no_h1</source>
+                <target>Add a single main heading (&lt;h1&gt;)</target>
+            </trans-unit>
+            <trans-unit id="356">
+                <source>label.health_check_advice_images_without_alt</source>
+                <target>Add descriptive alt text to %count% image(s)</target>
+            </trans-unit>
+            <trans-unit id="357">
+                <source>label.health_check_advice_broken_links</source>
+                <target>Fix or remove %count% broken internal link(s)</target>
+            </trans-unit>
+            <trans-unit id="358">
+                <source>label.health_check_summary_w3c_css</source>
+                <target>%errors% error(s), %warnings% warning(s)</target>
+            </trans-unit>
+            <trans-unit id="359">
+                <source>label.health_check_w3c_css_call_failed</source>
+                <target>W3C CSS validation failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="361">
+                <source>label.health_check_ssl_certificate_not_https</source>
+                <target>Site not served over HTTPS, certificate not checked</target>
+            </trans-unit>
+            <trans-unit id="362">
+                <source>label.health_check_ssl_certificate_call_failed</source>
+                <target>Could not read the TLS certificate: %message%</target>
+            </trans-unit>
+            <trans-unit id="363">
+                <source>label.health_check_summary_ssl_certificate</source>
+                <target>Expires in %days% day(s) (%date%)</target>
+            </trans-unit>
+            <trans-unit id="364">
+                <source>label.health_check_advice_ssl_certificate</source>
+                <target>Renew the TLS certificate before it expires</target>
+            </trans-unit>
+            <trans-unit id="365">
+                <source>label.health_check_mixed_content_call_failed</source>
+                <target>Mixed content check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="366">
+                <source>label.health_check_mixed_content_found</source>
+                <target>%count% insecure (http://) resource(s) found</target>
+            </trans-unit>
+            <trans-unit id="367">
+                <source>label.health_check_mixed_content_ok</source>
+                <target>No insecure resources found</target>
+            </trans-unit>
+            <trans-unit id="368">
+                <source>label.health_check_advice_mixed_content</source>
+                <target>Serve %count% resource(s) over https:// instead of http://</target>
+            </trans-unit>
+            <trans-unit id="369">
+                <source>label.health_check_seo_files_call_failed</source>
+                <target>Request failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="370">
+                <source>label.health_check_robots_missing</source>
+                <target>robots.txt is missing or empty</target>
+            </trans-unit>
+            <trans-unit id="371">
+                <source>label.health_check_robots_blocks_everything</source>
+                <target>robots.txt disallows all crawling (Disallow: / for User-agent: *)</target>
+            </trans-unit>
+            <trans-unit id="372">
+                <source>label.health_check_robots_ok</source>
+                <target>robots.txt is reachable and does not block everything</target>
+            </trans-unit>
+            <trans-unit id="373">
+                <source>label.health_check_sitemap_missing</source>
+                <target>%file% is missing</target>
+            </trans-unit>
+            <trans-unit id="374">
+                <source>label.health_check_sitemap_invalid</source>
+                <target>%file% does not look like a valid sitemap</target>
+            </trans-unit>
+            <trans-unit id="375">
+                <source>label.health_check_sitemap_ok</source>
+                <target>%file% is reachable and well-formed</target>
+            </trans-unit>
+            <trans-unit id="376">
+                <source>label.health_check_redirect_loop</source>
+                <target>Redirect loop detected</target>
+            </trans-unit>
+            <trans-unit id="377">
+                <source>label.health_check_redirect_chain</source>
+                <target>Chains through %hops% other redirect(s)</target>
+            </trans-unit>
+            <trans-unit id="378">
+                <source>label.health_check_redirect_ok</source>
+                <target>Direct redirect, no chaining</target>
+            </trans-unit>
+            <trans-unit id="379">
+                <source>label.health_check_sitemap_index_invalid</source>
+                <target>sitemap-index.xml does not look like a valid sitemap index</target>
+            </trans-unit>
+            <trans-unit id="380">
+                <source>label.health_check_sitemap_index_empty</source>
+                <target>sitemap-index.xml does not reference any sitemap</target>
+            </trans-unit>
+            <trans-unit id="382">
+                <source>label.health_check_sitemap_index_ok</source>
+                <target>sitemap-index.xml is reachable and references %count% sitemap(s)</target>
             </trans-unit>
         </body>
     </file>

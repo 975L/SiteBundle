@@ -11,11 +11,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\ImportProviderInterface;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Service\DefaultPagesImporter;
-use c975L\UiBundle\Entity\Block;
-use c975L\UiBundle\Entity\Media;
 use Doctrine\ORM\EntityManagerInterface;
-use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // Imports a "site_page" content export (see PageCrudController::exportSelection/ContentExporter) - unlike DefaultPagesImporter::import() (which only ever creates the fixed default pages and skips ones that already exist), this always overwrites: the whole point is pushing a page built in dev on top of whatever exists in prod under the same slug. Matches by slug, never by id (which won't match between environments) - Block has no natural key of its own, so its entire collection is replaced rather than diffed
 class PageImportProvider implements ImportProviderInterface
@@ -25,7 +21,7 @@ class PageImportProvider implements ImportProviderInterface
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly PageRepository $pageRepository,
-        private readonly DefaultPagesImporter $defaultPagesImporter,
+        private readonly BlockDataImporter $blockDataImporter,
     ) {
     }
 
@@ -51,6 +47,7 @@ class PageImportProvider implements ImportProviderInterface
                 ->setChangeFrequency($item['changeFrequency'] ?? null)
                 ->setPriority($item['priority'] ?? null)
                 ->setIsPublished($item['isPublished'] ?? false)
+                ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
                 ->setModification($now);
 
             // Existing Blocks have no natural key to match the imported ones against, so the whole collection is replaced - BlockRemovalListener removes the orphaned rows (and their Medias) on flush
@@ -58,21 +55,20 @@ class PageImportProvider implements ImportProviderInterface
                 $page->removeBlock($existingBlock);
             }
 
-            foreach ($item['blocks'] ?? [] as $blockData) {
-                $this->defaultPagesImporter->ensureFormBlockDependenciesExist($blockData);
-
-                $block = (new Block())
-                    ->setKind($blockData['kind'])
-                    ->setPosition($blockData['position'])
-                    ->setData($blockData['data'] ?? []);
-                $this->em->persist($block);
+            foreach ($this->blockDataImporter->buildBlocks($item['blocks'] ?? [], $filesDir) as $block) {
                 $page->addBlock($block);
+            }
 
-                foreach ($blockData['medias'] ?? [] as $mediaData) {
-                    $media = $this->buildMedia($mediaData, $filesDir);
-                    $this->em->persist($media);
-                    $block->addMedia($media);
-                }
+            // ogImage is exclusively owned by this Page (see Page::$ogImage's cascade), unlike Block medias there's no listener to orphan-remove it on its own - dropped by hand before a replacement (if any) is built
+            $existingOgImage = $page->getOgImage();
+            if (null !== $existingOgImage) {
+                $page->setOgImage(null);
+                $this->em->remove($existingOgImage);
+            }
+            if (isset($item['ogImage'])) {
+                $ogImage = $this->blockDataImporter->buildMedia($item['ogImage'], $filesDir);
+                $this->em->persist($ogImage);
+                $page->setOgImage($ogImage);
             }
 
             $this->em->persist($page);
@@ -82,29 +78,5 @@ class PageImportProvider implements ImportProviderInterface
         $this->em->flush();
 
         return ['created' => $created, 'updated' => $updated];
-    }
-
-    // Rebuilds a Media from its exported metadata, its file read straight from the extracted zip archive (see ContentImportController) and run through Vich's normal upload pipeline via ReplacingFile (a plain File is silently ignored by Vich's UploadHandler, see PageCrudController::cloneMedia()), so filename/size/mimeType/thumbnails all get regenerated here rather than trusting the exporting environment's values
-    private function buildMedia(array $mediaData, ?string $filesDir): Media
-    {
-        $media = (new Media())
-            ->setRole($mediaData['role'] ?? null)
-            ->setAlt($mediaData['alt'] ?? null)
-            ->setLabel($mediaData['label'] ?? null)
-            ->setWidth($mediaData['width'] ?? null)
-            ->setHeight($mediaData['height'] ?? null)
-            ->setCssClasses($mediaData['cssClasses'] ?? null)
-            ->setAbove($mediaData['above'] ?? false)
-            ->setCredits($mediaData['credits'] ?? null)
-            ->setRightsReserved($mediaData['rightsReserved'] ?? false)
-            ->setPosition($mediaData['position'] ?? 0)
-            ->setUrl($mediaData['url'] ?? null)
-            ->setDescription($mediaData['description'] ?? null);
-
-        if (null !== $filesDir && isset($mediaData['file'])) {
-            $media->setFile(new ReplacingFile($filesDir . '/' . $mediaData['file'], true, true, true));
-        }
-
-        return $media;
     }
 }

@@ -581,5 +581,16 @@
         "group": "form",
         "severity": "warning",
         "description": "description.site_form_gdpr"
+    },
+    {
+        "label": "label.healthcheck_pagespeed_api_key",
+        "slug": "healthcheck-pagespeed-api-key",
+        "sensitive": true,
+        "restricted": true,
+        "value": null,
+        "kind": "text",
+        "group": "security",
+        "severity": "warning",
+        "description": "description.healthcheck_pagespeed_api_key"
     }
 ]

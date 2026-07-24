@@ -14,8 +14,12 @@ use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
+use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
+use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
+use c975L\SiteBundle\Management\BlockDataExporter;
+use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\TemplateApplier;
 use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
@@ -50,7 +54,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -61,6 +64,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -151,11 +155,15 @@ class PageCrudControllerTest extends TestCase
         ?ContentExporter $contentExporter = null,
         ?TemplateRegistry $templateRegistry = null,
         ?TemplateApplier $templateApplier = null,
+        ?PageExportProvider $pageExportProvider = null,
+        ?CsrfTokenManagerInterface $csrfTokenManager = null,
     ): PageCrudController {
         $translatorStub = $translator ?? $this->createStub(TranslatorInterface::class);
         if (null === $translator) {
             $translatorStub->method('trans')->willReturnArgument(0);
         }
+
+        $pageRepository ??= $this->createStub(PageRepository::class);
 
         return new PageCrudController(
             $security ?? $this->createStub(Security::class),
@@ -163,7 +171,7 @@ class PageCrudControllerTest extends TestCase
             $adminUrlGenerator ?? $this->createAdminUrlGenerator(),
             $translatorStub,
             $redirectRepository ?? $this->createStub(RedirectRepository::class),
-            $pageRepository ?? $this->createStub(PageRepository::class),
+            $pageRepository,
             $adminContextProvider ?? $this->createAdminContextProvider(),
             $requestStack ?? new RequestStack(),
             $slugger ?? new AsciiSlugger(),
@@ -172,6 +180,8 @@ class PageCrudControllerTest extends TestCase
             $contentExporter ?? $this->createStub(ContentExporter::class),
             $templateRegistry ?? new TemplateRegistry([]),
             $templateApplier ?? new TemplateApplier(),
+            $pageExportProvider ?? new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
+            $csrfTokenManager ?? $this->createStub(CsrfTokenManagerInterface::class),
         );
     }
 
@@ -947,6 +957,66 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('title-confirm', $title->getAsDto()->getFormTypeOptions()['attr']['data-controller'] ?? null);
     }
 
+    // No entity yet (new page) - blockMoveRowAttr() has nothing to key the move on, so the "blocks" field gets no row_attr at all rather than a partial/broken one
+    public function testConfigureFieldsBlocksFieldHasNoRowAttrOnNewPage(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_NEW);
+        $blocks = $this->findFieldByProperty($fields, 'blocks');
+
+        $this->assertSame([], $blocks->getAsDto()->getFormTypeOptions()['row_attr'] ?? null);
+    }
+
+    // Editing an already-saved page - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see BlockMoveRowAttrTrait)
+    public function testConfigureFieldsBlocksFieldRowAttrCarriesBlockMoveDataOnEditPage(): void
+    {
+        $page = (new Page())->setTitle('x')->setSlug('about');
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 7);
+
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturn('/admin/ui/block/move');
+
+        $csrfTokenManager = $this->createStub(CsrfTokenManagerInterface::class);
+        $csrfTokenManager->method('getToken')->willReturn(new CsrfToken('management_ui_block_move', 'token123'));
+
+        $controller = $this->createController(
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext($page)),
+            csrfTokenManager: $csrfTokenManager,
+        );
+        $controller->setContainer($this->createContainer(['router' => $router]));
+
+        $fields = $controller->configureFields(Crud::PAGE_EDIT);
+        $rowAttr = $this->findFieldByProperty($fields, 'blocks')->getAsDto()->getFormTypeOptions()['row_attr'] ?? [];
+
+        $this->assertSame('page', $rowAttr['data-block-owner-type']);
+        $this->assertSame(7, $rowAttr['data-block-owner-id']);
+        $this->assertSame('/admin/ui/block/move', $rowAttr['data-block-move-url']);
+        $this->assertSame('token123', $rowAttr['data-block-move-csrf-token']);
+    }
+
+    // The "Health check" tab and its panel field only make sense once the page exists and has been checked at least once (see PageHealthCheckExtension) - onlyWhenUpdating() keeps both off the "new" page entirely
+    public function testConfigureFieldsHealthCheckTabAndPanelAreOnlyDisplayedWhenEditing(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_EDIT);
+        $healthCheckField = $this->findFieldByProperty($fields, 'healthCheck');
+
+        $this->assertNotNull($healthCheckField);
+        $this->assertTrue($healthCheckField->getAsDto()->isDisplayedOn(Crud::PAGE_EDIT));
+        $this->assertFalse($healthCheckField->getAsDto()->isDisplayedOn(Crud::PAGE_NEW));
+        $this->assertSame(PageHealthCheckPanelType::class, $healthCheckField->getAsDto()->getFormType());
+    }
+
+    // The QR code needs a saved entity id - same onlyWhenUpdating() reasoning as the Health check panel, and it previously only ever rendered on the edit page too (a separate template is used for "new")
+    public function testConfigureFieldsQrCodeFieldIsOnlyDisplayedWhenEditing(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_EDIT);
+        $qrCodeField = $this->findFieldByProperty($fields, 'qrcode');
+
+        $this->assertNotNull($qrCodeField);
+        $this->assertTrue($qrCodeField->getAsDto()->isDisplayedOn(Crud::PAGE_EDIT));
+        $this->assertFalse($qrCodeField->getAsDto()->isDisplayedOn(Crud::PAGE_NEW));
+        $this->assertSame(PageQrCodeType::class, $qrCodeField->getAsDto()->getFormType());
+    }
+
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void
     {
         $requestStack = new RequestStack();
@@ -1177,11 +1247,15 @@ class PageCrudControllerTest extends TestCase
             'changeFrequency' => null,
             'priority' => null,
             'isPublished' => true,
+            'summarySocialNetwork' => null,
+            'ogImage' => null,
             'blocks' => [[
                 'kind' => 'text',
                 'position' => 0,
                 'data' => ['content' => 'hello'],
+                'animation' => null,
                 'medias' => [],
+                'slots' => [],
             ]],
         ]];
 
@@ -1248,16 +1322,14 @@ class PageCrudControllerTest extends TestCase
             }))
             ->willReturn(new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_')));
 
-        $parameterBag = $this->createStub(ContainerBagInterface::class);
-        $parameterBag->method('get')->willReturnCallback(
-            static fn (string $name) => 'kernel.project_dir' === $name ? $projectDir : null,
+        $controller = $this->createController(
+            pageRepository: $pageRepository,
+            contentExporter: $contentExporter,
+            pageExportProvider: new PageExportProvider($pageRepository, new BlockDataExporter($projectDir)),
         );
-
-        $controller = $this->createController(pageRepository: $pageRepository, contentExporter: $contentExporter);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
-            'parameter_bag' => $parameterBag,
         ]));
 
         $controller->exportSelection(

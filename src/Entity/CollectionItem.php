@@ -20,12 +20,12 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
-// A single, ready-made "title/description/image/link" item, grouped by an arbitrary "group" key so one table can back several unrelated collections (e.g. "projects" on one site, something else on another) - exposed to the "collection" block via CollectionItemSourceProvider. Its own Vich field (rather than a link to UiBundle\Media) reuses the same UiMediaNamer/NestedFileSystemStorage resizing/webp pipeline without depending on UiBundle's Media table, following BookBundle/ShopBundle's own precedent of each domain owning its own uploadable field.
+// A single, ready-made "title/description/image/link" item, belonging to a CollectionGroup so one table can back several unrelated collections (e.g. "Projects" on one site, something else on another) - exposed to the "collection" block via CollectionItemSourceProvider. Its own Vich field (rather than a link to UiBundle\Media) reuses the same UiMediaNamer/NestedFileSystemStorage resizing/webp pipeline without depending on UiBundle's Media table, following BookBundle/ShopBundle's own precedent of each domain owning its own uploadable field.
 #[ORM\Entity(repositoryClass: CollectionItemRepository::class)]
 #[ORM\Table(name: 'site_collection_item')]
-#[ORM\UniqueConstraint(name: 'UNIQ_COLLECTION_ITEM_GROUP_SLUG', columns: ['group', 'slug'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_COLLECTION_ITEM_GROUP_SLUG', columns: ['collection_group_id', 'slug'])]
 #[Vich\Uploadable]
-#[UniqueEntity(fields: ['group', 'slug'])]
+#[UniqueEntity(fields: ['collectionGroup', 'slug'])]
 class CollectionItem implements VichImageResizableInterface, VichMediaNamableInterface
 {
     private const IMAGE_WIDTH = 800;
@@ -35,11 +35,11 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
     #[ORM\Column]
     private ?int $id = null;
 
-    // Backtick-quoted: "group" is a reserved word in MySQL/MariaDB, unlike Doctrine's own quoting strategy which only auto-escapes identifiers matching *known* reserved words at the time it shipped - explicit quoting here is the only way that's guaranteed to survive engine version bumps
-    #[ORM\Column(name: '`group`', length: 100)]
-    #[Assert\NotBlank]
-    #[Assert\Length(max: 100)]
-    private ?string $group = null;
+    // Which CollectionGroup this item belongs to - always set by CollectionItemCrudController from the browsed collection, never typed by hand (see its currentCollectionGroup())
+    #[ORM\ManyToOne(targetEntity: CollectionGroup::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
+    private ?CollectionGroup $collectionGroup = null;
 
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank]
@@ -91,14 +91,14 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
         return $this->id;
     }
 
-    public function getGroup(): ?string
+    public function getCollectionGroup(): ?CollectionGroup
     {
-        return $this->group;
+        return $this->collectionGroup;
     }
 
-    public function setGroup(?string $group): self
+    public function setCollectionGroup(?CollectionGroup $collectionGroup): self
     {
-        $this->group = $group;
+        $this->collectionGroup = $collectionGroup;
 
         return $this;
     }
@@ -233,10 +233,10 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
         return self::IMAGE_WIDTH;
     }
 
-    // Unique, non-role name in its own group's subdirectory - id is still null on first upload (Vich's prePersist listener runs before the auto-increment id is assigned), same fallback as UiBundle\Media::getVichMediaPath()
+    // Unique, non-role name in its own collection's subdirectory - id is still null on first upload (Vich's prePersist listener runs before the auto-increment id is assigned), same fallback as UiBundle\Media::getVichMediaPath()
     public function getVichMediaPath(): string
     {
-        return 'medias/site/collection-' . $this->group . '-' . ($this->id ?? uniqid());
+        return 'medias/site/collection-' . $this->collectionGroup?->getSlug() . '-' . ($this->id ?? uniqid());
     }
 
     public function __toString(): string

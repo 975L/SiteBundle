@@ -530,6 +530,14 @@
                 <source>description.site_form_gdpr</source>
                 <target>Añade una casilla RGPD obligatoria a los formularios públicos</target>
             </trans-unit>
+            <trans-unit id="137">
+                <source>label.healthcheck_pagespeed_api_key</source>
+                <target>Clave API de PageSpeed Insights</target>
+            </trans-unit>
+            <trans-unit id="138">
+                <source>description.healthcheck_pagespeed_api_key</source>
+                <target>Opcional - aumenta el límite de peticiones de Google PageSpeed Insights para el comando c975l:health-check:run. Consíguela en https://developers.google.com/speed/docs/insights/v5/get-started</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

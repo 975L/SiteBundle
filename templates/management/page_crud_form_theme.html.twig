@@ -1,0 +1,21 @@
+{# Form theme for PageCrudController's virtual (mapped: false) fields - form.parent.vars.data is the Page entity itself, the standard Symfony Form way to reach the bound entity from inside a form theme block (unlike a regular Twig include, ea/entity globals aren't guaranteed here) #}
+
+{# PageHealthCheckPanelType (the "Health check" tab) #}
+{% block c975l_page_health_check_panel_widget %}
+    {% set panel = page_health_check(form.parent.vars.data) %}
+
+    {% if panel.results is empty %}
+        <p class="text-muted">{{ 'label.health_check_panel_empty'|trans({}, 'site') }}</p>
+    {% else %}
+        {# showFilters: false - a single page only ever has a handful of rows (one per kind), the search/status/kind filter bar from the global Health check page is unnecessary clutter here. advice: rendered by the shared table itself, inside each row's own "Résumé" cell rather than as one aggregate block above it #}
+        {{ include('@c975LConfig/management/health_check/_table.html.twig', { results: panel.results, kinds: [], showFilters: false, advice: panel.advice }) }}
+    {% endif %}
+{% endblock %}
+
+{# PageQrCodeType (the "Data" tab) - moved here from being appended below the whole tabbed form (visible under every tab regardless of which one was active) to being scoped to the tab it actually belongs to #}
+{% block c975l_page_qrcode_widget %}
+    {% set page = form.parent.vars.data %}
+    <legend class="col-form-label">{{ 'label.qrcode'|trans({}, 'site') }}</legend>
+    <p class="text-muted">{{ 'label.qrcode_help'|trans({}, 'site') }}</p>
+    <img src="{{ ea_url().setAction('qrcode').setEntityId(page.id) }}" alt="QR Code">
+{% endblock %}

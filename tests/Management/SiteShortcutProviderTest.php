@@ -9,6 +9,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\ConfigBundle\Management\ShortcutProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\SiteShortcutController;
 use c975L\SiteBundle\Management\SiteShortcutProvider;
@@ -98,5 +99,18 @@ class SiteShortcutProviderTest extends TestCase
         $this->assertSame('ROLE_SUPER_ADMIN', $shortcuts[2]['role']);
         $this->assertSame(SiteShortcutController::SITEMAP_CREATE_ROUTE, $shortcuts[2]['route']);
         $this->assertSame(SiteShortcutController::EXPORT_TABLES_ROUTE, $shortcuts[3]['route']);
+    }
+
+    // The dashboard groups shortcuts by category - the table export is the only one belonging to "export", the rest to "site"
+    public function testGetShortcutsCategorizesEachEntry(): void
+    {
+        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(false));
+
+        $shortcuts = $provider->getShortcuts();
+
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $shortcuts[0]['category']);
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $shortcuts[1]['category']);
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $shortcuts[2]['category']);
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_EXPORT, $shortcuts[3]['category']);
     }
 }

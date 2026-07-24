@@ -35,6 +35,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'route' => SiteShortcutController::CREATE_PAGE_ROUTE,
                 'active' => false,
                 'role' => $this->configService->get('site-role-editor'),
+                'category' => ShortcutProviderInterface::CATEGORY_SITE,
             ],
             [
                 'label' => $this->translator->trans(
@@ -46,6 +47,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'route' => SiteShortcutController::REGISTRATION_ENABLED_TOGGLE_ROUTE,
                 'active' => $userRegistrationEnabled,
                 'role' => $this->configService->get('site-role-admin'),
+                'category' => ShortcutProviderInterface::CATEGORY_SITE,
             ],
             [
                 'label' => $this->translator->trans('label.sitemaps_create', [], 'site'),
@@ -53,6 +55,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'route' => SiteShortcutController::SITEMAP_CREATE_ROUTE,
                 'active' => false,
                 'role' => 'ROLE_SUPER_ADMIN',
+                'category' => ShortcutProviderInterface::CATEGORY_SITE,
             ],
             [
                 'label' => $this->translator->trans('label.export_tables', [], 'site'),
@@ -60,6 +63,7 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'route' => SiteShortcutController::EXPORT_TABLES_ROUTE,
                 'active' => false,
                 'role' => 'ROLE_SUPER_ADMIN',
+                'category' => ShortcutProviderInterface::CATEGORY_EXPORT,
             ],
         ];
     }

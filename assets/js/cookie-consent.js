@@ -26,7 +26,6 @@ export default class extends Controller {
             }
 
             const consentModal = {
-                title: this.messageValue,
                 description: this.messageValue,
                 acceptAllBtn: this.acceptValue,
                 acceptNecessaryBtn: this.rejectValue,

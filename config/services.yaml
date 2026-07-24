@@ -54,7 +54,7 @@ services:
               translation_domain: 'site'
               form: c975L\SiteBundle\Form\Block\TwigContentType
               template: '@c975LSite/blocks/TwigContent.html.twig'
-              category: 'label.category_migration'
+              category: 'label.category_twig'
               pickable: true
               # Not cacheable: on a collection's detail Page, its output varies per request with
               # "collectionItem" (see CollectionItemContext) - a persisted Block's id-keyed cache

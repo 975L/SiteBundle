@@ -5,6 +5,7 @@
          colors="true"
          cacheDirectory=".phpunit.cache"
          failOnDeprecation="true"
+         failOnNotice="true"
 >
     <testsuites>
         <testsuite name="c975LSiteBundle Test Suite">

@@ -11,6 +11,7 @@ namespace c975L\SiteBundle\Command;
 
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\SiteBundle\Management\CollectionGroupResolver;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -35,6 +36,7 @@ class CollectionItemImportCommand extends Command
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly CollectionItemRepository $collectionItemRepository,
+        private readonly CollectionGroupResolver $collectionGroupResolver,
         private readonly SluggerInterface $slugger,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
@@ -56,12 +58,12 @@ class CollectionItemImportCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $group = $input->getOption('group');
+        $groupName = $input->getOption('group');
         $jsonFile = $this->projectDir . '/' . ltrim($input->getOption('json-file'), '/');
         $imagesDir = $this->projectDir . '/' . ltrim($input->getOption('images-dir'), '/');
         $dryRun = $input->getOption('dry-run');
 
-        if (!$group) {
+        if (!$groupName) {
             $io->error('Option --group is required.');
 
             return Command::FAILURE;
@@ -80,17 +82,24 @@ class CollectionItemImportCommand extends Command
             return Command::FAILURE;
         }
 
-        $io->title(sprintf('Importing into collection group "%s"', $group));
+        $io->title(sprintf('Importing into collection "%s"', $groupName));
         $io->text($dryRun
             ? '<comment>DRY-RUN — nothing will be persisted</comment>'
             : '<info>LIVE — changes will be flushed</info>');
         $io->newLine();
 
-        $existingItems = $this->collectionItemRepository->findByGroup($group);
+        // Resolves the target collection by its normalized slug rather than an exact-string name match, so re-running the command with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate - creating it on the fly if it doesn't exist yet, same CollectionGroupResolver used by CollectionItemImportProvider's Sync import so both entry points agree on what counts as "the same collection". A never-persisted collection deterministically has zero existing items, so the repository queries below are skipped rather than run against an id-less entity; the new CollectionGroup itself is only persisted, flushed together with the items at the very end
+        $groupUsedSlugs = [];
+        [$collectionGroup, $isNewCollectionGroup] = $this->collectionGroupResolver->resolve($groupName, $groupUsedSlugs);
+        if ($isNewCollectionGroup && !$dryRun) {
+            $this->em->persist($collectionGroup);
+        }
+
+        $existingItems = $isNewCollectionGroup ? [] : $this->collectionItemRepository->findByCollectionGroup($collectionGroup);
         $existingTitles = array_map(static fn (CollectionItem $item): string => $item->getTitle(), $existingItems);
         // Tracks slugs assigned so far in this run too, since two different titles imported in the same batch could still normalize to the same slug before either is flushed to the DB
         $usedSlugs = array_map(static fn (CollectionItem $item): string => (string) $item->getSlug(), $existingItems);
-        $position = $this->collectionItemRepository->countByGroup($group);
+        $position = $isNewCollectionGroup ? 0 : $this->collectionItemRepository->countByCollectionGroup($collectionGroup);
         $created = 0;
         $skipped = 0;
 
@@ -117,7 +126,7 @@ class CollectionItemImportCommand extends Command
             $usedSlugs[] = $slug;
 
             $item = (new CollectionItem())
-                ->setGroup($group)
+                ->setCollectionGroup($collectionGroup)
                 ->setTitle($title)
                 ->setSlug($slug)
                 ->setDescription($row['description'] ?? null)

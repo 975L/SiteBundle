@@ -11,7 +11,9 @@ namespace c975L\SiteBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
+use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -59,10 +61,10 @@ class CollectionItemCrudControllerTest extends TestCase
         );
     }
 
-    // Simulates browsing the index already scoped to a group (?group=...), or the un-scoped "pick a group" screen when $group is null
-    private function createRequestStackWithGroup(?string $group): RequestStack
+    // Simulates browsing the index already scoped to a collection (?collectionGroup=<id>), or reaching it with none when $collectionGroupId is null
+    private function createRequestStackWithCollectionGroup(?int $collectionGroupId): RequestStack
     {
-        $request = new Request(null !== $group ? ['group' => $group] : []);
+        $request = new Request(null !== $collectionGroupId ? ['collectionGroup' => $collectionGroupId] : []);
 
         $requestStack = new RequestStack();
         $requestStack->push($request);
@@ -72,6 +74,7 @@ class CollectionItemCrudControllerTest extends TestCase
 
     private function createController(
         ?CollectionItemRepository $collectionItemRepository = null,
+        ?CollectionGroupRepository $collectionGroupRepository = null,
         ?SluggerInterface $slugger = null,
         ?AdminUrlGenerator $adminUrlGenerator = null,
         ?RequestStack $requestStack = null,
@@ -87,6 +90,7 @@ class CollectionItemCrudControllerTest extends TestCase
             $translator,
             $slugger ?? new AsciiSlugger(),
             $collectionItemRepository ?? $this->createStub(CollectionItemRepository::class),
+            $collectionGroupRepository ?? $this->createStub(CollectionGroupRepository::class),
             $adminUrlGenerator ?? $this->createAdminUrlGenerator(),
             $requestStack ?? new RequestStack(),
         );
@@ -97,77 +101,47 @@ class CollectionItemCrudControllerTest extends TestCase
         return (new \ReflectionMethod($controller, $method))->invoke($controller, ...$args);
     }
 
-    private function withId(CollectionItem $item, int $id): CollectionItem
+    private function withId(object $entity, int $id): object
     {
-        (new \ReflectionProperty(CollectionItem::class, 'id'))->setValue($item, $id);
+        (new \ReflectionProperty($entity::class, 'id'))->setValue($entity, $id);
 
-        return $item;
+        return $entity;
     }
 
-    private function findFieldByProperty(iterable $fields, string $property): mixed
+    private function collectionGroupRepositoryReturning(?CollectionGroup $collectionGroup, int $id): CollectionGroupRepository
     {
-        foreach ($fields as $field) {
-            if ($property === $field->getAsDto()->getProperty()) {
-                return $field;
-            }
-        }
+        $repository = $this->createMock(CollectionGroupRepository::class);
+        $repository->expects($this->once())->method('find')->with($id)->willReturn($collectionGroup);
 
-        return null;
+        return $repository;
     }
 
-    // --- currentGroup (private) -----------------------------------------------------------------------
+    // --- currentCollectionGroup (private) --------------------------------------------------------------
 
-    public function testCurrentGroupReturnsNullWhenThereIsNoRequest(): void
+    public function testCurrentCollectionGroupReturnsNullWhenThereIsNoRequest(): void
     {
         $controller = $this->createController(requestStack: new RequestStack());
 
-        $this->assertNull($this->invokePrivate($controller, 'currentGroup'));
+        $this->assertNull($this->invokePrivate($controller, 'currentCollectionGroup'));
     }
 
-    public function testCurrentGroupReturnsNullWhenNoGroupQueryParam(): void
+    public function testCurrentCollectionGroupReturnsNullWhenNoCollectionGroupQueryParam(): void
     {
-        $controller = $this->createController(requestStack: $this->createRequestStackWithGroup(null));
+        $controller = $this->createController(requestStack: $this->createRequestStackWithCollectionGroup(null));
 
-        $this->assertNull($this->invokePrivate($controller, 'currentGroup'));
+        $this->assertNull($this->invokePrivate($controller, 'currentCollectionGroup'));
     }
 
-    public function testCurrentGroupReturnsTheGroupQueryParam(): void
+    public function testCurrentCollectionGroupResolvesTheQueryParamThroughTheRepository(): void
     {
-        $controller = $this->createController(requestStack: $this->createRequestStackWithGroup('projects'));
+        $collectionGroup = $this->withId(new CollectionGroup(), 5);
 
-        $this->assertSame('projects', $this->invokePrivate($controller, 'currentGroup'));
-    }
+        $controller = $this->createController(
+            collectionGroupRepository: $this->collectionGroupRepositoryReturning($collectionGroup, 5),
+            requestStack: $this->createRequestStackWithCollectionGroup(5),
+        );
 
-    // --- configureFields --------------------------------------------------------------------------------
-
-    // No group selected (e.g. reaching "new" directly): the free-text group field stays empty, same as before this screen existed
-    public function testConfigureFieldsDoesNotPrefillGroupOnNewPageWithoutACurrentGroup(): void
-    {
-        $controller = $this->createController(requestStack: $this->createRequestStackWithGroup(null));
-        $fields = $controller->configureFields(Crud::PAGE_NEW);
-        $group = $this->findFieldByProperty($fields, 'group');
-
-        $this->assertArrayNotHasKey('data', $group->getAsDto()->getFormTypeOptions());
-    }
-
-    // Creating a new item from within an already-filtered group view prefills it, so an editor doesn't have to retype it by hand (a typo would silently create a brand-new group)
-    public function testConfigureFieldsPrefillsGroupOnNewPageWhenACurrentGroupIsSet(): void
-    {
-        $controller = $this->createController(requestStack: $this->createRequestStackWithGroup('projects'));
-        $fields = $controller->configureFields(Crud::PAGE_NEW);
-        $group = $this->findFieldByProperty($fields, 'group');
-
-        $this->assertSame('projects', $group->getAsDto()->getFormTypeOptions()['data'] ?? null);
-    }
-
-    // Editing an existing item must never override its own already-persisted group with the currently browsed one
-    public function testConfigureFieldsDoesNotPrefillGroupOnEditPageEvenWithACurrentGroup(): void
-    {
-        $controller = $this->createController(requestStack: $this->createRequestStackWithGroup('projects'));
-        $fields = $controller->configureFields(Crud::PAGE_EDIT);
-        $group = $this->findFieldByProperty($fields, 'group');
-
-        $this->assertArrayNotHasKey('data', $group->getAsDto()->getFormTypeOptions());
+        $this->assertSame($collectionGroup, $this->invokePrivate($controller, 'currentCollectionGroup'));
     }
 
     // --- configureActions --------------------------------------------------------------------------------
@@ -197,12 +171,29 @@ class CollectionItemCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
     }
 
-    // --- persistEntity / updateEntity ----------------------------------------------------------------
+    // --- createEntity / persistEntity / updateEntity -------------------------------------------------
 
-    public function testPersistEntitySlugifiesAndDelegatesToParent(): void
+    // Must be set here rather than in persistEntity() - EasyAdmin validates the form against the entity
+    // built by createEntity(), before persistEntity() ever runs (see the #[Assert\NotNull] on collectionGroup)
+    public function testCreateEntitySetsTheCurrentCollectionGroup(): void
     {
+        $collectionGroup = $this->withId(new CollectionGroup(), 5);
+
+        $controller = $this->createController(
+            collectionGroupRepository: $this->collectionGroupRepositoryReturning($collectionGroup, 5),
+            requestStack: $this->createRequestStackWithCollectionGroup(5),
+        );
+
+        $item = $controller->createEntity(CollectionItem::class);
+
+        $this->assertSame($collectionGroup, $item->getCollectionGroup());
+    }
+
+    public function testPersistEntitySlugifiesAndDelegatesToParentWithoutTouchingTheCollectionGroup(): void
+    {
+        $collectionGroup = $this->withId(new CollectionGroup(), 5);
         $controller = $this->createController();
-        $item = (new CollectionItem())->setGroup('projects')->setSlug('Néw Ïtem!');
+        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('Néw Ïtem!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($item);
@@ -210,13 +201,15 @@ class CollectionItemCrudControllerTest extends TestCase
 
         $controller->persistEntity($manager, $item);
 
+        $this->assertSame($collectionGroup, $item->getCollectionGroup());
         $this->assertSame('new-item', $item->getSlug());
     }
 
-    public function testUpdateEntitySlugifiesAndDelegatesToParent(): void
+    public function testUpdateEntitySlugifiesAndDelegatesToParentWithoutTouchingTheCollectionGroup(): void
     {
+        $collectionGroup = new CollectionGroup();
         $controller = $this->createController();
-        $item = (new CollectionItem())->setGroup('projects')->setSlug('Héllo Wörld!');
+        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('Héllo Wörld!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($item);
@@ -224,6 +217,7 @@ class CollectionItemCrudControllerTest extends TestCase
 
         $controller->updateEntity($manager, $item);
 
+        $this->assertSame($collectionGroup, $item->getCollectionGroup());
         $this->assertSame('hello-world', $item->getSlug());
     }
 
@@ -232,7 +226,7 @@ class CollectionItemCrudControllerTest extends TestCase
     public function testSlugifyItemNormalizesAccentsSpacesAndCase(): void
     {
         $controller = $this->createController();
-        $item = (new CollectionItem())->setGroup('projects')->setSlug('Héllo Wörld!');
+        $item = (new CollectionItem())->setCollectionGroup(new CollectionGroup())->setSlug('Héllo Wörld!');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -249,17 +243,19 @@ class CollectionItemCrudControllerTest extends TestCase
         $this->assertNull($item->getSlug());
     }
 
-    // Collision check is scoped to the item's own "group" - a same-named slug in another group never collides
-    public function testSlugifyItemAppendsASuffixOnCollisionWithinTheSameGroup(): void
+    // Collision check is scoped to the item's own collection - a same-named slug in another collection never collides
+    public function testSlugifyItemAppendsASuffixOnCollisionWithinTheSameCollectionGroup(): void
     {
+        $collectionGroup = $this->withId(new CollectionGroup(), 1);
+
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findOneByGroupAndSlug')->willReturnMap([
-            ['projects', 'my-item', $this->withId(new CollectionItem(), 1)],
-            ['projects', 'my-item-2', null],
+        $repository->method('findOneByCollectionGroupAndSlug')->willReturnMap([
+            [$collectionGroup, 'my-item', $this->withId(new CollectionItem(), 1)],
+            [$collectionGroup, 'my-item-2', null],
         ]);
 
         $controller = $this->createController($repository);
-        $item = (new CollectionItem())->setGroup('projects')->setSlug('My Item');
+        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('My Item');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -269,14 +265,26 @@ class CollectionItemCrudControllerTest extends TestCase
     // Re-saving an item with its own unchanged slug must not collide with itself
     public function testSlugifyItemDoesNotCollideWithItself(): void
     {
+        $collectionGroup = new CollectionGroup();
+
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findOneByGroupAndSlug')->willReturn($this->withId(
-            (new CollectionItem())->setGroup('projects')->setSlug('my-item'),
+        $repository->method('findOneByCollectionGroupAndSlug')->willReturn($this->withId(
+            (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('my-item'),
             5
         ));
 
         $controller = $this->createController($repository);
-        $item = $this->withId((new CollectionItem())->setGroup('projects')->setSlug('My Item'), 5);
+        $item = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('My Item'), 5);
+
+        $this->invokePrivate($controller, 'slugifyItem', [$item]);
+
+        $this->assertSame('my-item', $item->getSlug());
+    }
+
+    public function testSlugifyItemNeverCollidesWhenTheItemHasNoCollectionGroupYet(): void
+    {
+        $controller = $this->createController();
+        $item = (new CollectionItem())->setSlug('My Item');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -292,9 +300,10 @@ class CollectionItemCrudControllerTest extends TestCase
 
     public function testReorderPersistsPositionsInTheSubmittedOrder(): void
     {
-        $item1 = $this->withId((new CollectionItem())->setGroup('sites'), 1);
-        $item2 = $this->withId((new CollectionItem())->setGroup('sites'), 2);
-        $item3 = $this->withId((new CollectionItem())->setGroup('sites'), 3);
+        $collectionGroup = $this->withId(new CollectionGroup(), 9);
+        $item1 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 1);
+        $item2 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 2);
+        $item3 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 3);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findBy')->willReturn([$item1, $item2, $item3]);
@@ -309,7 +318,7 @@ class CollectionItemCrudControllerTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
 
         $response = $controller->reorder(
-            $this->createReorderRequest(['group' => 'sites', 'ids' => [3, 1, 2], '_token' => 'valid-token']),
+            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [3, 1, 2], '_token' => 'valid-token']),
             $entityManager,
         );
 
@@ -342,17 +351,18 @@ class CollectionItemCrudControllerTest extends TestCase
         ]));
 
         $controller->reorder(
-            $this->createReorderRequest(['group' => 'sites', 'ids' => [1], '_token' => 'invalid-token']),
+            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [1], '_token' => 'invalid-token']),
             $this->createStub(EntityManagerInterface::class),
         );
     }
 
-    // An id whose item doesn't belong to the submitted group never reaches setPosition() - a tampered payload could otherwise reorder another group's items
-    public function testReorderDeniesAccessWhenAnItemDoesNotBelongToTheSubmittedGroup(): void
+    // An id whose item doesn't belong to the submitted collection never reaches setPosition() - a tampered payload could otherwise reorder another collection's items
+    public function testReorderDeniesAccessWhenAnItemDoesNotBelongToTheSubmittedCollectionGroup(): void
     {
         $this->expectException(AccessDeniedException::class);
 
-        $item = $this->withId((new CollectionItem())->setGroup('other-group'), 1);
+        $otherCollectionGroup = $this->withId(new CollectionGroup(), 42);
+        $item = $this->withId((new CollectionItem())->setCollectionGroup($otherCollectionGroup), 1);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findBy')->willReturn([$item]);
@@ -364,7 +374,7 @@ class CollectionItemCrudControllerTest extends TestCase
         ]));
 
         $controller->reorder(
-            $this->createReorderRequest(['group' => 'sites', 'ids' => [1], '_token' => 'valid-token']),
+            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [1], '_token' => 'valid-token']),
             $this->createStub(EntityManagerInterface::class),
         );
     }

@@ -13,8 +13,10 @@ namespace c975L\SiteBundle\Controller\Management;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
+use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Form\VichImageOptions;
+use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -42,7 +44,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 
 use function Symfony\Component\Translation\t;
 
-// Generic "title/description/image/link" item, grouped by an arbitrary "group" (e.g. "projects") so this one CRUD/table can back several unrelated collections across sites - see CollectionItemSourceProvider, exposing one CollectionSourceProviderInterface source per group to UiBundle's "collection" block.
+// Generic "title/description/image/link" item, belonging to a CollectionGroup (e.g. "Projects") so this one CRUD/table can back several unrelated collections across sites - see CollectionItemSourceProvider, exposing one CollectionSourceProviderInterface source per CollectionGroup to UiBundle's "collection" block.
 class CollectionItemCrudController extends AbstractCrudController
 {
     use UniqueSlugTrait;
@@ -52,6 +54,7 @@ class CollectionItemCrudController extends AbstractCrudController
         private readonly TranslatorInterface $translator,
         private readonly SluggerInterface $slugger,
         private readonly CollectionItemRepository $collectionItemRepository,
+        private readonly CollectionGroupRepository $collectionGroupRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly RequestStack $requestStack,
     ) {
@@ -62,22 +65,32 @@ class CollectionItemCrudController extends AbstractCrudController
         return CollectionItem::class;
     }
 
-    // Without a "group" to scope to, shows the intermediate "pick a group" screen instead of EasyAdmin's own grid
+    // Items only ever make sense scoped to one collection - without a resolvable ?collectionGroup=<id>, bounces back to CollectionCrudController's own list instead of showing an ambiguous/empty grid
     public function index(AdminContext $context): KeyValueStore|Response
     {
-        if (!$this->currentGroup()) {
-            return $this->render('@c975LSite/management/collection_item_crud_groups.html.twig', [
-                'counts' => $this->collectionItemRepository->countsByGroup(),
-                'newUrl' => $this->adminUrlGenerator->setController(self::class)->setAction(Action::NEW)->generateUrl(),
-                'newLabel' => $this->translator->trans(
-                    'action.new',
-                    ['%entity_label_singular%' => $this->translator->trans('label.collection_item', [], 'site')],
-                    'EasyAdminBundle',
-                ),
-            ]);
+        if (null === $this->currentCollectionGroup()) {
+            return $this->redirectToCollectionsList();
         }
 
         return parent::index($context);
+    }
+
+    // Same guard as index() - reachable directly (e.g. a stale bookmark) without ever having browsed into a collection first
+    public function new(AdminContext $context): KeyValueStore|Response
+    {
+        if (null === $this->currentCollectionGroup()) {
+            return $this->redirectToCollectionsList();
+        }
+
+        return parent::new($context);
+    }
+
+    private function redirectToCollectionsList(): Response
+    {
+        return $this->redirect($this->adminUrlGenerator
+            ->setController(CollectionCrudController::class)
+            ->setAction(Action::INDEX)
+            ->generateUrl());
     }
 
     public function createIndexQueryBuilder(...$args): QueryBuilder
@@ -86,9 +99,9 @@ class CollectionItemCrudController extends AbstractCrudController
             ->addOrderBy('entity.position', 'ASC')
         ;
 
-        $group = $this->currentGroup();
-        if (null !== $group) {
-            $qb->andWhere('entity.group = :group')->setParameter('group', $group);
+        $collectionGroup = $this->currentCollectionGroup();
+        if (null !== $collectionGroup) {
+            $qb->andWhere('entity.collectionGroup = :collectionGroup')->setParameter('collectionGroup', $collectionGroup);
         }
 
         return $qb;
@@ -105,7 +118,7 @@ class CollectionItemCrudController extends AbstractCrudController
             ->overrideTemplate('crud/index', '@c975LSite/management/collection_item_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/collection_item_crud_edit.html.twig')
             ->overrideTemplate('crud/new', '@c975LSite/management/collection_item_crud_new.html.twig')
-            // Drag-and-drop reorder (see collection-item-sort.js) only ever sees the rows on the current page - the index is always filtered to a single group (see index()/createIndexQueryBuilder()), 100 is just a safety margin should one group ever grow past that
+            // Drag-and-drop reorder (see collection-item-sort.js) only ever sees the rows on the current page - the index is always filtered to a single collection (see index()/createIndexQueryBuilder()), 100 is just a safety margin should one collection ever grow past that
             ->setPaginatorPageSize(100)
         ;
     }
@@ -114,12 +127,11 @@ class CollectionItemCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-editor');
 
-        // Only shown once a group is selected, mirroring PageCrudController's own trash toggle
-        $backToGroupsAction = Action::new('groups', t('label.collection_items', [], 'site'), 'fas fa-layer-group')
+        // Back to CollectionCrudController's own list - mirroring PageCrudController's own trash toggle
+        $backToCollectionsAction = Action::new('collections', t('label.collections', [], 'site'), 'fas fa-layer-group')
             ->linkToUrl(fn () => $this->adminUrlGenerator
-                ->setController(self::class)
+                ->setController(CollectionCrudController::class)
                 ->setAction(Action::INDEX)
-                ->unset('group')
                 ->generateUrl())
             ->createAsGlobalAction()
         ;
@@ -130,7 +142,7 @@ class CollectionItemCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         return $actions
-            ->add(Crud::PAGE_INDEX, $backToGroupsAction)
+            ->add(Crud::PAGE_INDEX, $backToCollectionsAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
@@ -142,7 +154,7 @@ class CollectionItemCrudController extends AbstractCrudController
                 $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
             ->setPermission(Action::INDEX, $role)
-            ->setPermission('groups', $role)
+            ->setPermission('collections', $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
@@ -151,7 +163,7 @@ class CollectionItemCrudController extends AbstractCrudController
         ;
     }
 
-    // Persists a new drag-and-drop order for one group's items (see collection_item_crud_index.html.twig and assets/js/collection-item-sort.js). The index is already scoped to one group, but the submitted ids are re-checked against $group here rather than trusted as-is.
+    // Persists a new drag-and-drop order for one collection's items (see collection_item_crud_index.html.twig and assets/js/collection-item-sort.js). The index is already scoped to one collection, but the submitted ids are re-checked against $collectionGroupId here rather than trusted as-is.
     #[AdminRoute(path: '/reorder', options: ['methods' => ['POST']])]
     public function reorder(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -162,12 +174,12 @@ class CollectionItemCrudController extends AbstractCrudController
             throw $this->createAccessDeniedException();
         }
 
-        $group = (string) ($payload['group'] ?? '');
+        $collectionGroupId = (int) ($payload['collectionGroup'] ?? 0);
         $ids = array_map('intval', (array) ($payload['ids'] ?? []));
 
         $itemsById = [];
         foreach ($this->collectionItemRepository->findBy(['id' => $ids]) as $item) {
-            if ($item->getGroup() !== $group) {
+            if ($item->getCollectionGroup()?->getId() !== $collectionGroupId) {
                 throw $this->createAccessDeniedException();
             }
             $itemsById[$item->getId()] = $item;
@@ -184,19 +196,8 @@ class CollectionItemCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        $groupField = TextField::new('group')
-            ->setLabel(t('label.group', [], 'site'))
-            ->setHelp(t('label.collection_item_group_help', [], 'site'))
-        ;
-        // Prefills the currently browsed group when creating a new item from within it, so an editor doesn't have to retype it by hand (a typo here would silently create a brand-new group instead of joining the existing one)
-        if (Crud::PAGE_NEW === $pageName && null !== ($group = $this->currentGroup())) {
-            $groupField->setFormTypeOption('data', $group);
-        }
-
         return [
             IdField::new('id')->onlyOnIndex(),
-
-            $groupField,
 
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'ui')),
@@ -235,7 +236,15 @@ class CollectionItemCrudController extends AbstractCrudController
         ];
     }
 
-    // New item
+    // New item - the collection it belongs to always comes from the browsed context, never from the form itself (see currentCollectionGroup()). Must happen here rather than in persistEntity(), since EasyAdmin validates the form against the entity built by createEntity() before persistEntity() ever runs.
+    public function createEntity(string $entityFqcn): CollectionItem
+    {
+        $collectionItem = new CollectionItem();
+        $collectionItem->setCollectionGroup($this->currentCollectionGroup());
+
+        return $collectionItem;
+    }
+
     public function persistEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
         $this->slugifyItem($collectionItem);
@@ -243,7 +252,7 @@ class CollectionItemCrudController extends AbstractCrudController
         parent::persistEntity($entityManager, $collectionItem);
     }
 
-    // Updated item - re-slugifies in case the slug was hand-edited into something colliding within its group
+    // Updated item - re-slugifies in case the slug was hand-edited into something colliding within its own collection
     public function updateEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
         $this->slugifyItem($collectionItem);
@@ -251,7 +260,7 @@ class CollectionItemCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $collectionItem);
     }
 
-    // Normalizes the slug (removes accents, spaces, uppercase...) and appends -2, -3... on collision - scoped to the item's own "group", unlike Page::$slug which is unique site-wide
+    // Normalizes the slug (removes accents, spaces, uppercase...) and appends -2, -3... on collision - scoped to the item's own collection, unlike Page::$slug which is unique site-wide
     private function slugifyItem(CollectionItem $collectionItem): void
     {
         $slug = $collectionItem->getSlug();
@@ -268,18 +277,20 @@ class CollectionItemCrudController extends AbstractCrudController
 
     private function slugCollides(CollectionItem $collectionItem, string $candidate): bool
     {
-        $existing = $this->collectionItemRepository->findOneByGroupAndSlug(
-            (string) $collectionItem->getGroup(),
-            $candidate
-        );
+        $collectionGroup = $collectionItem->getCollectionGroup();
+        if (null === $collectionGroup) {
+            return false;
+        }
+
+        $existing = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $candidate);
 
         return null !== $existing && $existing->getId() !== $collectionItem->getId();
     }
 
-    private function currentGroup(): ?string
+    private function currentCollectionGroup(): ?CollectionGroup
     {
-        $group = $this->requestStack->getCurrentRequest()?->query->get('group');
+        $id = $this->requestStack->getCurrentRequest()?->query->get('collectionGroup');
 
-        return \is_string($group) && '' !== $group ? $group : null;
+        return is_numeric($id) ? $this->collectionGroupRepository->find((int) $id) : null;
     }
 }

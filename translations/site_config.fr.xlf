@@ -530,6 +530,14 @@
                 <source>description.site_form_gdpr</source>
                 <target>Ajoute une case de consentement RGPD obligatoire aux formulaires publics</target>
             </trans-unit>
+            <trans-unit id="137">
+                <source>label.healthcheck_pagespeed_api_key</source>
+                <target>Clé API PageSpeed Insights</target>
+            </trans-unit>
+            <trans-unit id="138">
+                <source>description.healthcheck_pagespeed_api_key</source>
+                <target>Facultatif - relève le quota de Google PageSpeed Insights pour la commande c975l:health-check:run. À obtenir sur https://developers.google.com/speed/docs/insights/v5/get-started</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

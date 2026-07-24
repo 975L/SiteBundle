@@ -13,6 +13,7 @@ use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\SiteBundle\Entity\Font;
+use c975L\SiteBundle\Management\FontExportProvider;
 use c975L\SiteBundle\Management\FontImportProvider;
 use c975L\SiteBundle\Repository\FontRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -68,6 +69,7 @@ class FontCrudController extends AbstractCrudController
         private readonly FontRepository $fontRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly ContentExporter $contentExporter,
+        private readonly FontExportProvider $fontExportProvider,
     ) {
     }
 
@@ -140,42 +142,9 @@ class FontCrudController extends AbstractCrudController
         }
 
         $fonts = $this->fontRepository->findBy(['id' => $batchActionDto->getEntityIds()]);
+        $data = $this->fontExportProvider->serialize($fonts);
 
-        $files = [];
-        $items = [];
-        foreach ($fonts as $font) {
-            $fontData = $this->exportFontData($font, $files);
-            if (null !== $fontData) {
-                $items[] = $fontData;
-            }
-        }
-
-        return $this->contentExporter->export(FontImportProvider::KIND, $items, $files);
-    }
-
-    // Registers the font's physical file for the zip archive (&$files: archive-relative path => disk path), returning the metadata entry with a 'file' reference instead of embedding its bytes - same convention as PageCrudController::exportMediaData(). Returns null (skipped by the caller) when the file can't be read, rather than exporting a broken reference
-    private function exportFontData(Font $font, array &$files): ?array
-    {
-        $filename = $font->getFilename();
-        if (null === $filename) {
-            return null;
-        }
-
-        $path = $this->getParameter('kernel.project_dir') . '/public/' . $filename;
-        if (!is_file($path)) {
-            return null;
-        }
-
-        $archivePath = 'files/' . bin2hex(random_bytes(8)) . '_' . basename($filename);
-        $files[$archivePath] = $path;
-
-        return [
-            'name' => $font->getName(),
-            'weight' => $font->getWeight(),
-            'style' => $font->getStyle(),
-            'originalFilename' => basename($filename),
-            'file' => $archivePath,
-        ];
+        return $this->contentExporter->export(FontImportProvider::KIND, $data['items'], $data['files']);
     }
 
     public function configureFields(string $pageName): iterable

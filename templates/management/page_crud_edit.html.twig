@@ -4,8 +4,4 @@
     <p>{{ ('label.info_page'|trans({}, 'site')) }}</p>
 
     {{ parent() }}
-
-    <legend class="col-form-label">{{ 'label.qrcode'|trans({}, 'site') }}</legend>
-    <p class="text-muted">{{ 'label.qrcode_help'|trans({}, 'site') }}</p>
-    <img src="{{ ea_url().setAction('qrcode').setEntityId(entity.instance.id) }}" alt="QR Code">
 {% endblock main %}

@@ -427,8 +427,8 @@
                 <target>Legal</target>
             </trans-unit>
             <trans-unit id="112">
-                <source>label.category_migration</source>
-                <target>Migración</target>
+                <source>label.category_twig</source>
+                <target>Twig</target>
             </trans-unit>
             <trans-unit id="113">
                 <source>label.model</source>
@@ -984,27 +984,11 @@
             </trans-unit>
             <trans-unit id="256">
                 <source>label.collection_items</source>
-                <target>Colecciones</target>
-            </trans-unit>
-            <trans-unit id="257">
-                <source>label.group</source>
-                <target>Grupo</target>
-            </trans-unit>
-            <trans-unit id="258">
-                <source>label.collection_item_group_help</source>
-                <target>Colección a la que pertenece este elemento (ej. "projects") - elegida como fuente en el bloque "Collection"</target>
+                <target>Elementos</target>
             </trans-unit>
             <trans-unit id="267">
                 <source>label.collection_item_slug_help</source>
-                <target>Identifica el elemento en su grupo, usado en su URL de detalle si el bloque "Collection" define una - único solo por grupo.</target>
-            </trans-unit>
-            <trans-unit id="281">
-                <source>label.collection_items_count</source>
-                <target>Número de elementos</target>
-            </trans-unit>
-            <trans-unit id="282">
-                <source>label.collection_items_none</source>
-                <target>Todavía no hay colecciones.</target>
+                <target>Identifica el elemento en su propia colección, usado en su URL de detalle si el bloque "Collection" define una - único solo por colección.</target>
             </trans-unit>
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
@@ -1048,11 +1032,31 @@
             </trans-unit>
             <trans-unit id="284">
                 <source>label.info_collection_item_list</source>
-                <target>Elementos título/descripción/imagen/enlace agrupados por «group», cada uno alimentando un bloque «collection» del sitio. Arrastre para reordenar, o cree/modifique/elimine un elemento desde esta lista.</target>
+                <target>Elementos título/descripción/imagen/enlace de esta colección, mostrados por su bloque «Collection» en una página. Arrastre para reordenar, o cree/modifique/elimine un elemento desde esta lista.</target>
             </trans-unit>
             <trans-unit id="285">
-                <source>label.info_collection_item_groups</source>
-                <target>Elija un grupo para gestionar sus elementos, o cree uno nuevo. Cada grupo alimenta un bloque "collection".</target>
+                <source>label.info_collections</source>
+                <target>Cree una colección y luego haga clic en «Elementos» para añadirle contenido. Una vez creada, la colección estará disponible como fuente en el bloque «Collection» de cualquier página.</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>label.collection</source>
+                <target>Colección</target>
+            </trans-unit>
+            <trans-unit id="318">
+                <source>label.collections</source>
+                <target>Colecciones</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>label.collection_name</source>
+                <target>Nombre</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>label.collection_name_help</source>
+                <target>Nombre visible de la colección - su identificador técnico (abajo) se genera automáticamente a partir de él.</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>label.collection_slug_help</source>
+                <target>Identificador técnico de la colección, generado a partir de su nombre - es el que aparece en la lista de fuentes del bloque «Collection» de una página, para mostrar su contenido.</target>
             </trans-unit>
             <trans-unit id="286">
                 <source>label.info_user_roles</source>
@@ -1153,6 +1157,250 @@
             <trans-unit id="310">
                 <source>label.info_font</source>
                 <target>Archivos de fuentes personalizadas subidos para el sitio (ttf, woff, woff2). Añada, modifique o elimine una fuente; cada peso y estilo forma una variante distinta utilizable en la configuración del tema.</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>label.essential_action_pages</source>
+                <target>Página de inicio</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>description.essential_action_pages</source>
+                <target>La página en la que aterriza cada visitante primero</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>label.essential_action_menus</source>
+                <target>Menús navbar y footer</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>description.essential_action_menus</source>
+                <target>Los enlaces de navegación mostrados arriba y abajo de cada página</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>label.essential_action_fonts</source>
+                <target>Tipografías</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>description.essential_action_fonts</source>
+                <target>Al menos una tipografía para los textos del sitio</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>label.health_check_summary_pagespeed</source>
+                <target>Rendimiento %performance% · Accesibilidad %accessibility% · Buenas prácticas %bestPractices% · SEO %seo%</target>
+            </trans-unit>
+            <trans-unit id="323">
+                <source>label.health_check_console_errors</source>
+                <target>%count% error(es) de consola</target>
+            </trans-unit>
+            <trans-unit id="324">
+                <source>label.health_check_pagespeed_call_failed</source>
+                <target>Fallo en la llamada a PageSpeed Insights: %message%</target>
+            </trans-unit>
+            <trans-unit id="325">
+                <source>label.health_check_pagespeed_api_key_missing</source>
+                <target>No hay ninguna clave API de PageSpeed Insights configurada - la cuota anónima de Google se comparte mundialmente y se agota fácilmente (HTTP 429)</target>
+            </trans-unit>
+            <trans-unit id="326">
+                <source>label.health_check_summary_security_headers</source>
+                <target>%present%/%total% encabezados de seguridad presentes</target>
+            </trans-unit>
+            <trans-unit id="327">
+                <source>label.health_check_security_headers_missing</source>
+                <target>faltan: %headers%</target>
+            </trans-unit>
+            <trans-unit id="328">
+                <source>label.health_check_security_headers_cors_wildcard</source>
+                <target>CORS permite cualquier origen (*)</target>
+            </trans-unit>
+            <trans-unit id="329">
+                <source>label.health_check_security_headers_call_failed</source>
+                <target>Fallo en la comprobación de encabezados de seguridad: %message%</target>
+            </trans-unit>
+            <trans-unit id="330">
+                <source>label.health_check_summary_w3c_html</source>
+                <target>%errors% error(es), %warnings% advertencia(s)</target>
+            </trans-unit>
+            <trans-unit id="331">
+                <source>label.health_check_w3c_html_call_failed</source>
+                <target>Fallo en la validación HTML W3C: %message%</target>
+            </trans-unit>
+            <trans-unit id="335">
+                <source>label.health_check_content_quality_call_failed</source>
+                <target>Fallo en la comprobación de contenido: %message%</target>
+            </trans-unit>
+            <trans-unit id="336">
+                <source>label.health_check_content_quality_no_description</source>
+                <target>falta la meta descripción</target>
+            </trans-unit>
+            <trans-unit id="337">
+                <source>label.health_check_content_quality_no_h1</source>
+                <target>falta el &lt;h1&gt;</target>
+            </trans-unit>
+            <trans-unit id="338">
+                <source>label.health_check_content_quality_images_without_alt</source>
+                <target>%count% imagen(es) sin texto alternativo</target>
+            </trans-unit>
+            <trans-unit id="339">
+                <source>label.health_check_content_quality_broken_links</source>
+                <target>%count% enlace(s) interno(s) roto(s)</target>
+            </trans-unit>
+            <trans-unit id="340">
+                <source>label.health_check_content_quality_ok</source>
+                <target>No se ha detectado ningún problema de contenido</target>
+            </trans-unit>
+            <trans-unit id="341">
+                <source>label.health_check_page_not_found</source>
+                <target>Página no encontrada (no probada)</target>
+            </trans-unit>
+            <trans-unit id="342">
+                <source>label.health_check_security_headers_scope</source>
+                <target>estos encabezados se aplican a todo el sitio, comprobados una sola vez a través de la página de inicio</target>
+            </trans-unit>
+            <trans-unit id="343">
+                <source>label.tab_data</source>
+                <target>Datos</target>
+            </trans-unit>
+            <trans-unit id="344">
+                <source>label.tab_health_check</source>
+                <target>Estado de salud</target>
+            </trans-unit>
+            <trans-unit id="345">
+                <source>label.health_check_panel_empty</source>
+                <target>Aún no hay resultados de estado de salud para esta página.</target>
+            </trans-unit>
+            <trans-unit id="347">
+                <source>label.health_check_advice_pagespeed</source>
+                <target>Mejorar %category% (puntuación: %score%) - ejecute Lighthouse localmente para el detalle completo</target>
+            </trans-unit>
+            <trans-unit id="348">
+                <source>label.health_check_advice_security_headers</source>
+                <target>Configurar los encabezados de seguridad faltantes: %headers%</target>
+            </trans-unit>
+            <trans-unit id="349">
+                <source>label.health_check_advice_security_headers_cors</source>
+                <target>Restringir el CORS en lugar de permitir cualquier origen (*)</target>
+            </trans-unit>
+            <trans-unit id="350">
+                <source>label.health_check_advice_w3c_html_errors</source>
+                <target>Corregir %count% error(es) de validación HTML</target>
+            </trans-unit>
+            <trans-unit id="351">
+                <source>label.health_check_advice_w3c_css_errors</source>
+                <target>Corregir %count% error(es) de validación CSS</target>
+            </trans-unit>
+            <trans-unit id="352">
+                <source>label.health_check_advice_w3c_html_warnings</source>
+                <target>Revisar %count% advertencia(s) de validación HTML</target>
+            </trans-unit>
+            <trans-unit id="353">
+                <source>label.health_check_advice_w3c_css_warnings</source>
+                <target>Revisar %count% advertencia(s) de validación CSS</target>
+            </trans-unit>
+            <trans-unit id="354">
+                <source>label.health_check_advice_no_description</source>
+                <target>Añadir una meta descripción (unos 50-160 caracteres)</target>
+            </trans-unit>
+            <trans-unit id="355">
+                <source>label.health_check_advice_no_h1</source>
+                <target>Añadir un único título principal (&lt;h1&gt;)</target>
+            </trans-unit>
+            <trans-unit id="356">
+                <source>label.health_check_advice_images_without_alt</source>
+                <target>Añadir texto alternativo descriptivo a %count% imagen(es)</target>
+            </trans-unit>
+            <trans-unit id="357">
+                <source>label.health_check_advice_broken_links</source>
+                <target>Corregir o eliminar %count% enlace(s) interno(s) roto(s)</target>
+            </trans-unit>
+            <trans-unit id="358">
+                <source>label.health_check_summary_w3c_css</source>
+                <target>%errors% error(es), %warnings% advertencia(s)</target>
+            </trans-unit>
+            <trans-unit id="359">
+                <source>label.health_check_w3c_css_call_failed</source>
+                <target>Fallo en la validación CSS W3C: %message%</target>
+            </trans-unit>
+            <trans-unit id="361">
+                <source>label.health_check_ssl_certificate_not_https</source>
+                <target>El sitio no se sirve por HTTPS, certificado no verificado</target>
+            </trans-unit>
+            <trans-unit id="362">
+                <source>label.health_check_ssl_certificate_call_failed</source>
+                <target>No se pudo leer el certificado TLS: %message%</target>
+            </trans-unit>
+            <trans-unit id="363">
+                <source>label.health_check_summary_ssl_certificate</source>
+                <target>Caduca en %days% día(s) (%date%)</target>
+            </trans-unit>
+            <trans-unit id="364">
+                <source>label.health_check_advice_ssl_certificate</source>
+                <target>Renovar el certificado TLS antes de que caduque</target>
+            </trans-unit>
+            <trans-unit id="365">
+                <source>label.health_check_mixed_content_call_failed</source>
+                <target>Fallo en la comprobación de contenido mixto: %message%</target>
+            </trans-unit>
+            <trans-unit id="366">
+                <source>label.health_check_mixed_content_found</source>
+                <target>%count% recurso(s) no seguro(s) (http://) encontrado(s)</target>
+            </trans-unit>
+            <trans-unit id="367">
+                <source>label.health_check_mixed_content_ok</source>
+                <target>No se encontraron recursos no seguros</target>
+            </trans-unit>
+            <trans-unit id="368">
+                <source>label.health_check_advice_mixed_content</source>
+                <target>Servir %count% recurso(s) por https:// en lugar de http://</target>
+            </trans-unit>
+            <trans-unit id="369">
+                <source>label.health_check_seo_files_call_failed</source>
+                <target>Fallo en la solicitud: %message%</target>
+            </trans-unit>
+            <trans-unit id="370">
+                <source>label.health_check_robots_missing</source>
+                <target>robots.txt no existe o está vacío</target>
+            </trans-unit>
+            <trans-unit id="371">
+                <source>label.health_check_robots_blocks_everything</source>
+                <target>robots.txt bloquea todo rastreo (Disallow: / para User-agent: *)</target>
+            </trans-unit>
+            <trans-unit id="372">
+                <source>label.health_check_robots_ok</source>
+                <target>robots.txt es accesible y no bloquea todo</target>
+            </trans-unit>
+            <trans-unit id="373">
+                <source>label.health_check_sitemap_missing</source>
+                <target>%file% no existe</target>
+            </trans-unit>
+            <trans-unit id="374">
+                <source>label.health_check_sitemap_invalid</source>
+                <target>%file% no parece un sitemap válido</target>
+            </trans-unit>
+            <trans-unit id="375">
+                <source>label.health_check_sitemap_ok</source>
+                <target>%file% es accesible y está bien formado</target>
+            </trans-unit>
+            <trans-unit id="376">
+                <source>label.health_check_redirect_loop</source>
+                <target>Bucle de redirección detectado</target>
+            </trans-unit>
+            <trans-unit id="377">
+                <source>label.health_check_redirect_chain</source>
+                <target>Encadena con %hops% otra(s) redirección(es)</target>
+            </trans-unit>
+            <trans-unit id="378">
+                <source>label.health_check_redirect_ok</source>
+                <target>Redirección directa, sin encadenar</target>
+            </trans-unit>
+            <trans-unit id="379">
+                <source>label.health_check_sitemap_index_invalid</source>
+                <target>sitemap-index.xml no parece ser un índice de sitemap válido</target>
+            </trans-unit>
+            <trans-unit id="380">
+                <source>label.health_check_sitemap_index_empty</source>
+                <target>sitemap-index.xml no referencia ningún sitemap</target>
+            </trans-unit>
+            <trans-unit id="382">
+                <source>label.health_check_sitemap_index_ok</source>
+                <target>sitemap-index.xml es accesible y referencia %count% sitemap(s)</target>
             </trans-unit>
         </body>
     </file>

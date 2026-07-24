@@ -10,7 +10,10 @@
 namespace c975L\SiteBundle\Tests\Command;
 
 use c975L\SiteBundle\Command\CollectionItemImportCommand;
+use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\SiteBundle\Management\CollectionGroupResolver;
+use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -57,11 +60,32 @@ class CollectionItemImportCommandTest extends TestCase
         file_put_contents($this->projectDir . '/items.json', json_encode($rows));
     }
 
+    // Simulates the target collection already existing, so the command never needs to create one
+    private function createCollectionGroupRepository(?CollectionGroup $existingCollectionGroup): CollectionGroupRepository
+    {
+        $repository = $this->createStub(CollectionGroupRepository::class);
+        $repository->method('findOneBySlug')->willReturn($existingCollectionGroup);
+
+        return $repository;
+    }
+
     private function createTester(
         EntityManagerInterface $em,
-        CollectionItemRepository $repository
+        CollectionItemRepository $repository,
+        ?CollectionGroupRepository $collectionGroupRepository = null,
     ): CommandTester {
-        return new CommandTester(new CollectionItemImportCommand($em, $repository, new AsciiSlugger(), $this->projectDir));
+        return new CommandTester(new CollectionItemImportCommand(
+            $em,
+            $repository,
+            new CollectionGroupResolver(
+                $collectionGroupRepository ?? $this->createCollectionGroupRepository(
+                    (new CollectionGroup())->setName('projects')->setSlug('projects')
+                ),
+                new AsciiSlugger(),
+            ),
+            new AsciiSlugger(),
+            $this->projectDir,
+        ));
     }
 
     public function testExecuteFailsWhenGroupOptionIsMissing(): void
@@ -97,8 +121,8 @@ class CollectionItemImportCommandTest extends TestCase
         ]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([]);
-        $repository->method('countByGroup')->willReturn(0);
+        $repository->method('findByCollectionGroup')->willReturn([]);
+        $repository->method('countByCollectionGroup')->willReturn(0);
 
         $persisted = null;
         $em = $this->createMock(EntityManagerInterface::class);
@@ -117,7 +141,83 @@ class CollectionItemImportCommandTest extends TestCase
         $this->assertSame('papa-calin', $persisted->getSlug());
     }
 
-    // Two different titles that normalize to the same slug within one run must still end up unique - neither is flushed yet, so a DB-only collision check (findByGroup, snapshotted before the loop) alone wouldn't catch this
+    // The target collection doesn't exist yet - created on the fly by name (--group), persisted alongside the items in the single final flush
+    public function testExecuteCreatesTheCollectionWhenItDoesNotExistYet(): void
+    {
+        $this->writeJson([['title' => 'Papa Câlin']]);
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+
+        $persisted = [];
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+        $em->expects($this->once())->method('flush');
+
+        $tester = $this->createTester($em, $repository, $this->createCollectionGroupRepository(null));
+        $statusCode = $tester->execute(['--group' => 'New Collection', '--json-file' => 'items.json']);
+
+        $this->assertSame(Command::SUCCESS, $statusCode);
+
+        $collectionGroups = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof CollectionGroup));
+        $this->assertCount(1, $collectionGroups);
+        $this->assertSame('New Collection', $collectionGroups[0]->getName());
+        $this->assertSame('new-collection', $collectionGroups[0]->getSlug());
+
+        $items = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof CollectionItem));
+        $this->assertSame($collectionGroups[0], $items[0]->getCollectionGroup());
+    }
+
+    // Resolving by normalized slug rather than exact name means re-running with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate one with a colliding slug
+    public function testExecuteMatchesAnExistingCollectionRegardlessOfNameCasingOrWhitespace(): void
+    {
+        $this->writeJson([['title' => 'Papa Câlin']]);
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+
+        $collectionGroupRepository = $this->createStub(CollectionGroupRepository::class);
+        $collectionGroupRepository->method('findOneBySlug')->willReturnCallback(
+            static fn (string $slug): ?CollectionGroup => 'projects' === $slug ? $projects : null
+        );
+
+        $persisted = [];
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+        $em->expects($this->once())->method('flush');
+
+        $tester = $this->createTester($em, $repository, $collectionGroupRepository);
+        $statusCode = $tester->execute(['--group' => 'Projects ', '--json-file' => 'items.json']);
+
+        $this->assertSame(Command::SUCCESS, $statusCode);
+        $this->assertCount(0, array_filter($persisted, static fn (object $entity): bool => $entity instanceof CollectionGroup));
+
+        $items = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof CollectionItem));
+        $this->assertSame($projects, $items[0]->getCollectionGroup());
+    }
+
+    // --dry-run never creates the collection either - findByCollectionGroup()/countByCollectionGroup() would fail to bind an id-less entity, so they must be skipped entirely, not just the persist/flush calls
+    public function testDryRunNeverCreatesTheMissingCollectionEither(): void
+    {
+        $this->writeJson([['title' => 'Papa Câlin']]);
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())->method('persist');
+        $em->expects($this->never())->method('flush');
+
+        $tester = $this->createTester($em, $repository, $this->createCollectionGroupRepository(null));
+        $statusCode = $tester->execute(['--group' => 'New Collection', '--json-file' => 'items.json', '--dry-run' => true]);
+
+        $this->assertSame(Command::SUCCESS, $statusCode);
+        $this->assertStringContainsString('1 items would be created. 0 skipped.', $tester->getDisplay());
+    }
+
+    // Two different titles that normalize to the same slug within one run must still end up unique - neither is flushed yet, so a DB-only collision check (findByCollectionGroup, snapshotted before the loop) alone wouldn't catch this
     public function testExecuteDeduplicatesSlugsWithinTheSameRun(): void
     {
         $this->writeJson([
@@ -126,8 +226,8 @@ class CollectionItemImportCommandTest extends TestCase
         ]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([]);
-        $repository->method('countByGroup')->willReturn(0);
+        $repository->method('findByCollectionGroup')->willReturn([]);
+        $repository->method('countByCollectionGroup')->willReturn(0);
 
         $persistedSlugs = [];
         $em = $this->createMock(EntityManagerInterface::class);
@@ -142,21 +242,22 @@ class CollectionItemImportCommandTest extends TestCase
         $this->assertSame(['papa-calin', 'papa-calin-2'], $persistedSlugs);
     }
 
-    // A title already present in the group (per findByGroup) is skipped, so re-running the command on the same JSON is idempotent
+    // A title already present in the collection (per findByCollectionGroup) is skipped, so re-running the command on the same JSON is idempotent
     public function testExecuteSkipsAlreadyImportedTitles(): void
     {
         $this->writeJson([['title' => 'Papa Câlin']]);
 
-        $existing = (new CollectionItem())->setGroup('projects')->setTitle('Papa Câlin');
+        $projects = (new CollectionGroup())->setName('projects')->setSlug('projects');
+        $existing = (new CollectionItem())->setCollectionGroup($projects)->setTitle('Papa Câlin');
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([$existing]);
-        $repository->method('countByGroup')->willReturn(1);
+        $repository->method('findByCollectionGroup')->willReturn([$existing]);
+        $repository->method('countByCollectionGroup')->willReturn(1);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('persist');
 
-        $tester = $this->createTester($em, $repository);
+        $tester = $this->createTester($em, $repository, $this->createCollectionGroupRepository($projects));
         $statusCode = $tester->execute(['--group' => 'projects', '--json-file' => 'items.json']);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
@@ -168,8 +269,8 @@ class CollectionItemImportCommandTest extends TestCase
         $this->writeJson([['description' => 'No title here']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([]);
-        $repository->method('countByGroup')->willReturn(0);
+        $repository->method('findByCollectionGroup')->willReturn([]);
+        $repository->method('countByCollectionGroup')->willReturn(0);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('persist');
@@ -186,8 +287,8 @@ class CollectionItemImportCommandTest extends TestCase
         $this->writeJson([['title' => 'Papa Câlin']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([]);
-        $repository->method('countByGroup')->willReturn(0);
+        $repository->method('findByCollectionGroup')->willReturn([]);
+        $repository->method('countByCollectionGroup')->willReturn(0);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())->method('persist');
@@ -205,8 +306,8 @@ class CollectionItemImportCommandTest extends TestCase
         $this->writeJson([['title' => 'Papa Câlin', 'image' => 'missing.webp']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findByGroup')->willReturn([]);
-        $repository->method('countByGroup')->willReturn(0);
+        $repository->method('findByCollectionGroup')->willReturn([]);
+        $repository->method('countByCollectionGroup')->willReturn(0);
 
         $tester = $this->createTester($this->createStub(EntityManagerInterface::class), $repository);
         $tester->execute([

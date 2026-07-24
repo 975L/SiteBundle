@@ -1,12 +1,16 @@
 {# <twig:c975LSite:General:CookieConsent/> #}
 {% set cookiesPolicyUrl = config('url-cookies-policy') %}
+{# Stimulus derives value-attribute names from the controller identifier as registered
+   ("cookieConsent" in assets/controllers.js), not a dasherized form of it - only each
+   value's own name gets dasherized. So these must read "cookieconsent-*-value", not
+   "cookie-consent-*-value", or every value silently falls back to its type default ("") #}
 <div data-controller="cookieConsent"
-     data-cookie-consent-message-value="{{ 'text.cookies_banner'|trans({}, 'site') }}"
-     data-cookie-consent-accept-value="{{ 'label.cookies_accept'|trans({}, 'site') }}"
-     data-cookie-consent-reject-value="{{ 'label.cookies_reject'|trans({}, 'site') }}"
+     data-cookieconsent-message-value="{{ 'text.cookies_banner'|trans({}, 'site') }}"
+     data-cookieconsent-accept-value="{{ 'label.cookies_accept'|trans({}, 'site') }}"
+     data-cookieconsent-reject-value="{{ 'label.cookies_reject'|trans({}, 'site') }}"
      {% if cookiesPolicyUrl %}
-         data-cookie-consent-policy-url-value="{{ cookiesPolicyUrl }}"
-         data-cookie-consent-policy-label-value="{{ 'label.cookies_policy'|trans({}, 'site') }}"
+         data-cookieconsent-policy-url-value="{{ cookiesPolicyUrl }}"
+         data-cookieconsent-policy-label-value="{{ 'label.cookies_policy'|trans({}, 'site') }}"
      {% endif %}
-     data-cookie-consent-lang-value="{{ app.request.locale }}">
+     data-cookieconsent-lang-value="{{ app.request.locale }}">
 </div>

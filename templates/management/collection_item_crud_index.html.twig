@@ -7,10 +7,10 @@
 {% endblock main %}
 
 {# Marks each row with the data JS needs to drag-and-drop reorder it (see assets/js/collection-item-sort.js
-   and CollectionItemCrudController::reorder()) - the index is always filtered to a single group
-   (see CollectionItemCrudController::index()), so every row on the page already shares the same data-group. #}
+   and CollectionItemCrudController::reorder()) - the index is always filtered to a single collection
+   (see CollectionItemCrudController::index()), so every row on the page already shares the same data-collection. #}
 {% block entity_row_attributes %}
-    data-group="{{ entity.instance.group }}"
+    data-collection="{{ entity.instance.collectionGroup.id }}"
     data-reorder-url="{{ ea_url().setAction('reorder') }}"
     data-reorder-token="{{ csrf_token('collection_item_reorder') }}"
 {% endblock %}

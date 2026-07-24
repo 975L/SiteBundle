@@ -23,7 +23,7 @@
                     {% endif %}
 
                     {% if showSiteName and siteName is not null %}
-                        <p class="menu-site-name">{{ siteName }}</p>
+                        <a href="{{ path('page_home') }}" class="menu-site-name">{{ siteName }}</a>
                     {% endif %}
                 </div>
 

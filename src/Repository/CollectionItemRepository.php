@@ -9,6 +9,7 @@
 
 namespace c975L\SiteBundle\Repository;
 
+use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,11 +25,11 @@ class CollectionItemRepository extends ServiceEntityRepository
     }
 
     // @return CollectionItem[]
-    public function findByGroup(string $group, ?int $limit = null): array
+    public function findByCollectionGroup(CollectionGroup $collectionGroup, ?int $limit = null): array
     {
         $qb = $this->createQueryBuilder('c')
-            ->andWhere('c.group = :group')
-            ->setParameter('group', $group)
+            ->andWhere('c.collectionGroup = :collectionGroup')
+            ->setParameter('collectionGroup', $collectionGroup)
             ->orderBy('c.position', 'ASC')
         ;
 
@@ -39,53 +40,27 @@ class CollectionItemRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function countByGroup(string $group): int
+    public function countByCollectionGroup(CollectionGroup $collectionGroup): int
     {
         return (int) $this->createQueryBuilder('c')
             ->select('COUNT(c.id)')
-            ->andWhere('c.group = :group')
-            ->setParameter('group', $group)
+            ->andWhere('c.collectionGroup = :collectionGroup')
+            ->setParameter('collectionGroup', $collectionGroup)
             ->getQuery()
             ->getSingleScalarResult()
         ;
     }
 
-    // Used both to enforce the group-scoped slug uniqueness (see CollectionItemCrudController) and to resolve a "collection" block item's detail view (see CollectionItemSourceProvider's "detail" key)
-    public function findOneByGroupAndSlug(string $group, string $slug): ?CollectionItem
+    // Used both to enforce the collection-scoped slug uniqueness (see CollectionItemCrudController) and to resolve a "collection" block item's detail view (see CollectionItemSourceProvider's "detail" key)
+    public function findOneByCollectionGroupAndSlug(CollectionGroup $collectionGroup, string $slug): ?CollectionItem
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.group = :group')
+            ->andWhere('c.collectionGroup = :collectionGroup')
             ->andWhere('c.slug = :slug')
-            ->setParameter('group', $group)
+            ->setParameter('collectionGroup', $collectionGroup)
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getOneOrNullResult()
         ;
-    }
-
-    // Every distinct group currently in use - CollectionItemSourceProvider exposes one CollectionSourceProviderInterface source per group found here
-    public function findDistinctGroups(): array
-    {
-        return array_column(
-            $this->createQueryBuilder('c')
-                ->select('DISTINCT c.group')
-                ->getQuery()
-                ->getScalarResult(),
-            'group'
-        );
-    }
-
-    // Item count per group, ordered by group - backs CollectionItemCrudController's intermediate "pick a group" index screen
-    public function countsByGroup(): array
-    {
-        $rows = $this->createQueryBuilder('c')
-            ->select('c.group AS grp, COUNT(c.id) AS itemCount')
-            ->groupBy('c.group')
-            ->orderBy('c.group', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return array_combine(array_column($rows, 'grp'), array_column($rows, 'itemCount'));
     }
 }

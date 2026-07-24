@@ -13,6 +13,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\SiteBundle\Controller\Management\FontCrudController;
 use c975L\SiteBundle\Entity\Font;
+use c975L\SiteBundle\Management\FontExportProvider;
 use c975L\SiteBundle\Repository\FontRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -29,7 +30,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -99,6 +99,7 @@ class FontCrudControllerTest extends TestCase
     private function createController(
         ?FontRepository $fontRepository = null,
         ?ContentExporter $contentExporter = null,
+        ?FontExportProvider $fontExportProvider = null,
     ): FontCrudController {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -106,12 +107,15 @@ class FontCrudControllerTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn('site-role-editor');
 
+        $fontRepository ??= $this->createStub(FontRepository::class);
+
         return new FontCrudController(
             $configService,
             $translator,
-            $fontRepository ?? $this->createStub(FontRepository::class),
+            $fontRepository,
             $this->createAdminUrlGenerator(),
             $contentExporter ?? $this->createStub(ContentExporter::class),
+            $fontExportProvider ?? new FontExportProvider($fontRepository, sys_get_temp_dir()),
         );
     }
 
@@ -186,16 +190,14 @@ class FontCrudControllerTest extends TestCase
             }))
             ->willReturn(new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_')));
 
-        $parameterBag = $this->createStub(ContainerBagInterface::class);
-        $parameterBag->method('get')->willReturnCallback(
-            static fn (string $name) => 'kernel.project_dir' === $name ? $projectDir : null,
+        $controller = $this->createController(
+            fontRepository: $fontRepository,
+            contentExporter: $contentExporter,
+            fontExportProvider: new FontExportProvider($fontRepository, $projectDir),
         );
-
-        $controller = $this->createController(fontRepository: $fontRepository, contentExporter: $contentExporter);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
-            'parameter_bag' => $parameterBag,
         ]));
 
         $controller->exportSelection($this->createAdminContext(), new BatchActionDto('exportSelection', [1], Font::class, 'valid'));

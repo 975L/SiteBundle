@@ -12,7 +12,9 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
 use c975L\SiteBundle\Entity\Menu;
+use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
@@ -27,9 +29,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
@@ -37,6 +41,8 @@ use function Symfony\Component\Translation\t;
 // Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
+    use BlockMoveRowAttrTrait;
+
     private const LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
@@ -48,6 +54,8 @@ class MenuCrudController extends AbstractCrudController
         private readonly ConfigServiceInterface $configService,
         private readonly MenuRepository $menuRepository,
         private readonly TranslatorInterface $translator,
+        private readonly AdminContextProvider $adminContextProvider,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -129,6 +137,7 @@ class MenuCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $isNew = Crud::PAGE_NEW === $pageName;
+        $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
 
         // Only locations not yet used can be picked when creating a new row - avoids ever hitting the DB-level unique constraint on Menu::$location
         $usedLocations = $this->menuRepository->createQueryBuilder('m')
@@ -151,6 +160,8 @@ class MenuCrudController extends AbstractCrudController
                 ->setFormTypeOption('disabled', !$isNew)
                 ->setRequired(true),
 
+            // row_attr markers read by ea-sortable.js - see PageCrudController's own "blocks" field for
+            // the full explanation
             CollectionField::new('blocks')
                 ->setLabel(t('label.blocks', [], 'ui'))
                 ->setEntryType(BlockType::class)
@@ -158,6 +169,7 @@ class MenuCrudController extends AbstractCrudController
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
                 ->setFormTypeOption('entry_options.context', 'menu')
+                ->setFormTypeOption('row_attr', $this->blockMoveRowAttr(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
                 ->hideOnIndex(),
         ];
     }

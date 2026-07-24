@@ -18,9 +18,14 @@ use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
+use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
+use c975L\SiteBundle\Form\Type\PageQrCodeType;
+use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
+use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Management\TemplateApplier;
 use c975L\SiteBundle\Management\TemplateRegistry;
+use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
@@ -51,6 +56,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
@@ -66,6 +73,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -74,6 +82,7 @@ use function Symfony\Component\Translation\t;
 
 class PageCrudController extends AbstractCrudController
 {
+    use BlockMoveRowAttrTrait;
     use UniqueSlugTrait;
 
     public function __construct(
@@ -91,6 +100,8 @@ class PageCrudController extends AbstractCrudController
         private readonly ContentExporter $contentExporter,
         private readonly TemplateRegistry $templateRegistry,
         private readonly TemplateApplier $templateApplier,
+        private readonly PageExportProvider $pageExportProvider,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -145,6 +156,9 @@ class PageCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
+
+            FormField::addTab(t('label.tab_data', [], 'site'))
+                ->hideOnIndex(),
 
             // Data
             // Confirms with the user before letting them change the title, since it will also change the slug (see updateEntity); handled by the "title-confirm" Stimulus controller (assets/js/title-confirm.js), loaded admin-wide via admin.js; not needed on a new page, since there's no existing slug/redirect to preserve yet and the confirmation modal isn't even rendered on the "new" crud page (only edit/index/detail)
@@ -206,6 +220,8 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Blocks
+            // row_attr markers read by ea-sortable.js to allow dragging an already-saved Block into a
+            // container present on this same page (or back out to top-level) - see BlockMoveController.
             CollectionField::new('blocks')
                 ->setLabel(t('label.blocks', [], 'ui'))
                 ->setEntryType(BlockType::class)
@@ -213,6 +229,7 @@ class PageCrudController extends AbstractCrudController
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
                 ->setFormTypeOption('entry_options.context', 'page')
+                ->setFormTypeOption('row_attr', $this->blockMoveRowAttr(SiteBlockOwnerResolver::TYPE_PAGE, $entity instanceof Page ? $entity->getId() : null))
                 ->hideOnIndex(),
 
             // Dates
@@ -224,6 +241,20 @@ class PageCrudController extends AbstractCrudController
                 ->setLabel(t('label.modification', [], 'site'))
                 ->setFormTypeOption('disabled', 'disabled')
                 ->onlyOnDetail(),
+
+            // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new")
+            Field::new('qrcode', false)
+                ->setFormType(PageQrCodeType::class)
+                ->onlyWhenUpdating(),
+
+            // Health check
+            // Only on edit: a page has to exist (and be checked at least once by c975l:health-check:run) before there's anything to show here - see PageHealthCheckExtension/PageHealthCheckPanelType/page_crud_form_theme.html.twig
+            FormField::addTab(t('label.tab_health_check', [], 'site'))
+                ->hideOnIndex()
+                ->onlyWhenUpdating(),
+            Field::new('healthCheck', false)
+                ->setFormType(PageHealthCheckPanelType::class)
+                ->onlyWhenUpdating(),
         ];
     }
 
@@ -464,6 +495,7 @@ class PageCrudController extends AbstractCrudController
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
             ->overrideTemplate('crud/new', '@c975LSite/management/page_crud_new.html.twig')
+            ->addFormTheme('@c975LSite/management/page_crud_form_theme.html.twig')
         ;
     }
 
@@ -904,72 +936,9 @@ class PageCrudController extends AbstractCrudController
         }
 
         $pages = $this->pageRepository->findBy(['id' => $batchActionDto->getEntityIds()]);
+        $data = $this->pageExportProvider->serialize($pages);
 
-        $files = [];
-        $items = [];
-        foreach ($pages as $page) {
-            $blocks = [];
-            foreach ($page->getBlocks() as $block) {
-                $medias = [];
-                foreach ($block->getMedias() as $media) {
-                    $mediaData = $this->exportMediaData($media, $files);
-                    if (null !== $mediaData) {
-                        $medias[] = $mediaData;
-                    }
-                }
-
-                $blocks[] = [
-                    'kind' => $block->getKind(),
-                    'position' => $block->getPosition(),
-                    'data' => $block->getData(),
-                    'medias' => $medias,
-                ];
-            }
-
-            $items[] = [
-                'title' => $page->getTitle(),
-                'slug' => $page->getSlug(),
-                'changeFrequency' => $page->getChangeFrequency(),
-                'priority' => $page->getPriority(),
-                'isPublished' => $page->isPublished(),
-                'blocks' => $blocks,
-            ];
-        }
-
-        return $this->contentExporter->export(PageImportProvider::KIND, $items, $files);
+        return $this->contentExporter->export(PageImportProvider::KIND, $data['items'], $data['files']);
     }
 
-    // Reads the Media's physical file from disk and registers it for the zip archive (&$files: archive-relative path => disk path), returning the metadata entry with a 'file' reference instead of embedding its bytes - same disk-path convention as cloneMedia(). Returns null (skipped by the caller) when there is no file or it can't be read, rather than exporting a broken reference
-    private function exportMediaData(Media $media, array &$files): ?array
-    {
-        $filename = $media->getFilename();
-        if (null === $filename) {
-            return null;
-        }
-
-        $path = $this->getParameter('kernel.project_dir') . '/public/' . $filename;
-        if (!is_file($path)) {
-            return null;
-        }
-
-        $archivePath = 'files/' . bin2hex(random_bytes(8)) . '_' . basename($filename);
-        $files[$archivePath] = $path;
-
-        return [
-            'role' => $media->getRole(),
-            'alt' => $media->getAlt(),
-            'label' => $media->getLabel(),
-            'width' => $media->getWidth(),
-            'height' => $media->getHeight(),
-            'cssClasses' => $media->getCssClasses(),
-            'above' => $media->isAbove(),
-            'credits' => $media->getCredits(),
-            'rightsReserved' => $media->isRightsReserved(),
-            'position' => $media->getPosition(),
-            'url' => $media->getUrl(),
-            'description' => $media->getDescription(),
-            'originalFilename' => basename($filename),
-            'file' => $archivePath,
-        ];
-    }
 }

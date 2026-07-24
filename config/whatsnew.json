@@ -1,5 +1,130 @@
 [
     {
+        "date": "2026-07-24",
+        "description": [
+            {
+                "en": "Health check results now link directly to the page's own edit screen, alongside its public url",
+                "fr": "Les résultats du Bilan de santé renvoient désormais directement vers l'écran d'édition de la page concernée, aux côtés de son url publique",
+                "es": "Los resultados del Estado de salud ahora enlazan directamente con la pantalla de edición de la página, junto a su url pública"
+            },
+            {
+                "en": "The Health check now also covers HTTP security headers and W3C HTML/CSS markup validation - for accessibility declaration audit trails (RGAA/EAA)",
+                "fr": "Le Bilan de santé couvre désormais aussi les en-têtes de sécurité HTTP et la validation W3C du balisage HTML/CSS - pour les déclarations d'accessibilité (RGAA/EAA)",
+                "es": "El Estado de salud ahora también cubre los encabezados de seguridad HTTP y la validación W3C del marcado HTML/CSS - para las declaraciones de accesibilidad (RGAA/EAA)"
+            },
+            {
+                "en": "The Health check now also flags a missing meta description, a missing main heading, images without alt text, and broken internal links on each published page",
+                "fr": "Le Bilan de santé signale désormais aussi une description meta manquante, un titre principal manquant, des images sans texte alternatif, et des liens internes cassés sur chaque page publiée",
+                "es": "El Estado de salud ahora también señala una meta descripción faltante, un título principal faltante, imágenes sin texto alternativo y enlaces internos rotos en cada página publicada"
+            },
+            {
+                "en": "Fixed the cookie consent banner sometimes showing its default message and buttons instead of your site's own wording",
+                "fr": "Correction du bandeau de consentement aux cookies qui affichait parfois son message et ses boutons par défaut au lieu du texte propre à votre site",
+                "es": "Corregido el banner de consentimiento de cookies que a veces mostraba su mensaje y botones predeterminados en lugar del texto propio de su sitio"
+            },
+            {
+                "en": "Fixed the Health check's W3C validation showing a confusing server error for a page not yet deployed on the checked environment - it now reports \"page not found\" instead",
+                "fr": "Correction de la validation W3C du Bilan de santé qui affichait une erreur serveur confuse pour une page pas encore déployée sur l'environnement vérifié - elle indique désormais « page introuvable »",
+                "es": "Corregida la validación W3C del Estado de salud que mostraba un error de servidor confuso para una página aún no desplegada en el entorno verificado - ahora indica «página no encontrada»"
+            },
+            {
+                "en": "Removed the WAVE accessibility check (paid, credit-based) from the Health check - it didn't scale to checking many pages across many sites at that price; the free PageSpeed accessibility score remains",
+                "fr": "Retrait de la vérification d'accessibilité WAVE (payante, à crédits) du Bilan de santé - son coût ne passait pas à l'échelle pour vérifier de nombreuses pages sur de nombreux sites ; le score d'accessibilité PageSpeed, gratuit, reste disponible",
+                "es": "Eliminada la comprobación de accesibilidad WAVE (de pago, por créditos) del Estado de salud - su coste no era viable para comprobar muchas páginas en muchos sitios; la puntuación de accesibilidad de PageSpeed, gratuita, se mantiene"
+            },
+            {
+                "en": "Each page's edit screen now has a \"Health check\" tab showing that page's own results and short recommendations on what to fix, alongside a \"Data\" tab for everything else",
+                "fr": "L'écran d'édition de chaque page dispose désormais d'un onglet « Bilan de santé » montrant les résultats propres à cette page et de courtes recommandations sur ce qu'il faut corriger, aux côtés d'un onglet « Données » pour le reste",
+                "es": "La pantalla de edición de cada página ahora tiene una pestaña de «Estado de salud» que muestra los resultados propios de esa página y breves recomendaciones sobre qué corregir, junto a una pestaña de «Datos» para el resto"
+            },
+            {
+                "en": "HTML and CSS validation are now shown as two separate lines instead of one combined summary, and each recommendation now links directly to the relevant tool's own report for the page (W3C, PageSpeed Insights, securityheaders.com)",
+                "fr": "La validation HTML et CSS s'affiche désormais sur deux lignes distinctes au lieu d'un résumé combiné, et chaque recommandation renvoie désormais directement vers le rapport de l'outil concerné pour la page (W3C, PageSpeed Insights, securityheaders.com)",
+                "es": "La validación HTML y CSS ahora se muestra en dos líneas separadas en lugar de un resumen combinado, y cada recomendación ahora enlaza directamente al informe de la herramienta correspondiente para la página (W3C, PageSpeed Insights, securityheaders.com)"
+            },
+            {
+                "en": "The Health check now also monitors your TLS certificate's expiry date, warning well before it runs out",
+                "fr": "Le Bilan de santé surveille désormais aussi la date d'expiration de votre certificat TLS, avec une alerte bien avant son échéance",
+                "es": "El Estado de salud ahora también supervisa la fecha de caducidad de su certificado TLS, avisando con antelación antes de que expire"
+            },
+            {
+                "en": "The Health check now flags any http:// image, script or stylesheet loaded from an https:// page (\"mixed content\"), which browsers block or warn about",
+                "fr": "Le Bilan de santé signale désormais toute image, script ou feuille de style chargée en http:// depuis une page en https:// (« contenu mixte »), que les navigateurs bloquent ou signalent",
+                "es": "El Estado de salud ahora señala cualquier imagen, script u hoja de estilo cargada en http:// desde una página en https:// («contenido mixto»), que los navegadores bloquean o advierten"
+            },
+            {
+                "en": "The Health check now checks that robots.txt and the sitemap are reachable and correctly formed, and warns if robots.txt accidentally blocks search engines from the whole site",
+                "fr": "Le Bilan de santé vérifie désormais que robots.txt et le sitemap sont accessibles et correctement formés, et alerte si robots.txt bloque accidentellement les moteurs de recherche sur tout le site",
+                "es": "El Estado de salud ahora comprueba que robots.txt y el sitemap son accesibles y tienen un formato correcto, y avisa si robots.txt bloquea accidentalmente a los buscadores en todo el sitio"
+            },
+            {
+                "en": "The Health check now detects redirect chains and loops among your configured redirects",
+                "fr": "Le Bilan de santé détecte désormais les chaînes de redirections et les boucles parmi vos redirections configurées",
+                "es": "El Estado de salud ahora detecta cadenas de redirecciones y bucles entre sus redirecciones configuradas"
+            },
+            {
+                "en": "Fixed importing collection items sometimes creating a second, duplicate collection instead of joining the existing one with the same name",
+                "fr": "Correction de l'import d'éléments de collection qui créait parfois une seconde collection en double au lieu de rejoindre celle déjà existante portant le même nom",
+                "es": "Corregida la importación de elementos de colección que a veces creaba una segunda colección duplicada en lugar de unirse a la ya existente con el mismo nombre"
+            },
+            {
+                "en": "The dashboard's guided tour now explains Pages, Redirects, Users, Menus, Media, Collections, Fonts, Forms and Email templates, not just their title",
+                "fr": "La visite guidée du tableau de bord explique désormais les écrans Pages, Redirections, Utilisateurs, Menus, Médiathèque, Collections, Polices, Formulaires et Modèles d'e-mail, pas seulement leur titre",
+                "es": "El recorrido guiado del panel de control ahora explica las pantallas de Páginas, Redirecciones, Usuarios, Menús, Biblioteca de medios, Colecciones, Fuentes, Formularios y Plantillas de correo, no solo su título"
+            }
+        ]
+    },
+    {
+        "date": "2026-07-23",
+        "description": [
+            {
+                "en": "Published pages are now checked weekly against Google's PageSpeed Insights, feeding ConfigBundle's new \"Health check\" dashboard page",
+                "fr": "Les pages publiées sont désormais vérifiées chaque semaine via PageSpeed Insights de Google, alimentant la nouvelle page « Bilan de santé » du tableau de bord de ConfigBundle",
+                "es": "Las páginas publicadas ahora se comprueban semanalmente con PageSpeed Insights de Google, alimentando la nueva página de «Estado de salud» del panel de control de ConfigBundle"
+            },
+            {
+                "en": "A missing PageSpeed Insights API key now shows as a warning right on the Health check page, and as a dashboard alert",
+                "fr": "L'absence de clé API PageSpeed Insights s'affiche désormais en avertissement directement sur la page Bilan de santé, ainsi qu'en alerte sur le tableau de bord",
+                "es": "La falta de una clave API de PageSpeed Insights ahora se muestra como advertencia directamente en la página de Estado de salud, así como en una alerta del panel de control"
+            },
+            {
+                "en": "Pages, fonts, collection items, site graphics, redirects and menus are now included when you use ConfigBundle's \"Export sync (everything)\" shortcut",
+                "fr": "Les Pages, Polices, éléments de collection, graphiques du site, Redirections et Menus sont désormais inclus lorsque vous utilisez le raccourci « Exporter la synchro (tout) » de ConfigBundle",
+                "es": "Las Páginas, Fuentes, elementos de colección, gráficos del sitio, Redirecciones y Menús ahora se incluyen al usar el atajo «Exportar la sincronización (todo)» de ConfigBundle"
+            },
+            {
+                "en": "Fixed a Page sync export/import silently dropping a block placed inside a container (eg. a document-download block inside a multi-column layout)",
+                "fr": "Correction d'une synchro de Page qui laissait de côté sans prévenir un bloc placé dans un conteneur (par ex. un bloc de téléchargement de document dans une mise en page multi-colonnes)",
+                "es": "Corregida una sincronización de Página que descartaba silenciosamente un bloque colocado dentro de un contenedor (por ejemplo, un bloque de descarga de documento dentro de un diseño de varias columnas)"
+            },
+            {
+                "en": "The dashboard's setup checklist now also tracks whether you've set a homepage, a navbar and footer menu, and at least one font",
+                "fr": "La liste de vérification de configuration du tableau de bord suit désormais aussi si vous avez défini une page d'accueil, un menu de navigation et de pied de page, ainsi qu'au moins une police",
+                "es": "La lista de verificación de configuración del panel ahora también controla si has definido una página de inicio, un menú de navegación y de pie de página, y al menos una fuente"
+            },
+            {
+                "en": "Less frequently used screens (Redirects, Site graphics, Menus, Fonts, Forms, Email templates) are now tucked into a collapsed \"Advanced\" section of the dashboard menu",
+                "fr": "Les écrans utilisés moins souvent (Redirections, Graphiques du site, Menus, Polices, Formulaires, Modèles d'e-mail) sont désormais regroupés dans une section « Avancé » repliable du menu du tableau de bord",
+                "es": "Las pantallas usadas con menos frecuencia (Redirecciones, Gráficos del sitio, Menús, Fuentes, Formularios, Plantillas de correo) ahora se agrupan en una sección «Avanzado» plegable del menú del panel"
+            },
+            {
+                "en": "The \"Twig content\" block now has its own \"Twig\" category instead of \"Migration\" when adding a block to a page",
+                "fr": "Le bloc « Contenu Twig » a désormais sa propre catégorie « Twig » au lieu de « Migration » lors de l'ajout d'un bloc à une page",
+                "es": "El bloque «Contenido Twig» ahora tiene su propia categoría «Twig» en lugar de «Migración» al añadir un bloque a una página"
+            },
+            {
+                "en": "Collections now have their own screen: create one (its technical name is generated for you), then open it to add items - no more retyping a free-text group name that a typo could silently duplicate",
+                "fr": "Les collections ont désormais leur propre écran : créez-en une (son identifiant technique est généré pour vous), puis ouvrez-la pour y ajouter des éléments - plus besoin de retaper un nom de groupe en texte libre qu'une faute de frappe pouvait dupliquer silencieusement",
+                "es": "Las colecciones ahora tienen su propia pantalla: cree una (su identificador técnico se genera automáticamente), luego ábrala para añadirle elementos - ya no hay que volver a escribir un nombre de grupo en texto libre que un error tipográfico podía duplicar silenciosamente"
+            },
+            {
+                "en": "On a Page or a Menu, you can now drag an already-saved block into a different section (or back out to the main list), not just reorder it within the same one",
+                "fr": "Sur une Page ou un Menu, vous pouvez désormais glisser un bloc déjà enregistré vers une autre section (ou le faire ressortir vers la liste principale), pas seulement le réordonner au sein de la même section",
+                "es": "En una Página o un Menú, ahora puede arrastrar un bloque ya guardado a otra sección (o devolverlo a la lista principal), no solo reordenarlo dentro de la misma sección"
+            }
+        ]
+    },
+    {
         "date": "2026-07-22",
         "description": [
             {

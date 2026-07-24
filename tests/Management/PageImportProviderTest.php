@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Management\BlockDataImporter;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
@@ -30,10 +31,11 @@ class PageImportProviderTest extends TestCase
 
     public function testSupportsImportOnlyMatchesSitePageKind(): void
     {
+        $em = $this->createStub(EntityManagerInterface::class);
         $provider = new PageImportProvider(
-            $this->createStub(EntityManagerInterface::class),
+            $em,
             $this->createPageRepository(),
-            $this->createStub(DefaultPagesImporter::class),
+            new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)),
         );
 
         $this->assertTrue($provider->supportsImport('site_page'));
@@ -54,7 +56,7 @@ class PageImportProviderTest extends TestCase
             ->method('ensureFormBlockDependenciesExist')
             ->with(['kind' => 'form', 'position' => 0, 'data' => ['name' => 'contact']]);
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), $defaultPagesImporter);
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $defaultPagesImporter));
 
         $result = $provider->import([[
             'title' => 'Contact',
@@ -95,7 +97,7 @@ class PageImportProviderTest extends TestCase
         $provider = new PageImportProvider(
             $em,
             $this->createPageRepository($existingPage),
-            $this->createStub(DefaultPagesImporter::class),
+            new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)),
         );
 
         $result = $provider->import([[
@@ -128,7 +130,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), $this->createStub(DefaultPagesImporter::class));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -165,5 +167,126 @@ class PageImportProviderTest extends TestCase
         unlink($filesDir . '/files/photo.jpg');
         rmdir($filesDir . '/files');
         rmdir($filesDir);
+    }
+
+    public function testImportRebuildsAContainerBlocksNestedSlotsRecursively(): void
+    {
+        $filesDir = sys_get_temp_dir() . '/page_import_test_' . bin2hex(random_bytes(4));
+        mkdir($filesDir . '/files', 0777, true);
+        file_put_contents($filesDir . '/files/brochure.pdf', 'fake-pdf-bytes');
+
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+
+        $provider->import([[
+            'title' => 'About',
+            'slug' => 'about',
+            'blocks' => [[
+                'kind' => 'flex_columns',
+                'position' => 0,
+                'data' => [],
+                'slots' => [[
+                    'kind' => 'document_download',
+                    'position' => 0,
+                    'data' => ['label' => 'Brochure'],
+                    'animation' => 'fade-in',
+                    'medias' => [[
+                        'position' => 0,
+                        'originalFilename' => 'brochure.pdf',
+                        'file' => 'files/brochure.pdf',
+                    ]],
+                ]],
+            ]],
+        ]], $filesDir);
+
+        $page = null;
+        foreach ($persisted as $entity) {
+            if ($entity instanceof Page) {
+                $page = $entity;
+            }
+        }
+        $this->assertInstanceOf(Page::class, $page);
+        $container = $page->getBlocks()->first();
+        $this->assertSame('flex_columns', $container->getKind());
+        $this->assertCount(1, $container->getSlots());
+
+        $slot = $container->getSlots()->first();
+        $this->assertSame('document_download', $slot->getKind());
+        $this->assertSame('fade-in', $slot->getAnimation());
+        $this->assertCount(1, $slot->getMedias());
+        $this->assertSame('fake-pdf-bytes', file_get_contents($slot->getMedias()->first()->getFile()->getPathname()));
+
+        unlink($filesDir . '/files/brochure.pdf');
+        rmdir($filesDir . '/files');
+        rmdir($filesDir);
+    }
+
+    public function testImportRebuildsThePagesOwnSummaryAndOgImage(): void
+    {
+        $filesDir = sys_get_temp_dir() . '/page_import_test_' . bin2hex(random_bytes(4));
+        mkdir($filesDir . '/files', 0777, true);
+        file_put_contents($filesDir . '/files/og.jpg', 'fake-og-image-bytes');
+
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+
+        $provider->import([[
+            'title' => 'About',
+            'slug' => 'about',
+            'summarySocialNetwork' => 'Shared on social networks',
+            'ogImage' => [
+                'position' => 0,
+                'originalFilename' => 'og.jpg',
+                'file' => 'files/og.jpg',
+            ],
+            'blocks' => [],
+        ]], $filesDir);
+
+        $page = null;
+        foreach ($persisted as $entity) {
+            if ($entity instanceof Page) {
+                $page = $entity;
+            }
+        }
+        $this->assertInstanceOf(Page::class, $page);
+        $this->assertSame('Shared on social networks', $page->getSummarySocialNetwork());
+        $this->assertNotNull($page->getOgImage());
+        $this->assertSame('fake-og-image-bytes', file_get_contents($page->getOgImage()->getFile()->getPathname()));
+
+        unlink($filesDir . '/files/og.jpg');
+        rmdir($filesDir . '/files');
+        rmdir($filesDir);
+    }
+
+    public function testImportRemovesTheExistingOgImageWhenTheExportCarriesNone(): void
+    {
+        $existingOgImage = (new Media())->setFilename('uploads/old-og.jpg');
+        $existingPage = (new Page())->setTitle('About')->setSlug('about')->setOgImage($existingOgImage);
+
+        $removed = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('remove')->willReturnCallback(static function (object $entity) use (&$removed): void {
+            $removed[] = $entity;
+        });
+
+        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+
+        $provider->import([[
+            'title' => 'About',
+            'slug' => 'about',
+            'blocks' => [],
+        ]]);
+
+        $this->assertSame([$existingOgImage], $removed);
+        $this->assertNull($existingPage->getOgImage());
     }
 }

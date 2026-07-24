@@ -24,6 +24,8 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             ->add(RecurringMessage::cron('7 3 * * 1',   new RunCommandMessage('c975l:site:backup --report')))
+            // Weekly: every registered health check provider is free (no paid API involved)
+            ->add(RecurringMessage::cron('0 4 * * 0',   new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains')))
         ;
     }
 }
