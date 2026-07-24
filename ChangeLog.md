@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.7.2
+
+- Fixed `CollectionItemImportProvider` failing to import items into a newly created collection (24/07/2026)
+
 ## v7.7.1
 
 - Added `ImportmapProvider`, declaring `controllers-admin.js`/`controllers.js`'s importmap.php entries for ConfigBundle's `c975l:config:check-importmap` (24/07/2026)

@@ -71,6 +71,11 @@
                 "en": "The dashboard's guided tour now explains Pages, Redirects, Users, Menus, Media, Collections, Fonts, Forms and Email templates, not just their title",
                 "fr": "La visite guidée du tableau de bord explique désormais les écrans Pages, Redirections, Utilisateurs, Menus, Médiathèque, Collections, Polices, Formulaires et Modèles d'e-mail, pas seulement leur titre",
                 "es": "El recorrido guiado del panel de control ahora explica las pantallas de Páginas, Redirecciones, Usuarios, Menús, Biblioteca de medios, Colecciones, Fuentes, Formularios y Plantillas de correo, no solo su título"
+            },
+            {
+                "en": "Fixed importing collection items failing when the collection they belong to didn't exist yet",
+                "fr": "Correction de l'import d'éléments de collection qui échouait lorsque la collection à laquelle ils appartiennent n'existait pas encore",
+                "es": "Corregida la importación de elementos de colección que fallaba cuando la colección a la que pertenecen aún no existía"
             }
         ]
     },

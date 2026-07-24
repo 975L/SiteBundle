@@ -133,6 +133,39 @@ class CollectionItemImportProviderTest extends TestCase
         $this->assertSame('new-collection', $collectionGroups[0]->getSlug());
     }
 
+    // A freshly created CollectionGroup has no id until flushed - findOneByCollectionGroupAndSlug() binds it as a query parameter right after, which Doctrine rejects for an entity with no identifier value (ORMInvalidArgumentException) unless it was flushed first
+    public function testImportFlushesANewlyCreatedCollectionGroupBeforeQueryingItsItems(): void
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $flushedBeforeQuery = false;
+        $em->method('persist');
+        $em->expects($this->atLeastOnce())->method('flush')->willReturnCallback(static function () use (&$flushedBeforeQuery): void {
+            $flushedBeforeQuery = true;
+        });
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+        $repository->method('findOneByCollectionGroupAndSlug')->willReturnCallback(
+            function () use (&$flushedBeforeQuery): ?CollectionItem {
+                $this->assertTrue($flushedBeforeQuery, 'CollectionGroup must be flushed before being used as a query parameter');
+
+                return null;
+            }
+        );
+
+        $provider = new CollectionItemImportProvider(
+            $em,
+            $repository,
+            $this->createCollectionGroupResolver(null),
+        );
+
+        $provider->import([[
+            'collectionGroup' => 'New Collection',
+            'title' => 'First Item',
+            'slug' => 'first-item',
+            'position' => 0,
+        ]]);
+    }
+
     // Resolving by normalized slug rather than exact name means a name that only differs in casing/punctuation still matches the existing collection instead of creating a duplicate - see CollectionItemImportCommand's own equivalent test, both now share CollectionGroupResolver
     public function testImportMatchesAnExistingCollectionGroupBySlugRegardlessOfNameVariation(): void
     {

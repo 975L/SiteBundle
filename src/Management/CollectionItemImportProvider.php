@@ -72,7 +72,9 @@ class CollectionItemImportProvider implements ImportProviderInterface
     {
         [$collectionGroup, $isNew] = $this->collectionGroupResolver->resolve($name, $usedSlugs);
         if ($isNew) {
+            // Flushed right away - it needs a real id before findOneByCollectionGroupAndSlug() can bind it as a query parameter (Doctrine rejects binding an unflushed entity, which has none yet)
             $this->em->persist($collectionGroup);
+            $this->em->flush();
         }
 
         return $collectionGroup;
