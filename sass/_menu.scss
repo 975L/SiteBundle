@@ -159,7 +159,7 @@ body.navbar-fixed {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 
     &.active {
-        background-color: rgba(var(--primary), 0.1);
+        background-color: color-mix(in srgb, var(--primary) 10%, transparent);
     }
 }
 

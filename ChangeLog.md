@@ -1,5 +1,10 @@
 # Changelog
 
+## v7.7.5
+
+- Page's own blocks now render full-width outside `layout.html.twig`'s `.container`, instead of constrained inside it (24/07/2026)
+- Fixed the active menu item's background color never applying, invalid `rgba()` usage on `--primary` (24/07/2026)
+
 ## v7.7.4
 
 - `BlockDataExporter`/`BlockDataImporter` now carry a PDF's `.webp` thumbnail alongside it in Sync exports/imports, reused as-is via `Media::$importedThumbnailPath` instead of regenerating it with Ghostscript (24/07/2026)

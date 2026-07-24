@@ -81,6 +81,16 @@
                 "en": "You can now upload several fonts at once from the Fonts list, with their name, weight and style guessed automatically from each file's name",
                 "fr": "Vous pouvez désormais importer plusieurs polices en une fois depuis la liste des Polices, avec leur nom, graisse et style devinés automatiquement à partir du nom de chaque fichier",
                 "es": "Ahora puede importar varias fuentes a la vez desde la lista de Fuentes, con su nombre, grosor y estilo adivinados automáticamente a partir del nombre de cada archivo"
+            },
+            {
+                "en": "A page's blocks now display full-width instead of confined to a narrow centered column",
+                "fr": "Les blocks d'une page s'affichent désormais en pleine largeur au lieu d'être confinés dans une colonne centrale étroite",
+                "es": "Los bloques de una página ahora se muestran a ancho completo en lugar de confinados en una columna central estrecha"
+            },
+            {
+                "en": "Fixed the active menu item's background highlight not showing",
+                "fr": "Correction du surlignage en fond de l'élément de menu actif qui ne s'affichait pas",
+                "es": "Corregido el resaltado de fondo del elemento de menú activo que no se mostraba"
             }
         ]
     },
