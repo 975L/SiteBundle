@@ -194,8 +194,7 @@ class PageCrudController extends AbstractCrudController
             BooleanField::new('isIndexable')
                 ->setLabel(t('label.is_indexable', [], 'site'))
                 ->setHelp(t('label.is_indexable_help', [], 'site'))
-                ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields'])
-                ->hideOnIndex(),
+                ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields']),
             ChoiceField::new('changeFrequency')
                 ->setLabel(t('label.change_frequency', [], 'site'))
                 ->setHelp(t('label.change_frequency_help', [], 'site'))

@@ -1053,6 +1053,16 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame(PageQrCodeType::class, $qrCodeField->getAsDto()->getFormType());
     }
 
+    // Whether a page is indexed is as telling as whether it is published, so it gets its own column and its own index switch, next to "isPublished"
+    public function testConfigureFieldsShowsIsIndexableOnIndex(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_INDEX);
+        $isIndexable = $this->findFieldByProperty($fields, 'isIndexable');
+
+        $this->assertNotNull($isIndexable);
+        $this->assertTrue($isIndexable->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
+    }
+
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void
     {
         $requestStack = new RequestStack();

@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.9.1
+
+- `isIndexable` is now shown as a switch in the pages list, next to `isPublished` (26/07/2026)
+
 ## v7.9.0
 
 - Fixed the `viewport` meta missing its comma separator in `layout.html.twig` and `emails/fullLayout.html.twig` (26/07/2026)

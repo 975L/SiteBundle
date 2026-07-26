@@ -81,6 +81,11 @@
                 "en": "The cookie banner is now served entirely from the site, with no call to an external provider",
                 "fr": "La bannière cookies est désormais servie entièrement depuis le site, sans aucun appel à un fournisseur externe",
                 "es": "El banner de cookies ahora se sirve íntegramente desde el sitio, sin ninguna llamada a un proveedor externo"
+            },
+            {
+                "en": "The pages list now shows at a glance which pages are indexed by search engines, and lets it be changed right there",
+                "fr": "La liste des pages indique désormais d'un coup d'œil quelles pages sont indexées par les moteurs de recherche, et permet de le changer directement",
+                "es": "La lista de páginas ahora muestra de un vistazo qué páginas están indexadas por los buscadores, y permite cambiarlo directamente"
             }
         ]
     },
