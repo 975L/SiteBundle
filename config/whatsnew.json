@@ -3,6 +3,31 @@
         "date": "2026-07-26",
         "description": [
             {
+                "en": "Fixed pages not scaling properly on mobile, the viewport declaration being malformed",
+                "fr": "Correction des pages qui ne s'adaptaient pas correctement sur mobile, la déclaration du viewport étant mal formée",
+                "es": "Corregidas las páginas que no se adaptaban correctamente en móvil, al estar mal formada la declaración del viewport"
+            },
+            {
+                "en": "The health check now analyses one page at a time, so its own measurements no longer slow the site down",
+                "fr": "Le contrôle de santé analyse désormais une page à la fois, ses propres mesures ne ralentissent donc plus le site",
+                "es": "La comprobación de estado ahora analiza una página cada vez, por lo que sus propias mediciones ya no ralentizan el sitio"
+            },
+            {
+                "en": "Fixed the legal pages showing a raw label instead of \"Latest update\" above their date",
+                "fr": "Correction des pages légales affichant une étiquette brute au lieu de « Dernière mise à jour » au-dessus de leur date",
+                "es": "Corregidas las páginas legales que mostraban una etiqueta sin traducir en lugar de «Última actualización» sobre su fecha"
+            },
+            {
+                "en": "The emails can now be zoomed in, the layout no longer locks it",
+                "fr": "Les emails peuvent désormais être zoomés, la mise en page ne le bloque plus",
+                "es": "Ahora se puede ampliar el zoom en los emails, la maquetación ya no lo bloquea"
+            },
+            {
+                "en": "Pages load a little faster when the Matomo statistics are enabled",
+                "fr": "Les pages se chargent un peu plus vite lorsque les statistiques Matomo sont activées",
+                "es": "Las páginas cargan algo más rápido cuando las estadísticas de Matomo están activadas"
+            },
+            {
                 "en": "The pages no longer jump around while the logo loads",
                 "fr": "Les pages ne sautent plus pendant le chargement du logo",
                 "es": "Las páginas ya no saltan mientras se carga el logotipo"

@@ -24,7 +24,6 @@ use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use c975L\SiteBundle\Tests\Repository\ConfigRepositoryFindOneBySlugFixture;
 use c975L\UiBundle\Service\ConfigEditUrlResolver;
 use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SitePageHealthCheckProviderTest extends TestCase
@@ -58,12 +57,6 @@ class SitePageHealthCheckProviderTest extends TestCase
         ]);
 
         return $configService;
-    }
-
-    // request()'s return value is opaque to the provider - only read() (mocked separately per test) gives it meaning
-    private function stubResponse(): ResponseInterface
-    {
-        return $this->createStub(ResponseInterface::class);
     }
 
     private function createPageExistenceChecker(bool $exists = true): PageExistenceChecker
@@ -150,14 +143,30 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertSame([], $provider->runChecks());
     }
 
+    // PSI answers by loading the page itself, so batching every page's request() up front had Google hitting this site with as many simultaneous loads as it has pages - inflating the TTFB it was measuring and dragging every score down. analyze() blocks until each page is done before the next one starts, which is the whole point; request()/read() being used again here would silently bring the batching back
+    public function testRunChecksAnalysesOnePageAtATime(): void
+    {
+        $pageSpeedInsightsClient = $this->createMock(PageSpeedInsightsClient::class);
+        $pageSpeedInsightsClient->expects($this->never())->method('request');
+        $pageSpeedInsightsClient->expects($this->exactly(3))
+            ->method('analyze')
+            ->willReturn(['scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95], 'consoleErrors' => []]);
+
+        $provider = $this->createProvider(
+            $this->createPageRepository([$this->createPage('home', 'Home'), $this->createPage('contact', 'Contact'), $this->createPage('legal', 'Legal')]),
+            $pageSpeedInsightsClient,
+            $this->createConfigService('https://example.com'),
+        );
+
+        $this->assertCount(3, $provider->runChecks());
+    }
+
     public function testRunChecksBuildsTheHomeUrlFromTheSiteRootWithoutThePagesPrefix(): void
     {
         $pageSpeedInsightsClient = $this->createMock(PageSpeedInsightsClient::class);
         $pageSpeedInsightsClient->expects($this->once())
-            ->method('request')
+            ->method('analyze')
             ->with('https://example.com/')
-            ->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')
             ->willReturn(['scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95], 'consoleErrors' => []]);
 
         $provider = $this->createProvider(
@@ -176,10 +185,8 @@ class SitePageHealthCheckProviderTest extends TestCase
     {
         $pageSpeedInsightsClient = $this->createMock(PageSpeedInsightsClient::class);
         $pageSpeedInsightsClient->expects($this->once())
-            ->method('request')
+            ->method('analyze')
             ->with('https://example.com/pages/contact')
-            ->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')
             ->willReturn(['scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95], 'consoleErrors' => []]);
 
         $provider = $this->createProvider(
@@ -196,8 +203,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsOkWhenEveryScoreIsAtLeastNinety(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 90, 'accessibility' => 100, 'best-practices' => 95, 'seo' => 92],
             'consoleErrors' => [],
         ]);
@@ -214,8 +220,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsWarningWhenAScoreIsBetweenFiftyAndNinety(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 65, 'accessibility' => 100, 'best-practices' => 95, 'seo' => 92],
             'consoleErrors' => [],
         ]);
@@ -232,8 +237,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsErrorWhenAScoreIsBelowFifty(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 30, 'accessibility' => 100, 'best-practices' => 95, 'seo' => 92],
             'consoleErrors' => [],
         ]);
@@ -250,8 +254,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsAtLeastWarningWhenThereAreConsoleErrorsEvenWithPerfectScores(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 100, 'accessibility' => 100, 'best-practices' => 100, 'seo' => 100],
             'consoleErrors' => ['Uncaught TypeError'],
         ]);
@@ -268,8 +271,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksIncludesThePageEditUrl(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95],
             'consoleErrors' => [],
         ]);
@@ -287,8 +289,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksReturnsAnErrorRowWhenThePageSpeedCallFails(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willThrowException(new \RuntimeException('Quota exceeded'));
+        $pageSpeedInsightsClient->method('analyze')->willThrowException(new \RuntimeException('Quota exceeded'));
 
         $provider = $this->createProvider(
             $this->createPageRepository([$this->createPage('home', 'Home')]),
@@ -305,7 +306,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksReturnsASkippedRowWithoutCallingPageSpeedWhenThePageDoesNotExist(): void
     {
         $pageSpeedInsightsClient = $this->createMock(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->expects($this->never())->method('request');
+        $pageSpeedInsightsClient->expects($this->never())->method('analyze');
 
         $provider = $this->createProvider(
             $this->createPageRepository([$this->createPage('home', 'Home')]),
@@ -324,8 +325,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksKeepsRowsInPageOrderWhenAMiddlePageIsNotFound(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95],
             'consoleErrors' => [],
         ]);
@@ -353,8 +353,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksPrependsAWarningRowWhenNoApiKeyIsConfigured(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 100, 'accessibility' => 100, 'best-practices' => 100, 'seo' => 100],
             'consoleErrors' => [],
         ]);
@@ -377,8 +376,7 @@ class SitePageHealthCheckProviderTest extends TestCase
     public function testRunChecksDoesNotPrependAWarningRowWhenAnApiKeyIsConfigured(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
-        $pageSpeedInsightsClient->method('request')->willReturn($this->stubResponse());
-        $pageSpeedInsightsClient->method('read')->willReturn([
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
             'scores' => ['performance' => 100, 'accessibility' => 100, 'best-practices' => 100, 'seo' => 100],
             'consoleErrors' => [],
         ]);

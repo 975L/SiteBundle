@@ -60,7 +60,8 @@
             {% block meta %}
                 <meta charset="utf-8">
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width initial-scale=1.0">
+{# The comma is not optional: the viewport content is a comma-separated list, so "width=device-width initial-scale=1.0" is one single unparseable token and the whole directive is dropped #}
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <meta name="format-detection" content="telephone=no">
 {# Turbo reads this to nonce the inline <script>/<style> tags it re-executes on page visits/frame
    loads - without it, Turbo recreates them without a nonce and NelmioSecurityBundle's CSP blocks
@@ -149,7 +150,17 @@
             {% endblock %}
 {# Preconnect #}
             {% block preconnect %}
-                {% for preconnectUrl in config('site-preconnect') %}
+{# Matomo's own origin, added automatically rather than left to be repeated in "site-preconnect" on every
+   site that enables it - its script is fetched from a third-party host by the "matomo" controller, so the
+   DNS lookup + TLS handshake only start once that JS runs, costing a full round-trip before the first byte
+   of matomo.js. Origin only: "site-matomo-url" carries a path ("https://example.com/piwik"), which a
+   preconnect must not include. Skipped when it is the site's own host, already connected by definition #}
+                {% set matomoOrigin = config('site-matomo-url') ? config('site-matomo-url')|split('/')|slice(0, 3)|join('/') : '' %}
+                {% set preconnectUrls = config('site-preconnect')|default([]) %}
+                {% if matomoOrigin and matomoOrigin != app.request.getSchemeAndHttpHost() and matomoOrigin not in preconnectUrls %}
+                    {% set preconnectUrls = preconnectUrls|merge([matomoOrigin]) %}
+                {% endif %}
+                {% for preconnectUrl in preconnectUrls %}
                     <link rel="preconnect" href="{{ preconnectUrl }}">
                 {% endfor %}
             {% endblock %}

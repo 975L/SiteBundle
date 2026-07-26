@@ -15,7 +15,8 @@
             {% block meta %}
                 <meta charset="utf-8" />
                 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-                <meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
+{# Comma-separated, same fix as layout.html.twig - without them the whole directive is one unparseable token. "maximum-scale"/"user-scalable" dropped along the way: locking the zoom leaves anyone who needs to enlarge the text with no way to do it #}
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <meta name="format-detection" content="telephone=no" />
                 {# Author #}
                 {% if author is defined %}

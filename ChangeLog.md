@@ -1,5 +1,17 @@
 # Changelog
 
+## v7.9.0
+
+- Fixed the `viewport` meta missing its comma separator in `layout.html.twig` and `emails/fullLayout.html.twig` (26/07/2026)
+- The email layout's `viewport` no longer locks the zoom (26/07/2026)
+- `SitePageHealthCheckProvider` now analyses one page at a time, instead of firing every PageSpeed request at once (26/07/2026)
+- The layout now preconnects to Matomo's own origin, without needing it in `site-preconnect` (26/07/2026)
+- Added `PageDevProfilePathProvider`, declaring every published page to ConfigBundle's `c975l:dev-profile:run` (26/07/2026)
+- Added `PagePublicUrlResolver::resolvePath()`, the local path `resolve()` already built, now reusable without `site-url` (26/07/2026)
+- Added a readme section on the dev profile (26/07/2026)
+- Documented that Matomo's origin is preconnected without being listed in `site-preconnect` (26/07/2026)
+- Fixed `label.latest_update` being translated in the `messages` domain instead of `site` in the twelve legal model templates (26/07/2026)
+
 ## v7.8.1
 
 - Merged `translations.en/fr/es.js` into a single `translations.js` (26/07/2026) [BC-Break]

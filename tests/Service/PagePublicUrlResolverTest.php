@@ -57,4 +57,26 @@ class PagePublicUrlResolverTest extends TestCase
 
         $this->assertSame('https://example.com/pages/contact', $resolver->resolve($this->createPage('contact')));
     }
+
+    public function testResolvePathBuildsTheSiteRootForHome(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com'), $this->createUrlGenerator());
+
+        $this->assertSame('/', $resolver->resolvePath($this->createPage('home')));
+    }
+
+    public function testResolvePathBuildsARegularPagePathWithoutTrailingSlash(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com'), $this->createUrlGenerator());
+
+        $this->assertSame('/pages/contact', $resolver->resolvePath($this->createPage('contact')));
+    }
+
+    // The local path has no host to build, so it stays available where resolve() returns null (see PageDevProfilePathProvider)
+    public function testResolvePathWorksWithoutASiteUrl(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService(null), $this->createUrlGenerator());
+
+        $this->assertSame('/pages/contact', $resolver->resolvePath($this->createPage('contact')));
+    }
 }

@@ -29,10 +29,14 @@ class PagePublicUrlResolver
             return null;
         }
 
-        $path = 'home' === $page->getSlug()
+        return $siteUrl . $this->resolvePath($page);
+    }
+
+    // The local part of that url, without the host - what PageDevProfilePathProvider hands to the kernel, since profiling the developer's own machine has nothing to do with "site-url" (which points at the live site even from a dev environment)
+    public function resolvePath(Page $page): string
+    {
+        return 'home' === $page->getSlug()
             ? $this->urlGenerator->generate('page_home', [], UrlGeneratorInterface::ABSOLUTE_PATH)
             : $this->urlGenerator->generate('page_display', ['page' => $page->getSlug()], UrlGeneratorInterface::ABSOLUTE_PATH);
-
-        return $siteUrl . $path;
     }
 }

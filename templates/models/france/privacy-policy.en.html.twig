@@ -2,7 +2,7 @@
 
 <div class="legal">
 	<p class="text text-center">
-		{{ 'label.latest_update'|trans }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
+		{{ 'label.latest_update'|trans({}, 'site') }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
 	<p class="text text-center">

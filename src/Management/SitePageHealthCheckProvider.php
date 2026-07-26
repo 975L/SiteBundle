@@ -19,7 +19,6 @@ use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageSpeedInsightsClient;
 use c975L\UiBundle\Service\ConfigEditUrlResolver;
-use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Runs PageSpeed Insights (Lighthouse performance/accessibility/best-practices/SEO scores, including the detailed WCAG-related audits under "accessibility", plus the errors-in-console audit) against every published page, for ConfigBundle's "Health check" dashboard page (see HealthCheckProviderInterface, run only from c975l:health-check:run)
@@ -63,27 +62,20 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
             $results[] = $this->missingApiKeyRow();
         }
 
-        // Every PSI request is fired before any response is read, letting the HttpClient transport run them concurrently instead of paying each page's up-to-60s timeout serially (see PageSpeedInsightsClient::request()/read()). Rows are keyed by the page's own position (not appended as each branch resolves) and ksort()ed back at the end, so a not-found page in the middle of the list doesn't shuffle every row after it to the bottom
+        // One page at a time, deliberately. Firing every request up front let the HttpClient transport run them concurrently, but PSI answers by *loading the page itself*: N in-flight analyses means Google hitting this very site with N simultaneous requests, which inflates the TTFB it then measures and drags every score down - the check was scoring the load it was itself creating. It also crowds PSI's per-minute quota, where the daily one is the only limit an API key really lifts. This command runs from cron (see HealthCheckProviderInterface), so the extra wall-clock costs nothing anyone is waiting on
         $pageRows = [];
-        $pending = [];
-        foreach ($this->pageRepository->findAllOrdered() as $index => $page) {
+        foreach ($this->pageRepository->findAllOrdered() as $page) {
             $url = $this->pagePublicUrlResolver->resolve($page);
             $editUrl = $this->pageEditUrlResolver->resolve($page);
             if (!$this->pageExistenceChecker->exists($url)) {
-                $pageRows[$index] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
+                $pageRows[] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
                 continue;
             }
 
-            $pending[$index] = [$url, $page->getTitle(), $editUrl, $this->pageSpeedInsightsClient->request($url)];
+            $pageRows[] = $this->checkPage($url, $page->getTitle(), $editUrl);
         }
 
-        foreach ($pending as $index => [$url, $label, $editUrl, $response]) {
-            $pageRows[$index] = $this->checkPage($url, $label, $editUrl, $response);
-        }
-
-        ksort($pageRows);
-
-        return [...$results, ...array_values($pageRows)];
+        return [...$results, ...$pageRows];
     }
 
     // Surfaces the missing PSI key directly in the Health check table (not just the dashboard alerts, see configs.json's "severity": "warning") - its stable url (the config's own edit screen) dedupes like any page row, see HealthCheckResultRepository::findLatestPerUrlAndKind()
@@ -112,10 +104,10 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
         ];
     }
 
-    private function checkPage(string $url, ?string $label, ?string $editUrl, ResponseInterface $response): array
+    private function checkPage(string $url, ?string $label, ?string $editUrl): array
     {
         try {
-            $analysis = $this->pageSpeedInsightsClient->read($response);
+            $analysis = $this->pageSpeedInsightsClient->analyze($url);
         } catch (\Throwable $e) {
             return $this->errorRow($url, $label, 'label.health_check_pagespeed_call_failed', $e->getMessage(), $editUrl);
         }

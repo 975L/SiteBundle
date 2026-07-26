@@ -474,6 +474,18 @@ Deliberately **not** a `HealthCheckProviderInterface` implementation (see [Healt
 
 ---
 
+## Dev profile
+
+```bash
+php bin/console c975l:dev-profile:run
+```
+
+ConfigBundle's dev-only command (see its own README for what it measures and how to contribute paths from another bundle) lists what the Symfony dev toolbar would flag on every page — n+1 queries, deprecations, missing translations, external HTTP calls during rendering. SiteBundle contributes `PageDevProfilePathProvider`, declaring every published `Page`, so there's nothing to write for an app installing it.
+
+Note the difference with the health check and the smoke test above: both fetch the **live** site over HTTP at `site-url`, which points at production even from a dev machine. This one hands each page's local path (`PagePublicUrlResolver::resolvePath()`) straight to the local kernel, no HTTP and no host involved, so it profiles the code and database you're working on.
+
+---
+
 ## Health check
 
 SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
@@ -631,7 +643,9 @@ Each component renders nothing if either its URL or logo config value is missing
 
 ### Preconnect
 
-Set `site-preconnect` in ConfigBundle to a JSON array of external origins to preconnect to, i.e. `["https://975l.com"]`. Useful when `HostedBy`/`MadeBy` logos or Matomo are served from a third-party domain. Empty by default, so it has no effect unless configured.
+Set `site-preconnect` in ConfigBundle to a JSON array of external origins to preconnect to, i.e. `["https://975l.com"]`. Useful when `HostedBy`/`MadeBy` logos are served from a third-party domain. Empty by default, so it has no effect unless configured.
+
+`site-matomo-url`'s own origin is preconnected automatically, without having to be repeated here — its script is fetched from a third-party host, so the DNS lookup and TLS handshake would otherwise only start once that JS runs.
 
 ---
 

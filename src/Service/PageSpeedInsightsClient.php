@@ -25,7 +25,7 @@ class PageSpeedInsightsClient
     ) {
     }
 
-    // Fires the request and returns immediately without waiting for a response - Symfony's HttpClient transports (e.g. CurlHttpClient) multiplex every in-flight response, so a caller analyzing many pages (SitePageHealthCheckProvider) can request() all of them up front and read() them afterwards to run them concurrently instead of paying each ~60s timeout serially
+    // Fires the request and returns immediately without waiting for a response - Symfony's HttpClient transports (e.g. CurlHttpClient) multiplex every in-flight response, so a caller can request() several urls up front and read() them afterwards to run them concurrently. Do NOT do that across pages of one same site: PSI answers by loading the page itself, so N in-flight analyses means N simultaneous hits on that site, inflating the very TTFB being measured and dragging every score down (see SitePageHealthCheckProvider, which used to and no longer does). analyze() is the right entry point in all but very unusual cases
     public function request(string $url): ResponseInterface
     {
         return $this->httpClient->request('GET', self::buildUrl($url, $this->configService->get('healthcheck-pagespeed-api-key')), ['timeout' => 60]);
