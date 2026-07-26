@@ -1106,6 +1106,8 @@ body.navbar-fixed {
 }
 .menu-logo img {
   display: block;
+  height: 40px;
+  width: auto;
 }
 
 .menu-site-name {
@@ -1367,6 +1369,22 @@ ul.dropdown-menu > li {
 ul.list-unstyled > li,
 ul.dropdown-menu > li {
   list-style-image: none;
+}
+
+/* A marker only makes sense against a left-aligned edge - centered, the chevrons stay pinned to the
+   left while the text floats in the middle, and the padding they reserve shifts that text off-centre.
+   Mostly hit by rich text entered in a centered container (a collection item's card, see UiBundle's
+   CollectionItem.html.twig), where the <ul> comes from the editor and can't be given .list-unstyled */
+.text-center ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* An ordered list's numbers carry meaning, so they can't be dropped like the chevrons above - "inside"
+   moves the marker into the text flow, where it gets centered along with it */
+.text-center ol {
+  list-style-position: inside;
+  padding-left: 0;
 }
 
 table {

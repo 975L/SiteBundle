@@ -54,6 +54,9 @@ body.navbar-fixed {
 
     img {
         display: block;
+        // Sizes the logo here rather than through the img's width/height attributes, which now carry its intrinsic dimensions so the browser can reserve the right room for it (see Navbar.html.twig)
+        height: 40px;
+        width: auto;
     }
 }
 

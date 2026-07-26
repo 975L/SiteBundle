@@ -3,6 +3,16 @@
         "date": "2026-07-26",
         "description": [
             {
+                "en": "The pages no longer jump around while the logo loads",
+                "fr": "Les pages ne sautent plus pendant le chargement du logo",
+                "es": "Las páginas ya no saltan mientras se carga el logotipo"
+            },
+            {
+                "en": "A bulleted list inside centered text is now properly centered, and a numbered one keeps its numbers",
+                "fr": "Une liste à puces dans un texte centré est désormais correctement centrée, et une liste numérotée garde ses numéros",
+                "es": "Una lista con viñetas dentro de un texto centrado ahora queda bien centrada, y una lista numerada conserva sus números"
+            },
+            {
                 "en": "A page can now be kept out of search engines with a single checkbox - it leaves the sitemap and tells crawlers not to index it",
                 "fr": "Une page peut désormais être tenue à l'écart des moteurs de recherche d'une simple case à cocher - elle quitte le plan du site et demande aux robots de ne pas l'indexer",
                 "es": "Una página ahora puede mantenerse fuera de los motores de búsqueda con una simple casilla - sale del mapa del sitio e indica a los rastreadores que no la indexen"

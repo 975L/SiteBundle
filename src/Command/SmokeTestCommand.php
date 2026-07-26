@@ -66,6 +66,13 @@ class SmokeTestCommand extends Command
             return Command::FAILURE;
         }
 
+        // A site left in maintenance answers 503 + the maintenance page (inline css only) on every public url, so every check below would fail on a deployment that actually went fine - the site being in maintenance is a deliberate state, not a broken deployment
+        if (true === $this->configService->get('site-maintenance')) {
+            $io->warning('Le site est en mode maintenance, smoke test ignoré (les pages publiques répondent 503 par construction).');
+
+            return Command::SUCCESS;
+        }
+
         // The very same set of pages the health check and the sitemap use (published, not deleted), so a site has one single notion of "page that must answer 200" rather than three lists drifting apart
         $pageUrls = [];
         foreach ($this->pageRepository->findAllOrdered() as $page) {
@@ -87,6 +94,8 @@ class SmokeTestCommand extends Command
         if (!$input->getOption('pages-only')) {
             $assets = $this->smokeTestClient->findAssets($siteUrl, $siteUrl);
             if (!$assets) {
+                // The pages are listed first: a home page without a single asset is almost always a home page that isn't rendering at all (500, redirect elsewhere), and their status codes say so - "aucun asset trouvé" alone sends someone looking at asset-map:compile while the site is down for another reason
+                $this->listFailures($io, $statuses);
                 $io->error('Aucun asset css/js trouvé dans le HTML de la page d\'accueil.');
 
                 return Command::FAILURE;
@@ -115,13 +124,23 @@ class SmokeTestCommand extends Command
             return Command::SUCCESS;
         }
 
-        foreach ($failures as $url => $status) {
-            // 0 is this command's own marker for "no answer at all", not an HTTP status - showing it as such would send someone looking for a status code that doesn't exist
-            $io->writeln(sprintf('  <error>FAIL</error> %s  %s', 0 === $status ? 'pas de réponse' : (string) $status, $url));
-        }
+        $this->listFailures($io, $statuses);
 
         $io->error(sprintf('%d url(s) en échec sur %d vérifiée(s).', \count($failures), \count($statuses)));
 
         return Command::FAILURE;
+    }
+
+    // Every non-200 url, one per line
+    private function listFailures(SymfonyStyle $io, array $statuses): void
+    {
+        foreach ($statuses as $url => $status) {
+            if (200 === $status) {
+                continue;
+            }
+
+            // 0 is this command's own marker for "no answer at all", not an HTTP status - showing it as such would send someone looking for a status code that doesn't exist
+            $io->writeln(sprintf('  <error>FAIL</error> %s  %s', 0 === $status ? 'pas de réponse' : (string) $status, $url));
+        }
     }
 }

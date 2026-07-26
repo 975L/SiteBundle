@@ -106,6 +106,35 @@ class SmokeTestCommandTest extends TestCase
         $this->assertStringContainsString('Aucun asset css/js', $tester->getDisplay());
     }
 
+    // The pages are what explain an assetless home page, so their status codes must show up rather than only "aucun asset trouvé"
+    public function testItListsThePageFailuresWhenTheHomePageReferencesNoAsset(): void
+    {
+        $tester = $this->tester(['https://example.com/'], [], [['https://example.com/' => 503]]);
+
+        $this->assertSame(Command::FAILURE, $tester->execute([]));
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('503', $display);
+        $this->assertStringContainsString('Aucun asset css/js', $display);
+    }
+
+    // A site in maintenance answers 503 + a maintenance page with inline css only, on every public url: that's a deliberate state, so a deployment must not be reported as broken
+    public function testItSkipsEverythingWhenTheSiteIsInMaintenance(): void
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnCallback(
+            static fn (string $key): mixed => 'site-maintenance' === $key ? true : 'https://example.com'
+        );
+
+        $smokeTestClient = $this->createMock(SmokeTestClient::class);
+        $smokeTestClient->expects($this->never())->method('check');
+        $smokeTestClient->expects($this->never())->method('findAssets');
+
+        $tester = new CommandTester($this->command(['https://example.com/'], $smokeTestClient, $configService));
+
+        $this->assertSame(Command::SUCCESS, $tester->execute([]));
+        $this->assertStringContainsString('maintenance', $tester->getDisplay());
+    }
+
     public function testItFailsWhenSiteUrlIsNotConfigured(): void
     {
         $configService = $this->createStub(ConfigServiceInterface::class);

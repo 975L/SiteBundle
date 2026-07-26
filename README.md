@@ -135,6 +135,8 @@ Declare these variables in each page template to populate meta tags and the page
 {% set summarySocialNetwork = 'A short summary for social networks of this page.' %}
 ```
 
+`summarySocialNetwork` feeds both `<meta name="description">` and `og:description`. A page that doesn't set it ships no meta description at all, which `ContentQualityHealthCheckProvider` reports.
+
 ### Template blocks
 
 The layout exposes the following Twig blocks for you to override or extend:
@@ -366,6 +368,7 @@ Registration/reset-password-request reject bots at several layers, so a public f
 - **`Assert\Email` + `c975L\UiBundle\Validator\Constraints\DnsEmail`** on every email-typed field — format check, then a live MX/A DNS lookup (via `egulias/email-validator`) rejecting domains that can't receive mail at all (e.g. `something@dominatingkeywords.com`). Applies to any generic Form's email field (contact/register/reset-password-request alike), plus `User::$email` itself on every entity validation (including the User CRUD in the backoffice, which still carries its own `#[DnsEmail]`).
 - **Honeypot + minimum submit delay** — an invisible rotating-name field (hidden inline, no CSS dependency), and a minimum delay between displaying the form and submitting it, tracked in session. Either one failing silently redirects back (same "form_submitted" flash as a real submission) without creating an account or sending any email, giving no signal back to the bot. The delay is the shared `site-form-delay` ConfigBundle key (seconds, default `3`) - one setting for every public form (contact, register, reset-password-request) instead of one per bundle.
 - **GDPR consent checkbox** - shown on both forms (unmapped `gdpr` field, using the bundle's own `text.gdpr` translation) when the shared `site-form-gdpr` ConfigBundle key (bool, default `true`) is enabled. The registration form also carries a `cgu` field (terms-of-use acceptance), enforced the same way.
+- **Duplicate email** - `RegisterFormAction` silently succeeds (same flash, no account created, no email sent) when the submitted email already has an account, same non-revealing stance `ResetPasswordRequestFormAction` already has for "no such account".
 - **Rate limiting by IP** — shared with every other generic Form (`limiter.ui_form`, optional), not a dedicated `registration`/`reset_password` limiter anymore:
 
 ```yaml
@@ -379,7 +382,6 @@ framework:
 ```
 
 Without this config, rate limiting is simply skipped (fails open) rather than erroring - see `c975L\UiBundle\Service\RateLimiterGuard`.
-- **Duplicate email** - `RegisterFormAction` silently succeeds (same flash, no account created, no email sent) when the submitted email already has an account, same non-revealing stance `ResetPasswordRequestFormAction` already has for "no such account".
 
 ### Login throttling
 
@@ -464,6 +466,8 @@ php bin/console c975l:site:smoke-test
 
 Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
 
+A site left in maintenance (`site-maintenance`) answers 503 on every public url by construction, so the command checks nothing and exits 0 rather than reporting a deployment that went fine as broken — run it once the site is back online.
+
 Assets are read out of the home page's rendered HTML rather than declared anywhere: AssetMapper's filenames are hashed (`app-EiPntxm.css`), so this is what actually proves `asset-map:compile` and the stylesheet cache warmer both ran, and ran in the right order. Requests are all fired before any status is read, so checking a few dozen urls costs about a second.
 
 Deliberately **not** a `HealthCheckProviderInterface` implementation (see [Health check](#health-check) below): that one judges a live site's quality on a weekly schedule and persists rows for a dashboard, this one answers "is it broken, right now" and has to be able to fail a pipeline.
@@ -486,7 +490,7 @@ SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see 
 | `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable and well-formed, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
 | `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
 
-#### What content-quality actually flags
+### What content-quality actually flags
 
 Two rules keep the `content-quality` kind from reporting things you cannot fix:
 
@@ -793,7 +797,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
 | `php bin/console c975l:site:templates:apply <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
-| `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets) |
+| `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets, a site in maintenance is skipped entirely) |
 | `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collections) rows for a given collection (`--images-dir`, `--dry-run` options) |
 
 ### Create a new site

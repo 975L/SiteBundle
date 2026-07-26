@@ -21,7 +21,7 @@
         "php": ">=8.1",
         "c975l/config-bundle": "*",
         "c975l/social-bundle": "*",
-        "c975l/ui-bundle": "^1.9",
+        "c975l/ui-bundle": "^1.10",
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",
         "easycorp/easyadmin-bundle": "^5.1",

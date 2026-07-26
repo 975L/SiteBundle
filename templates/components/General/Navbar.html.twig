@@ -20,7 +20,13 @@
                         <a href="{{ path('page_home') }}" class="menu-logo">
 {# eager, never lazy: the navbar logo is above the fold on every single page, so deferring it only
    delays a request the browser could already have started from the preload scanner #}
-                            <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" height="40" loading="eager" fetchpriority="high">
+{# The intrinsic dimensions, not the displayed ones: they only declare the aspect ratio the browser
+   reserves room for (the displayed size comes from _menu.scss), which is what keeps the navbar from
+   shifting while the logo loads. intrinsicWidth/intrinsicHeight rather than width/height: those are
+   free-text admin fields and a "50%"/"100px" value would be discarded by the browser, taking the
+   fallback below down with it. Older Media rows have neither (see MediaDimensionsCommand), hence
+   the fallback to the displayed height alone #}
+                            <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ siteName|default('Logo') }}"{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
                         </a>
                     {% endif %}
 

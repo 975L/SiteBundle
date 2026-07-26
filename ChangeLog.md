@@ -1,5 +1,18 @@
 # Changelog
 
+## v7.8.1
+
+- Merged `translations.en/fr/es.js` into a single `translations.js` (26/07/2026) [BC-Break]
+- The navbar logo now carries its intrinsic `width`/`height` and a `?v=` cache-buster (26/07/2026)
+- `_menu.scss` now sizes the navbar logo (26/07/2026)
+- A `ul` inside a `.text-center` container drops its chevron marker (26/07/2026)
+- An `ol` inside a `.text-center` container moves its numbers into the centered text flow (26/07/2026)
+- `c975l:site:smoke-test` now skips a site left in maintenance (26/07/2026)
+- `c975l:site:smoke-test` now lists the page failures when the home page references no asset (26/07/2026)
+- `c975l/ui-bundle` is now required in `^1.10`, for `Media::getIntrinsicWidth()`/`getIntrinsicHeight()` (26/07/2026)
+- Added `ConfigsJsonTest`, checking every `configs.json` entry has unique slug, expected keys and en/es/fr translations (26/07/2026)
+- Added `TranslationsJsTest`, checking `translations.js` carries every shipped locale with the same keys (26/07/2026)
+
 ## v7.8.0
 
 - Added `c975l:site:smoke-test`/`SmokeTestClient`, checking every published page and the home page's css/js assets answer 200 (26/07/2026)
@@ -485,7 +498,7 @@
 - Added StyleSheetProvider to load stylesheets automatically (27/06/2026)
 - Removed animations.css (27/06/2026)
 
-## 6.28.1
+## 6.28.1
 
 - Put icons in their own folder (27/06/2026)
 - Added a controller.js to register stimulus controllers (27/06/2026)
@@ -513,7 +526,7 @@
 - Corrected default configs (22/06/2026)
 - Added translated messages (22/06/2026)
 
-## v6.27.2
+## v6.27.2
 
 - Corrected SitemapCreateCommand
 
@@ -576,7 +589,7 @@
 ## v6.25
 
 - Removed h1 from navbar as not recommended (31/03/2026)
-- Added Twig Extension Nl2br to avoid use of <br /> (31/03/2026)
+- Added Twig Extension Nl2br to avoid use of `<br />` (31/03/2026)
 - Removed button element as descendant of a element (31/03/2026)
 - Removed width="auto" for Video components (25/03/2026)
 - Corrected html in models (31/03/2026)
@@ -607,7 +620,7 @@
 - Added line-clamp as a css variable to be able to modify it easily (05/02/2026)
 - Added nl2br filter to Readmore component (05/02/2026)
 
-## v6.22.6
+## v6.22.6
 
 - Added component Text:Readmore (05/02/2026)
 
@@ -678,7 +691,7 @@
 
 - Added a locale variable to be able to change it at the main level template (21/08/2025)
 
-## v6.19.2
+## v6.19.2
 
 - Added raw filter to label to allow html (01/08/2025)
 
@@ -1488,7 +1501,7 @@ Upgrading from v1.x? **Check UPGRADE.md**
 
 ## v1.2.1
 
-- Corrected `layout.html.twig` for ` if display` to check if it's not pdf instead of checking 'html' as display can take other values (07/03/2018)
+- Corrected `layout.html.twig` for `if display` to check if it's not pdf instead of checking 'html' as display can take other values (07/03/2018)
 
 ## v1.2
 
