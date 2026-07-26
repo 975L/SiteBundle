@@ -171,12 +171,13 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertSame('https://example.com/', $results[0]['url']);
     }
 
-    public function testRunChecksBuildsARegularPageUrlWithTrailingSlash(): void
+    // Same canonical form as the sitemap, no trailing slash (see PagePublicUrlResolver)
+    public function testRunChecksBuildsARegularPageUrlWithoutTrailingSlash(): void
     {
         $pageSpeedInsightsClient = $this->createMock(PageSpeedInsightsClient::class);
         $pageSpeedInsightsClient->expects($this->once())
             ->method('request')
-            ->with('https://example.com/pages/contact/')
+            ->with('https://example.com/pages/contact')
             ->willReturn($this->stubResponse());
         $pageSpeedInsightsClient->method('read')
             ->willReturn(['scores' => ['performance' => 95, 'accessibility' => 95, 'best-practices' => 95, 'seo' => 95], 'consoleErrors' => []]);
@@ -189,7 +190,7 @@ class SitePageHealthCheckProviderTest extends TestCase
 
         $results = $provider->runChecks();
 
-        $this->assertSame('https://example.com/pages/contact/', $results[0]['url']);
+        $this->assertSame('https://example.com/pages/contact', $results[0]['url']);
     }
 
     public function testRunChecksStatusIsOkWhenEveryScoreIsAtLeastNinety(): void
@@ -346,7 +347,7 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertCount(3, $results);
         $this->assertSame('https://example.com/', $results[0]['url']);
         $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $results[1]['status']);
-        $this->assertSame('https://example.com/pages/about/', $results[2]['url']);
+        $this->assertSame('https://example.com/pages/about', $results[2]['url']);
     }
 
     public function testRunChecksPrependsAWarningRowWhenNoApiKeyIsConfigured(): void

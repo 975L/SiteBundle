@@ -189,6 +189,13 @@ class PageCrudController extends AbstractCrudController
             $isPublishedField,
 
             // Sitemaps
+            // Unchecking it drops the page from the sitemap and switches its "robots" meta tag to "noindex", and locks changeFrequency/priority below - handled by the "sitemap-fields" Stimulus controller (assets/js/sitemap-fields.js), loaded admin-wide via controllers-admin.js. Locked read-only rather than disabled, so both keep their value across a save (see the controller): re-checking the box gives the page back the settings it had, and neither field is required anyway
+            // Set on the row rather than on the checkbox itself: a BooleanField rendered as a switch (the default) goes through EasyAdmin's <twig:ea:Switch> component, which only forwards id/name/value/checked/disabled/required/variant and drops "attr" entirely - "row_attr" is rendered by its form_row, and the "change" event bubbles up to it anyway
+            BooleanField::new('isIndexable')
+                ->setLabel(t('label.is_indexable', [], 'site'))
+                ->setHelp(t('label.is_indexable_help', [], 'site'))
+                ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields'])
+                ->hideOnIndex(),
             ChoiceField::new('changeFrequency')
                 ->setLabel(t('label.change_frequency', [], 'site'))
                 ->setHelp(t('label.change_frequency_help', [], 'site'))
@@ -201,13 +208,13 @@ class PageCrudController extends AbstractCrudController
                     'yearly' => t('label.yearly', [], 'site'),
                     'never' => t('label.never', [], 'site'),
                 ])
-                ->setRequired(true)
+                ->setRequired(false)
                 ->hideOnIndex(),
             IntegerField::new('priority')
                 ->setLabel(t('label.priority', [], 'site'))
                 ->setHelp(t('label.priority_help', [], 'site'))
                 ->setFormTypeOption('attr', ['min' => 0, 'max' => 10])
-                ->setRequired(true)
+                ->setRequired(false)
                 ->hideOnIndex(),
 
             // SEO
@@ -616,6 +623,8 @@ class PageCrudController extends AbstractCrudController
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
+            // Carried over like the other SEO attributes - a copy of a deliberately noindex page (eg. "creer-un-compte") must not silently reappear in sitemap-site.xml and in Google's index
+            ->setIsIndexable($source->isIndexable())
             ->setIsPublished(false)
             ->setCreation($now)
             ->setModification($now);

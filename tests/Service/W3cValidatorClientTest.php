@@ -64,6 +64,55 @@ class W3cValidatorClientTest extends TestCase
 
         $this->assertSame(['line 4: Property "colour" doesn\'t exist'], $result['errors']);
         $this->assertSame(['line 9: Same colors for background and border'], $result['warnings']);
+        $this->assertSame([], $result['benignWarnings']);
+    }
+
+    // The validator sometimes splits a message into several parts - both errors and warnings have to join them, or the row reads "line 9: Array"
+    public function testValidateCssJoinsAMessageReturnedAsAnArray(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'cssvalidation' => [
+                    'validity' => false,
+                    'errors' => [['line' => 4, 'message' => ['Property', '"colour"', 'doesn\'t exist']]],
+                    'warnings' => [['line' => 9, 'message' => ['Same colors for', 'background and border']]],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $client = new W3cValidatorClient($httpClient);
+        $result = $client->validateCss('https://example.com/pages/home/');
+
+        $this->assertSame(['line 4: Property "colour" doesn\'t exist'], $result['errors']);
+        $this->assertSame(['line 9: Same colors for background and border'], $result['warnings']);
+    }
+
+    // Warnings about constructs the validator's own CSS3 profile predates are split off, not dropped - the Health check shows the same total as the W3C report, only the status follows the actionable count
+    public function testValidateCssSplitsOffBenignWarnings(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'cssvalidation' => [
+                    'validity' => true,
+                    'errors' => [],
+                    'warnings' => [
+                        ['line' => 2, 'message' => 'Due to their dynamic nature, CSS variables are currently not statically checked'],
+                        ['line' => 3, 'message' => '“-webkit-line-clamp” is a vendor extension'],
+                        ['line' => 4, 'message' => '“::-webkit-file-upload-button” is a vendor extended pseudo-element'],
+                        ['line' => 5, 'message' => '“:-moz-focusring” is a vendor extended pseudo-class'],
+                        ['line' => 6, 'message' => '“auto” is not defined by any specification as an allowed value for “pointer-events”, but is supported in multiple browsers'],
+                        ['line' => 7, 'message' => 'The property “clip” is deprecated'],
+                    ],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $client = new W3cValidatorClient($httpClient);
+        $result = $client->validateCss('https://example.com/pages/home/');
+
+        // A deprecated property is something to actually fix, unlike the five above it
+        $this->assertSame(['line 7: The property “clip” is deprecated'], $result['warnings']);
+        $this->assertCount(5, $result['benignWarnings']);
     }
 
     public function testValidateCssHandlesAMultiPartMessageArray(): void

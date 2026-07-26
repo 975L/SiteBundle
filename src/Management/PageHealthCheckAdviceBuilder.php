@@ -9,6 +9,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\HealthCheckAdviceBuilder;
 use c975L\ConfigBundle\Management\HealthCheckAdviceProviderInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,7 +33,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     ) {
     }
 
-    // Grouped by kind rather than a flat list - the Health check panel renders each kind's advice inside that row's own "Résumé" cell (see page_crud_form_theme.html.twig), not as one aggregate block
+    // Keyed per result (HealthCheckAdviceBuilder::key(), ie. kind + url) rather than by kind alone - the Health check panel renders each result's advice inside that row's own "Résumé" cell (see page_crud_form_theme.html.twig), and the dashboard's own page lists one row per page *and* per kind, so keying by kind had every page's content-quality row showing the last checked page's advice
     public function buildAdvice(array $results): array
     {
         $advice = [];
@@ -48,7 +49,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
                 default => $this->unknownKindAdvice($result),
             };
             if ($lines) {
-                $advice[$result->getKind()] = $lines;
+                $advice[HealthCheckAdviceBuilder::key($result)] = $lines;
             }
         }
 
@@ -63,9 +64,10 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         return [];
     }
 
-    private function line(string $translationId, array $params, ?string $url): array
+    // $items: the individual offenders behind a "%count% of them" advice line (see contentQualityAdvice()), rendered by the shared table as a collapsed list under the line rather than as more advice lines - a page with a dozen images without alt text would otherwise bury every other row of the table
+    private function line(string $translationId, array $params, ?string $url, array $items = []): array
     {
-        return ['text' => $this->translator->trans($translationId, $params, 'site'), 'url' => $url];
+        return ['text' => $this->translator->trans($translationId, $params, 'site'), 'url' => $url, 'items' => $items];
     }
 
     private function pagespeedAdvice(HealthCheckResult $result): array
@@ -140,10 +142,13 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         return $advice;
     }
 
-    // No external validator for this one - it's this bundle's own local check, there's no third-party report to link to
+    // No external validator for this one - it's this bundle's own local check, there's no third-party report to link to. Each image/link is listed individually under its advice line instead, linking to the block holding it (see ContentQualityHealthCheckProvider::describeImages()/describeLinks())
     private function contentQualityAdvice(HealthCheckResult $result): array
     {
         $details = $result->getDetails() ?? [];
+        // Only ever a list here, but a result persisted before those two details became lists of their own still holds a plain count - normalized away rather than crashing the whole panel until the next run
+        $images = $this->itemList($details['imagesWithoutAlt'] ?? []);
+        $links = $this->itemList($details['brokenLinks'] ?? []);
 
         $advice = [];
         if (false === ($details['hasDescription'] ?? true)) {
@@ -152,14 +157,44 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         if (false === ($details['hasH1'] ?? true)) {
             $advice[] = $this->line('label.health_check_advice_no_h1', [], null);
         }
-        if (($details['imagesWithoutAlt'] ?? 0) > 0) {
-            $advice[] = $this->line('label.health_check_advice_images_without_alt', ['%count%' => $details['imagesWithoutAlt']], null);
+        if ($images) {
+            $advice[] = $this->line('label.health_check_advice_images_without_alt', ['%count%' => \count($images)], null, array_map(
+                fn (array $image): array => $this->item($image['src'] ?? '', $image),
+                $images,
+            ));
         }
-        if ($details['brokenLinks'] ?? []) {
-            $advice[] = $this->line('label.health_check_advice_broken_links', ['%count%' => \count($details['brokenLinks'])], null);
+        if ($links) {
+            $advice[] = $this->line('label.health_check_advice_broken_links', ['%count%' => \count($links)], null, array_map(
+                fn (array $link): array => $this->item($this->linkText($link), $link),
+                $links,
+            ));
         }
 
         return $advice;
+    }
+
+    // What the visitor actually clicks on, ahead of the url - an image-only link (or one whose text couldn't be read) falls back to the url alone
+    private function linkText(array $link): string
+    {
+        $url = $link['url'] ?? '';
+
+        return ($link['text'] ?? null) ? $link['text'] . ' - ' . $url : $url;
+    }
+
+    // Anything that isn't a list of detail arrays (an older result's plain count, a null) yields no items rather than a broken list
+    private function itemList(mixed $details): array
+    {
+        return \is_array($details) ? array_values(array_filter($details, '\is_array')) : [];
+    }
+
+    // The block's own label as the link text, so the user knows where they'll land - a block-less image/link (one coming from the theme, the menu, a template) has no link at all, only its own text
+    private function item(string $text, array $details): array
+    {
+        return [
+            'text' => $text,
+            'url' => $details['editUrl'] ?? null,
+            'label' => ($details['block'] ?? null) ? $this->translator->trans('label.health_check_advice_edit_block', ['%block%' => $details['block']], 'site') : null,
+        ];
     }
 
     // No external validator for this one either - the certificate itself has no public report page to link to

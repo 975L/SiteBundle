@@ -11,7 +11,6 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Command\ExportTablesCommand;
-use App\Command\SitemapCreateCommand;
 use c975L\UiBundle\Repository\FormRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -26,13 +25,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SiteShortcutController extends AbstractController
 {
     // EasyAdmin prefixes this with the Dashboard's own route name, giving management_XXX
-    public const SITEMAP_CREATE_ROUTE = 'management_site_sitemap_create';
     public const EXPORT_TABLES_ROUTE = 'management_site_export_tables';
     public const REGISTRATION_ENABLED_TOGGLE_ROUTE = 'management_site_user_registration_enabled_toggle';
     public const CREATE_PAGE_ROUTE = 'management_site_create_page';
 
     public function __construct(
-        private readonly SitemapCreateCommand $sitemapCreateCommand,
         private readonly ExportTablesCommand $exportTablesCommand,
         private readonly FormRepository $formRepository,
         private readonly EntityManagerInterface $manager,
@@ -121,23 +118,5 @@ class SiteShortcutController extends AbstractController
             'Content-Type' => 'application/octet-stream',
             'Content-Disposition' => 'attachment; filename="site_' . date('Ymd_His') . '.sql"',
         ]);
-    }
-
-    // Calls the creation of sitemaps
-    #[AdminRoute(
-        path: '/site/sitemap-create',
-        name: 'site_sitemap_create',
-        options: ['methods' => ['POST']]
-    )]
-    public function createSitemap(Request $request): RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
-
-        if ($this->isCsrfTokenValid(self::SITEMAP_CREATE_ROUTE, $request->request->get('_token'))) {
-            $this->sitemapCreateCommand->createSitemap();
-            $this->addFlash('success', $this->translator->trans('flash.sitemaps_created', [], 'site'));
-        }
-
-        return $this->redirectToRoute('management');
     }
 }

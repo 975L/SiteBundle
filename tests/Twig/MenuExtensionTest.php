@@ -320,10 +320,20 @@ class MenuExtensionTest extends TestCase
     // A "page:ID#anchor-blockId" target (see MenuLinkType's anchor choices, UiBundle's BlockAnchorSlugger) resolves the page normally and appends the fragment as-is
     public function testGetMenuLinkUrlAppendsFragmentForPageTargetWithAnchor(): void
     {
+        $page = (new Page())->setTitle('Contact')->setSlug('contact')->setIsPublished(true);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('/page_display/contact#services-7', $extension->getMenuLinkUrl('page:42#services-7'));
+    }
+
+    // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so a menu link going through page_display would cost a redirect hop on every click
+    public function testGetMenuLinkUrlResolvesTheHomePageToTheSiteRoot(): void
+    {
         $page = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
         $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
 
-        $this->assertSame('/page_display/home#services-7', $extension->getMenuLinkUrl('page:42#services-7'));
+        $this->assertSame('/page_home', $extension->getMenuLinkUrl('page:42'));
+        $this->assertSame('/page_home#services-7', $extension->getMenuLinkUrl('page:42#services-7'));
     }
 
     // A "page:ID" target's label is the page's own title

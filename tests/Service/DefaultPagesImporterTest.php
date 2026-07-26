@@ -116,6 +116,27 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertSame('home', $pages[0]->getSlug());
     }
 
+    // The account-related pages have no SEO value, so they're seeded out of the sitemap and out of Google's index; every other default page is indexable
+    public function testImportSeedsTheAccountPagesAsNonIndexable(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->import();
+
+        $indexable = [];
+        foreach ($persisted as $entity) {
+            if ($entity instanceof Page) {
+                $indexable[$entity->getSlug()] = $entity->isIndexable();
+            }
+        }
+
+        $this->assertFalse($indexable['creer-un-compte']);
+        $this->assertFalse($indexable['mot-de-passe-oublie']);
+        $this->assertTrue($indexable['home']);
+        $this->assertTrue($indexable['contact']);
+    }
+
     // Re-running the import on a site that already has every page, Form and EmailTemplate must not duplicate anything
     public function testImportSkipsPagesAlreadyPresentInDatabase(): void
     {

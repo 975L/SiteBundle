@@ -274,6 +274,14 @@
                 <source>label.website</source>
                 <target>Sitio web</target>
             </trans-unit>
+            <trans-unit id="392">
+                <source>label.is_indexable</source>
+                <target>Referenciar la página</target>
+            </trans-unit>
+            <trans-unit id="393">
+                <source>label.is_indexable_help</source>
+                <target>Desmarque para excluir la página del sitemap y pedir a los motores de búsqueda que no la indexen (ej. creación de cuenta, contraseña olvidada)</target>
+            </trans-unit>
             <trans-unit id="74">
                 <source>label.change_frequency</source>
                 <target>Frecuencia de cambio</target>
@@ -709,14 +717,6 @@
             <trans-unit id="189">
                 <source>label.user_registration_disable</source>
                 <target>Deshabilitar el registro de usuarios</target>
-            </trans-unit>
-            <trans-unit id="190">
-                <source>label.sitemaps_create</source>
-                <target>Crear sitemaps</target>
-            </trans-unit>
-            <trans-unit id="191">
-                <source>flash.sitemaps_created</source>
-                <target>Sitemaps creadas con éxito</target>
             </trans-unit>
             <trans-unit id="192">
                 <source>label.menu_item_target</source>
@@ -1429,6 +1429,18 @@
             <trans-unit id="382">
                 <source>label.health_check_sitemap_index_ok</source>
                 <target>sitemap-index.xml es accesible y referencia %count% sitemap(s)</target>
+            </trans-unit>
+            <trans-unit id="390">
+                <source>label.health_check_advice_edit_block</source>
+                <target>Bloque «%block%»</target>
+            </trans-unit>
+            <trans-unit id="391">
+                <source>label.cookies_dialog</source>
+                <target>Consentimiento de cookies</target>
+            </trans-unit>
+            <trans-unit id="394">
+                <source>label.health_check_w3c_benign_warnings</source>
+                <target>de los cuales %actionable% accionable(s) (%benign% benignos: variables CSS, prefijos de proveedor, no verificables por el validador)</target>
             </trans-unit>
         </body>
     </file>

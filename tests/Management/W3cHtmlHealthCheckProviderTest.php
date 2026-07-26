@@ -165,7 +165,7 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $results = $provider->runChecks();
 
         $this->assertCount(2, $results);
-        $this->assertSame(['https://example.com/', 'https://example.com/pages/contact/'], $requested);
+        $this->assertSame(['https://example.com/', 'https://example.com/pages/contact'], $requested);
         $this->assertSame(HealthCheckResult::STATUS_OK, $results[0]['status']);
         $this->assertSame(HealthCheckResult::STATUS_OK, $results[1]['status']);
     }
@@ -191,7 +191,7 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $this->assertCount(3, $results);
         $this->assertSame('https://example.com/', $results[0]['url']);
         $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $results[1]['status']);
-        $this->assertSame('https://example.com/pages/about/', $results[2]['url']);
+        $this->assertSame('https://example.com/pages/about', $results[2]['url']);
     }
 
     public function testRunChecksReturnsASkippedRowWhenThePageIsNotDeployed(): void

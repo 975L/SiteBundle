@@ -39,7 +39,7 @@ class MaintenanceScheduleTest extends TestCase
     public static function recurringMessages(): array
     {
         return [
-            [0, '5 0 * * *', 'app:sitemaps:create'],
+            [0, '5 0 * * *', 'c975l:sitemaps:create'],
             [1, '7 */6 * * *', 'c975l:site:backup'],
             [2, '0 3 * * *', 'c975l:site:messenger-cleanup'],
             [3, '7 3 * * 1', 'c975l:site:backup --report'],

@@ -20,7 +20,7 @@ class MaintenanceSchedule implements ScheduleProviderInterface
     {
         return (new Schedule())
             ->stateful($this->cache)
-            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('app:sitemaps:create')))
+            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('c975l:sitemaps:create')))
             ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             ->add(RecurringMessage::cron('7 3 * * 1',   new RunCommandMessage('c975l:site:backup --report')))

@@ -91,10 +91,16 @@ class MenuExtension extends AbstractExtension
 
         if ('page' === $parsed['type']) {
             $page = $this->resolvePage($parsed['pageId']);
+            if (null === $page || !$page->isPublished() || $page->isDeleted()) {
+                return '';
+            }
 
-            return null === $page || !$page->isPublished() || $page->isDeleted()
-                ? ''
-                : $this->router->generate('page_display', ['page' => $page->getSlug()]) . (null !== $parsed['fragment'] ? '#' . $parsed['fragment'] : '');
+            // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
+            $path = 'home' === $page->getSlug()
+                ? $this->router->generate('page_home')
+                : $this->router->generate('page_display', ['page' => $page->getSlug()]);
+
+            return $path . (null !== $parsed['fragment'] ? '#' . $parsed['fragment'] : '');
         }
 
         return 'route' === $parsed['type'] && null !== $parsed['value'] && $this->linkableRouteRegistry->has($parsed['value'])

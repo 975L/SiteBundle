@@ -14,7 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Service\SeoFilesClient;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Checks robots.txt and sitemap-site.xml (see SitemapCreateCommand) are actually reachable and sane - both are silent, easy-to-forget deployment steps (eg. a fresh environment never running c975l:site:sitemaps:create, or an app-level robots.txt left blocking everything from a staging config). The robots.txt "blocks everything" check is a heuristic, not a full parser - it only catches the single most damaging misconfiguration (a global "Disallow: /" under "User-agent: *"), not every possible robots.txt edge case. Also checks sitemap-index.xml (only produced by the app-level scaffolded multi-sitemap command) and every child sitemap it references, when one is deployed
+// Checks robots.txt and sitemap-site.xml (see SitePageSitemapProvider) are actually reachable and sane - both are silent, easy-to-forget deployment steps (eg. a fresh environment never running c975l:sitemaps:create, or an app-level robots.txt left blocking everything from a staging config). The robots.txt "blocks everything" check is a heuristic, not a full parser - it only catches the single most damaging misconfiguration (a global "Disallow: /" under "User-agent: *"), not every possible robots.txt edge case. Also checks sitemap-index.xml (written by ConfigBundle's SitemapWriter, declaring every bundle's own sub-sitemap) and every child sitemap it references, when one is deployed
 class SeoFilesHealthCheckProvider implements HealthCheckProviderInterface
 {
     public function __construct(

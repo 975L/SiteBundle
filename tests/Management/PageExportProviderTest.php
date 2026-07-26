@@ -47,6 +47,7 @@ class PageExportProviderTest extends TestCase
             'changeFrequency' => null,
             'priority' => null,
             'isPublished' => true,
+            'isIndexable' => true,
             'summarySocialNetwork' => null,
             'ogImage' => null,
             'blocks' => [[

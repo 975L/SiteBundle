@@ -5,6 +5,9 @@
 {% set title = detailTitle is defined and detailTitle ? detailTitle : page.title %}
 {% set summarySocialNetwork = page.summarySocialNetwork %}
 
+{# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
+{% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
+
 {# Preview-only, request-scoped preview of a theme preset's shape (see PageController::preview()'s
    ?preset=<slug>) - never writes to site_config, so it never affects any other visitor or page.
    Colors/fonts are never overridden here: they stay whatever the site's own configs say, a preset

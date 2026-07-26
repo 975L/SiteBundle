@@ -27,11 +27,17 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         return new PageHealthCheckAdviceBuilder($translator, $logger);
     }
 
-    private function createResult(string $kind, array $details): HealthCheckResult
+    // Same key the builder groups its advice under (HealthCheckAdviceBuilder::key(), ie. kind + url)
+    private function key(string $kind, string $url = 'https://example.com/'): string
+    {
+        return $kind . '|' . $url;
+    }
+
+    private function createResult(string $kind, array $details, string $url = 'https://example.com/'): HealthCheckResult
     {
         return (new HealthCheckResult())
             ->setKind($kind)
-            ->setUrl('https://example.com/')
+            ->setUrl($url)
             ->setStatus(HealthCheckResult::STATUS_WARNING)
             ->setSummary('summary')
             ->setDetails($details);
@@ -49,10 +55,10 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
         $this->assertCount(1, $advice);
-        $this->assertCount(2, $advice['pagespeed']);
-        $this->assertStringContainsString('60', $advice['pagespeed'][0]['text']);
-        $this->assertStringContainsString('89', $advice['pagespeed'][1]['text']);
-        $this->assertSame('https://pagespeed.web.dev/report?url=https%3A%2F%2Fexample.com%2F', $advice['pagespeed'][0]['url']);
+        $this->assertCount(2, $advice[$this->key('pagespeed')]);
+        $this->assertStringContainsString('60', $advice[$this->key('pagespeed')][0]['text']);
+        $this->assertStringContainsString('89', $advice[$this->key('pagespeed')][1]['text']);
+        $this->assertSame('https://pagespeed.web.dev/report?url=https%3A%2F%2Fexample.com%2F', $advice[$this->key('pagespeed')][0]['url']);
     }
 
     public function testPagespeedGivesNoAdviceWhenEveryScoreIsGood(): void
@@ -68,9 +74,9 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(1, $advice['security-headers']);
-        $this->assertStringContainsString('content-security-policy, referrer-policy', $advice['security-headers'][0]['text']);
-        $this->assertSame('https://securityheaders.com/?q=https%3A%2F%2Fexample.com%2F&followRedirects=on', $advice['security-headers'][0]['url']);
+        $this->assertCount(1, $advice[$this->key('security-headers')]);
+        $this->assertStringContainsString('content-security-policy, referrer-policy', $advice[$this->key('security-headers')][0]['text']);
+        $this->assertSame('https://securityheaders.com/?q=https%3A%2F%2Fexample.com%2F&followRedirects=on', $advice[$this->key('security-headers')][0]['url']);
     }
 
     public function testSecurityHeadersAdvisesOnCorsWildcard(): void
@@ -79,7 +85,7 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertSame('label.health_check_advice_security_headers_cors', $advice['security-headers'][0]['text']);
+        $this->assertSame('label.health_check_advice_security_headers_cors', $advice[$this->key('security-headers')][0]['text']);
     }
 
     public function testW3cHtmlAdvisesOnErrorsAndWarnings(): void
@@ -88,10 +94,10 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(2, $advice['w3c-html']);
-        $this->assertStringContainsString('1', $advice['w3c-html'][0]['text']);
-        $this->assertStringContainsString('2', $advice['w3c-html'][1]['text']);
-        $this->assertSame('https://validator.w3.org/nu/?doc=https%3A%2F%2Fexample.com%2F', $advice['w3c-html'][0]['url']);
+        $this->assertCount(2, $advice[$this->key('w3c-html')]);
+        $this->assertStringContainsString('1', $advice[$this->key('w3c-html')][0]['text']);
+        $this->assertStringContainsString('2', $advice[$this->key('w3c-html')][1]['text']);
+        $this->assertSame('https://validator.w3.org/nu/?doc=https%3A%2F%2Fexample.com%2F', $advice[$this->key('w3c-html')][0]['url']);
     }
 
     public function testW3cHtmlGivesNoAdviceWhenClean(): void
@@ -107,10 +113,10 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(2, $advice['w3c-css']);
-        $this->assertStringContainsString('1', $advice['w3c-css'][0]['text']);
-        $this->assertStringContainsString('2', $advice['w3c-css'][1]['text']);
-        $this->assertSame('https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fexample.com%2F&profile=css3svg', $advice['w3c-css'][0]['url']);
+        $this->assertCount(2, $advice[$this->key('w3c-css')]);
+        $this->assertStringContainsString('1', $advice[$this->key('w3c-css')][0]['text']);
+        $this->assertStringContainsString('2', $advice[$this->key('w3c-css')][1]['text']);
+        $this->assertSame('https://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Fexample.com%2F&profile=css3svg', $advice[$this->key('w3c-css')][0]['url']);
     }
 
     public function testW3cCssGivesNoAdviceWhenClean(): void
@@ -125,13 +131,39 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $result = $this->createResult('content-quality', [
             'hasDescription' => false,
             'hasH1' => false,
-            'imagesWithoutAlt' => 3,
-            'brokenLinks' => ['https://example.com/pages/missing/'],
+            'imagesWithoutAlt' => [['src' => '/media/a.jpg', 'block' => null, 'editUrl' => null]],
+            'brokenLinks' => [['url' => 'https://example.com/pages/missing/', 'text' => null, 'block' => null, 'editUrl' => null]],
         ]);
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(4, $advice['content-quality']);
+        $this->assertCount(4, $advice[$this->key('content-quality')]);
+    }
+
+    // Each offending image/link listed one by one under its own advice line, with a link straight to the block holding it
+    public function testContentQualityListsEachImageAndLinkAsAnItem(): void
+    {
+        $result = $this->createResult('content-quality', [
+            'hasDescription' => true,
+            'hasH1' => true,
+            'imagesWithoutAlt' => [
+                ['src' => '/media/beach.jpg', 'block' => '(#1) Hero', 'editUrl' => '/management?focusBlock=12'],
+                ['src' => '/media/team.jpg', 'block' => null, 'editUrl' => null],
+            ],
+            'brokenLinks' => [['url' => 'https://example.com/pages/missing/', 'text' => 'Nos tarifs', 'block' => '(#3) Cta', 'editUrl' => '/management?focusBlock=34']],
+        ]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertStringContainsString('2', $advice[0]['text']);
+        $this->assertSame('/media/beach.jpg', $advice[0]['items'][0]['text']);
+        $this->assertSame('/management?focusBlock=12', $advice[0]['items'][0]['url']);
+        $this->assertStringContainsString('(#1) Hero', $advice[0]['items'][0]['label']);
+        // A block-less image (a theme/template one) is still listed, just with nothing to link to
+        $this->assertNull($advice[0]['items'][1]['url']);
+        $this->assertNull($advice[0]['items'][1]['label']);
+        $this->assertSame('Nos tarifs - https://example.com/pages/missing/', $advice[1]['items'][0]['text']);
+        $this->assertSame('/management?focusBlock=34', $advice[1]['items'][0]['url']);
     }
 
     public function testContentQualityGivesNoAdviceWhenEverythingIsFine(): void
@@ -139,8 +171,21 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $result = $this->createResult('content-quality', [
             'hasDescription' => true,
             'hasH1' => true,
-            'imagesWithoutAlt' => 0,
+            'imagesWithoutAlt' => [],
             'brokenLinks' => [],
+        ]);
+
+        $this->assertSame([], $this->createBuilder()->buildAdvice([$result]));
+    }
+
+    // A result persisted before those two details became lists of their own still holds a plain count - no advice for it (the next run fixes that), but no crash either
+    public function testContentQualityIgnoresPreListDetailsShape(): void
+    {
+        $result = $this->createResult('content-quality', [
+            'hasDescription' => true,
+            'hasH1' => true,
+            'imagesWithoutAlt' => 3,
+            'brokenLinks' => ['https://example.com/pages/missing/'],
         ]);
 
         $this->assertSame([], $this->createBuilder()->buildAdvice([$result]));
@@ -160,9 +205,9 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(1, $advice['ssl-certificate']);
-        $this->assertSame('label.health_check_advice_ssl_certificate', $advice['ssl-certificate'][0]['text']);
-        $this->assertNull($advice['ssl-certificate'][0]['url']);
+        $this->assertCount(1, $advice[$this->key('ssl-certificate')]);
+        $this->assertSame('label.health_check_advice_ssl_certificate', $advice[$this->key('ssl-certificate')][0]['text']);
+        $this->assertNull($advice[$this->key('ssl-certificate')][0]['url']);
     }
 
     public function testSslCertificateGivesNoAdviceWhenFarFromExpiry(): void
@@ -186,8 +231,8 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
         $advice = $this->createBuilder()->buildAdvice([$result]);
 
-        $this->assertCount(1, $advice['mixed-content']);
-        $this->assertStringContainsString('1', $advice['mixed-content'][0]['text']);
+        $this->assertCount(1, $advice[$this->key('mixed-content')]);
+        $this->assertStringContainsString('1', $advice[$this->key('mixed-content')][0]['text']);
     }
 
     public function testMixedContentGivesNoAdviceWhenClean(): void
@@ -236,7 +281,19 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $advice = $this->createBuilder()->buildAdvice([$pagespeed, $w3cHtml]);
 
         $this->assertCount(2, $advice);
-        $this->assertArrayHasKey('pagespeed', $advice);
-        $this->assertArrayHasKey('w3c-html', $advice);
+        $this->assertArrayHasKey($this->key('pagespeed'), $advice);
+        $this->assertArrayHasKey($this->key('w3c-html'), $advice);
+    }
+
+    // The dashboard's Health check page lists one row per url and per kind - keying by kind alone had every page's row show the last checked page's advice
+    public function testBuildKeepsTwoPagesOfTheSameKindApart(): void
+    {
+        $home = $this->createResult('content-quality', ['imagesWithoutAlt' => [['src' => '/media/a.jpg']]], 'https://example.com/');
+        $contact = $this->createResult('content-quality', ['imagesWithoutAlt' => [['src' => '/media/b.jpg'], ['src' => '/media/c.jpg']]], 'https://example.com/pages/contact/');
+
+        $advice = $this->createBuilder()->buildAdvice([$home, $contact]);
+
+        $this->assertCount(1, $advice[$this->key('content-quality')][0]['items']);
+        $this->assertCount(2, $advice[$this->key('content-quality', 'https://example.com/pages/contact/')][0]['items']);
     }
 }

@@ -68,7 +68,7 @@ class PageHealthCheckExtensionTest extends TestCase
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_WARNING)
             ->setSummary('summary')
-            ->setDetails(['hasDescription' => false, 'hasH1' => true, 'imagesWithoutAlt' => 0, 'brokenLinks' => []]);
+            ->setDetails(['hasDescription' => false, 'hasH1' => true, 'imagesWithoutAlt' => [], 'brokenLinks' => []]);
 
         $repository = $this->createMock(HealthCheckResultRepository::class);
         $repository->expects($this->once())->method('findLatestByUrl')->with('https://example.com/')->willReturn([$result]);
@@ -78,7 +78,8 @@ class PageHealthCheckExtensionTest extends TestCase
         $panel = $extension->getPanel($this->createPage('home'));
 
         $this->assertSame([$result], $panel['results']);
-        $this->assertSame(['content-quality' => [['text' => 'label.health_check_advice_no_description', 'url' => null]]], $panel['advice']);
+        // Keyed by HealthCheckAdviceBuilder::key(), ie. kind + url
+        $this->assertSame(['content-quality|https://example.com/' => [['text' => 'label.health_check_advice_no_description', 'url' => null, 'items' => []]]], $panel['advice']);
     }
 
     public function testGetPanelDropsTheSiteWideSecurityHeadersResult(): void

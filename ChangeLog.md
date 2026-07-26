@@ -1,5 +1,48 @@
 # Changelog
 
+## v7.8.0
+
+- Added `c975l:site:smoke-test`/`SmokeTestClient`, checking every published page and the home page's css/js assets answer 200 (26/07/2026)
+- `c975l:site:smoke-test` takes a `--pages-only` option, skipping the asset pass (26/07/2026)
+- `SitePageSitemapProvider` now passes `Page::$priority` as-is on its 0-10 scale, `SitemapWriter` doing the conversion to the protocol's 0.0-1.0 (26/07/2026)
+- Added `PageBlockLocator`, tracing an image/link found in a page's rendered HTML back to the block that produced it (26/07/2026)
+- Content-quality advice lines now list each offending image/link individually, linking to its own block (26/07/2026)
+- `PageHealthCheckAdviceBuilder::buildAdvice()` is now keyed by ConfigBundle's `HealthCheckAdviceBuilder::key()` instead of by kind (26/07/2026) [BC-Break]
+- Fixed every page's content-quality row showing the last checked page's advice (26/07/2026)
+- `W3cCssHealthCheckProvider` now counts the warnings the validator's CSS3 profile predates apart, as benign (26/07/2026)
+- Fixed a W3C CSS warning whose `message` comes back as an array rendering as "Array" (26/07/2026)
+- Removed the `::-moz-focus-inner`/`:-moz-focusring` pair from `_normalize.scss`, a no-op costing eight W3C validator warnings (26/07/2026)
+- Fixed `.btn-secondary`'s label being repainted by `a.btn`/`a:hover`, dropping its contrast to 3.5:1 (26/07/2026)
+- `menu_link` now points at the site root for the "home" page instead of costing a 301 hop on every click (26/07/2026)
+- `layout.html.twig`'s `robots` meta tag is now overridable per template, and `page.html.twig` sets it from `Page::isIndexable()` (26/07/2026)
+- Added a `fontPreload` block in `layout.html.twig`, emitting the preloads before the stylesheets (26/07/2026)
+- Added the `sitemap-fields` Stimulus controller, locking a non-indexable page's sitemap fields (26/07/2026)
+- `isIndexable` is now carried by page export/import, and `DefaultPagesImporter` seeds the account-related pages as non-indexable (26/07/2026)
+- Fixed `clonePage()` dropping `isIndexable`, putting a duplicated noindex page back in the sitemap (26/07/2026)
+- `ContentQualityClient::readLinkCheck()` now returns a `LINK_*` verdict string instead of a `bool`, and `isLinkBroken()` only reports a conclusive 4xx/5xx (26/07/2026) [BC-Break]
+- `ContentQualityHealthCheckProvider`'s `brokenLinks` detail now carries each link's own url and location instead of a bare url string (26/07/2026) [BC-Break]
+- `font_preloads()` is now cached, dropped by `FontCssListener`/`ThemeVariablesCssListener` - it re-queried every font family on every front-end render (26/07/2026)
+- Fixed `PageBlockLocator` matching an image against a block holding a filename that merely shares its prefix (`photo-1` vs `photo-11`) (26/07/2026)
+- Fixed the sitemap fields being wiped on every save of a non-indexable page - `changeFrequency`/`priority` are now locked read-only, not disabled (26/07/2026)
+- Added `Page::$isIndexable`, excluding a page from `sitemap-site.xml` and adding its `robots` meta tag (26/07/2026) [DB-Migration]
+- Sitemap generation moved to ConfigBundle: `c975l:site:sitemaps:create` is replaced by `c975l:sitemaps:create`, collecting every bundle's `SitemapProviderInterface` (26/07/2026) [BC-Break]
+- Added `SitePageSitemapProvider`, SiteBundle's own contribution to that sitemap (the database pages) (26/07/2026)
+- `PagePublicUrlResolver` now builds `/pages/{slug}` without a trailing slash, the canonical form shared with the sitemap (26/07/2026)
+- Moved `sitemap.xml.twig`/`sitemap-index.xml.twig` and the "Regenerate sitemap" dashboard shortcut to ConfigBundle (26/07/2026) [BC-Break]
+- Removed the scaffold's `App\Command\SitemapCreateCommand`; the scheduler now runs `c975l:sitemaps:create` directly (26/07/2026)
+- Removed `SitemapCreateCommand::getChangeFrequency()`/`getPriority()`, dead since pages moved to the database (26/07/2026)
+- Fixed `SiteShortcutController` importing the scaffold's `App\Command\SitemapCreateCommand` from bundle code (26/07/2026)
+- Fixed the readme's scheduler example missing the `c975l:` prefix on every command (26/07/2026)
+- Documented that file-based pages aren't declared in the sitemap, only database pages are (26/07/2026)
+- Added `FontPreloadExtension`/`font_preloads()`, emitting `<link rel="preload">` for the theme's own uploaded fonts (26/07/2026)
+- The navbar logo is now `loading="eager" fetchpriority="high"` instead of `loading="lazy"` (26/07/2026)
+- Fixed the Matomo controller building a `//matomo.js` URL when `site-matomo-url` ends with a slash (26/07/2026)
+- Added `label.cookies_dialog`, giving the cookie banner's `role="dialog"` an accessible name (26/07/2026)
+- `vanilla-cookieconsent` is now served from the bundle instead of jsDelivr (26/07/2026)
+- Fixed `a.btn` overriding `.btn-secondary`'s and `.btn-link`'s own text color in `emails.css` (26/07/2026)
+- Renamed the `cookieConsent`/`collectionItemSort` Stimulus controllers to `cookie-consent`/`collection-item-sort` (26/07/2026)
+- Removed the dead `templates/emails/emails.min.css`, emails inline `public/css/emails.min.css` (26/07/2026)
+
 ## v7.7.5
 
 - Page's own blocks now render full-width outside `layout.html.twig`'s `.container`, instead of constrained inside it (24/07/2026)

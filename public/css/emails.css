@@ -51,11 +51,18 @@
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
+  --navbar-background-scrolled: var(--navbar-background);
+  --navbar-text-scrolled: var(--navbar-text);
   --footer-background: var(--primary);
   --footer-text: var(--white);
   --footer-text-hover: var(--footer-text);
   --footer-items-direction: column;
   --footer-items-justify: flex-start;
+  --footer-border: solid grey 2px;
+  --footer-width: 100vw;
+  --footer-margin-x: calc(50% - 50vw);
+  --footer-padding: 2em 15px 3em 15px;
+  --footer-link-hover-background: rgba(0, 0, 0, 0.1);
   --disabled: #808080;
   --font-family-title: var(--c975l-font-family-title, sans-serif);
   --font-family-body: var(--c975l-font-family-body, sans-serif);
@@ -414,13 +421,19 @@ section {
   background-color: var(--button-background-primary-dark);
 }
 
-.btn-secondary {
+/* Doubled ".btn.btn-secondary" (0,2,0) on purpose - it has to outweigh both "a.btn" (0,1,1, below)
+   and SiteBundle's global "a:hover" (0,1,1), which would otherwise repaint the label white/link-blue
+   over the secondary background, i.e. 3.5:1 instead of the 6:1 --button-secondary-color gives */
+.btn.btn-secondary,
+.btn.btn-secondary:visited {
   background-color: var(--secondary);
   color: var(--button-secondary-color);
 }
 
-.btn-secondary:hover {
+.btn.btn-secondary:hover,
+.btn.btn-secondary:visited:hover {
   background-color: var(--button-background-secondary-dark);
+  color: var(--button-secondary-color);
 }
 
 .btn-success {
@@ -439,20 +452,22 @@ section {
   background-color: var(--button-background-danger-dark);
 }
 
-/* No background/shadow - reads as a plain text link, not a filled button. Overrides "a.btn"'s own
-   color rule below via the higher-specificity "a.btn-link" selector. */
-.btn-link,
-a.btn-link {
+/* No background/shadow - reads as a plain text link, not a filled button. Same doubled ".btn.btn-link"
+   as .btn-secondary above: "a.btn-link" ties with "a.btn" on specificity and lost on source order,
+   leaving the label white on the page background (1:1) with no underline left */
+.btn.btn-link,
+.btn.btn-link:visited {
   background-color: transparent;
   box-shadow: none;
   color: var(--primary);
   text-decoration: underline;
 }
 
-.btn-link:hover,
-a.btn-link:hover {
+.btn.btn-link:hover,
+.btn.btn-link:visited:hover {
   background-color: transparent;
   color: var(--button-background-primary-dark);
+  text-decoration: underline;
 }
 
 .btn-grey {
@@ -650,12 +665,12 @@ tfoot td {
 /* FOOTER */
 footer {
   background-color: var(--footer-background);
-  border-top: solid grey 2px;
+  border-top: var(--footer-border);
   margin-top: 3em;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 2em 15px 3em 15px;
-  width: 100vw;
+  margin-left: var(--footer-margin-x);
+  margin-right: var(--footer-margin-x);
+  padding: var(--footer-padding);
+  width: var(--footer-width);
 }
 
 footer .menu-items,
@@ -687,6 +702,11 @@ footer .menu-item {
 
 footer .menu-link {
   padding: 0.25rem;
+}
+
+footer .menu-link:hover,
+footer .menu-link:focus {
+  background-color: var(--footer-link-hover-background);
 }
 
 footer .menu-label {

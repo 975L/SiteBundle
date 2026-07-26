@@ -57,6 +57,10 @@ class Page implements HasBlocksInterface
     #[ORM\ManyToOne]
     private ?User $user = null;
 
+    // Whether the page is meant to be referenced by search engines. True by default - opting a page out is the exception, meant for pages with no SEO value (e.g. "creer-un-compte", "mot-de-passe-oublie", created by DefaultPagesImporter). Drives both its presence in sitemap-site.xml (see SitePageSitemapProvider::getUrls()) and its "robots" meta tag (see layout.html.twig): excluding a page from the sitemap alone wouldn't prevent indexing, since the sitemap is only a crawl hint
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $isIndexable = true;
+
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Assert\Range(min: 0, max: 10)]
     private ?int $priority = null;
@@ -172,6 +176,18 @@ class Page implements HasBlocksInterface
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isIndexable(): bool
+    {
+        return $this->isIndexable;
+    }
+
+    public function setIsIndexable(bool $isIndexable): static
+    {
+        $this->isIndexable = $isIndexable;
 
         return $this;
     }

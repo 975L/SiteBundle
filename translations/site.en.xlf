@@ -274,6 +274,14 @@
                 <source>label.website</source>
                 <target>Website</target>
             </trans-unit>
+            <trans-unit id="392">
+                <source>label.is_indexable</source>
+                <target>Reference the page</target>
+            </trans-unit>
+            <trans-unit id="393">
+                <source>label.is_indexable_help</source>
+                <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password)</target>
+            </trans-unit>
             <trans-unit id="74">
                 <source>label.change_frequency</source>
                 <target>Change frequency</target>
@@ -709,14 +717,6 @@
             <trans-unit id="189">
                 <source>label.user_registration_disable</source>
                 <target>Disable user registration</target>
-            </trans-unit>
-            <trans-unit id="190">
-                <source>label.sitemaps_create</source>
-                <target>Create sitemaps</target>
-            </trans-unit>
-            <trans-unit id="191">
-                <source>flash.sitemaps_created</source>
-                <target>Sitemaps created successfully</target>
             </trans-unit>
             <trans-unit id="192">
                 <source>label.menu_item_target</source>
@@ -1429,6 +1429,18 @@
             <trans-unit id="389">
                 <source>flash.font_bulk_import_skipped</source>
                 <target>Skipped (invalid format or too large): %files%</target>
+            </trans-unit>
+            <trans-unit id="390">
+                <source>label.health_check_advice_edit_block</source>
+                <target>Block "%block%"</target>
+            </trans-unit>
+            <trans-unit id="391">
+                <source>label.cookies_dialog</source>
+                <target>Cookie consent</target>
+            </trans-unit>
+            <trans-unit id="394">
+                <source>label.health_check_w3c_benign_warnings</source>
+                <target>of which %actionable% actionable (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
             </trans-unit>
         </body>
     </file>

@@ -13,6 +13,7 @@ use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\SiteBundle\Listener\ThemeVariablesCssListener;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
@@ -70,6 +71,7 @@ class ThemeVariablesCssListenerTest extends TestCase
             $repository,
             $this->createStub(StylesheetCacheWarmer::class),
             $this->projectDir,
+            new ArrayAdapter(),
         );
     }
 
@@ -289,7 +291,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $stylesheetCacheWarmer = $this->createMock(StylesheetCacheWarmer::class);
         $stylesheetCacheWarmer->expects($this->once())->method('compileAll');
 
-        $listener = new ThemeVariablesCssListener($repository, $stylesheetCacheWarmer, $this->projectDir);
+        $listener = new ThemeVariablesCssListener($repository, $stylesheetCacheWarmer, $this->projectDir, new ArrayAdapter());
         $listener->postUpdate(new PostUpdateEventArgs(
             $this->config('theme-color-primary', '#ff0000'),
             $this->createStub(EntityManagerInterface::class),

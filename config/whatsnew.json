@@ -1,5 +1,55 @@
 [
     {
+        "date": "2026-07-26",
+        "description": [
+            {
+                "en": "A page can now be kept out of search engines with a single checkbox - it leaves the sitemap and tells crawlers not to index it",
+                "fr": "Une page peut désormais être tenue à l'écart des moteurs de recherche d'une simple case à cocher - elle quitte le plan du site et demande aux robots de ne pas l'indexer",
+                "es": "Una página ahora puede mantenerse fuera de los motores de búsqueda con una simple casilla - sale del mapa del sitio e indica a los rastreadores que no la indexen"
+            },
+            {
+                "en": "The Health check now lists each image without alternative text and each broken link one by one, with a direct link to the content block holding it",
+                "fr": "Le Bilan de santé liste désormais une par une chaque image sans texte alternatif et chaque lien cassé, avec un lien direct vers le bloc de contenu concerné",
+                "es": "El Estado de salud ahora enumera una por una cada imagen sin texto alternativo y cada enlace roto, con un enlace directo al bloque de contenido correspondiente"
+            },
+            {
+                "en": "Fixed the Health check showing the same advice on every page's row instead of each page's own",
+                "fr": "Corrigé : le Bilan de santé affichait les mêmes conseils sur la ligne de chaque page au lieu de ceux de la page concernée",
+                "es": "Corregido: el Estado de salud mostraba los mismos consejos en la fila de cada página en lugar de los de cada página"
+            },
+            {
+                "en": "The CSS check no longer stays orange forever over warnings nothing can be done about - they're counted apart, and the total the validator reports is still shown",
+                "fr": "Le contrôle CSS ne reste plus orange indéfiniment à cause d'avertissements sur lesquels on ne peut rien - ils sont comptés à part, et le total du validateur reste affiché",
+                "es": "La comprobación CSS ya no permanece naranja indefinidamente por advertencias sobre las que no se puede actuar - se cuentan por separado y el total del validador sigue mostrándose"
+            },
+            {
+                "en": "Every sitemap of the site is now regenerated in one go, whichever features are installed, and the list search engines read is kept up to date on its own",
+                "fr": "Tous les plans du site sont désormais régénérés d'un coup, quelles que soient les fonctionnalités installées, et la liste que lisent les moteurs de recherche reste à jour d'elle-même",
+                "es": "Todos los mapas del sitio se regeneran ahora de una sola vez, cualesquiera sean las funcionalidades instaladas, y la lista que leen los motores de búsqueda se mantiene actualizada por sí sola"
+            },
+            {
+                "en": "Pages now display their text in the site's own fonts right away, instead of briefly falling back to a default one",
+                "fr": "Les pages affichent désormais leur texte dans les polices du site dès l'ouverture, au lieu de passer brièvement par une police par défaut",
+                "es": "Las páginas ahora muestran su texto con las tipografías del sitio desde el principio, en lugar de recurrir brevemente a una predeterminada"
+            },
+            {
+                "en": "Menu links to the home page now go straight there instead of passing through a redirect",
+                "fr": "Les liens de menu vers la page d'accueil y mènent désormais directement, sans passer par une redirection",
+                "es": "Los enlaces de menú a la página de inicio ahora van directamente allí, sin pasar por una redirección"
+            },
+            {
+                "en": "Fixed secondary buttons whose label became hard to read on hover",
+                "fr": "Corrigé : les boutons secondaires dont le libellé devenait difficile à lire au survol",
+                "es": "Corregido: los botones secundarios cuya etiqueta se volvía difícil de leer al pasar el cursor"
+            },
+            {
+                "en": "The cookie banner is now served entirely from the site, with no call to an external provider",
+                "fr": "La bannière cookies est désormais servie entièrement depuis le site, sans aucun appel à un fournisseur externe",
+                "es": "El banner de cookies ahora se sirve íntegramente desde el sitio, sin ninguna llamada a un proveedor externo"
+            }
+        ]
+    },
+    {
         "date": "2026-07-24",
         "description": [
             {

@@ -47,6 +47,8 @@ class PageImportProvider implements ImportProviderInterface
                 ->setChangeFrequency($item['changeFrequency'] ?? null)
                 ->setPriority($item['priority'] ?? null)
                 ->setIsPublished($item['isPublished'] ?? false)
+                // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
+                ->setIsIndexable($item['isIndexable'] ?? true)
                 ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
                 ->setModification($now);
 

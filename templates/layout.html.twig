@@ -70,7 +70,8 @@
                 <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
 {# Display for html #}
                 {% if display != 'pdf' %}
-                    <meta name="robots" content="index, follow">
+{# "noindex, follow" when a Page has been marked as non-indexable (see pages/page.html.twig and Page::isIndexable()) - "follow" is kept so the links it carries still pass on #}
+                    <meta name="robots" content="{{ robots|default('index, follow') }}">
 {# Site #}
                     {% if site is defined %}
                         <meta property="og:site_name" content="{{ site }}">
@@ -128,6 +129,16 @@
                         <link rel="alternate" hreflang="{{ locale }}" href="{{ app.request.uri }}">
                     {% endif %}
 {# End display for html #}
+                {% endif %}
+            {% endblock %}
+{# Font preload - must stay before the stylesheets: the @font-face rules sit inside the concatenated
+   site.css, so without this the browser only discovers the .woff2 files after downloading AND parsing it.
+   crossorigin is required even same-origin, as fonts are always fetched in CORS mode #}
+            {% block fontPreload %}
+                {% if display != 'pdf' %}
+                    {% for font in font_preloads() %}
+                        <link rel="preload" href="{{ asset('/' ~ font.path) }}" as="font" type="{{ font.type }}" crossorigin>
+                    {% endfor %}
                 {% endif %}
             {% endblock %}
 {# Stylesheets #}

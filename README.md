@@ -25,7 +25,7 @@ See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bun
 - **Admin CRUD** for users via EasyAdmin, with role management
 - **Admin CRUD** for the site's navbar/footer menus and the email header/footer via EasyAdmin
 - **Admin CRUD** for the site's graphics (favicon, Apple touch icon, logo, default Open Graph image) via EasyAdmin
-- **Sitemap generation** from both filesystem templates and database pages, with a "Regenerate sitemap" dashboard shortcut
+- **Sitemap generation** from database pages, collecting any other bundle's sitemap through `SitemapProviderInterface`, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
 - **Legal model templates** for France (French): cookies, copyright, legal notice, privacy policy, terms of sales, terms of use
 - **Matomo analytics** integration
@@ -98,7 +98,7 @@ php bin/console assets:install --symlink
 
 ### Register Stimulus controllers
 
-This bundle ships Stimulus controllers (basic, matomo, cookieConsent). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace.
+This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, matomo, cookie-consent) and back-office ones in `controllers-admin.js` (title-confirm, collection-item-sort, sitemap-fields). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
 
 Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
@@ -193,11 +193,7 @@ Use the `display` variable to conditionally include templates (defaults to `html
 
 Place Twig templates in `templates/pages/`. They are served at `/pages/{slug}` via the `page_display` route.
 
-To **hint the sitemap generator**, add metadata in a Twig comment at the top of the file:
-
-```twig
-{# changeFrequency="monthly" priority="8" #}
-```
+They are **not declared in the sitemap** — only database pages are (see [Sitemap generation](#sitemap-generation)), since a filesystem template carries no `lastmod`, no `priority` and no publication state. Create the page in the database instead if it has to be crawled.
 
 ### Redirects and deleted pages
 
@@ -214,7 +210,7 @@ Use the `Page` entity to manage pages through the database. Each page supports:
 
 - Title, slug (unique), summarySocialNetwork
 - Published status and display position
-- Sitemap fields: change frequency and priority (0–10)
+- Sitemap fields: indexable, change frequency and priority (0–10) — unchecking *indexable* both drops the page from `sitemap-site.xml` and switches its `robots` meta tag to `noindex` (change frequency/priority are then locked, keeping their value)
 - Blocks (content blocks from [c975L/UiBundle](https://github.com/975L/UiBundle))
 - Creation / modification timestamps and author reference
 
@@ -418,19 +414,21 @@ This lets you disable a user from the backoffice (`isEnabled` isn't readonly, un
 
 ### Sitemap generation
 
-Run the following command to generate `public/sitemap-pages.xml`:
+Run the following command to generate every sitemap the site needs:
 
 ```bash
-php bin/console c975l:site:sitemaps:create
+php bin/console c975l:sitemaps:create
 ```
 
-The command aggregates URLs from:
-1. Twig files in `templates/pages/` (reads `changeFrequency` and `priority` from comments)
-2. Published database pages (uses their `changeFrequency` and `priority` fields)
+The command belongs to ConfigBundle (`SitemapWriter`), not to SiteBundle: it writes one `public/sitemap-<name>.xml` per bundle implementing `SitemapProviderInterface`, plus the `public/sitemap-index.xml` declaring them all. SiteBundle contributes `SitePageSitemapProvider`, which gives `sitemap-site.xml` from the database pages — non-indexable pages excluded, urls built by `PagePublicUrlResolver` so they're exactly the ones the health checks test. BookBundle, ShopBundle… each contribute their own the same way, with nothing to declare in the app.
 
-A sitemap index template is also available at `@c975LSite/sitemap-index.xml.twig`.
+Point Google Search Console at `sitemap-index.xml` only, never at the sub-sitemaps — installing or removing a bundle then changes what's crawled with nothing to update on Google's side.
 
-The same command can also be triggered from the dashboard, via a "Regenerate sitemap" shortcut contributed through ConfigBundle's `ShortcutProviderInterface`.
+The same writer is also behind the "Create sitemaps" dashboard shortcut (ConfigBundle's `ConfigShortcutProvider`), for when publishing shouldn't wait for the next scheduler run.
+
+On a site scaffolded before this, `App\Command\SitemapCreateCommand` (`app:sitemaps:create`) is obsolete — running each bundle's sitemap command and writing the index is exactly what `c975l:sitemaps:create` does. Delete `src/Command/SitemapCreateCommand.php` (and its test), and point `MaintenanceSchedule` at `c975l:sitemaps:create`.
+
+To contribute a sitemap from another bundle, see [Contributing a sitemap](https://github.com/975L/ConfigBundle#contributing-a-sitemap-from-other-bundles) in ConfigBundle's own README — it's a two-method interface, and the file/index writing is none of the contributing bundle's business.
 
 ### Alternate languages (hreflang)
 
@@ -458,6 +456,20 @@ To override it manually for a file-based page:
 
 ---
 
+## Smoke test
+
+```bash
+php bin/console c975l:site:smoke-test
+```
+
+Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
+
+Assets are read out of the home page's rendered HTML rather than declared anywhere: AssetMapper's filenames are hashed (`app-EiPntxm.css`), so this is what actually proves `asset-map:compile` and the stylesheet cache warmer both ran, and ran in the right order. Requests are all fired before any status is read, so checking a few dozen urls costs about a second.
+
+Deliberately **not** a `HealthCheckProviderInterface` implementation (see [Health check](#health-check) below): that one judges a live site's quality on a weekly schedule and persists rows for a dashboard, this one answers "is it broken, right now" and has to be able to fail a pipeline.
+
+---
+
 ## Health check
 
 SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
@@ -467,16 +479,24 @@ SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see 
 | `SitePageHealthCheckProvider` | `pagespeed` | Lighthouse performance/accessibility/best-practices/SEO scores + console errors, via Google's PageSpeed Insights v5 API | Optional (`healthcheck-pagespeed-api-key`) - works without one, but Google's anonymous quota is shared worldwide and easily exhausted (HTTP 429); a key raises it |
 | `SecurityHeadersHealthCheckProvider` | `security-headers` | HSTS, CSP (or its `frame-ancestors` in place of X-Frame-Options), X-Content-Type-Options, Referrer-Policy, Permissions-Policy, wildcard CORS - reimplemented directly against the page's own response headers (no securityheaders.com dependency, it has no public API for automated use). These headers are set once for the whole site, never per-page, so only the homepage is fetched | None |
 | `W3cHtmlHealthCheckProvider` | `w3c-html` | HTML markup (W3C Nu Html Checker) - skips a page outright (single "not tested" row) if it doesn't resolve on the checked environment, instead of forwarding a 404 to the validator | None |
-| `W3cCssHealthCheckProvider` | `w3c-css` | CSS markup (W3C CSS Validator) - same not-deployed guard as `W3cHtmlHealthCheckProvider`. Split from HTML into its own kind/row so each shows its own count (eg. "51 CSS warnings") without being buried in one combined line, and each gets its own direct link to its validator's report for the page | None |
-| `ContentQualityHealthCheckProvider` | `content-quality` | Missing meta description, missing `<h1>`, images without `alt`, broken internal links (`<a href>` pointing at this site's own host, each unique link checked once per run regardless of how many pages link to it) - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider` | None |
+| `W3cCssHealthCheckProvider` | `w3c-css` | CSS markup (W3C CSS Validator) - same not-deployed guard as `W3cHtmlHealthCheckProvider`. Split from HTML into its own kind/row so each shows its own count (eg. "51 CSS warnings") without being buried in one combined line, and each gets its own direct link to its validator's report for the page. Warnings the validator's own CSS3 profile predates (one per `var()` usage, vendor prefixes and prefixed pseudo-elements/classes, values it doesn't know but reports as browser-supported) are counted apart as *benign*: the summary still shows the report's own total, and only the actionable count drives the row's status, so a stylesheet built on custom properties isn't permanently orange. Nothing is dropped - both lists are persisted, under `warnings` and `benignWarnings` (see `W3cValidatorClient::BENIGN_CSS_WARNING_PATTERNS`) | None |
+| `ContentQualityHealthCheckProvider` | `content-quality` | Missing meta description, missing `<h1>`, images without `alt`, broken internal links (`<a href>` pointing at this site's own host, each unique link checked once per run regardless of how many pages link to it) - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider`. See [what counts as an offence](#what-content-quality-actually-flags) - a decorative image and an unreachable server are deliberately *not* flagged | None |
 | `SslCertificateHealthCheckProvider` | `ssl-certificate` | TLS certificate expiry (warns at 30 days left, errors at 7) - one check for the whole site, since the certificate is issued for the host, not per-page. Skipped entirely if `site-url` isn't `https://` | None |
 | `MixedContentHealthCheckProvider` | `mixed-content` | `http://` images/scripts/stylesheets loaded from an `https://` page, per published page - skipped entirely if `site-url` isn't `https://` | None |
 | `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable and well-formed, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
 | `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
 
-`W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) to skip a page that doesn't resolve on the checked environment with a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - not a warning/error, there's nothing to act on until the page is actually deployed), instead of forwarding a confusing raw HTTP error to the actual check. `'home'` maps to the site root, any other slug to `/pages/{slug}/`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
+#### What content-quality actually flags
 
-**Run this against production's own database**, same constraint as `c975l:site:sitemaps:create`/`c975l:site:backup`: the page list comes from `PageRepository::findAllOrdered()` against whichever database the command is connected to, while the urls it builds always point at `site-url` (production). Run it from a dev/staging environment whose database has pages not yet synced to production (see [Contributing export providers](https://github.com/975L/ConfigBundle#contributing-export-providers-from-other-bundles)'s "Sync" zip) and you'll get failures for pages that simply aren't live yet - not a bug, just the wrong database for the question being asked. In normal operation this is a non-issue: the scheduler consumer already runs on production.
+Two rules keep the `content-quality` kind from reporting things you cannot fix:
+
+- **Images.** A missing `alt` attribute is always an error. An explicitly empty `alt=""` is the *correct* markup for a decorative image, so it is only flagged when nothing marks it as decorative: no `aria-hidden="true"`, no `role="presentation"`/`role="none"`, and no enclosing `<a>`/`<button>` already carrying its own `aria-label`/`aria-labelledby`. A share button's icon inside a labelled link, or a logo inside a labelled link, is therefore correct as-is and stays out of the report - flagging it would leave the page in warning forever with nothing to fix.
+- **Every offender is listed individually** under its advice line on the page's own "Health check" tab (a collapsed list, so a page with a dozen images without `alt` doesn't bury the rest of the table), each linking straight to the block that produced it (`PageBlockLocator`, best-effort: it traces the rendered `src`/`href` back through the page's blocks, and falls back to the page's plain edit url when no block claims it).
+- **Links.** Only a conclusive HTTP status `>= 400` counts as broken. A transport failure (timeout, DNS, refused connection) and a `405`/`501` (the server refusing the `HEAD` *method*, not the url) are retried once with a `GET`, and if they still can't be concluded they are left out rather than reported. Link checks are also fired in batches of 10 instead of all at once: Symfony's `HttpClient` caps concurrent connections per host, so a site-wide burst only queues the surplus while each queued request's own timeout is already running - which used to turn perfectly valid links into timeouts, and timeouts into "broken" rows.
+
+`W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) to skip a page that doesn't resolve on the checked environment with a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - not a warning/error, there's nothing to act on until the page is actually deployed), instead of forwarding a confusing raw HTTP error to the actual check. `'home'` maps to the site root, any other slug to `/pages/{slug}`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
+
+**Run this against production's own database**, same constraint as `c975l:sitemaps:create`/`c975l:site:backup`: the page list comes from `PageRepository::findAllOrdered()` against whichever database the command is connected to, while the urls it builds always point at `site-url` (production). Run it from a dev/staging environment whose database has pages not yet synced to production (see [Contributing export providers](https://github.com/975L/ConfigBundle#contributing-export-providers-from-other-bundles)'s "Sync" zip) and you'll get failures for pages that simply aren't live yet - not a bug, just the wrong database for the question being asked. In normal operation this is a non-issue: the scheduler consumer already runs on production.
 
 **On WCAG/accessibility specifically**: there is no free, pure-PHP equivalent to a real WCAG scanner (tools like axe-core need a headless browser, i.e. Node) - `SitePageHealthCheckProvider`'s `accessibility` score is the only automated signal here, a rougher one than an itemized audit (it's the same axe-core engine under the hood, but reports one score, not per-criterion detail). A prior version of this bundle called WebAIM's WAVE API for itemized RGAA/WCAG detail; it was removed as credit-based pricing (~$0.04/page) doesn't scale to checking many pages across many sites. If you need an itemized audit trail for an accessibility declaration (RGAA 4.1's 106 criteria map to WCAG 2.1 AA, EAA enforceable since June 2025), run WAVE's own browser extension manually per page, or reintroduce a paid provider on your own `HealthCheckProviderInterface` implementation.
 
@@ -580,11 +600,14 @@ Set `url-cookies-policy` in ConfigBundle (optional — links the banner to your 
 <twig:c975LSite:General:CookieConsent/>
 ```
 
-Wraps [`vanilla-cookieconsent`](https://cookieconsent.orestbida.com/) v3, loaded from CDN only when
-the component is actually rendered (never as a blanket request on every page). Deliberately
-binary — one non-essential category (`content`), two buttons (accept/reject) — no preferences
-panel to build or maintain. The `message`, `cookies_accept`, `cookies_reject`, and `cookies_policy`
-texts are loaded from the `site` translation domain.
+Wraps [`vanilla-cookieconsent`](https://cookieconsent.orestbida.com/) v3 (MIT), served from this
+bundle (`public/js/cookieconsent.umd.js` + `public/css/cookieconsent.css`) and loaded only when the
+component is actually rendered (never as a blanket request on every page). Self-hosted on purpose:
+a CDN would receive the visitor's IP before any consent is given, and would need an external
+`script-src`/`style-src` host in your CSP. Deliberately binary — one non-essential category
+(`content`), two buttons (accept/reject) — no preferences panel to build or maintain. The
+`message`, `cookies_accept`, `cookies_reject`, `cookies_policy` and `cookies_dialog` (the dialog's
+accessible name) texts are loaded from the `site` translation domain.
 
 If `c975l/ui-bundle` is installed, its `<twig:c975LUi:Video:Iframe/>` (the `video_iframe` block)
 automatically gates on the resulting consent state — nothing else to wire up. It reacts to a
@@ -721,6 +744,7 @@ File names may contain letters (including accented), digits, `-`, `_`, `/`, and 
 | `\|nl2br` | Applies PHP's `nl2br()` with HTML output safe |
 | `\|linkify` | Turns bare `http(s)://` URLs in a raw string into `<a target="_blank" rel="noopener noreferrer">` links, HTML-escaping the rest |
 | `theme_variables_css()` | Returns the CSS compiled by `ThemeVariablesCssListener` from the admin-editable theme configs (see [Themes](#themes)), for inlining where a `<link>` isn't possible (e.g. emails) |
+| `font_preloads()` | Returns the admin-uploaded font files the current theme actually uses (2 at most, `path` + MIME `type` each), to emit as `<link rel="preload">` in the `<head>` — the `@font-face` rules live inside the compiled stylesheet, so without this the browser only discovers the files after downloading *and* parsing it. Cached, refreshed on any font or theme-font change |
 
 ---
 
@@ -765,11 +789,11 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | --- | --- |
 | `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
 | `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project |
-| `php bin/console c975l:site:sitemaps:create` | Generates `public/sitemap-pages.xml` from filesystem and database pages |
 | `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
 | `php bin/console c975l:site:templates:apply <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
+| `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets) |
 | `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collections) rows for a given collection (`--images-dir`, `--dry-run` options) |
 
 ### Create a new site
@@ -924,7 +948,7 @@ A dashboard alert (ConfigBundle's `AlertProviderInterface`) also surfaces import
 
 ## Scheduler
 
-The bundle provides `site:sitemaps:create`, `site:backup` and `site:messenger-cleanup` as schedulable commands. The schedule itself is defined in your app so each project controls its own timing.
+The bundle provides `c975l:site:backup` and `c975l:site:messenger-cleanup` as schedulable commands, alongside ConfigBundle's own `c975l:sitemaps:create`/`c975l:health-check:run`. The schedule itself is defined in your app so each project controls its own timing.
 
 ### 1. Create the schedule class
 
@@ -951,13 +975,13 @@ class MaintenanceSchedule implements ScheduleProviderInterface
         return (new Schedule())
             ->stateful($this->cache)
             // Sitemap: daily at 00:05
-            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('site:sitemaps:create')))
+            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('c975l:sitemaps:create')))
             // Backup: every 6 hours (DB dumped table by table; files: complete on the first run and every site-backup-full-interval-months after that, modified-since-last-run in between)
-            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('site:backup')))
+            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
             // Same backup + a summary email: every Monday at 03:07
-            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('site:backup --report')))
+            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:site:backup --report')))
             // Messenger cleanup: daily at 03:00
-            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('site:messenger-cleanup')))
+            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             // Health check (see below): every registered provider is free, weekly is plenty
             ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains')));
     }

@@ -274,6 +274,14 @@
                 <source>label.website</source>
                 <target>Site web</target>
             </trans-unit>
+            <trans-unit id="392">
+                <source>label.is_indexable</source>
+                <target>Référencer la page</target>
+            </trans-unit>
+            <trans-unit id="393">
+                <source>label.is_indexable_help</source>
+                <target>Décochez pour retirer la page du sitemap et demander aux moteurs de recherche de ne pas l'indexer (ex. création de compte, mot de passe oublié)</target>
+            </trans-unit>
             <trans-unit id="74">
                 <source>label.change_frequency</source>
                 <target>Fréquence de changement</target>
@@ -709,14 +717,6 @@
             <trans-unit id="189">
                 <source>label.user_registration_disable</source>
                 <target>Désactiver l'inscription des utilisateurs</target>
-            </trans-unit>
-            <trans-unit id="190">
-                <source>label.sitemaps_create</source>
-                <target>Créer sitemaps</target>
-            </trans-unit>
-            <trans-unit id="191">
-                <source>flash.sitemaps_created</source>
-                <target>Sitemaps créées avec succès</target>
             </trans-unit>
             <trans-unit id="192">
                 <source>label.menu_item_target</source>
@@ -1429,6 +1429,18 @@
             <trans-unit id="382">
                 <source>label.health_check_sitemap_index_ok</source>
                 <target>sitemap-index.xml est accessible et référence %count% sitemap(s)</target>
+            </trans-unit>
+            <trans-unit id="390">
+                <source>label.health_check_advice_edit_block</source>
+                <target>Bloc « %block% »</target>
+            </trans-unit>
+            <trans-unit id="391">
+                <source>label.cookies_dialog</source>
+                <target>Consentement aux cookies</target>
+            </trans-unit>
+            <trans-unit id="394">
+                <source>label.health_check_w3c_benign_warnings</source>
+                <target>dont %actionable% actionnable(s) (%benign% bénins : variables CSS, préfixes vendeur, non vérifiables par le validateur)</target>
             </trans-unit>
         </body>
     </file>

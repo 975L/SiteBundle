@@ -85,6 +85,27 @@ class PageImportProviderTest extends TestCase
         $this->assertSame('form', $page->getBlocks()->first()->getKind());
     }
 
+    // isIndexable travels with the page, so a noindex page stays out of the target site's sitemap too - defaulting to indexable for a zip exported before the field existed
+    public function testImportCarriesIsIndexableAndDefaultsToTrue(): void
+    {
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+
+        $provider->import([
+            ['title' => 'Créer un compte', 'slug' => 'creer-un-compte', 'isPublished' => true, 'isIndexable' => false, 'blocks' => []],
+            ['title' => 'About', 'slug' => 'about', 'isPublished' => true, 'blocks' => []],
+        ]);
+
+        $pages = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof Page));
+        $this->assertFalse($pages[0]->isIndexable());
+        $this->assertTrue($pages[1]->isIndexable());
+    }
+
     public function testImportOverwritesAnExistingPageAndReplacesItsBlocks(): void
     {
         $existingBlock = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'old']);

@@ -184,26 +184,12 @@ button,
 }
 
 /**
- * Remove the inner border and padding in Firefox.
+ * Dropped from normalize.css v8 here: the ::-moz-focus-inner rule (removing Firefox's inner dotted
+ * focus border) and the :-moz-focusring rule that only existed to restore what it unset. Firefox
+ * stopped drawing that inner border years ago and draws its focus ring through :focus-visible like
+ * every other engine, so the pair is a no-op today - and eight vendor-extension warnings on the
+ * W3C CSS validator. The -webkit- rules around them are kept: those still matter on iOS/Safari.
  */
-button::-moz-focus-inner,
-[type=button]::-moz-focus-inner,
-[type=reset]::-moz-focus-inner,
-[type=submit]::-moz-focus-inner {
-  border-style: none;
-  padding: 0;
-}
-
-/**
- * Restore the focus styles unset by the previous rule.
- */
-button:-moz-focusring,
-[type=button]:-moz-focusring,
-[type=reset]:-moz-focusring,
-[type=submit]:-moz-focusring {
-  outline: 1px dotted ButtonText;
-}
-
 /**
  * Correct the padding in Firefox.
  */

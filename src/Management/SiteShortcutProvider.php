@@ -50,14 +50,6 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'category' => ShortcutProviderInterface::CATEGORY_SITE,
             ],
             [
-                'label' => $this->translator->trans('label.sitemaps_create', [], 'site'),
-                'icon' => 'fas fa-sitemap',
-                'route' => SiteShortcutController::SITEMAP_CREATE_ROUTE,
-                'active' => false,
-                'role' => 'ROLE_SUPER_ADMIN',
-                'category' => ShortcutProviderInterface::CATEGORY_SITE,
-            ],
-            [
                 'label' => $this->translator->trans('label.export_tables', [], 'site'),
                 'icon' => 'fas fa-database',
                 'route' => SiteShortcutController::EXPORT_TABLES_ROUTE,

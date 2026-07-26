@@ -45,6 +45,7 @@ class PageExportProvider implements ExportProviderInterface
                 'changeFrequency' => $page->getChangeFrequency(),
                 'priority' => $page->getPriority(),
                 'isPublished' => $page->isPublished(),
+                'isIndexable' => $page->isIndexable(),
                 'summarySocialNetwork' => $page->getSummarySocialNetwork(),
                 'ogImage' => null !== $ogImage ? $this->blockDataExporter->exportMedia($ogImage, $files) : null,
                 'blocks' => $this->blockDataExporter->exportBlocks($page->getBlocks(), $files),

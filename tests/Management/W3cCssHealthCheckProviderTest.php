@@ -62,9 +62,10 @@ class W3cCssHealthCheckProviderTest extends TestCase
 
     private function createTranslator(): TranslatorInterface
     {
+        // Parameters appended after the id rather than substituted into it: the ids here carry no placeholder of their own, and the counts a summary was built with are exactly what these tests assert on
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(
-            fn (string $id, array $parameters = [], ?string $domain = null) => strtr($id, $parameters)
+            fn (string $id, array $parameters = [], ?string $domain = null) => $parameters ? $id . ' ' . implode(' ', $parameters) : $id
         );
 
         return $translator;
@@ -144,6 +145,56 @@ class W3cCssHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => ['line 4: bad property'], 'warnings' => []]));
 
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $provider->runChecks()[0]['status']);
+    }
+
+    // A stylesheet built on custom properties raises one benign warning per var() usage - the row must not sit at orange for good over warnings nobody can act on
+    public function testRunChecksStatusIsOkWhenEveryWarningIsBenign(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient([
+            'errors' => [],
+            'warnings' => [],
+            'benignWarnings' => ['line 2: CSS variables', 'line 3: vendor extension'],
+        ]));
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $provider->runChecks()[0]['status']);
+    }
+
+    // Nothing is hidden: the total shown is exactly the W3C report's own (actionable + benign), the breakdown only added next to it - a dashboard disagreeing with the report it links to reads as broken
+    public function testRunChecksSummaryKeepsTheW3cWarningTotalAndAddsTheBreakdown(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient([
+            'errors' => [],
+            'warnings' => ['line 7: deprecated property'],
+            'benignWarnings' => ['line 2: CSS variables', 'line 3: vendor extension'],
+        ]));
+
+        $summary = $provider->runChecks()[0]['summary'];
+
+        $this->assertStringContainsString('label.health_check_summary_w3c_css', $summary);
+        // %errors% 0, %warnings% 3 (1 actionable + 2 benign), then %actionable% 1 / %benign% 2
+        $this->assertStringContainsString('0 3', $summary);
+        $this->assertStringContainsString('label.health_check_w3c_benign_warnings', $summary);
+        $this->assertStringContainsString('1 2', $summary);
+    }
+
+    // Nothing to break down, nothing appended - and the HTML validator, which has no benign class at all, never shows it
+    public function testRunChecksSummaryOmitsTheBreakdownWithoutBenignWarnings(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => [], 'warnings' => ['line 7: deprecated property']]));
+
+        $this->assertStringNotContainsString('label.health_check_w3c_benign_warnings', $provider->runChecks()[0]['summary']);
+    }
+
+    // Split off, never dropped: both lists are persisted, so the report can always be reconciled with the row
+    public function testRunChecksKeepsBenignWarningsInTheDetails(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient([
+            'errors' => [],
+            'warnings' => [],
+            'benignWarnings' => ['line 2: CSS variables'],
+        ]));
+
+        $this->assertSame(['line 2: CSS variables'], $provider->runChecks()[0]['details']['benignWarnings']);
     }
 
     public function testRunChecksReturnsASkippedRowWhenThePageIsNotDeployed(): void

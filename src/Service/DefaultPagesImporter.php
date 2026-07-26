@@ -223,6 +223,8 @@ class DefaultPagesImporter
             ->setChangeFrequency($def['changeFrequency'])
             ->setPriority($def['priority'])
             ->setIsPublished($def['isPublished'])
+            // Only the account-related pages opt out (see the definitions below), every other default page is indexable
+            ->setIsIndexable($def['isIndexable'] ?? true)
             ->setCreation($now)
             ->setModification($now);
 
@@ -474,6 +476,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'register']],
                 ],
                 [
@@ -482,6 +485,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
                 ],
                 [
@@ -555,6 +559,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'register']],
                 ],
                 [
@@ -563,6 +568,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
                 ],
                 [
@@ -636,6 +642,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'register']],
                 ],
                 [
@@ -644,6 +651,7 @@ class DefaultPagesImporter
                     'changeFrequency' => 'yearly',
                     'priority'        => 1,
                     'isPublished'        => true,
+                    'isIndexable'     => false,
                     'block'           => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
                 ],
                 [

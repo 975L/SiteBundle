@@ -1,16 +1,19 @@
 {# <twig:c975LSite:General:CookieConsent/> #}
 {% set cookiesPolicyUrl = config('url-cookies-policy') %}
 {# Stimulus derives value-attribute names from the controller identifier as registered
-   ("cookieConsent" in assets/controllers.js), not a dasherized form of it - only each
-   value's own name gets dasherized. So these must read "cookieconsent-*-value", not
-   "cookie-consent-*-value", or every value silently falls back to its type default ("") #}
-<div data-controller="cookieConsent"
-     data-cookieconsent-message-value="{{ 'text.cookies_banner'|trans({}, 'site') }}"
-     data-cookieconsent-accept-value="{{ 'label.cookies_accept'|trans({}, 'site') }}"
-     data-cookieconsent-reject-value="{{ 'label.cookies_reject'|trans({}, 'site') }}"
+   ("cookie-consent" in assets/controllers.js), not a dasherized form of it - keep both
+   in kebab-case, a camelCase identifier would need "data-cookieconsent-*-value" here
+   or every value silently falls back to its type default ("") #}
+<div data-controller="cookie-consent"
+     data-cookie-consent-stylesheet-value="{{ asset('bundles/c975lsite/css/cookieconsent.css') }}"
+     data-cookie-consent-script-value="{{ asset('bundles/c975lsite/js/cookieconsent.umd.js') }}"
+     data-cookie-consent-message-value="{{ 'text.cookies_banner'|trans({}, 'site') }}"
+     data-cookie-consent-label-value="{{ 'label.cookies_dialog'|trans({}, 'site') }}"
+     data-cookie-consent-accept-value="{{ 'label.cookies_accept'|trans({}, 'site') }}"
+     data-cookie-consent-reject-value="{{ 'label.cookies_reject'|trans({}, 'site') }}"
      {% if cookiesPolicyUrl %}
-         data-cookieconsent-policy-url-value="{{ cookiesPolicyUrl }}"
-         data-cookieconsent-policy-label-value="{{ 'label.cookies_policy'|trans({}, 'site') }}"
+         data-cookie-consent-policy-url-value="{{ cookiesPolicyUrl }}"
+         data-cookie-consent-policy-label-value="{{ 'label.cookies_policy'|trans({}, 'site') }}"
      {% endif %}
-     data-cookieconsent-lang-value="{{ app.request.locale }}">
+     data-cookie-consent-lang-value="{{ app.request.locale }}">
 </div>

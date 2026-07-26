@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Listener;
 use c975L\SiteBundle\Entity\Font;
 use c975L\SiteBundle\Repository\FontRepository;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use c975L\SiteBundle\Twig\FontPreloadExtension;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
@@ -19,6 +20,7 @@ use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 // Fires for any Font flushed through the EntityManager and regenerates public/bundles/build/site-fonts-uploaded.css
 // from every currently uploaded Font - same "compiled from DB, single source of truth" pattern as ThemeVariablesCssListener,
@@ -35,6 +37,7 @@ class FontCssListener implements CacheWarmerInterface
         private readonly StylesheetCacheWarmer $stylesheetCacheWarmer,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
+        private readonly CacheInterface $cache,
     ) {}
 
     public function postPersist(PostPersistEventArgs $args): void
@@ -76,6 +79,10 @@ class FontCssListener implements CacheWarmerInterface
     // Rewrites the whole file from every current Font row, not just the one that changed
     private function regenerate(): void
     {
+        // The <head>'s font preloads are computed from the very same rows (see FontPreloadExtension), so they go stale
+        // at exactly the same moment as the compiled CSS below
+        $this->cache->delete(FontPreloadExtension::CACHE_KEY);
+
         $blocks = [];
         foreach ($this->fontRepository->findAllOrdered() as $font) {
             $format = $font->getFormat();

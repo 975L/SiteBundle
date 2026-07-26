@@ -12,20 +12,26 @@ export default class extends Controller {
         message: String,
         accept: String,
         reject: String,
+        label: String,
         policyUrl: String,
         policyLabel: String,
         lang: { type: String, default: "fr" },
+        // Defaults match the vendored copies shipped in this bundle's public/ - the template passes the asset()-resolved (cache-busted) URLs, these are only the fallback when it doesn't
+        stylesheet: { type: String, default: "/bundles/c975lsite/css/cookieconsent.css" },
+        script: { type: String, default: "/bundles/c975lsite/js/cookieconsent.umd.js" },
     };
 
     connect() {
-        // https://cookieconsent.orestbida.com/ - CSS+JS loaded here (not via a static bundle stylesheet list) so the CDN is only contacted on pages that actually render this component, i.e. sites with `site-enable-cookie-consent` on
-        this.loadStylesheet("https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3.1.0/dist/cookieconsent.css");
-        this.loadScript("https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3.1.0/dist/cookieconsent.umd.js", () => {
+        // https://cookieconsent.orestbida.com/ (MIT) - served from this bundle, not from a CDN: a third party must not receive the visitor's IP before any consent is given, and it keeps the CSP free of an external script/style host. Still loaded here rather than in a static bundle stylesheet list, so it only costs the pages that actually render this component, i.e. sites with `site-enable-cookie-consent` on
+        this.loadStylesheet(this.stylesheetValue);
+        this.loadScript(this.scriptValue, () => {
             if (!window.CookieConsent) {
                 return;
             }
 
+            // "label" is the dialog's aria-label - without it (or a title, which the "bar inline" layout has no room for) the role="dialog" has no accessible name at all
             const consentModal = {
+                label: this.labelValue,
                 description: this.messageValue,
                 acceptAllBtn: this.acceptValue,
                 acceptNecessaryBtn: this.rejectValue,

@@ -17,6 +17,23 @@ class W3cValidatorClient
     private const HTML_ENDPOINT = 'https://validator.w3.org/nu/';
     private const CSS_ENDPOINT = 'https://jigsaw.w3.org/css-validator/validator';
 
+    // Warnings the CSS validator raises about constructs that are correct and deliberate rather than defects to
+    // fix - its own CSS3 profile simply predates them. They are returned in full (readCss()'s "benignWarnings"),
+    // only counted apart from the actionable ones: the Health check summary still shows the same warning total as
+    // the W3C report it links to, and only the row's status follows the actionable count. Without this, a
+    // stylesheet built on custom properties (one warning per var() usage, ~65 on a c975L site) leaves the
+    // "w3c-css" row permanently orange, which is a light nobody looks at any more
+    private const BENIGN_CSS_WARNING_PATTERNS = [
+        // "Due to their dynamic nature, CSS variables are currently not statically checked" - custom properties are a W3C Recommendation the validator cannot resolve statically, not a defect
+        'not statically checked',
+        // "-webkit-line-clamp is a vendor extension" - no standard equivalent that validates (the standard "line-clamp" is rejected as an error by this same profile)
+        'is a vendor extension',
+        // "::-webkit-file-upload-button is a vendor extended pseudo-element", ":-moz-focusring is a vendor extended pseudo-class"
+        'vendor extended pseudo-',
+        // "auto is not defined by any specification as an allowed value for pointer-events, but is supported in multiple browsers" - the profile predates the spec that defines it
+        'but is supported in multiple browsers',
+    ];
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
     ) {
@@ -66,7 +83,7 @@ class W3cValidatorClient
         ]);
     }
 
-    // Blocks until the given in-flight response completes and parses it - same return shape as readHtml()
+    // Blocks until the given in-flight response completes and parses it - same return shape as readHtml(), plus 'benignWarnings' (string[]) holding the warnings split off by BENIGN_CSS_WARNING_PATTERNS. Nothing is dropped: 'warnings' + 'benignWarnings' is exactly what the W3C report shows
     public function readCss(ResponseInterface $response): array
     {
         $data = $response->toArray();
@@ -76,12 +93,33 @@ class W3cValidatorClient
             static fn (array $error) => sprintf('line %d: %s', $error['line'] ?? 0, is_array($error['message'] ?? null) ? implode(' ', $error['message']) : ($error['message'] ?? 'Unknown error')),
             $result['errors'] ?? [],
         );
-        $warnings = array_map(
-            static fn (array $warning) => sprintf('line %d: %s', $warning['line'] ?? 0, $warning['message'] ?? 'Unknown warning'),
-            $result['warnings'] ?? [],
-        );
 
-        return ['errors' => $errors, 'warnings' => $warnings];
+        $warnings = [];
+        $benignWarnings = [];
+        foreach ($result['warnings'] ?? [] as $warning) {
+            // Same guard as the errors above: the validator sometimes returns a message split into several parts, which would otherwise render as "Array"
+            $text = sprintf('line %d: %s', $warning['line'] ?? 0, is_array($warning['message'] ?? null) ? implode(' ', $warning['message']) : ($warning['message'] ?? 'Unknown warning'));
+            if ($this->isBenignCssWarning($text)) {
+                $benignWarnings[] = $text;
+                continue;
+            }
+
+            $warnings[] = $text;
+        }
+
+        return ['errors' => $errors, 'warnings' => $warnings, 'benignWarnings' => $benignWarnings];
+    }
+
+    // The validator's messages are always English (no Accept-Language is sent), so matching on their own wording is stable
+    private function isBenignCssWarning(string $message): bool
+    {
+        foreach (self::BENIGN_CSS_WARNING_PATTERNS as $pattern) {
+            if (str_contains($message, $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Convenience for a single-URL validation - returns the same shape as readCss(), or throws on a network/API error

@@ -12,7 +12,9 @@ namespace c975L\SiteBundle\Tests\Listener;
 use c975L\SiteBundle\Entity\Font;
 use c975L\SiteBundle\Listener\FontCssListener;
 use c975L\SiteBundle\Repository\FontRepository;
+use c975L\SiteBundle\Twig\FontPreloadExtension;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
@@ -71,7 +73,26 @@ class FontCssListenerTest extends TestCase
             $repository,
             $this->createStub(StylesheetCacheWarmer::class),
             $this->projectDir,
+            new ArrayAdapter(),
         );
+    }
+
+    // The <head>'s font preloads are computed from the same rows, so a Font change has to drop them too
+    public function testRegeneratingDropsTheFontPreloadCache(): void
+    {
+        $cache = new ArrayAdapter();
+        $cache->get(FontPreloadExtension::CACHE_KEY, static fn (): array => [['path' => 'stale.woff2', 'type' => 'font/woff2']]);
+
+        $repository = $this->createStub(FontRepository::class);
+        $repository->method('findAllOrdered')->willReturn([]);
+        $listener = new FontCssListener($repository, $this->createStub(StylesheetCacheWarmer::class), $this->projectDir, $cache);
+
+        $listener->postUpdate(new PostUpdateEventArgs(
+            $this->font('Roboto', 400, 'normal', 'medias/fonts/font-1.woff2'),
+            $this->createStub(EntityManagerInterface::class),
+        ));
+
+        $this->assertFalse($cache->hasItem(FontPreloadExtension::CACHE_KEY));
     }
 
     public function testPostPersistIgnoresNonFontEntities(): void
@@ -186,7 +207,7 @@ class FontCssListenerTest extends TestCase
         $stylesheetCacheWarmer = $this->createMock(StylesheetCacheWarmer::class);
         $stylesheetCacheWarmer->expects($this->once())->method('compileAll');
 
-        $listener = new FontCssListener($repository, $stylesheetCacheWarmer, $this->projectDir);
+        $listener = new FontCssListener($repository, $stylesheetCacheWarmer, $this->projectDir, new ArrayAdapter());
         $listener->postUpdate(new PostUpdateEventArgs(
             $this->font('Roboto', 400, 'normal', 'medias/fonts/font-1.woff2'),
             $this->createStub(EntityManagerInterface::class),

@@ -424,6 +424,32 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($capturedCopy->isPublished());
     }
 
+    // A copy of a deliberately noindex page (eg. "creer-un-compte") must not silently reappear in the sitemap, so isIndexable is carried over like the other SEO attributes
+    public function testDuplicateCarriesOverIsIndexable(): void
+    {
+        $source = (new Page())->setTitle('Original')->setSlug('original')->setIsIndexable(false);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturn(null);
+
+        $capturedCopy = null;
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$capturedCopy): void {
+            $capturedCopy = $entity;
+        });
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->duplicate($this->createAdminContext($source), $manager);
+
+        $this->assertInstanceOf(Page::class, $capturedCopy);
+        $this->assertFalse($capturedCopy->isIndexable());
+    }
+
     public function testDuplicateClonesEachBlockWithItsOwnMedias(): void
     {
         $source = (new Page())->setTitle('Original')->setSlug('original');
@@ -957,6 +983,16 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('title-confirm', $title->getAsDto()->getFormTypeOptions()['attr']['data-controller'] ?? null);
     }
 
+    // "sitemap-fields" must sit on the row, not on the checkbox: EasyAdmin renders a BooleanField as a <twig:ea:Switch> component that only forwards id/name/value/checked/disabled/required/variant and silently drops "attr", so a data-controller set there never reaches the DOM and changeFrequency/priority stay enabled
+    public function testConfigureFieldsAddsSitemapFieldsControllerOnIsIndexableRow(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_EDIT);
+        $isIndexable = $this->findFieldByProperty($fields, 'isIndexable');
+
+        $this->assertSame('sitemap-fields', $isIndexable->getAsDto()->getFormTypeOptions()['row_attr']['data-controller'] ?? null);
+        $this->assertArrayNotHasKey('data-controller', $isIndexable->getAsDto()->getFormTypeOptions()['attr'] ?? []);
+    }
+
     // No entity yet (new page) - blockMoveRowAttr() has nothing to key the move on, so the "blocks" field gets no row_attr at all rather than a partial/broken one
     public function testConfigureFieldsBlocksFieldHasNoRowAttrOnNewPage(): void
     {
@@ -1247,6 +1283,7 @@ class PageCrudControllerTest extends TestCase
             'changeFrequency' => null,
             'priority' => null,
             'isPublished' => true,
+            'isIndexable' => true,
             'summarySocialNetwork' => null,
             'ogImage' => null,
             'blocks' => [[

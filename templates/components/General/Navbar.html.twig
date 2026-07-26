@@ -18,7 +18,9 @@
                 <div class="menu-brand-top">
                     {% if logo is not null %}
                         <a href="{{ path('page_home') }}" class="menu-logo">
-                            <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" height="40" loading="lazy">
+{# eager, never lazy: the navbar logo is above the fold on every single page, so deferring it only
+   delays a request the browser could already have started from the preload scanner #}
+                            <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" height="40" loading="eager" fetchpriority="high">
                         </a>
                     {% endif %}
 
@@ -49,7 +51,8 @@
         {% if logo is not null %}
             <p class="text-center">
                 <a href="{{ path('page_home') }}" aria-label="{{ siteName|default('Logo') }}">
-                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" class="img" height="70" loading="lazy">
+{# eager, never lazy: same reason as the menu logo above #}
+                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" class="img" height="70" loading="eager" fetchpriority="high">
                 </a>
             </p>
         {% endif %}

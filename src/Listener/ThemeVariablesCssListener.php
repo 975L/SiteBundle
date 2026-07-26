@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Listener;
 use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use c975L\SiteBundle\Twig\FontPreloadExtension;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
@@ -19,6 +20,7 @@ use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 // Fires for any Config flushed through the EntityManager, regardless of which controller or app code triggered the change - filters down to the "theme" group (colors/fonts editable by the admin in ThemeCrudController) and regenerates the compiled CSS file every time one of them changes, so there is a single source of truth (site_config) for both the site's stylesheet and the email layout (see ThemeVariablesExtension for the email side)
 // Also a CacheWarmer: Config rows persisted before this listener existed (or restored from a backup) never fire a Doctrine event again on their own, so without this the compiled file could stay missing/stale until an admin happens to re-save a theme config - warming up on every cache:warmup/cache:clear guarantees it always reflects the current site_config, deploy or not
@@ -47,6 +49,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
         private readonly StylesheetCacheWarmer $stylesheetCacheWarmer,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
+        private readonly CacheInterface $cache,
     ) {}
 
     public function postPersist(PostPersistEventArgs $args): void
@@ -88,6 +91,10 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
     // Rewrites the whole file from every current theme config, not just the one that changed
     private function regenerate(): void
     {
+        // The <head>'s font preloads are computed from the very same rows (see FontPreloadExtension), so they go stale
+        // at exactly the same moment as the compiled CSS below
+        $this->cache->delete(FontPreloadExtension::CACHE_KEY);
+
         $lines = [];
         foreach ($this->configRepository->findByGroup(Config::GROUP_THEME) as $config) {
             $value = $config->getValue();

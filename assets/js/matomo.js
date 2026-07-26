@@ -14,7 +14,9 @@ export default class extends Controller {
         _paq.push(["trackPageView"]);
         _paq.push(["enableLinkTracking"]);
         (function() {
-            var u = this.element.dataset.matomoUrl + "/";
+            // Trailing slashes stripped first: an admin-entered "site-matomo-url" ending in "/" would
+            // otherwise produce "//matomo.js", which defeats proxy cache de-duplication
+            var u = this.element.dataset.matomoUrl.replace(/\/+$/, "") + "/";
             _paq.push(["setTrackerUrl", u + "matomo.php"]);
             _paq.push(["setSiteId", this.element.dataset.matomoId]);
             var d = document, g = d.createElement("script"), s = d.getElementsByTagName("script")[0];

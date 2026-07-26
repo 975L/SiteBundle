@@ -50,10 +50,11 @@ class PagePublicUrlResolverTest extends TestCase
         $this->assertSame('https://example.com/', $resolver->resolve($this->createPage('home')));
     }
 
-    public function testResolveBuildsARegularPageUrlWithTrailingSlash(): void
+    // No trailing slash - both forms answer 200, and this is the canonical one, shared with the sitemap (see SitePageSitemapProvider)
+    public function testResolveBuildsARegularPageUrlWithoutTrailingSlash(): void
     {
         $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com'), $this->createUrlGenerator());
 
-        $this->assertSame('https://example.com/pages/contact/', $resolver->resolve($this->createPage('contact')));
+        $this->assertSame('https://example.com/pages/contact', $resolver->resolve($this->createPage('contact')));
     }
 }
