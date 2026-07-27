@@ -2,1541 +2,1541 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="en" datatype="plaintext" original="site.en.xlf">
         <body>
-            <trans-unit id="1">
-                <source>label.made_by</source>
-                <target>Made by</target>
-            </trans-unit>
-            <trans-unit id="2">
-                <source>text.cookies_banner</source>
-                <target>This site uses a session cookie required for it to work, and may embed third-party content (videos, etc.) requiring your consent.</target>
-            </trans-unit>
-            <trans-unit id="3">
-                <source>label.cookies_policy</source>
-                <target>Cookies Policy</target>
-            </trans-unit>
-            <trans-unit id="4">
-                <source>text.err</source>
-                <target>We have detected an error :-( We ask you to excuse us.</target>
-            </trans-unit>
-            <trans-unit id="5">
-                <source>text.err401</source>
-                <target>I can not access this resource because access is restricted and requires identification.</target>
-            </trans-unit>
-            <trans-unit id="6">
-                <source>text.err403</source>
-                <target>I can not access this resource because access is restricted.</target>
-            </trans-unit>
-            <trans-unit id="7">
-                <source>text.err404</source>
-                <target>The page I request is not available. Please check the link in the address bar.</target>
-            </trans-unit>
-            <trans-unit id="8">
-                <source>text.err410</source>
-                <target>The page I requested does not exist anymore.</target>
-            </trans-unit>
-            <trans-unit id="9">
-                <source>text.err500</source>
-                <target>We have detected an internal error :-( We ask you to excuse us.</target>
-            </trans-unit>
-            <trans-unit id="10">
-                <source>label.cookies_reject</source>
-                <target>Reject</target>
-            </trans-unit>
-            <trans-unit id="11">
-                <source>label.latest_update</source>
-                <target>Latest update</target>
-            </trans-unit>
-            <trans-unit id="12">
-                <source>label.copyright</source>
-                <target>Copyright</target>
-            </trans-unit>
-            <trans-unit id="13">
-                <source>label.legal_notice</source>
-                <target>Legal notice</target>
-            </trans-unit>
-            <trans-unit id="14">
-                <source>label.point_error</source>
-                <target>I point out the error</target>
-            </trans-unit>
-            <trans-unit id="15">
-                <source>label.page_deleted</source>
-                <target>Page deleted</target>
-            </trans-unit>
-            <trans-unit id="16">
-                <source>label.privacy_policy</source>
-                <target>Privacy policy</target>
-            </trans-unit>
-            <trans-unit id="17">
-                <source>label.publication_rights</source>
-                <target>Publication rights</target>
-            </trans-unit>
-            <trans-unit id="18">
-                <source>label.terms_of_sales</source>
-                <target>Terms of sales</target>
-            </trans-unit>
-            <trans-unit id="19">
-                <source>label.terms_of_use</source>
-                <target>Terms of use</target>
-            </trans-unit>
-            <trans-unit id="20">
-                <source>text.only_french</source>
-                <target>Only the French text is authoritative, the other languages being translations.</target>
-            </trans-unit>
-            <trans-unit id="21">
-                <source>label.hosted_by</source>
-                <target>Hosted by</target>
-            </trans-unit>
-            <trans-unit id="22">
-                <source>label.accept_tos</source>
-                <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of sales (TOS)</a>]]></target>
-            </trans-unit>
-            <trans-unit id="23">
-                <source>label.mandatory_field</source>
-                <target>* Mandatory field</target>
-            </trans-unit>
-            <trans-unit id="24">
-                <source>label.terms_of_sales_filename</source>
-                <target>TermsOfSales</target>
-            </trans-unit>
-            <trans-unit id="25">
-                <source>text.gdpr</source>
-                <target>I agree that this website stores the submitted data so that it can answer my request</target>
-            </trans-unit>
-            <trans-unit id="32">
-                <source>label.all_rights_reserved</source>
-                <target>© All rights reserved</target>
-            </trans-unit>
-            <trans-unit id="33">
-                <source>label.audio_not_supported</source>
-                <target>Your browser does not support the audio tag.</target>
-            </trans-unit>
-            <trans-unit id="34">
-                <source>label.video_not_supported</source>
-                <target>Your browser does not support the video tag.</target>
-            </trans-unit>
-            <trans-unit id="35">
-                <source>label.download</source>
-                <target>Download</target>
-            </trans-unit>
-            <trans-unit id="36">
-                <source>label.readmore</source>
-                <target>Read more...</target>
-            </trans-unit>
-            <trans-unit id="37">
-                <source>label.readless</source>
-                <target>Read less</target>
-            </trans-unit>
-            <trans-unit id="38">
-                <source>label.menu_toggle</source>
-                <target>Open/Close the menu</target>
-            </trans-unit>
-            <trans-unit id="39">
-                <source>label.phone</source>
-                <target>Phone</target>
-            </trans-unit>
-            <trans-unit id="40">
-                <source>label.opening_hours</source>
-                <target>Opening hours</target>
-            </trans-unit>
-            <trans-unit id="41">
-                <source>menu.toggle</source>
-                <target>Open/Close the menu</target>
-            </trans-unit>
-            <trans-unit id="42">
-                <source>label.price_range</source>
-                <target>Price range</target>
-            </trans-unit>
-            <trans-unit id="43">
-                <source>label.address</source>
-                <target>Address</target>
-            </trans-unit>
-            <trans-unit id="44">
-                <source>label.title</source>
-                <target>Title</target>
-            </trans-unit>
-            <trans-unit id="45">
-                <source>label.slug</source>
-                <target>Slug</target>
-            </trans-unit>
-            <trans-unit id="46">
-                <source>label.summary_social_network</source>
-                <target>Social network summary</target>
-            </trans-unit>
-            <trans-unit id="47">
-                <source>label.dashboard</source>
-                <target>Dashboard</target>
-            </trans-unit>
-            <trans-unit id="48">
-                <source>label.management</source>
-                <target>Management</target>
-            </trans-unit>
-            <trans-unit id="49">
-                <source>label.page</source>
-                <target>Page</target>
-            </trans-unit>
-            <trans-unit id="50">
-                <source>label.pages</source>
-                <target>Pages</target>
-            </trans-unit>
-            <trans-unit id="51">
-                <source>label.signout</source>
-                <target>Sign out</target>
-            </trans-unit>
-            <trans-unit id="52">
-                <source>label.user</source>
-                <target>User</target>
-            </trans-unit>
-            <trans-unit id="53">
-                <source>label.article</source>
-                <target>Article</target>
-            </trans-unit>
-            <trans-unit id="54">
-                <source>label.articles</source>
-                <target>Articles</target>
-            </trans-unit>
-            <trans-unit id="55">
-                <source>label.image</source>
-                <target>Image</target>
-            </trans-unit>
-            <trans-unit id="56">
-                <source>label.detail</source>
-                <target>Detail</target>
-            </trans-unit>
-            <trans-unit id="57">
-                <source>label.creation</source>
-                <target>Creation</target>
-            </trans-unit>
-            <trans-unit id="58">
-                <source>label.modification</source>
-                <target>Modification</target>
-            </trans-unit>
-            <trans-unit id="59">
-                <source>label.position</source>
-                <target>Position</target>
-            </trans-unit>
-            <trans-unit id="60">
-                <source>label.position_help</source>
-                <target>Display order (1 = first); use increments of 5 to leave room.</target>
-            </trans-unit>
-            <trans-unit id="61">
-                <source>text.no_articles</source>
-                <target>No articles available.</target>
-            </trans-unit>
-            <trans-unit id="62">
-                <source>label.back_to_list</source>
-                <target>Back to list</target>
-            </trans-unit>
-            <trans-unit id="63">
-                <source>label.previous_slide</source>
-                <target>Previous slide</target>
-            </trans-unit>
-            <trans-unit id="64">
-                <source>label.next_slide</source>
-                <target>Next slide</target>
-            </trans-unit>
-            <trans-unit id="65">
-                <source>label.stop_animation</source>
-                <target>Stop animation</target>
-            </trans-unit>
-            <trans-unit id="66">
-                <source>label.start_animation</source>
-                <target>Start animation</target>
-            </trans-unit>
-            <trans-unit id="67">
-                <source>label.slide_navigation</source>
-                <target>Slide navigation</target>
-            </trans-unit>
-            <trans-unit id="68">
-                <source>label.slide</source>
-                <target>Slide</target>
-            </trans-unit>
-            <trans-unit id="69">
-                <source>label.current</source>
-                <target>current</target>
-            </trans-unit>
-            <trans-unit id="70">
-                <source>label.item_of</source>
-                <target>Item %current% of %total%</target>
-            </trans-unit>
-            <trans-unit id="71">
-                <source>label.pages_gallery</source>
-                <target>Pages gallery</target>
-            </trans-unit>
-            <trans-unit id="72">
-                <source>label.is_published</source>
-                <target>Is published</target>
-            </trans-unit>
-            <trans-unit id="268">
-                <source>label.draft</source>
-                <target>draft</target>
-            </trans-unit>
-            <trans-unit id="73">
-                <source>label.website</source>
-                <target>Website</target>
-            </trans-unit>
-            <trans-unit id="392">
-                <source>label.is_indexable</source>
-                <target>Reference the page</target>
-            </trans-unit>
-            <trans-unit id="393">
-                <source>label.is_indexable_help</source>
-                <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password)</target>
-            </trans-unit>
-            <trans-unit id="74">
-                <source>label.change_frequency</source>
-                <target>Change frequency</target>
-            </trans-unit>
-            <trans-unit id="75">
-                <source>label.change_frequency_help</source>
-                <target>Frequency at which the page content changes</target>
-            </trans-unit>
-            <trans-unit id="76">
-                <source>label.priority</source>
-                <target>Priority</target>
-            </trans-unit>
-            <trans-unit id="77">
-                <source>label.priority_help</source>
-                <target>Priority of the page in the sitemap (0 = low, 10 = high)</target>
-            </trans-unit>
-            <trans-unit id="78">
-                <source>label.always</source>
-                <target>Always</target>
-            </trans-unit>
-            <trans-unit id="79">
-                <source>label.hourly</source>
-                <target>Hourly</target>
-            </trans-unit>
-            <trans-unit id="80">
-                <source>label.daily</source>
-                <target>Daily</target>
-            </trans-unit>
-            <trans-unit id="81">
-                <source>label.weekly</source>
-                <target>Weekly</target>
-            </trans-unit>
-            <trans-unit id="82">
-                <source>label.monthly</source>
-                <target>Monthly</target>
-            </trans-unit>
-            <trans-unit id="83">
-                <source>label.yearly</source>
-                <target>Yearly</target>
-            </trans-unit>
-            <trans-unit id="84">
-                <source>label.never</source>
-                <target>Never</target>
-            </trans-unit>
-            <trans-unit id="85">
-                <source>label.summary_social_network_help</source>
-                <target>Used by social networks when the page is shared</target>
-            </trans-unit>
-            <trans-unit id="86">
-                <source>label.is_deleted</source>
-                <target>Deleted</target>
-            </trans-unit>
-            <trans-unit id="87">
-                <source>label.redirect</source>
-                <target>Redirect</target>
-            </trans-unit>
-            <trans-unit id="88">
-                <source>label.redirects</source>
-                <target>Redirects</target>
-            </trans-unit>
-            <trans-unit id="89">
-                <source>label.from_path</source>
-                <target>Source path</target>
-            </trans-unit>
-            <trans-unit id="90">
-                <source>label.from_path_help</source>
-                <target>URL path with leading / (e.g. /la-guilde-des-seigneurs)</target>
-            </trans-unit>
-            <trans-unit id="91">
-                <source>label.to_url</source>
-                <target>Target URL</target>
-            </trans-unit>
-            <trans-unit id="92">
-                <source>label.to_url_help</source>
-                <target>Full URL (https://...) or absolute path (/series/la-guilde)</target>
-            </trans-unit>
-            <trans-unit id="93">
-                <source>label.permanent</source>
-                <target>Permanent (301)</target>
-            </trans-unit>
-            <trans-unit id="94">
-                <source>label.permanent_help</source>
-                <target>Checked = permanent redirect 301 (SEO), unchecked = temporary 302</target>
-            </trans-unit>
-            <trans-unit id="95">
-                <source>action.trash</source>
-                <target>Trash</target>
-            </trans-unit>
-            <trans-unit id="96">
-                <source>action.move_to_trash</source>
-                <target>Move to trash</target>
-            </trans-unit>
-            <trans-unit id="97">
+            <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Delete permanently</target>
             </trans-unit>
-            <trans-unit id="98">
-                <source>confirm.delete_permanently</source>
-                <target>This action is irreversible and will permanently delete the page and its content. Continue?</target>
-            </trans-unit>
-            <trans-unit id="99">
-                <source>flash.page_deleted_permanently</source>
-                <target>The page has been permanently deleted.</target>
-            </trans-unit>
-            <trans-unit id="100">
-                <source>action.restore</source>
-                <target>Restore</target>
-            </trans-unit>
-            <trans-unit id="101">
-                <source>flash.page_restored</source>
-                <target>The page has been restored.</target>
-            </trans-unit>
-            <trans-unit id="102">
-                <source>action.view_on_site</source>
-                <target>View on site</target>
-            </trans-unit>
-            <trans-unit id="103">
-                <source>label.slug_help</source>
-                <target>Ideally close to the title (no accents, capitals or spaces). Editable via the lock icon; a redirect preserves SEO.</target>
-            </trans-unit>
-            <trans-unit id="104">
-                <source>confirm.title_change</source>
-                <target>Changing the title will change the page's URL (slug), a redirect will be automatically set up. Continue?</target>
-            </trans-unit>
-            <trans-unit id="105">
-                <source>label.content</source>
-                <target>Content</target>
-            </trans-unit>
-            <trans-unit id="106">
-                <source>label.content_help</source>
-                <target>Paste the old .html.twig file's content here - interpreted as Twig (config(), path(), etc.).</target>
-            </trans-unit>
-            <trans-unit id="107">
-                <source>block.twig_content</source>
-                <target>Twig Content</target>
-            </trans-unit>
-            <trans-unit id="108">
-                <source>block.twig_content_description</source>
-                <target>Includes an existing Twig template by its path</target>
-            </trans-unit>
-            <trans-unit id="109">
-                <source>block.legal_model</source>
-                <target>Legal Model</target>
-            </trans-unit>
-            <trans-unit id="110">
-                <source>block.legal_model_description</source>
-                <target>Inserts an existing legal text template (T&amp;Cs, legal notice...)</target>
-            </trans-unit>
-            <trans-unit id="111">
-                <source>label.category_legal</source>
-                <target>Legal</target>
-            </trans-unit>
-            <trans-unit id="112">
-                <source>label.category_twig</source>
-                <target>Twig</target>
-            </trans-unit>
-            <trans-unit id="113">
-                <source>label.model</source>
-                <target>Model</target>
-            </trans-unit>
-            <trans-unit id="114">
-                <source>block.articles_slider</source>
-                <target>Articles Slider</target>
-            </trans-unit>
-            <trans-unit id="115">
-                <source>block.articles_slider_description</source>
-                <target>Slideshow highlighting a selection of articles</target>
-            </trans-unit>
-            <trans-unit id="116">
-                <source>label.category_navigation</source>
-                <target>Navigation</target>
-            </trans-unit>
-            <trans-unit id="117">
-                <source>label.duration</source>
-                <target>Duration</target>
-            </trans-unit>
-            <trans-unit id="118">
-                <source>label.users</source>
-                <target>Users</target>
-            </trans-unit>
-            <trans-unit id="119">
-                <source>label.roles</source>
-                <target>Roles</target>
-            </trans-unit>
-            <trans-unit id="120">
-                <source>action.preview</source>
-                <target>Preview</target>
-            </trans-unit>
-            <trans-unit id="121">
-                <source>label.preview_mode</source>
-                <target>Unpublished preview - not visible to the public.</target>
-            </trans-unit>
-            <trans-unit id="122">
-                <source>label.export</source>
-                <target>Export</target>
-            </trans-unit>
-            <trans-unit id="123">
-                <source>label.info_page</source>
-                <target>List of all the site's pages. You can create, edit, duplicate, publish, preview, move to trash or permanently delete a page; a deleted page can only be recovered from the trash until it's permanently deleted.</target>
-            </trans-unit>
-            <trans-unit id="124">
-                <source>label.info_redirect</source>
-                <target>List of the site's URL redirects. You can create, edit or delete a redirect; double-check the source and target URLs, a mistake can break a link or cause a redirect loop.</target>
-            </trans-unit>
-            <trans-unit id="125">
-                <source>label.info_user</source>
-                <target>List of the site's users. You can edit a user's roles or delete them; be careful, changing roles immediately changes their back-office access rights.</target>
-            </trans-unit>
-            <trans-unit id="126">
-                <source>label.qrcode</source>
-                <target>QR Code</target>
-            </trans-unit>
-            <trans-unit id="127">
-                <source>label.qrcode_help</source>
-                <target>Right-click to save the image, use it wherever you want</target>
-            </trans-unit>
-            <trans-unit id="128">
-                <source>label.site_graphics</source>
-                <target>Site graphics</target>
-            </trans-unit>
-            <trans-unit id="129">
-                <source>label.site_graphic</source>
-                <target>Site graphic</target>
-            </trans-unit>
-            <trans-unit id="130">
-                <source>label.role</source>
-                <target>Role</target>
-            </trans-unit>
-            <trans-unit id="131">
-                <source>label.file</source>
-                <target>File</target>
-            </trans-unit>
-            <trans-unit id="132">
-                <source>label.favicon</source>
-                <target>Favicon</target>
-            </trans-unit>
-            <trans-unit id="133">
-                <source>label.apple_touch_icon</source>
-                <target>Apple touch icon</target>
-            </trans-unit>
-            <trans-unit id="134">
-                <source>label.og_image</source>
-                <target>Open Graph image</target>
-            </trans-unit>
-            <trans-unit id="135">
-                <source>label.logo</source>
-                <target>Logo</target>
-            </trans-unit>
-            <trans-unit id="136">
-                <source>label.og_image_help</source>
-                <target>Image shown when the page is shared. Empty = site's default og-image or logo.</target>
-            </trans-unit>
-            <trans-unit id="137">
-                <source>label.site_graphic_missing</source>
-                <target>No file has been uploaded yet</target>
-            </trans-unit>
-            <trans-unit id="138">
-                <source>label.info_site_graphic</source>
-                <target>Site-wide graphics: favicon, Apple Touch icon, default Open Graph image, logo and error images. Each role (except error image) can only be used once; replace the file to update it.</target>
-            </trans-unit>
-            <trans-unit id="139">
-                <source>label.menus</source>
-                <target>Menus</target>
-            </trans-unit>
-            <trans-unit id="140">
-                <source>label.menu</source>
-                <target>Menu</target>
-            </trans-unit>
-            <trans-unit id="141">
-                <source>label.location</source>
-                <target>Location</target>
-            </trans-unit>
-            <trans-unit id="142">
-                <source>label.navbar</source>
-                <target>Navigation</target>
-            </trans-unit>
-            <trans-unit id="143">
-                <source>label.footer</source>
-                <target>Footer</target>
-            </trans-unit>
-            <trans-unit id="145">
-                <source>label.create_page</source>
-                <target>Create page</target>
-            </trans-unit>
-            <trans-unit id="146">
-                <source>label.media_used_as_og_image</source>
-                <target>OG image of "%page%"</target>
-            </trans-unit>
-            <trans-unit id="147">
-                <source>label.media_used_in_page_block</source>
-                <target>Block "%block%" on page "%page%"</target>
-            </trans-unit>
-            <trans-unit id="148">
-                <source>label.route</source>
-                <target>Route</target>
-            </trans-unit>
-            <trans-unit id="149">
-                <source>label.choose_page</source>
-                <target>Choose a page</target>
-            </trans-unit>
-            <trans-unit id="150">
-                <source>label.choose_route</source>
-                <target>Choose a route</target>
-            </trans-unit>
-            <trans-unit id="152">
-                <source>label.export_tables</source>
-                <target>Export (SQL) "site_xxx" tables</target>
-            </trans-unit>
-            <trans-unit id="153">
-                <source>label.register</source>
-                <target>Register</target>
-            </trans-unit>
-            <trans-unit id="154">
-                <source>label.password</source>
-                <target>Password</target>
-            </trans-unit>
-            <trans-unit id="155">
-                <source>label.email</source>
-                <target>Email</target>
-            </trans-unit>
-            <trans-unit id="156">
-                <source>label.confirm_email_title</source>
-                <target>Hi! Please confirm your email!</target>
-            </trans-unit>
-            <trans-unit id="157">
-                <source>text.confirm_email_instructions</source>
-                <target>Please confirm your email address by clicking the following link:</target>
-            </trans-unit>
-            <trans-unit id="158">
-                <source>label.confirm_my_email</source>
-                <target>Confirm my Email</target>
-            </trans-unit>
-            <trans-unit id="159">
-                <source>text.link_expires_in</source>
-                <target>This link will expire in</target>
-            </trans-unit>
-            <trans-unit id="162">
-                <source>text.no_email_received</source>
-                <target>If you don't receive an email please check your spam folder or</target>
-            </trans-unit>
-            <trans-unit id="164">
-                <source>text.reset_password_instructions</source>
-                <target>To reset your password, please visit the following link</target>
-            </trans-unit>
-            <trans-unit id="165">
-                <source>label.reset_password</source>
-                <target>Reset your password</target>
-            </trans-unit>
-            <trans-unit id="168">
-                <source>label.login</source>
-                <target>Login</target>
-            </trans-unit>
-            <trans-unit id="169">
-                <source>label.please_sign_in</source>
-                <target>Please sign in</target>
-            </trans-unit>
-            <trans-unit id="170">
-                <source>label.sign_in</source>
-                <target>Sign in</target>
-            </trans-unit>
-            <trans-unit id="171">
-                <source>text.logged_in_as</source>
-                <target>You are logged in as %user%,</target>
-            </trans-unit>
-            <trans-unit id="172">
-                <source>label.forgot_password</source>
-                <target>Forgot your password?</target>
-            </trans-unit>
-            <trans-unit id="173">
-                <source>label.create_account</source>
-                <target>Create an account</target>
-            </trans-unit>
-            <trans-unit id="174">
-                <source>label.error_image</source>
-                <target>Error image</target>
-            </trans-unit>
-            <trans-unit id="175">
-                <source>label.error</source>
-                <target>Error</target>
-            </trans-unit>
-            <trans-unit id="176">
-                <source>label.error_code</source>
-                <target>Error %code%</target>
-            </trans-unit>
-            <trans-unit id="177">
-                <source>label.agree_terms</source>
-                <target>I agree to the terms</target>
-            </trans-unit>
-            <trans-unit id="178">
-                <source>label.new_password</source>
-                <target>New password</target>
-            </trans-unit>
-            <trans-unit id="179">
-                <source>label.password_confirm</source>
-                <target>Repeat password</target>
-            </trans-unit>
-            <trans-unit id="180">
-                <source>label.password_help</source>
-                <target>At least 8 characters, with a lowercase, uppercase, digit and special character</target>
-            </trans-unit>
-            <trans-unit id="181">
-                <source>label.confirm_your_email</source>
-                <target>Confirm your email</target>
-            </trans-unit>
-            <trans-unit id="182">
-                <source>label.email_address_verified</source>
-                <target>Your email address has been verified.</target>
-            </trans-unit>
-            <trans-unit id="183">
-                <source>label.password_reset_request</source>
-                <target>Your password reset request</target>
-            </trans-unit>
-            <trans-unit id="184">
-                <source>label.no_reset_password_token_found</source>
-                <target>No reset password token found in the URL or in the session.</target>
-            </trans-unit>
-            <trans-unit id="185">
-                <source>label.site_graphic_file_help</source>
-                <target>Auto-resized: favicon to 48×48 px (.ico), Apple touch icon to 114×114 px (.png).</target>
-            </trans-unit>
-            <trans-unit id="186">
-                <source>flash.user_registration_enabled</source>
-                <target>User registration enabled</target>
-            </trans-unit>
-            <trans-unit id="187">
-                <source>flash.user_registration_disabled</source>
-                <target>User registration disabled</target>
-            </trans-unit>
-            <trans-unit id="188">
-                <source>label.user_registration_enable</source>
-                <target>Enable user registration</target>
-            </trans-unit>
-            <trans-unit id="189">
-                <source>label.user_registration_disable</source>
-                <target>Disable user registration</target>
-            </trans-unit>
-            <trans-unit id="192">
-                <source>label.menu_item_target</source>
-                <target>Target</target>
-            </trans-unit>
-            <trans-unit id="193">
-                <source>label.choose_target</source>
-                <target>Choose a page or a route</target>
-            </trans-unit>
-            <trans-unit id="278">
-                <source>label.menu_link_label</source>
-                <target>Label (optional)</target>
-            </trans-unit>
-            <trans-unit id="279">
-                <source>help.menu_link_label</source>
-                <target>Empty = target page's/section's title (or computed copyright for the "Copyright" page).</target>
-            </trans-unit>
-            <trans-unit id="194">
+            <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Duplicate</target>
             </trans-unit>
-            <trans-unit id="195">
-                <source>confirm.duplicate</source>
-                <target>An unpublished copy of this page and all its content (blocks, medias) will be created. Continue?</target>
-            </trans-unit>
-            <trans-unit id="196">
-                <source>flash.page_duplicated</source>
-                <target>The page has been duplicated.</target>
-            </trans-unit>
-            <trans-unit id="197">
-                <source>label.copy_suffix</source>
-                <target>copy</target>
-            </trans-unit>
-            <trans-unit id="198">
-                <source>label.email_footer</source>
-                <target>Email footer</target>
-            </trans-unit>
-            <trans-unit id="202">
-                <source>label.email_header</source>
-                <target>Email header</target>
-            </trans-unit>
-            <trans-unit id="199">
-                <source>block.menu_link</source>
-                <target>Menu link</target>
-            </trans-unit>
-            <trans-unit id="200">
-                <source>block.menu_link_description</source>
-                <target>Link to a page or route, sortable with other blocks (navbar, footer, email)</target>
-            </trans-unit>
-            <trans-unit id="201">
-                <source>label.info_menu</source>
-                <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
-            </trans-unit>
-            <trans-unit id="203">
-                <source>label.messenger_alert_super_admin</source>
-                <target>%count% important Messenger failure(s)</target>
-            </trans-unit>
-            <trans-unit id="204">
-                <source>description.messenger_alert_super_admin</source>
-                <target>Send failures unrelated to a blacklisted address. Click for details.</target>
-            </trans-unit>
-            <trans-unit id="205">
-                <source>label.messenger_alert_admin</source>
-                <target>A technical issue has been automatically reported</target>
-            </trans-unit>
-            <trans-unit id="206">
-                <source>description.messenger_alert_admin</source>
-                <target>Technical issue auto-reported to the dev team. No action required.</target>
-            </trans-unit>
-            <trans-unit id="207">
-                <source>label.messenger_failed</source>
-                <target>Failed messages</target>
-            </trans-unit>
-            <trans-unit id="208">
-                <source>description.messenger_failed</source>
-                <target>Messages that failed to send; minor cases (blacklist, spam) are purged after retention.</target>
-            </trans-unit>
-            <trans-unit id="209">
-                <source>label.messenger_purge_now</source>
-                <target>Purge now</target>
-            </trans-unit>
-            <trans-unit id="210">
-                <source>label.date</source>
-                <target>Date</target>
-            </trans-unit>
-            <trans-unit id="211">
-                <source>label.messenger_to</source>
-                <target>Recipient</target>
-            </trans-unit>
-            <trans-unit id="241">
-                <source>label.messenger_from</source>
-                <target>Sender</target>
-            </trans-unit>
-            <trans-unit id="242">
-                <source>text.too_many_attempts</source>
-                <target>Too many attempts, please try again later.</target>
-            </trans-unit>
-            <trans-unit id="212">
-                <source>label.messenger_subject</source>
-                <target>Subject</target>
-            </trans-unit>
-            <trans-unit id="213">
-                <source>label.messenger_error</source>
-                <target>Error</target>
-            </trans-unit>
-            <trans-unit id="214">
-                <source>label.messenger_important</source>
-                <target>Important</target>
-            </trans-unit>
-            <trans-unit id="215">
-                <source>label.messenger_minor</source>
-                <target>Minor</target>
-            </trans-unit>
-            <trans-unit id="216">
-                <source>label.messenger_none</source>
-                <target>No failed messages</target>
-            </trans-unit>
-            <trans-unit id="217">
-                <source>flash.messenger_purged</source>
-                <target>%count% message(s) purged</target>
-            </trans-unit>
-            <trans-unit id="218">
-                <source>label.gallery_showcase_articles_slider</source>
-                <target>Articles slideshow</target>
-            </trans-unit>
-            <trans-unit id="219">
-                <source>label.gallery_showcase_articles_slider_description</source>
-                <target>Clickable slideshow of a chosen page's articles.</target>
-            </trans-unit>
-            <trans-unit id="220">
-                <source>label.gallery_showcase_menu_link</source>
-                <target>Menu link</target>
-            </trans-unit>
-            <trans-unit id="221">
-                <source>label.gallery_showcase_menu_link_description</source>
-                <target>Link to a page or a route, used in the site's menus.</target>
-            </trans-unit>
-            <trans-unit id="222">
-                <source>label.logout</source>
-                <target>Logout</target>
-            </trans-unit>
-            <trans-unit id="223">
-                <source>label.messenger_by_error</source>
-                <target>Summary by error</target>
-            </trans-unit>
-            <trans-unit id="224">
-                <source>label.messenger_count</source>
-                <target>Count</target>
-            </trans-unit>
-            <trans-unit id="225">
-                <source>label.messenger_actions</source>
-                <target>Actions</target>
-            </trans-unit>
-            <trans-unit id="226">
-                <source>label.messenger_delete_group</source>
-                <target>Delete the %count%</target>
-            </trans-unit>
-            <trans-unit id="227">
-                <source>label.messenger_delete_group_confirm</source>
-                <target>Permanently delete these %count% message(s)?</target>
-            </trans-unit>
-            <trans-unit id="228">
-                <source>label.messenger_detail</source>
-                <target>Detail</target>
-            </trans-unit>
-            <trans-unit id="229">
-                <source>label.messenger_error_code</source>
-                <target>Code</target>
-            </trans-unit>
-            <trans-unit id="230">
-                <source>label.messenger_error_class</source>
-                <target>Error class</target>
-            </trans-unit>
-            <trans-unit id="231">
-                <source>label.messenger_retries</source>
-                <target>Retries</target>
-            </trans-unit>
-            <trans-unit id="232">
-                <source>label.messenger_transport</source>
-                <target>Original transport</target>
-            </trans-unit>
-            <trans-unit id="233">
-                <source>label.messenger_retry</source>
-                <target>Retry</target>
-            </trans-unit>
-            <trans-unit id="234">
-                <source>label.messenger_delete</source>
-                <target>Delete</target>
-            </trans-unit>
-            <trans-unit id="235">
-                <source>label.messenger_delete_confirm</source>
-                <target>Permanently delete this message?</target>
-            </trans-unit>
-            <trans-unit id="236">
-                <source>flash.messenger_not_found</source>
-                <target>Message #%id% not found (already processed?)</target>
-            </trans-unit>
-            <trans-unit id="237">
-                <source>flash.messenger_retry_success</source>
-                <target>Message #%id% sent successfully</target>
-            </trans-unit>
-            <trans-unit id="238">
-                <source>flash.messenger_retry_failed</source>
-                <target>Retry of message #%id% failed: %error%</target>
-            </trans-unit>
-            <trans-unit id="239">
-                <source>flash.messenger_deleted</source>
-                <target>Message #%id% deleted</target>
-            </trans-unit>
-            <trans-unit id="240">
-                <source>flash.messenger_group_deleted</source>
-                <target>%count% message(s) deleted</target>
-            </trans-unit>
-            <trans-unit id="243">
-                <source>label.templates</source>
-                <target>Templates</target>
-            </trans-unit>
-            <trans-unit id="244">
-                <source>confirm.apply_template</source>
-                <target>The template's blocks will be added to this page (example content, to be edited afterwards). Existing blocks are kept. Continue?</target>
-            </trans-unit>
-            <trans-unit id="245">
-                <source>flash.template_applied</source>
-                <target>The template's blocks have been added to the page.</target>
-            </trans-unit>
-            <trans-unit id="246">
-                <source>label.template_agency_home</source>
-                <target>Agency homepage</target>
-            </trans-unit>
-            <trans-unit id="259">
-                <source>label.template_portfolio_showcase</source>
-                <target>Portfolio</target>
-            </trans-unit>
-            <trans-unit id="249">
-                <source>flash.template_applied_to_copy</source>
-                <target>An unpublished copy has been created with the template's blocks added.</target>
-            </trans-unit>
-            <trans-unit id="250">
-                <source>action.publish_as_replacement</source>
-                <target>Publish as replacement</target>
-            </trans-unit>
-            <trans-unit id="251">
-                <source>confirm.publish_as_replacement</source>
-                <target>This page will be published in place of "%title%": it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>
-            </trans-unit>
-            <trans-unit id="252">
-                <source>flash.page_replaced</source>
-                <target>The page has been published in place of the original, now in the trash.</target>
-            </trans-unit>
-            <trans-unit id="253">
-                <source>flash.page_to_replace_not_found</source>
-                <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
-            </trans-unit>
-            <trans-unit id="254">
-                <source>flash.page_restored_slug_taken</source>
-                <target>The page has been restored, but its original address (%slug%) is now taken: it kept its technical address, rename it manually if needed.</target>
-            </trans-unit>
-            <trans-unit id="255">
-                <source>label.collection_item</source>
-                <target>Collection item</target>
-            </trans-unit>
-            <trans-unit id="256">
-                <source>label.collection_items</source>
-                <target>Items</target>
-            </trans-unit>
-            <trans-unit id="267">
-                <source>label.collection_item_slug_help</source>
-                <target>Identifies the item within its own collection, used for its detail URL if the "Collection" block defines one - unique per collection only.</target>
-            </trans-unit>
-            <trans-unit id="260">
-                <source>label.cookies_accept</source>
-                <target>Accept</target>
-            </trans-unit>
-            <trans-unit id="264">
-                <source>label.template_path</source>
-                <target>Detail template path</target>
-            </trans-unit>
-            <trans-unit id="265">
-                <source>label.template_path_help</source>
-                <target>Twig template (e.g. "block_showcase/bundle.html.twig") for an item's detail view from this page's "Collection" block. Empty = plain Content field.</target>
-            </trans-unit>
-            <trans-unit id="266">
-                <source>label.template_default</source>
-                <target>Generic</target>
-            </trans-unit>
-            <trans-unit id="270">
-                <source>block.register</source>
-                <target>Registration form</target>
-            </trans-unit>
-            <trans-unit id="271">
-                <source>block.register_description</source>
-                <target>Embeds the account registration form</target>
-            </trans-unit>
-            <trans-unit id="274">
-                <source>block.reset_password_request</source>
-                <target>Password reset request form</target>
-            </trans-unit>
-            <trans-unit id="275">
-                <source>block.reset_password_request_description</source>
-                <target>Embeds the "forgot my password" form</target>
-            </trans-unit>
-            <trans-unit id="280">
-                <source>text.registration_disabled</source>
-                <target>Registration is not currently open.</target>
-            </trans-unit>
-            <trans-unit id="284">
-                <source>label.info_collection_item_list</source>
-                <target>Title/description/image/link items belonging to this collection, displayed by its "Collection" block on a page. Drag to reorder, or create/edit/delete an item from this list.</target>
-            </trans-unit>
-            <trans-unit id="285">
-                <source>label.info_collections</source>
-                <target>Create a collection, then click "Items" to add content to it. Once created, a collection becomes available as a source in the "Collection" block on any page.</target>
-            </trans-unit>
-            <trans-unit id="317">
-                <source>label.collection</source>
-                <target>Collection</target>
-            </trans-unit>
-            <trans-unit id="318">
-                <source>label.collections</source>
-                <target>Collections</target>
-            </trans-unit>
-            <trans-unit id="319">
-                <source>label.collection_name</source>
-                <target>Name</target>
-            </trans-unit>
-            <trans-unit id="320">
-                <source>label.collection_name_help</source>
-                <target>The collection's displayed name - its technical identifier (below) is generated from it automatically.</target>
-            </trans-unit>
-            <trans-unit id="321">
-                <source>label.collection_slug_help</source>
-                <target>The collection's technical identifier, generated from its name - this is what shows up in a page's "Collection" block source list, to display its content.</target>
-            </trans-unit>
-            <trans-unit id="286">
-                <source>label.info_user_roles</source>
-                <target>Roles listed below (other than ROLE_SUPER_ADMIN) come from %link_open%this key%link_close%.</target>
-            </trans-unit>
-            <trans-unit id="287">
-                <source>label.info_user_registration</source>
-                <target>Visitor registration toggles in one click from %link_open%the dashboard%link_close% (admin-only).</target>
-            </trans-unit>
-            <trans-unit id="288">
-                <source>label.menu_link_primary</source>
-                <target>Highlight as a button</target>
-            </trans-unit>
-            <trans-unit id="289">
-                <source>help.menu_link_primary</source>
-                <target>Renders as a filled primary-color button instead of a link - use sparingly (e.g. "Contact")</target>
-            </trans-unit>
-            <trans-unit id="290">
-                <source>label.font</source>
-                <target>Font</target>
-            </trans-unit>
-            <trans-unit id="291">
-                <source>label.fonts</source>
-                <target>Fonts</target>
-            </trans-unit>
-            <trans-unit id="292">
-                <source>label.font_name</source>
-                <target>Font name</target>
-            </trans-unit>
-            <trans-unit id="293">
-                <source>label.font_weight</source>
-                <target>Weight</target>
-            </trans-unit>
-            <trans-unit id="294">
-                <source>label.font_style</source>
-                <target>Style</target>
-            </trans-unit>
-            <trans-unit id="295">
-                <source>label.font_style_normal</source>
-                <target>Normal</target>
-            </trans-unit>
-            <trans-unit id="296">
-                <source>label.font_style_italic</source>
-                <target>Italic</target>
-            </trans-unit>
-            <trans-unit id="297">
-                <source>label.font_file_help</source>
-                <target>Accepted formats: TTF, WOFF, WOFF2 (max 5 MB). Stored in public/medias/fonts and turned into a @font-face rule offered by the theme's font pickers.</target>
-            </trans-unit>
-            <trans-unit id="298">
-                <source>label.font_file_invalid_extension</source>
-                <target>Invalid file: only TTF, WOFF and WOFF2 fonts are accepted.</target>
-            </trans-unit>
-            <trans-unit id="299">
-                <source>label.font_weight_thin</source>
-                <target>Thin</target>
-            </trans-unit>
-            <trans-unit id="300">
-                <source>label.font_weight_extra_light</source>
-                <target>Extra Light</target>
-            </trans-unit>
-            <trans-unit id="301">
-                <source>label.font_weight_light</source>
-                <target>Light</target>
-            </trans-unit>
-            <trans-unit id="302">
-                <source>label.font_weight_regular</source>
-                <target>Regular</target>
-            </trans-unit>
-            <trans-unit id="303">
-                <source>label.font_weight_medium</source>
-                <target>Medium</target>
-            </trans-unit>
-            <trans-unit id="304">
-                <source>label.font_weight_semibold</source>
-                <target>SemiBold</target>
-            </trans-unit>
-            <trans-unit id="305">
-                <source>label.font_weight_bold</source>
-                <target>Bold</target>
-            </trans-unit>
-            <trans-unit id="306">
-                <source>label.font_weight_extra_bold</source>
-                <target>Extra Bold</target>
-            </trans-unit>
-            <trans-unit id="307">
-                <source>label.font_weight_black</source>
-                <target>Black</target>
-            </trans-unit>
-            <trans-unit id="308">
-                <source>label.font_weight_variable</source>
-                <target>Variable (100-900)</target>
-            </trans-unit>
-            <trans-unit id="309">
+            <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Export selection</target>
             </trans-unit>
-            <trans-unit id="310">
-                <source>label.info_font</source>
-                <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
-            </trans-unit>
-            <trans-unit id="311">
-                <source>label.essential_action_pages</source>
-                <target>Homepage</target>
-            </trans-unit>
-            <trans-unit id="312">
-                <source>description.essential_action_pages</source>
-                <target>The page every visitor lands on first</target>
-            </trans-unit>
-            <trans-unit id="313">
-                <source>label.essential_action_menus</source>
-                <target>Navbar &amp; footer menus</target>
-            </trans-unit>
-            <trans-unit id="314">
-                <source>description.essential_action_menus</source>
-                <target>The navigation links shown at the top and bottom of every page</target>
-            </trans-unit>
-            <trans-unit id="315">
-                <source>label.essential_action_fonts</source>
-                <target>Fonts</target>
-            </trans-unit>
-            <trans-unit id="316">
-                <source>description.essential_action_fonts</source>
-                <target>At least one typeface for your site's text</target>
-            </trans-unit>
-            <trans-unit id="322">
-                <source>label.health_check_summary_pagespeed</source>
-                <target>Performance %performance% · Accessibility %accessibility% · Best practices %bestPractices% · SEO %seo%</target>
-            </trans-unit>
-            <trans-unit id="323">
-                <source>label.health_check_console_errors</source>
-                <target>%count% console error(s)</target>
-            </trans-unit>
-            <trans-unit id="324">
-                <source>label.health_check_pagespeed_call_failed</source>
-                <target>PageSpeed Insights call failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="325">
-                <source>label.health_check_pagespeed_api_key_missing</source>
-                <target>No PageSpeed Insights API key configured - Google's anonymous quota is shared worldwide and easily exhausted (HTTP 429)</target>
-            </trans-unit>
-            <trans-unit id="326">
-                <source>label.health_check_summary_security_headers</source>
-                <target>%present%/%total% security headers present</target>
-            </trans-unit>
-            <trans-unit id="327">
-                <source>label.health_check_security_headers_missing</source>
-                <target>missing: %headers%</target>
-            </trans-unit>
-            <trans-unit id="328">
-                <source>label.health_check_security_headers_cors_wildcard</source>
-                <target>CORS allows any origin (*)</target>
-            </trans-unit>
-            <trans-unit id="329">
-                <source>label.health_check_security_headers_call_failed</source>
-                <target>Security headers check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="330">
-                <source>label.health_check_summary_w3c_html</source>
-                <target>%errors% error(s), %warnings% warning(s)</target>
-            </trans-unit>
-            <trans-unit id="331">
-                <source>label.health_check_w3c_html_call_failed</source>
-                <target>W3C HTML validation failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="335">
-                <source>label.health_check_content_quality_call_failed</source>
-                <target>Content check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="336">
-                <source>label.health_check_content_quality_no_description</source>
-                <target>missing meta description</target>
-            </trans-unit>
-            <trans-unit id="337">
-                <source>label.health_check_content_quality_no_h1</source>
-                <target>missing &lt;h1&gt;</target>
-            </trans-unit>
-            <trans-unit id="338">
-                <source>label.health_check_content_quality_images_without_alt</source>
-                <target>%count% image(s) without alt text</target>
-            </trans-unit>
-            <trans-unit id="339">
-                <source>label.health_check_content_quality_broken_links</source>
-                <target>%count% broken internal link(s)</target>
-            </trans-unit>
-            <trans-unit id="340">
-                <source>label.health_check_content_quality_ok</source>
-                <target>No content issues found</target>
-            </trans-unit>
-            <trans-unit id="341">
-                <source>label.health_check_page_not_found</source>
-                <target>Page not found (not tested)</target>
-            </trans-unit>
-            <trans-unit id="420">
-                <source>label.health_check_url_gone</source>
-                <target>Deliberately removed (HTTP 410), but still declared</target>
-            </trans-unit>
-            <trans-unit id="342">
-                <source>label.health_check_security_headers_scope</source>
-                <target>these headers apply to the whole site, checked once via the homepage</target>
-            </trans-unit>
-            <trans-unit id="343">
-                <source>label.tab_data</source>
-                <target>Data</target>
-            </trans-unit>
-            <trans-unit id="344">
-                <source>label.tab_health_check</source>
-                <target>Health check</target>
-            </trans-unit>
-            <trans-unit id="345">
-                <source>label.health_check_panel_empty</source>
-                <target>No health check results yet for this page.</target>
-            </trans-unit>
-            <trans-unit id="347">
-                <source>label.health_check_advice_pagespeed</source>
-                <target>Improve %category% (score: %score%) - run Lighthouse locally for a full breakdown</target>
-            </trans-unit>
-            <trans-unit id="348">
-                <source>label.health_check_advice_security_headers</source>
-                <target>Configure the missing security headers: %headers%</target>
-            </trans-unit>
-            <trans-unit id="349">
-                <source>label.health_check_advice_security_headers_cors</source>
-                <target>Restrict CORS instead of allowing any origin (*)</target>
-            </trans-unit>
-            <trans-unit id="350">
-                <source>label.health_check_advice_w3c_html_errors</source>
-                <target>Fix %count% HTML validation error(s)</target>
-            </trans-unit>
-            <trans-unit id="351">
-                <source>label.health_check_advice_w3c_css_errors</source>
-                <target>Fix %count% CSS validation error(s)</target>
-            </trans-unit>
-            <trans-unit id="352">
-                <source>label.health_check_advice_w3c_html_warnings</source>
-                <target>Review %count% HTML validation warning(s)</target>
-            </trans-unit>
-            <trans-unit id="353">
-                <source>label.health_check_advice_w3c_css_warnings</source>
-                <target>Review %count% CSS validation warning(s)</target>
-            </trans-unit>
-            <trans-unit id="354">
-                <source>label.health_check_advice_no_description</source>
-                <target>Add a meta description (about 50-160 characters)</target>
-            </trans-unit>
-            <trans-unit id="355">
-                <source>label.health_check_advice_no_h1</source>
-                <target>Add a single main heading (&lt;h1&gt;)</target>
-            </trans-unit>
-            <trans-unit id="356">
-                <source>label.health_check_advice_images_without_alt</source>
-                <target>Add descriptive alt text to %count% image(s)</target>
-            </trans-unit>
-            <trans-unit id="357">
-                <source>label.health_check_advice_broken_links</source>
-                <target>Fix or remove %count% broken internal link(s)</target>
-            </trans-unit>
-            <trans-unit id="358">
-                <source>label.health_check_summary_w3c_css</source>
-                <target>%errors% error(s), %warnings% warning(s)</target>
-            </trans-unit>
-            <trans-unit id="359">
-                <source>label.health_check_w3c_css_call_failed</source>
-                <target>W3C CSS validation failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="361">
-                <source>label.health_check_ssl_certificate_not_https</source>
-                <target>Site not served over HTTPS, certificate not checked</target>
-            </trans-unit>
-            <trans-unit id="362">
-                <source>label.health_check_ssl_certificate_call_failed</source>
-                <target>Could not read the TLS certificate: %message%</target>
-            </trans-unit>
-            <trans-unit id="363">
-                <source>label.health_check_summary_ssl_certificate</source>
-                <target>Expires in %days% day(s) (%date%)</target>
-            </trans-unit>
-            <trans-unit id="364">
-                <source>label.health_check_advice_ssl_certificate</source>
-                <target>Renew the TLS certificate before it expires</target>
-            </trans-unit>
-            <trans-unit id="365">
-                <source>label.health_check_mixed_content_call_failed</source>
-                <target>Mixed content check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="366">
-                <source>label.health_check_mixed_content_found</source>
-                <target>%count% insecure (http://) resource(s) found</target>
-            </trans-unit>
-            <trans-unit id="367">
-                <source>label.health_check_mixed_content_ok</source>
-                <target>No insecure resources found</target>
-            </trans-unit>
-            <trans-unit id="368">
-                <source>label.health_check_advice_mixed_content</source>
-                <target>Serve %count% resource(s) over https:// instead of http://</target>
-            </trans-unit>
-            <trans-unit id="369">
-                <source>label.health_check_seo_files_call_failed</source>
-                <target>Request failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="370">
-                <source>label.health_check_robots_missing</source>
-                <target>robots.txt is missing or empty</target>
-            </trans-unit>
-            <trans-unit id="371">
-                <source>label.health_check_robots_blocks_everything</source>
-                <target>robots.txt disallows all crawling (Disallow: / for User-agent: *)</target>
-            </trans-unit>
-            <trans-unit id="372">
-                <source>label.health_check_robots_ok</source>
-                <target>robots.txt is reachable and does not block everything</target>
-            </trans-unit>
-            <trans-unit id="373">
-                <source>label.health_check_sitemap_missing</source>
-                <target>%file% is missing</target>
-            </trans-unit>
-            <trans-unit id="374">
-                <source>label.health_check_sitemap_invalid</source>
-                <target>%file% does not look like a valid sitemap</target>
-            </trans-unit>
-            <trans-unit id="375">
-                <source>label.health_check_sitemap_ok</source>
-                <target>%file% is reachable and well-formed</target>
-            </trans-unit>
-            <trans-unit id="376">
-                <source>label.health_check_redirect_loop</source>
-                <target>Redirect loop detected</target>
-            </trans-unit>
-            <trans-unit id="377">
-                <source>label.health_check_redirect_chain</source>
-                <target>Chains through %hops% other redirect(s)</target>
-            </trans-unit>
-            <trans-unit id="378">
-                <source>label.health_check_redirect_ok</source>
-                <target>Direct redirect, no chaining</target>
-            </trans-unit>
-            <trans-unit id="379">
-                <source>label.health_check_sitemap_index_invalid</source>
-                <target>sitemap-index.xml does not look like a valid sitemap index</target>
-            </trans-unit>
-            <trans-unit id="380">
-                <source>label.health_check_sitemap_index_empty</source>
-                <target>sitemap-index.xml does not reference any sitemap</target>
-            </trans-unit>
-            <trans-unit id="382">
-                <source>label.health_check_sitemap_index_ok</source>
-                <target>sitemap-index.xml is reachable and references %count% sitemap(s)</target>
-            </trans-unit>
-            <trans-unit id="383">
+            <trans-unit id="7TaPAuT">
                 <source>action.font_bulk_import</source>
                 <target>Bulk import</target>
             </trans-unit>
-            <trans-unit id="384">
-                <source>label.font_bulk_import</source>
-                <target>Bulk font import</target>
+            <trans-unit id="vUjYe27">
+                <source>action.move_to_trash</source>
+                <target>Move to trash</target>
             </trans-unit>
-            <trans-unit id="385">
-                <source>label.font_bulk_import_help</source>
-                <target>Select several TTF, WOFF or WOFF2 files at once (max 5 MB each) - each file's name, weight and style are guessed from its filename (eg. "OpenSans-Bold.ttf", "Roboto-ExtraLightItalic.woff2"). Review the imported fonts afterward and fix any wrong guess.</target>
+            <trans-unit id="OVrqPFV">
+                <source>action.preview</source>
+                <target>Preview</target>
             </trans-unit>
-            <trans-unit id="386">
+            <trans-unit id="jNBmJGy">
+                <source>action.publish_as_replacement</source>
+                <target>Publish as replacement</target>
+            </trans-unit>
+            <trans-unit id="KrzhzB_">
+                <source>action.restore</source>
+                <target>Restore</target>
+            </trans-unit>
+            <trans-unit id="8w7xgsI">
+                <source>action.trash</source>
+                <target>Trash</target>
+            </trans-unit>
+            <trans-unit id="CTyRVpC">
+                <source>action.view_on_site</source>
+                <target>View on site</target>
+            </trans-unit>
+            <trans-unit id="h_n2JrK">
+                <source>block.articles_slider</source>
+                <target>Articles Slider</target>
+            </trans-unit>
+            <trans-unit id="oQH.wPQ">
+                <source>block.articles_slider_description</source>
+                <target>Slideshow highlighting a selection of articles</target>
+            </trans-unit>
+            <trans-unit id="C4gS09K">
+                <source>block.legal_model</source>
+                <target>Legal Model</target>
+            </trans-unit>
+            <trans-unit id="48e0zxX">
+                <source>block.legal_model_description</source>
+                <target>Inserts an existing legal text template (T&amp;Cs, legal notice...)</target>
+            </trans-unit>
+            <trans-unit id="PizX88K">
+                <source>block.menu_link</source>
+                <target>Menu link</target>
+            </trans-unit>
+            <trans-unit id="0unMBlV">
+                <source>block.menu_link_description</source>
+                <target>Link to a page or route, sortable with other blocks (navbar, footer, email)</target>
+            </trans-unit>
+            <trans-unit id="bkUdInz">
+                <source>block.register</source>
+                <target>Registration form</target>
+            </trans-unit>
+            <trans-unit id="Vu6G154">
+                <source>block.register_description</source>
+                <target>Embeds the account registration form</target>
+            </trans-unit>
+            <trans-unit id="9qSD.K2">
+                <source>block.reset_password_request</source>
+                <target>Password reset request form</target>
+            </trans-unit>
+            <trans-unit id="U0aVf7M">
+                <source>block.reset_password_request_description</source>
+                <target>Embeds the "forgot my password" form</target>
+            </trans-unit>
+            <trans-unit id="mwZQzCN">
+                <source>block.twig_content</source>
+                <target>Twig Content</target>
+            </trans-unit>
+            <trans-unit id="y3dxozy">
+                <source>block.twig_content_description</source>
+                <target>Includes an existing Twig template by its path</target>
+            </trans-unit>
+            <trans-unit id="GkcovoE">
+                <source>confirm.apply_template</source>
+                <target>The template's blocks will be added to this page (example content, to be edited afterwards). Existing blocks are kept. Continue?</target>
+            </trans-unit>
+            <trans-unit id="X4j.TeG">
+                <source>confirm.delete_permanently</source>
+                <target>This action is irreversible and will permanently delete the page and its content. Continue?</target>
+            </trans-unit>
+            <trans-unit id="gtzKxeG">
+                <source>confirm.duplicate</source>
+                <target>An unpublished copy of this page and all its content (blocks, medias) will be created. Continue?</target>
+            </trans-unit>
+            <trans-unit id="AJcGJ1z">
+                <source>confirm.publish_as_replacement</source>
+                <target>This page will be published in place of "%title%": it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>
+            </trans-unit>
+            <trans-unit id="RYfKbzg">
+                <source>confirm.title_change</source>
+                <target>Changing the title will change the page's URL (slug), a redirect will be automatically set up. Continue?</target>
+            </trans-unit>
+            <trans-unit id="g1ySJ94">
+                <source>description.essential_action_fonts</source>
+                <target>At least one typeface for your site's text</target>
+            </trans-unit>
+            <trans-unit id="gHAPNMC">
+                <source>description.essential_action_menus</source>
+                <target>The navigation links shown at the top and bottom of every page</target>
+            </trans-unit>
+            <trans-unit id="X4UVRD3">
+                <source>description.essential_action_pages</source>
+                <target>The page every visitor lands on first</target>
+            </trans-unit>
+            <trans-unit id="vDZMvYG">
+                <source>description.messenger_alert_admin</source>
+                <target>Technical issue auto-reported to the dev team. No action required.</target>
+            </trans-unit>
+            <trans-unit id="khpNT6d">
+                <source>description.messenger_alert_super_admin</source>
+                <target>Send failures unrelated to a blacklisted address. Click for details.</target>
+            </trans-unit>
+            <trans-unit id="5OjCR2m">
+                <source>description.messenger_failed</source>
+                <target>Messages that failed to send; minor cases (blacklist, spam) are purged after retention.</target>
+            </trans-unit>
+            <trans-unit id="tymp2.R">
                 <source>flash.font_bulk_import_invalid_token</source>
                 <target>Invalid or expired form, please try again.</target>
             </trans-unit>
-            <trans-unit id="387">
+            <trans-unit id="ZpEnHov">
                 <source>flash.font_bulk_import_no_files</source>
                 <target>No font file selected.</target>
             </trans-unit>
-            <trans-unit id="388">
-                <source>flash.font_bulk_import_success</source>
-                <target>%count% font(s) imported.</target>
-            </trans-unit>
-            <trans-unit id="389">
+            <trans-unit id="qpZ4cFd">
                 <source>flash.font_bulk_import_skipped</source>
                 <target>Skipped (invalid format or too large): %files%</target>
             </trans-unit>
-            <trans-unit id="390">
-                <source>label.health_check_advice_edit_block</source>
-                <target>Block "%block%"</target>
+            <trans-unit id="KdHpBKb">
+                <source>flash.font_bulk_import_success</source>
+                <target>%count% font(s) imported.</target>
             </trans-unit>
-            <trans-unit id="391">
+            <trans-unit id="z.Yxr72">
+                <source>flash.messenger_deleted</source>
+                <target>Message #%id% deleted</target>
+            </trans-unit>
+            <trans-unit id="liKyPhk">
+                <source>flash.messenger_group_deleted</source>
+                <target>%count% message(s) deleted</target>
+            </trans-unit>
+            <trans-unit id="7wqIvFf">
+                <source>flash.messenger_not_found</source>
+                <target>Message #%id% not found (already processed?)</target>
+            </trans-unit>
+            <trans-unit id="td7ZlY3">
+                <source>flash.messenger_purged</source>
+                <target>%count% message(s) purged</target>
+            </trans-unit>
+            <trans-unit id="ZBV1Jze">
+                <source>flash.messenger_retry_failed</source>
+                <target>Retry of message #%id% failed: %error%</target>
+            </trans-unit>
+            <trans-unit id="vmblKo8">
+                <source>flash.messenger_retry_success</source>
+                <target>Message #%id% sent successfully</target>
+            </trans-unit>
+            <trans-unit id="gVKF2E6">
+                <source>flash.page_deleted_permanently</source>
+                <target>The page has been permanently deleted.</target>
+            </trans-unit>
+            <trans-unit id="zRezukK">
+                <source>flash.page_duplicated</source>
+                <target>The page has been duplicated.</target>
+            </trans-unit>
+            <trans-unit id="SUsKJ.K">
+                <source>flash.page_replaced</source>
+                <target>The page has been published in place of the original, now in the trash.</target>
+            </trans-unit>
+            <trans-unit id="LsypGAl">
+                <source>flash.page_restored</source>
+                <target>The page has been restored.</target>
+            </trans-unit>
+            <trans-unit id="pmCocef">
+                <source>flash.page_restored_slug_taken</source>
+                <target>The page has been restored, but its original address (%slug%) is now taken: it kept its technical address, rename it manually if needed.</target>
+            </trans-unit>
+            <trans-unit id="IAF7ZBQ">
+                <source>flash.page_to_replace_not_found</source>
+                <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
+            </trans-unit>
+            <trans-unit id="eASNSId">
+                <source>flash.template_applied</source>
+                <target>The template's blocks have been added to the page.</target>
+            </trans-unit>
+            <trans-unit id="kl.Z3Sh">
+                <source>flash.template_applied_to_copy</source>
+                <target>An unpublished copy has been created with the template's blocks added.</target>
+            </trans-unit>
+            <trans-unit id="ZD8H9hY">
+                <source>flash.user_registration_disabled</source>
+                <target>User registration disabled</target>
+            </trans-unit>
+            <trans-unit id="DX2vnwV">
+                <source>flash.user_registration_enabled</source>
+                <target>User registration enabled</target>
+            </trans-unit>
+            <trans-unit id="LABQ8NS">
+                <source>help.menu_link_label</source>
+                <target>Empty = target page's/section's title (or computed copyright for the "Copyright" page).</target>
+            </trans-unit>
+            <trans-unit id="kN7MaAu">
+                <source>help.menu_link_primary</source>
+                <target>Renders as a filled primary-color button instead of a link - use sparingly (e.g. "Contact")</target>
+            </trans-unit>
+            <trans-unit id="i1lkhfp">
+                <source>label.accept_tos</source>
+                <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of sales (TOS)</a>]]></target>
+            </trans-unit>
+            <trans-unit id="CEVgeJ7">
+                <source>label.address</source>
+                <target>Address</target>
+            </trans-unit>
+            <trans-unit id="R9rpsVT">
+                <source>label.agree_terms</source>
+                <target>I agree to the terms</target>
+            </trans-unit>
+            <trans-unit id="vbyuEEV">
+                <source>label.all_rights_reserved</source>
+                <target>© All rights reserved</target>
+            </trans-unit>
+            <trans-unit id="G2DcWZ.">
+                <source>label.always</source>
+                <target>Always</target>
+            </trans-unit>
+            <trans-unit id="gBMbs0d">
+                <source>label.apple_touch_icon</source>
+                <target>Apple touch icon</target>
+            </trans-unit>
+            <trans-unit id="TUImAIH">
+                <source>label.article</source>
+                <target>Article</target>
+            </trans-unit>
+            <trans-unit id="g20NDI_">
+                <source>label.articles</source>
+                <target>Articles</target>
+            </trans-unit>
+            <trans-unit id="aXXRVuG">
+                <source>label.audio_not_supported</source>
+                <target>Your browser does not support the audio tag.</target>
+            </trans-unit>
+            <trans-unit id="1GXuSep">
+                <source>label.back_to_list</source>
+                <target>Back to list</target>
+            </trans-unit>
+            <trans-unit id="_13H57u">
+                <source>label.category_legal</source>
+                <target>Legal</target>
+            </trans-unit>
+            <trans-unit id="tKFuD86">
+                <source>label.category_navigation</source>
+                <target>Navigation</target>
+            </trans-unit>
+            <trans-unit id="33y1SlL">
+                <source>label.category_twig</source>
+                <target>Twig</target>
+            </trans-unit>
+            <trans-unit id="m8zmXqC">
+                <source>label.change_frequency</source>
+                <target>Change frequency</target>
+            </trans-unit>
+            <trans-unit id="IEQFd98">
+                <source>label.change_frequency_help</source>
+                <target>Frequency at which the page content changes</target>
+            </trans-unit>
+            <trans-unit id="32pJid7">
+                <source>label.choose_page</source>
+                <target>Choose a page</target>
+            </trans-unit>
+            <trans-unit id=".YAYndO">
+                <source>label.choose_route</source>
+                <target>Choose a route</target>
+            </trans-unit>
+            <trans-unit id="g4ks7W9">
+                <source>label.choose_target</source>
+                <target>Choose a page or a route</target>
+            </trans-unit>
+            <trans-unit id="tCnzNoT">
+                <source>label.collection</source>
+                <target>Collection</target>
+            </trans-unit>
+            <trans-unit id="nFdnL3O">
+                <source>label.collection_item</source>
+                <target>Collection item</target>
+            </trans-unit>
+            <trans-unit id="5HKrWnE">
+                <source>label.collection_item_slug_help</source>
+                <target>Identifies the item within its own collection, used for its detail URL if the "Collection" block defines one - unique per collection only.</target>
+            </trans-unit>
+            <trans-unit id=".QE11YL">
+                <source>label.collection_items</source>
+                <target>Items</target>
+            </trans-unit>
+            <trans-unit id="4MUXFHW">
+                <source>label.collection_name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="ZV8rtBb">
+                <source>label.collection_name_help</source>
+                <target>The collection's displayed name - its technical identifier (below) is generated from it automatically.</target>
+            </trans-unit>
+            <trans-unit id="2TuVIUM">
+                <source>label.collection_slug_help</source>
+                <target>The collection's technical identifier, generated from its name - this is what shows up in a page's "Collection" block source list, to display its content.</target>
+            </trans-unit>
+            <trans-unit id="67KQhUC">
+                <source>label.collections</source>
+                <target>Collections</target>
+            </trans-unit>
+            <trans-unit id="WFsxQCT">
+                <source>label.confirm_email_title</source>
+                <target>Hi! Please confirm your email!</target>
+            </trans-unit>
+            <trans-unit id="LYjyQ.S">
+                <source>label.confirm_my_email</source>
+                <target>Confirm my Email</target>
+            </trans-unit>
+            <trans-unit id="MYK2PZj">
+                <source>label.confirm_your_email</source>
+                <target>Confirm your email</target>
+            </trans-unit>
+            <trans-unit id="f7w7ZE0">
+                <source>label.content</source>
+                <target>Content</target>
+            </trans-unit>
+            <trans-unit id="kxkBPjr">
+                <source>label.content_help</source>
+                <target>Paste the old .html.twig file's content here - interpreted as Twig (config(), path(), etc.).</target>
+            </trans-unit>
+            <trans-unit id="rpDgbSi">
+                <source>label.cookies_accept</source>
+                <target>Accept</target>
+            </trans-unit>
+            <trans-unit id="qrNBASP">
                 <source>label.cookies_dialog</source>
                 <target>Cookie consent</target>
             </trans-unit>
-            <trans-unit id="394">
-                <source>label.health_check_w3c_benign_warnings</source>
-                <target>of which %actionable% actionable (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
+            <trans-unit id="HCj0D9c">
+                <source>label.cookies_policy</source>
+                <target>Cookies Policy</target>
             </trans-unit>
-            <trans-unit id="395">
-                <source>label.health_check_content_quality_no_title</source>
-                <target>missing title</target>
+            <trans-unit id="QqHGDx.">
+                <source>label.cookies_reject</source>
+                <target>Reject</target>
             </trans-unit>
-            <trans-unit id="396">
-                <source>label.health_check_content_quality_title_too_short</source>
-                <target>title too short (%length% characters)</target>
+            <trans-unit id="eyjXZ2b">
+                <source>label.copy_suffix</source>
+                <target>copy</target>
             </trans-unit>
-            <trans-unit id="397">
-                <source>label.health_check_content_quality_title_too_long</source>
-                <target>title too long (%length% characters)</target>
+            <trans-unit id="LBVSVcj">
+                <source>label.copyright</source>
+                <target>Copyright</target>
             </trans-unit>
-            <trans-unit id="398">
-                <source>label.health_check_content_quality_description_too_short</source>
-                <target>description too short (%length% characters)</target>
+            <trans-unit id="BOyuRcf">
+                <source>label.create_account</source>
+                <target>Create an account</target>
             </trans-unit>
-            <trans-unit id="399">
-                <source>label.health_check_content_quality_description_too_long</source>
-                <target>description too long (%length% characters)</target>
+            <trans-unit id="AvnDzC2">
+                <source>label.create_page</source>
+                <target>Create page</target>
             </trans-unit>
-            <trans-unit id="400">
-                <source>label.health_check_content_quality_missing_social_tags</source>
-                <target>%count% missing share tag(s)</target>
+            <trans-unit id="emPIlPf">
+                <source>label.creation</source>
+                <target>Creation</target>
             </trans-unit>
-            <trans-unit id="401">
-                <source>label.health_check_advice_no_title</source>
-                <target>Add a page title (&lt;title&gt; tag)</target>
+            <trans-unit id="z7EoShC">
+                <source>label.current</source>
+                <target>current</target>
             </trans-unit>
-            <trans-unit id="402">
-                <source>label.health_check_advice_title_length</source>
-                <target>Adjust the title: %length% characters, %min% to %max% recommended</target>
+            <trans-unit id="TlcjSFt">
+                <source>label.daily</source>
+                <target>Daily</target>
             </trans-unit>
-            <trans-unit id="403">
+            <trans-unit id="id1d4o4">
+                <source>label.dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="QkYrM9J">
+                <source>label.date</source>
+                <target>Date</target>
+            </trans-unit>
+            <trans-unit id="0.g7Tcu">
+                <source>label.detail</source>
+                <target>Detail</target>
+            </trans-unit>
+            <trans-unit id="tLGn0en">
+                <source>label.download</source>
+                <target>Download</target>
+            </trans-unit>
+            <trans-unit id="lm9YUiz">
+                <source>label.draft</source>
+                <target>draft</target>
+            </trans-unit>
+            <trans-unit id="HeK1yap">
+                <source>label.duration</source>
+                <target>Duration</target>
+            </trans-unit>
+            <trans-unit id="ykW6lkh">
+                <source>label.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="Uy9DSA6">
+                <source>label.email_address_verified</source>
+                <target>Your email address has been verified.</target>
+            </trans-unit>
+            <trans-unit id="3C3YrgK">
+                <source>label.email_footer</source>
+                <target>Email footer</target>
+            </trans-unit>
+            <trans-unit id="yODeA59">
+                <source>label.email_header</source>
+                <target>Email header</target>
+            </trans-unit>
+            <trans-unit id="v4zFdy0">
+                <source>label.error</source>
+                <target>Error</target>
+            </trans-unit>
+            <trans-unit id="RYdVt_3">
+                <source>label.error_code</source>
+                <target>Error %code%</target>
+            </trans-unit>
+            <trans-unit id="fZX2vH1">
+                <source>label.error_image</source>
+                <target>Error image</target>
+            </trans-unit>
+            <trans-unit id="8SGIe4o">
+                <source>label.essential_action_fonts</source>
+                <target>Fonts</target>
+            </trans-unit>
+            <trans-unit id="ifpHL_i">
+                <source>label.essential_action_menus</source>
+                <target>Navbar &amp; footer menus</target>
+            </trans-unit>
+            <trans-unit id="LiL8IVW">
+                <source>label.essential_action_pages</source>
+                <target>Homepage</target>
+            </trans-unit>
+            <trans-unit id="J2sBc_e">
+                <source>label.export</source>
+                <target>Export</target>
+            </trans-unit>
+            <trans-unit id="TRqZ6vK">
+                <source>label.export_tables</source>
+                <target>Export (SQL) "site_xxx" tables</target>
+            </trans-unit>
+            <trans-unit id="akTKyKA">
+                <source>label.favicon</source>
+                <target>Favicon</target>
+            </trans-unit>
+            <trans-unit id="DmcAvc0">
+                <source>label.file</source>
+                <target>File</target>
+            </trans-unit>
+            <trans-unit id="ZbTNTSZ">
+                <source>label.font</source>
+                <target>Font</target>
+            </trans-unit>
+            <trans-unit id="7NbFp1S">
+                <source>label.font_bulk_import</source>
+                <target>Bulk font import</target>
+            </trans-unit>
+            <trans-unit id="n9yTG4w">
+                <source>label.font_bulk_import_help</source>
+                <target>Select several TTF, WOFF or WOFF2 files at once (max 5 MB each) - each file's name, weight and style are guessed from its filename (eg. "OpenSans-Bold.ttf", "Roboto-ExtraLightItalic.woff2"). Review the imported fonts afterward and fix any wrong guess.</target>
+            </trans-unit>
+            <trans-unit id="x75HSFP">
+                <source>label.font_file_help</source>
+                <target>Accepted formats: TTF, WOFF, WOFF2 (max 5 MB). Stored in public/medias/fonts and turned into a @font-face rule offered by the theme's font pickers.</target>
+            </trans-unit>
+            <trans-unit id="pAzRTZZ">
+                <source>label.font_file_invalid_extension</source>
+                <target>Invalid file: only TTF, WOFF and WOFF2 fonts are accepted.</target>
+            </trans-unit>
+            <trans-unit id="WAbfqVw">
+                <source>label.font_name</source>
+                <target>Font name</target>
+            </trans-unit>
+            <trans-unit id="SvJOd0k">
+                <source>label.font_style</source>
+                <target>Style</target>
+            </trans-unit>
+            <trans-unit id="gxpM4OM">
+                <source>label.font_style_italic</source>
+                <target>Italic</target>
+            </trans-unit>
+            <trans-unit id="N4V609U">
+                <source>label.font_style_normal</source>
+                <target>Normal</target>
+            </trans-unit>
+            <trans-unit id="EtdrCKk">
+                <source>label.font_weight</source>
+                <target>Weight</target>
+            </trans-unit>
+            <trans-unit id="DcBb0E8">
+                <source>label.font_weight_black</source>
+                <target>Black</target>
+            </trans-unit>
+            <trans-unit id="8OpFiI0">
+                <source>label.font_weight_bold</source>
+                <target>Bold</target>
+            </trans-unit>
+            <trans-unit id="rsh_BqU">
+                <source>label.font_weight_extra_bold</source>
+                <target>Extra Bold</target>
+            </trans-unit>
+            <trans-unit id="vwDLQY.">
+                <source>label.font_weight_extra_light</source>
+                <target>Extra Light</target>
+            </trans-unit>
+            <trans-unit id="Mp.YqFV">
+                <source>label.font_weight_light</source>
+                <target>Light</target>
+            </trans-unit>
+            <trans-unit id="qL7Gp9j">
+                <source>label.font_weight_medium</source>
+                <target>Medium</target>
+            </trans-unit>
+            <trans-unit id="zLV2aBT">
+                <source>label.font_weight_regular</source>
+                <target>Regular</target>
+            </trans-unit>
+            <trans-unit id=".hfRymY">
+                <source>label.font_weight_semibold</source>
+                <target>SemiBold</target>
+            </trans-unit>
+            <trans-unit id="2A7.7yO">
+                <source>label.font_weight_thin</source>
+                <target>Thin</target>
+            </trans-unit>
+            <trans-unit id="0SfE11h">
+                <source>label.font_weight_variable</source>
+                <target>Variable (100-900)</target>
+            </trans-unit>
+            <trans-unit id="kjFy2J8">
+                <source>label.fonts</source>
+                <target>Fonts</target>
+            </trans-unit>
+            <trans-unit id="y9I5gZL">
+                <source>label.footer</source>
+                <target>Footer</target>
+            </trans-unit>
+            <trans-unit id="9kwOG_r">
+                <source>label.forgot_password</source>
+                <target>Forgot your password?</target>
+            </trans-unit>
+            <trans-unit id="gN2_MMc">
+                <source>label.from_path</source>
+                <target>Source path</target>
+            </trans-unit>
+            <trans-unit id="GnuqUyG">
+                <source>label.from_path_help</source>
+                <target>URL path with leading / (e.g. /la-guilde-des-seigneurs)</target>
+            </trans-unit>
+            <trans-unit id="ZPdQcNU">
+                <source>label.gallery_showcase_articles_slider</source>
+                <target>Articles slideshow</target>
+            </trans-unit>
+            <trans-unit id="_ghedtn">
+                <source>label.gallery_showcase_articles_slider_description</source>
+                <target>Clickable slideshow of a chosen page's articles.</target>
+            </trans-unit>
+            <trans-unit id="ZEFmmXq">
+                <source>label.gallery_showcase_menu_link</source>
+                <target>Menu link</target>
+            </trans-unit>
+            <trans-unit id="QjQ95bW">
+                <source>label.gallery_showcase_menu_link_description</source>
+                <target>Link to a page or a route, used in the site's menus.</target>
+            </trans-unit>
+            <trans-unit id="ioq2qzc">
+                <source>label.health_check_advice_broken_external_links</source>
+                <target>Check %count% external link(s) with no valid answer</target>
+            </trans-unit>
+            <trans-unit id="BHCr5BP">
+                <source>label.health_check_advice_broken_links</source>
+                <target>Fix or remove %count% broken internal link(s)</target>
+            </trans-unit>
+            <trans-unit id="eUyCpWs">
                 <source>label.health_check_advice_description_length</source>
                 <target>Adjust the meta description: %length% characters, %min% to %max% recommended</target>
             </trans-unit>
-            <trans-unit id="404">
-                <source>label.health_check_advice_social_tags</source>
-                <target>Add the missing share tags: %tags%</target>
+            <trans-unit id="n3afLC_">
+                <source>label.health_check_advice_edit_block</source>
+                <target>Block "%block%"</target>
             </trans-unit>
-            <trans-unit id="405">
-                <source>label.health_check_deployment_https</source>
-                <target>https redirect</target>
-            </trans-unit>
-            <trans-unit id="406">
-                <source>label.health_check_deployment_not_found</source>
-                <target>404 page</target>
-            </trans-unit>
-            <trans-unit id="407">
-                <source>label.health_check_deployment_call_failed</source>
-                <target>Deployment check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="408">
-                <source>label.health_check_https_redirect_ok</source>
-                <target>http correctly redirects to https</target>
-            </trans-unit>
-            <trans-unit id="409">
-                <source>label.health_check_https_redirect_missing</source>
-                <target>http does not redirect to https (HTTP %status%)</target>
-            </trans-unit>
-            <trans-unit id="410">
-                <source>label.health_check_https_redirect_insecure</source>
-                <target>http redirects to an insecure url</target>
-            </trans-unit>
-            <trans-unit id="411">
-                <source>label.health_check_not_found_ok</source>
-                <target>Custom 404 page</target>
-            </trans-unit>
-            <trans-unit id="412">
-                <source>label.health_check_not_found_default_page</source>
-                <target>Generic 404 page, not the site's own</target>
-            </trans-unit>
-            <trans-unit id="413">
-                <source>label.health_check_not_found_wrong_status</source>
-                <target>An unknown url answers HTTP %status% instead of 404</target>
-            </trans-unit>
-            <trans-unit id="414">
+            <trans-unit id="iSotDsO">
                 <source>label.health_check_advice_https_redirect</source>
                 <target>Set up the http to https redirect on the server (vhost/proxy)</target>
             </trans-unit>
-            <trans-unit id="415">
+            <trans-unit id="0AdFwDK">
                 <source>label.health_check_advice_https_redirect_insecure</source>
                 <target>Point the http redirect straight at the https url</target>
             </trans-unit>
-            <trans-unit id="416">
-                <source>label.health_check_advice_not_found_status</source>
-                <target>Answer a real 404 status on an unknown url (currently HTTP %status%)</target>
+            <trans-unit id="MM9oA4.">
+                <source>label.health_check_advice_images_without_alt</source>
+                <target>Add descriptive alt text to %count% image(s)</target>
             </trans-unit>
-            <trans-unit id="417">
+            <trans-unit id="xK35Cvz">
+                <source>label.health_check_advice_mixed_content</source>
+                <target>Serve %count% resource(s) over https:// instead of http://</target>
+            </trans-unit>
+            <trans-unit id="eaPaHXh">
+                <source>label.health_check_advice_no_description</source>
+                <target>Add a meta description (about 50-160 characters)</target>
+            </trans-unit>
+            <trans-unit id="u_vJVOo">
+                <source>label.health_check_advice_no_h1</source>
+                <target>Add a single main heading (&lt;h1&gt;)</target>
+            </trans-unit>
+            <trans-unit id="84WbPxk">
+                <source>label.health_check_advice_no_title</source>
+                <target>Add a page title (&lt;title&gt; tag)</target>
+            </trans-unit>
+            <trans-unit id="gijMDev">
                 <source>label.health_check_advice_not_found_default_page</source>
                 <target>Create templates/bundles/TwigBundle/Exception/error404.html.twig using the site's own layout</target>
             </trans-unit>
-            <trans-unit id="418">
+            <trans-unit id="66.X63v">
+                <source>label.health_check_advice_not_found_status</source>
+                <target>Answer a real 404 status on an unknown url (currently HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="AbhQf9h">
+                <source>label.health_check_advice_pagespeed</source>
+                <target>Improve %category% (score: %score%) - run Lighthouse locally for a full breakdown</target>
+            </trans-unit>
+            <trans-unit id="j1gAV_O">
+                <source>label.health_check_advice_security_headers</source>
+                <target>Configure the missing security headers: %headers%</target>
+            </trans-unit>
+            <trans-unit id="FAR3dT8">
+                <source>label.health_check_advice_security_headers_cors</source>
+                <target>Restrict CORS instead of allowing any origin (*)</target>
+            </trans-unit>
+            <trans-unit id="mAndfIm">
+                <source>label.health_check_advice_social_tags</source>
+                <target>Add the missing share tags: %tags%</target>
+            </trans-unit>
+            <trans-unit id="LLcDIA3">
+                <source>label.health_check_advice_ssl_certificate</source>
+                <target>Renew the TLS certificate before it expires</target>
+            </trans-unit>
+            <trans-unit id="9PkM4lV">
+                <source>label.health_check_advice_title_length</source>
+                <target>Adjust the title: %length% characters, %min% to %max% recommended</target>
+            </trans-unit>
+            <trans-unit id="XVKksRK">
+                <source>label.health_check_advice_w3c_css_errors</source>
+                <target>Fix %count% CSS validation error(s)</target>
+            </trans-unit>
+            <trans-unit id="3XoIz3R">
+                <source>label.health_check_advice_w3c_css_warnings</source>
+                <target>Review %count% CSS validation warning(s)</target>
+            </trans-unit>
+            <trans-unit id="Mu0Vk6Z">
+                <source>label.health_check_advice_w3c_html_errors</source>
+                <target>Fix %count% HTML validation error(s)</target>
+            </trans-unit>
+            <trans-unit id="TDWdHCO">
+                <source>label.health_check_advice_w3c_html_warnings</source>
+                <target>Review %count% HTML validation warning(s)</target>
+            </trans-unit>
+            <trans-unit id="lVL06z_">
+                <source>label.health_check_console_errors</source>
+                <target>%count% console error(s)</target>
+            </trans-unit>
+            <trans-unit id="z_WhL6.">
                 <source>label.health_check_content_quality_broken_external_links</source>
                 <target>%count% broken external link(s)</target>
             </trans-unit>
-            <trans-unit id="419">
-                <source>label.health_check_advice_broken_external_links</source>
-                <target>Check %count% external link(s) with no valid answer</target>
+            <trans-unit id="KNYNgu2">
+                <source>label.health_check_content_quality_broken_links</source>
+                <target>%count% broken internal link(s)</target>
+            </trans-unit>
+            <trans-unit id="FnwQdHx">
+                <source>label.health_check_content_quality_call_failed</source>
+                <target>Content check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="LFH1s4O">
+                <source>label.health_check_content_quality_description_too_long</source>
+                <target>description too long (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="Ox8evki">
+                <source>label.health_check_content_quality_description_too_short</source>
+                <target>description too short (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="ME83NQd">
+                <source>label.health_check_content_quality_images_without_alt</source>
+                <target>%count% image(s) without alt text</target>
+            </trans-unit>
+            <trans-unit id="I4Rz7aG">
+                <source>label.health_check_content_quality_missing_social_tags</source>
+                <target>%count% missing share tag(s)</target>
+            </trans-unit>
+            <trans-unit id="BJy8gU9">
+                <source>label.health_check_content_quality_no_description</source>
+                <target>missing meta description</target>
+            </trans-unit>
+            <trans-unit id="wg7L155">
+                <source>label.health_check_content_quality_no_h1</source>
+                <target>missing &lt;h1&gt;</target>
+            </trans-unit>
+            <trans-unit id="n0fEOV8">
+                <source>label.health_check_content_quality_no_title</source>
+                <target>missing title</target>
+            </trans-unit>
+            <trans-unit id="VeQ3n7J">
+                <source>label.health_check_content_quality_ok</source>
+                <target>No content issues found</target>
+            </trans-unit>
+            <trans-unit id="rALqDws">
+                <source>label.health_check_content_quality_title_too_long</source>
+                <target>title too long (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="3V1EipY">
+                <source>label.health_check_content_quality_title_too_short</source>
+                <target>title too short (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="ZEoDmkn">
+                <source>label.health_check_deployment_call_failed</source>
+                <target>Deployment check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="O9kLgA7">
+                <source>label.health_check_deployment_https</source>
+                <target>https redirect</target>
+            </trans-unit>
+            <trans-unit id="7ZjpK.P">
+                <source>label.health_check_deployment_not_found</source>
+                <target>404 page</target>
+            </trans-unit>
+            <trans-unit id="5oHSgYP">
+                <source>label.health_check_https_redirect_insecure</source>
+                <target>http redirects to an insecure url</target>
+            </trans-unit>
+            <trans-unit id="Zyn9CBY">
+                <source>label.health_check_https_redirect_missing</source>
+                <target>http does not redirect to https (HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="c5wEJdP">
+                <source>label.health_check_https_redirect_ok</source>
+                <target>http correctly redirects to https</target>
+            </trans-unit>
+            <trans-unit id="4HIWk23">
+                <source>label.health_check_mixed_content_call_failed</source>
+                <target>Mixed content check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id=".505zhu">
+                <source>label.health_check_mixed_content_found</source>
+                <target>%count% insecure (http://) resource(s) found</target>
+            </trans-unit>
+            <trans-unit id="2_4UG6U">
+                <source>label.health_check_mixed_content_ok</source>
+                <target>No insecure resources found</target>
+            </trans-unit>
+            <trans-unit id="YvTkRdQ">
+                <source>label.health_check_not_found_default_page</source>
+                <target>Generic 404 page, not the site's own</target>
+            </trans-unit>
+            <trans-unit id="uCcSKeY">
+                <source>label.health_check_not_found_ok</source>
+                <target>Custom 404 page</target>
+            </trans-unit>
+            <trans-unit id="ywo1XVT">
+                <source>label.health_check_not_found_wrong_status</source>
+                <target>An unknown url answers HTTP %status% instead of 404</target>
+            </trans-unit>
+            <trans-unit id="mmRyN6V">
+                <source>label.health_check_page_not_found</source>
+                <target>Page not found (not tested)</target>
+            </trans-unit>
+            <trans-unit id="so2JtYT">
+                <source>label.health_check_pagespeed_api_key_missing</source>
+                <target>No PageSpeed Insights API key configured - Google's anonymous quota is shared worldwide and easily exhausted (HTTP 429)</target>
+            </trans-unit>
+            <trans-unit id="ikg.ejR">
+                <source>label.health_check_pagespeed_call_failed</source>
+                <target>PageSpeed Insights call failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="vsnyc60">
+                <source>label.health_check_panel_empty</source>
+                <target>No health check results yet for this page.</target>
+            </trans-unit>
+            <trans-unit id="tn.Riea">
+                <source>label.health_check_redirect_chain</source>
+                <target>Chains through %hops% other redirect(s)</target>
+            </trans-unit>
+            <trans-unit id="nkB4fxf">
+                <source>label.health_check_redirect_loop</source>
+                <target>Redirect loop detected</target>
+            </trans-unit>
+            <trans-unit id="tYM8NWt">
+                <source>label.health_check_redirect_ok</source>
+                <target>Direct redirect, no chaining</target>
+            </trans-unit>
+            <trans-unit id="QDn5iu_">
+                <source>label.health_check_robots_blocks_everything</source>
+                <target>robots.txt disallows all crawling (Disallow: / for User-agent: *)</target>
+            </trans-unit>
+            <trans-unit id="r4uXdga">
+                <source>label.health_check_robots_missing</source>
+                <target>robots.txt is missing or empty</target>
+            </trans-unit>
+            <trans-unit id="o1UGYYf">
+                <source>label.health_check_robots_ok</source>
+                <target>robots.txt is reachable and does not block everything</target>
+            </trans-unit>
+            <trans-unit id="D2qT.fs">
+                <source>label.health_check_security_headers_call_failed</source>
+                <target>Security headers check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="YByjYVO">
+                <source>label.health_check_security_headers_cors_wildcard</source>
+                <target>CORS allows any origin (*)</target>
+            </trans-unit>
+            <trans-unit id="_ls5_jv">
+                <source>label.health_check_security_headers_missing</source>
+                <target>missing: %headers%</target>
+            </trans-unit>
+            <trans-unit id="JOx_E7E">
+                <source>label.health_check_security_headers_scope</source>
+                <target>these headers apply to the whole site, checked once via the homepage</target>
+            </trans-unit>
+            <trans-unit id="Z5MQYLr">
+                <source>label.health_check_seo_files_call_failed</source>
+                <target>Request failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="P8iNFef">
+                <source>label.health_check_sitemap_index_empty</source>
+                <target>sitemap-index.xml does not reference any sitemap</target>
+            </trans-unit>
+            <trans-unit id="vdPK5K0">
+                <source>label.health_check_sitemap_index_invalid</source>
+                <target>sitemap-index.xml does not look like a valid sitemap index</target>
+            </trans-unit>
+            <trans-unit id="FOd3j4t">
+                <source>label.health_check_sitemap_index_ok</source>
+                <target>sitemap-index.xml is reachable and references %count% sitemap(s)</target>
+            </trans-unit>
+            <trans-unit id="D6twj5K">
+                <source>label.health_check_sitemap_invalid</source>
+                <target>%file% does not look like a valid sitemap</target>
+            </trans-unit>
+            <trans-unit id="hRrR7wP">
+                <source>label.health_check_sitemap_missing</source>
+                <target>%file% is missing</target>
+            </trans-unit>
+            <trans-unit id="ixM01t_">
+                <source>label.health_check_sitemap_ok</source>
+                <target>%file% is reachable and well-formed</target>
+            </trans-unit>
+            <trans-unit id="t.pDm_y">
+                <source>label.health_check_ssl_certificate_call_failed</source>
+                <target>Could not read the TLS certificate: %message%</target>
+            </trans-unit>
+            <trans-unit id="huusFBh">
+                <source>label.health_check_ssl_certificate_not_https</source>
+                <target>Site not served over HTTPS, certificate not checked</target>
+            </trans-unit>
+            <trans-unit id="hXo9hSM">
+                <source>label.health_check_summary_pagespeed</source>
+                <target>Performance %performance% · Accessibility %accessibility% · Best practices %bestPractices% · SEO %seo%</target>
+            </trans-unit>
+            <trans-unit id="tVOszC6">
+                <source>label.health_check_summary_security_headers</source>
+                <target>%present%/%total% security headers present</target>
+            </trans-unit>
+            <trans-unit id="lF7WRuH">
+                <source>label.health_check_summary_ssl_certificate</source>
+                <target>Expires in %days% day(s) (%date%)</target>
+            </trans-unit>
+            <trans-unit id="IQOS79g">
+                <source>label.health_check_summary_w3c_css</source>
+                <target>%errors% error(s), %warnings% warning(s)</target>
+            </trans-unit>
+            <trans-unit id="mbz6Kqg">
+                <source>label.health_check_summary_w3c_html</source>
+                <target>%errors% error(s), %warnings% warning(s)</target>
+            </trans-unit>
+            <trans-unit id="5NWxr7E">
+                <source>label.health_check_url_gone</source>
+                <target>Deliberately removed (HTTP 410), but still declared</target>
+            </trans-unit>
+            <trans-unit id="Ag5xH55">
+                <source>label.health_check_w3c_benign_warnings</source>
+                <target>of which %actionable% actionable (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
+            </trans-unit>
+            <trans-unit id="qYfmk2.">
+                <source>label.health_check_w3c_css_call_failed</source>
+                <target>W3C CSS validation failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="ryHcoYa">
+                <source>label.health_check_w3c_html_call_failed</source>
+                <target>W3C HTML validation failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="rdukMJh">
+                <source>label.hosted_by</source>
+                <target>Hosted by</target>
+            </trans-unit>
+            <trans-unit id="LrcwcAH">
+                <source>label.hourly</source>
+                <target>Hourly</target>
+            </trans-unit>
+            <trans-unit id="O_0K8EM">
+                <source>label.image</source>
+                <target>Image</target>
+            </trans-unit>
+            <trans-unit id="TR5bI5b">
+                <source>label.info_collection_item_list</source>
+                <target>Title/description/image/link items belonging to this collection, displayed by its "Collection" block on a page. Drag to reorder, or create/edit/delete an item from this list.</target>
+            </trans-unit>
+            <trans-unit id="TatvdGm">
+                <source>label.info_collections</source>
+                <target>Create a collection, then click "Items" to add content to it. Once created, a collection becomes available as a source in the "Collection" block on any page.</target>
+            </trans-unit>
+            <trans-unit id="z7IyPeJ">
+                <source>label.info_font</source>
+                <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
+            </trans-unit>
+            <trans-unit id="6ENBv5f">
+                <source>label.info_menu</source>
+                <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
+            </trans-unit>
+            <trans-unit id="0ov1m.g">
+                <source>label.info_page</source>
+                <target>List of all the site's pages. You can create, edit, duplicate, publish, preview, move to trash or permanently delete a page; a deleted page can only be recovered from the trash until it's permanently deleted.</target>
+            </trans-unit>
+            <trans-unit id="rszWvKi">
+                <source>label.info_redirect</source>
+                <target>List of the site's URL redirects. You can create, edit or delete a redirect; double-check the source and target URLs, a mistake can break a link or cause a redirect loop.</target>
+            </trans-unit>
+            <trans-unit id="MwU6S3V">
+                <source>label.info_site_graphic</source>
+                <target>Site-wide graphics: favicon, Apple Touch icon, default Open Graph image, logo and error images. Each role (except error image) can only be used once; replace the file to update it.</target>
+            </trans-unit>
+            <trans-unit id="14MwZnc">
+                <source>label.info_user</source>
+                <target>List of the site's users. You can edit a user's roles or delete them; be careful, changing roles immediately changes their back-office access rights.</target>
+            </trans-unit>
+            <trans-unit id="cxSqi5b">
+                <source>label.info_user_registration</source>
+                <target>Visitor registration toggles in one click from %link_open%the dashboard%link_close% (admin-only).</target>
+            </trans-unit>
+            <trans-unit id="waNryE6">
+                <source>label.info_user_roles</source>
+                <target>Roles listed below (other than ROLE_SUPER_ADMIN) come from %link_open%this key%link_close%.</target>
+            </trans-unit>
+            <trans-unit id="p2lI9Fi">
+                <source>label.is_deleted</source>
+                <target>Deleted</target>
+            </trans-unit>
+            <trans-unit id=".5H7HVy">
+                <source>label.is_indexable</source>
+                <target>Reference the page</target>
+            </trans-unit>
+            <trans-unit id="uHgxjl3">
+                <source>label.is_indexable_help</source>
+                <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password)</target>
+            </trans-unit>
+            <trans-unit id="f7EAy._">
+                <source>label.is_published</source>
+                <target>Is published</target>
+            </trans-unit>
+            <trans-unit id="eALZin6">
+                <source>label.item_of</source>
+                <target>Item %current% of %total%</target>
+            </trans-unit>
+            <trans-unit id="RzBZ4z7">
+                <source>label.latest_update</source>
+                <target>Latest update</target>
+            </trans-unit>
+            <trans-unit id="7BkQCei">
+                <source>label.legal_notice</source>
+                <target>Legal notice</target>
+            </trans-unit>
+            <trans-unit id="QgJjQWe">
+                <source>label.location</source>
+                <target>Location</target>
+            </trans-unit>
+            <trans-unit id="vLldAk9">
+                <source>label.login</source>
+                <target>Login</target>
+            </trans-unit>
+            <trans-unit id="CicLx_A">
+                <source>label.logo</source>
+                <target>Logo</target>
+            </trans-unit>
+            <trans-unit id="3hZO6SI">
+                <source>label.logout</source>
+                <target>Logout</target>
+            </trans-unit>
+            <trans-unit id="wnOXjkT">
+                <source>label.made_by</source>
+                <target>Made by</target>
+            </trans-unit>
+            <trans-unit id="_0OT.Rv">
+                <source>label.management</source>
+                <target>Management</target>
+            </trans-unit>
+            <trans-unit id="MsDN5Sv">
+                <source>label.mandatory_field</source>
+                <target>* Mandatory field</target>
+            </trans-unit>
+            <trans-unit id="K8BhvNS">
+                <source>label.media_used_as_og_image</source>
+                <target>OG image of "%page%"</target>
+            </trans-unit>
+            <trans-unit id="NTFHsDG">
+                <source>label.media_used_in_page_block</source>
+                <target>Block "%block%" on page "%page%"</target>
+            </trans-unit>
+            <trans-unit id="lvuwXKG">
+                <source>label.menu</source>
+                <target>Menu</target>
+            </trans-unit>
+            <trans-unit id="C_qZ.4z">
+                <source>label.menu_item_target</source>
+                <target>Target</target>
+            </trans-unit>
+            <trans-unit id="sa_931Z">
+                <source>label.menu_link_label</source>
+                <target>Label (optional)</target>
+            </trans-unit>
+            <trans-unit id="OprTwDC">
+                <source>label.menu_link_primary</source>
+                <target>Highlight as a button</target>
+            </trans-unit>
+            <trans-unit id="zRjbN7z">
+                <source>label.menu_toggle</source>
+                <target>Open/Close the menu</target>
+            </trans-unit>
+            <trans-unit id="9W45ElS">
+                <source>label.menus</source>
+                <target>Menus</target>
+            </trans-unit>
+            <trans-unit id="CzQFJOJ">
+                <source>label.messenger_actions</source>
+                <target>Actions</target>
+            </trans-unit>
+            <trans-unit id="4Fh5Zeh">
+                <source>label.messenger_alert_admin</source>
+                <target>A technical issue has been automatically reported</target>
+            </trans-unit>
+            <trans-unit id="dEw0nxL">
+                <source>label.messenger_alert_super_admin</source>
+                <target>%count% important Messenger failure(s)</target>
+            </trans-unit>
+            <trans-unit id="rTPONzA">
+                <source>label.messenger_by_error</source>
+                <target>Summary by error</target>
+            </trans-unit>
+            <trans-unit id="q9nBbQt">
+                <source>label.messenger_count</source>
+                <target>Count</target>
+            </trans-unit>
+            <trans-unit id="mciG46c">
+                <source>label.messenger_delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="vbhcK2l">
+                <source>label.messenger_delete_confirm</source>
+                <target>Permanently delete this message?</target>
+            </trans-unit>
+            <trans-unit id="z7Q92q7">
+                <source>label.messenger_delete_group</source>
+                <target>Delete the %count%</target>
+            </trans-unit>
+            <trans-unit id="ZeJTUAH">
+                <source>label.messenger_delete_group_confirm</source>
+                <target>Permanently delete these %count% message(s)?</target>
+            </trans-unit>
+            <trans-unit id="TQZxTCT">
+                <source>label.messenger_detail</source>
+                <target>Detail</target>
+            </trans-unit>
+            <trans-unit id="UoTyvJn">
+                <source>label.messenger_error</source>
+                <target>Error</target>
+            </trans-unit>
+            <trans-unit id="2XKsaDm">
+                <source>label.messenger_error_class</source>
+                <target>Error class</target>
+            </trans-unit>
+            <trans-unit id="PdEOB0V">
+                <source>label.messenger_error_code</source>
+                <target>Code</target>
+            </trans-unit>
+            <trans-unit id="T2GT4MH">
+                <source>label.messenger_failed</source>
+                <target>Failed messages</target>
+            </trans-unit>
+            <trans-unit id="27CLL4k">
+                <source>label.messenger_from</source>
+                <target>Sender</target>
+            </trans-unit>
+            <trans-unit id="fT5KqIP">
+                <source>label.messenger_important</source>
+                <target>Important</target>
+            </trans-unit>
+            <trans-unit id="KgJXzDG">
+                <source>label.messenger_minor</source>
+                <target>Minor</target>
+            </trans-unit>
+            <trans-unit id="odFrop6">
+                <source>label.messenger_none</source>
+                <target>No failed messages</target>
+            </trans-unit>
+            <trans-unit id=".FS8LLE">
+                <source>label.messenger_purge_now</source>
+                <target>Purge now</target>
+            </trans-unit>
+            <trans-unit id="CXyZbmf">
+                <source>label.messenger_retries</source>
+                <target>Retries</target>
+            </trans-unit>
+            <trans-unit id="Jjf5VFk">
+                <source>label.messenger_retry</source>
+                <target>Retry</target>
+            </trans-unit>
+            <trans-unit id="OBazAhq">
+                <source>label.messenger_subject</source>
+                <target>Subject</target>
+            </trans-unit>
+            <trans-unit id="_DmTgAf">
+                <source>label.messenger_to</source>
+                <target>Recipient</target>
+            </trans-unit>
+            <trans-unit id="IkuuVf9">
+                <source>label.messenger_transport</source>
+                <target>Original transport</target>
+            </trans-unit>
+            <trans-unit id="lXynwwU">
+                <source>label.model</source>
+                <target>Model</target>
+            </trans-unit>
+            <trans-unit id="baXk6pr">
+                <source>label.modification</source>
+                <target>Modification</target>
+            </trans-unit>
+            <trans-unit id="HVYyEc3">
+                <source>label.monthly</source>
+                <target>Monthly</target>
+            </trans-unit>
+            <trans-unit id="p8HNnIW">
+                <source>label.navbar</source>
+                <target>Navigation</target>
+            </trans-unit>
+            <trans-unit id="CEVLUY_">
+                <source>label.never</source>
+                <target>Never</target>
+            </trans-unit>
+            <trans-unit id="oyd10Po">
+                <source>label.new_password</source>
+                <target>New password</target>
+            </trans-unit>
+            <trans-unit id="qQ0RGVI">
+                <source>label.next_slide</source>
+                <target>Next slide</target>
+            </trans-unit>
+            <trans-unit id="ZixQpOO">
+                <source>label.no_reset_password_token_found</source>
+                <target>No reset password token found in the URL or in the session.</target>
+            </trans-unit>
+            <trans-unit id="GJNimRX">
+                <source>label.og_image</source>
+                <target>Open Graph image</target>
+            </trans-unit>
+            <trans-unit id="XvS5v.o">
+                <source>label.og_image_help</source>
+                <target>Image shown when the page is shared. Empty = site's default og-image or logo.</target>
+            </trans-unit>
+            <trans-unit id="IBymOD8">
+                <source>label.opening_hours</source>
+                <target>Opening hours</target>
+            </trans-unit>
+            <trans-unit id="OmyXHwr">
+                <source>label.page</source>
+                <target>Page</target>
+            </trans-unit>
+            <trans-unit id="GKczZ58">
+                <source>label.page_deleted</source>
+                <target>Page deleted</target>
+            </trans-unit>
+            <trans-unit id="dfCuHTM">
+                <source>label.pages</source>
+                <target>Pages</target>
+            </trans-unit>
+            <trans-unit id="eJLxUVx">
+                <source>label.pages_gallery</source>
+                <target>Pages gallery</target>
+            </trans-unit>
+            <trans-unit id="yaiKGee">
+                <source>label.password</source>
+                <target>Password</target>
+            </trans-unit>
+            <trans-unit id="hz5aZk6">
+                <source>label.password_confirm</source>
+                <target>Repeat password</target>
+            </trans-unit>
+            <trans-unit id="3pkh79k">
+                <source>label.password_help</source>
+                <target>At least 8 characters, with a lowercase, uppercase, digit and special character</target>
+            </trans-unit>
+            <trans-unit id="LLkv7Ba">
+                <source>label.password_reset_request</source>
+                <target>Your password reset request</target>
+            </trans-unit>
+            <trans-unit id="A.D0sBG">
+                <source>label.permanent</source>
+                <target>Permanent (301)</target>
+            </trans-unit>
+            <trans-unit id="DOLd5Pf">
+                <source>label.permanent_help</source>
+                <target>Checked = permanent redirect 301 (SEO), unchecked = temporary 302</target>
+            </trans-unit>
+            <trans-unit id="KXf3t5l">
+                <source>label.phone</source>
+                <target>Phone</target>
+            </trans-unit>
+            <trans-unit id="ozwU3T.">
+                <source>label.please_sign_in</source>
+                <target>Please sign in</target>
+            </trans-unit>
+            <trans-unit id="0qUSPNu">
+                <source>label.point_error</source>
+                <target>I point out the error</target>
+            </trans-unit>
+            <trans-unit id="Rfi.GLm">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="E.qyEl.">
+                <source>label.position_help</source>
+                <target>Display order (1 = first); use increments of 5 to leave room.</target>
+            </trans-unit>
+            <trans-unit id="ljaH9fz">
+                <source>label.preview_mode</source>
+                <target>Unpublished preview - not visible to the public.</target>
+            </trans-unit>
+            <trans-unit id="02hgMl1">
+                <source>label.previous_slide</source>
+                <target>Previous slide</target>
+            </trans-unit>
+            <trans-unit id="wqV.yBO">
+                <source>label.price_range</source>
+                <target>Price range</target>
+            </trans-unit>
+            <trans-unit id="W3dIh.v">
+                <source>label.priority</source>
+                <target>Priority</target>
+            </trans-unit>
+            <trans-unit id="2K4ZQpE">
+                <source>label.priority_help</source>
+                <target>Priority of the page in the sitemap (0 = low, 10 = high)</target>
+            </trans-unit>
+            <trans-unit id="h3TeJLZ">
+                <source>label.privacy_policy</source>
+                <target>Privacy policy</target>
+            </trans-unit>
+            <trans-unit id="WSsMBYX">
+                <source>label.publication_rights</source>
+                <target>Publication rights</target>
+            </trans-unit>
+            <trans-unit id="uPsqmgW">
+                <source>label.qrcode</source>
+                <target>QR Code</target>
+            </trans-unit>
+            <trans-unit id="EtxgfyH">
+                <source>label.qrcode_help</source>
+                <target>Right-click to save the image, use it wherever you want</target>
+            </trans-unit>
+            <trans-unit id="UmK6KNk">
+                <source>label.readless</source>
+                <target>Read less</target>
+            </trans-unit>
+            <trans-unit id="DAM4HGA">
+                <source>label.readmore</source>
+                <target>Read more...</target>
+            </trans-unit>
+            <trans-unit id="h5p4XS_">
+                <source>label.redirect</source>
+                <target>Redirect</target>
+            </trans-unit>
+            <trans-unit id="MJxBTAS">
+                <source>label.redirects</source>
+                <target>Redirects</target>
+            </trans-unit>
+            <trans-unit id="Cn7F.4b">
+                <source>label.register</source>
+                <target>Register</target>
+            </trans-unit>
+            <trans-unit id="pvYiOoS">
+                <source>label.reset_password</source>
+                <target>Reset your password</target>
+            </trans-unit>
+            <trans-unit id="Gj4Ca1d">
+                <source>label.role</source>
+                <target>Role</target>
+            </trans-unit>
+            <trans-unit id="0PZB8zr">
+                <source>label.roles</source>
+                <target>Roles</target>
+            </trans-unit>
+            <trans-unit id="7sshO_4">
+                <source>label.route</source>
+                <target>Route</target>
+            </trans-unit>
+            <trans-unit id="UsWSixX">
+                <source>label.sign_in</source>
+                <target>Sign in</target>
+            </trans-unit>
+            <trans-unit id="lnfUWu.">
+                <source>label.signout</source>
+                <target>Sign out</target>
+            </trans-unit>
+            <trans-unit id="rttit_o">
+                <source>label.site_graphic</source>
+                <target>Site graphic</target>
+            </trans-unit>
+            <trans-unit id="0pHTiGE">
+                <source>label.site_graphic_file_help</source>
+                <target>Auto-resized: favicon to 48×48 px (.ico), Apple touch icon to 114×114 px (.png).</target>
+            </trans-unit>
+            <trans-unit id="6.3yMVA">
+                <source>label.site_graphic_missing</source>
+                <target>No file has been uploaded yet</target>
+            </trans-unit>
+            <trans-unit id="sDMW24b">
+                <source>label.site_graphics</source>
+                <target>Site graphics</target>
+            </trans-unit>
+            <trans-unit id="7V5.lpF">
+                <source>label.slide</source>
+                <target>Slide</target>
+            </trans-unit>
+            <trans-unit id="PzRJxVB">
+                <source>label.slide_navigation</source>
+                <target>Slide navigation</target>
+            </trans-unit>
+            <trans-unit id="0kGqgMZ">
+                <source>label.slug</source>
+                <target>Slug</target>
+            </trans-unit>
+            <trans-unit id="dtyJZly">
+                <source>label.slug_help</source>
+                <target>Ideally close to the title (no accents, capitals or spaces). Editable via the lock icon; a redirect preserves SEO.</target>
+            </trans-unit>
+            <trans-unit id="71_aLjk">
+                <source>label.start_animation</source>
+                <target>Start animation</target>
+            </trans-unit>
+            <trans-unit id="ru2vORh">
+                <source>label.stop_animation</source>
+                <target>Stop animation</target>
+            </trans-unit>
+            <trans-unit id="sIJNQm6">
+                <source>label.summary_social_network</source>
+                <target>Social network summary</target>
+            </trans-unit>
+            <trans-unit id="qGVcC.N">
+                <source>label.summary_social_network_help</source>
+                <target>Used by social networks when the page is shared</target>
+            </trans-unit>
+            <trans-unit id="A2S1irP">
+                <source>label.tab_data</source>
+                <target>Data</target>
+            </trans-unit>
+            <trans-unit id="viFs8Ed">
+                <source>label.tab_health_check</source>
+                <target>Health check</target>
+            </trans-unit>
+            <trans-unit id="gsn2fUJ">
+                <source>label.template_agency_home</source>
+                <target>Agency homepage</target>
+            </trans-unit>
+            <trans-unit id="CT0L_1J">
+                <source>label.template_default</source>
+                <target>Generic</target>
+            </trans-unit>
+            <trans-unit id="1l.Hgl6">
+                <source>label.template_path</source>
+                <target>Detail template path</target>
+            </trans-unit>
+            <trans-unit id="8mjuX51">
+                <source>label.template_path_help</source>
+                <target>Twig template (e.g. "block_showcase/bundle.html.twig") for an item's detail view from this page's "Collection" block. Empty = plain Content field.</target>
+            </trans-unit>
+            <trans-unit id="BIHKHL9">
+                <source>label.template_portfolio_showcase</source>
+                <target>Portfolio</target>
+            </trans-unit>
+            <trans-unit id="Gwnseqp">
+                <source>label.templates</source>
+                <target>Templates</target>
+            </trans-unit>
+            <trans-unit id="ua7HEiS">
+                <source>label.terms_of_sales</source>
+                <target>Terms of sales</target>
+            </trans-unit>
+            <trans-unit id="yMPPhUy">
+                <source>label.terms_of_sales_filename</source>
+                <target>TermsOfSales</target>
+            </trans-unit>
+            <trans-unit id="wIPeOCe">
+                <source>label.terms_of_use</source>
+                <target>Terms of use</target>
+            </trans-unit>
+            <trans-unit id="ZIbme0L">
+                <source>label.title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="pU0wOZ0">
+                <source>label.to_url</source>
+                <target>Target URL</target>
+            </trans-unit>
+            <trans-unit id="AVZ1p4W">
+                <source>label.to_url_help</source>
+                <target>Full URL (https://...) or absolute path (/series/la-guilde)</target>
+            </trans-unit>
+            <trans-unit id="ExAFOiH">
+                <source>label.user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="hKJPguf">
+                <source>label.user_registration_disable</source>
+                <target>Disable user registration</target>
+            </trans-unit>
+            <trans-unit id="IpO0rga">
+                <source>label.user_registration_enable</source>
+                <target>Enable user registration</target>
+            </trans-unit>
+            <trans-unit id="GQQkfB3">
+                <source>label.users</source>
+                <target>Users</target>
+            </trans-unit>
+            <trans-unit id="LOa9pVD">
+                <source>label.video_not_supported</source>
+                <target>Your browser does not support the video tag.</target>
+            </trans-unit>
+            <trans-unit id="rJFIqnF">
+                <source>label.website</source>
+                <target>Website</target>
+            </trans-unit>
+            <trans-unit id="Ybi4oRo">
+                <source>label.weekly</source>
+                <target>Weekly</target>
+            </trans-unit>
+            <trans-unit id="Je1Jsmh">
+                <source>label.yearly</source>
+                <target>Yearly</target>
+            </trans-unit>
+            <trans-unit id="UFzGawd">
+                <source>menu.toggle</source>
+                <target>Open/Close the menu</target>
+            </trans-unit>
+            <trans-unit id="NKuTZhq">
+                <source>text.confirm_email_instructions</source>
+                <target>Please confirm your email address by clicking the following link:</target>
+            </trans-unit>
+            <trans-unit id="2lWOypu">
+                <source>text.cookies_banner</source>
+                <target>This site uses a session cookie required for it to work, and may embed third-party content (videos, etc.) requiring your consent.</target>
+            </trans-unit>
+            <trans-unit id="39RTBwl">
+                <source>text.err</source>
+                <target>We have detected an error :-( We ask you to excuse us.</target>
+            </trans-unit>
+            <trans-unit id="Wq4Nyxz">
+                <source>text.err401</source>
+                <target>I can not access this resource because access is restricted and requires identification.</target>
+            </trans-unit>
+            <trans-unit id="JSndLI8">
+                <source>text.err403</source>
+                <target>I can not access this resource because access is restricted.</target>
+            </trans-unit>
+            <trans-unit id="y6aW1zN">
+                <source>text.err404</source>
+                <target>The page I request is not available. Please check the link in the address bar.</target>
+            </trans-unit>
+            <trans-unit id="Lkwmqk9">
+                <source>text.err410</source>
+                <target>The page I requested does not exist anymore.</target>
+            </trans-unit>
+            <trans-unit id="o1.55T1">
+                <source>text.err500</source>
+                <target>We have detected an internal error :-( We ask you to excuse us.</target>
+            </trans-unit>
+            <trans-unit id="fqCFO6G">
+                <source>text.gdpr</source>
+                <target>I agree that this website stores the submitted data so that it can answer my request</target>
+            </trans-unit>
+            <trans-unit id="m3ORa7e">
+                <source>text.link_expires_in</source>
+                <target>This link will expire in</target>
+            </trans-unit>
+            <trans-unit id="vcT08Ej">
+                <source>text.logged_in_as</source>
+                <target>You are logged in as %user%,</target>
+            </trans-unit>
+            <trans-unit id="npvFfuM">
+                <source>text.no_articles</source>
+                <target>No articles available.</target>
+            </trans-unit>
+            <trans-unit id="QJG8nyh">
+                <source>text.no_email_received</source>
+                <target>If you don't receive an email please check your spam folder or</target>
+            </trans-unit>
+            <trans-unit id="uZIQirh">
+                <source>text.only_french</source>
+                <target>Only the French text is authoritative, the other languages being translations.</target>
+            </trans-unit>
+            <trans-unit id="LgVtsQ.">
+                <source>text.registration_disabled</source>
+                <target>Registration is not currently open.</target>
+            </trans-unit>
+            <trans-unit id="GtfvB62">
+                <source>text.reset_password_instructions</source>
+                <target>To reset your password, please visit the following link</target>
+            </trans-unit>
+            <trans-unit id="we221_t">
+                <source>text.too_many_attempts</source>
+                <target>Too many attempts, please try again later.</target>
             </trans-unit>
         </body>
     </file>

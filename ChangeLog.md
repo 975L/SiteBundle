@@ -1,5 +1,9 @@
 # Changelog
 
+## v7.10.1
+
+- Replaced ids by hash in translations (27/07/2026)
+
 ## v7.10.0
 
 - Removed the theme preset catalog, `SiteThemePresetProvider`, `config/themes/`, `sass/themes/` and the compiled `public/css/themes/` alike (27/07/2026) [BC-Break]
