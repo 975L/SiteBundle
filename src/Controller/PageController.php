@@ -11,9 +11,9 @@ namespace c975L\SiteBundle\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\SiteThemePresetProvider;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Twig\CollectionItemContext;
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +34,6 @@ class PageController extends AbstractController
         private readonly CollectionSourceRegistry $collectionSourceRegistry,
         private readonly Environment $twig,
         private readonly CollectionItemContext $collectionItemContext,
-        private readonly ?SiteThemePresetProvider $themePresetProvider = null,
     ) {
     }
 
@@ -152,34 +151,45 @@ class PageController extends AbstractController
         $itemSlug = substr($slug, $lastSlash + 1);
 
         foreach ($parentPage->getBlocks() as $block) {
-            if ('collection' !== $block->getKind()) {
-                continue;
+            $detail = $this->renderCollectionDetail($block, $itemSlug);
+            if (null !== $detail) {
+                return [$parentPage, $detail[0], $detail[1]];
             }
-
-            $data = $block->getData();
-            $source = $data['source'] ?? null;
-            $detailPageSlug = $data['detailPage'] ?? null;
-            if (null === $source || null === $detailPageSlug) {
-                continue;
-            }
-
-            $itemData = $this->collectionSourceRegistry->detail($source, $itemSlug);
-            if (null === $itemData) {
-                continue;
-            }
-
-            $detailPage = $this->pageService->findForDisplay($detailPageSlug);
-            if (null === $detailPage) {
-                continue;
-            }
-
-            $this->collectionItemContext->set($itemData);
-            $html = $this->twig->render('@c975LSite/pages/_blocks.html.twig', ['blocks' => $detailPage->getBlocks()]);
-
-            return [$parentPage, $html, $itemData['title'] ?? null];
         }
 
         return [null, null, null];
+    }
+
+    // One block's own attempt at the item slug - null as soon as anything doesn't line up (a block of another kind, an incomplete "collection" block, an item its source doesn't know, a detail page since unpublished), so the caller simply moves on to the next block; @return array{0: string, 1: ?string}|null - the rendered detail page and the item's own title
+    private function renderCollectionDetail(Block $block, string $itemSlug): ?array
+    {
+        if ('collection' !== $block->getKind()) {
+            return null;
+        }
+
+        $data = $block->getData();
+        $source = $data['source'] ?? null;
+        $detailPageSlug = $data['detailPage'] ?? null;
+        if (null === $source || null === $detailPageSlug) {
+            return null;
+        }
+
+        $itemData = $this->collectionSourceRegistry->detail($source, $itemSlug);
+        if (null === $itemData) {
+            return null;
+        }
+
+        $detailPage = $this->pageService->findForDisplay($detailPageSlug);
+        if (null === $detailPage) {
+            return null;
+        }
+
+        $this->collectionItemContext->set($itemData);
+
+        return [
+            $this->twig->render('@c975LSite/pages/_blocks.html.twig', ['blocks' => $detailPage->getBlocks()]),
+            $itemData['title'] ?? null,
+        ];
     }
 
 // PREVIEW
@@ -210,15 +220,11 @@ class PageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        // Optional ?preset=<slug>: previews a theme preset's colors/fonts/shape for this request only (see templates/pages/page.html.twig), without writing anything to site_config - lets an editor judge a site-wide preset's effect before committing to it via "Apply preset". Only ever previews the design, never the page's blocks - a template is applied independently (see PageCrudController::applyTemplate())
-        $previewPreset = $this->themePresetProvider?->getPresets()[(string) $request->query->get('preset')] ?? null;
-
         return $this->render(
             '@c975LSite/pages/page.html.twig',
             [
                 'page' => $pageObject,
                 'isPreview' => true,
-                'previewPreset' => $previewPreset,
                 'detailHtml' => $detailHtml,
                 'detailTitle' => $detailTitle,
             ]

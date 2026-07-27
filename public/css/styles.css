@@ -337,6 +337,9 @@ template {
   --border-accent: color-mix(in srgb, var(--primary) 35%, var(--background));
   --surface-inverse: #232323;
   --text-on-inverse: #d8d8d8;
+  --section-bg-muted: var(--surface-alt);
+  --section-bg-primary: var(--primary);
+  --section-bg-dark: var(--text);
   --radius-btn: 5px;
   --radius-card: 10px;
   --radius-panel: 16px;
@@ -344,11 +347,18 @@ template {
   --navbar-background: var(--white);
   --navbar-text: var(--black);
   --navbar-active-color: var(--primary);
+  --navbar-site-name-color: var(--primary);
+  --navbar-site-tagline-color: var(--text);
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
   --navbar-background-scrolled: var(--navbar-background);
   --navbar-text-scrolled: var(--navbar-text);
+  --navbar-btn-background: var(--primary);
+  --navbar-btn-background-hover: var(--button-background-primary-dark);
+  --navbar-btn-color: var(--button-color);
+  --navbar-width: 100vw;
+  --navbar-margin-x: calc(50% - 50vw);
   --footer-background: var(--primary);
   --footer-text: var(--white);
   --footer-text-hover: var(--footer-text);
@@ -469,6 +479,7 @@ body {
   max-width: var(--body-max-width);
   margin: 0 auto;
   background-color: var(--background);
+  font-weight: var(--font-body-weight);
 }
 
 .box-shadow {
@@ -1063,9 +1074,9 @@ input.success {
   background-color: var(--navbar-background);
   box-shadow: var(--shadow-nav);
   border-bottom: var(--border-nav);
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  width: 100vw;
+  margin-left: var(--navbar-margin-x);
+  margin-right: var(--navbar-margin-x);
+  width: var(--navbar-width);
 }
 
 .menu-fixed {
@@ -1113,18 +1124,19 @@ body.navbar-fixed {
 .menu-site-name {
   font-size: 1.25rem;
   font-weight: bold;
-  color: var(--primary);
+  color: var(--navbar-site-name-color);
   margin-left: 0.5rem;
 }
 
 .menu-site-tagline {
   font-size: 0.9rem;
   font-weight: normal;
-  color: var(--primary);
+  color: var(--navbar-site-tagline-color);
   margin-bottom: 5px;
 }
 .menu-site-tagline div {
   margin: 0;
+  color: inherit;
 }
 
 .menu-toggle {
@@ -1227,22 +1239,22 @@ body.navbar-fixed {
 }
 
 .menu-item--primary .menu-link {
-  background-color: var(--primary);
+  background-color: var(--navbar-btn-background);
   border-radius: var(--radius-btn);
   padding: 0.5rem 1.2rem;
   transition: background-color 0.2s ease;
 }
 .menu-item--primary .menu-link:hover, .menu-item--primary .menu-link:focus {
-  background-color: var(--button-background-primary-dark);
+  background-color: var(--navbar-btn-background-hover);
 }
 
 .menu-item--primary .menu-label {
-  color: var(--button-color);
+  color: var(--navbar-btn-color);
 }
 
 .menu-item--primary .menu-link:hover .menu-label,
 .menu-item--primary .menu-link:focus .menu-label {
-  color: var(--button-color);
+  color: var(--navbar-btn-color);
 }
 
 .menu-label {

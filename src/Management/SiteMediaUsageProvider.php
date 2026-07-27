@@ -43,8 +43,16 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
     public function getUsages(array $medias): array
     {
         $usages = [];
-        $mediaIds = array_map(static fn (Media $media): ?int => $media->getId(), $medias);
+        $this->addRoleUsages($usages, $medias);
+        $this->addBlockUsages($usages, $medias);
+        $this->addOgImageUsages($usages, array_map(static fn (Media $media): ?int => $media->getId(), $medias));
 
+        return $usages;
+    }
+
+    // A media carrying a role is one of the site's own graphics (favicon, logo...), edited from its own screen rather than from a page
+    private function addRoleUsages(array &$usages, array $medias): void
+    {
         foreach ($medias as $media) {
             if (null === $media->getRole()) {
                 continue;
@@ -60,7 +68,11 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
                     ->generateUrl(),
             ];
         }
+    }
 
+    // Every page holding a block one of these medias belongs to, in a single query for the whole batch rather than one per media
+    private function addBlockUsages(array &$usages, array $medias): void
+    {
         $blockIdToMediaIds = [];
         foreach ($medias as $media) {
             if (null !== $block = $media->getBlock()) {
@@ -68,22 +80,28 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
             }
         }
 
-        if ([] !== $blockIdToMediaIds) {
-            foreach ($this->pageRepository->findByBlockIds(array_keys($blockIdToMediaIds)) as $page) {
-                foreach ($page->getBlocks() as $block) {
-                    foreach ($blockIdToMediaIds[$block->getId()] ?? [] as $mediaId) {
-                        $usages[$mediaId][] = [
-                            'label' => $this->translator->trans('label.media_used_in_page_block', [
-                                '%block%' => (string) $block,
-                                '%page%' => $page->getTitle(),
-                            ], 'site'),
-                            'url' => $this->pageEditUrl($page, $block),
-                        ];
-                    }
+        if ([] === $blockIdToMediaIds) {
+            return;
+        }
+
+        foreach ($this->pageRepository->findByBlockIds(array_keys($blockIdToMediaIds)) as $page) {
+            foreach ($page->getBlocks() as $block) {
+                foreach ($blockIdToMediaIds[$block->getId()] ?? [] as $mediaId) {
+                    $usages[$mediaId][] = [
+                        'label' => $this->translator->trans('label.media_used_in_page_block', [
+                            '%block%' => (string) $block,
+                            '%page%' => $page->getTitle(),
+                        ], 'site'),
+                        'url' => $this->pageEditUrl($page, $block),
+                    ];
                 }
             }
         }
+    }
 
+    // A page's share image belongs to the page itself, not to any of its blocks
+    private function addOgImageUsages(array &$usages, array $mediaIds): void
+    {
         $pagesWithOgImage = $this->pageRepository->createQueryBuilder('p')
             ->andWhere('IDENTITY(p.ogImage) IN (:mediaIds)')
             ->setParameter('mediaIds', $mediaIds)
@@ -97,8 +115,6 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
                 'url' => $this->pageEditUrl($page),
             ];
         }
-
-        return $usages;
     }
 
     // $block: when given, the URL also opens/scrolls straight to that block's row on the Page edit form (see BlockFocusController) instead of leaving the user to find it among every other block

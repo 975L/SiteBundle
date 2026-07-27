@@ -1,5 +1,13 @@
-/* This site's own theme - buttons/cards/panels radii, navbar and footer shape.
-   Freely editable: not synced back from c975l/site-bundle after this first copy. */
+/* This site's own theme - buttons/cards/panels radii, navbar, footer and section flats.
+   Freely editable: not synced back from c975l/site-bundle after this first copy.
+
+   One site, one theme: there is no catalog to pick from, this file IS the site's theme. Every value
+   below is the bundle's own default, restated here so the whole surface a design can retune is visible
+   in one place - change what the design needs, leave the rest alone.
+
+   Colors and fonts are NOT here: they are admin-editable from the backoffice ("theme" config group) and
+   compiled into bundles/build/site-theme.css. The tokens below are shapes and layout, which no admin
+   should have to think about. */
 :root {
     --radius-btn: 5px;
     --radius-card: 10px;
@@ -10,6 +18,19 @@
     --border-nav: none;
     --navbar-position: relative;
     --navbar-z-index: auto;
+    /* The single "primary" nav item's pill - invert them if the navbar is a colored flat, where the
+       default .btn-primary colors would be invisible */
+    --navbar-btn-background: var(--primary);
+    --navbar-btn-background-hover: var(--button-background-primary-dark);
+    --navbar-btn-color: var(--button-color);
+    /* The bar bleeds full-viewport-width, past --body-max-width - set both to auto/0 for a design
+       that frames the page, so the navbar stays inside the frame. Same pair as the footer's below */
+    --navbar-width: 100vw;
+    --navbar-margin-x: calc(50% - 50vw);
+    /* Site name and tagline, left of the nav - point both at var(--navbar-text) if the navbar is a
+       colored flat, where the default --primary/--text would be unreadable */
+    --navbar-site-name-color: var(--primary);
+    --navbar-site-tagline-color: var(--text);
 
     --footer-background: var(--primary);
     --footer-text: var(--white);
@@ -21,4 +42,16 @@
     --footer-margin-x: calc(50% - 50vw);
     --footer-padding: 2em 15px 3em 15px;
     --footer-link-hover-background: rgba(0, 0, 0, 0.1);
+
+    /* The three flats a page section can be painted with, when an editor sets its "background" field
+       (UiBundle). Only the background is set here: the text, dividers and translucent chips of each
+       variant are mixed back into it automatically, so retuning one line retunes the whole variant */
+    --section-bg-muted: var(--surface-alt);
+    --section-bg-primary: var(--primary);
+    --section-bg-dark: var(--text);
+    /* A flat bleeds full-viewport-width, past --body-max-width - set these to auto/auto/0 for a design
+       that frames the page, so the flats stay inside the frame like the navbar and footer above */
+    --section-flat-offset: 50%;
+    --section-flat-width: 100vw;
+    --section-flat-margin-x: -50vw;
 }

@@ -70,20 +70,30 @@ class ScaffoldInstaller
         return ['copied' => $copied, 'backedUp' => $backedUp, 'skipped' => $skipped];
     }
 
-    // Never writes to the app's own assets/styles/app.css - editing a developer-owned file in place is too risky to automate reliably. Returns a one-line reminder for the calling command to display when the scaffolded assets/styles/themes/theme.css exists but app.css doesn't import it yet, null otherwise (already wired, or this project doesn't have either file)
+    // Never writes to the app's own assets/styles/app.css or assets/app.js - editing a developer-owned file in place is too risky to automate reliably. Returns a one-line reminder for the calling command to display when the scaffolded assets/styles/themes/theme.css exists but nothing imports it yet, null otherwise (already wired, or this project doesn't have either file)
     public function themeImportReminder(): ?string
     {
-        $themeFile = $this->projectDir . '/assets/styles/themes/theme.css';
-        $appCss = $this->projectDir . '/assets/styles/app.css';
-        if (!is_file($themeFile) || !is_file($appCss)) {
+        if (!is_file($this->projectDir . '/assets/styles/themes/theme.css')) {
             return null;
         }
 
-        if (str_contains(file_get_contents($appCss), 'themes/theme.css')) {
+        // assets/app.js counts too, and is in fact the better place: AssetMapper doesn't merge CSS, so an @import forces the browser to download and parse app.css before it even discovers the theme, while two imports from app.js are fetched in parallel. Either file alone is enough to wire the theme, so an app.js-only project gets the reminder just like an app.css one - only a project with neither has nowhere to put the import, and nothing to be reminded of
+        $wiringPoints = array_filter([
+            $this->projectDir . '/assets/styles/app.css',
+            $this->projectDir . '/assets/app.js',
+        ], 'is_file');
+
+        if (!$wiringPoints) {
             return null;
         }
 
-        return 'Add @import url("./themes/theme.css"); to assets/styles/app.css (before any non-@import rule) to activate your site\'s editable theme.';
+        foreach ($wiringPoints as $path) {
+            if (str_contains(file_get_contents($path), 'themes/theme.css')) {
+                return null;
+            }
+        }
+
+        return 'Import the theme to activate it: add "import \'./styles/themes/theme.css\';" to assets/app.js, before the ./styles/app.css import (preferred - AssetMapper doesn\'t merge CSS, so both sheets are then fetched in parallel), or @import url("./themes/theme.css"); at the top of assets/styles/app.css.';
     }
 
     private function backup(string $relativePath, string $target): void
@@ -105,35 +115,4 @@ class ScaffoldInstaller
         }
     }
 
-    // Wires the scaffolded assets/styles/themes/theme.css (the app's own, freely-editable theme - see scaffold/assets/styles/themes/theme.css) into app.css, so a fresh scaffold install doesn't leave it orphaned. @import must precede other rules to be valid CSS, so this is inserted right after the last existing @import rather than appended at the end
-    private function ensureThemeImport(): void
-    {
-        $themeFile = $this->projectDir . '/assets/styles/themes/theme.css';
-        $appCss = $this->projectDir . '/assets/styles/app.css';
-        if (!is_file($themeFile) || !is_file($appCss)) {
-            return;
-        }
-
-        $content = file_get_contents($appCss);
-        if (str_contains($content, 'themes/theme.css')) {
-            return;
-        }
-
-        $import = "/* THEME */\n@import url(\"./themes/theme.css\");";
-        $lines = explode("\n", $content);
-        $lastImportLine = null;
-        foreach ($lines as $i => $line) {
-            if (str_starts_with(ltrim($line), '@import')) {
-                $lastImportLine = $i;
-            }
-        }
-
-        if (null === $lastImportLine) {
-            file_put_contents($appCss, $import . "\n\n" . $content);
-            return;
-        }
-
-        array_splice($lines, $lastImportLine + 1, 0, ['', $import]);
-        file_put_contents($appCss, implode("\n", $lines));
-    }
 }

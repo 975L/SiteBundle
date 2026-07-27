@@ -52,12 +52,10 @@ class W3cValidatorClient
     // Blocks until the given in-flight response completes and parses it - returns ['errors' => string[], 'warnings' => string[]], one entry per message, "line N: text" for easy reading in the summary/details
     public function readHtml(ResponseInterface $response): array
     {
-        $data = $response->toArray();
-
         $errors = [];
         $warnings = [];
-        foreach ($data['messages'] ?? [] as $message) {
-            $text = sprintf('line %d: %s', $message['lastLine'] ?? 0, $message['message'] ?? 'Unknown error');
+        foreach ($response->toArray()['messages'] ?? [] as $message) {
+            $text = self::messageLine($message, 'lastLine', 'Unknown error');
             if ('error' === ($message['type'] ?? null)) {
                 $errors[] = $text;
             } elseif ('warning' === ($message['subType'] ?? null)) {
@@ -66,6 +64,14 @@ class W3cValidatorClient
         }
 
         return ['errors' => $errors, 'warnings' => $warnings];
+    }
+
+    // "line N: text", from the validator's own line number and wording - both validators sometimes return a message split into several parts, joined back here rather than rendering as "Array". The two don't name their line the same way, hence $lineKey ("lastLine" for the Nu checker, "line" for the CSS one)
+    private static function messageLine(array $message, string $lineKey, string $fallback): string
+    {
+        $text = $message['message'] ?? $fallback;
+
+        return sprintf('line %d: %s', $message[$lineKey] ?? 0, is_array($text) ? implode(' ', $text) : $text);
     }
 
     // Convenience for a single-URL validation - returns the same shape as readHtml(), or throws on a network/API error
@@ -86,19 +92,17 @@ class W3cValidatorClient
     // Blocks until the given in-flight response completes and parses it - same return shape as readHtml(), plus 'benignWarnings' (string[]) holding the warnings split off by BENIGN_CSS_WARNING_PATTERNS. Nothing is dropped: 'warnings' + 'benignWarnings' is exactly what the W3C report shows
     public function readCss(ResponseInterface $response): array
     {
-        $data = $response->toArray();
-        $result = $data['cssvalidation'] ?? [];
+        $result = $response->toArray()['cssvalidation'] ?? [];
 
         $errors = array_map(
-            static fn (array $error) => sprintf('line %d: %s', $error['line'] ?? 0, is_array($error['message'] ?? null) ? implode(' ', $error['message']) : ($error['message'] ?? 'Unknown error')),
+            static fn (array $error) => self::messageLine($error, 'line', 'Unknown error'),
             $result['errors'] ?? [],
         );
 
         $warnings = [];
         $benignWarnings = [];
         foreach ($result['warnings'] ?? [] as $warning) {
-            // Same guard as the errors above: the validator sometimes returns a message split into several parts, which would otherwise render as "Array"
-            $text = sprintf('line %d: %s', $warning['line'] ?? 0, is_array($warning['message'] ?? null) ? implode(' ', $warning['message']) : ($warning['message'] ?? 'Unknown warning'));
+            $text = self::messageLine($warning, 'line', 'Unknown warning');
             if ($this->isBenignCssWarning($text)) {
                 $benignWarnings[] = $text;
                 continue;

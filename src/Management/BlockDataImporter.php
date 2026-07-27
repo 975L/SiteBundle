@@ -17,6 +17,23 @@ use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 // Shared Block/Media rebuild for every Sync import carrying a Block collection (Page, Menu) - mirrors BlockDataExporter on the way in
 class BlockDataImporter
 {
+    // Every scalar Media field an export carries, with the value to fall back on when the archive predates that field - keeps buildMedia() a plain mapping instead of a chain of thirteen "?? default"
+    private const MEDIA_DEFAULTS = [
+        'role' => null,
+        'name' => null,
+        'alt' => null,
+        'label' => null,
+        'width' => null,
+        'height' => null,
+        'cssClasses' => null,
+        'above' => false,
+        'credits' => null,
+        'rightsReserved' => false,
+        'position' => 0,
+        'url' => null,
+        'description' => null,
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly DefaultPagesImporter $defaultPagesImporter,
@@ -45,16 +62,11 @@ class BlockDataImporter
             ->setData($blockData['data'] ?? [])
             ->setAnimation($blockData['animation'] ?? null);
 
-        foreach ($blockData['medias'] ?? [] as $mediaData) {
-            $media = $this->buildMedia($mediaData, $filesDir);
-            $this->em->persist($media);
-            $block->addMedia($media);
-        }
+        $this->addMedias($block, $blockData['medias'] ?? [], $filesDir);
 
+        // buildBlock() persists the slot itself, at the end of its own recursion
         foreach ($blockData['slots'] ?? [] as $slotData) {
-            $slot = $this->buildBlock($slotData, $filesDir);
-            $this->em->persist($slot);
-            $block->addSlot($slot);
+            $block->addSlot($this->buildBlock($slotData, $filesDir));
         }
 
         $this->em->persist($block);
@@ -62,23 +74,37 @@ class BlockDataImporter
         return $block;
     }
 
+    private function addMedias(Block $block, array $mediasData, ?string $filesDir): void
+    {
+        foreach ($mediasData as $mediaData) {
+            $media = $this->buildMedia($mediaData, $filesDir);
+            $this->em->persist($media);
+            $block->addMedia($media);
+        }
+    }
+
     // Rebuilds a Media from its exported metadata, its file read straight from the extracted zip archive (see ContentImportController) and run through Vich's normal upload pipeline via ReplacingFile (a plain File is silently ignored by Vich's UploadHandler, see PageCrudController::cloneMedia()), so filename/size/mimeType/thumbnails all get regenerated here rather than trusting the exporting environment's values. Public: also used directly for a standalone Media not attached to any Block (eg. Page::$ogImage)
     public function buildMedia(array $mediaData, ?string $filesDir): Media
     {
+        $values = [];
+        foreach (self::MEDIA_DEFAULTS as $key => $default) {
+            $values[$key] = $mediaData[$key] ?? $default;
+        }
+
         $media = (new Media())
-            ->setRole($mediaData['role'] ?? null)
-            ->setName($mediaData['name'] ?? null)
-            ->setAlt($mediaData['alt'] ?? null)
-            ->setLabel($mediaData['label'] ?? null)
-            ->setWidth($mediaData['width'] ?? null)
-            ->setHeight($mediaData['height'] ?? null)
-            ->setCssClasses($mediaData['cssClasses'] ?? null)
-            ->setAbove($mediaData['above'] ?? false)
-            ->setCredits($mediaData['credits'] ?? null)
-            ->setRightsReserved($mediaData['rightsReserved'] ?? false)
-            ->setPosition($mediaData['position'] ?? 0)
-            ->setUrl($mediaData['url'] ?? null)
-            ->setDescription($mediaData['description'] ?? null);
+            ->setRole($values['role'])
+            ->setName($values['name'])
+            ->setAlt($values['alt'])
+            ->setLabel($values['label'])
+            ->setWidth($values['width'])
+            ->setHeight($values['height'])
+            ->setCssClasses($values['cssClasses'])
+            ->setAbove($values['above'])
+            ->setCredits($values['credits'])
+            ->setRightsReserved($values['rightsReserved'])
+            ->setPosition($values['position'])
+            ->setUrl($values['url'])
+            ->setDescription($values['description']);
 
         if (null !== $filesDir && isset($mediaData['file'])) {
             $media->setFile(new ReplacingFile($filesDir . '/' . $mediaData['file'], true, true, true));

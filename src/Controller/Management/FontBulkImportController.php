@@ -73,19 +73,12 @@ class FontBulkImportController extends AbstractController
         $created = 0;
         $skipped = [];
         foreach ($files as $file) {
-            if (!$file instanceof UploadedFile || !$file->isValid() || !$this->isValidFontFile($file)) {
+            $font = $this->buildFont($file);
+            if (null === $font) {
                 $skipped[] = $file instanceof UploadedFile ? $file->getClientOriginalName() : '?';
 
                 continue;
             }
-
-            $guess = $this->fontFilenameParser->parse($file->getClientOriginalName());
-
-            $font = (new Font())
-                ->setName($guess['name'])
-                ->setWeight($guess['weight'])
-                ->setStyle($guess['style'])
-                ->setFile($file);
 
             $this->entityManager->persist($font);
             ++$created;
@@ -103,6 +96,22 @@ class FontBulkImportController extends AbstractController
         $this->addFlash('success', $this->translator->trans('flash.font_bulk_import_success', ['%count%' => $created], 'site'));
 
         return $this->redirect($this->adminUrlGenerator->setController(FontCrudController::class)->setAction(Action::INDEX)->generateUrl());
+    }
+
+    // Name/weight/style guessed from the filename (see FontFilenameParser), all three still editable afterwards - null for anything that isn't a usable font upload, which the caller reports back as skipped rather than failing the whole batch
+    private function buildFont(mixed $file): ?Font
+    {
+        if (!$file instanceof UploadedFile || !$file->isValid() || !$this->isValidFontFile($file)) {
+            return null;
+        }
+
+        $guess = $this->fontFilenameParser->parse($file->getClientOriginalName());
+
+        return (new Font())
+            ->setName($guess['name'])
+            ->setWeight($guess['weight'])
+            ->setStyle($guess['style'])
+            ->setFile($file);
     }
 
     private function isValidFontFile(UploadedFile $file): bool

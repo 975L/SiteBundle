@@ -38,14 +38,16 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     {
         $advice = [];
         foreach ($results as $result) {
-            $lines = match ($result->getKind()) {
-                'pagespeed' => $this->pagespeedAdvice($result),
-                'security-headers' => $this->securityHeadersAdvice($result),
-                'w3c-html' => $this->w3cHtmlAdvice($result),
-                'w3c-css' => $this->w3cCssAdvice($result),
-                'content-quality' => $this->contentQualityAdvice($result),
-                'ssl-certificate' => $this->sslCertificateAdvice($result),
-                'mixed-content' => $this->mixedContentAdvice($result),
+            $lines = match (true) {
+                'pagespeed' === $result->getKind() => $this->pagespeedAdvice($result),
+                'security-headers' === $result->getKind() => $this->securityHeadersAdvice($result),
+                'w3c-html' === $result->getKind() => $this->w3cHtmlAdvice($result),
+                'w3c-css' === $result->getKind() => $this->w3cCssAdvice($result),
+                // Every "urls-<bundle>" kind holds exactly the same details as content-quality - same analyzer behind both, only the url list differs (see DeclaredUrlsHealthCheckProvider)
+                'content-quality' === $result->getKind(), str_starts_with($result->getKind(), 'urls-') => $this->contentQualityAdvice($result),
+                'ssl-certificate' === $result->getKind() => $this->sslCertificateAdvice($result),
+                'mixed-content' === $result->getKind() => $this->mixedContentAdvice($result),
+                'deployment' === $result->getKind() => $this->deploymentAdvice($result),
                 default => $this->unknownKindAdvice($result),
             };
             if ($lines) {
@@ -142,32 +144,87 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         return $advice;
     }
 
-    // No external validator for this one - it's this bundle's own local check, there's no third-party report to link to. Each image/link is listed individually under its advice line instead, linking to the block holding it (see ContentQualityHealthCheckProvider::describeImages()/describeLinks())
+    // No external validator for this one - it's this bundle's own local check, there's no third-party report to link to. Each image/link is listed individually under its advice line instead, linking to the block holding it (see ContentQualityAnalyzer::describeImages()/describeLinks())
     private function contentQualityAdvice(HealthCheckResult $result): array
     {
         $details = $result->getDetails() ?? [];
-        // Only ever a list here, but a result persisted before those two details became lists of their own still holds a plain count - normalized away rather than crashing the whole panel until the next run
-        $images = $this->itemList($details['imagesWithoutAlt'] ?? []);
-        $links = $this->itemList($details['brokenLinks'] ?? []);
+
+        return array_merge(
+            $this->titleAdvice($details),
+            $this->descriptionAdvice($details),
+            $this->headingAdvice($details),
+            $this->socialTagsAdvice($details),
+            $this->offendersAdvice($details),
+        );
+    }
+
+    // The thresholds themselves come from ContentQualityAnalyzer, which already applied them - repeating them here is only to tell the user what to aim for
+    private function titleAdvice(array $details): array
+    {
+        $issue = $details['titleIssue'] ?? null;
+        if ('missing' === $issue) {
+            return [$this->line('label.health_check_advice_no_title', [], null)];
+        }
+        if (!\in_array($issue, ['short', 'long'], true)) {
+            return [];
+        }
+
+        return [$this->line('label.health_check_advice_title_length', [
+            '%length%' => $details['titleLength'] ?? 0,
+            '%min%' => ContentQualityAnalyzer::TITLE_MIN_LENGTH,
+            '%max%' => ContentQualityAnalyzer::TITLE_MAX_LENGTH,
+        ], null)];
+    }
+
+    // A description that isn't there at all gets "add one" rather than "make it longer", same split as the summary's own
+    private function descriptionAdvice(array $details): array
+    {
+        if (false === ($details['hasDescription'] ?? true)) {
+            return [$this->line('label.health_check_advice_no_description', [], null)];
+        }
+        if (!\in_array($details['descriptionIssue'] ?? null, ['short', 'long'], true)) {
+            return [];
+        }
+
+        return [$this->line('label.health_check_advice_description_length', [
+            '%length%' => $details['descriptionLength'] ?? 0,
+            '%min%' => ContentQualityAnalyzer::DESCRIPTION_MIN_LENGTH,
+            '%max%' => ContentQualityAnalyzer::DESCRIPTION_MAX_LENGTH,
+        ], null)];
+    }
+
+    private function headingAdvice(array $details): array
+    {
+        return false === ($details['hasH1'] ?? true) ? [$this->line('label.health_check_advice_no_h1', [], null)] : [];
+    }
+
+    // Listed by name rather than counted - "og:description, og:image" is the whole fix, there's nothing to expand into a collapsed list here
+    private function socialTagsAdvice(array $details): array
+    {
+        $tags = array_filter((array) ($details['missingSocialTags'] ?? []), '\is_string');
+
+        return $tags ? [$this->line('label.health_check_advice_social_tags', ['%tags%' => implode(', ', $tags)], null)] : [];
+    }
+
+    // The three details holding a list of individual offenders, each rendered as one "%count% of them" line expandable into that list. Broken external links are worded as "check them" rather than "fix them": the page they point at may well be back tomorrow, and the fix (drop the link, point it elsewhere) is a call only the author can make
+    private function offendersAdvice(array $details): array
+    {
+        $offenders = [
+            'imagesWithoutAlt' => ['label.health_check_advice_images_without_alt', static fn (array $image): string => $image['src'] ?? ''],
+            'brokenLinks' => ['label.health_check_advice_broken_links', $this->linkText(...)],
+            'brokenExternalLinks' => ['label.health_check_advice_broken_external_links', $this->linkText(...)],
+        ];
 
         $advice = [];
-        if (false === ($details['hasDescription'] ?? true)) {
-            $advice[] = $this->line('label.health_check_advice_no_description', [], null);
-        }
-        if (false === ($details['hasH1'] ?? true)) {
-            $advice[] = $this->line('label.health_check_advice_no_h1', [], null);
-        }
-        if ($images) {
-            $advice[] = $this->line('label.health_check_advice_images_without_alt', ['%count%' => \count($images)], null, array_map(
-                fn (array $image): array => $this->item($image['src'] ?? '', $image),
-                $images,
-            ));
-        }
-        if ($links) {
-            $advice[] = $this->line('label.health_check_advice_broken_links', ['%count%' => \count($links)], null, array_map(
-                fn (array $link): array => $this->item($this->linkText($link), $link),
-                $links,
-            ));
+        foreach ($offenders as $key => [$translationId, $text]) {
+            // Only ever a list here, but a result persisted before these details became lists of their own still holds a plain count - normalized away rather than crashing the whole panel until the next run
+            $items = $this->itemList($details[$key] ?? []);
+            if ($items) {
+                $advice[] = $this->line($translationId, ['%count%' => \count($items)], null, array_map(
+                    fn (array $item): array => $this->item($text($item), $item),
+                    $items,
+                ));
+            }
         }
 
         return $advice;
@@ -206,6 +263,18 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         }
 
         return [$this->line('label.health_check_advice_ssl_certificate', [], null)];
+    }
+
+    // Each of these is a server/routing fix rather than a content one, so the advice points at what to change, not at a block to edit
+    private function deploymentAdvice(HealthCheckResult $result): array
+    {
+        return match ($result->getDetails()['issue'] ?? null) {
+            'https-redirect' => [$this->line('label.health_check_advice_https_redirect', [], null)],
+            'insecure-redirect' => [$this->line('label.health_check_advice_https_redirect_insecure', [], null)],
+            'not-404' => [$this->line('label.health_check_advice_not_found_status', ['%status%' => $result->getDetails()['statusCode'] ?? ''], null)],
+            'default-404' => [$this->line('label.health_check_advice_not_found_default_page', [], null)],
+            default => [],
+        };
     }
 
     private function mixedContentAdvice(HealthCheckResult $result): array

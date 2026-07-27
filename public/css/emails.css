@@ -41,6 +41,9 @@
   --border-accent: color-mix(in srgb, var(--primary) 35%, var(--background));
   --surface-inverse: #232323;
   --text-on-inverse: #d8d8d8;
+  --section-bg-muted: var(--surface-alt);
+  --section-bg-primary: var(--primary);
+  --section-bg-dark: var(--text);
   --radius-btn: 5px;
   --radius-card: 10px;
   --radius-panel: 16px;
@@ -48,11 +51,18 @@
   --navbar-background: var(--white);
   --navbar-text: var(--black);
   --navbar-active-color: var(--primary);
+  --navbar-site-name-color: var(--primary);
+  --navbar-site-tagline-color: var(--text);
   --border-nav: none;
   --navbar-position: relative;
   --navbar-z-index: auto;
   --navbar-background-scrolled: var(--navbar-background);
   --navbar-text-scrolled: var(--navbar-text);
+  --navbar-btn-background: var(--primary);
+  --navbar-btn-background-hover: var(--button-background-primary-dark);
+  --navbar-btn-color: var(--button-color);
+  --navbar-width: 100vw;
+  --navbar-margin-x: calc(50% - 50vw);
   --footer-background: var(--primary);
   --footer-text: var(--white);
   --footer-text-hover: var(--footer-text);
@@ -151,6 +161,7 @@ body {
   max-width: var(--body-max-width);
   margin: 0 auto;
   background-color: var(--background);
+  font-weight: var(--font-body-weight);
 }
 
 .box-shadow {

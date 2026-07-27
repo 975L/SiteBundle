@@ -1,5 +1,66 @@
 # Changelog
 
+## v7.10.0
+
+- Removed the theme preset catalog, `SiteThemePresetProvider`, `config/themes/`, `sass/themes/` and the compiled `public/css/themes/` alike (27/07/2026) [BC-Break]
+- Removed the `theme-stylesheet` config key, along with its `label.`/`description.` translations (27/07/2026) [BC-Break]
+- `StylesheetProvider` no longer takes a `ConfigServiceInterface`, having no config left to read (27/07/2026) [BC-Break]
+- Removed `PageController`'s `?preset=<slug>` preview, along with `label.preview_preset_mode` (27/07/2026) [BC-Break]
+- The scaffolded `assets/styles/themes/theme.css` now restates every shape token at its default value (27/07/2026)
+- Added `--navbar-width`/`--navbar-margin-x`, the navbar's full-bleed being hardcoded in `.menu` while the footer already read the same pair from tokens (27/07/2026)
+- Added `--navbar-btn-background`/`-background-hover`/`-color`, the "primary" nav item's pill being invisible on a navbar painted with `--primary` (27/07/2026)
+- Added `--navbar-site-name-color`/`--navbar-site-tagline-color`, both hardcoded to `--primary` until now (27/07/2026)
+- Fixed the navbar tagline showing `--text` instead of its own color, `_typography.scss` painting the rich-text editor's `<div>` directly (27/07/2026)
+- Added `--section-bg-muted`/`-primary`/`-dark`, the three flats a page section can be painted with (27/07/2026)
+- `body` now carries `font-weight: var(--font-body-weight)`, the token being declared since 18/02/2024 but read by no rule (27/07/2026)
+- Removed the scaffolded `assets/styles/_fonts.css` starter file, superseded by the font upload screen (27/07/2026) [BC-Break]
+- Removed the `site-fonts-face-file` config key, along with `FontService`'s parsing of dev-declared `@font-face` (27/07/2026) [BC-Break]
+- `FontService` now only offers the uploaded fonts, and no longer depends on `ConfigServiceInterface`/`kernel.project_dir` (27/07/2026) [BC-Break]
+- `ThemeVariablesCssListener` now compiles only the `theme-`-prefixed slugs of the theme group, skipping the others instead of turning them into a variable no stylesheet reads (27/07/2026)
+- Fixed a lesser admin silently stripping ROLE_SUPER_ADMIN off a user just by saving their record in `UserCrudController` (27/07/2026)
+- `UserCrudController` gained an `AdminContextProvider` constructor argument, to know which user is being edited (27/07/2026) [BC-Break]
+- `c975l:site:create` now also grants ROLE_EDITOR to the bootstrap user, no `role_hierarchy` being shipped to imply it from ROLE_ADMIN (27/07/2026)
+- Added `UserCrudControllerTest`, covering the role choices and the frozen roles field (27/07/2026)
+- Added `UserManagementVoter`, keeping a lesser admin off a super admin's account, edit and delete alike (27/07/2026)
+- `UserCrudController` now hands that voter to EasyAdmin as its entity permission, in place of the `site-role-admin` role (27/07/2026)
+- Added `ContentQualityAnalyzer`, the content-quality checks split off from `ContentQualityHealthCheckProvider` (27/07/2026)
+- Added `DeclaredUrlsHealthCheckProvider`, running those same checks over another bundle's declared sitemap urls (27/07/2026)
+- Added `DeclaredUrlsHealthCheckPass`, registering one provider per `SitemapProviderInterface` in the container (27/07/2026)
+- Added `DeploymentHealthCheckProvider`, checking the http/https redirect and that an unknown url answers a real 404 (27/07/2026)
+- Added `DeploymentClient` (27/07/2026)
+- `content-quality` now checks the `<title>`'s presence and its 30-65 character length (27/07/2026)
+- `content-quality` now checks the meta description's 50-160 character length, not just its presence (27/07/2026)
+- `content-quality` now checks the `og:title`/`og:description`/`og:image` share tags (27/07/2026)
+- `content-quality` now checks external links too, a dead one only ever a warning (27/07/2026)
+- Link checks now send an identifying `User-Agent`, a bare library default being filtered by most big sites (27/07/2026)
+- A link answering 403, 429 or LinkedIn's non-standard 999 is now inconclusive, instead of broken (27/07/2026)
+- `PageHealthCheckAdviceBuilder` now covers the `deployment` and `urls-<bundle>` kinds (27/07/2026)
+- Added the advice lines for the title, description, share tags and external link checks (27/07/2026)
+- Fixed a W3C HTML message split into several parts rendering as "line 12: Array" (27/07/2026)
+- The scaffolded `MaintenanceSchedule` now schedules the `deployment` and `urls-<bundle>` kinds (27/07/2026)
+- `ContentQualityAnalyzer` now analyses urls in batches, instead of firing every request at once and holding every response (27/07/2026)
+- A declared url no longer costs an existence HEAD of its own, its analysis response answering it (27/07/2026)
+- `DeclaredUrlsHealthCheckPass` now skips abstract and synthetic definitions, which no container can reference (27/07/2026)
+- `ScaffoldInstaller::themeImportReminder()` now also fires on a project wiring its assets from `app.js` alone (27/07/2026)
+- Removed `ScaffoldInstaller::ensureThemeImport()`, a private method called by nothing (27/07/2026)
+- Added a readme section on routing `RunCommandMessage`, for the dashboard's on-demand health check runs (27/07/2026)
+- Fixed `UserManagementVoter` denying an account holding ROLE_SUPER_ADMIN without the `site-role-admin` role (27/07/2026)
+- A declared url answering 404 is now an error, instead of being reported as not tested (27/07/2026) [BC-Break]
+- A url answering 403 or 5xx is now an error too, instead of being reported as not tested (27/07/2026) [BC-Break]
+- A url answering 410 is now a warning, deliberately removed but still declared (27/07/2026)
+- Added the `label.health_check_url_gone` translation (27/07/2026)
+- Added `UserManagementVoterTest` (27/07/2026)
+- `c975l:site:create` no longer asks to confirm the password, which it echoes in clear text anyway (27/07/2026)
+- `c975l:site:create` now looks for `src/Entity/User.php` on disk, autoloading the class freezing its pre-scaffold version for the whole process (27/07/2026)
+- Added `BuildFileWriterTrait`, the atomic build-file write shared by `ThemeVariablesCssListener` and `FontCssListener` (27/07/2026)
+- Split the longest methods of the commands, controllers, importers and services into named private helpers (27/07/2026)
+- Added `DeploymentHealthCheckProviderTest`, `DeclaredUrlsHealthCheckProviderTest` and `DeclaredUrlsHealthCheckPassTest` (27/07/2026)
+- Added `DeploymentClientTest` (27/07/2026)
+- Added `SiteCreateCommandTest` (27/07/2026)
+- Added a `W3cValidatorClientTest` case on a HTML message returned as an array (27/07/2026)
+- Documented the per-row `UserManagementVoter` guard and the frozen roles field in the readme (27/07/2026)
+- Documented wiring `theme.css` from `assets/app.js` in the readme, AssetMapper not merging CSS (27/07/2026)
+
 ## v7.9.1
 
 - `isIndexable` is now shown as a switch in the pages list, next to `isPublished` (26/07/2026)
@@ -556,7 +617,6 @@
 - Added join for article medias (18/06/2026)
 - Corrected Sitemap command to include pages in database (18/06/2026)
 - Moved Listener logic to CrudControllers (18/06/2026)
-- Removed twitter meta data (20/06/2026)
 - Moved MaintenanceListener to c975L/ConfigBundle (22/06/2026)
 
 ## v6.26.2
@@ -1511,7 +1571,6 @@ Upgrading from v1.x? **Check UPGRADE.md**
 
 ## v1.2.2
 
-- Added Twitter cards (07/03/2018)
 - Corrected indentation in `layout.html.twig` (07/03/2018)
 - Changed `README.md` to use `inc_content()` (07/03/2018)
 

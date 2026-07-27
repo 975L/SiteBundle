@@ -10,7 +10,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ProviderMerger;
 
-// Merges the templates contributed by every TemplateProviderInterface (SiteBundle's own shipped ones via SiteTemplateProvider, plus any satellite bundle's or app's own) - same pattern as ConfigBundle's ThemePresetRegistry
+// Merges the templates contributed by every TemplateProviderInterface (SiteBundle's own shipped ones via SiteTemplateProvider, plus any satellite bundle's or app's own) - same merge-every-provider pattern as ConfigBundle's own registries
 class TemplateRegistry
 {
     private array $templates;

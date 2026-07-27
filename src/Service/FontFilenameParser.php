@@ -47,29 +47,36 @@ class FontFilenameParser
         $base = preg_replace('/_[a-z]{3,4}(,[a-z]{3,4})*$/i', '', $base) ?? $base;
 
         $parts = preg_split('/[-_]+/', $base, -1, PREG_SPLIT_NO_EMPTY) ?: [$base];
+        $suffix = $this->parseSuffix($parts);
 
-        $weight = 400;
-        $style = 'normal';
-        $nameParts = $parts;
-
-        if (\count($parts) > 1) {
-            $suffix = strtolower((string) end($parts));
-            $isItalic = str_contains($suffix, 'italic');
-            $weightSuffix = str_replace('italic', '', $suffix);
-            $matchedWeight = '' !== $weightSuffix ? $this->matchWeight($weightSuffix) : null;
-
-            if ($isItalic || null !== $matchedWeight) {
-                array_pop($nameParts);
-                $style = $isItalic ? 'italic' : 'normal';
-                $weight = $matchedWeight ?? $weight;
-            }
-        }
+        // The last segment is only dropped from the name when it really was a weight/style suffix - "Papa-Calin.woff2" keeps both words
+        $nameParts = null === $suffix ? $parts : \array_slice($parts, 0, -1);
 
         return [
             'name' => $this->humanize(implode(' ', $nameParts)),
-            'weight' => $weight,
-            'style' => $style,
+            'weight' => $suffix['weight'] ?? 400,
+            'style' => $suffix['style'] ?? 'normal',
         ];
+    }
+
+    // The weight/style the filename's last segment stands for ("Bold", "ExtraBoldItalic", "Italic"...), or null when it carries neither - a single-segment filename ("Roboto.ttf") has no suffix to read either
+    // @return array{weight: int, style: string}|null
+    private function parseSuffix(array $parts): ?array
+    {
+        if (\count($parts) < 2) {
+            return null;
+        }
+
+        $suffix = strtolower((string) end($parts));
+        $isItalic = str_contains($suffix, 'italic');
+        $weightSuffix = str_replace('italic', '', $suffix);
+        $weight = '' !== $weightSuffix ? $this->matchWeight($weightSuffix) : null;
+
+        if (!$isItalic && null === $weight) {
+            return null;
+        }
+
+        return ['weight' => $weight ?? 400, 'style' => $isItalic ? 'italic' : 'normal'];
     }
 
     private function matchWeight(string $suffix): ?int

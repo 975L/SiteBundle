@@ -115,40 +115,49 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
         $scores = $analysis['scores'];
         $consoleErrors = $analysis['consoleErrors'];
 
+        return [
+            'url' => $url,
+            'label' => $label,
+            'status' => $this->pageStatus($scores, $consoleErrors),
+            'summary' => $this->pageSummary($scores, $consoleErrors),
+            'details' => ['scores' => $scores, 'consoleErrors' => $consoleErrors],
+            'editUrl' => $editUrl,
+        ];
+    }
+
+    // The worst verdict any of the four gauges earns: red below SCORE_THRESHOLD_WARNING, orange below SCORE_THRESHOLD_OK. A console error alone only ever warns - it doesn't say the page is broken, but it's worth a look
+    private function pageStatus(array $scores, array $consoleErrors): string
+    {
         $status = HealthCheckResult::STATUS_OK;
         foreach ($scores as $score) {
             if (null === $score) {
                 continue;
             }
             if ($score < self::SCORE_THRESHOLD_WARNING) {
-                $status = HealthCheckResult::STATUS_ERROR;
-                break;
+                return HealthCheckResult::STATUS_ERROR;
             }
             if ($score < self::SCORE_THRESHOLD_OK) {
                 $status = HealthCheckResult::STATUS_WARNING;
             }
         }
-        if ($consoleErrors && HealthCheckResult::STATUS_OK === $status) {
-            $status = HealthCheckResult::STATUS_WARNING;
-        }
 
+        return $consoleErrors && HealthCheckResult::STATUS_OK === $status ? HealthCheckResult::STATUS_WARNING : $status;
+    }
+
+    // The four scores in one line, a gauge never returned by the API showing as "-" rather than as a 0 it didn't earn
+    private function pageSummary(array $scores, array $consoleErrors): string
+    {
         $summary = $this->translator->trans('label.health_check_summary_pagespeed', [
             '%performance%' => $scores['performance'] ?? '-',
             '%accessibility%' => $scores['accessibility'] ?? '-',
             '%bestPractices%' => $scores['best-practices'] ?? '-',
             '%seo%' => $scores['seo'] ?? '-',
         ], 'site');
-        if ($consoleErrors) {
-            $summary .= ' · ' . $this->translator->trans('label.health_check_console_errors', ['%count%' => \count($consoleErrors)], 'site');
+
+        if (!$consoleErrors) {
+            return $summary;
         }
 
-        return [
-            'url' => $url,
-            'label' => $label,
-            'status' => $status,
-            'summary' => $summary,
-            'details' => ['scores' => $scores, 'consoleErrors' => $consoleErrors],
-            'editUrl' => $editUrl,
-        ];
+        return $summary . ' · ' . $this->translator->trans('label.health_check_console_errors', ['%count%' => \count($consoleErrors)], 'site');
     }
 }

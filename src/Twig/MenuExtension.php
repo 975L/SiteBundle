@@ -89,23 +89,33 @@ class MenuExtension extends AbstractExtension
 
         $parsed = self::parseTarget($target);
 
-        if ('page' === $parsed['type']) {
-            $page = $this->resolvePage($parsed['pageId']);
-            if (null === $page || !$page->isPublished() || $page->isDeleted()) {
-                return '';
-            }
+        return match ($parsed['type']) {
+            'page' => $this->pageUrl($parsed),
+            'route' => $this->routeUrl($parsed['value']),
+            default => '',
+        };
+    }
 
-            // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
-            $path = 'home' === $page->getSlug()
-                ? $this->router->generate('page_home')
-                : $this->router->generate('page_display', ['page' => $page->getSlug()]);
-
-            return $path . (null !== $parsed['fragment'] ? '#' . $parsed['fragment'] : '');
+    // Empty string for a page that no longer resolves (unpublished, soft-deleted, removed), so the template skips rendering the link
+    private function pageUrl(array $parsed): string
+    {
+        $page = $this->resolvePage($parsed['pageId']);
+        if (null === $page || !$page->isPublished() || $page->isDeleted()) {
+            return '';
         }
 
-        return 'route' === $parsed['type'] && null !== $parsed['value'] && $this->linkableRouteRegistry->has($parsed['value'])
-            ? $this->router->generate($parsed['value'])
-            : '';
+        // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
+        $path = 'home' === $page->getSlug()
+            ? $this->router->generate('page_home')
+            : $this->router->generate('page_display', ['page' => $page->getSlug()]);
+
+        return $path . (null !== $parsed['fragment'] ? '#' . $parsed['fragment'] : '');
+    }
+
+    // Only a route a LinkableRouteProviderInterface still declares is generated - one dropped since the menu was saved yields an empty string rather than a routing exception on every page
+    private function routeUrl(?string $route): string
+    {
+        return null !== $route && $this->linkableRouteRegistry->has($route) ? $this->router->generate($route) : '';
     }
 
     public function getMenuLinkLabel(?string $target): string
@@ -116,30 +126,36 @@ class MenuExtension extends AbstractExtension
 
         $parsed = self::parseTarget($target);
 
-        if ('page' === $parsed['type']) {
-            $page = $this->resolvePage($parsed['pageId']);
-            if (null === $page) {
-                return '';
-            }
+        return match ($parsed['type']) {
+            'page' => $this->pageLabel($parsed),
+            'route' => $this->routeLabel($parsed['value']),
+            default => '',
+        };
+    }
 
-            // No fragment (whole-page target) and this is the site's own "Copyright" legal page: shows the live computed copyright instead of the page's own title, so a footer's "Copyright" link doubles as the copyright notice instead of showing both side by side (see "site-menu-link-copyright-auto")
-            if (null === $parsed['fragment'] && $this->isCopyrightPage($page)) {
-                return $this->copyrightExtension->getCopyright(false);
-            }
-
-            // A "#anchor-blockId" fragment (see MenuLinkType) labels a specific section, not the page itself - falls back to the page's own title if the block was since removed/moved
-            $sectionLabel = null !== $parsed['fragment'] ? $this->findSectionLabel($page, $parsed['fragment']) : null;
-
-            return $sectionLabel ?? (string) $page->getTitle();
+    private function pageLabel(array $parsed): string
+    {
+        $page = $this->resolvePage($parsed['pageId']);
+        if (null === $page) {
+            return '';
         }
 
-        if ('route' === $parsed['type'] && null !== $parsed['value']) {
-            $route = $this->linkableRouteRegistry->get($parsed['value']);
-
-            return null === $route ? '' : $this->translator->trans($route['label'], [], $route['translation_domain']);
+        // No fragment (whole-page target) and this is the site's own "Copyright" legal page: shows the live computed copyright instead of the page's own title, so a footer's "Copyright" link doubles as the copyright notice instead of showing both side by side (see "site-menu-link-copyright-auto")
+        if (null === $parsed['fragment'] && $this->isCopyrightPage($page)) {
+            return $this->copyrightExtension->getCopyright(false);
         }
 
-        return '';
+        // A "#anchor-blockId" fragment (see MenuLinkType) labels a specific section, not the page itself - falls back to the page's own title if the block was since removed/moved
+        $sectionLabel = null !== $parsed['fragment'] ? $this->findSectionLabel($page, $parsed['fragment']) : null;
+
+        return $sectionLabel ?? (string) $page->getTitle();
+    }
+
+    private function routeLabel(?string $route): string
+    {
+        $registered = null === $route ? null : $this->linkableRouteRegistry->get($route);
+
+        return null === $registered ? '' : $this->translator->trans($registered['label'], [], $registered['translation_domain']);
     }
 
     // True when $target's own label already is (or would be) the live-computed copyright notice - lets Footer.html.twig skip its own fallback "copyright" span instead of showing it twice
@@ -179,22 +195,7 @@ class MenuExtension extends AbstractExtension
     // Batches every "menu_link" block's target Page into a single query instead of one find() call per link (see resolvePage()) - parses each block's raw target the same way getMenuLinkUrl()/getMenuLinkLabel() do, but only to collect ids upfront
     private function preloadPages(Collection $blocks): void
     {
-        $ids = [];
-        foreach ($blocks as $block) {
-            if ('menu_link' !== $block->getKind()) {
-                continue;
-            }
-
-            $parsed = self::parseTarget((string) ($block->getData()['target'] ?? ''));
-            if ('page' !== $parsed['type'] || null === $parsed['pageId']) {
-                continue;
-            }
-
-            if (!array_key_exists($parsed['pageId'], $this->pageCache)) {
-                $ids[$parsed['pageId']] = true;
-            }
-        }
-
+        $ids = $this->collectPageIds($blocks);
         if ([] === $ids) {
             return;
         }
@@ -207,6 +208,24 @@ class MenuExtension extends AbstractExtension
         foreach (array_keys($ids) as $pageId) {
             $this->pageCache[$pageId] ??= null;
         }
+    }
+
+    // The ids of every "page:ID" target of the given blocks not already cached, as keys (deduped) - a block of another kind, a "route:" target or an incomplete one contributes nothing
+    private function collectPageIds(Collection $blocks): array
+    {
+        $ids = [];
+        foreach ($blocks as $block) {
+            if ('menu_link' !== $block->getKind()) {
+                continue;
+            }
+
+            $parsed = self::parseTarget((string) ($block->getData()['target'] ?? ''));
+            if ('page' === $parsed['type'] && null !== $parsed['pageId'] && !array_key_exists($parsed['pageId'], $this->pageCache)) {
+                $ids[$parsed['pageId']] = true;
+            }
+        }
+
+        return $ids;
     }
 
     // Single point of Page lookup for both getMenuLinkUrl()/getMenuLinkLabel() - reads from the batch preloaded by preloadPages(), falling back to an individual find() for a target reached without going through getMenuBlocks() first (defensive; every current caller does)

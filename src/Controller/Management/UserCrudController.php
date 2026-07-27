@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
+use c975L\SiteBundle\Security\Voter\UserManagementVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -24,6 +25,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,6 +40,7 @@ class UserCrudController extends AbstractCrudController
         private readonly TableExporter $tableExporter,
         private readonly Security $security,
         private readonly TranslatorInterface $translator,
+        private readonly AdminContextProvider $adminContextProvider,
     ) {
     }
 
@@ -66,20 +69,40 @@ class UserCrudController extends AbstractCrudController
         }
 
         // ROLE_USER is excluded, it's already granted by default to every user (see User::getRoles()); not required, since having none selected simply means the user only has that default role
-        yield ChoiceField::new('roles')
+        $isFrozen = $this->editsASuperAdminWithoutBeingOne();
+        $rolesField = ChoiceField::new('roles')
             ->setLabel(t('label.roles', [], 'site'))
-            ->setChoices($this->roleChoices())
+            ->setChoices($this->roleChoices($isFrozen))
             ->allowMultipleChoices()
             ->renderExpanded(false)
             ->setRequired(false);
+
+        // A disabled field is ignored on submit and keeps its stored value, whatever gets posted
+        if ($isFrozen) {
+            $rolesField->setFormTypeOption('disabled', 'disabled');
+        }
+
+        yield $rolesField;
     }
 
-    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array) ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too, Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it — otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's "restricted" configs entirely
-    private function roleChoices(): array
+    // A super admin's roles are shown to a lesser admin, but frozen. Symfony's ChoiceType silently drops a value missing from the choices when displaying the field (unlike on submit, where it rejects it), so without this the form would come back without ROLE_SUPER_ADMIN in the submitted set - and a plain ROLE_ADMIN saving a super admin's record would demote them without ever seeing the role. Second line of defence since UserManagementVoter: the edit page of a super admin's account is no longer reachable by a lesser admin at all, unless an app overrides configureCrud() and drops the entity permission with it
+    private function editsASuperAdminWithoutBeingOne(): bool
+    {
+        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            return false;
+        }
+
+        $edited = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
+
+        return $edited instanceof User && in_array('ROLE_SUPER_ADMIN', $edited->getRoles(), true);
+    }
+
+    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array). ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too, Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it — otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's "restricted" configs entirely. Kept on a frozen field: nothing is submitted back from it, and dropping it there would just hide the role the edited user really has
+    private function roleChoices(bool $keepSuperAdmin): array
     {
         $roles = (array) $this->configService->get('user-roles-available');
 
-        if (!$this->security->isGranted('ROLE_SUPER_ADMIN')) {
+        if (!$keepSuperAdmin && !$this->security->isGranted('ROLE_SUPER_ADMIN')) {
             $roles = array_filter($roles, static fn (string $role): bool => 'ROLE_SUPER_ADMIN' !== $role);
         }
 
@@ -126,7 +149,8 @@ class UserCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
-            ->setEntityPermission($this->configService->get('site-role-admin'))
+            // Per-row permission (see UserManagementVoter), which the plain "site-role-admin" role this used to hold couldn't express: it also keeps a lesser admin away from a super admin's own account, whatever the action
+            ->setEntityPermission(UserManagementVoter::MANAGE)
             ->overrideTemplate('crud/index', '@c975LSite/management/user_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/user_crud_edit.html.twig')
         ;

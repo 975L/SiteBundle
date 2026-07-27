@@ -38,6 +38,10 @@
     // Deliberately NOT derived from --text/--background above (those flip in dark mode, see _theme-dark.scss): a handful of block designs use a permanently-dark contrast panel regardless of the site's current light/dark theme - these stay fixed neutrals on purpose
     --surface-inverse: #232323;
     --text-on-inverse: #d8d8d8;
+    // The three flats a page section can be painted with, when its "background" field is set (UiBundle's .section--bg-* in sass/_page-sections.scss). Only the background of each variant is a token: everything the variant inverts on top of it (text, muted text, borders, translucent chips) is mixed back into whatever color is set here, so retuning one of these three is enough to retune the whole variant. "dark" follows --text rather than --secondary: a dark band has to stay dark whatever the admin picks as the site's secondary color, which is just as often a pale one
+    --section-bg-muted: var(--surface-alt);
+    --section-bg-primary: var(--primary);
+    --section-bg-dark: var(--text);
     // Shape tokens - defaults match today's look exactly (nothing changes until a page template overrides them), but header/navbar/footer/buttons/cards all read from here so a template's stylesheet can reskin the whole site's "shape" (radii, nav shadow) in one place
     --radius-btn: 5px;
     --radius-card: 10px;
@@ -48,6 +52,9 @@
     --navbar-text: var(--black);
     // Active-page underline (desktop nav, see _menu.scss) - defaults to --primary like before this token existed, but a template whose --navbar-background follows --primary itself now has somewhere to point this that isn't invisible against its own background
     --navbar-active-color: var(--primary);
+    // Site name and tagline (the brand block, left of the nav) - same reasoning as --navbar-active-color: both were hardcoded to --primary, which is exactly the color a navbar painted with --navbar-background: var(--primary) makes invisible. A site whose navbar is a colored flat points these at var(--navbar-text) instead. The tagline's default is --text, not --primary like the name's: it is authored in the backoffice's rich-text editor, so it comes back wrapped in a <div> that _typography.scss's own "* { color: var(--text) }" paints directly - which is what every site has actually been showing, whatever _menu.scss asked for
+    --navbar-site-name-color: var(--primary);
+    --navbar-site-tagline-color: var(--text);
     --border-nav: none;
     // The admin's own site-navbar-position config (Navbar.html.twig) sets --navbar-position inline and always wins when non-empty - this is only the template's own fallback, for a design that wants e.g. a sticky header without the admin having to set that config
     --navbar-position: relative;
@@ -55,6 +62,13 @@
     // Optional "scrolled" state, toggled by UiBundle's menu.js (.menu.is-scrolled once window.scrollY passes a small threshold) - defaults to the same colors so nothing changes unless a site overrides them (e.g. a transparent/colored navbar over a hero that turns solid once scrolled)
     --navbar-background-scrolled: var(--navbar-background);
     --navbar-text-scrolled: var(--navbar-text);
+    // The single "primary" nav item's pill (see _menu.scss) - defaults are UiBundle's .btn-primary colors, which a navbar painted with --navbar-background: var(--primary) turns invisible: such a site inverts them (white pill, --primary label)
+    --navbar-btn-background: var(--primary);
+    --navbar-btn-background-hover: var(--button-background-primary-dark);
+    --navbar-btn-color: var(--button-color);
+    // Same pair as --footer-width/--footer-margin-x below, for the navbar: the bar bleeds full-viewport-width regardless of --body-max-width (see body's own max-width in _general.scss) - a template framing the page inside that max-width sets both to auto/0 so the navbar stays inside the frame with the rest of the page
+    --navbar-width: 100vw;
+    --navbar-margin-x: calc(50% - 50vw);
     // Footer layout/look - defaults match today's colored-band footer; a template can flip these to a plain, minimal footer (transparent background, muted text, items in a row) instead
     --footer-background: var(--primary);
     --footer-text: var(--white);

@@ -52,6 +52,60 @@ class ContentQualityClientTest extends TestCase
         $this->assertFalse($client->analyze('https://example.com/pages/home/')['hasDescription']);
     }
 
+    public function testAnalyzeReadsTheTitleAndDescription(): void
+    {
+        $html = '<html><head><title>Nos tarifs 2026</title><meta name="description" content=" A great page "></head><body><h1>T</h1></body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $result = $client->analyze('https://example.com/pages/home/');
+
+        $this->assertSame('Nos tarifs 2026', $result['title']);
+        $this->assertSame('A great page', $result['description']);
+    }
+
+    // A <title> broken over several indented Twig lines is not a longer title than the same one on a single line
+    public function testAnalyzeCollapsesWhitespaceInTheTitle(): void
+    {
+        $html = "<html><head><title>\n    Nos   tarifs\n    2026\n</title></head><body><h1>T</h1></body></html>";
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $this->assertSame('Nos tarifs 2026', $client->analyze('https://example.com/pages/home/')['title']);
+    }
+
+    public function testAnalyzeReturnsAnEmptyTitleWhenThePageHasNone(): void
+    {
+        $html = '<html><head></head><body><h1>T</h1></body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $this->assertSame('', $client->analyze('https://example.com/pages/home/')['title']);
+    }
+
+    // The Open Graph protocol specifies "property", but "name" is common in the wild and works just as well
+    public function testAnalyzeReadsSocialTagsFromEitherPropertyOrName(): void
+    {
+        $html = '<html><head>
+            <meta property="og:title" content="A title">
+            <meta name="og:description" content="A description">
+            <meta property="og:image" content="/media/og.png">
+            <meta name="viewport" content="width=device-width">
+        </head><body><h1>T</h1></body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $tags = $client->analyze('https://example.com/pages/home/')['socialTags'];
+
+        $this->assertSame(['og:title', 'og:description', 'og:image'], array_keys($tags));
+        $this->assertSame('/media/og.png', $tags['og:image']);
+    }
+
+    // A share preview has nothing to render from an empty content, so it counts as no tag at all
+    public function testAnalyzeIgnoresASocialTagWithAnEmptyContent(): void
+    {
+        $html = '<html><head><meta property="og:image" content="  "></head><body><h1>T</h1></body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $this->assertSame([], $client->analyze('https://example.com/pages/home/')['socialTags']);
+    }
+
     // Each offending image's own src, not just how many - the Health check panel lists them one by one
     public function testAnalyzeListsImagesWithoutAlt(): void
     {
@@ -129,6 +183,59 @@ class ContentQualityClientTest extends TestCase
         $links = $client->analyze('https://example.com/pages/home/')['internalLinks'];
 
         $this->assertSame(['https://example.com/pages/contact/', 'https://example.com/pages/about/'], $links);
+    }
+
+    // Links to another host are kept apart from this site's own, not dropped - a merchant that took a product page down is a real dead link, just not the same problem nor the same severity
+    public function testAnalyzeExtractsExternalLinksSeparately(): void
+    {
+        $html = '<html><body><h1>T</h1>
+            <a href="/pages/contact/">Contact</a>
+            <a href="https://www.fnac.com/livre/123">Acheter</a>
+            <a href="http://partner.example.org/">Partenaire</a>
+            <a href="//cdn.example.net/asset">CDN</a>
+            <a href="mailto:hello@example.com">Mail</a>
+            <a href="ftp://files.example.org/">Ftp</a>
+        </body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $result = $client->analyze('https://example.com/pages/home/');
+
+        $this->assertSame(['https://example.com/pages/contact/'], $result['internalLinks']);
+        // The protocol-relative one inherits the page's own scheme, otherwise it isn't requestable; ftp:/mailto: are out
+        $this->assertSame(['https://www.fnac.com/livre/123', 'http://partner.example.org/', 'https://cdn.example.net/asset'], $result['externalLinks']);
+        $this->assertSame('Acheter', $result['linkTexts']['https://www.fnac.com/livre/123']);
+    }
+
+    // A status that says how the server treats this client (bot filtering, rate limiting, a refused method) says nothing about whether the url exists
+    public function testCheckLinkTreatsAntiBotAndRateLimitStatusesAsInconclusive(): void
+    {
+        foreach ([403, 429, 999] as $status) {
+            $httpClient = new MockHttpClient(fn (string $method, string $url, array $options) => new MockResponse('', ['http_code' => $status]));
+            $client = new ContentQualityClient($httpClient);
+
+            $this->assertSame(ContentQualityClient::LINK_UNKNOWN, $client->checkLink('https://www.fnac.com/livre/123'), 'HTTP ' . $status);
+            $this->assertFalse($client->isLinkBroken('https://www.fnac.com/livre/123'));
+        }
+    }
+
+    // Identifying the checker is what lets a WAF operator allow it rather than guess at it
+    public function testLinkChecksSendAnIdentifiableUserAgent(): void
+    {
+        $sentHeaders = [];
+        $httpClient = new MockHttpClient(function (string $method, string $url, array $options) use (&$sentHeaders): MockResponse {
+            $sentHeaders[] = implode("\n", $options['headers'] ?? []);
+
+            // 405 on the HEAD so the GET fallback is exercised too - both passes must identify themselves
+            return new MockResponse('', ['http_code' => 'HEAD' === $method ? 405 : 200]);
+        });
+        $client = new ContentQualityClient($httpClient);
+
+        $client->checkLink('https://external.com/');
+
+        $this->assertCount(2, $sentHeaders);
+        foreach ($sentHeaders as $headers) {
+            $this->assertStringContainsString('c975LHealthCheck', $headers);
+        }
     }
 
     public function testAnalyzeDedupesInternalLinks(): void

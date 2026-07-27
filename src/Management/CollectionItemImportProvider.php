@@ -43,29 +43,36 @@ class CollectionItemImportProvider implements ImportProviderInterface
 
         foreach ($items as $item) {
             $collectionGroup = $collectionGroups[$item['collectionGroup']] ??= $this->resolveCollectionGroup($item['collectionGroup'], $usedSlugs);
-            $collectionItem = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $item['slug']);
-            $isNew = null === $collectionItem;
-            $collectionItem ??= new CollectionItem();
-
-            $collectionItem
-                ->setCollectionGroup($collectionGroup)
-                ->setTitle($item['title'])
-                ->setSlug($item['slug'])
-                ->setDescription($item['description'] ?? null)
-                ->setUrl($item['url'] ?? null)
-                ->setPosition($item['position'] ?? 0);
-
-            if (null !== $filesDir && isset($item['file'])) {
-                $collectionItem->setFile(new ReplacingFile($filesDir . '/' . $item['file'], true, true, true));
-            }
-
-            $this->em->persist($collectionItem);
-            $isNew ? $created++ : $updated++;
+            $this->importItem($item, $collectionGroup, $filesDir) ? $created++ : $updated++;
         }
 
         $this->em->flush();
 
         return ['created' => $created, 'updated' => $updated];
+    }
+
+    // One exported item written over whatever already lives under its (collection, slug) pair - returns whether it had to be created
+    private function importItem(array $item, CollectionGroup $collectionGroup, ?string $filesDir): bool
+    {
+        $collectionItem = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $item['slug']);
+        $isNew = null === $collectionItem;
+        $collectionItem ??= new CollectionItem();
+
+        $collectionItem
+            ->setCollectionGroup($collectionGroup)
+            ->setTitle($item['title'])
+            ->setSlug($item['slug'])
+            ->setDescription($item['description'] ?? null)
+            ->setUrl($item['url'] ?? null)
+            ->setPosition($item['position'] ?? 0);
+
+        if (null !== $filesDir && isset($item['file'])) {
+            $collectionItem->setFile(new ReplacingFile($filesDir . '/' . $item['file'], true, true, true));
+        }
+
+        $this->em->persist($collectionItem);
+
+        return $isNew;
     }
 
     private function resolveCollectionGroup(string $name, array &$usedSlugs): CollectionGroup

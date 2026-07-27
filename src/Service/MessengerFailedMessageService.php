@@ -33,6 +33,18 @@ class MessengerFailedMessageService
     // Exception message keywords indicating the failure is caused by the recipient's own reputation (blacklisted spammer domain, ...) rather than an issue worth an admin's attention
     private const MINOR_KEYWORDS = ['blacklist', 'blocklist', 'block-listed', 'rbl', 'spam', 'reputation'];
 
+    // What decode() knows about a row whose body it couldn't read back into an Envelope - the same keys describeEnvelope() fills in, so the row is still listed with its id and date
+    private const EMPTY_DETAILS = [
+        'from' => null,
+        'to' => null,
+        'subject' => null,
+        'exceptionMessage' => null,
+        'exceptionClass' => null,
+        'exceptionCode' => null,
+        'retryCount' => 0,
+        'originalTransport' => null,
+    ];
+
     public function __construct(
         private readonly Connection $connection,
         // Matches the "failed" transport name assumed by the raw SQL below, per the Symfony Messenger recipe default (framework.messenger.failure_transport: failed)
@@ -151,12 +163,38 @@ class MessengerFailedMessageService
     // Decodes a raw messenger_messages row into a readable array
     private function decode(array $row): array
     {
+        [$envelope, $decodeError] = $this->unserializeBody($row['body']);
+
+        $details = match (true) {
+            $envelope instanceof Envelope => $this->describeEnvelope($envelope),
+            null !== $decodeError => ['exceptionMessage' => 'Unserialize failed: ' . $decodeError] + self::EMPTY_DETAILS,
+            default => self::EMPTY_DETAILS,
+        };
+
+        return [
+            'id' => (int) $row['id'],
+            'createdAt' => new \DateTimeImmutable($row['created_at']),
+            'from' => $details['from'],
+            'to' => $details['to'],
+            'subject' => $details['subject'],
+            'exceptionMessage' => $details['exceptionMessage'],
+            'exceptionClass' => $details['exceptionClass'],
+            'exceptionCode' => $details['exceptionCode'],
+            'retryCount' => $details['retryCount'],
+            'originalTransport' => $details['originalTransport'],
+            // Messages we cannot identify as email (to === null) are kept as important by precaution
+            'important' => null === $details['to'] || null === $details['exceptionMessage'] || !$this->isMinor($details['exceptionMessage']),
+        ];
+    }
+
+    // The stored envelope, plus the reason it couldn't be read when that's what happened
+    // @return array{0: mixed, 1: ?string}
+    private function unserializeBody(string $body): array
+    {
         // Symfony's default transport serializer (PhpSerializer) stores serialize($envelope) wrapped in addslashes(), with a base64 fallback for non-UTF8-safe payloads (see PhpSerializer::encode()/decode()); this mirrors that exact pre-processing so the raw SQL body can be unserialized the same way the transport itself would read it
-        $body = $row['body'];
         if (!str_ends_with($body, '}')) {
             $body = base64_decode($body);
         }
-        $body = stripslashes($body);
 
         // Captures the reason PHP's unserialize() fails (missing/renamed class, corrupted body, ...) instead of silently swallowing it, so admins see why a row can't be read
         $decodeError = null;
@@ -165,55 +203,41 @@ class MessengerFailedMessageService
 
             return true;
         });
-        $envelope = unserialize($body);
+        $envelope = unserialize(stripslashes($body));
         restore_error_handler();
 
-        $exceptionMessage = null;
-        $exceptionClass = null;
-        $exceptionCode = null;
-        $retryCount = 0;
-        $originalTransport = null;
-        $from = null;
-        $to = null;
-        $subject = null;
+        return [$envelope, $decodeError];
+    }
 
-        if ($envelope instanceof Envelope) {
-            $errorStamp = $envelope->last(ErrorDetailsStamp::class);
-            $exceptionMessage = $errorStamp?->getExceptionMessage();
-            $exceptionClass = $errorStamp?->getExceptionClass();
-            $exceptionCode = $errorStamp?->getExceptionCode();
+    // Everything decode() reports about a readable row - the stamps Messenger itself left on the envelope, plus what the message being an email adds
+    private function describeEnvelope(Envelope $envelope): array
+    {
+        $errorStamp = $envelope->last(ErrorDetailsStamp::class);
 
-            $retryCount = RedeliveryStamp::getRetryCountFromEnvelope($envelope);
-            $originalTransport = $envelope->last(SentToFailureTransportStamp::class)?->getOriginalReceiverName();
+        return $this->describeEmail($envelope->getMessage()) + [
+            'exceptionMessage' => $errorStamp?->getExceptionMessage(),
+            'exceptionClass' => $errorStamp?->getExceptionClass(),
+            'exceptionCode' => $errorStamp?->getExceptionCode(),
+            'retryCount' => RedeliveryStamp::getRetryCountFromEnvelope($envelope),
+            'originalTransport' => $envelope->last(SentToFailureTransportStamp::class)?->getOriginalReceiverName(),
+        ];
+    }
 
-            $message = $envelope->getMessage();
-            if ($message instanceof SendEmailMessage) {
-                $rawMessage = $message->getMessage();
-                if ($rawMessage instanceof Email) {
-                    $fromAddresses = $rawMessage->getFrom();
-                    $from = isset($fromAddresses[0]) ? $fromAddresses[0]->getAddress() : null;
-                    $addresses = $rawMessage->getTo();
-                    $to = isset($addresses[0]) ? $addresses[0]->getAddress() : null;
-                    $subject = $rawMessage->getSubject();
-                }
-            }
-        } elseif (null !== $decodeError) {
-            $exceptionMessage = 'Unserialize failed: ' . $decodeError;
+    // from/to/subject when the failed message is an email, all null otherwise - a message of another kind is still listed, just without the fields only an email has
+    private function describeEmail(object $message): array
+    {
+        $email = $message instanceof SendEmailMessage ? $message->getMessage() : null;
+        if (!$email instanceof Email) {
+            return ['from' => null, 'to' => null, 'subject' => null];
         }
 
+        $fromAddresses = $email->getFrom();
+        $toAddresses = $email->getTo();
+
         return [
-            'id' => (int) $row['id'],
-            'createdAt' => new \DateTimeImmutable($row['created_at']),
-            'from' => $from,
-            'to' => $to,
-            'subject' => $subject,
-            'exceptionMessage' => $exceptionMessage,
-            'exceptionClass' => $exceptionClass,
-            'exceptionCode' => $exceptionCode,
-            'retryCount' => $retryCount,
-            'originalTransport' => $originalTransport,
-            // Messages we cannot identify as email (to === null) are kept as important by precaution
-            'important' => null === $to || null === $exceptionMessage || !$this->isMinor($exceptionMessage),
+            'from' => isset($fromAddresses[0]) ? $fromAddresses[0]->getAddress() : null,
+            'to' => isset($toAddresses[0]) ? $toAddresses[0]->getAddress() : null,
+            'subject' => $email->getSubject(),
         ];
     }
 

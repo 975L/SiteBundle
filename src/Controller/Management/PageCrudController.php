@@ -268,9 +268,24 @@ class PageCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-editor');
 
-        // Toggles between "go to trash" and "back to pages", depending on where we currently are
+        $this->addPublishAsReplacementGroup($actions, $role);
+        $this->addTemplatesGroup($actions, $role);
+
+        // Exports the checked pages with their Blocks (see exportSelection()/PageImportProvider) as a zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController - restricted to site-role-admin since it's a heavier/less common action than the regular editor permissions
+        $actions->add(Crud::PAGE_INDEX, Action::new('exportSelection', t('action.export_selection', [], 'site'), 'fa fa-file-export')
+            ->createAsBatchAction()
+            ->linkToCrudAction('exportSelection'));
+        $actions->setPermission('exportSelection', $this->configService->get('site-role-admin'));
+
+        return $this->applyActionPermissions($this->tuneIndexActions($this->addPageActions($actions)), $role);
+    }
+
+    // Toggles between "go to trash" and "back to pages", depending on where we currently are
+    private function trashAction(): Action
+    {
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
-        $trashAction = $isTrash
+
+        $action = $isTrash
             ? Action::new('trash', t('label.pages', [], 'site'), 'fa fa-file')
                 ->linkToUrl(fn () => $this->adminUrlGenerator
                     ->setController(self::class)
@@ -283,10 +298,91 @@ class PageCrudController extends AbstractCrudController
                     ->setAction(Action::INDEX)
                     ->set('trash', 1)
                     ->generateUrl());
-        $trashAction
+
+        return $action
             ->createAsGlobalAction()
             ->addCssClass('btn btn-secondary');
+    }
 
+    // Publishes this (non-deleted) page in place of another one, picked from this dropdown - one sub-action per existing other page, same pattern as addTemplatesGroup(). No longer requires having gone through applyTemplate()'s getReplaces() pre-fill: that field is now only a convenience default (see publishAsReplacement()), the actual target is always the id carried by the link
+    // Edit screen only, not among the row/detail inline actions - it's a rarer, deliberate act (swaps a live page out), warranting its own visual weight rather than sitting next to preview/duplicate. asWarningActionGroup() (not a raw addCssClass('btn-warning'), which would just sit alongside the group's own default "btn-secondary" and lose out to it in the cascade) flags that weight without implying danger the way asDangerActionGroup()'s red would. Not built/added at all when there's no other page to offer - an EasyAdmin ActionGroup can't be added with zero actions
+    private function addPublishAsReplacementGroup(Actions $actions, string $role): void
+    {
+        $subActions = [];
+        foreach ($this->replaceableTargets() as $target) {
+            $targetId = $target->getId();
+            $subActionName = 'publishAsReplacement_' . $targetId;
+            $subActions[] = Action::new($subActionName, $target->getTitle())
+                ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction('publishAsReplacement')
+                    ->setEntityId($page->getId())
+                    ->set('replaces', $targetId)
+                    ->generateUrl())
+                ->displayIf(static fn (Page $page): bool => $page->getId() !== $targetId)
+                ->askConfirmation($this->translator->trans('confirm.publish_as_replacement', ['%title%' => $target->getTitle()], 'site'));
+            $actions->setPermission($subActionName, $role);
+        }
+
+        if ([] === $subActions) {
+            return;
+        }
+
+        $actions->add(Crud::PAGE_EDIT, array_reduce(
+            $subActions,
+            static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
+            ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
+                ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+                ->asWarningActionGroup()
+        ));
+    }
+
+    // Only queried on the edit screen (the only place the group is ever added) - skips a full "every non-deleted page" query and one Action/closure per page on every index/detail render, where the dropdown couldn't be shown anyway
+    // Reads the request's crudAction attribute directly rather than via adminContextProvider->getContext(): the AdminContext is only attached to the request by AdminRouterSubscriber AFTER configureActions() runs, so getContext() is always null here. It's a request *attribute*, not a query param - Symfony's router merges it in from the matched route's defaults before EasyAdmin's own subscriber even runs, regardless of whether the URL is query-string or pretty-path based
+    private function replaceableTargets(): array
+    {
+        if (Crud::PAGE_EDIT !== $this->requestStack->getCurrentRequest()?->attributes->get(EA::CRUD_ACTION)) {
+            return [];
+        }
+
+        return $this->pageRepository->createQueryBuilder('p')
+            ->andWhere('p.isDeleted = :deleted')
+            ->setParameter('deleted', false)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Adds the Blocks of a shipped template (config/templates/*.json) to the page being edited - one action per template, only shown once at least one is registered
+    private function addTemplatesGroup(Actions $actions, string $role): void
+    {
+        $templates = $this->templateRegistry->all();
+        if ([] === $templates) {
+            return;
+        }
+
+        $group = ActionGroup::new('templates', t('label.templates', [], 'site'), 'fa fa-th-large');
+        foreach ($templates as $id => $template) {
+            $actionName = 'applyTemplate_' . $id;
+            $group->addAction(
+                // 'label' belongs to whichever bundle contributed the template (see TemplateProviderInterface) - 'site' is only the fallback for a provider that hasn't declared one
+                Action::new($actionName, $this->translator->trans($template['label'], [], $template['domain'] ?? 'site'))
+                    ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
+                        ->setController(self::class)
+                        ->setAction('applyTemplate')
+                        ->setEntityId($page->getId())
+                        ->set('template', $id)
+                        ->generateUrl())
+                    ->askConfirmation(t('confirm.apply_template', [], 'site'))
+            );
+            $actions->setPermission($actionName, $role);
+        }
+
+        $actions->add(Crud::PAGE_EDIT, $group);
+    }
+
+    // Every action this CRUD adds on top of EasyAdmin's own built-in ones, and where each of them shows
+    private function addPageActions(Actions $actions): Actions
+    {
         // Permanently removes the page, only shown once already in the trash askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to trash") instead of a native confirm() - keeps the UI consistent
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
             ->linkToCrudAction('deletePermanently')
@@ -322,45 +418,6 @@ class PageCrudController extends AbstractCrudController
             ->askConfirmation(t('confirm.duplicate', [], 'site'))
             ->addCssClass('btn btn-secondary');
 
-        // Publishes this (non-deleted) page in place of another one, picked from this dropdown - one sub-action per existing other page, same pattern as $templatesGroup below. No longer requires having gone through applyTemplate()'s getReplaces() pre-fill: that field is now only a convenience default (see publishAsReplacement()), the actual target is always the id carried by the link
-        // Only queried/built on the edit screen (the only place this group is ever added, see below) - skips a full "every non-deleted page" query and one Action/closure per page on every index/detail render, where the dropdown couldn't be shown anyway
-        // Reads the request's crudAction attribute directly rather than via adminContextProvider->getContext(): the AdminContext is only attached to the request by AdminRouterSubscriber AFTER configureActions() runs, so getContext() is always null here. It's a request *attribute*, not a query param - Symfony's router merges it in from the matched route's defaults before EasyAdmin's own subscriber even runs, regardless of whether the URL is query-string or pretty-path based
-        $isEditPage = Crud::PAGE_EDIT === $this->requestStack->getCurrentRequest()?->attributes->get(EA::CRUD_ACTION);
-        $replaceableTargets = $isEditPage
-            ? $this->pageRepository->createQueryBuilder('p')
-                ->andWhere('p.isDeleted = :deleted')
-                ->setParameter('deleted', false)
-                ->getQuery()
-                ->getResult()
-            : [];
-        $publishAsReplacementSubActions = [];
-        foreach ($replaceableTargets as $target) {
-            $targetId = $target->getId();
-            $subActionName = 'publishAsReplacement_' . $targetId;
-            $publishAsReplacementSubActions[] = Action::new($subActionName, $target->getTitle())
-                ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
-                    ->setController(self::class)
-                    ->setAction('publishAsReplacement')
-                    ->setEntityId($page->getId())
-                    ->set('replaces', $targetId)
-                    ->generateUrl())
-                ->displayIf(static fn (Page $page): bool => $page->getId() !== $targetId)
-                ->askConfirmation($this->translator->trans('confirm.publish_as_replacement', ['%title%' => $target->getTitle()], 'site'));
-            $actions->setPermission($subActionName, $role);
-        }
-
-        // Edit screen only, not among the row/detail inline actions - it's a rarer, deliberate act (swaps a live page out), warranting its own visual weight rather than sitting next to preview/duplicate. asWarningActionGroup() (not a raw addCssClass('btn-warning'), which would just sit alongside the group's own default "btn-secondary" and lose out to it in the cascade) flags that weight without implying danger the way asDangerActionGroup()'s red would. Not built/added at all when there's no other page to offer - an EasyAdmin ActionGroup can't be added with zero actions
-        if ([] !== $publishAsReplacementSubActions) {
-            $publishAsReplacementGroup = array_reduce(
-                $publishAsReplacementSubActions,
-                static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
-                ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
-                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
-                    ->asWarningActionGroup()
-            );
-            $actions->add(Crud::PAGE_EDIT, $publishAsReplacementGroup);
-        }
-
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
             ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
@@ -373,42 +430,8 @@ class PageCrudController extends AbstractCrudController
             ->linkToCrudAction(Action::INDEX)
             ->addCssClass('btn btn-secondary');
 
-        // Exports the checked pages with their Blocks (see exportSelection()/PageImportProvider) as a zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController - restricted to site-role-admin since it's a heavier/less common action than the regular editor permissions
-        $exportSelectionAction = Action::new('exportSelection', t('action.export_selection', [], 'site'), 'fa fa-file-export')
-            ->createAsBatchAction()
-            ->linkToCrudAction('exportSelection');
-
-        // Adds the Blocks of a shipped template (config/templates/*.json) to the page being edited - one action per template, only shown once at least one is registered
-        $templates = $this->templateRegistry->all();
-        $templatesGroup = [] !== $templates
-            ? ActionGroup::new('templates', t('label.templates', [], 'site'), 'fa fa-th-large')
-            : null;
-        foreach ($templates as $id => $template) {
-            // 'label' belongs to whichever bundle contributed the template (see TemplateProviderInterface) - 'site' is only the fallback for a provider that hasn't declared one
-            $domain = $template['domain'] ?? 'site';
-
-            $actionName = 'applyTemplate_' . $id;
-            $templatesGroup?->addAction(
-                Action::new($actionName, $this->translator->trans($template['label'], [], $domain))
-                    ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
-                        ->setController(self::class)
-                        ->setAction('applyTemplate')
-                        ->setEntityId($page->getId())
-                        ->set('template', $id)
-                        ->generateUrl())
-                    ->askConfirmation(t('confirm.apply_template', [], 'site'))
-            );
-            $actions->setPermission($actionName, $role);
-        }
-        if (null !== $templatesGroup) {
-            $actions->add(Crud::PAGE_EDIT, $templatesGroup);
-        }
-
-        $actions->add(Crud::PAGE_INDEX, $exportSelectionAction);
-        $actions->setPermission('exportSelection', $this->configService->get('site-role-admin'));
-
         return $actions
-            ->add(Crud::PAGE_INDEX, $trashAction)
+            ->add(Crud::PAGE_INDEX, $this->trashAction())
             ->add(Crud::PAGE_INDEX, $restoreAction)
             ->add(Crud::PAGE_INDEX, $deletePermanentlyAction)
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
@@ -425,6 +448,13 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $duplicateAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
+        ;
+    }
+
+    // The index's own row actions are icon-only (see EasyAdminActionHelper), and "delete" reads as "move to trash" everywhere, since that's all it does here
+    private function tuneIndexActions(Actions $actions): Actions
+    {
+        return $actions
             ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate'])
@@ -459,6 +489,13 @@ class PageCrudController extends AbstractCrudController
                 $action,
                 $this->translator->trans('action.duplicate', [], 'site'),
             ))
+        ;
+    }
+
+    // Everything a page CRUD can do sits behind the same "site-role-editor" role - only "exportSelection" is stricter (see configureActions())
+    private function applyActionPermissions(Actions $actions, string $role): Actions
+    {
+        return $actions
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)

@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Command;
 
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
+use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
@@ -69,16 +70,8 @@ class CollectionItemImportCommand extends Command
             return Command::FAILURE;
         }
 
-        if (!is_file($jsonFile)) {
-            $io->error("File not found: {$jsonFile}");
-
-            return Command::FAILURE;
-        }
-
-        $rows = json_decode(file_get_contents($jsonFile), true);
-        if (!is_array($rows)) {
-            $io->error("File '{$jsonFile}' does not contain a valid JSON array.");
-
+        $rows = $this->readRows($io, $jsonFile);
+        if (null === $rows) {
             return Command::FAILURE;
         }
 
@@ -88,68 +81,8 @@ class CollectionItemImportCommand extends Command
             : '<info>LIVE — changes will be flushed</info>');
         $io->newLine();
 
-        // Resolves the target collection by its normalized slug rather than an exact-string name match, so re-running the command with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate - creating it on the fly if it doesn't exist yet, same CollectionGroupResolver used by CollectionItemImportProvider's Sync import so both entry points agree on what counts as "the same collection". A never-persisted collection deterministically has zero existing items, so the repository queries below are skipped rather than run against an id-less entity; the new CollectionGroup itself is only persisted, flushed together with the items at the very end
-        $groupUsedSlugs = [];
-        [$collectionGroup, $isNewCollectionGroup] = $this->collectionGroupResolver->resolve($groupName, $groupUsedSlugs);
-        if ($isNewCollectionGroup && !$dryRun) {
-            $this->em->persist($collectionGroup);
-        }
-
-        $existingItems = $isNewCollectionGroup ? [] : $this->collectionItemRepository->findByCollectionGroup($collectionGroup);
-        $existingTitles = array_map(static fn (CollectionItem $item): string => $item->getTitle(), $existingItems);
-        // Tracks slugs assigned so far in this run too, since two different titles imported in the same batch could still normalize to the same slug before either is flushed to the DB
-        $usedSlugs = array_map(static fn (CollectionItem $item): string => (string) $item->getSlug(), $existingItems);
-        $position = $isNewCollectionGroup ? 0 : $this->collectionItemRepository->countByCollectionGroup($collectionGroup);
-        $created = 0;
-        $skipped = 0;
-
-        foreach ($rows as $row) {
-            $title = $row['title'] ?? null;
-
-            if (!$title) {
-                $io->warning('Row with no "title" - skipped.');
-                ++$skipped;
-                continue;
-            }
-
-            if (in_array($title, $existingTitles, true)) {
-                $io->writeln("  <comment>[skip]</comment> {$title} (already imported)");
-                ++$skipped;
-                continue;
-            }
-
-            $slug = $this->uniqueSlug(
-                $this->slugger,
-                $title,
-                static fn (string $candidate): bool => in_array($candidate, $usedSlugs, true)
-            );
-            $usedSlugs[] = $slug;
-
-            $item = (new CollectionItem())
-                ->setCollectionGroup($collectionGroup)
-                ->setTitle($title)
-                ->setSlug($slug)
-                ->setDescription($row['description'] ?? null)
-                ->setUrl($row['url'] ?? null)
-                ->setPosition($position)
-            ;
-
-            $imagePath = null !== ($row['image'] ?? null) ? $imagesDir . '/' . ltrim($row['image'], '/') : null;
-            if (null !== $imagePath && is_file($imagePath)) {
-                $item->setFile(new ReplacingFile($imagePath));
-            } elseif (null !== $imagePath) {
-                $io->warning("  Image not found for \"{$title}\": {$imagePath}");
-            }
-
-            $io->writeln(sprintf('  <info>[+]</info> %s%s', $title, $dryRun ? ' <comment>(dry-run)</comment>' : ''));
-
-            if (!$dryRun) {
-                $this->em->persist($item);
-            }
-
-            ++$position;
-            ++$created;
-        }
+        [$collectionGroup, $state] = $this->resolveTarget($groupName, $dryRun);
+        [$created, $skipped] = $this->importRows($rows, $collectionGroup, $state, $io, $imagesDir, $dryRun);
 
         if (!$dryRun) {
             $this->em->flush();
@@ -164,5 +97,121 @@ class CollectionItemImportCommand extends Command
         ));
 
         return Command::SUCCESS;
+    }
+
+    // The file's rows, or null once the reason it couldn't be read has been reported
+    private function readRows(SymfonyStyle $io, string $jsonFile): ?array
+    {
+        if (!is_file($jsonFile)) {
+            $io->error("File not found: {$jsonFile}");
+
+            return null;
+        }
+
+        $rows = json_decode(file_get_contents($jsonFile), true);
+        if (!is_array($rows)) {
+            $io->error("File '{$jsonFile}' does not contain a valid JSON array.");
+
+            return null;
+        }
+
+        return $rows;
+    }
+
+    // Resolves the target collection by its normalized slug rather than an exact-string name match, so re-running the command with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate - creating it on the fly if it doesn't exist yet, same CollectionGroupResolver used by CollectionItemImportProvider's Sync import so both entry points agree on what counts as "the same collection". A never-persisted collection deterministically has zero existing items, so the repository queries are skipped rather than run against an id-less entity; the new CollectionGroup itself is only persisted, flushed together with the items at the very end
+    // @return array{0: CollectionGroup, 1: array} - the collection, and what the row loop starts from
+    private function resolveTarget(string $groupName, bool $dryRun): array
+    {
+        $groupUsedSlugs = [];
+        [$collectionGroup, $isNew] = $this->collectionGroupResolver->resolve($groupName, $groupUsedSlugs);
+        if ($isNew && !$dryRun) {
+            $this->em->persist($collectionGroup);
+        }
+
+        $existingItems = $isNew ? [] : $this->collectionItemRepository->findByCollectionGroup($collectionGroup);
+
+        return [$collectionGroup, [
+            'titles' => array_map(static fn (CollectionItem $item): string => $item->getTitle(), $existingItems),
+            // Tracks slugs assigned so far in this run too, since two different titles imported in the same batch could still normalize to the same slug before either is flushed to the DB
+            'slugs' => array_map(static fn (CollectionItem $item): string => (string) $item->getSlug(), $existingItems),
+            'position' => $isNew ? 0 : $this->collectionItemRepository->countByCollectionGroup($collectionGroup),
+        ]];
+    }
+
+    // @return array{0: int, 1: int} - created, skipped
+    private function importRows(array $rows, CollectionGroup $collectionGroup, array $state, SymfonyStyle $io, string $imagesDir, bool $dryRun): array
+    {
+        $created = 0;
+        $skipped = 0;
+
+        foreach ($rows as $row) {
+            $item = $this->buildItem($row, $collectionGroup, $state, $io, $imagesDir);
+            if (null === $item) {
+                ++$skipped;
+                continue;
+            }
+
+            $io->writeln(sprintf('  <info>[+]</info> %s%s', $item->getTitle(), $dryRun ? ' <comment>(dry-run)</comment>' : ''));
+            if (!$dryRun) {
+                $this->em->persist($item);
+            }
+            ++$created;
+        }
+
+        return [$created, $skipped];
+    }
+
+    // One JSON row as an item, or null when there's nothing to import from it (no title, or a title the collection already holds) - $state carries the titles/slugs already taken and where the next item goes, updated as rows go through
+    private function buildItem(array $row, CollectionGroup $collectionGroup, array &$state, SymfonyStyle $io, string $imagesDir): ?CollectionItem
+    {
+        $title = $row['title'] ?? null;
+        if (!$title) {
+            $io->warning('Row with no "title" - skipped.');
+
+            return null;
+        }
+
+        if (in_array($title, $state['titles'], true)) {
+            $io->writeln("  <comment>[skip]</comment> {$title} (already imported)");
+
+            return null;
+        }
+
+        $slug = $this->uniqueSlug(
+            $this->slugger,
+            $title,
+            static fn (string $candidate): bool => in_array($candidate, $state['slugs'], true)
+        );
+        $state['slugs'][] = $slug;
+
+        $item = (new CollectionItem())
+            ->setCollectionGroup($collectionGroup)
+            ->setTitle($title)
+            ->setSlug($slug)
+            ->setDescription($row['description'] ?? null)
+            ->setUrl($row['url'] ?? null)
+            ->setPosition($state['position']++)
+        ;
+
+        $this->attachImage($item, $row['image'] ?? null, $imagesDir, $io);
+
+        return $item;
+    }
+
+    // A missing image only warns - the item itself is still worth importing, its picture can be added from the admin afterwards
+    private function attachImage(CollectionItem $item, ?string $image, string $imagesDir, SymfonyStyle $io): void
+    {
+        if (null === $image) {
+            return;
+        }
+
+        $path = $imagesDir . '/' . ltrim($image, '/');
+        if (!is_file($path)) {
+            $io->warning(sprintf('  Image not found for "%s": %s', $item->getTitle(), $path));
+
+            return;
+        }
+
+        $item->setFile(new ReplacingFile($path));
     }
 }

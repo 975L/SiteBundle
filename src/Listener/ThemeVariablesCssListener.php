@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Listener;
 use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use c975L\SiteBundle\Listener\Trait\BuildFileWriterTrait;
 use c975L\SiteBundle\Twig\FontPreloadExtension;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -29,11 +30,12 @@ use Symfony\Contracts\Cache\CacheInterface;
 #[AsDoctrineListener(event: Events::postRemove)]
 class ThemeVariablesCssListener implements CacheWarmerInterface
 {
+    use BuildFileWriterTrait;
+
     // Theme-group configs that are never a CSS value themselves, so must stay out of the compiled :root block:
-    // "theme-mode" drives the data-theme HTML attribute server-side (see layout.html.twig); "site-fonts-face-file"
-    // is a PHP-side file path read by FontService, never consumed via var(--c975l-...) - also not "theme-"-prefixed,
-    // which would otherwise corrupt the mechanical slug->variable mapping below
-    private const EXCLUDED_SLUGS = ['theme-mode', 'site-fonts-face-file'];
+    // "theme-mode" drives the data-theme HTML attribute server-side (see layout.html.twig), never consumed
+    // via var(--c975l-...)
+    private const EXCLUDED_SLUGS = ['theme-mode'];
 
     // Generic CSS family each font-family slug falls back to if the chosen custom font fails to load at runtime -
     // same defaults already baked into _variables.scss's var(..., fallback) for the "config left empty" case,
@@ -97,39 +99,40 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
 
         $lines = [];
         foreach ($this->configRepository->findByGroup(Config::GROUP_THEME) as $config) {
-            $value = $config->getValue();
-            if (in_array($config->getSlug(), self::EXCLUDED_SLUGS, true) || null === $value || '' === $value) {
-                continue;
+            $line = $this->variableLine($config);
+            if (null !== $line) {
+                $lines[] = $line;
             }
-
-            // Mechanical mapping, e.g. "theme-color-primary" -> "--c975l-color-primary": no lookup table to maintain when a new theme variable is added to SiteBundle/config/configs-css.json
-            $slug = $config->getSlug();
-            $variable = '--c975l-' . (str_starts_with($slug, 'theme-') ? substr($slug, strlen('theme-')) : $slug);
-
-            // A bare custom font name (from the new ChoiceField) gets its generic fallback appended. A value already
-            // containing a comma is left untouched - it's either a generic keyword's own fallback-free case, or a
-            // full stack an admin already typed by hand before this kind existed (e.g. '"Georgia", serif')
-            $fallback = self::FONT_FALLBACKS[$config->getSlug()] ?? null;
-            if (null !== $fallback && !str_contains($value, ',') && !in_array($value, Config::GENERIC_FONT_FAMILIES, true)) {
-                $value .= ', ' . $fallback;
-            }
-
-            $lines[] = sprintf('    %s: %s;', $variable, $value);
         }
 
-        $buildDir = $this->projectDir . '/public/bundles/build';
-        if (!is_dir($buildDir) && !@mkdir($buildDir, 0775, true) && !is_dir($buildDir)) {
-            throw new \RuntimeException(sprintf('Unable to create the "%s" directory.', $buildDir));
-        }
-
-        $css = [] === $lines ? '' : ":root {\n" . implode("\n", $lines) . "\n}\n";
-        $path = $buildDir . '/site-theme.css';
-        $tmpPath = $path . '.' . uniqid('', true) . '.tmp';
-        if (false === @file_put_contents($tmpPath, $css) || !@rename($tmpPath, $path)) {
-            throw new \RuntimeException(sprintf('Unable to write "%s".', $path));
-        }
+        $this->writeBuildFile('site-theme.css', [] === $lines ? '' : ":root {\n" . implode("\n", $lines) . "\n}\n");
 
         // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, an admin applying a preset would regenerate site-theme.css but still see the previous theme until the next deploy/warmup
         $this->stylesheetCacheWarmer->compileAll();
+    }
+
+    // One config row as its ":root" custom property declaration, or null when the row isn't one - mechanical mapping, e.g. "theme-color-primary" -> "--c975l-color-primary": no lookup table to maintain when a new theme variable is added to SiteBundle/config/configs-css.json. The "theme-" prefix is what marks a config as a CSS value, so anything else in the group is skipped rather than compiled into a variable no stylesheet reads - that's also what keeps a slug this bundle no longer ships (a row left behind in site_config, nothing prunes them) out of the file
+    private function variableLine(Config $config): ?string
+    {
+        $slug = $config->getSlug();
+        $value = $config->getValue();
+        if (null === $value || '' === $value || !str_starts_with($slug, 'theme-') || in_array($slug, self::EXCLUDED_SLUGS, true)) {
+            return null;
+        }
+
+        return sprintf('    --c975l-%s: %s;', substr($slug, strlen('theme-')), $this->withFontFallback($slug, $value));
+    }
+
+    // A bare custom font name (from the new ChoiceField) gets its generic fallback appended. A value already
+    // containing a comma is left untouched - it's either a generic keyword's own fallback-free case, or a
+    // full stack an admin already typed by hand before this kind existed (e.g. '"Georgia", serif')
+    private function withFontFallback(string $slug, string $value): string
+    {
+        $fallback = self::FONT_FALLBACKS[$slug] ?? null;
+        if (null === $fallback || str_contains($value, ',') || in_array($value, Config::GENERIC_FONT_FAMILIES, true)) {
+            return $value;
+        }
+
+        return $value . ', ' . $fallback;
     }
 }

@@ -4,9 +4,10 @@ services:
         autoconfigure: true
         public: true
 
+    # DeclaredUrlsHealthCheckProvider is excluded on purpose: it takes a SitemapProviderInterface, of which there are as many as there are bundles declaring one, so it can't be autowired - DeclaredUrlsHealthCheckPass registers one instance per sitemap provider instead
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Messenger,Service/Security}'
+        exclude: '../src/{DependencyInjection,Entity,Messenger,Service/Security,Management/DeclaredUrlsHealthCheckProvider.php}'
 
     # Only decorates NelmioSecurityBundle's nonce generator if the app installed it (SiteBundle doesn't require it) - see SessionNonceGenerator for why. decoration_on_invalid: ignore drops this definition entirely when nelmio_security.nonce_generator doesn't exist, so it's a no-op otherwise
     c975L\SiteBundle\Service\Security\SessionNonceGenerator:

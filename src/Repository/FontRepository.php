@@ -34,7 +34,7 @@ class FontRepository extends ServiceEntityRepository
         ;
     }
 
-    // Distinct font-family names currently uploaded, offered by FontService alongside the dev-declared ones
+    // Distinct font-family names currently uploaded, offered by FontService to the "font" kind config selects
     public function findDistinctNames(): array
     {
         return array_column(

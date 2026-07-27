@@ -8,27 +8,12 @@
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
 {% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
 
-{# Preview-only, request-scoped preview of a theme preset's shape (see PageController::preview()'s
-   ?preset=<slug>) - never writes to site_config, so it never affects any other visitor or page.
-   Colors/fonts are never overridden here: they stay whatever the site's own configs say, a preset
-   only ever previews the shape stylesheet on top of them. Rendered after bundle_stylesheets() so
-   it wins the cascade. #}
-{% block stylesheets %}
-    {{ parent() }}
-    {% if previewPreset is defined and previewPreset and previewPreset.stylesheet %}
-        <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/themes/' ~ previewPreset.stylesheet ~ '.min.css') }}">
-    {% endif %}
-{% endblock %}
-
 {# Overrides "container" (not "content"): the alerts stay inside layout's ".container" div, but
    the page's own blocks render full-width as its sibling instead - see components/Blocks/Blocks.html.twig #}
 {% block container %}
     <div class="container">
         {% if isPreview|default(false) and not page.isPublished %}
             <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />
-        {% endif %}
-        {% if previewPreset is defined and previewPreset %}
-            <twig:c975LUi:Alert:Alert type="info" message="{{ 'label.preview_preset_mode'|trans({'%label%': previewPreset.label|trans({}, previewPreset.domain|default('config'))}, 'site') }}" />
         {% endif %}
     </div>
     {% if detailHtml is defined and detailHtml %}

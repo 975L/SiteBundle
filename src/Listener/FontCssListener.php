@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Listener;
 use c975L\SiteBundle\Entity\Font;
 use c975L\SiteBundle\Repository\FontRepository;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
+use c975L\SiteBundle\Listener\Trait\BuildFileWriterTrait;
 use c975L\SiteBundle\Twig\FontPreloadExtension;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
@@ -24,14 +25,16 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 // Fires for any Font flushed through the EntityManager and regenerates public/bundles/build/site-fonts-uploaded.css
 // from every currently uploaded Font - same "compiled from DB, single source of truth" pattern as ThemeVariablesCssListener,
-// but for the admin-uploaded fonts rather than the dev-declared ones in _fonts.css (see FontService, which offers both
-// to the "font" kind config selects). Also a CacheWarmer for the same reason: rows persisted/restored without firing
+// but for the fonts rather than the theme colors (see FontService, which offers their names to the "font" kind config
+// selects). Also a CacheWarmer for the same reason: rows persisted/restored without firing
 // a fresh Doctrine event must still produce an up-to-date file on cache:warmup/cache:clear.
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::postRemove)]
 class FontCssListener implements CacheWarmerInterface
 {
+    use BuildFileWriterTrait;
+
     public function __construct(
         private readonly FontRepository $fontRepository,
         private readonly StylesheetCacheWarmer $stylesheetCacheWarmer,
@@ -85,35 +88,35 @@ class FontCssListener implements CacheWarmerInterface
 
         $blocks = [];
         foreach ($this->fontRepository->findAllOrdered() as $font) {
-            $format = $font->getFormat();
-            if (null === $font->getFilename() || null === $format) {
-                continue;
+            $rule = $this->fontFaceRule($font);
+            if (null !== $rule) {
+                $blocks[] = $rule;
             }
-
-            $blocks[] = sprintf(
-                "@font-face {\n    font-family: \"%s\";\n    src: url(\"/%s\") format(\"%s\");\n    font-weight: %s;\n    font-style: %s;\n    font-display: swap;\n}\n",
-                str_replace('"', '\\"', $font->getName() ?? ''),
-                $font->getFilename(),
-                $format,
-                // A variable font's real axis range is hidden behind its .woff2 Brotli encoding - declaring the full
-                // 100-900 span is always safe, the browser clamps to what the file's own fvar table actually supports
-                $font->isVariable() ? '100 900' : (string) $font->getWeight(),
-                $font->getStyle(),
-            );
         }
 
-        $buildDir = $this->projectDir . '/public/bundles/build';
-        if (!is_dir($buildDir) && !@mkdir($buildDir, 0775, true) && !is_dir($buildDir)) {
-            throw new \RuntimeException(sprintf('Unable to create the "%s" directory.', $buildDir));
-        }
-
-        $path = $buildDir . '/site-fonts-uploaded.css';
-        $tmpPath = $path . '.' . uniqid('', true) . '.tmp';
-        if (false === @file_put_contents($tmpPath, implode("\n", $blocks)) || !@rename($tmpPath, $path)) {
-            throw new \RuntimeException(sprintf('Unable to write "%s".', $path));
-        }
+        $this->writeBuildFile('site-fonts-uploaded.css', implode("\n", $blocks));
 
         // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, uploading a font would regenerate site-fonts-uploaded.css but the live site would keep serving the previous version until the next deploy/warmup
         $this->stylesheetCacheWarmer->compileAll();
+    }
+
+    // One Font row as its @font-face rule, or null for a row with nothing to serve yet (no uploaded file, unknown format)
+    private function fontFaceRule(Font $font): ?string
+    {
+        $format = $font->getFormat();
+        if (null === $font->getFilename() || null === $format) {
+            return null;
+        }
+
+        return sprintf(
+            "@font-face {\n    font-family: \"%s\";\n    src: url(\"/%s\") format(\"%s\");\n    font-weight: %s;\n    font-style: %s;\n    font-display: swap;\n}\n",
+            str_replace('"', '\\"', $font->getName() ?? ''),
+            $font->getFilename(),
+            $format,
+            // A variable font's real axis range is hidden behind its .woff2 Brotli encoding - declaring the full
+            // 100-900 span is always safe, the browser clamps to what the file's own fvar table actually supports
+            $font->isVariable() ? '100 900' : (string) $font->getWeight(),
+            $font->getStyle(),
+        );
     }
 }

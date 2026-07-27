@@ -950,10 +950,6 @@
                 <source>label.template_portfolio_showcase</source>
                 <target>Portfolio</target>
             </trans-unit>
-            <trans-unit id="247">
-                <source>label.preview_preset_mode</source>
-                <target>Previewing the "%label%" preset - your colors and fonts stay as-is, nothing saved</target>
-            </trans-unit>
             <trans-unit id="249">
                 <source>flash.template_applied_to_copy</source>
                 <target>An unpublished copy has been created with the template's blocks added.</target>
@@ -993,10 +989,6 @@
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
                 <target>Accept</target>
-            </trans-unit>
-            <trans-unit id="261">
-                <source>label.theme_preset_default</source>
-                <target>Default</target>
             </trans-unit>
             <trans-unit id="264">
                 <source>label.template_path</source>
@@ -1250,6 +1242,10 @@
                 <source>label.health_check_page_not_found</source>
                 <target>Page not found (not tested)</target>
             </trans-unit>
+            <trans-unit id="420">
+                <source>label.health_check_url_gone</source>
+                <target>Deliberately removed (HTTP 410), but still declared</target>
+            </trans-unit>
             <trans-unit id="342">
                 <source>label.health_check_security_headers_scope</source>
                 <target>these headers apply to the whole site, checked once via the homepage</target>
@@ -1441,6 +1437,106 @@
             <trans-unit id="394">
                 <source>label.health_check_w3c_benign_warnings</source>
                 <target>of which %actionable% actionable (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
+            </trans-unit>
+            <trans-unit id="395">
+                <source>label.health_check_content_quality_no_title</source>
+                <target>missing title</target>
+            </trans-unit>
+            <trans-unit id="396">
+                <source>label.health_check_content_quality_title_too_short</source>
+                <target>title too short (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="397">
+                <source>label.health_check_content_quality_title_too_long</source>
+                <target>title too long (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="398">
+                <source>label.health_check_content_quality_description_too_short</source>
+                <target>description too short (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="399">
+                <source>label.health_check_content_quality_description_too_long</source>
+                <target>description too long (%length% characters)</target>
+            </trans-unit>
+            <trans-unit id="400">
+                <source>label.health_check_content_quality_missing_social_tags</source>
+                <target>%count% missing share tag(s)</target>
+            </trans-unit>
+            <trans-unit id="401">
+                <source>label.health_check_advice_no_title</source>
+                <target>Add a page title (&lt;title&gt; tag)</target>
+            </trans-unit>
+            <trans-unit id="402">
+                <source>label.health_check_advice_title_length</source>
+                <target>Adjust the title: %length% characters, %min% to %max% recommended</target>
+            </trans-unit>
+            <trans-unit id="403">
+                <source>label.health_check_advice_description_length</source>
+                <target>Adjust the meta description: %length% characters, %min% to %max% recommended</target>
+            </trans-unit>
+            <trans-unit id="404">
+                <source>label.health_check_advice_social_tags</source>
+                <target>Add the missing share tags: %tags%</target>
+            </trans-unit>
+            <trans-unit id="405">
+                <source>label.health_check_deployment_https</source>
+                <target>https redirect</target>
+            </trans-unit>
+            <trans-unit id="406">
+                <source>label.health_check_deployment_not_found</source>
+                <target>404 page</target>
+            </trans-unit>
+            <trans-unit id="407">
+                <source>label.health_check_deployment_call_failed</source>
+                <target>Deployment check failed: %message%</target>
+            </trans-unit>
+            <trans-unit id="408">
+                <source>label.health_check_https_redirect_ok</source>
+                <target>http correctly redirects to https</target>
+            </trans-unit>
+            <trans-unit id="409">
+                <source>label.health_check_https_redirect_missing</source>
+                <target>http does not redirect to https (HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="410">
+                <source>label.health_check_https_redirect_insecure</source>
+                <target>http redirects to an insecure url</target>
+            </trans-unit>
+            <trans-unit id="411">
+                <source>label.health_check_not_found_ok</source>
+                <target>Custom 404 page</target>
+            </trans-unit>
+            <trans-unit id="412">
+                <source>label.health_check_not_found_default_page</source>
+                <target>Generic 404 page, not the site's own</target>
+            </trans-unit>
+            <trans-unit id="413">
+                <source>label.health_check_not_found_wrong_status</source>
+                <target>An unknown url answers HTTP %status% instead of 404</target>
+            </trans-unit>
+            <trans-unit id="414">
+                <source>label.health_check_advice_https_redirect</source>
+                <target>Set up the http to https redirect on the server (vhost/proxy)</target>
+            </trans-unit>
+            <trans-unit id="415">
+                <source>label.health_check_advice_https_redirect_insecure</source>
+                <target>Point the http redirect straight at the https url</target>
+            </trans-unit>
+            <trans-unit id="416">
+                <source>label.health_check_advice_not_found_status</source>
+                <target>Answer a real 404 status on an unknown url (currently HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="417">
+                <source>label.health_check_advice_not_found_default_page</source>
+                <target>Create templates/bundles/TwigBundle/Exception/error404.html.twig using the site's own layout</target>
+            </trans-unit>
+            <trans-unit id="418">
+                <source>label.health_check_content_quality_broken_external_links</source>
+                <target>%count% broken external link(s)</target>
+            </trans-unit>
+            <trans-unit id="419">
+                <source>label.health_check_advice_broken_external_links</source>
+                <target>Check %count% external link(s) with no valid answer</target>
             </trans-unit>
         </body>
     </file>

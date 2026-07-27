@@ -150,7 +150,7 @@ class FontPreloadExtensionTest extends TestCase
         $this->assertCount(1, $extension->getFontPreloads());
     }
 
-    // A family offered by the dev-declared _fonts.css (see FontService) has no Font row to point at
+    // A family with no Font row to point at (a CSS generic, or a name typed before the select existed) preloads nothing
     public function testReturnsNothingWhenNoUploadedFontMatchesTheTheme(): void
     {
         $extension = $this->createExtension(

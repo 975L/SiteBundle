@@ -207,9 +207,9 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringNotContainsString('--c975l-mode', $css);
     }
 
-    // site-fonts-face-file is a PHP-side path read by FontService, never a CSS custom property - also not
-    // "theme-"-prefixed, exercising the mechanical slug->variable mapping's non-prefixed branch
-    public function testRegenerateExcludesSiteFontsFaceFileSlug(): void
+    // The "theme-" prefix is what marks a config as a CSS value - a theme-group row without it (typically a slug the
+    // bundle no longer ships, left behind in site_config) must not end up as a variable no stylesheet reads
+    public function testRegenerateSkipsANonPrefixedSlug(): void
     {
         $listener = $this->createListener([
             $this->config('site-fonts-face-file', '/assets/styles/_fonts.css'),
@@ -222,8 +222,8 @@ class ThemeVariablesCssListenerTest extends TestCase
         ));
 
         $css = file_get_contents($this->cssPath);
-        $this->assertStringNotContainsString('_fonts.css', $css);
         $this->assertStringNotContainsString('site-fonts-face-file', $css);
+        $this->assertStringContainsString('--c975l-color-primary: #ff0000;', $css);
     }
 
     public function testPostRemoveRegeneratesFileReflectingTheRemainingConfigs(): void

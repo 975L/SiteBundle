@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 // An admin-uploaded font file (ttf/woff/woff2), turned into a @font-face rule by FontCssListener (compiled to
-// public/bundles/build/site-fonts-uploaded.css) - alongside the dev-declared fonts in _fonts.css (see FontService),
-// this is the second source FontRegistry can offer to the "font" kind config selects. Own Vich field rather than
+// public/bundles/build/site-fonts-uploaded.css) - this is what FontService offers, via FontRegistry, to the
+// "font" kind config selects. Own Vich field rather than
 // UiBundle\Media, same precedent as CollectionItem: not an image, would need to skip all of Media's resize logic
 #[ORM\Entity(repositoryClass: FontRepository::class)]
 #[ORM\Table(name: 'site_font')]

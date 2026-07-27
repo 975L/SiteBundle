@@ -1,5 +1,60 @@
 [
     {
+        "date": "2026-07-27",
+        "description": [
+            {
+                "en": "The Health check now tells you when a page's title or description is missing, too short or too long, so search results show them in full",
+                "fr": "Le Bilan de santé vous signale désormais lorsqu'un titre ou une description de page est absent, trop court ou trop long, afin que les résultats de recherche les affichent en entier",
+                "es": "El Estado de salud ahora le avisa cuando el título o la descripción de una página falta, es demasiado corto o demasiado largo, para que los resultados de búsqueda los muestren completos"
+            },
+            {
+                "en": "The Health check now warns when a page lacks the tags that build its preview on Facebook, LinkedIn or WhatsApp",
+                "fr": "Le Bilan de santé vous prévient désormais lorsqu'une page n'a pas les éléments qui construisent son aperçu sur Facebook, LinkedIn ou WhatsApp",
+                "es": "El Estado de salud ahora le avisa cuando una página carece de los elementos que construyen su vista previa en Facebook, LinkedIn o WhatsApp"
+            },
+            {
+                "en": "The Health check now also verifies the links pointing to other websites, reported as a simple warning since they are not yours to fix",
+                "fr": "Le Bilan de santé vérifie désormais aussi les liens pointant vers d'autres sites, signalés en simple avertissement puisqu'ils ne dépendent pas de vous",
+                "es": "El Estado de salud ahora también verifica los enlaces que apuntan a otros sitios, señalados como simple advertencia ya que no dependen de usted"
+            },
+            {
+                "en": "Fewer perfectly valid links are reported as broken - a site refusing the automated check is no longer taken for a dead page",
+                "fr": "Moins de liens parfaitement valides sont signalés comme cassés - un site refusant la vérification automatique n'est plus pris pour une page morte",
+                "es": "Menos enlaces perfectamente válidos se señalan como rotos - un sitio que rechaza la comprobación automática ya no se toma por una página muerta"
+            },
+            {
+                "en": "The Health check now verifies two settings that fail silently: that visitors arriving over an unsecured address are sent to the secure one, and that a mistyped address really answers \"page not found\"",
+                "fr": "Le Bilan de santé vérifie désormais deux réglages qui échouent en silence : que les visiteurs arrivant par une adresse non sécurisée sont bien renvoyés vers la sécurisée, et qu'une adresse mal saisie répond bien « page introuvable »",
+                "es": "El Estado de salud ahora verifica dos ajustes que fallan en silencio: que los visitantes que llegan por una dirección no segura se redirigen a la segura, y que una dirección mal escrita responde realmente «página no encontrada»"
+            },
+            {
+                "en": "The Health check now covers everything else the site publishes - books, products, photos, campaigns - and not just its pages",
+                "fr": "Le Bilan de santé couvre désormais tout ce que le site publie par ailleurs - livres, produits, photos, campagnes - et plus seulement ses pages",
+                "es": "El Estado de salud ahora cubre todo lo demás que publica el sitio - libros, productos, fotos, campañas - y no solo sus páginas"
+            },
+            {
+                "en": "An administrator can no longer modify or delete a super-administrator's account, nor remove that role by simply saving the record",
+                "fr": "Un administrateur ne peut plus modifier ni supprimer le compte d'un super-administrateur, ni lui retirer ce rôle en enregistrant simplement sa fiche",
+                "es": "Un administrador ya no puede modificar ni eliminar la cuenta de un superadministrador, ni retirarle ese rol con solo guardar su ficha"
+            },
+            {
+                "en": "Fonts are now managed entirely from the Fonts screen, with nothing left to declare elsewhere",
+                "fr": "Les polices se gèrent désormais entièrement depuis l'écran Polices, sans plus rien à déclarer ailleurs",
+                "es": "Las tipografías ahora se gestionan íntegramente desde la pantalla Tipografías, sin nada más que declarar en otro sitio"
+            },
+            {
+                "en": "The theme presets are removed: one site, one theme, with its colors and fonts still editable from the Theme screen",
+                "fr": "Les thèmes prédéfinis sont supprimés : un site, un thème, dont les couleurs et les polices restent modifiables depuis l'écran Thème",
+                "es": "Los temas predefinidos se han eliminado: un sitio, un tema, cuyos colores y tipografías siguen siendo editables desde la pantalla Tema"
+            },
+            {
+                "en": "Fixed the site's tagline in the navigation bar ignoring the color set for it",
+                "fr": "Correction du slogan du site dans la barre de navigation qui ignorait la couleur définie pour lui",
+                "es": "Corregido el lema del sitio en la barra de navegación que ignoraba el color definido para él"
+            }
+        ]
+    },
+    {
         "date": "2026-07-26",
         "description": [
             {

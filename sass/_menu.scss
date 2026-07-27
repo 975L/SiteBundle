@@ -8,10 +8,10 @@
     background-color: var(--navbar-background);
     box-shadow: var(--shadow-nav);
     border-bottom: var(--border-nav);
-    // Breaks out of body's max-width (_general.scss) so the bar spans the full viewport, same technique already used by footer (_footer.scss) - .menu-header/.menu-items keep their own gutter, so only the background/shadow/border reach the edges
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    width: 100vw;
+    // Breaks out of body's max-width (_general.scss) so the bar spans the full viewport, same technique and same token pair already used by footer (_footer.scss) - .menu-header/.menu-items keep their own gutter, so only the background/shadow/border reach the edges
+    margin-left: var(--navbar-margin-x);
+    margin-right: var(--navbar-margin-x);
+    width: var(--navbar-width);
 }
 
 .menu-fixed {
@@ -63,18 +63,22 @@ body.navbar-fixed {
 .menu-site-name {
     font-size: 1.25rem;
     font-weight: bold;
-    color: var(--primary);
+    color: var(--navbar-site-name-color);
     margin-left: 0.5rem;
 }
 
 .menu-site-tagline {
     font-size: 0.9rem;
     font-weight: normal;
-    color: var(--primary);
+    color: var(--navbar-site-tagline-color);
     margin-bottom: 5px;
     // Trix (backoffice rich-text editor) wraps the saved value in its own <div>
     div {
         margin: 0;
+        // _typography.scss's "* { color: var(--text) }" matches that <div> directly, and a color set on an
+        // element always beats the one it would have inherited - so without this the tagline's own color
+        // never reaches the only element actually holding its text
+        color: inherit;
     }
 }
 
@@ -193,27 +197,29 @@ body.navbar-fixed {
 }
 
 // A single stand-out item (e.g. "Contact") among a Menu's otherwise plain links - see MenuLinkType's
-// "primary" field. Reuses the same design tokens as UiBundle's .btn-primary rather than that class
-// itself, whose display:block/max-width/margin:auto layout isn't meant for an inline flex nav item
+// "primary" field. Its three colors go through tokens defaulting to UiBundle's .btn-primary ones (that
+// class itself isn't reused, its display:block/max-width/margin:auto layout not being meant for an inline
+// flex nav item): a navbar painted with --navbar-background: var(--primary) makes a --primary pill
+// invisible, exactly like --navbar-site-name-color's case, and inverts them instead
 .menu-item--primary .menu-link {
-    background-color: var(--primary);
+    background-color: var(--navbar-btn-background);
     border-radius: var(--radius-btn);
     padding: 0.5rem 1.2rem;
     transition: background-color 0.2s ease;
 
     &:hover,
     &:focus {
-        background-color: var(--button-background-primary-dark);
+        background-color: var(--navbar-btn-background-hover);
     }
 }
 
 .menu-item--primary .menu-label {
-    color: var(--button-color);
+    color: var(--navbar-btn-color);
 }
 
 .menu-item--primary .menu-link:hover .menu-label,
 .menu-item--primary .menu-link:focus .menu-label {
-    color: var(--button-color);
+    color: var(--navbar-btn-color);
 }
 
 // White text matches the mobile dropdown's colored (--primary) background - see desktop override below, where the navbar's own (light/translucent) background needs dark text instead

@@ -9,7 +9,6 @@ namespace c975L\SiteBundle\Tests\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\PageController;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\SiteThemePresetProvider;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Twig\CollectionItemContext;
 use c975L\UiBundle\Entity\Block;
@@ -51,7 +50,6 @@ class PageControllerTest extends TestCase
         PageServiceInterface $pageService,
         ConfigServiceInterface $configService,
         bool $isGranted = true,
-        ?SiteThemePresetProvider $themePresetProvider = null,
         ?CollectionSourceRegistry $collectionSourceRegistry = null,
         ?Environment $twig = null,
     ): PageController {
@@ -62,14 +60,12 @@ class PageControllerTest extends TestCase
             );
         }
 
-        // Defaults to null (not a real SiteThemePresetProvider): that class implements ConfigBundle's ThemePresetProviderInterface, which isn't in this bundle's own installed vendor snapshot yet (same reason SiteThemePresetProviderTest already fails) - tests that don't cover preset preview don't need to pay that cost, only the ones that pass a real provider explicitly do
         $controller = new PageController(
             $pageService,
             $configService,
             $collectionSourceRegistry ?? $this->createStub(CollectionSourceRegistry::class),
             $twig,
             new CollectionItemContext(),
-            $themePresetProvider,
         );
 
         $router = $this->createStub(UrlGeneratorInterface::class);
@@ -561,8 +557,8 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:0', $capturedPageParameters['detailHtml']);
     }
 
-    // Without a wired SiteThemePresetProvider (optional dependency), ?preset is simply ignored - graceful degradation rather than a hard failure
-    public function testPreviewResolvesToNullPresetWhenNoneRequested(): void
+    // Regression guard on the removed theme preset catalog: ?preset is an ordinary, unknown query param now, neither read by the controller nor handed to the template - a site has one theme of its own (assets/styles/themes/theme.css), there is nothing left to preview against
+    public function testPreviewPassesNoThemePresetToTheTemplate(): void
     {
         $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
         $controller = $this->createController(
@@ -589,6 +585,6 @@ class PageControllerTest extends TestCase
 
         $controller->preview('draft', new Request(['preset' => 'anything']));
 
-        $this->assertNull($capturedParameters['previewPreset']);
+        $this->assertArrayNotHasKey('previewPreset', $capturedParameters);
     }
 }

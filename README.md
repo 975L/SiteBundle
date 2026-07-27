@@ -313,7 +313,7 @@ Social icons in the footer (site or email) are no longer a dedicated component/c
 
 ## Users
 
-`App\Entity\User` is managed in the EasyAdmin dashboard via `UserCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by the `site-role-admin` key in ConfigBundle, same as pages.
+`App\Entity\User` is managed in the EasyAdmin dashboard via `UserCrudController`. The menu entry is registered automatically through `MenuProvider`. Access is controlled by `UserManagementVoter` (`setEntityPermission()`), which grants the `site-role-admin` key in ConfigBundle, same as pages — except on a `ROLE_SUPER_ADMIN`'s own account, which only another super admin may act on (see [ROLE_SUPER_ADMIN and restricted configs](#role_super_admin-and-restricted-configs)).
 
 The controller relies on EasyAdmin's auto-discovery of the app's own `User` fields (which vary per app), except for:
 
@@ -338,8 +338,10 @@ these with `"restricted": true` in
 `configs.json`; any config so flagged is hidden entirely (index, edit, and export) from
 every user except one holding `ROLE_SUPER_ADMIN`, regardless of `site-role-admin`.
 
-`c975l:site:create` grants `ROLE_SUPER_ADMIN` (together with `ROLE_ADMIN`) to the bootstrap user
-automatically, since whoever runs it owns the site. When you (the producer) deploy a client's site,
+`c975l:site:create` grants `ROLE_SUPER_ADMIN` (together with `ROLE_EDITOR` and `ROLE_ADMIN`) to the
+bootstrap user automatically, since whoever runs it owns the site. No `role_hierarchy` is shipped, so
+each role is granted explicitly: `ROLE_ADMIN` never implies `ROLE_EDITOR`, and an account holding only
+the former would fail every `site-role-editor` gated action. When you (the producer) deploy a client's site,
 run `site:create` yourself to become its super-admin, then create the client's own users with plain
 `ROLE_ADMIN` via the User CRUD — they get full access to pages, menus, general configs, etc., but
 the `backup` config group stays out of their reach. A standalone install where you're the only user
@@ -356,6 +358,18 @@ not just visually, so Symfony's `ChoiceType` rejects a crafted submission trying
 anyway. Without this, listing `ROLE_SUPER_ADMIN` in `user-roles-available` would let any
 `ROLE_ADMIN` grant it to themselves through the User CRUD and bypass every restricted config in one
 step.
+
+The reverse move is blocked too. `UserManagementVoter` (handed to EasyAdmin as the entity permission,
+so it's evaluated per row: on the index, where an inaccessible row keeps its place minus its actions,
+and again before the edit/delete page is built at all) keeps a plain `ROLE_ADMIN` off a super admin's
+account entirely — not just off their roles, but off their email, their password reset and their
+deletion. `ROLE_SUPER_ADMIN` is granted before the `site-role-admin` check, not after: with no
+`role_hierarchy` shipped it doesn't imply that role on its own, and an account holding only the
+highest role would otherwise be refused every row of the very screen that could grant it the one it's
+missing. On top of that, the `roles` field itself is rendered disabled whenever a lesser admin opens a
+super admin's record — Symfony's `ChoiceType` *displays* a value missing from the choices by silently
+dropping it (where it rejects it on submit), so saving the record would otherwise have posted a set
+without `ROLE_SUPER_ADMIN` and demoted them, with neither of them seeing it.
 
 ### Disabling registration
 
@@ -488,7 +502,7 @@ Note the difference with the health check and the smoke test above: both fetch t
 
 ## Health check
 
-SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
+SiteBundle contributes eleven `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains, http/https and 404 deployment), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
 
 | Provider | `getKind()` | Checks | API key |
 | --- | --- | --- | --- |
@@ -496,19 +510,36 @@ SiteBundle contributes nine `HealthCheckProviderInterface` implementations (see 
 | `SecurityHeadersHealthCheckProvider` | `security-headers` | HSTS, CSP (or its `frame-ancestors` in place of X-Frame-Options), X-Content-Type-Options, Referrer-Policy, Permissions-Policy, wildcard CORS - reimplemented directly against the page's own response headers (no securityheaders.com dependency, it has no public API for automated use). These headers are set once for the whole site, never per-page, so only the homepage is fetched | None |
 | `W3cHtmlHealthCheckProvider` | `w3c-html` | HTML markup (W3C Nu Html Checker) - skips a page outright (single "not tested" row) if it doesn't resolve on the checked environment, instead of forwarding a 404 to the validator | None |
 | `W3cCssHealthCheckProvider` | `w3c-css` | CSS markup (W3C CSS Validator) - same not-deployed guard as `W3cHtmlHealthCheckProvider`. Split from HTML into its own kind/row so each shows its own count (eg. "51 CSS warnings") without being buried in one combined line, and each gets its own direct link to its validator's report for the page. Warnings the validator's own CSS3 profile predates (one per `var()` usage, vendor prefixes and prefixed pseudo-elements/classes, values it doesn't know but reports as browser-supported) are counted apart as *benign*: the summary still shows the report's own total, and only the actionable count drives the row's status, so a stylesheet built on custom properties isn't permanently orange. Nothing is dropped - both lists are persisted, under `warnings` and `benignWarnings` (see `W3cValidatorClient::BENIGN_CSS_WARNING_PATTERNS`) | None |
-| `ContentQualityHealthCheckProvider` | `content-quality` | Missing meta description, missing `<h1>`, images without `alt`, broken internal links (`<a href>` pointing at this site's own host, each unique link checked once per run regardless of how many pages link to it) - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider`. See [what counts as an offence](#what-content-quality-actually-flags) - a decorative image and an unreachable server are deliberately *not* flagged | None |
+| `ContentQualityHealthCheckProvider` | `content-quality` | Missing/too short/too long `<title>` (30-65 characters) and meta description (50-160), missing `<h1>`, missing share tags (`og:title`, `og:description`, `og:image` - read from either the `property` or the `name` attribute), images without `alt`, broken links - internal (`<a href>` pointing at this site's own host) **and** external, each unique link checked once per run regardless of how many pages link to it, and an external one only ever a warning - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider`. See [what counts as an offence](#what-content-quality-actually-flags) - a decorative image and an unreachable server are deliberately *not* flagged | None |
 | `SslCertificateHealthCheckProvider` | `ssl-certificate` | TLS certificate expiry (warns at 30 days left, errors at 7) - one check for the whole site, since the certificate is issued for the host, not per-page. Skipped entirely if `site-url` isn't `https://` | None |
 | `MixedContentHealthCheckProvider` | `mixed-content` | `http://` images/scripts/stylesheets loaded from an `https://` page, per published page - skipped entirely if `site-url` isn't `https://` | None |
 | `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable and well-formed, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
+| `DeclaredUrlsHealthCheckProvider` | `urls-<bundle>` | The same content-quality checks, over the urls **another bundle already declares for its sitemap** — books, products, photos, campaigns. See [Checking other bundles' urls](#checking-other-bundles-urls): nothing to implement bundle-side, and one kind per bundle so each can be scheduled at its own pace | None |
+| `DeploymentHealthCheckProvider` | `deployment` | Two site-wide deployment settings nothing else covers, both silent when they break: that `http://` really redirects to `https://` (checked with `max_redirects: 0`, so the redirect itself is the answer - a relative or `http://` target is only a warning, no redirect at all an error; skipped if `site-url` isn't `https://`), and that an unknown url (`/c975l-health-check-404-probe`, a fixed path so it reads as this check in the access logs) answers a real `404` carrying the site's own error page. A soft 404 answering `200` is an error - search engines index every typo as a page otherwise. "The site's own page" is a heuristic, same spirit as the `robots.txt` one: the body mentions `site-name` somewhere (header, footer, title), which the framework's default error page never does - it only ever downgrades a correct 404 to a warning, and is skipped when no `site-name` is set | None |
 | `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
+
+### Checking other bundles' urls
+
+`content-quality` only knows about SiteBundle's own `Page` entities. Everything else a site publishes — a book, a product, a photo, a crowdfunding campaign — is checked by `DeclaredUrlsHealthCheckProvider`, which reuses the exact same `ContentQualityAnalyzer` over the urls a bundle **already declares for its sitemap**:
+
+- **Nothing to implement.** `DeclaredUrlsHealthCheckPass` registers one provider per `SitemapProviderInterface` found in the container. A bundle that declares a sitemap is health-checked; that's the whole contract. Services are discovered by interface rather than by ConfigBundle's tag, so it doesn't matter which bundle's compiler pass ran first.
+- **One kind per bundle**, named after the sitemap it already declares: `urls-book`, `urls-shop`, `urls-gallery`, `urls-crowdfunding`. All of them land on the same Health check dashboard, but each can be run on its own — what the site sells or funds is worth catching weekly, while a gallery declaring two thousand photos is better off on its own, less frequent entry (that split is what the scaffolded `MaintenanceSchedule` ships):
+
+```bash
+php bin/console c975l:health-check:run --kind=urls-book --kind=urls-shop
+```
+
+- **SiteBundle's own `SitePageSitemapProvider` is deliberately skipped**: `content-quality` already checks every `Page`, and does it better (each offence traced back to the block holding it, each row linking to the page's own edit screen). A declared url has no `Page` and no admin screen behind it, so its rows carry no edit link and no block link — every other check is identical, down to the advice lines.
 
 ### What content-quality actually flags
 
-Two rules keep the `content-quality` kind from reporting things you cannot fix:
+Three rules keep the `content-quality` kind from reporting things you cannot fix:
+
+- **Share tags.** Only the three a preview actually needs to render are required (`og:title`, `og:description`, `og:image`). `og:url`/`og:type` belong to the Open Graph protocol too, but nothing visible breaks without them, so they stay out rather than turning every page orange over a tag no one sees. A tag with an empty `content` counts as absent. Schema.org/JSON-LD is deliberately **not** checked: whether a page carries structured data depends on what it is, not on whether it's well built.
 
 - **Images.** A missing `alt` attribute is always an error. An explicitly empty `alt=""` is the *correct* markup for a decorative image, so it is only flagged when nothing marks it as decorative: no `aria-hidden="true"`, no `role="presentation"`/`role="none"`, and no enclosing `<a>`/`<button>` already carrying its own `aria-label`/`aria-labelledby`. A share button's icon inside a labelled link, or a logo inside a labelled link, is therefore correct as-is and stays out of the report - flagging it would leave the page in warning forever with nothing to fix.
 - **Every offender is listed individually** under its advice line on the page's own "Health check" tab (a collapsed list, so a page with a dozen images without `alt` doesn't bury the rest of the table), each linking straight to the block that produced it (`PageBlockLocator`, best-effort: it traces the rendered `src`/`href` back through the page's blocks, and falls back to the page's plain edit url when no block claims it).
-- **Links.** Only a conclusive HTTP status `>= 400` counts as broken. A transport failure (timeout, DNS, refused connection) and a `405`/`501` (the server refusing the `HEAD` *method*, not the url) are retried once with a `GET`, and if they still can't be concluded they are left out rather than reported. Link checks are also fired in batches of 10 instead of all at once: Symfony's `HttpClient` caps concurrent connections per host, so a site-wide burst only queues the surplus while each queued request's own timeout is already running - which used to turn perfectly valid links into timeouts, and timeouts into "broken" rows.
+- **Links.** Only a conclusive HTTP status `>= 400` counts as broken. A transport failure (timeout, DNS, refused connection) and any status describing how the server treats *this client* rather than whether the url exists — `405`/`501` (the `HEAD` method refused), `403` and LinkedIn's non-standard `999` (bot filtering, which most big retailers and social sites apply to datacenter IPs), `429` (rate limiting) — are retried once with a `GET`, and if they still can't be concluded they are left out rather than reported. Link checks identify themselves as `Mozilla/5.0 (compatible; c975LHealthCheck/1.0; +https://github.com/975L/SiteBundle)`: honest enough that a WAF operator can look it up and allow it, while keeping the crawler shape far fewer filters reject outright than a bare library default. **External links are checked too, but a dead one is only ever a warning** — it isn't yours to fix on your own schedule, and it's the check most exposed to a false positive; a dead link on your own pages stays an error. Both are listed separately, in the same dedup/batching pass, so an external host is hit once per run and not once per page linking to it. Link checks are also fired in batches of 10 instead of all at once: Symfony's `HttpClient` caps concurrent connections per host, so a site-wide burst only queues the surplus while each queued request's own timeout is already running - which used to turn perfectly valid links into timeouts, and timeouts into "broken" rows.
 
 `W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) to skip a page that doesn't resolve on the checked environment with a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - not a warning/error, there's nothing to act on until the page is actually deployed), instead of forwarding a confusing raw HTTP error to the actual check. `'home'` maps to the site root, any other slug to `/pages/{slug}`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
 
@@ -564,33 +595,31 @@ Nothing is persisted per item — see `PageController::resolveCollectionDetail()
 
 ## Themes
 
-The site's colors, fonts and light/dark mode are admin-editable ConfigBundle keys (`group: theme`, see `config/configs-css.json`): `theme-color-primary`, `theme-color-secondary`, `theme-color-primary-dark-mode`, `theme-color-secondary-dark-mode`, `theme-color-background`, `theme-color-text`, `theme-font-family-title`, `theme-font-family-body`, `theme-font-family-accent`, `theme-mode` (`auto`/`light`/`dark`) and `theme-stylesheet` (see below). Managed via ConfigBundle's `ThemeCrudController`, its own dashboard view so it doesn't get mixed up with the general config list.
+The site's colors, fonts and light/dark mode are admin-editable ConfigBundle keys (`group: theme`, see `config/configs-css.json`): `theme-color-primary`, `theme-color-secondary`, `theme-color-primary-dark-mode`, `theme-color-secondary-dark-mode`, `theme-color-background`, `theme-color-text`, `theme-font-family-title`, `theme-font-family-body`, `theme-font-family-accent`, `theme-mode` (`auto`/`light`/`dark`). Managed via ConfigBundle's `ThemeCrudController`, its own dashboard view so it doesn't get mixed up with the general config list.
 
-The 3 `theme-font-family-*` keys are `kind: font` (ConfigBundle), rendering a `<select>` instead of free text: the 3 CSS generics (`serif`/`sans-serif`/`monospace`) are always offered, topped up with whatever custom `font-family` names `FontService` parses from the `@font-face` declarations in the CSS file pointed to by `site-fonts-face-file` (another `theme`-group key, defaults to `assets/styles/_fonts.css` — see the scaffolded starter file for the expected format), plus whatever an admin has uploaded (see below). Unlike the color keys, they're not `restricted` — any `ROLE_ADMIN`, not just `ROLE_SUPER_ADMIN`, can change them.
+The 3 `theme-font-family-*` keys are `kind: font` (ConfigBundle), rendering a `<select>` instead of free text: the 3 CSS generics (`serif`/`sans-serif`/`monospace`) are always offered, topped up with the `font-family` names of whatever fonts an admin has uploaded (`FontService`, see below). Unlike the color keys, they're not `restricted` — any `ROLE_ADMIN`, not just `ROLE_SUPER_ADMIN`, can change them.
 
-An admin can also upload their own font files straight from the dashboard (`FontCrudController`, TTF/WOFF/WOFF2, 5 MB max) — no dev/deploy needed. Each upload is one `Font` row (name/weight/style + the file, stored under `public/medias/fonts`); `FontCssListener` (Doctrine listener + `CacheWarmerInterface`, same pattern as `ThemeVariablesCssListener`) compiles every row into `public/bundles/build/site-fonts-uploaded.css`, one `@font-face` block per row, loaded via `StylesheetProvider` alongside `site-theme.css`. No format conversion happens server-side (WOFF2 encoding needs Brotli + glyph-table transforms that plain PHP can't do without a system binary) — an admin wanting broad browser fallback just uploads the same font in more than one format, producing several `@font-face` rules with identical `font-family`/weight/style that the browser picks between.
+An admin uploads their own font files straight from the dashboard (`FontCrudController`, TTF/WOFF/WOFF2, 5 MB max) — no dev/deploy needed. Each upload is one `Font` row (name/weight/style + the file, stored under `public/medias/fonts`); `FontCssListener` (Doctrine listener + `CacheWarmerInterface`, same pattern as `ThemeVariablesCssListener`) compiles every row into `public/bundles/build/site-fonts-uploaded.css`, one `@font-face` block per row, loaded via `StylesheetProvider` alongside `site-theme.css`. No format conversion happens server-side (WOFF2 encoding needs Brotli + glyph-table transforms that plain PHP can't do without a system binary) — an admin wanting broad browser fallback just uploads the same font in more than one format, producing several `@font-face` rules with identical `font-family`/weight/style that the browser picks between.
 
 The Font list's "Bulk import" toolbar action (`FontBulkImportController`) uploads several font files at once instead of one `FontCrudController` row at a time: each file's name/weight/style is guessed from its filename (`FontFilenameParser`, following the `FamilyName-WeightStyle.ext` convention used by Google Fonts and most foundries, eg. `OpenSans-Bold.ttf`), then goes through the same `Font`/`FontCssListener` pipeline as a single upload. A wrong guess is fixed afterward on that row's own edit screen.
 
 Selected fonts can be exported the same way as pages (see [Admin management](#admin-management)): an "Export selection" batch action, `site-role-admin`-gated, producing a zip re-importable via ConfigBundle's **Import content** screen (`FontImportProvider`). `FontExportProvider` also plugs Fonts into ConfigBundle's **Export sync (everything)** dashboard shortcut.
 
-Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, also a `CacheWarmerInterface` so a fresh `public/bundles/build/site-theme.css` exists after a deploy even without an admin re-saving anything) into `--c975l-*` CSS custom properties, loaded right after `styles.min.css` so they win the cascade over the built-in defaults. A bare custom font name picked for `theme-font-family-title`/`-body`/`-accent` also gets a generic fallback appended (`sans-serif`/`sans-serif`/`monospace` respectively) so the browser has somewhere to go if the `@font-face` fails to load. The same compiled file is inlined into emails via the `theme_variables_css()` Twig function — no more per-app `_user-variables.css`/`_user-typography.css` override stubs to keep in sync, the backoffice is now the single source of truth for both the site and its emails. Because the real site links UiBundle's concatenated `bundles/build/site.css` rather than `site-theme.css` directly, the listener also calls UiBundle's `StylesheetCacheWarmer::compileAll()` after every regeneration, so a theme change (or applying a preset) is reflected immediately instead of waiting for the next `cache:warmup`.
+Every change is compiled by `ThemeVariablesCssListener` (a Doctrine listener, also a `CacheWarmerInterface` so a fresh `public/bundles/build/site-theme.css` exists after a deploy even without an admin re-saving anything) into `--c975l-*` CSS custom properties, loaded right after `styles.min.css` so they win the cascade over the built-in defaults. A bare custom font name picked for `theme-font-family-title`/`-body`/`-accent` also gets a generic fallback appended (`sans-serif`/`sans-serif`/`monospace` respectively) so the browser has somewhere to go if the `@font-face` fails to load. The same compiled file is inlined into emails via the `theme_variables_css()` Twig function — no more per-app `_user-variables.css`/`_user-typography.css` override stubs to keep in sync, the backoffice is now the single source of truth for both the site and its emails. Because the real site links UiBundle's concatenated `bundles/build/site.css` rather than `site-theme.css` directly, the listener also calls UiBundle's `StylesheetCacheWarmer::compileAll()` after every regeneration, so a theme change is reflected immediately instead of waiting for the next `cache:warmup`.
 
 `theme-mode: dark` (or `auto` following the visitor's OS preference via `prefers-color-scheme`) swaps in a dark palette (see `sass/_theme-dark.scss`); `theme-color-primary-dark-mode`/`-secondary-dark-mode` optionally override just the accent colors for dark mode, falling back to the light-mode ones otherwise.
 
-### Presets
+### A site's own theme
 
-`config/themes/*.json` ships ready-made "shape" stylesheets (see below) as one-click presets, listed via `SiteThemePresetProvider` (implements ConfigBundle's `ThemePresetProviderInterface`). An admin applies one from the Theme dashboard's "Presets" action group — this only ever overwrites the `theme-stylesheet` config in a single flush; colors/fonts stay entirely admin-owned (edited directly, above) and page content is never touched.
+One site, one theme: there is no catalog to pick from, and nothing to switch between. `c975l:scaffold:install` copies an editable `assets/styles/themes/theme.css` into the app — every shape token the bundle knows, restated at its default value as a starting point — and the app owns it from then on, never synced back from the bundle. Wire it yourself, from `assets/app.js` (preferred — AssetMapper doesn't merge CSS, so `import './styles/themes/theme.css';` placed before the `./styles/app.css` import gets both sheets fetched in parallel) or with `@import url("./themes/theme.css");` at the top of `assets/styles/app.css`; the command reminds you as long as neither file mentions it. Either way the theme loads after the bundle's own stylesheets, so its tokens win over their base values.
 
-Before committing to one, preview it on any page: `/pages/{page}/preview?preset=<slug>` renders that page with the preset's shape applied for this request only (nothing written to `site_config`) — your own colors/fonts are shown as-is. A preset never references a page template (see [Page templates](#page-templates)): the two are entirely independent, applying one never affects the other.
+That file is for **shapes and layout** — radii, navbar/footer, section flats (see UiBundle's [colored backgrounds](https://github.com/975L/UiBundle#colored-backgrounds), whose `--section-bg-*` are declared here). Colors and fonts are not in it: they belong to the admin, edited from the backoffice as described above, and no design token should second-guess them.
 
-### Theme shape stylesheets
+A navbar painted with `--navbar-background: var(--primary)` has three tokens to inverse what would otherwise be invisible on it: `--navbar-site-name-color`/`--navbar-site-tagline-color` for the brand block, and `--navbar-btn-background`/`-background-hover`/`-color` for the single "primary" nav item's pill, whose defaults are UiBundle's `.btn-primary` colors.
 
-A theme preset (see above) can ship its own `sass/themes/<slug>.scss`, overriding non-color "shape" tokens — border radii, shadows, navbar/footer layout — defined in `sass/_variables.scss`. Setting `theme-stylesheet` (done automatically when applying a preset that declares one) loads `bundles/c975lsite/css/themes/<slug>.min.css` after `site-theme.css`, so it can override those tokens on top of the admin's colors/fonts. `default` is the only one shipped by the bundle itself (matching `_variables.scss`'s own base tokens, materialized as a real preset rather than an implicit fallback) — a satellite bundle can contribute more via its own `ThemePresetProviderInterface` implementation (see `SiteThemePresetProvider` for the pattern), aggregated by ConfigBundle's `ThemePresetRegistry`.
+Navbar and footer both bleed full-viewport-width past `--body-max-width`, each through its own pair of tokens: `--navbar-width`/`--navbar-margin-x` and `--footer-width`/`--footer-margin-x`. A design that frames the page inside that max-width sets the pairs it needs to `auto`/`0` here, instead of overriding `.menu`/`footer` from `app.css`.
 
-### A site's own one-off theme
-
-For a fully custom site design that doesn't need switching between presets, `c975l:scaffold:install` copies an editable `assets/styles/themes/theme.css` into the app (same shape tokens as the `default` preset, as a starting point) — edit it freely, it's the app's own file, never synced back from the bundle after that first copy. Add `@import url("./themes/theme.css");` to `assets/styles/app.css` yourself (the command reminds you if it's still missing); since `app.css` loads last, it then overrides whatever `theme-stylesheet` preset is active.
+Rules that override a bundle's own classes belong in `app.css`, not in `theme.css` — the split is "values on one side, rules on the other", not "mine versus the bundle's".
 
 ---
 
@@ -1001,7 +1030,11 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             // Messenger cleanup: daily at 03:00
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             // Health check (see below): every registered provider is free, weekly is plenty
-            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains')));
+            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains --kind=deployment')))
+            // Other bundles' own declared urls (see "Checking other bundles' urls"), one kind per bundle: what the site sells or funds is caught weekly too, a dead product/book/campaign page costs a sale
+            ->add(RecurringMessage::cron('0 5 * * 0', new RunCommandMessage('c975l:health-check:run --kind=urls-book --kind=urls-shop --kind=urls-crowdfunding')))
+            // The gallery on its own: one declared url per photo makes it by far the longest run, and a stale photo page is nothing like a product page going down
+            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --kind=urls-gallery')));
     }
 }
 ```
@@ -1022,6 +1055,22 @@ You may keep a cron entry that restarts the worker daily (e.g., at 00:25) to rec
 
 ```bash
 25 0 * * * systemctl --user start messenger-worker@your-site.service
+```
+
+### 3. Route `RunCommandMessage`, for the on-demand runs
+
+The scheduler dispatches its own commands through its `scheduler_site` transport, but the dashboard's **"Run health check now"** button (ConfigBundle) queues `RunCommandMessage` on the default bus instead — it has no schedule to attach to. Route it to an asynchronous transport, and have the worker consume that one too, otherwise Messenger handles it synchronously and the button blocks the admin request just as it used to:
+
+```yaml
+# config/packages/messenger.yaml
+framework:
+    messenger:
+        routing:
+            Symfony\Component\Console\Messenger\RunCommandMessage: async
+```
+
+```bash
+php bin/console messenger:consume async scheduler_site
 ```
 
 ---

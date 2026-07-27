@@ -11,7 +11,7 @@ namespace c975L\SiteBundle\Service;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-// Parses a page's own rendered HTML (native DOMDocument/DOMXPath, no dependency) for the content-quality checks - meta description, H1, image alt text, internal links (for ContentQualityHealthCheckProvider's broken-link pass). Reading the actual rendered markup rather than the block data that produced it works regardless of which block kinds/theme a page uses
+// Parses a page's own rendered HTML (native DOMDocument/DOMXPath, no dependency) for the content-quality checks - title, meta description, H1, image alt text, Open Graph share tags, internal links (for ContentQualityHealthCheckProvider's broken-link pass). Reading the actual rendered markup rather than the block data that produced it works regardless of which block kinds/theme a page uses. Nothing is judged here (what makes a title too short, which share tags matter) - that's ContentQualityHealthCheckProvider's call, this only reports what the page holds
 class ContentQualityClient
 {
     // A missing alt attribute is always an error, but an explicitly empty one (alt="") is the *correct* way to mark a decorative image - it only counts when nothing marks it as such: no aria-hidden, no role="presentation"/"none", and no enclosing link/button already carrying its own accessible name (a share button's icon, a logo inside a labelled link). Flagging those would leave a page in warning forever, since there is nothing to fix
@@ -21,6 +21,12 @@ class ContentQualityClient
     public const LINK_OK = 'ok';
     public const LINK_BROKEN = 'broken';
     public const LINK_UNKNOWN = 'unknown';
+
+    // Statuses that describe how the *server* treats this client rather than whether the url exists: the method it refuses (405/501), the bot filtering big retailers/social sites answer datacenter IPs with (403, and LinkedIn's own non-standard 999), and rate limiting (429). All inconclusive, never broken
+    private const INCONCLUSIVE_STATUSES = [403, 405, 429, 501, 999];
+
+    // Identifies the checker honestly (a WAF operator can look it up and allow it) while keeping the "Mozilla/5.0 (compatible; ...)" shape crawlers have used since Googlebot, which far fewer filters reject outright than a bare library default. Sites that still answer 403 are reported as inconclusive, not as broken - see INCONCLUSIVE_STATUSES
+    private const LINK_CHECK_USER_AGENT = 'Mozilla/5.0 (compatible; c975LHealthCheck/1.0; +https://github.com/975L/SiteBundle)';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -33,20 +39,26 @@ class ContentQualityClient
         return $this->httpClient->request('GET', $url, ['timeout' => 30]);
     }
 
-    // Blocks until the given in-flight response completes and parses it - $url is the same one passed to request(), needed again here to resolve internal links against its own host. Returns ['hasDescription' => bool, 'hasH1' => bool, 'imagesWithoutAlt' => string[] (each offending img's src), 'internalLinks' => string[] (deduped, absolute, same-host only), 'linkTexts' => array<string, string> (each internal link's anchor text)]
+    // Blocks until the given in-flight response completes and parses it - $url is the same one passed to request(), needed again here to resolve links against its own host. Returns ['title' => string, 'description' => string, 'hasDescription' => bool, 'hasH1' => bool, 'imagesWithoutAlt' => string[] (each offending img's src), 'socialTags' => array<string, string>, 'internalLinks' => string[] (deduped, absolute, same-host only), 'externalLinks' => string[] (same, other hosts), 'linkTexts' => array<string, string> (each link's anchor text)]
     public function read(ResponseInterface $response, string $url): array
     {
         $xpath = $this->buildXPath($response->getContent());
         $host = parse_url($url, \PHP_URL_HOST);
 
-        $description = $xpath->query('//meta[@name="description"]/@content')->item(0)?->nodeValue;
-        ['links' => $internalLinks, 'texts' => $linkTexts] = $this->extractInternalLinks($xpath, $url, $host);
+        $description = trim((string) $xpath->query('//meta[@name="description"]/@content')->item(0)?->nodeValue);
+        ['links' => $internalLinks, 'external' => $externalLinks, 'texts' => $linkTexts] = $this->extractInternalLinks($xpath, $url, $host);
 
         return [
-            'hasDescription' => '' !== trim((string) $description),
+            // Whitespace collapsed the same way a browser/crawler renders it - a <title> broken over three indented Twig lines is not a 40-character title
+            'title' => trim(preg_replace('/\s+/', ' ', (string) $xpath->query('//title')->item(0)?->textContent)),
+            // The description itself alongside hasDescription, since its length is checked too and "missing" and "too short" are two different things to tell the user
+            'description' => $description,
+            'hasDescription' => '' !== $description,
             'hasH1' => $xpath->query('//h1')->length > 0,
             'imagesWithoutAlt' => $this->extractImagesWithoutAlt($xpath),
+            'socialTags' => $this->extractSocialTags($xpath),
             'internalLinks' => $internalLinks,
+            'externalLinks' => $externalLinks,
             'linkTexts' => $linkTexts,
         ];
     }
@@ -60,16 +72,16 @@ class ContentQualityClient
     // A HEAD request is enough to know if a link resolves
     public function requestLinkCheck(string $url): ResponseInterface
     {
-        return $this->httpClient->request('HEAD', $url, ['timeout' => 15]);
+        return $this->httpClient->request('HEAD', $url, ['timeout' => 15, 'headers' => ['User-Agent' => self::LINK_CHECK_USER_AGENT]]);
     }
 
     // Second pass for a link the HEAD couldn't conclude on - a fair share of servers answer 405/501 to HEAD, or drop it altogether, on urls that serve perfectly well in GET
     public function requestLinkCheckFallback(string $url): ResponseInterface
     {
-        return $this->httpClient->request('GET', $url, ['timeout' => 15]);
+        return $this->httpClient->request('GET', $url, ['timeout' => 15, 'headers' => ['User-Agent' => self::LINK_CHECK_USER_AGENT]]);
     }
 
-    // Only a conclusive >= 400 answer means broken. A transport failure (DNS, timeout, connection refused) yields LINK_UNKNOWN, and so does a 405/501, which says the server refuses the HEAD *method* rather than the url - both are worth a requestLinkCheckFallback() retry before anything is called broken
+    // Only a conclusive >= 400 answer means broken. A transport failure (DNS, timeout, connection refused) yields LINK_UNKNOWN, and so does anything in INCONCLUSIVE_STATUSES, which describes how the server treats this client rather than whether the url exists - all worth a requestLinkCheckFallback() retry before anything is called broken
     public function readLinkCheck(ResponseInterface $response): string
     {
         try {
@@ -79,7 +91,7 @@ class ContentQualityClient
         }
 
         return match (true) {
-            405 === $status, 501 === $status => self::LINK_UNKNOWN,
+            \in_array($status, self::INCONCLUSIVE_STATUSES, true) => self::LINK_UNKNOWN,
             $status >= 400 => self::LINK_BROKEN,
             default => self::LINK_OK,
         };
@@ -136,32 +148,63 @@ class ContentQualityClient
         return array_keys($sources);
     }
 
-    // Root-relative ("/pages/contact/") and same-host absolute links only - external links, anchors, mailto:/tel:/javascript: are not this site's problem to fix. Each link's anchor text is kept alongside it ('texts'), so a broken link can be listed by what the visitor actually clicks on rather than by its url alone - first occurrence wins, the same url linked twice with two different labels only needs fixing once
+    // Every og:* meta tag holding an actual value, keyed by its (lowercased) name - which of them a page is expected to carry is ContentQualityHealthCheckProvider's call, not this one's. Both the "property" and the "name" attribute are read: the Open Graph protocol specifies "property", but "name" is common in the wild and works just as well. An empty content is the same as no tag at all - a share preview has nothing to render either way
+    private function extractSocialTags(\DOMXPath $xpath): array
+    {
+        $tags = [];
+
+        foreach ($xpath->query('//meta[@content][@property or @name]') as $meta) {
+            $name = strtolower(trim($meta->getAttribute('property') ?: $meta->getAttribute('name')));
+            $content = trim($meta->getAttribute('content'));
+            if ('' !== $content && str_starts_with($name, 'og:')) {
+                $tags[$name] ??= $content;
+            }
+        }
+
+        return $tags;
+    }
+
+    // Split into same-host links (this site's own pages) and http(s) links to another host, both absolute and deduped - anchors, mailto:/tel:/javascript: and host-less relative hrefs ("contact.html", which nothing in this bundle produces) are dropped either way. The two are kept apart rather than merged because a dead link on your own site and a merchant that took its product page down are not the same problem, nor the same severity (see ContentQualityHealthCheckProvider::buildRow()). Each link's anchor text is kept alongside it ('texts'), so a broken link can be listed by what the visitor actually clicks on rather than by its url alone - first occurrence wins, the same url linked twice with two different labels only needs fixing once
     private function extractInternalLinks(\DOMXPath $xpath, string $pageUrl, ?string $host): array
     {
-        $scheme = parse_url($pageUrl, \PHP_URL_SCHEME);
         $links = [];
+        $external = [];
         $texts = [];
 
         foreach ($xpath->query('//a[@href]') as $anchor) {
-            $href = trim($anchor->getAttribute('href'));
-            if ('' === $href || str_starts_with($href, '#') || preg_match('/^(mailto|tel|javascript):/i', $href)) {
+            $link = $this->absoluteLink(trim($anchor->getAttribute('href')), $pageUrl, $host);
+            if (null === $link) {
                 continue;
             }
 
-            if (str_starts_with($href, '/') && !str_starts_with($href, '//')) {
-                $link = $scheme . '://' . $host . $href;
-            } elseif (parse_url($href, \PHP_URL_HOST) === $host) {
-                $link = $href;
+            if (parse_url($link, \PHP_URL_HOST) === $host) {
+                $links[$link] = true;
+            } elseif (preg_match('#^https?://#i', $link)) {
+                $external[$link] = true;
             } else {
                 continue;
             }
 
-            $links[$link] = true;
             $texts[$link] ??= $this->anchorText($anchor);
         }
 
-        return ['links' => array_keys($links), 'texts' => array_filter($texts)];
+        return ['links' => array_keys($links), 'external' => array_keys($external), 'texts' => array_filter($texts)];
+    }
+
+    // The requestable url an href points at, or null for what never is - an empty href, an anchor, a mailto:/tel:/javascript: scheme. A protocol-relative href ("//cdn.example.com/x") inherits the page's own scheme, a root-relative one its host as well
+    private function absoluteLink(string $href, string $pageUrl, ?string $host): ?string
+    {
+        if ('' === $href || str_starts_with($href, '#') || preg_match('/^(mailto|tel|javascript):/i', $href)) {
+            return null;
+        }
+
+        $scheme = parse_url($pageUrl, \PHP_URL_SCHEME);
+
+        return match (true) {
+            str_starts_with($href, '//') => $scheme . ':' . $href,
+            str_starts_with($href, '/') => $scheme . '://' . $host . $href,
+            default => $href,
+        };
     }
 
     // An image-only link has no text of its own - its image's alt is the closest thing to a label, and an empty string when it has none either (filtered out by the caller)

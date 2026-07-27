@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\SiteBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Management\PageHealthCheckAdviceBuilder;
 use Psr\Log\LoggerInterface;
 use PHPUnit\Framework\TestCase;
@@ -187,6 +188,98 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
             'imagesWithoutAlt' => 3,
             'brokenLinks' => ['https://example.com/pages/missing/'],
         ]);
+
+        $this->assertSame([], $this->createBuilder()->buildAdvice([$result]));
+    }
+
+    public function testContentQualityAdvisesOnAMissingTitle(): void
+    {
+        $result = $this->createResult('content-quality', ['titleIssue' => 'missing', 'titleLength' => 0]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertSame('label.health_check_advice_no_title', $advice[0]['text']);
+    }
+
+    // The advice states the length found alongside the window to aim for, both title and description
+    public function testContentQualityAdvisesOnTitleAndDescriptionLength(): void
+    {
+        $result = $this->createResult('content-quality', [
+            'titleIssue' => 'short',
+            'titleLength' => 12,
+            'hasDescription' => true,
+            'descriptionIssue' => 'long',
+            'descriptionLength' => 210,
+        ]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertCount(2, $advice);
+        $this->assertStringContainsString('12', $advice[0]['text']);
+        $this->assertStringContainsString((string) ContentQualityAnalyzer::TITLE_MAX_LENGTH, $advice[0]['text']);
+        $this->assertStringContainsString('210', $advice[1]['text']);
+    }
+
+    // A page with no description at all only gets the "add one" line, never the length one on top of it
+    public function testContentQualityDoesNotStackTheLengthAdviceOnAMissingDescription(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => false, 'descriptionIssue' => null, 'descriptionLength' => 0]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertCount(1, $advice);
+        $this->assertSame('label.health_check_advice_no_description', $advice[0]['text']);
+    }
+
+    public function testContentQualityAdvisesOnMissingShareTagsByName(): void
+    {
+        $result = $this->createResult('content-quality', ['missingSocialTags' => ['og:description', 'og:image']]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertStringContainsString('og:description, og:image', $advice[0]['text']);
+    }
+
+    // Its own line, apart from the internal one - the two aren't the same fix, nor the same severity
+    public function testContentQualityAdvisesOnBrokenExternalLinksSeparately(): void
+    {
+        $result = $this->createResult('content-quality', [
+            'brokenLinks' => [['url' => 'https://example.com/pages/missing/', 'text' => null]],
+            'brokenExternalLinks' => [['url' => 'https://www.fnac.com/livre/123', 'text' => 'Acheter le livre']],
+        ]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertCount(2, $advice);
+        $this->assertStringContainsString('label.health_check_advice_broken_links', $advice[0]['text']);
+        $this->assertStringContainsString('label.health_check_advice_broken_external_links', $advice[1]['text']);
+        $this->assertSame('Acheter le livre - https://www.fnac.com/livre/123', $advice[1]['items'][0]['text']);
+    }
+
+    // Another bundle's declared urls hold exactly the same details as content-quality, so they get the same advice rather than the "unknown kind" silence
+    public function testDeclaredUrlKindsGetTheContentQualityAdvice(): void
+    {
+        $result = $this->createResult('urls-book', ['titleIssue' => 'missing', 'titleLength' => 0], 'https://example.com/livre/mon-livre');
+
+        $advice = $this->createBuilder()->buildAdvice([$result]);
+
+        $this->assertSame('label.health_check_advice_no_title', $advice[$this->key('urls-book', 'https://example.com/livre/mon-livre')][0]['text']);
+    }
+
+    public function testDeploymentAdvisesOnEachIssue(): void
+    {
+        $missingRedirect = $this->createResult('deployment', ['issue' => 'https-redirect', 'statusCode' => 200], 'http://example.com/');
+        $softNotFound = $this->createResult('deployment', ['issue' => 'not-404', 'statusCode' => 200], 'https://example.com/probe');
+
+        $advice = $this->createBuilder()->buildAdvice([$missingRedirect, $softNotFound]);
+
+        $this->assertSame('label.health_check_advice_https_redirect', $advice[$this->key('deployment', 'http://example.com/')][0]['text']);
+        $this->assertStringContainsString('200', $advice[$this->key('deployment', 'https://example.com/probe')][0]['text']);
+    }
+
+    public function testDeploymentGivesNoAdviceWhenNothingIsWrong(): void
+    {
+        $result = $this->createResult('deployment', []);
 
         $this->assertSame([], $this->createBuilder()->buildAdvice([$result]));
     }

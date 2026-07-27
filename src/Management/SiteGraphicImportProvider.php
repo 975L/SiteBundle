@@ -37,22 +37,7 @@ class SiteGraphicImportProvider implements ImportProviderInterface
         $clearedRepeatableRoles = [];
 
         foreach ($items as $item) {
-            $role = $item['role'];
-
-            if (in_array($role, Media::getSingletonRoles(), true)) {
-                $media = $this->mediaRepository->findOneByRole($role);
-                $isNew = null === $media;
-                $media ??= (new Media())->setRole($role);
-            } else {
-                if (!isset($clearedRepeatableRoles[$role])) {
-                    foreach ($this->mediaRepository->findBy(['role' => $role]) as $existing) {
-                        $this->em->remove($existing);
-                    }
-                    $clearedRepeatableRoles[$role] = true;
-                }
-                $media = (new Media())->setRole($role);
-                $isNew = true;
-            }
+            [$media, $isNew] = $this->resolveMedia($item['role'], $clearedRepeatableRoles);
 
             if (null !== $filesDir && isset($item['file'])) {
                 $media->setFile(new ReplacingFile($filesDir . '/' . $item['file'], true, true, true));
@@ -65,5 +50,25 @@ class SiteGraphicImportProvider implements ImportProviderInterface
         $this->em->flush();
 
         return ['created' => $created, 'updated' => $updated];
+    }
+
+    // A singleton role (favicon, logo...) is updated in place, so the site keeps exactly one; a repeatable one is rebuilt from scratch, its existing rows dropped once per role for the whole batch rather than once per item
+    // @return array{0: Media, 1: bool} - the media to fill in, and whether it had to be created
+    private function resolveMedia(string $role, array &$clearedRepeatableRoles): array
+    {
+        if (in_array($role, Media::getSingletonRoles(), true)) {
+            $media = $this->mediaRepository->findOneByRole($role);
+
+            return [$media ?? (new Media())->setRole($role), null === $media];
+        }
+
+        if (!isset($clearedRepeatableRoles[$role])) {
+            foreach ($this->mediaRepository->findBy(['role' => $role]) as $existing) {
+                $this->em->remove($existing);
+            }
+            $clearedRepeatableRoles[$role] = true;
+        }
+
+        return [(new Media())->setRole($role), true];
     }
 }

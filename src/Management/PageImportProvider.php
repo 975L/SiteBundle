@@ -37,48 +37,71 @@ class PageImportProvider implements ImportProviderInterface
         $now = new \DateTime();
 
         foreach ($items as $item) {
-            $page = $this->pageRepository->findOneBy(['slug' => $item['slug']]);
-            $isNew = null === $page;
-            $page ??= (new Page())->setCreation($now);
-
-            $page
-                ->setTitle($item['title'])
-                ->setSlug($item['slug'])
-                ->setChangeFrequency($item['changeFrequency'] ?? null)
-                ->setPriority($item['priority'] ?? null)
-                ->setIsPublished($item['isPublished'] ?? false)
-                // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
-                ->setIsIndexable($item['isIndexable'] ?? true)
-                ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
-                ->setModification($now);
-
-            // Existing Blocks have no natural key to match the imported ones against, so the whole collection is replaced - BlockRemovalListener removes the orphaned rows (and their Medias) on flush
-            foreach ($page->getBlocks()->toArray() as $existingBlock) {
-                $page->removeBlock($existingBlock);
-            }
-
-            foreach ($this->blockDataImporter->buildBlocks($item['blocks'] ?? [], $filesDir) as $block) {
-                $page->addBlock($block);
-            }
-
-            // ogImage is exclusively owned by this Page (see Page::$ogImage's cascade), unlike Block medias there's no listener to orphan-remove it on its own - dropped by hand before a replacement (if any) is built
-            $existingOgImage = $page->getOgImage();
-            if (null !== $existingOgImage) {
-                $page->setOgImage(null);
-                $this->em->remove($existingOgImage);
-            }
-            if (isset($item['ogImage'])) {
-                $ogImage = $this->blockDataImporter->buildMedia($item['ogImage'], $filesDir);
-                $this->em->persist($ogImage);
-                $page->setOgImage($ogImage);
-            }
-
-            $this->em->persist($page);
-            $isNew ? $created++ : $updated++;
+            $this->importPage($item, $now, $filesDir) ? $created++ : $updated++;
         }
 
         $this->em->flush();
 
         return ['created' => $created, 'updated' => $updated];
+    }
+
+    // One exported page written over whatever already lives under its slug - returns whether it had to be created
+    private function importPage(array $item, \DateTime $now, ?string $filesDir): bool
+    {
+        $page = $this->pageRepository->findOneBy(['slug' => $item['slug']]);
+        $isNew = null === $page;
+        $page ??= (new Page())->setCreation($now);
+
+        $this->fillPage($page, $item, $now);
+        $this->replaceBlocks($page, $item['blocks'] ?? [], $filesDir);
+        $this->replaceOgImage($page, $item['ogImage'] ?? null, $filesDir);
+
+        $this->em->persist($page);
+
+        return $isNew;
+    }
+
+    private function fillPage(Page $page, array $item, \DateTime $now): void
+    {
+        $page
+            ->setTitle($item['title'])
+            ->setSlug($item['slug'])
+            ->setChangeFrequency($item['changeFrequency'] ?? null)
+            ->setPriority($item['priority'] ?? null)
+            ->setIsPublished($item['isPublished'] ?? false)
+            // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
+            ->setIsIndexable($item['isIndexable'] ?? true)
+            ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
+            ->setModification($now);
+    }
+
+    // Existing Blocks have no natural key to match the imported ones against, so the whole collection is replaced - BlockRemovalListener removes the orphaned rows (and their Medias) on flush
+    private function replaceBlocks(Page $page, array $blocksData, ?string $filesDir): void
+    {
+        foreach ($page->getBlocks()->toArray() as $existingBlock) {
+            $page->removeBlock($existingBlock);
+        }
+
+        foreach ($this->blockDataImporter->buildBlocks($blocksData, $filesDir) as $block) {
+            $page->addBlock($block);
+        }
+    }
+
+    // ogImage is exclusively owned by this Page (see Page::$ogImage's cascade), unlike Block medias there's no listener to orphan-remove it on its own - dropped by hand before a replacement (if any) is built
+    private function replaceOgImage(Page $page, ?array $ogImageData, ?string $filesDir): void
+    {
+        $existing = $page->getOgImage();
+        if (null !== $existing) {
+            $page->setOgImage(null);
+            $this->em->remove($existing);
+        }
+
+        if (null === $ogImageData) {
+            return;
+        }
+
+        $ogImage = $this->blockDataImporter->buildMedia($ogImageData, $filesDir);
+        $this->em->persist($ogImage);
+        $page->setOgImage($ogImage);
     }
 }

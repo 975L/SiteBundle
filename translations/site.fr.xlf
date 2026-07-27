@@ -950,10 +950,6 @@
                 <source>label.template_portfolio_showcase</source>
                 <target>Portfolio</target>
             </trans-unit>
-            <trans-unit id="247">
-                <source>label.preview_preset_mode</source>
-                <target>Aperçu du preset "%label%" - couleurs et polices inchangées, rien n'est enregistré</target>
-            </trans-unit>
             <trans-unit id="249">
                 <source>flash.template_applied_to_copy</source>
                 <target>Une copie non publiée a été créée avec les blocks du template ajoutés.</target>
@@ -993,10 +989,6 @@
             <trans-unit id="260">
                 <source>label.cookies_accept</source>
                 <target>Accepter</target>
-            </trans-unit>
-            <trans-unit id="261">
-                <source>label.theme_preset_default</source>
-                <target>Par défaut</target>
             </trans-unit>
             <trans-unit id="264">
                 <source>label.template_path</source>
@@ -1250,6 +1242,10 @@
                 <source>label.health_check_page_not_found</source>
                 <target>Page introuvable (non testée)</target>
             </trans-unit>
+            <trans-unit id="420">
+                <source>label.health_check_url_gone</source>
+                <target>Supprimée volontairement (HTTP 410), mais toujours déclarée</target>
+            </trans-unit>
             <trans-unit id="342">
                 <source>label.health_check_security_headers_scope</source>
                 <target>ces en-têtes s'appliquent à tout le site, vérifiées une seule fois via la page d'accueil</target>
@@ -1441,6 +1437,106 @@
             <trans-unit id="394">
                 <source>label.health_check_w3c_benign_warnings</source>
                 <target>dont %actionable% actionnable(s) (%benign% bénins : variables CSS, préfixes vendeur, non vérifiables par le validateur)</target>
+            </trans-unit>
+            <trans-unit id="395">
+                <source>label.health_check_content_quality_no_title</source>
+                <target>titre manquant</target>
+            </trans-unit>
+            <trans-unit id="396">
+                <source>label.health_check_content_quality_title_too_short</source>
+                <target>titre trop court (%length% caractères)</target>
+            </trans-unit>
+            <trans-unit id="397">
+                <source>label.health_check_content_quality_title_too_long</source>
+                <target>titre trop long (%length% caractères)</target>
+            </trans-unit>
+            <trans-unit id="398">
+                <source>label.health_check_content_quality_description_too_short</source>
+                <target>description trop courte (%length% caractères)</target>
+            </trans-unit>
+            <trans-unit id="399">
+                <source>label.health_check_content_quality_description_too_long</source>
+                <target>description trop longue (%length% caractères)</target>
+            </trans-unit>
+            <trans-unit id="400">
+                <source>label.health_check_content_quality_missing_social_tags</source>
+                <target>%count% balise(s) de partage manquante(s)</target>
+            </trans-unit>
+            <trans-unit id="401">
+                <source>label.health_check_advice_no_title</source>
+                <target>Ajouter un titre de page (balise &lt;title&gt;)</target>
+            </trans-unit>
+            <trans-unit id="402">
+                <source>label.health_check_advice_title_length</source>
+                <target>Ajuster le titre : %length% caractères, %min% à %max% recommandés</target>
+            </trans-unit>
+            <trans-unit id="403">
+                <source>label.health_check_advice_description_length</source>
+                <target>Ajuster la description meta : %length% caractères, %min% à %max% recommandés</target>
+            </trans-unit>
+            <trans-unit id="404">
+                <source>label.health_check_advice_social_tags</source>
+                <target>Ajouter les balises de partage manquantes : %tags%</target>
+            </trans-unit>
+            <trans-unit id="405">
+                <source>label.health_check_deployment_https</source>
+                <target>Redirection https</target>
+            </trans-unit>
+            <trans-unit id="406">
+                <source>label.health_check_deployment_not_found</source>
+                <target>Page 404</target>
+            </trans-unit>
+            <trans-unit id="407">
+                <source>label.health_check_deployment_call_failed</source>
+                <target>Échec de la vérification du déploiement : %message%</target>
+            </trans-unit>
+            <trans-unit id="408">
+                <source>label.health_check_https_redirect_ok</source>
+                <target>http redirige bien vers https</target>
+            </trans-unit>
+            <trans-unit id="409">
+                <source>label.health_check_https_redirect_missing</source>
+                <target>http ne redirige pas vers https (HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="410">
+                <source>label.health_check_https_redirect_insecure</source>
+                <target>http redirige vers une url non sécurisée</target>
+            </trans-unit>
+            <trans-unit id="411">
+                <source>label.health_check_not_found_ok</source>
+                <target>Page 404 personnalisée</target>
+            </trans-unit>
+            <trans-unit id="412">
+                <source>label.health_check_not_found_default_page</source>
+                <target>Page 404 générique, pas celle du site</target>
+            </trans-unit>
+            <trans-unit id="413">
+                <source>label.health_check_not_found_wrong_status</source>
+                <target>Une url inexistante répond HTTP %status% au lieu de 404</target>
+            </trans-unit>
+            <trans-unit id="414">
+                <source>label.health_check_advice_https_redirect</source>
+                <target>Configurer la redirection http vers https sur le serveur (vhost/proxy)</target>
+            </trans-unit>
+            <trans-unit id="415">
+                <source>label.health_check_advice_https_redirect_insecure</source>
+                <target>Faire pointer la redirection http directement vers l'url https</target>
+            </trans-unit>
+            <trans-unit id="416">
+                <source>label.health_check_advice_not_found_status</source>
+                <target>Renvoyer un vrai code 404 sur une url inexistante (actuellement HTTP %status%)</target>
+            </trans-unit>
+            <trans-unit id="417">
+                <source>label.health_check_advice_not_found_default_page</source>
+                <target>Créer templates/bundles/TwigBundle/Exception/error404.html.twig aux couleurs du site</target>
+            </trans-unit>
+            <trans-unit id="418">
+                <source>label.health_check_content_quality_broken_external_links</source>
+                <target>%count% lien(s) externe(s) cassé(s)</target>
+            </trans-unit>
+            <trans-unit id="419">
+                <source>label.health_check_advice_broken_external_links</source>
+                <target>Vérifier %count% lien(s) externe(s) sans réponse valide</target>
             </trans-unit>
         </body>
     </file>

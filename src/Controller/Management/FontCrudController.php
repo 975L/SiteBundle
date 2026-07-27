@@ -36,8 +36,9 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 use function Symfony\Component\Translation\t;
 
-// Lets an admin upload their own font files (ttf/woff/woff2) rather than relying on a dev-declared @font-face in
-// _fonts.css (see FontService) - FontCssListener compiles every row here into public/bundles/build/site-fonts-uploaded.css
+// Lets an admin upload their own font files (ttf/woff/woff2), no dev/deploy needed to add one - FontCssListener
+// compiles every row here into public/bundles/build/site-fonts-uploaded.css, FontService offers their names to
+// the "font" kind config selects
 class FontCrudController extends AbstractCrudController
 {
     private const ALLOWED_EXTENSIONS = ['ttf', 'woff', 'woff2'];

@@ -233,9 +233,7 @@ class BackupCommand extends Command
 
     private function backupFolders(): void
     {
-        $dateTime = $this->startedAt->format('Y-m-d_-_H-i');
         $publicFolder = $this->projectDir . '/public';
-        $excludeFile = $this->projectDir . '/config/backup_exclude.cnf';
         $dateTimeFile = $this->projectDir . '/var/BackupDateTimeFile';
         $fullDateTimeFile = $this->projectDir . '/var/BackupFullDateTimeFile';
 
@@ -249,74 +247,102 @@ class BackupCommand extends Command
             || $this->monthsElapsedSince($fullDateTimeFile) >= $fullIntervalMonths;
 
         if ($doFull) {
-            $this->report .= "COMPLETE Folders backup\n";
-            // -C changes into $publicFolder so archive paths are relative (./medias/..., etc.)
-            $args = ['nice', 'tar', '--bzip2', '--create', '-C', $publicFolder];
-            foreach (self::STANDARD_EXCLUDES as $pattern) {
-                $args[] = '--exclude=' . $pattern;
-            }
-            $args[] = '--exclude=sitemap-*';
-            if (file_exists($excludeFile)) {
-                $args[] = '--exclude-from=' . $excludeFile;
-            }
-            $args[] = '--file';
-            $args[] = $this->finalFolder . "/WEBSITE_-_{$this->siteDomain}_-_{$dateTime}_-_Complete.tar.bz2";
-            $args[] = '.';
-            $process = new Process($args);
-            $process->setTimeout(3600);
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                $this->errors[] = 'Complete folders tar failed: ' . $process->getErrorOutput();
-            }
+            $this->backupFoldersComplete($publicFolder);
         } else {
-            $lastBackupTime = filemtime($dateTimeFile);
-            $excludedTopLevel = array_flip(self::STANDARD_EXCLUDES);
-
-            $finder = (new Finder())
-                ->files()
-                ->in($publicFolder)
-                ->filter(function (\SplFileInfo $f) use ($publicFolder, $excludedTopLevel) {
-                    $relative = substr($f->getRealPath(), strlen($publicFolder) + 1);
-                    $topLevel = strtok($relative, '/');
-                    if (isset($excludedTopLevel[$topLevel])) {
-                        return false;
-                    }
-                    return !str_starts_with($topLevel, 'sitemap-');
-                })
-                ->filter(fn(\SplFileInfo $f) => $f->getMTime() > $lastBackupTime);
-
-            $modifiedFiles = array_map(
-                fn(\SplFileInfo $f) => $f->getRealPath(),
-                iterator_to_array($finder, false)
-            );
-
-            if (!empty($modifiedFiles)) {
-                $this->report .= "PARTIAL Folders backup\n";
-                foreach ($modifiedFiles as $file) {
-                    $this->report .= $file . "\n";
-                }
-                $process = new Process(array_merge(
-                    ['nice', 'tar', '--bzip2', '--create',
-                        '--file', $this->finalFolder . "/WEBSITE_-_{$this->siteDomain}_-_{$dateTime}_-_Partial.tar.bz2",
-                    ],
-                    $modifiedFiles
-                ));
-                $process->setTimeout(3600);
-                $process->run();
-
-                if (!$process->isSuccessful()) {
-                    $this->errors[] = 'Partial folders tar failed: ' . $process->getErrorOutput();
-                }
-            } else {
-                $this->report .= "NO FILE to save\n";
-            }
+            $this->backupFoldersPartial($publicFolder, (int) filemtime($dateTimeFile));
         }
 
         // Record start time so the next partial backup only captures newer files
         touch($dateTimeFile, $this->startedAt->getTimestamp());
         if ($doFull) {
             touch($fullDateTimeFile, $this->startedAt->getTimestamp());
+        }
+    }
+
+    // Everything under public/, minus the framework's own assets, the generated sitemaps and whatever config/backup_exclude.cnf adds
+    private function backupFoldersComplete(string $publicFolder): void
+    {
+        $this->report .= "COMPLETE Folders backup\n";
+        $excludeFile = $this->projectDir . '/config/backup_exclude.cnf';
+
+        // -C changes into $publicFolder so archive paths are relative (./medias/..., etc.)
+        $args = ['nice', 'tar', '--bzip2', '--create', '-C', $publicFolder];
+        foreach (self::STANDARD_EXCLUDES as $pattern) {
+            $args[] = '--exclude=' . $pattern;
+        }
+        $args[] = '--exclude=sitemap-*';
+        if (file_exists($excludeFile)) {
+            $args[] = '--exclude-from=' . $excludeFile;
+        }
+        $args[] = '--file';
+        $args[] = $this->foldersArchiveName('Complete');
+        $args[] = '.';
+
+        $this->runFoldersTar($args, 'Complete folders tar failed: ');
+    }
+
+    // Only the files changed since the last run, each listed in the report so a restore knows what the archive holds
+    private function backupFoldersPartial(string $publicFolder, int $lastBackupTime): void
+    {
+        $modifiedFiles = $this->findModifiedFiles($publicFolder, $lastBackupTime);
+        if (empty($modifiedFiles)) {
+            $this->report .= "NO FILE to save\n";
+            return;
+        }
+
+        $this->report .= "PARTIAL Folders backup\n";
+        foreach ($modifiedFiles as $file) {
+            $this->report .= $file . "\n";
+        }
+
+        $this->runFoldersTar(
+            array_merge(['nice', 'tar', '--bzip2', '--create', '--file', $this->foldersArchiveName('Partial')], $modifiedFiles),
+            'Partial folders tar failed: '
+        );
+    }
+
+    // Files modified since the last run, minus the same top-level folders the complete backup excludes
+    private function findModifiedFiles(string $publicFolder, int $lastBackupTime): array
+    {
+        $excludedTopLevel = array_flip(self::STANDARD_EXCLUDES);
+
+        $finder = (new Finder())
+            ->files()
+            ->in($publicFolder)
+            ->filter(function (\SplFileInfo $f) use ($publicFolder, $excludedTopLevel) {
+                $topLevel = strtok(substr($f->getRealPath(), strlen($publicFolder) + 1), '/');
+
+                return !isset($excludedTopLevel[$topLevel]) && !str_starts_with($topLevel, 'sitemap-');
+            })
+            ->filter(fn(\SplFileInfo $f) => $f->getMTime() > $lastBackupTime);
+
+        return array_map(
+            fn(\SplFileInfo $f) => $f->getRealPath(),
+            iterator_to_array($finder, false)
+        );
+    }
+
+    // Both variants share the site/date naming, only the suffix tells them apart
+    private function foldersArchiveName(string $suffix): string
+    {
+        return sprintf(
+            '%s/WEBSITE_-_%s_-_%s_-_%s.tar.bz2',
+            $this->finalFolder,
+            $this->siteDomain,
+            $this->startedAt->format('Y-m-d_-_H-i'),
+            $suffix
+        );
+    }
+
+    // 1h timeout, as the folders backup has always used - a complete archive of a media-heavy site takes a while
+    private function runFoldersTar(array $args, string $errorPrefix): void
+    {
+        $process = new Process($args);
+        $process->setTimeout(3600);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            $this->errors[] = $errorPrefix . $process->getErrorOutput();
         }
     }
 

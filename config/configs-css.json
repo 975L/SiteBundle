@@ -99,28 +99,6 @@
         "description": "description.theme_font_family_accent"
     },
     {
-        "label": "label.site_fonts_face_file",
-        "slug": "site-fonts-face-file",
-        "sensitive": false,
-        "restricted": true,
-        "value": "/assets/styles/_fonts.css",
-        "kind": "text",
-        "group": "theme",
-        "severity": null,
-        "description": "description.site_fonts_face_file"
-    },
-    {
-        "label": "label.theme_stylesheet",
-        "slug": "theme-stylesheet",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "theme",
-        "severity": null,
-        "description": "description.theme_stylesheet"
-    },
-    {
         "label": "label.theme_mode",
         "slug": "theme-mode",
         "sensitive": false,

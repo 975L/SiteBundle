@@ -83,20 +83,9 @@ class TemplateApplyCommand extends Command
                 return Command::FAILURE;
             }
 
-            $page = (new Page())
-                ->setTitle($title)
-                ->setSlug($slug)
-                ->setIsPublished((bool) $input->getOption('publish'))
-                ->setPriority(5)
-                ->setChangeFrequency('monthly')
-                ->setCreation(new \DateTime())
-                ->setModification(new \DateTime());
-            $this->entityManager->persist($page);
+            $page = $this->createPage($title, $slug, (bool) $input->getOption('publish'));
         } elseif ($input->getOption('replace')) {
-            foreach ($page->getBlocks()->toArray() as $block) {
-                $page->removeBlock($block);
-                $this->entityManager->remove($block);
-            }
+            $this->clearBlocks($page);
         }
 
         $user = $this->security->getUser();
@@ -116,6 +105,31 @@ class TemplateApplyCommand extends Command
         ));
 
         return Command::SUCCESS;
+    }
+
+    // The same defaults the admin's "new page" form starts from - the template's own blocks are what the page is really about, everything else is only there to make it a valid Page
+    private function createPage(string $title, string $slug, bool $isPublished): Page
+    {
+        $page = (new Page())
+            ->setTitle($title)
+            ->setSlug($slug)
+            ->setIsPublished($isPublished)
+            ->setPriority(5)
+            ->setChangeFrequency('monthly')
+            ->setCreation(new \DateTime())
+            ->setModification(new \DateTime());
+        $this->entityManager->persist($page);
+
+        return $page;
+    }
+
+    // --replace: the template starts from an empty page rather than appending to whatever was already there
+    private function clearBlocks(Page $page): void
+    {
+        foreach ($page->getBlocks()->toArray() as $block) {
+            $page->removeBlock($block);
+            $this->entityManager->remove($block);
+        }
     }
 
     // Falls back to an arbitrary JSON file when $templateArg isn't a known config/templates/ slug - lets a one-off Claude design be applied without shipping it as a permanent bundle asset

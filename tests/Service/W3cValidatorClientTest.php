@@ -47,6 +47,40 @@ class W3cValidatorClientTest extends TestCase
         $this->assertSame(['errors' => [], 'warnings' => []], $result);
     }
 
+    // The Nu checker splits a message the same way the CSS one does, and used to render it as "line 12: Array"
+    public function testValidateHtmlJoinsAMessageReturnedAsAnArray(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'messages' => [
+                    ['type' => 'error', 'lastLine' => 12, 'message' => ['Unclosed element', '"div"']],
+                    ['type' => 'info', 'subType' => 'warning', 'lastLine' => 30, 'message' => ['Consider using', '"alt" text']],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $client = new W3cValidatorClient($httpClient);
+        $result = $client->validateHtml('https://example.com/pages/home/');
+
+        $this->assertSame(['line 12: Unclosed element "div"'], $result['errors']);
+        $this->assertSame(['line 30: Consider using "alt" text'], $result['warnings']);
+    }
+
+    // Neither the line number nor the wording is guaranteed to be there - a message missing both must still read as a line, not crash the whole report
+    public function testValidateHtmlFallsBackWhenAMessageCarriesNoLineOrText(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'messages' => [['type' => 'error']],
+            ]), ['http_code' => 200])
+        );
+
+        $client = new W3cValidatorClient($httpClient);
+        $result = $client->validateHtml('https://example.com/pages/home/');
+
+        $this->assertSame(['line 0: Unknown error'], $result['errors']);
+    }
+
     public function testValidateCssSplitsErrorsAndWarnings(): void
     {
         $httpClient = new MockHttpClient(

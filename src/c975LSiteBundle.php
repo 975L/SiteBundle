@@ -10,6 +10,7 @@
 namespace c975L\SiteBundle;
 
 use c975L\ConfigBundle\DependencyInjection\Compiler\TaggedInterfacePass;
+use c975L\SiteBundle\DependencyInjection\Compiler\DeclaredUrlsHealthCheckPass;
 use c975L\SiteBundle\Management\TemplateProviderInterface;
 use c975L\UiBundle\Namer\UiMediaNamer;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,6 +22,7 @@ class c975LSiteBundle extends AbstractBundle
     public function build(ContainerBuilder $container): void
     {
         $container->addCompilerPass(new TaggedInterfacePass(TemplateProviderInterface::class, 'c975l.template_provider'));
+        $container->addCompilerPass(new DeclaredUrlsHealthCheckPass());
     }
 
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void

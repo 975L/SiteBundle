@@ -174,16 +174,8 @@ class CollectionItemCrudController extends AbstractCrudController
             throw $this->createAccessDeniedException();
         }
 
-        $collectionGroupId = (int) ($payload['collectionGroup'] ?? 0);
         $ids = array_map('intval', (array) ($payload['ids'] ?? []));
-
-        $itemsById = [];
-        foreach ($this->collectionItemRepository->findBy(['id' => $ids]) as $item) {
-            if ($item->getCollectionGroup()?->getId() !== $collectionGroupId) {
-                throw $this->createAccessDeniedException();
-            }
-            $itemsById[$item->getId()] = $item;
-        }
+        $itemsById = $this->itemsScopedToCollection($ids, (int) ($payload['collectionGroup'] ?? 0));
 
         foreach (array_values($ids) as $position => $id) {
             $itemsById[$id]?->setPosition($position);
@@ -192,6 +184,20 @@ class CollectionItemCrudController extends AbstractCrudController
         $entityManager->flush();
 
         return new JsonResponse(['success' => true]);
+    }
+
+    // The submitted items keyed by id - an id belonging to another collection is refused outright rather than silently reordered
+    private function itemsScopedToCollection(array $ids, int $collectionGroupId): array
+    {
+        $itemsById = [];
+        foreach ($this->collectionItemRepository->findBy(['id' => $ids]) as $item) {
+            if ($item->getCollectionGroup()?->getId() !== $collectionGroupId) {
+                throw $this->createAccessDeniedException();
+            }
+            $itemsById[$item->getId()] = $item;
+        }
+
+        return $itemsById;
     }
 
     public function configureFields(string $pageName): iterable

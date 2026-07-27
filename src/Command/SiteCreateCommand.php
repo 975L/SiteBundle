@@ -75,7 +75,8 @@ class SiteCreateCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        if (!class_exists(\App\Entity\User::class)) {
+        // Filesystem check, not class_exists(): autoloading App\Entity\User here would freeze the pre-scaffold version in memory for the whole process, and the scaffold's own User.php (installed below) would never be the one used
+        if (!is_file($this->projectDir . '/src/Entity/User.php')) {
             $io->error('App\\Entity\\User introuvable. Lance d\'abord "php bin/console make:user", puis relance cette commande.');
 
             return Command::FAILURE;
@@ -241,26 +242,21 @@ class SiteCreateCommand extends Command
             return [$email, '(compte déjà existant)'];
         }
 
-        do {
-            $password = $io->ask('Mot de passe (8 caractères minimum, affiché en clair)', null, function (?string $answer): string {
-                if (!$answer || \strlen($answer) < 8) {
-                    throw new \RuntimeException('Le mot de passe doit contenir au moins 8 caractères.');
-                }
-
-                return $answer;
-            });
-            $confirmation = $io->ask('Confirmer le mot de passe');
-            if ($confirmation !== $password) {
-                $io->error('Les mots de passe ne correspondent pas, recommence.');
+        // No confirmation prompt: the password is typed and echoed in clear text, so a typo is visible right away
+        $password = $io->ask('Mot de passe (8 caractères minimum, affiché en clair)', null, function (?string $answer): string {
+            if (!$answer || \strlen($answer) < 8) {
+                throw new \RuntimeException('Le mot de passe doit contenir au moins 8 caractères.');
             }
-        } while ($confirmation !== $password);
+
+            return $answer;
+        });
 
         $now = new \DateTime();
         $user = new \App\Entity\User();
         $user->setEmail($email);
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
-        // Bootstrap user is the site's owner (producer or self-hoster), so it also gets ROLE_SUPER_ADMIN, the only role allowed to see/edit the "backup" config group (DB credentials, see ConfigCrudController)
-        $user->setRoles(['ROLE_ADMIN', 'ROLE_SUPER_ADMIN']);
+        // Bootstrap user is the site's owner (producer or self-hoster), so it gets every role the backoffice knows: ROLE_SUPER_ADMIN is the only one allowed to see/edit the "backup" config group (DB credentials, see ConfigCrudController), and ROLE_EDITOR has to be granted explicitly since no role_hierarchy is shipped - ROLE_ADMIN alone wouldn't pass the "site-role-editor" gated actions
+        $user->setRoles(['ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']);
         $user->setIsVerified(true);
         $user->setIsEnabled(true);
         $user->setCreation($now);
@@ -362,33 +358,33 @@ class SiteCreateCommand extends Command
         $position = $menu->getBlocks()->count();
 
         foreach ($this->linkableRouteRegistry->all() as $routeName => $meta) {
-            $target = 'route:' . $routeName;
-            if (\in_array($target, $existingTargets, true)) {
-                continue;
-            }
-
             $label = $this->translator->trans($meta['label'], [], $meta['translation_domain']);
-            if ($io->confirm(sprintf('Ajouter "%s" au menu du footer ?', $label), true)) {
-                $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
-            }
+            $this->offerFooterLink($io, $menu, 'route:' . $routeName, $existingTargets, $position, sprintf('Ajouter "%s" au menu du footer ?', $label));
         }
 
         foreach ($this->defaultPagesImporter->getLegalPageSlugsByModel() as $slug) {
             $page = $this->pageRepository->findOneBy(['slug' => $slug]);
-            $target = null === $page ? null : 'page:' . $page->getId();
-            if (null === $page || \in_array($target, $existingTargets, true)) {
+            if (null === $page) {
                 continue;
             }
 
-            if ($io->confirm(sprintf('Ajouter la page "%s" au menu du footer ?', $page->getTitle()), true)) {
-                $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
-            }
+            $this->offerFooterLink($io, $menu, 'page:' . $page->getId(), $existingTargets, $position, sprintf('Ajouter la page "%s" au menu du footer ?', $page->getTitle()));
         }
 
         $this->em->persist($menu);
         $this->em->flush();
 
         $io->text(sprintf('  ✓ %d élément(s) dans le menu du footer', $menu->getBlocks()->count()));
+    }
+
+    // Asks about one target and appends it as a "menu_link" Block when accepted - a target the menu already carries is never offered again, which is what keeps re-running the command from creating duplicates
+    private function offerFooterLink(SymfonyStyle $io, Menu $menu, string $target, array $existingTargets, int &$position, string $question): void
+    {
+        if (\in_array($target, $existingTargets, true) || !$io->confirm($question, true)) {
+            return;
+        }
+
+        $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
     }
 
     // Writes the marker checked at the top of execute(): committed to the repo so the guard survives git clone/deploy, not just a re-run on the same machine.

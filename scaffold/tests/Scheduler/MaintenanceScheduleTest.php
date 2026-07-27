@@ -23,7 +23,7 @@ class MaintenanceScheduleTest extends TestCase
         $this->assertSame($cache, $schedule->getState());
 
         $recurringMessages = $schedule->getRecurringMessages();
-        $this->assertCount(5, $recurringMessages);
+        $this->assertCount(7, $recurringMessages);
 
         // Checks the cron expression and the command carried by the message
         $recurringMessage = $recurringMessages[$index];
@@ -43,7 +43,9 @@ class MaintenanceScheduleTest extends TestCase
             [1, '7 */6 * * *', 'c975l:site:backup'],
             [2, '0 3 * * *', 'c975l:site:messenger-cleanup'],
             [3, '7 3 * * 1', 'c975l:site:backup --report'],
-            [4, '0 4 * * 0', 'c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains'],
+            [4, '0 4 * * 0', 'c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains --kind=deployment'],
+            [5, '0 5 * * 0', 'c975l:health-check:run --kind=urls-book --kind=urls-shop --kind=urls-crowdfunding'],
+            [6, '0 6 1 * *', 'c975l:health-check:run --kind=urls-gallery'],
         ];
     }
 }

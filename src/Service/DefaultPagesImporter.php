@@ -161,58 +161,61 @@ class DefaultPagesImporter
     // $onPage, if given, is called for each page not yet in database as fn(array $def): array{import: bool, isPublished: bool} and lets a command decide interactively whether to import it and with which isPublished value. Without it (default), every page is imported using the isPublished value from getDefinitions(). Returns ['created' => int, 'skipped' => int]
     public function import(?callable $onPage = null): array
     {
-        $created = 0;
-        $skipped = 0;
-        $backfilled = false;
+        $counts = ['created' => 0, 'skipped' => 0, 'backfilled' => 0];
         $now = new \DateTime();
         $user = $this->security->getUser();
         $definitions = $this->getDefinitions();
 
         // Always imports the default locale, plus any locale declared in framework.enabled_locales; the default locale comes first so the homepage keeps a deterministic title
-        $locales = array_unique([$this->defaultLocale, ...$this->enabledLocales]);
-
-        foreach ($locales as $locale) {
-            if (!isset($definitions[$locale])) {
-                continue;
-            }
-
-            foreach ($definitions[$locale] as $def) {
-                // Skips definitions tied to a bundle (i.e. Shop's "terms of sales") that isn't installed
-                if (isset($def['requiresClass']) && !class_exists($def['requiresClass'])) {
-                    continue;
+        foreach (array_unique([$this->defaultLocale, ...$this->enabledLocales]) as $locale) {
+            foreach ($definitions[$locale] ?? [] as $def) {
+                foreach ($this->importDefinition($def, $now, $user, $onPage) as $counter) {
+                    $counts[$counter]++;
                 }
-
-                if ($this->pageRepository->findOneBy(['slug' => $def['slug']])) {
-                    $skipped++;
-                    // The page itself already exists, but its "form" Block's own Form/EmailTemplate might still be
-                    // missing (see formBlockNameFromPageDef()/ensureFormAndEmailTemplateExist()) - buildPage() below
-                    // never runs for this definition since it's about to be skipped
-                    $formName = $this->formBlockNameFromPageDef($def);
-                    if (null !== $formName) {
-                        $this->ensureFormAndEmailTemplateExist($formName);
-                        $backfilled = true;
-                    }
-                    continue;
-                }
-
-                if (null !== $onPage) {
-                    $decision = $onPage($def);
-                    if (!$decision['import']) {
-                        continue;
-                    }
-                    $def['isPublished'] = $decision['isPublished'];
-                }
-
-                $this->em->persist($this->buildPage($def, $now, $user));
-                $created++;
             }
         }
 
-        if ($created > 0 || $backfilled) {
+        if ($counts['created'] > 0 || $counts['backfilled'] > 0) {
             $this->em->flush();
         }
 
-        return ['created' => $created, 'skipped' => $skipped];
+        return ['created' => $counts['created'], 'skipped' => $counts['skipped']];
+    }
+
+    // One page definition, persisted, skipped or ignored altogether - returns the counters import() has to increment for it ('backfilled' comes on top of 'skipped' when the existing page's Form/EmailTemplate had to be seeded), empty when the definition contributes nothing
+    // @return list<string>
+    private function importDefinition(array $def, \DateTime $now, mixed $user, ?callable $onPage): array
+    {
+        // Skips definitions tied to a bundle (i.e. Shop's "terms of sales") that isn't installed
+        if (isset($def['requiresClass']) && !class_exists($def['requiresClass'])) {
+            return [];
+        }
+
+        if ($this->pageRepository->findOneBy(['slug' => $def['slug']])) {
+            // The page itself already exists, but its "form" Block's own Form/EmailTemplate might still be
+            // missing (see formBlockNameFromPageDef()/ensureFormAndEmailTemplateExist()) - buildPage() below
+            // never runs for this definition since it's about to be skipped
+            $formName = $this->formBlockNameFromPageDef($def);
+            if (null === $formName) {
+                return ['skipped'];
+            }
+
+            $this->ensureFormAndEmailTemplateExist($formName);
+
+            return ['skipped', 'backfilled'];
+        }
+
+        if (null !== $onPage) {
+            $decision = $onPage($def);
+            if (!$decision['import']) {
+                return [];
+            }
+            $def['isPublished'] = $decision['isPublished'];
+        }
+
+        $this->em->persist($this->buildPage($def, $now, $user));
+
+        return ['created'];
     }
 
     private function buildPage(array $def, \DateTime $now, mixed $user): Page
@@ -314,23 +317,35 @@ class DefaultPagesImporter
 
         $existing = $this->formRepository->findOneBy(['name' => $name]);
         if (null !== $existing) {
-            if ($existing->isRestricted() && $existing->getAction() !== $action) {
-                $existing->setAction($action);
-                $existing->setActionConfig($actionConfig);
-                $this->em->persist($existing);
-            }
-
-            foreach ($existing->getFields() as $existingField) {
-                $url = $fields[$existingField->getName()][3] ?? null;
-                if ($existingField->isRestricted() && null === $existingField->getUrl() && null !== $url) {
-                    $existingField->setUrl($url);
-                    $this->em->persist($existingField);
-                }
-            }
+            $this->backfillForm($existing, $fields, $action, $actionConfig);
 
             return;
         }
 
+        $this->em->persist($this->buildForm($name, $fields, $action, $actionConfig));
+    }
+
+    // A Form seeded by an earlier version of this bundle brought up to date in place - only ever on a still-restricted Form/field, so nothing an admin has taken over is touched
+    private function backfillForm(Form $form, array $fields, ?string $action, ?array $actionConfig): void
+    {
+        if ($form->isRestricted() && $form->getAction() !== $action) {
+            $form->setAction($action);
+            $form->setActionConfig($actionConfig);
+            $this->em->persist($form);
+        }
+
+        foreach ($form->getFields() as $field) {
+            $url = $fields[$field->getName()][3] ?? null;
+            if ($field->isRestricted() && null === $field->getUrl() && null !== $url) {
+                $field->setUrl($url);
+                $this->em->persist($field);
+            }
+        }
+    }
+
+    // $fields entries are [type, label, placeholder, url] tuples, in the order they're declared
+    private function buildForm(string $name, array $fields, ?string $action, ?array $actionConfig): Form
+    {
         $form = (new Form())
             ->setName($name)
             ->setAction($action)
@@ -339,20 +354,20 @@ class DefaultPagesImporter
 
         $position = 0;
         foreach ($fields as $fieldName => [$type, $label, $placeholder, $url]) {
-            $field = (new FormField())
-                ->setName($fieldName)
-                ->setLabel($label)
-                ->setType($type)
-                ->setPlaceholder($placeholder)
-                ->setUrl($url)
-                ->setRequired(true)
-                ->setPosition($position++)
-                ->setRestricted(true)
-            ;
-            $form->addField($field);
+            $form->addField(
+                (new FormField())
+                    ->setName($fieldName)
+                    ->setLabel($label)
+                    ->setType($type)
+                    ->setPlaceholder($placeholder)
+                    ->setUrl($url)
+                    ->setRequired(true)
+                    ->setPosition($position++)
+                    ->setRestricted(true)
+            );
         }
 
-        $this->em->persist($form);
+        return $form;
     }
 
     // Idempotent - seeds a restricted c975L\UiBundle\Entity\EmailTemplate (name locked, blocks still editable, see
