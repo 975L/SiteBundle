@@ -214,9 +214,7 @@ class CollectionItemCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->setHelp(t('label.collection_item_slug_help', [], 'site')),
 
-            // "data-ai-rephrase" opts this plain textarea into UiBundle's rephrase button (see its
-            // block_theme.html.twig's textarea_widget) - off by default there since a plain textarea is
-            // also used for non-prose values (e.g. ConfigBundle's JSON config values) that must never get it
+            // Opts this textarea into UiBundle's rephrase button, off by default there for non-prose values
             TextareaField::new('description')
                 ->setLabel(t('label.description', [], 'ui'))
                 ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true'])

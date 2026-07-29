@@ -17,6 +17,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Turns a page's own HealthCheckResult rows into short, actionable advice lines - the Health check panel already shows *what* was found (via the shared table/gauges), this says *what to do about it*. Reads each provider's own "details" array rather than parsing the (already translated) summary text, see each *HealthCheckProvider's buildRow()/checkPage() for what "details" holds per kind. Each line also carries an optional direct link to the external tool's own report for this page (eg. the W3C validators, PageSpeed Insights, securityheaders.com) - none of these are called from here, they're just the public web UI for the same check already run
 class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
 {
+    // Kinds another bundle already writes advice for through its own HealthCheckAdviceProvider (here ConfigBundle's BackupHealthCheckAdviceProvider) - skipped silently rather than logged as unmapped, unknownKindAdvice() being there to catch a kind *nobody* advises on, not one this bundle simply has no business advising on
+    private const KINDS_ADVISED_ELSEWHERE = ['backup'];
+
     // Same threshold PageSpeed/Lighthouse itself uses for its own green/orange split - a score in the orange band is still worth calling out, only red (<50) is truly urgent, but both get advice here since either falls short of "good"
     private const PAGESPEED_GOOD_THRESHOLD = 90;
 
@@ -48,6 +51,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
                 'ssl-certificate' === $result->getKind() => $this->sslCertificateAdvice($result),
                 'mixed-content' === $result->getKind() => $this->mixedContentAdvice($result),
                 'deployment' === $result->getKind() => $this->deploymentAdvice($result),
+                \in_array($result->getKind(), self::KINDS_ADVISED_ELSEWHERE, true) => [],
                 default => $this->unknownKindAdvice($result),
             };
             if ($lines) {
@@ -150,12 +154,21 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         $details = $result->getDetails() ?? [];
 
         return array_merge(
+            $this->redirectAdvice($details),
             $this->titleAdvice($details),
             $this->descriptionAdvice($details),
             $this->headingAdvice($details),
             $this->socialTagsAdvice($details),
             $this->offendersAdvice($details),
         );
+    }
+
+    // First of the lines, like the summary's own clause: everything below it was measured on the url the redirect landed on, not on the one declared
+    private function redirectAdvice(array $details): array
+    {
+        $redirect = $details['redirect'] ?? null;
+
+        return null === $redirect ? [] : [$this->line('label.health_check_advice_redirects', ['%url%' => $redirect['finalUrl'] ?? ''], null)];
     }
 
     // The thresholds themselves come from ContentQualityAnalyzer, which already applied them - repeating them here is only to tell the user what to aim for
@@ -193,9 +206,16 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         ], null)];
     }
 
+    // "hasH1" is read as a fallback for the rows persisted before the check counted them, whose details hold that key alone - they get the same advice until the next run replaces them
     private function headingAdvice(array $details): array
     {
-        return false === ($details['hasH1'] ?? true) ? [$this->line('label.health_check_advice_no_h1', [], null)] : [];
+        $count = $details['h1Count'] ?? (($details['hasH1'] ?? true) ? 1 : 0);
+
+        return match (true) {
+            0 === $count => [$this->line('label.health_check_advice_no_h1', [], null)],
+            $count > 1 => [$this->line('label.health_check_advice_several_h1', [], null)],
+            default => [],
+        };
     }
 
     // Listed by name rather than counted - "og:description, og:image" is the whole fix, there's nothing to expand into a collapsed list here

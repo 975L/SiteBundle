@@ -1,15 +1,9 @@
-{# Adapter for the dynamic Block system — resolves "target" (page:ID / route:NAME, see MenuLinkType)
-   into an actual link. Renders nothing if it no longer resolves (page unpublished/deleted, route no
-   longer registered) - mirrors the silent filtering the former MenuExtension::getMenuItems() did. #}
+{# Resolves "target" into a link, rendering nothing when it no longer resolves #}
 {% set url = menu_link_url(target) %}
 {% if url is not empty %}
     {% set currentPath = app.request.pathinfo %}
     {% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
-    {# "label" (see MenuLinkType) overrides the auto-derived label when set - useful for an anchor
-       target, whose section title is rarely a good fit for a compact navbar item. Otherwise
-       menu_link_label() resolves it (page/section title, or the live "© firstYear - currentYear" for
-       the site's own "Copyright" page - see "site-menu-link-copyright-auto") - not cached (menu_link
-       is cacheable: false), so the computed copyright's year stays fresh. #}
+    {# "label" overrides the derived one; uncached, so the computed copyright's year stays fresh #}
     {% set resolvedLabel = label|default('') is not empty ? label : menu_link_label(target) %}
     <div class="{{ ['menu-item', isActive ? 'active' : null, primary|default(false) ? 'menu-item--primary' : null]|filter(v => v is not null)|join(' ') }}">
         <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>

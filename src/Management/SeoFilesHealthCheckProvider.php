@@ -17,6 +17,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Checks robots.txt and sitemap-site.xml (see SitePageSitemapProvider) are actually reachable and sane - both are silent, easy-to-forget deployment steps (eg. a fresh environment never running c975l:sitemaps:create, or an app-level robots.txt left blocking everything from a staging config). The robots.txt "blocks everything" check is a heuristic, not a full parser - it only catches the single most damaging misconfiguration (a global "Disallow: /" under "User-agent: *"), not every possible robots.txt edge case. Also checks sitemap-index.xml (written by ConfigBundle's SitemapWriter, declaring every bundle's own sub-sitemap) and every child sitemap it references, when one is deployed
 class SeoFilesHealthCheckProvider implements HealthCheckProviderInterface
 {
+    // How long the sitemap file may go without being rewritten before it is called stale. Not a rule Google publishes: it's simply longer than any of the schedules this bundle documents (the weekly c975l:sitemaps:create entry), so only a sitemap that genuinely stopped being regenerated trips it
+    private const STALE_AFTER_DAYS = 30;
+
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly SeoFilesClient $seoFilesClient,
@@ -79,7 +82,37 @@ class SeoFilesHealthCheckProvider implements HealthCheckProviderInterface
             return $this->row($url, $label, HealthCheckResult::STATUS_ERROR, 'label.health_check_sitemap_invalid');
         }
 
-        return $this->row($url, $label, HealthCheckResult::STATUS_OK, 'label.health_check_sitemap_ok');
+        return str_contains($file['content'], '<urlset')
+            ? $this->checkUrlset($url, $label, $file)
+            : $this->row($url, $label, HealthCheckResult::STATUS_OK, 'label.health_check_sitemap_ok');
+    }
+
+    // What a well-formed sitemap still fails to say: a urlset declaring nothing has Search Console report "0 page discovered" without a single error, and one the command stopped regenerating months ago has it stop coming back for it - both silent, and both what the c975l:sitemaps:create command not running on a deployment leaves behind
+    private function checkUrlset(string $url, string $label, array $file): array
+    {
+        $count = $this->countUrls($file['content']);
+
+        if (0 === $count) {
+            return $this->row($url, $label, HealthCheckResult::STATUS_WARNING, 'label.health_check_sitemap_empty');
+        }
+
+        // The date the *file* was last written, not the freshest <lastmod> it declares: those carry each Page's own modification date, so a site whose content is simply stable would be called stale for as long as nobody edited it, however faithfully the command keeps running
+        $lastModified = $file['lastModified'] ?? null;
+        if (null !== $lastModified && $lastModified < new \DateTimeImmutable('-' . self::STALE_AFTER_DAYS . ' days')) {
+            return $this->row($url, $label, HealthCheckResult::STATUS_WARNING, 'label.health_check_sitemap_stale', ['%date%' => $lastModified->format('d/m/Y')]);
+        }
+
+        return $this->row($url, $label, HealthCheckResult::STATUS_OK, 'label.health_check_sitemap_ok_urls', ['%count%' => $count]);
+    }
+
+    // How many urls the sitemap declares - malformed XML yields none at all, already reported by the "<urlset" check above
+    private function countUrls(string $content): int
+    {
+        $previousSetting = libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content);
+        libxml_use_internal_errors($previousSetting);
+
+        return false === $xml ? 0 : $xml->url->count();
     }
 
     // sitemap-index.xml is optional (only multi-sitemap setups via the app-level scaffolded command generate one) - a missing/unreachable index yields no rows at all, unlike a missing sitemap-site.xml. When present, each referenced sitemap gets its own row (via checkSitemap()) alongside the index's own row, so a broken child is pinpointed instead of buried in a single aggregate result

@@ -118,7 +118,7 @@ class CollectionItemImportCommand extends Command
         return $rows;
     }
 
-    // Resolves the target collection by its normalized slug rather than an exact-string name match, so re-running the command with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate - creating it on the fly if it doesn't exist yet, same CollectionGroupResolver used by CollectionItemImportProvider's Sync import so both entry points agree on what counts as "the same collection". A never-persisted collection deterministically has zero existing items, so the repository queries are skipped rather than run against an id-less entity; the new CollectionGroup itself is only persisted, flushed together with the items at the very end
+    // Resolved by normalized slug, so re-running with different casing hits the same collection instead of duplicating it
     // @return array{0: CollectionGroup, 1: array} - the collection, and what the row loop starts from
     private function resolveTarget(string $groupName, bool $dryRun): array
     {

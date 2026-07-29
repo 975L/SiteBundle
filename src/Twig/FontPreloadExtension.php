@@ -16,31 +16,23 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-// The @font-face rules of the admin-uploaded fonts live inside the concatenated bundles/build/site.css (see
-// FontCssListener), so the browser only discovers the .woff2 files once that stylesheet has been downloaded AND
-// parsed - two serialized round-trips before the first glyph is even requested. Emitting a <link rel="preload">
-// in the <head> lets the preload scanner start those downloads immediately, in parallel with the stylesheet.
+// Preloads the uploaded fonts, whose @font-face rules the browser would otherwise only discover after parsing the stylesheet
 class FontPreloadExtension extends AbstractExtension
 {
-    // The computed preloads are cached under this key, deleted by FontCssListener/ThemeVariablesCssListener - the two
-    // places that already fire on a Font or a "theme" Config change, so nothing can go stale without them knowing
+    // Cached under this key, deleted by the two listeners that already fire on the changes that matter
     public const CACHE_KEY = 'c975l_site.font_preloads';
 
-    // Only the families the theme actually applies - preloading a font that the current theme doesn't use costs a
-    // request and competes for bandwidth with the ones it does
+    // Only the families the theme applies: preloading an unused font competes with the ones in use
     private const FONT_FAMILY_SLUGS = [
         'theme-font-family-title',
         'theme-font-family-body',
         'theme-font-family-accent',
     ];
 
-    // Preloading is a priority hint, and everything is high-priority means nothing is. Two covers the usual
-    // title + body pair; anything beyond that is better left to the normal @font-face discovery.
+    // Two covers the usual title and body pair; beyond that, everything high-priority means nothing is
     private const MAX_PRELOADS = 2;
 
-    // Derived from the extension rather than from Font::getMimeType() (upload-time detection commonly reports
-    // "application/octet-stream" for a .woff2) or Font::getFormat() (returns the CSS keyword "truetype", not a
-    // MIME type). A "type" the browser doesn't recognise makes it skip the preload entirely.
+    // From the extension: the upload-time mime is often "application/octet-stream", and getFormat() returns a CSS keyword
     private const MIME_TYPES = [
         'woff2' => 'font/woff2',
         'woff' => 'font/woff',
@@ -68,8 +60,7 @@ class FontPreloadExtension extends AbstractExtension
      */
     public function getFontPreloads(): array
     {
-        // Rendered in the <head> of every single front-end page, for a result that only changes when an admin uploads a
-        // font or switches a theme family - cached rather than re-queried per family on each request
+        // Cached rather than re-queried per family, this renders in the <head> of every front-end page
         return $this->cache->get(self::CACHE_KEY, fn (): array => $this->computeFontPreloads());
     }
 
@@ -102,8 +93,7 @@ class FontPreloadExtension extends AbstractExtension
         return array_values($preloads);
     }
 
-    // Config values may carry the generic fallback appended by ThemeVariablesCssListener ("Inter, sans-serif"),
-    // so only the first family of the stack is the custom font actually worth preloading
+    // A value may carry the appended generic fallback, so only the first family is the custom font
     private function getUsedFamilies(): array
     {
         $families = [];
@@ -122,8 +112,7 @@ class FontPreloadExtension extends AbstractExtension
         return array_keys($families);
     }
 
-    // The file the browser needs first for a given family: a variable font covers every weight on its own,
-    // otherwise the upright regular is what body text renders with - bold/italic can load on demand
+    // A variable font covers every weight; otherwise the upright regular is what body text renders with
     private function findPreloadableFont(string $family): ?Font
     {
         $candidates = [];

@@ -1,25 +1,21 @@
 {% extends '@c975LSite/layout.html.twig' %}
 
-{# detailTitle (see PageController::resolveCollectionDetail()) is the collection item's own title -
-   e.g. "UiBundle" rather than the parent Page's generic "Vitrine des blocks" #}
+{# The collection item's own title, rather than the parent Page's generic one #}
 {% set title = detailTitle is defined and detailTitle ? detailTitle : page.title %}
 {% set summarySocialNetwork = page.summarySocialNetwork %}
 
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
 {% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
 
-{# Overrides "container" (not "content"): the alerts stay inside layout's ".container" div, but
-   the page's own blocks render full-width as its sibling instead - see components/Blocks/Blocks.html.twig #}
+{# Overrides "container" so blocks render full-width beside the alerts; the div is dropped when empty, its padding opening a gap otherwise #}
 {% block container %}
-    <div class="container">
-        {% if isPreview|default(false) and not page.isPublished %}
+    {% if isPreview|default(false) and not page.isPublished %}
+        <div class="container">
             <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
     {% if detailHtml is defined and detailHtml %}
-        {# Set only by PageController::resolveCollectionDetail(): this URL's last segment resolved
-           against a "collection" block's own source instead of a real Page - already-rendered HTML,
-           stands in for the Page's own blocks #}
+        {# Already-rendered HTML standing in for the Page's blocks, the URL having resolved to a collection item #}
         {{ detailHtml|raw }}
     {% else %}
         <twig:c975LUi:Blocks:Blocks blocks="{{ page.blocks }}" />

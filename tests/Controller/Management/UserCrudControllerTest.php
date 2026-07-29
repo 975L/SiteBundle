@@ -34,6 +34,9 @@ class UserCrudControllerTest extends TestCase
 {
     private const AVAILABLE_ROLES = ['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_EDITOR'];
 
+    // What config/configs.json now ships: ROLE_SUPER_ADMIN is no longer declared there, the controller decides it
+    private const DEFAULT_ROLES = ['ROLE_ADMIN', 'ROLE_EDITOR'];
+
     // AbstractCrudController::configureFields() only ever calls getDefaultFields() on whatever the container returns for FieldProvider::class - the real one is final readonly, so an anonymous object with that single method stands in for it
     private function createContainer(): Container
     {
@@ -64,11 +67,13 @@ class UserCrudControllerTest extends TestCase
         return new AdminContextProvider($requestStack);
     }
 
-    private function createController(bool $actingUserIsSuperAdmin, ?User $editedUser = null): UserCrudController
+    private function createController(bool $actingUserIsSuperAdmin, ?User $editedUser = null, ?array $availableRoles = null): UserCrudController
     {
+        $availableRoles ??= self::AVAILABLE_ROLES;
+
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturnCallback(
-            static fn (string $slug): mixed => 'user-roles-available' === $slug ? self::AVAILABLE_ROLES : 'ROLE_ADMIN',
+            static fn (string $slug): mixed => 'user-roles-available' === $slug ? $availableRoles : 'ROLE_ADMIN',
         );
 
         $security = $this->createStub(Security::class);
@@ -146,6 +151,30 @@ class UserCrudControllerTest extends TestCase
         $field = $this->rolesField($this->createController(false, $this->createUser(['ROLE_SUPER_ADMIN'])));
 
         $this->assertContains('ROLE_SUPER_ADMIN', array_keys($field->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES)));
+    }
+
+    // The shipped default no longer declares ROLE_SUPER_ADMIN (it's granted once by c975l:site:create), so a super admin would lose the ability to grant it if the choices were only what the config holds
+    public function testRolesChoicesOfferSuperAdminToASuperAdminEvenWhenTheConfigOmitsIt(): void
+    {
+        $field = $this->rolesField($this->createController(true, $this->createUser(['ROLE_ADMIN']), self::DEFAULT_ROLES));
+
+        $this->assertSame(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_EDITOR'], array_keys($field->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES)));
+    }
+
+    // Same omission, but on the frozen field of a super admin edited by a lesser admin: without the role in the choices the select would show nothing of what that user actually has
+    public function testRolesChoicesKeepSuperAdminOnAFrozenFieldEvenWhenTheConfigOmitsIt(): void
+    {
+        $field = $this->rolesField($this->createController(false, $this->createUser(['ROLE_SUPER_ADMIN']), self::DEFAULT_ROLES));
+
+        $this->assertContains('ROLE_SUPER_ADMIN', array_keys($field->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES)));
+    }
+
+    // A lesser admin gets no extra role from the omission either - the config's own content is what's left
+    public function testRolesChoicesHideSuperAdminFromALesserAdminWhenTheConfigOmitsIt(): void
+    {
+        $field = $this->rolesField($this->createController(false, $this->createUser(['ROLE_ADMIN']), self::DEFAULT_ROLES));
+
+        $this->assertSame(['ROLE_ADMIN', 'ROLE_EDITOR'], array_keys($field->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES)));
     }
 
     // A super admin acting on another super admin keeps a fully editable field - the guard is about lesser admins only

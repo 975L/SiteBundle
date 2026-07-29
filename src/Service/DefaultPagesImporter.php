@@ -79,11 +79,7 @@ class DefaultPagesImporter
         ],
     ];
 
-    // One set of EmailBlock defs per locale, each a [type, heading, level, content, label, url] tuple (unused
-    // positions left null) - see ensureEmailTemplateExists(). "contact_notification" is embedded via
-    // email_template_body() inside templates/emails/contact_notification.html.twig, itself referenced by the
-    // "contact" Form's actionConfig.template (see ensureFormExists() call below); its {{ form_name }}/{{ fields }}
-    // placeholders are resolved by EmailTemplateRenderer at send time
+    // One EmailBlock tuple set per locale, unused positions left null; placeholders are resolved at send time
     private const CONTACT_NOTIFICATION_BLOCKS = [
         'fr' => [
             [EmailBlock::TYPE_HEADING, 'Nouveau message via {{ form_name }}', EmailBlock::LEVEL_H2, null, null, null],
@@ -99,8 +95,7 @@ class DefaultPagesImporter
         ],
     ];
 
-    // "{{ signed_url }}"/"{{ expires_at }}" are resolved by EmailVerifier's caller (App\Service\RegisterFormAction) - see
-    // templates/emails/confirmation_email.html.twig
+    // "{{ signed_url }}"/"{{ expires_at }}" are resolved by EmailVerifier's caller
     private const ACCOUNT_VALIDATION_BLOCKS = [
         'fr' => [
             [EmailBlock::TYPE_HEADING, 'Confirmez votre adresse email', EmailBlock::LEVEL_H1, null, null, null],
@@ -122,8 +117,7 @@ class DefaultPagesImporter
         ],
     ];
 
-    // "{{ reset_url }}"/"{{ expires_at }}" are resolved by App\Service\ResetPasswordRequestFormAction - see
-    // templates/emails/reset_password_email.html.twig
+    // "{{ reset_url }}"/"{{ expires_at }}" are resolved by ResetPasswordRequestFormAction
     private const PASSWORD_RESET_BLOCKS = [
         'fr' => [
             [EmailBlock::TYPE_HEADING, 'Réinitialisation de votre mot de passe', EmailBlock::LEVEL_H1, null, null, null],
@@ -182,7 +176,7 @@ class DefaultPagesImporter
         return ['created' => $counts['created'], 'skipped' => $counts['skipped']];
     }
 
-    // One page definition, persisted, skipped or ignored altogether - returns the counters import() has to increment for it ('backfilled' comes on top of 'skipped' when the existing page's Form/EmailTemplate had to be seeded), empty when the definition contributes nothing
+    // The counters import() must increment for this definition, empty when it contributes nothing
     // @return list<string>
     private function importDefinition(array $def, \DateTime $now, mixed $user, ?callable $onPage): array
     {
@@ -192,9 +186,7 @@ class DefaultPagesImporter
         }
 
         if ($this->pageRepository->findOneBy(['slug' => $def['slug']])) {
-            // The page itself already exists, but its "form" Block's own Form/EmailTemplate might still be
-            // missing (see formBlockNameFromPageDef()/ensureFormAndEmailTemplateExist()) - buildPage() below
-            // never runs for this definition since it's about to be skipped
+            // The page exists but its Form/EmailTemplate may not, buildPage() never running for it
             $formName = $this->formBlockNameFromPageDef($def);
             if (null === $formName) {
                 return ['skipped'];
@@ -370,9 +362,7 @@ class DefaultPagesImporter
         return $form;
     }
 
-    // Idempotent - seeds a restricted c975L\UiBundle\Entity\EmailTemplate (name locked, blocks still editable, see
-    // EmailTemplateCrudController), same principle as ensureFormExists() above. $blocksByLocale entries are
-    // [type, heading, level, content, label, url] tuples (see EmailBlock's own docblock for what each kind uses)
+    // Idempotent, seeding a restricted EmailTemplate whose name is locked but whose blocks stay editable
     private function ensureEmailTemplateExists(string $name, array $blocksByLocale): void
     {
         if (null !== $this->emailTemplateRepository->findOneBy(['name' => $name])) {

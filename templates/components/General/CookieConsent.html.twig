@@ -1,9 +1,6 @@
 {# <twig:c975LSite:General:CookieConsent/> #}
 {% set cookiesPolicyUrl = config('url-cookies-policy') %}
-{# Stimulus derives value-attribute names from the controller identifier as registered
-   ("cookie-consent" in assets/controllers.js), not a dasherized form of it - keep both
-   in kebab-case, a camelCase identifier would need "data-cookieconsent-*-value" here
-   or every value silently falls back to its type default ("") #}
+{# Kebab-case on both sides: Stimulus doesn't dasherize the identifier when deriving value names #}
 <div data-controller="cookie-consent"
      data-cookie-consent-stylesheet-value="{{ asset('bundles/c975lsite/css/cookieconsent.css') }}"
      data-cookie-consent-script-value="{{ asset('bundles/c975lsite/js/cookieconsent.umd.js') }}"

@@ -1,5 +1,60 @@
 [
     {
+        "date": "2026-07-29",
+        "description": [
+            {
+                "en": "The Health check now reports a page answering 404 as an error, where it used to show it as \"not tested\" and raise no alert at all - the very pages Search Console lists as not found",
+                "fr": "Le Bilan de santé signale désormais une page répondant 404 comme une erreur, là où elle s'affichait comme « non testée » sans déclencher la moindre alerte - exactement les pages que la Search Console liste comme introuvables",
+                "es": "El Estado de salud ahora informa de una página que responde 404 como un error, donde antes se mostraba como «no probada» sin generar ninguna alerta: precisamente las páginas que Search Console indica como no encontradas"
+            },
+            {
+                "en": "The Health check now warns when a page redirects before showing its content: search engines report the hop as a redirect error instead of following it",
+                "fr": "Le Bilan de santé vous prévient désormais lorsqu'une page redirige avant d'afficher son contenu : les moteurs de recherche signalent ce saut comme une erreur de redirection au lieu de le suivre",
+                "es": "El Estado de salud ahora le avisa cuando una página redirige antes de mostrar su contenido: los motores de búsqueda informan de ese salto como un error de redirección en lugar de seguirlo"
+            },
+            {
+                "en": "The Health check now warns when a sitemap declares no page at all, or hasn't been regenerated for over a month",
+                "fr": "Le Bilan de santé vous prévient désormais lorsqu'un sitemap ne déclare aucune page, ou qu'il n'a plus été régénéré depuis plus d'un mois",
+                "es": "El Estado de salud ahora le avisa cuando un sitemap no declara ninguna página, o cuando no se ha regenerado desde hace más de un mes"
+            },
+            {
+                "en": "Creating a menu is now a single click: the Menus screen shows one button per location that doesn't have its menu yet, and takes you straight to it",
+                "fr": "Créer un menu se fait désormais en un clic : l'écran Menus affiche un bouton par emplacement n'ayant pas encore son menu, et vous y emmène directement",
+                "es": "Crear un menú ahora se hace con un solo clic: la pantalla Menús muestra un botón por cada ubicación que aún no tiene su menú, y le lleva directamente a él"
+            },
+            {
+                "en": "The navigation bar now only offers links, anything else belonging in the page itself",
+                "fr": "La barre de navigation ne propose plus que des liens, tout le reste ayant sa place dans la page elle-même",
+                "es": "La barra de navegación ahora solo ofrece enlaces, cualquier otra cosa tiene su lugar en la propia página"
+            },
+            {
+                "en": "A menu link can now point at a section placed inside a column or a container, not just at a section sitting directly in the page",
+                "fr": "Un lien de menu peut désormais pointer vers une section placée dans une colonne ou un conteneur, et plus seulement vers une section posée directement dans la page",
+                "es": "Un enlace de menú ahora puede apuntar a una sección colocada dentro de una columna o un contenedor, y no solo a una sección situada directamente en la página"
+            },
+            {
+                "en": "A new switch on the page edit screen lets you hide the page title, for a page opened by a block that already shows it - the title stays everywhere else (browser tab, sharing, menus)",
+                "fr": "Une nouvelle case sur l'écran d'édition d'une page permet de masquer le titre de la page, pour une page ouverte par un block qui l'affiche déjà - le titre reste partout ailleurs (onglet du navigateur, partage, menus)",
+                "es": "Una nueva casilla en la pantalla de edición de una página permite ocultar el título de la página, para una página que empieza con un bloque que ya lo muestra: el título se mantiene en todas partes (pestaña del navegador, compartir, menús)"
+            },
+            {
+                "en": "The footer now stays at the bottom of the window on a short page, instead of floating halfway up it",
+                "fr": "Le pied de page reste désormais en bas de la fenêtre sur une page courte, au lieu de flotter à mi-hauteur",
+                "es": "El pie de página ahora se queda abajo de la ventana en una página corta, en lugar de quedar flotando a media altura"
+            }
+        ]
+    },
+    {
+        "date": "2026-07-28",
+        "description": [
+            {
+                "en": "The \"Templates\" menu is gone from the page edit screen: a template only ever copied sample content once, which you then had to rewrite entirely. To start from an existing page, use \"Duplicate\" instead",
+                "fr": "Le menu « Templates » a disparu de l'écran d'édition d'une page : un template ne faisait que recopier une fois un contenu d'exemple, qu'il fallait ensuite entièrement réécrire. Pour partir d'une page existante, utilisez plutôt « Dupliquer »",
+                "es": "El menú «Plantillas» ha desaparecido de la pantalla de edición de una página: una plantilla solo copiaba una vez un contenido de ejemplo, que luego había que reescribir por completo. Para partir de una página existente, utilice «Duplicar»"
+            }
+        ]
+    },
+    {
         "date": "2026-07-27",
         "description": [
             {

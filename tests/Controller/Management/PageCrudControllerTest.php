@@ -20,8 +20,6 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Management\BlockDataExporter;
 use c975L\SiteBundle\Management\PageExportProvider;
-use c975L\SiteBundle\Management\TemplateApplier;
-use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -153,8 +151,6 @@ class PageCrudControllerTest extends TestCase
         ?Connection $connection = null,
         ?TableExporter $tableExporter = null,
         ?ContentExporter $contentExporter = null,
-        ?TemplateRegistry $templateRegistry = null,
-        ?TemplateApplier $templateApplier = null,
         ?PageExportProvider $pageExportProvider = null,
         ?CsrfTokenManagerInterface $csrfTokenManager = null,
     ): PageCrudController {
@@ -178,8 +174,6 @@ class PageCrudControllerTest extends TestCase
             $connection ?? $this->createStub(Connection::class),
             $tableExporter ?? $this->createStub(TableExporter::class),
             $contentExporter ?? $this->createStub(ContentExporter::class),
-            $templateRegistry ?? new TemplateRegistry([]),
-            $templateApplier ?? new TemplateApplier(),
             $pageExportProvider ?? new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
             $csrfTokenManager ?? $this->createStub(CsrfTokenManagerInterface::class),
         );
@@ -483,99 +477,6 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('alt text', $copiedMedia->getAlt());
     }
 
-    // --- applyTemplate -------------------------------------------------------------------------------
-
-    public function testApplyTemplateDeniesAccessBelowEditor(): void
-    {
-        $this->expectException(AccessDeniedException::class);
-
-        $controller = $this->createController();
-        $controller->setContainer($this->createContainer([
-            'security.authorization_checker' => $this->createAuthorizationChecker(false),
-        ]));
-
-        $controller->applyTemplate(
-            $this->createAdminContext(new Page()),
-            new Request(),
-            $this->createStub(EntityManagerInterface::class)
-        );
-    }
-
-    // Never mutates the live/source page - builds an unpublished copy carrying the template's blocks and marked as replacing the source, then redirects to editing the copy, not the source
-    public function testApplyTemplateCreatesAnUnpublishedCopyMarkedAsReplacingTheSource(): void
-    {
-        $source = (new Page())->setTitle('Home')->setSlug('home');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($source, 42);
-
-        $templateRegistry = $this->createMock(TemplateRegistry::class);
-        $templateRegistry->expects($this->once())->method('get')->with('agency-home')->willReturn([
-            'label' => 'label.test',
-            'blocks' => [
-                ['kind' => 'hero', 'data' => ['title' => 'Hello']],
-            ],
-        ]);
-
-        $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findOneBy')->willReturn(null);
-
-        $capturedCopy = null;
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->once())->method('persist')->willReturnCallback(
-            function (object $entity) use (&$capturedCopy): void {
-                $capturedCopy = $entity;
-            }
-        );
-        $manager->expects($this->once())->method('flush');
-
-        $controller = $this->createController(pageRepository: $pageRepository, templateRegistry: $templateRegistry);
-        $controller->setContainer($this->createContainer([
-            'security.authorization_checker' => $this->createAuthorizationChecker(true),
-            'request_stack' => $this->createRequestStackWithSession(),
-        ]));
-
-        $response = $controller->applyTemplate(
-            $this->createAdminContext($source),
-            new Request(['template' => 'agency-home']),
-            $manager
-        );
-
-        $this->assertSame(302, $response->getStatusCode());
-        $this->assertCount(0, $source->getBlocks());
-        $this->assertInstanceOf(Page::class, $capturedCopy);
-        $this->assertCount(1, $capturedCopy->getBlocks());
-        $this->assertSame('hero', $capturedCopy->getBlocks()->first()->getKind());
-        $this->assertFalse($capturedCopy->isPublished());
-        $this->assertSame(42, $capturedCopy->getReplaces());
-    }
-
-    // An unknown ?template=<slug> is a no-op: no copy created, nothing persisted/flushed, redirects back to the source page itself (there is no copy to redirect to)
-    public function testApplyTemplateRedirectsToSourceWhenTemplateUnknown(): void
-    {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
-
-        $templateRegistry = $this->createStub(TemplateRegistry::class);
-        $templateRegistry->method('get')->willReturn(null);
-
-        $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->expects($this->never())->method('persist');
-        $manager->expects($this->never())->method('flush');
-
-        $controller = $this->createController(templateRegistry: $templateRegistry);
-        $controller->setContainer($this->createContainer([
-            'security.authorization_checker' => $this->createAuthorizationChecker(true),
-            'request_stack' => $this->createRequestStackWithSession(),
-        ]));
-
-        $response = $controller->applyTemplate(
-            $this->createAdminContext($page),
-            new Request(['template' => 'unknown']),
-            $manager
-        );
-
-        $this->assertSame(302, $response->getStatusCode());
-        $this->assertCount(0, $page->getBlocks());
-    }
-
     // --- publishAsReplacement ------------------------------------------------------------------------
 
     public function testPublishAsReplacementDeniesAccessBelowEditor(): void
@@ -678,7 +579,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($page->isDeleted());
     }
 
-    // Two drafts created (via applyTemplate) from the same original before either is published: the first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own publishAsReplacement() must not take over that mangled slug - it's treated the same as "original not found" instead of silently publishing under a garbage URL
+    // Two drafts created (via duplicate()) from the same original before either is published: the first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own publishAsReplacement() must not take over that mangled slug - it's treated the same as "original not found" instead of silently publishing under a garbage URL
     public function testPublishAsReplacementFlashesErrorWhenOriginalAlreadyArchivedByAnotherDraft(): void
     {
         $original = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home');
@@ -1295,6 +1196,7 @@ class PageCrudControllerTest extends TestCase
             'isPublished' => true,
             'isIndexable' => true,
             'summarySocialNetwork' => null,
+            'options' => [],
             'ogImage' => null,
             'blocks' => [[
                 'kind' => 'text',

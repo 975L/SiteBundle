@@ -1,5 +1,12 @@
 :root {
-    --alert-danger-color: #b64450;
+    // Which palette the browser's own UA-rendered parts belong to; undeclared, they all render light
+    color-scheme: light;
+    // A token, the four backgrounds below flipping in dark mode; applied to descendants too
+    --alert-color: #000;
+    // Darkened from #b64450, which read at 4.14:1 on the tint below - under WCAG AA. It only ever painted
+    // an alert's own bare text before, its nested content being caught by the theme's "*" rule; now that
+    // the descendants follow it too, the whole message rides on it
+    --alert-danger-color: #9c3a44;
     --alert-danger-background: #f2dede;
     --alert-info-background: #d9edf7;
     --alert-success-background: #d0e9c6;
@@ -17,7 +24,6 @@
     --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
     --button-background-secondary: rgb(218, 126, 57);
     --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black);
-    --button-background-secondary-light: color-mix(in srgb, var(--secondary) 50%, white);
     --button-background-success: rgb(40, 167, 69);
     --button-background-success-dark: rgb(40, 167, 69, 0.9);
     --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -38,8 +44,11 @@
     // Deliberately NOT derived from --text/--background above (those flip in dark mode, see _theme-dark.scss): a handful of block designs use a permanently-dark contrast panel regardless of the site's current light/dark theme - these stay fixed neutrals on purpose
     --surface-inverse: #232323;
     --text-on-inverse: #d8d8d8;
-    // The three flats a page section can be painted with, when its "background" field is set (UiBundle's .section--bg-* in sass/_page-sections.scss). Only the background of each variant is a token: everything the variant inverts on top of it (text, muted text, borders, translucent chips) is mixed back into whatever color is set here, so retuning one of these three is enough to retune the whole variant. "dark" follows --text rather than --secondary: a dark band has to stay dark whatever the admin picks as the site's secondary color, which is just as often a pale one
-    --section-bg-muted: var(--surface-alt);
+    // Canvas behind the page, i.e. what shows on both sides once the viewport is wider than --body-max-width (see body's own max-width in _general.scss). Defaults to the page background itself, which is what a browser already painted there on its own - html carrying no background of its own, body's propagates to the canvas. Setting it here is what stops that propagation, so a design framing the page inside its measure gives this a different color and gets the frame, without a rule of its own
+    --frame-background: var(--background);
+    // Only each flat's background is a token, everything it inverts being mixed back out of it
+    // "dark" follows --text, and "muted" --primary, so a band reads as a shade of the site, not a grey
+    --section-bg-muted: color-mix(in srgb, var(--background) 94%, var(--primary));
     --section-bg-primary: var(--primary);
     --section-bg-dark: var(--text);
     // Shape tokens - defaults match today's look exactly (nothing changes until a page template overrides them), but header/navbar/footer/buttons/cards all read from here so a template's stylesheet can reskin the whole site's "shape" (radii, nav shadow) in one place
@@ -75,13 +84,16 @@
     --footer-text-hover: var(--footer-text);
     --footer-items-direction: column;
     --footer-items-justify: flex-start;
-    --footer-border: solid grey 2px;
+    // Mixed out of the footer's own background rather than a flat grey, so the rule between the page and the band stays in the site's own hue - and follows it if the admin retunes the primary color. A footer left transparent gets rgba(0, 0, 0, 0.2) out of the same mix, i.e. a discreet dark rule, which is what a plain footer wants anyway
+    --footer-border: solid color-mix(in srgb, var(--footer-background) 80%, black) 2px;
     // The colored-band footer above is meant to bleed full-viewport-width regardless of --body-max-width (see body's own max-width in _general.scss) - a template going for a plain/minimal footer instead sets both of these to auto/0 so the footer's content realigns with the rest of the page
     --footer-width: 100vw;
     --footer-margin-x: calc(50% - 50vw);
     --footer-padding: 2em 15px 3em 15px;
-    // Matches .menu-link's own default hover/focus background (_menu.scss) - a template going for a plain/minimal footer sets this to transparent instead
-    --footer-link-hover-background: rgba(0, 0, 0, 0.1);
+    // Gap between the page's last content and the footer band - a template stacking colored flats sets it to 0 so the footer follows the previous flat with no strip of page background between them
+    --footer-margin-top: 3em;
+    // Toward the footer's own text color, not the black wash .menu-link uses (_menu.scss): a wash only ever darkens, so it disappears on a dark footer band - which the default one becomes as soon as the admin picks a dark primary. Mixing toward --footer-text contrasts in whichever direction that footer needs (it lightens a dark band, darkens a pale one). A template going for a plain/minimal footer sets this to transparent instead
+    --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text));
     --disabled: #808080;
     --font-family-title: var(--c975l-font-family-title, sans-serif);
     --font-family-body: var(--c975l-font-family-body, sans-serif);
@@ -98,6 +110,30 @@
     --input-focus-border-color: rgb(24, 115, 200);
     --input-focus-shadow-color: rgb(66, 130, 189);
     --input-shadow-color: #4d4d4d;
+    // Transparent in light mode; dark mode gives it a wash, a field being otherwise invisible
+    --input-background: transparent;
+    // Room kept above and below a field. A box-shadow takes no space in the layout, so the validation
+    // ring would otherwise be drawn over the label above it and the field below
+    --input-margin-block: 0.4em 1em;
+    // Distance from the bottom of a field's wrapper to its ✓/✗ glyph, anchored from the bottom because
+    // that edge is the one Symfony's field <div> and the password controller's .has-toggle share. Half
+    // the difference between the field's height and the glyph's, the field's own bottom margin collapsing
+    // through a wrapper carrying no padding or border
+    --input-glyph-offset: 9.5px;
+    // Pointed at the button status colors rather than a bare green/red, so one palette covers the site
+    --input-valid-border-color: var(--button-background-success);
+    --input-valid-shadow-color: var(--button-background-success);
+    --input-invalid-border-color: var(--button-background-danger);
+    --input-invalid-shadow-color: var(--button-background-danger);
+    // Text of the message shown under an invalid field, kept apart from the border color above: the same
+    // red reads at 4.53:1 on a white page but only 4.14:1 on the dark one, under the 4.5:1 WCAG AA asks
+    // for body text. A border has no such floor (3:1 for a non-textual element), so only this one is
+    // lightened in dark mode
+    --input-invalid-text-color: var(--button-background-danger);
+    // The show/hide eye is served as an <img>, so no currentColor reaches it and dark mode inverts it
+    --input-icon-filter: none;
+    // Measure every form is laid out on (UiBundle's sass/_forms.scss)
+    --form-width: min(70vw, 1000px);
     --readmore-lines: 5;
     --required-color: #000;
     --white: #fff;

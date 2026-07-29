@@ -6,9 +6,7 @@
     {{ parent() }}
 {% endblock main %}
 
-{# Marks each row with the data JS needs to drag-and-drop reorder it (see assets/js/collection-item-sort.js
-   and CollectionItemCrudController::reorder()) - the index is always filtered to a single collection
-   (see CollectionItemCrudController::index()), so every row on the page already shares the same data-collection. #}
+{# Marks each row for drag-and-drop reordering; the index is always filtered to one collection #}
 {% block entity_row_attributes %}
     data-collection="{{ entity.instance.collectionGroup.id }}"
     data-reorder-url="{{ ea_url().setAction('reorder') }}"

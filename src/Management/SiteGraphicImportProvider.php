@@ -52,7 +52,7 @@ class SiteGraphicImportProvider implements ImportProviderInterface
         return ['created' => $created, 'updated' => $updated];
     }
 
-    // A singleton role (favicon, logo...) is updated in place, so the site keeps exactly one; a repeatable one is rebuilt from scratch, its existing rows dropped once per role for the whole batch rather than once per item
+    // A singleton role is updated in place, a repeatable one rebuilt, its rows dropped once per role
     // @return array{0: Media, 1: bool} - the media to fill in, and whether it had to be created
     private function resolveMedia(string $role, array &$clearedRepeatableRoles): array
     {

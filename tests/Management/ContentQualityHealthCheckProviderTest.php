@@ -36,7 +36,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     private const GOOD_SOCIAL_TAGS = ['og:title' => 'T', 'og:description' => 'D', 'og:image' => '/media/og.png'];
 
     // Every analysis a test doesn't say otherwise about is a clean one - each test overrides only the key it is actually about (see the "+ self::GOOD_ANALYSIS" unions below), so adding a check here doesn't turn every other test's page orange
-    private const GOOD_ANALYSIS = ['title' => self::GOOD_TITLE, 'description' => self::GOOD_DESCRIPTION, 'hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'socialTags' => self::GOOD_SOCIAL_TAGS, 'internalLinks' => [], 'externalLinks' => [], 'linkTexts' => []];
+    private const GOOD_ANALYSIS = ['title' => self::GOOD_TITLE, 'description' => self::GOOD_DESCRIPTION, 'hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'socialTags' => self::GOOD_SOCIAL_TAGS, 'internalLinks' => [], 'externalLinks' => [], 'linkTexts' => []];
 
     private function createPage(string $slug): Page
     {
@@ -63,10 +63,11 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
     }
 
-    private function createPageExistenceChecker(bool $exists = true): PageExistenceChecker
+    // null stands for a url the HEAD never got an answer from (timeout, DNS, refused connection), which the analyzer tells apart from a real status
+    private function createPageExistenceChecker(?int $status = 200): PageExistenceChecker
     {
         $checker = $this->createStub(PageExistenceChecker::class);
-        $checker->method('exists')->willReturn($exists);
+        $checker->method('status')->willReturn($status);
 
         return $checker;
     }
@@ -75,6 +76,17 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     private function stubResponse(): ResponseInterface
     {
         return $this->createStub(ResponseInterface::class);
+    }
+
+    // A response the transport already followed $count redirects to reach, as HttpClient reports it through its own info
+    private function stubRedirectedResponse(int $count, string $finalUrl): ResponseInterface
+    {
+        $response = $this->createStub(ResponseInterface::class);
+        $response->method('getInfo')->willReturnCallback(
+            static fn (string $key) => ['redirect_count' => $count, 'url' => $finalUrl][$key] ?? null
+        );
+
+        return $response;
     }
 
     // Configures a ContentQualityClient stub/mock's request()/read() pair to behave like a synchronous analyze(), for tests that don't otherwise need to distinguish the two calls
@@ -163,7 +175,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsWarningWhenDescriptionIsMissing(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => false, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => false, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
 
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
@@ -175,17 +187,31 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksStatusIsWarningWhenH1IsMissing(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => false, 'imagesWithoutAlt' => [], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 0, 'imagesWithoutAlt' => [], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
 
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
         $this->assertSame(HealthCheckResult::STATUS_WARNING, $provider->runChecks()[0]['status']);
     }
 
+    // Valid HTML, so a warning like the rest, not an error - what it costs is a screen reader announcing two top-level subjects for one page
+    public function testRunChecksStatusIsWarningWhenThereAreSeveralH1(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 2, 'imagesWithoutAlt' => [], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+
+        $provider = $this->createProvider([$this->createPage('home')], $client);
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
+        $this->assertStringContainsString('label.health_check_content_quality_several_h1', $result['summary']);
+        $this->assertSame(2, $result['details']['h1Count']);
+    }
+
     public function testRunChecksStatusIsWarningWhenImagesAreMissingAlt(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => ['/media/a.jpg', '/media/b.jpg', '/media/c.jpg'], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => ['/media/a.jpg', '/media/b.jpg', '/media/c.jpg'], 'internalLinks' => [], 'linkTexts' => []] + self::GOOD_ANALYSIS);
 
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
@@ -195,16 +221,87 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame('/media/a.jpg', $result['details']['imagesWithoutAlt'][0]['src']);
     }
 
-    public function testRunChecksReturnsAWarningRowWhenThePageIsNotDeployed(): void
+    // The command runs against production's own database (see the readme), so a page listed in the sitemap that answers 404 is a real defect - it used to be reported as "not tested" (STATUS_SKIPPED), which raised no dashboard alert at all and hid the very 404s Search Console reports
+    public function testRunChecksReturnsAnErrorRowWhenAPageAnswersNotFound(): void
     {
         $client = $this->createMock(ContentQualityClient::class);
         $client->expects($this->never())->method('request');
 
-        $provider = $this->createProvider([$this->createPage('home')], $client, pageExistenceChecker: $this->createPageExistenceChecker(false));
+        $provider = $this->createProvider([$this->createPage('home')], $client, pageExistenceChecker: $this->createPageExistenceChecker(404));
 
         $result = $provider->runChecks()[0];
-        $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $result['status']);
-        $this->assertSame('label.health_check_page_not_found', $result['summary']);
+        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame('label.health_check_url_not_found', $result['summary']);
+    }
+
+    // Anything else the page answers is reported with the code itself, rather than as a raw "the check blew up" message
+    public function testRunChecksReportsThePageStatusWhenItAnswersAnError(): void
+    {
+        $provider = $this->createProvider(
+            [$this->createPage('home')],
+            $this->createStub(ContentQualityClient::class),
+            pageExistenceChecker: $this->createPageExistenceChecker(503),
+        );
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame('label.health_check_url_http_error', strtr($result['summary'], ['503' => '%status%']));
+    }
+
+    // 410 is the site answering on purpose - nothing is broken, only the page is still listed
+    public function testRunChecksWarnsWhenThePageWasDeliberatelyRemoved(): void
+    {
+        $provider = $this->createProvider(
+            [$this->createPage('home')],
+            $this->createStub(ContentQualityClient::class),
+            pageExistenceChecker: $this->createPageExistenceChecker(410),
+        );
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
+        $this->assertSame('label.health_check_url_gone', $result['summary']);
+    }
+
+    // No status at all: the host never answered, which is not the same as it answering 404 - reported as unreachable rather than as a page that isn't there
+    public function testRunChecksReportsAnUnreachableHostAsSuch(): void
+    {
+        $provider = $this->createProvider(
+            [$this->createPage('home')],
+            $this->createStub(ContentQualityClient::class),
+            pageExistenceChecker: $this->createPageExistenceChecker(null),
+        );
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame('label.health_check_url_unreachable', $result['summary']);
+    }
+
+    // A url listed in the sitemap is meant to answer 200 directly - the hop is read off the analysis response's own info, so it costs no extra request
+    public function testRunChecksWarnsWhenTheUrlRedirects(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $client->method('request')->willReturn($this->stubRedirectedResponse(1, 'https://example.com/pages/accueil'));
+        $client->method('read')->willReturn(self::GOOD_ANALYSIS);
+
+        $provider = $this->createProvider([$this->createPage('home')], $client);
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
+        $this->assertStringContainsString('label.health_check_content_quality_redirects', $result['summary']);
+        $this->assertSame(['count' => 1, 'finalUrl' => 'https://example.com/pages/accueil'], $result['details']['redirect']);
+    }
+
+    // Nothing to report on the overwhelming majority of urls, which answer 200 straight away
+    public function testRunChecksLeavesTheRedirectDetailEmptyOnADirectAnswer(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, self::GOOD_ANALYSIS);
+
+        $provider = $this->createProvider([$this->createPage('home')], $client);
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
+        $this->assertNull($result['details']['redirect']);
     }
 
     public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void
@@ -225,7 +322,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $client = $this->createStub(ContentQualityClient::class);
         $this->stubAnalyze($client, [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => [],
             'internalLinks' => ['https://example.com/pages/missing/'],
             'linkTexts' => ['https://example.com/pages/missing/' => 'Nos tarifs'],
@@ -246,7 +343,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $client = $this->createMock(ContentQualityClient::class);
         $this->stubAnalyze($client, [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => [],
             'internalLinks' => ['https://example.com/pages/shared/'],
             'linkTexts' => [],
@@ -269,8 +366,8 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->stubAnalyze($client, self::GOOD_ANALYSIS);
 
         $pageExistenceChecker = $this->createStub(PageExistenceChecker::class);
-        $pageExistenceChecker->method('exists')->willReturnCallback(
-            static fn (string $url): bool => !str_contains($url, 'contact')
+        $pageExistenceChecker->method('status')->willReturnCallback(
+            static fn (string $url): int => str_contains($url, 'contact') ? 404 : 200
         );
 
         $provider = $this->createProvider(
@@ -283,7 +380,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
 
         $this->assertCount(3, $results);
         $this->assertSame('https://example.com/', $results[0]['url']);
-        $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $results[1]['status']);
+        $this->assertSame(HealthCheckResult::STATUS_ERROR, $results[1]['status']);
         $this->assertSame('https://example.com/pages/about', $results[2]['url']);
     }
 
@@ -293,7 +390,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $client = $this->createStub(ContentQualityClient::class);
         $this->stubAnalyze($client, [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => ['/media/beach.jpg'],
             'internalLinks' => ['https://example.com/pages/missing/'],
             'linkTexts' => [],
@@ -324,7 +421,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksDoesNotReportAnInconclusiveLinkAsBroken(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/slow/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/slow/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
         $client->method('requestLinkCheck')->willReturn($this->stubResponse());
         $client->method('requestLinkCheckFallback')->willReturn($this->stubResponse());
         $client->method('readLinkCheck')->willReturn(ContentQualityClient::LINK_UNKNOWN);
@@ -339,7 +436,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksRetriesAnInconclusiveLinkInGet(): void
     {
         $client = $this->createMock(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/flaky/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/flaky/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
         $client->method('requestLinkCheck')->willReturn($this->stubResponse());
         $client->expects($this->once())->method('requestLinkCheckFallback')->with('https://example.com/pages/flaky/')->willReturn($this->stubResponse());
         $client->method('readLinkCheck')->willReturnOnConsecutiveCalls(ContentQualityClient::LINK_UNKNOWN, ContentQualityClient::LINK_BROKEN);
@@ -354,7 +451,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksDoesNotRetryAConclusiveLink(): void
     {
         $client = $this->createMock(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/missing/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/missing/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
         $client->method('requestLinkCheck')->willReturn($this->stubResponse());
         $client->expects($this->never())->method('requestLinkCheckFallback');
         $client->method('readLinkCheck')->willReturn(ContentQualityClient::LINK_BROKEN);
@@ -367,7 +464,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     {
         $links = array_map(static fn (int $i): string => 'https://example.com/pages/p' . $i . '/', range(1, 25));
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => $links, 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => $links, 'linkTexts' => []] + self::GOOD_ANALYSIS);
 
         $calls = [];
         $client->method('requestLinkCheck')->willReturnCallback(function () use (&$calls): ResponseInterface {
@@ -399,7 +496,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksSurvivesALinkRequestThrowing(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/bad/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/bad/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
         $client->method('requestLinkCheck')->willThrowException(new \RuntimeException('Invalid URL'));
         $client->method('requestLinkCheckFallback')->willThrowException(new \RuntimeException('Invalid URL'));
 

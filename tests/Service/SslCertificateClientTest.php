@@ -47,7 +47,7 @@ class SslCertificateClientTest extends TestCase
         (new SslCertificateClient())->fetchExpiry('127.0.0.1', 1);
     }
 
-    // Generates a short-lived self-signed certificate, then spawns a background TLS server presenting it - the client under test connects to it exactly like it would a real host
+    // Spawns a background TLS server on a short-lived self-signed certificate for the client to reach
     // @return array{0: int, 1: \DateTimeImmutable}
     private function startTlsServer(int $validDays): array
     {
@@ -64,8 +64,7 @@ class SslCertificateClientTest extends TestCase
         $expiresAt = (new \DateTimeImmutable())->setTimestamp(openssl_x509_parse($certificate)['validTo_time_t']);
 
         $port = random_int(20000, 60000);
-        // Accepts connections in a loop for a few seconds rather than a single one - the readiness probe below
-        // consumes a connection of its own before the real client connects
+        // Loops rather than accepting one connection, the readiness probe consuming one of its own
         $script = sprintf(
             '$c=stream_context_create(["ssl"=>["local_cert"=>%s,"allow_self_signed"=>true,"verify_peer"=>false]]);'
             . '$s=stream_socket_server("tls://127.0.0.1:%d",$e,$m,STREAM_SERVER_BIND|STREAM_SERVER_LISTEN,$c);'

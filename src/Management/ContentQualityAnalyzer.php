@@ -59,24 +59,32 @@ class ContentQualityAnalyzer
         foreach (array_chunk($entries, self::BATCH_SIZE, true) as $batch) {
             $pending = [];
             foreach ($batch as $index => $entry) {
-                // A page present in a lower environment's database but never deployed to the checked url is worth telling apart from a failed analysis - the existence HEAD does it before the slower request, same as W3cHealthCheckProvider. Only for a Page though: a declared url (no Page behind it) gets the same verdict for free from its own analysis response, and doubling the request count of a bundle declaring thousands of urls is not free
-                if (null !== $entry['page'] && !$this->pageExistenceChecker->exists($entry['url'])) {
-                    $analyses[$index] = $entry + ['analysis' => null, 'error' => null, 'notFound' => true, 'gone' => false];
-                    continue;
+                // A single HEAD before the slower analysis request, same as W3cHealthCheckProvider - and it carries the status code, so a page that doesn't answer is reported for what it answered rather than as a raw analysis failure. Only for a Page though: a declared url (no Page behind it) gets the same verdict for free from its own analysis response, and doubling the request count of a bundle declaring thousands of urls is not free
+                if (null !== $entry['page']) {
+                    $status = $this->pageExistenceChecker->status($entry['url']);
+                    if (null === $status || $status >= 400) {
+                        $analyses[$index] = $entry + $this->failedEntry(null, $status);
+                        continue;
+                    }
                 }
 
                 try {
                     $pending[$index] = $entry + ['response' => $this->contentQualityClient->request($entry['url'])];
                 } catch (\Throwable $e) {
-                    $analyses[$index] = $entry + ['analysis' => null, 'error' => $e->getMessage(), 'notFound' => false, 'gone' => false];
+                    $analyses[$index] = $entry + $this->failedEntry($e->getMessage(), null);
                 }
             }
 
             foreach ($pending as $index => $entry) {
                 try {
-                    $analyses[$index] = $entry + ['analysis' => $this->contentQualityClient->read($entry['response'], $entry['url']), 'error' => null, 'notFound' => false, 'gone' => false];
+                    $analyses[$index] = $entry + [
+                        'analysis' => $this->contentQualityClient->read($entry['response'], $entry['url']),
+                        'error' => null,
+                        'httpStatus' => null,
+                        'redirect' => $this->describeRedirect($entry['response'], $entry['url']),
+                    ];
                 } catch (\Throwable $e) {
-                    $analyses[$index] = $entry + ['analysis' => null, 'error' => $e->getMessage()] + $this->failureVerdict($entry['response'], null !== $entry['page']);
+                    $analyses[$index] = $entry + $this->failedEntry($e->getMessage(), $this->failureStatus($entry['response']));
                 }
             }
         }
@@ -86,23 +94,37 @@ class ContentQualityAnalyzer
         return array_values($analyses);
     }
 
-    // What a failed analysis says about the url itself, rather than about the check. 404 means "not deployed here", which is only worth telling apart for a Page (it exists in database either way, which is what the existence HEAD above establishes) - a url another bundle declares in its own sitemap answering 404 is precisely the defect these "urls-<bundle>" checks exist to surface, so it stays an error. 410 is the site answering on purpose (a soft-deleted Page - see PageController's GoneHttpException - or a resource its bundle removed): nothing is broken, only the declaration is stale. Anything else (403, 5xx, a response that never completed) says nothing about the url existing and is reported as the failure it is
-    // @return array{notFound: bool, gone: bool}
-    private function failureVerdict(ResponseInterface $response, bool $hasPage): array
+    // An entry no analysis could be built for, carrying whichever of the two says why: the status the url answered, or the message the request failed with
+    // @return array{analysis: null, error: ?string, httpStatus: ?int, redirect: null}
+    private function failedEntry(?string $error, ?int $status): array
     {
-        $status = $this->statusCode($response);
-
-        return ['notFound' => 404 === $status && $hasPage, 'gone' => 410 === $status];
+        return ['analysis' => null, 'error' => $error, 'httpStatus' => $status, 'redirect' => null];
     }
 
-    // A response that never completed (timeout, DNS, refused connection) throws here too, and carries no status at all
-    private function statusCode(ResponseInterface $response): ?int
+    // The redirects the analysis request already followed, read off its own response info rather than paying a second request with max_redirects: 0 for it. A url declared in a sitemap is meant to be the canonical one and answer 200 directly - Search Console reports the hop as a redirect error rather than following it the way a browser silently does
+    // @return array{count: int, finalUrl: string}|null
+    private function describeRedirect(ResponseInterface $response, string $url): ?array
+    {
+        $count = (int) $response->getInfo('redirect_count');
+        if ($count < 1) {
+            return null;
+        }
+
+        $finalUrl = (string) ($response->getInfo('url') ?? '');
+
+        return ['count' => $count, 'finalUrl' => '' === $finalUrl ? $url : $finalUrl];
+    }
+
+    // The status behind a failed analysis when there is one that explains it - null otherwise, so the failure is reported by the message it carries: a response that never completed (timeout, DNS, refused connection) throws here and has no status at all, and one that answered 200 and still failed to parse is not explained by its code either
+    private function failureStatus(ResponseInterface $response): ?int
     {
         try {
-            return $response->getStatusCode();
+            $status = $response->getStatusCode();
         } catch (\Throwable) {
             return null;
         }
+
+        return $status >= 400 ? $status : null;
     }
 
     // Every link found on every page, internal and external together, deduped, each checked once regardless of how many pages link to it - fired in batches (see BATCH_SIZE), then whatever the HEAD pass couldn't conclude on retried once in GET, so that only a real >= 400 answer ever ends up reported as broken. Internal and external are checked in the same pass (one dedup, one set of batches, no external host hit twice because two pages link to it) and only told apart when building each page's row
@@ -150,35 +172,12 @@ class ContentQualityAnalyzer
 
     private function buildRow(array $entry, array $brokenLinks): array
     {
-        if ($entry['notFound']) {
-            return [
-                'url' => $entry['url'],
-                'label' => $entry['label'],
-                'status' => HealthCheckResult::STATUS_SKIPPED,
-                'summary' => $this->translator->trans('label.health_check_page_not_found', [], 'site'),
-                'details' => [],
-                'editUrl' => $entry['editUrl'],
-            ];
-        }
-
-        // A warning rather than an error: the site answered correctly, the resource really was removed on purpose - what's left to fix is that something still declares it
-        if ($entry['gone']) {
-            return [
-                'url' => $entry['url'],
-                'label' => $entry['label'],
-                'status' => HealthCheckResult::STATUS_WARNING,
-                'summary' => $this->translator->trans('label.health_check_url_gone', [], 'site'),
-                'details' => [],
-                'editUrl' => $entry['editUrl'],
-            ];
-        }
-
-        if (null !== $entry['error']) {
-            return $this->errorRow($entry['url'], $entry['label'], 'label.health_check_content_quality_call_failed', $entry['error'], $entry['editUrl']);
+        if (null === $entry['analysis']) {
+            return $this->buildFailedRow($entry);
         }
 
         $details = $this->buildDetails($entry, $brokenLinks);
-        $issues = $this->summarizeIssues($details);
+        $issues = array_merge($this->redirectIssue($details), $this->summarizeIssues($details));
 
         return [
             'url' => $entry['url'],
@@ -192,6 +191,47 @@ class ContentQualityAnalyzer
             'summary' => $issues ? implode(' · ', $issues) : $this->translator->trans('label.health_check_content_quality_ok', [], 'site'),
             // hasDescription/hasH1 kept alongside imagesWithoutAlt/brokenLinks (already needed for the summary/status above) so PageHealthCheckAdviceBuilder can tell issues apart without re-parsing the translated summary text. The title/description verdicts are persisted already resolved ('short'/'long'/...) rather than as raw lengths alone, so the advice builder doesn't have to re-apply the thresholds - it only needs the length to state it back to the user
             'details' => $details,
+            'editUrl' => $entry['editUrl'],
+        ];
+    }
+
+    // The url never got analyzed, so there is nothing to judge about its content - only what it answered. A Page answering 404 used to be reported as "not tested" (STATUS_SKIPPED, so no dashboard alert either), which hid the very 404s Search Console reports: the command is documented as running against production's own database, where a page listed in the sitemap that doesn't answer is a real defect, not an undeployed one
+    private function buildFailedRow(array $entry): array
+    {
+        $status = $entry['httpStatus'];
+
+        // A warning rather than an error: the site answered correctly, the resource really was removed on purpose - what's left to fix is that something still declares it
+        if (410 === $status) {
+            return $this->failedRow($entry, HealthCheckResult::STATUS_WARNING, 'label.health_check_url_gone', []);
+        }
+
+        if (404 === $status) {
+            return $this->failedRow($entry, HealthCheckResult::STATUS_ERROR, 'label.health_check_url_not_found', []);
+        }
+
+        // The same statuses the link checks refuse to call broken (see ContentQualityClient::INCONCLUSIVE_STATUSES): they describe how the server treats this checker, not whether the page is fine, so a site behind a WAF would otherwise turn every one of its pages red without a single real defect. A warning rather than a skipped row, which would raise no alert at all - the run genuinely couldn't judge the page, and that is worth knowing
+        if (\in_array($status, ContentQualityClient::INCONCLUSIVE_STATUSES, true)) {
+            return $this->failedRow($entry, HealthCheckResult::STATUS_WARNING, 'label.health_check_url_inconclusive', ['%status%' => $status]);
+        }
+
+        if (null !== $status) {
+            return $this->failedRow($entry, HealthCheckResult::STATUS_ERROR, 'label.health_check_url_http_error', ['%status%' => $status]);
+        }
+
+        // No status at all: either the analysis request itself failed (its message says why), or the existence HEAD never completed
+        return null !== $entry['error']
+            ? $this->errorRow($entry['url'], $entry['label'], 'label.health_check_content_quality_call_failed', $entry['error'], $entry['editUrl'])
+            : $this->failedRow($entry, HealthCheckResult::STATUS_ERROR, 'label.health_check_url_unreachable', []);
+    }
+
+    private function failedRow(array $entry, string $status, string $translationId, array $parameters): array
+    {
+        return [
+            'url' => $entry['url'],
+            'label' => $entry['label'],
+            'status' => $status,
+            'summary' => $this->translator->trans($translationId, $parameters, 'site'),
+            'details' => [],
             'editUrl' => $entry['editUrl'],
         ];
     }
@@ -210,12 +250,24 @@ class ContentQualityAnalyzer
             'hasDescription' => $analysis['hasDescription'],
             'descriptionIssue' => $analysis['hasDescription'] ? $this->lengthIssue($descriptionLength, self::DESCRIPTION_MIN_LENGTH, self::DESCRIPTION_MAX_LENGTH) : null,
             'descriptionLength' => $descriptionLength,
-            'hasH1' => $analysis['hasH1'],
+            'h1Count' => $analysis['h1Count'],
             'missingSocialTags' => array_values(array_diff(self::REQUIRED_SOCIAL_TAGS, array_keys($analysis['socialTags'] ?? []))),
             'imagesWithoutAlt' => $this->describeImages($entry['page'], $analysis['imagesWithoutAlt']),
             'brokenLinks' => $this->describeBrokenLinks($entry, $brokenLinks, 'internalLinks'),
             'brokenExternalLinks' => $this->describeBrokenLinks($entry, $brokenLinks, 'externalLinks'),
+            // null when the url answered 200 directly, which is what a checked url is expected to do (see describeRedirect())
+            'redirect' => $entry['redirect'],
         ];
+    }
+
+    // Kept out of summarizeIssues() and listed first: a url that redirects is answered before any of its content is - and whatever that content is, it belongs to another url than the one declared here
+    private function redirectIssue(array $details): array
+    {
+        $redirect = $details['redirect'] ?? null;
+
+        return null === $redirect
+            ? []
+            : [$this->translator->trans('label.health_check_content_quality_redirects', ['%count%' => $redirect['count'], '%url%' => $redirect['finalUrl']], 'site')];
     }
 
     // The links of one page that the shared check found broken - internal and external are checked in the same pass (see checkBrokenLinks()) and only told apart here, by which of the analysis' two lists they came from
@@ -245,8 +297,11 @@ class ContentQualityAnalyzer
         } elseif ('long' === $details['descriptionIssue']) {
             $issues[] = $this->translator->trans('label.health_check_content_quality_description_too_long', ['%length%' => $details['descriptionLength']], 'site');
         }
-        if (!$details['hasH1']) {
+        // Several <h1> are valid HTML and Google copes with them, so this is a warning like the rest: what it costs is a screen reader announcing two top-level subjects for one page (typically the layout's own page title plus a "hero" block left on its h1 level - see Page::$isTitleDisplayed)
+        if (0 === $details['h1Count']) {
             $issues[] = $this->translator->trans('label.health_check_content_quality_no_h1', [], 'site');
+        } elseif ($details['h1Count'] > 1) {
+            $issues[] = $this->translator->trans('label.health_check_content_quality_several_h1', ['%count%' => $details['h1Count']], 'site');
         }
 
         foreach (['missingSocialTags' => 'missing_social_tags', 'imagesWithoutAlt' => 'images_without_alt', 'brokenLinks' => 'broken_links', 'brokenExternalLinks' => 'broken_external_links'] as $key => $translationId) {

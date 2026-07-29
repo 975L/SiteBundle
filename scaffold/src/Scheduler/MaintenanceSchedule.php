@@ -21,16 +21,15 @@ class MaintenanceSchedule implements ScheduleProviderInterface
         return (new Schedule())
             ->stateful($this->cache)
             ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('c975l:sitemaps:create')))
-            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
+            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:config:backup')))
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
-            ->add(RecurringMessage::cron('7 3 * * 1',   new RunCommandMessage('c975l:site:backup --report')))
+            // Weekly digest of the backups above, on its own entry rather than as --report on the Monday run: a summary riding on a backup only exists if that run reaches its last line, and no mail at all is what nobody notices
+            ->add(RecurringMessage::cron('7 3 * * 1',   new RunCommandMessage('c975l:config:backup:digest')))
             // Weekly: every registered health check provider is free (no paid API involved)
             ->add(RecurringMessage::cron('0 4 * * 0',   new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains --kind=deployment')))
-            // Weekly too, an hour after the pages: what the site sells or funds is what has to be caught early,
-            // and a dead product/book/campaign page costs a sale. Drop the kinds of the bundles you don't have installed
+            // Weekly, an hour after the pages; drop the kinds whose bundles you don't have installed
             ->add(RecurringMessage::cron('0 5 * * 0',   new RunCommandMessage('c975l:health-check:run --kind=urls-book --kind=urls-shop --kind=urls-crowdfunding')))
-            // Monthly, on its own: a gallery declares one url per photo, so this is by far the longest run of them
-            // all - and a photo page going stale is nothing like a product page going down
+            // Monthly and on its own: a gallery declares one url per photo, by far the longest run
             ->add(RecurringMessage::cron('0 6 1 * *',   new RunCommandMessage('c975l:health-check:run --kind=urls-gallery')))
         ;
     }

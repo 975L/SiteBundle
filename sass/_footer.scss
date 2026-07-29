@@ -2,7 +2,7 @@
 footer {
     background-color: var(--footer-background);
     border-top: var(--footer-border);
-    margin-top: 3em;
+    margin-top: var(--footer-margin-top);
     margin-left: var(--footer-margin-x);
     margin-right: var(--footer-margin-x);
     padding: var(--footer-padding);

@@ -15,18 +15,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
-// An admin-uploaded font file (ttf/woff/woff2), turned into a @font-face rule by FontCssListener (compiled to
-// public/bundles/build/site-fonts-uploaded.css) - this is what FontService offers, via FontRegistry, to the
-// "font" kind config selects. Own Vich field rather than
-// UiBundle\Media, same precedent as CollectionItem: not an image, would need to skip all of Media's resize logic
+// An admin-uploaded font file turned into a @font-face rule by FontCssListener; its own Vich field, not a Media, being no image to resize
 #[ORM\Entity(repositoryClass: FontRepository::class)]
 #[ORM\Table(name: 'site_font')]
 #[Vich\Uploadable]
 class Font implements VichMediaNamableInterface
 {
-    // Sentinel `weight` value meaning "this file is a variable font" instead of a single static cut - real weights
-    // start at 100, so 0 can't collide. FontCssListener emits a fixed "100 900" @font-face range for it instead of
-    // trying to read the file's actual fvar axis (unreliable to guess, and its .woff2 encoding hides it behind Brotli)
+    // Sentinel meaning "variable font": real weights start at 100, and the actual fvar axis is unreadable behind Brotli
     public const WEIGHT_VARIABLE = 0;
 
     #[ORM\Id]
@@ -34,8 +29,7 @@ class Font implements VichMediaNamableInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    // The font-family name used in the generated @font-face rule and offered by FontChoiceType - several rows can share
-    // the same name with a different weight/style (e.g. the regular and the bold cut of "Roboto" are two uploads)
+    // Several rows may share one family name with a different weight or style
     #[ORM\Column(length: 100)]
     private ?string $name = null;
 
@@ -167,8 +161,7 @@ class Font implements VichMediaNamableInterface
         };
     }
 
-    // Unique, non-role path in public/medias/fonts - id is still null on first upload (Vich's prePersist listener
-    // runs before the auto-increment id is assigned), same fallback as CollectionItem::getVichMediaPath()
+    // Unique non-role path; the id is still null on first upload, Vich running before the auto-increment
     public function getVichMediaPath(): string
     {
         return 'medias/fonts/font-' . ($this->id ?? uniqid());

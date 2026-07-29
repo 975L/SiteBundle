@@ -61,6 +61,10 @@ class Page implements HasBlocksInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isIndexable = true;
 
+    // Benign per-page display options, stored as one JSON payload rather than a column each - same reasoning as UiBundle's Block::$data: a new option is then a code change alone, no schema migration for every app running this bundle to replay. Read/written through the named accessors below, never as raw string keys: they hold each option's default in one place. Anything the database itself has to filter, sort or join on (slug, isPublished, isIndexable...) stays a real column
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $options = null;
+
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Assert\Range(min: 0, max: 10)]
     private ?int $priority = null;
@@ -80,7 +84,7 @@ class Page implements HasBlocksInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isDeleted = false;
 
-    // Id of the page this one is meant to take over once approved (see PageCrudController::applyTemplate() / publishAsReplacement()) - an id, not the slug, so the lookup stays correct even if that page's slug changes (e.g. archived by another draft's own publishAsReplacement()) in the meantime. Null once published as a replacement, or for any page not created that way.
+    // Id of the page this one is meant to take over once approved (see PageCrudController::publishAsReplacement()) - an id, not the slug, so the lookup stays correct even if that page's slug changes (e.g. archived by another draft's own publishAsReplacement()) in the meantime. Null once published as a replacement, or for any page not created that way.
     #[ORM\Column(nullable: true)]
     private ?int $replaces = null;
 
@@ -190,6 +194,43 @@ class Page implements HasBlocksInterface
         $this->isIndexable = $isIndexable;
 
         return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    // $default is what an option means when it was never set - every page predating it, and every one whose editor left it alone
+    public function getOption(string $key, mixed $default = null): mixed
+    {
+        return $this->getOptions()[$key] ?? $default;
+    }
+
+    public function setOption(string $key, mixed $value): static
+    {
+        $options = $this->getOptions();
+        $options[$key] = $value;
+
+        return $this->setOptions($options);
+    }
+
+    // Whether the layout prints the page's own title as its <h1> (see layout.html.twig). True by default - hiding it is for a page opened by a block carrying its own <h1> (a "hero"/"banner_title" left on its h1 level), where printing it too would give the page two top-level headings. A page ending up with none is reported by the content-quality health check, same as one with several
+    public function isTitleDisplayed(): bool
+    {
+        return (bool) $this->getOption('titleDisplayed', true);
+    }
+
+    public function setIsTitleDisplayed(bool $isTitleDisplayed): static
+    {
+        return $this->setOption('titleDisplayed', $isTitleDisplayed);
     }
 
     public function getPriority(): ?int

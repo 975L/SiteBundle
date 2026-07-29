@@ -14,17 +14,14 @@ use c975L\SiteBundle\Entity\Page;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// Builds a Page's own EasyAdmin edit URL (SiteBundle's PageCrudController) - shared by every HealthCheckProviderInterface
-// implementation checking pages (PageSpeed, W3C, content quality, mixed content), so their dashboard rows can
-// link to the CRUD screen for the page behind the row, alongside the tested public url (see PagePublicUrlResolver)
+// Builds a Page's EasyAdmin edit URL, shared by every health check listing pages
 class PageEditUrlResolver
 {
     public function __construct(private readonly AdminUrlGeneratorInterface $adminUrlGenerator)
     {
     }
 
-    // unsetAll() first: AdminUrlGenerator::generateUrl() never resets its own internal route parameters, so
-    // reusing one builder instance across calls would leak the previous page's entityId into the next url
+    // unsetAll() first: the generator keeps its route parameters, leaking the previous entityId otherwise
     public function resolve(Page $page): string
     {
         return $this->adminUrlGenerator->unsetAll()

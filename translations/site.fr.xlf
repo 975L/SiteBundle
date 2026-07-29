@@ -90,10 +90,6 @@
                 <source>block.twig_content_description</source>
                 <target>Inclut un template Twig existant par son chemin</target>
             </trans-unit>
-            <trans-unit id="GkcovoE">
-                <source>confirm.apply_template</source>
-                <target>Les blocks du template vont être ajoutés à cette page (contenu d'exemple, à modifier ensuite). Les blocks existants sont conservés. Continuer ?</target>
-            </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
                 <target>Cette action est irréversible et supprimera définitivement la page et son contenu. Continuer ?</target>
@@ -197,14 +193,6 @@
             <trans-unit id="IAF7ZBQ">
                 <source>flash.page_to_replace_not_found</source>
                 <target>La page à remplacer est introuvable (déjà supprimée ou renommée) : rien n'a été publié.</target>
-            </trans-unit>
-            <trans-unit id="eASNSId">
-                <source>flash.template_applied</source>
-                <target>Les blocks du template ont été ajoutés à la page.</target>
-            </trans-unit>
-            <trans-unit id="kl.Z3Sh">
-                <source>flash.template_applied_to_copy</source>
-                <target>Une copie non publiée a été créée avec les blocks du template ajoutés.</target>
             </trans-unit>
             <trans-unit id="ZD8H9hY">
                 <source>flash.user_registration_disabled</source>
@@ -373,6 +361,10 @@
             <trans-unit id="BOyuRcf">
                 <source>label.create_account</source>
                 <target>Créer un compte</target>
+            </trans-unit>
+            <trans-unit id="V.XSzNW">
+                <source>label.create_menu</source>
+                <target>Créer un menu :</target>
             </trans-unit>
             <trans-unit id="AvnDzC2">
                 <source>label.create_page</source>
@@ -642,6 +634,10 @@
                 <source>label.health_check_advice_pagespeed</source>
                 <target>Améliorer %category% (score : %score%) - lancez Lighthouse en local pour le détail complet</target>
             </trans-unit>
+            <trans-unit id="tl8GXFT">
+                <source>label.health_check_advice_redirects</source>
+                <target>Cette url redirige vers %url% : déclarez directement l'url finale, une url de sitemap doit répondre 200 sans saut</target>
+            </trans-unit>
             <trans-unit id="j1gAV_O">
                 <source>label.health_check_advice_security_headers</source>
                 <target>Configurer les en-têtes de sécurité manquants : %headers%</target>
@@ -649,6 +645,10 @@
             <trans-unit id="FAR3dT8">
                 <source>label.health_check_advice_security_headers_cors</source>
                 <target>Restreindre le CORS au lieu d'autoriser n'importe quelle origine (*)</target>
+            </trans-unit>
+            <trans-unit id="DC1f945">
+                <source>label.health_check_advice_several_h1</source>
+                <target>Ne garder qu'un seul titre principal (&lt;h1&gt;) par page</target>
             </trans-unit>
             <trans-unit id="mAndfIm">
                 <source>label.health_check_advice_social_tags</source>
@@ -725,6 +725,14 @@
             <trans-unit id="VeQ3n7J">
                 <source>label.health_check_content_quality_ok</source>
                 <target>Aucun problème de contenu détecté</target>
+            </trans-unit>
+            <trans-unit id="BqgaVw8">
+                <source>label.health_check_content_quality_redirects</source>
+                <target>Redirige en %count% saut(s) vers %url%</target>
+            </trans-unit>
+            <trans-unit id="nbaBi.g">
+                <source>label.health_check_content_quality_several_h1</source>
+                <target>%count% &lt;h1&gt; sur la page</target>
             </trans-unit>
             <trans-unit id="rALqDws">
                 <source>label.health_check_content_quality_title_too_long</source>
@@ -842,6 +850,10 @@
                 <source>label.health_check_seo_files_call_failed</source>
                 <target>Échec de la requête : %message%</target>
             </trans-unit>
+            <trans-unit id="STCbZQM">
+                <source>label.health_check_sitemap_empty</source>
+                <target>%file% ne déclare aucune url</target>
+            </trans-unit>
             <trans-unit id="P8iNFef">
                 <source>label.health_check_sitemap_index_empty</source>
                 <target>sitemap-index.xml ne référence aucun sitemap</target>
@@ -865,6 +877,14 @@
             <trans-unit id="ixM01t_">
                 <source>label.health_check_sitemap_ok</source>
                 <target>%file% est accessible et bien formé</target>
+            </trans-unit>
+            <trans-unit id="fbeNKQY">
+                <source>label.health_check_sitemap_ok_urls</source>
+                <target>%file% est accessible et déclare %count% url(s)</target>
+            </trans-unit>
+            <trans-unit id="f06Aer8">
+                <source>label.health_check_sitemap_stale</source>
+                <target>%file% n'a plus été régénéré depuis le %date%</target>
             </trans-unit>
             <trans-unit id="t.pDm_y">
                 <source>label.health_check_ssl_certificate_call_failed</source>
@@ -897,6 +917,22 @@
             <trans-unit id="5NWxr7E">
                 <source>label.health_check_url_gone</source>
                 <target>Supprimée volontairement (HTTP 410), mais toujours déclarée</target>
+            </trans-unit>
+            <trans-unit id="m8vgu62">
+                <source>label.health_check_url_http_error</source>
+                <target>Répond HTTP %status%</target>
+            </trans-unit>
+            <trans-unit id="NPIEmDn">
+                <source>label.health_check_url_inconclusive</source>
+                <target>Répond HTTP %status% au vérificateur, page non analysée</target>
+            </trans-unit>
+            <trans-unit id="k22BaC2">
+                <source>label.health_check_url_not_found</source>
+                <target>Introuvable (HTTP 404) alors qu'elle est déclarée</target>
+            </trans-unit>
+            <trans-unit id="_ldsYSV">
+                <source>label.health_check_url_unreachable</source>
+                <target>Injoignable (aucune réponse du serveur)</target>
             </trans-unit>
             <trans-unit id="Ag5xH55">
                 <source>label.health_check_w3c_benign_warnings</source>
@@ -977,6 +1013,14 @@
             <trans-unit id="f7EAy._">
                 <source>label.is_published</source>
                 <target>Est publié</target>
+            </trans-unit>
+            <trans-unit id="2NSCORF">
+                <source>label.is_title_displayed</source>
+                <target>Afficher le titre de la page</target>
+            </trans-unit>
+            <trans-unit id="gl0DNHA">
+                <source>label.is_title_displayed_help</source>
+                <target>Décochez si un block affiche déjà ce titre (ex. un « hero » réglé sur h1) : la page le garde partout ailleurs (onglet du navigateur, partage, menus), il cesse simplement d'être affiché deux fois</target>
             </trans-unit>
             <trans-unit id="eALZin6">
                 <source>label.item_of</source>
@@ -1385,30 +1429,6 @@
             <trans-unit id="viFs8Ed">
                 <source>label.tab_health_check</source>
                 <target>Bilan de santé</target>
-            </trans-unit>
-            <trans-unit id="gsn2fUJ">
-                <source>label.template_agency_home</source>
-                <target>Accueil agence</target>
-            </trans-unit>
-            <trans-unit id="CT0L_1J">
-                <source>label.template_default</source>
-                <target>Générique</target>
-            </trans-unit>
-            <trans-unit id="1l.Hgl6">
-                <source>label.template_path</source>
-                <target>Chemin du template de détail</target>
-            </trans-unit>
-            <trans-unit id="8mjuX51">
-                <source>label.template_path_help</source>
-                <target>Template Twig (ex. "block_showcase/bundle.html.twig") pour le détail d'un item du block "Collection". Vide = champ Contenu classique.</target>
-            </trans-unit>
-            <trans-unit id="BIHKHL9">
-                <source>label.template_portfolio_showcase</source>
-                <target>Portfolio</target>
-            </trans-unit>
-            <trans-unit id="Gwnseqp">
-                <source>label.templates</source>
-                <target>Templates</target>
             </trans-unit>
             <trans-unit id="ua7HEiS">
                 <source>label.terms_of_sales</source>

@@ -18,9 +18,7 @@ class EmailLayoutProviderTest extends TestCase
     // The body is passed through unmodified as "bodyHtml" to the bundle's own branded email layout
     public function testWrapRendersEmailTemplateLayoutWithBodyHtml(): void
     {
-        // c975l/ui-bundle's tagged releases (currently v1.9.1) don't have EmailLayoutProviderInterface yet -
-        // it only exists in the sibling UiBundle repo's uncommitted work. Remove this skip once a release
-        // containing it is required here.
+        // The tagged c975l/ui-bundle releases have no EmailLayoutProviderInterface yet; drop this skip once one does
         if (!interface_exists(\c975L\UiBundle\Contract\EmailLayoutProviderInterface::class)) {
             $this->markTestSkipped('c975l/ui-bundle has no EmailLayoutProviderInterface yet');
         }

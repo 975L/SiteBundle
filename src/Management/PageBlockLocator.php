@@ -14,19 +14,13 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// Traces something found in a page's *rendered* HTML (an image's src, a link's href - see ContentQualityClient) back to
-// the Block that produced it, and builds that block's own focus edit url (UiBundle's block-focus.js opens and scrolls to
-// that row on the Page edit screen). Used by ContentQualityHealthCheckProvider so each listed image without alt text or
-// broken link is a click away from the block to fix, instead of dropping the user at the top of a page of thirty blocks.
-// Everything here is best-effort matching: rendered markup carries no block id of its own for an anonymous visitor
-// (Block.html.twig only emits data-block-id for a user who can edit), so a miss simply returns null and the caller falls
-// back to the page's plain edit url
+// Traces something in a page's rendered HTML back to the Block that produced it, best-effort: rendered markup
+// carries no block id for an anonymous visitor, so a miss returns null and the caller falls back to the page url
 class PageBlockLocator
 {
     use BlockFocusUrlTrait;
 
-    // Below this, an extensionless filename ("cat") or a url's last segment ("cv") is too generic to match on without
-    // risking pointing at the wrong block - such a needle is only used as an exact match, never as a substring
+    // Below this, a needle is too generic to substring-match on and is only ever used as an exact match
     private const MIN_LOOSE_NEEDLE_LENGTH = 4;
 
     // Each block's own data as a searchable string, keyed by object id (see haystack())

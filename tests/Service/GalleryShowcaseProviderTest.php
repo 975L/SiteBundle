@@ -21,8 +21,7 @@ class GalleryShowcaseProviderTest extends TestCase
 {
     private function createProvider(): GalleryShowcaseProvider
     {
-        // TemplateWrapper is final and can't be doubled - use a real Environment (ArrayLoader stubs
-        // the one named template the provider renders) so createTemplate() also works for real
+        // TemplateWrapper is final, so a real Environment is used and createTemplate() works for real
         $twig = new Environment(new ArrayLoader([
             '@c975LUi/components/Slider/Slider.html.twig' => '<!-- slider -->',
         ]));
@@ -55,8 +54,7 @@ class GalleryShowcaseProviderTest extends TestCase
         $this->assertSame([''], array_keys($showcases['label.gallery_showcase_menu_link']['variants']));
     }
 
-    // Both stand in for their own block kind - the showcase suppresses that kind's own regular preview
-    // card once "kind" is set here, so neither shows up twice
+    // Both stand in for their own kind, so the showcase suppresses that kind's own preview card
     public function testBothShowcasesStandInForTheirOwnBlockKind(): void
     {
         $showcases = $this->createProvider()->getShowcases();

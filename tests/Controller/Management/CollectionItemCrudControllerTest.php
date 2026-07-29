@@ -173,8 +173,7 @@ class CollectionItemCrudControllerTest extends TestCase
 
     // --- createEntity / persistEntity / updateEntity -------------------------------------------------
 
-    // Must be set here rather than in persistEntity() - EasyAdmin validates the form against the entity
-    // built by createEntity(), before persistEntity() ever runs (see the #[Assert\NotNull] on collectionGroup)
+    // Set here, not in persistEntity(): EasyAdmin validates the entity createEntity() built
     public function testCreateEntitySetsTheCurrentCollectionGroup(): void
     {
         $collectionGroup = $this->withId(new CollectionGroup(), 5);

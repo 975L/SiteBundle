@@ -1,9 +1,6 @@
 {# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
 {% set footerBlocks = menu_blocks('footer') %}
-{# A menu_link targeting the site's own "Copyright" page (see MenuExtension::isMenuLinkCopyright(),
-   "site-menu-link-copyright-auto") already renders the live computed copyright as its label - unless
-   a custom "label" (MenuLinkType) overrides it - showing the plain $copyright span too would just
-   duplicate it #}
+{# A "Copyright"-page menu_link already renders the computed copyright, so the span would duplicate it #}
 {% set hasCopyrightLink = footerBlocks|filter(
     block => (block.data.label ?? '') is empty and menu_link_is_copyright(block.data.target ?? '')
 )|length > 0 %}

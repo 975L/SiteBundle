@@ -32,9 +32,7 @@
     background-color: var(--button-background-primary-dark);
 }
 
-/* Doubled ".btn.btn-secondary" (0,2,0) on purpose - it has to outweigh both "a.btn" (0,1,1, below)
-   and SiteBundle's global "a:hover" (0,1,1), which would otherwise repaint the label white/link-blue
-   over the secondary background, i.e. 3.5:1 instead of the 6:1 --button-secondary-color gives */
+// Class doubled on purpose, to outweigh "a.btn" below and the global "a:hover"
 .btn.btn-secondary,
 .btn.btn-secondary:visited {
     background-color: var(--secondary);
@@ -63,9 +61,7 @@
     background-color: var(--button-background-danger-dark);
 }
 
-/* No background/shadow - reads as a plain text link, not a filled button. Same doubled ".btn.btn-link"
-   as .btn-secondary above: "a.btn-link" ties with "a.btn" on specificity and lost on source order,
-   leaving the label white on the page background (1:1) with no underline left */
+// Class doubled for the same reason as .btn-secondary above: "a.btn-link" ties with "a.btn"
 .btn.btn-link,
 .btn.btn-link:visited {
     background-color: transparent;

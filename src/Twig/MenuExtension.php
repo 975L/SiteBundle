@@ -17,6 +17,7 @@ use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Service\BlockAnchorCollector;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,6 +35,9 @@ class MenuExtension extends AbstractExtension
     // Per-location memoization: Navbar.html.twig calls menu_blocks('navbar') twice in the same render (once to check "is not empty", once to actually render) - keeps that to one lookup per location per request even when it's a cache hit below
     private array $menuBlocksCache = [];
 
+    // Keyed by pageId (string) - the "fragment => label" map of a target page's own anchors, see findSectionLabel()
+    private array $pageAnchorsCache = [];
+
     public function __construct(
         private readonly MenuRepository $menuRepository,
         private readonly PageRepository $pageRepository,
@@ -44,6 +48,7 @@ class MenuExtension extends AbstractExtension
         private readonly ConfigServiceInterface $configService,
         private readonly DefaultPagesImporter $defaultPagesImporter,
         private readonly CopyrightExtension $copyrightExtension,
+        private readonly BlockAnchorCollector $anchorCollector,
     ) {
     }
 
@@ -69,7 +74,7 @@ class MenuExtension extends AbstractExtension
         return $this->menuBlocksCache[$location];
     }
 
-    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" Block is saved/removed). Safe to cache the entities directly here: a Menu can only ever contain "menu_link" blocks (see BlockRegistry's "menu"-context restriction on the picker), and that kind's own template (MenuLink.html.twig) never reads block.media/block.user - the only relations a Block carries - so those stay untouched, harmless lazy references through the cache round-trip
+    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" Block is saved/removed). Safe for "menu_link", the only kind a navbar can hold (see BlockRegistry::MENU_NAVBAR_CONTEXT) and what every other location holds in practice: its template (MenuLink.html.twig) never reads block.media/block.user - the only relations a Block carries - so those stay untouched, harmless lazy references through the cache round-trip
     private function loadMenuBlocks(string $location): array
     {
         return $this->cache->get('menu_' . $location, function (ItemInterface $item) use ($location): array {
@@ -182,7 +187,7 @@ class MenuExtension extends AbstractExtension
             && $page->getSlug() === ($this->defaultPagesImporter->getLegalPageSlugsByModel()['france/copyright'] ?? null);
     }
 
-    // Single point of "type:value" (and, for a "page:ID#fragment" target, pageId/fragment) parsing - shared by every target reader above plus preloadPages() below
+    // Single point of "type:value" parsing, shared by every target reader above
     // @return array{type: ?string, value: ?string, pageId: ?string, fragment: ?string}
     private static function parseTarget(?string $target): array
     {
@@ -240,23 +245,11 @@ class MenuExtension extends AbstractExtension
             : $this->pageCache[$pageId] = $this->pageRepository->find($pageId);
     }
 
-    // Resolves a "<anchor>-<blockId>" fragment back to that block's own label - same title-or-anchor, strip_tags'd fallback as MenuLinkType's own picker choices, so both stay in sync. The anchor slug itself may contain hyphens, so the block's numeric id (always its trailing segment) is what's matched on, not a naive split on the first/last "-"
+    // Resolves an in-page fragment back to the label of the block declaring it - through the very collector MenuLinkType builds its picker choices with, so both stay in sync (nested container slots and "slug"-based ids included). Memoized per page: a menu often carries several anchors of the same page, each one otherwise re-walking its whole block tree. Null for a fragment no block declares any more (section removed since the menu_link was saved), which getMenuLinkLabel() falls back from to the page's own title
     private function findSectionLabel(Page $page, string $fragment): ?string
     {
-        if (1 !== preg_match('/-(\d+)$/', $fragment, $matches)) {
-            return null;
-        }
+        $anchors = $this->pageAnchorsCache[(string) $page->getId()] ??= $this->anchorCollector->collect($page->getBlocks());
 
-        $blockId = (int) $matches[1];
-        foreach ($page->getBlocks() as $block) {
-            if ($block->getId() === $blockId) {
-                $label = strip_tags((string) ($block->getData()['title'] ?? $block->getData()['anchor'] ?? ''));
-
-                // Empty, not just missing, title/anchor (e.g. cleared after the menu_link was saved) - '' would short-circuit getMenuLinkLabel()'s own "?? $page->getTitle()" fallback
-                return '' !== $label ? $label : null;
-            }
-        }
-
-        return null;
+        return $anchors[$fragment] ?? null;
     }
 }

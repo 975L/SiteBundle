@@ -70,10 +70,7 @@ class SiteCreateCommandTest extends TestCase
         );
     }
 
-    // The entity guard must look at the file on disk, not at class_exists(): autoloading App\Entity\User before the
-    // scaffold is installed would freeze the pre-scaffold version in memory for the whole process (the migrated site's
-    // own User.php, without setIsVerified()). Here App\Entity\User IS autoloadable (composer autoload-dev maps App\ to
-    // scaffold/src/), so a class_exists() based guard would wrongly let the command run on this empty project dir.
+    // The guard must read the file on disk: App\Entity\User is autoloadable here, so class_exists() would wrongly pass
     public function testExecuteFailsWhenUserEntityFileIsMissingEvenThoughTheClassIsAutoloadable(): void
     {
         $this->assertTrue(class_exists(\App\Entity\User::class), 'Sanity check: App\Entity\User is autoloadable in this test suite');
@@ -98,8 +95,7 @@ class SiteCreateCommandTest extends TestCase
         $this->assertStringContainsString('Ce site a déjà été créé', $tester->getDisplay());
     }
 
-    // No confirmation prompt: the password is echoed in clear text, so a typo is visible right away. The stream below
-    // deliberately holds a third answer, which must stay unread.
+    // No confirmation prompt, the password being echoed; the stream's third answer must stay unread
     public function testCreateAdminUserDoesNotAskForPasswordConfirmation(): void
     {
         $persisted = [];
@@ -145,8 +141,7 @@ class SiteCreateCommandTest extends TestCase
         $this->assertStringNotContainsString('Mot de passe', $display);
     }
 
-    // createAdminUser() is private and sits after the scaffold install in execute(), which needs a booted app + DB,
-    // so it is driven directly with a scripted input stream rather than through CommandTester
+    // Private and past the scaffold install, so it is driven directly rather than through CommandTester
     private function callCreateAdminUser(SiteCreateCommand $command, string $answers, ?string &$display): array
     {
         $stream = fopen('php://memory', 'r+');

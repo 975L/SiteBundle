@@ -13,8 +13,7 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\BlockOwnerResolverInterface;
 use c975L\UiBundle\Contract\HasBlocksInterface;
 
-// Lets UiBundle's BlockMoveController relocate a Block belonging to a Page or a Menu, without depending
-// on either concrete class - auto-discovered by BlockOwnerResolverPass (see Readme)
+// Lets BlockMoveController relocate a Page's or a Menu's Block without depending on either class
 class SiteBlockOwnerResolver implements BlockOwnerResolverInterface
 {
     // Shared with PageCrudController/MenuCrudController's own blockMoveRowAttr() calls, so the owner-type strings only ever exist in one place

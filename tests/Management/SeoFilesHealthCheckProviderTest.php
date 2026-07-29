@@ -20,6 +20,7 @@ class SeoFilesHealthCheckProviderTest extends TestCase
 {
     private const VALID_SITEMAP = '<?xml version="1.0"?><urlset><url><loc>https://example.com/</loc></url></urlset>';
     private const VALID_SITEMAP_INDEX = '<?xml version="1.0"?><sitemapindex><sitemap><loc>https://example.com/sitemap-page.xml</loc></sitemap><sitemap><loc>https://example.com/sitemap-book.xml</loc></sitemap></sitemapindex>';
+    private const EMPTY_SITEMAP = '<?xml version="1.0"?><urlset></urlset>';
     private const EMPTY_SITEMAP_INDEX = '<?xml version="1.0"?><sitemapindex></sitemapindex>';
     private const OPEN_ROBOTS = "User-agent: *\nDisallow:\n";
     private const BLOCKING_ROBOTS = "User-agent: *\nDisallow: /\n";
@@ -173,6 +174,66 @@ class SeoFilesHealthCheckProviderTest extends TestCase
         $provider = new SeoFilesHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
 
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $provider->runChecks()[1]['status']);
+    }
+
+    private function runSitemapCheck(string $content, ?\DateTimeImmutable $lastModified = null): array
+    {
+        $client = $this->createClient([
+            ['https://example.com/robots.txt', ['statusCode' => 200, 'content' => self::OPEN_ROBOTS, 'lastModified' => null]],
+            ['https://example.com/sitemap-site.xml', ['statusCode' => 200, 'content' => $content, 'lastModified' => $lastModified]],
+            ['https://example.com/sitemap-index.xml', ['statusCode' => 404, 'content' => '', 'lastModified' => null]],
+        ]);
+
+        $provider = new SeoFilesHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+
+        return $provider->runChecks()[1];
+    }
+
+    // When the sitemap file itself was last rewritten, the only thing telling the freshness checks apart
+    private function writtenDaysAgo(int $daysAgo): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable('-' . $daysAgo . ' days');
+    }
+
+    // Well-formed XML declaring nothing at all - Search Console reports "0 page discovered" for it without a single error, which is exactly what c975l:sitemaps:create never running on a deployment leaves behind
+    public function testRunChecksStatusIsWarningWhenTheSitemapDeclaresNoUrl(): void
+    {
+        $result = $this->runSitemapCheck(self::EMPTY_SITEMAP);
+
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
+        $this->assertSame('label.health_check_sitemap_empty', $result['summary']);
+    }
+
+    // Nothing regenerated the file in a month, on a site whose sitemaps are documented as rebuilt weekly
+    public function testRunChecksStatusIsWarningWhenTheSitemapFileHasNotBeenRewrittenForLong(): void
+    {
+        $result = $this->runSitemapCheck(self::VALID_SITEMAP, $this->writtenDaysAgo(90));
+
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
+        $this->assertSame('label.health_check_sitemap_stale', $result['summary']);
+    }
+
+    public function testRunChecksStatusIsOkWhenTheSitemapFileWasRewrittenRecently(): void
+    {
+        $result = $this->runSitemapCheck(self::VALID_SITEMAP, $this->writtenDaysAgo(2));
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
+        $this->assertSame('label.health_check_sitemap_ok_urls', $result['summary']);
+    }
+
+    // A response carrying no Last-Modified header says nothing about the file's freshness - not the same as it being stale
+    public function testRunChecksStatusIsOkWhenTheResponseCarriesNoLastModified(): void
+    {
+        $this->assertSame(HealthCheckResult::STATUS_OK, $this->runSitemapCheck(self::VALID_SITEMAP)['status']);
+    }
+
+    // The whole point of reading the file's own date: a site whose content is simply stable declares months-old <lastmod>s while the command keeps regenerating the file faithfully, and used to be called stale for it
+    public function testRunChecksStatusIsOkWhenTheFileIsFreshButItsLastmodsAreOld(): void
+    {
+        $oldDate = $this->writtenDaysAgo(90)->format('Y-m-d');
+        $content = '<?xml version="1.0"?><urlset><url><loc>https://example.com/</loc><lastmod>' . $oldDate . '</lastmod></url></urlset>';
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $this->runSitemapCheck($content, $this->writtenDaysAgo(1))['status']);
     }
 
     public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void

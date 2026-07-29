@@ -49,8 +49,7 @@ class PageSpeedInsightsClient
         return $this->read($this->request($url));
     }
 
-    // Repeated "category" query params - Google's API doesn't accept the "category[]="/"category[0]=" shape
-    // Symfony HttpClient's own 'query' option would produce for an array value, so the query string is built by hand instead
+    // Built by hand: Google rejects the "category[]=" shape HttpClient's 'query' option produces
     private static function buildUrl(string $url, mixed $apiKey): string
     {
         $query = http_build_query(['url' => $url, 'strategy' => 'mobile'] + ($apiKey ? ['key' => $apiKey] : []));

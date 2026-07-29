@@ -6,12 +6,10 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
 
-// The reset-password *request* (the "reset_password_request" Form/FormAction) is now covered by
-// ResetPasswordRequestFormActionTest - this controller only keeps the signed reset-token link, see ResetPasswordController
+// This controller only keeps the signed reset-token link, the request itself being covered elsewhere
 class ResetPasswordControllerTest extends FunctionalTestCase
 {
-    // No token stored in session (e.g. /reset-password/reset/{token} visited a second time, after the
-    // token-in-URL redirect already consumed it into session, then the session itself expired)
+    // No token in session, the redirect having consumed it and the session then expired
     public function testResetThrowsNotFoundWhenNoTokenIsStoredInSession(): void
     {
         $client = $this->createAuthenticatedClient();

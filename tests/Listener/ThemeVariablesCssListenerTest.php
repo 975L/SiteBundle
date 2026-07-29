@@ -116,8 +116,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringContainsString('--c975l-font-family-title: "Georgia", serif;', $css);
     }
 
-    // A bare custom font name (as chosen via the new ChoiceField) gets its slug's generic fallback appended, so the
-    // browser has somewhere to go if the @font-face 404s/is slow instead of falling through to no font at all
+    // A bare font name gets its generic fallback appended, so the browser has somewhere to go
     public function testRegenerateAppendsGenericFallbackToABareCustomFontName(): void
     {
         $listener = $this->createListener([
@@ -152,8 +151,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringNotContainsString('sans-serif, sans-serif', $css);
     }
 
-    // A value already containing a comma is a full stack an admin already typed by hand before this kind existed
-    // (e.g. '"Georgia", serif') - left untouched, not doubled up with another fallback
+    // A value already holding a comma is a stack typed by hand, left untouched rather than doubled
     public function testRegenerateDoesNotAppendFallbackWhenValueAlreadyHasOne(): void
     {
         $listener = $this->createListener([
@@ -207,8 +205,7 @@ class ThemeVariablesCssListenerTest extends TestCase
         $this->assertStringNotContainsString('--c975l-mode', $css);
     }
 
-    // The "theme-" prefix is what marks a config as a CSS value - a theme-group row without it (typically a slug the
-    // bundle no longer ships, left behind in site_config) must not end up as a variable no stylesheet reads
+    // The "theme-" prefix marks a config as a CSS value; without it, no variable may be emitted
     public function testRegenerateSkipsANonPrefixedSlug(): void
     {
         $listener = $this->createListener([

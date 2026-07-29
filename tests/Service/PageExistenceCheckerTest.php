@@ -48,4 +48,28 @@ class PageExistenceCheckerTest extends TestCase
 
         $this->assertFalse($checker->exists('https://unresolvable.example/'));
     }
+
+    // The code itself, for a caller that has to report what the url answered rather than only whether it exists
+    public function testStatusReturnsTheCode(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse('', ['http_code' => 410])
+        );
+
+        $checker = new PageExistenceChecker($httpClient);
+
+        $this->assertSame(410, $checker->status('https://example.com/pages/removed/'));
+    }
+
+    // A host that never answered is not a page that isn't there - null tells the two apart, where exists() flattens both into false
+    public function testStatusReturnsNullWhenTheRequestThrows(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => throw new \RuntimeException('DNS failure')
+        );
+
+        $checker = new PageExistenceChecker($httpClient);
+
+        $this->assertNull($checker->status('https://unresolvable.example/'));
+    }
 }

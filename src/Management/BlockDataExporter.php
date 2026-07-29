@@ -75,10 +75,7 @@ class BlockDataExporter
             return null;
         }
 
-        // A PDF's own .webp thumbnail (see VichPdfThumbnailListener) is a sidecar file on disk, never a Media
-        // of its own - carried alongside so a Sync import doesn't have to regenerate it via Ghostscript, which
-        // isn't available on every host (e.g. Infomaniak). null when there's no thumbnail (not a PDF, or one
-        // was never generated - Ghostscript missing at upload time)
+        // A PDF's .webp thumbnail is a sidecar file, carried along so an import needn't rerun Ghostscript
         $thumbnail = null;
         $webpFilename = VichPdfThumbnailListener::toWebpPath($filename);
         if ($webpFilename !== $filename) {

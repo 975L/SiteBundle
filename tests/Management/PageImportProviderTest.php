@@ -106,6 +106,30 @@ class PageImportProviderTest extends TestCase
         $this->assertTrue($pages[1]->isIndexable());
     }
 
+    // options travel with the page the same way clonePage() carries them - without this, an export/import silently lost isTitleDisplayed and brought the duplicate <h1> back
+    public function testImportCarriesOptionsAndDefaultsToTheirOwnDefaults(): void
+    {
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+
+        $provider->import([
+            ['title' => 'Accueil', 'slug' => 'accueil', 'isPublished' => true, 'options' => ['titleDisplayed' => false], 'blocks' => []],
+            ['title' => 'About', 'slug' => 'about', 'isPublished' => true, 'blocks' => []],
+        ]);
+
+        $pages = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof Page));
+        $this->assertSame(['titleDisplayed' => false], $pages[0]->getOptions());
+        $this->assertFalse($pages[0]->isTitleDisplayed());
+        // A zip exported before the field existed: no option set at all, each then reading as its own default
+        $this->assertSame([], $pages[1]->getOptions());
+        $this->assertTrue($pages[1]->isTitleDisplayed());
+    }
+
     public function testImportOverwritesAnExistingPageAndReplacesItsBlocks(): void
     {
         $existingBlock = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'old']);

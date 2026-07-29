@@ -30,6 +30,43 @@ class SeoFilesClientTest extends TestCase
         $this->assertSame("User-agent: *\nDisallow:", $file['content']);
     }
 
+    // What tells a sitemap nobody regenerates from one whose content is simply stable - the file's own write date, which its <lastmod>s (each Page's modification date) never carry
+    public function testFetchReturnsTheLastModifiedHeaderAsADate(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse('<urlset/>', ['response_headers' => ['Last-Modified' => 'Wed, 22 Jul 2026 08:30:00 GMT']])
+        );
+
+        $client = new SeoFilesClient($httpClient);
+        $file = $client->fetch('https://example.com/sitemap-site.xml');
+
+        $this->assertInstanceOf(\DateTimeImmutable::class, $file['lastModified']);
+        $this->assertSame('2026-07-22 08:30:00', $file['lastModified']->setTimezone(new \DateTimeZone('GMT'))->format('Y-m-d H:i:s'));
+    }
+
+    // A sitemap served by a controller rather than written to disk carries no such header - saying nothing about its freshness, which is not the same as being stale
+    public function testFetchReturnsANullLastModifiedWhenTheHeaderIsAbsent(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse('<urlset/>')
+        );
+
+        $client = new SeoFilesClient($httpClient);
+
+        $this->assertNull($client->fetch('https://example.com/sitemap-site.xml')['lastModified']);
+    }
+
+    public function testFetchReturnsANullLastModifiedWhenTheHeaderIsUnparsable(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse('<urlset/>', ['response_headers' => ['Last-Modified' => 'not a date']])
+        );
+
+        $client = new SeoFilesClient($httpClient);
+
+        $this->assertNull($client->fetch('https://example.com/sitemap-site.xml')['lastModified']);
+    }
+
     public function testFetchDoesNotThrowOnANonSuccessStatusCode(): void
     {
         $httpClient = new MockHttpClient(

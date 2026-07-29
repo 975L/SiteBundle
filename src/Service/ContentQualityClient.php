@@ -22,8 +22,8 @@ class ContentQualityClient
     public const LINK_BROKEN = 'broken';
     public const LINK_UNKNOWN = 'unknown';
 
-    // Statuses that describe how the *server* treats this client rather than whether the url exists: the method it refuses (405/501), the bot filtering big retailers/social sites answer datacenter IPs with (403, and LinkedIn's own non-standard 999), and rate limiting (429). All inconclusive, never broken
-    private const INCONCLUSIVE_STATUSES = [403, 405, 429, 501, 999];
+    // Statuses that describe how the *server* treats this client rather than whether the url exists: the method it refuses (405/501), the bot filtering big retailers/social sites answer datacenter IPs with (403, and LinkedIn's own non-standard 999), and rate limiting (429). All inconclusive, never broken. Public so ContentQualityAnalyzer judges a page the same way rather than keeping its own copy - a site behind a WAF would otherwise have every one of its own pages reported as an error
+    public const INCONCLUSIVE_STATUSES = [403, 405, 429, 501, 999];
 
     // Identifies the checker honestly (a WAF operator can look it up and allow it) while keeping the "Mozilla/5.0 (compatible; ...)" shape crawlers have used since Googlebot, which far fewer filters reject outright than a bare library default. Sites that still answer 403 are reported as inconclusive, not as broken - see INCONCLUSIVE_STATUSES
     private const LINK_CHECK_USER_AGENT = 'Mozilla/5.0 (compatible; c975LHealthCheck/1.0; +https://github.com/975L/SiteBundle)';
@@ -54,7 +54,8 @@ class ContentQualityClient
             // The description itself alongside hasDescription, since its length is checked too and "missing" and "too short" are two different things to tell the user
             'description' => $description,
             'hasDescription' => '' !== $description,
-            'hasH1' => $xpath->query('//h1')->length > 0,
+            // The count, not just their presence: several <h1> stay valid HTML, but they announce as many top-level subjects for one page to a screen reader - reported as its own issue, see ContentQualityAnalyzer::summarizeIssues()
+            'h1Count' => $xpath->query('//h1')->length,
             'imagesWithoutAlt' => $this->extractImagesWithoutAlt($xpath),
             'socialTags' => $this->extractSocialTags($xpath),
             'internalLinks' => $internalLinks,

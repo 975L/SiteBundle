@@ -12,9 +12,7 @@ namespace c975L\SiteBundle\Service;
 use c975L\SiteBundle\Repository\FontRepository;
 use c975L\UiBundle\Contract\FontProviderInterface;
 
-// Exposes the font-family names of the fonts uploaded from the dashboard (see FontCrudController/FontCssListener) -
-// what ConfigBundle's theme-font-family-* configs offer as a real <select> instead of free text, auto-discovered by
-// UiBundle's FontProviderPass, no manual service tag needed
+// Offers the uploaded fonts' family names to the theme-font-family-* configs, auto-discovered by FontProviderPass
 class FontService implements FontProviderInterface
 {
     public function __construct(

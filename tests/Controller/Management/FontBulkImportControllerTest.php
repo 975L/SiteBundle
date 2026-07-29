@@ -149,8 +149,7 @@ class FontBulkImportControllerTest extends TestCase
         $this->assertSame(['flash.font_bulk_import_no_files'], $session->getFlashBag()->get('danger'));
     }
 
-    // Two valid files (weight/style guessed from their filename) plus one invalid extension - the invalid one is
-    // skipped (warning flash), the valid ones are persisted/flushed and the admin lands back on the Font list
+    // The invalid extension is skipped with a warning, the two valid files persisted
     public function testIndexCreatesOneFontPerValidFileAndSkipsInvalidOnes(): void
     {
         [$requestStack, $session] = $this->createRequestStackWithSession();

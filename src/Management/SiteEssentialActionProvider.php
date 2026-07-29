@@ -19,8 +19,7 @@ use c975L\SiteBundle\Repository\PageRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// This bundle's own essential actions, merged by ConfigBundle's EssentialActionBuilder alongside
-// ConfigEssentialActionProvider's - continues that same order sequence (10-40), picking up at 50
+// This bundle's essential actions, continuing ConfigBundle's order sequence and picking up at 50
 class SiteEssentialActionProvider implements EssentialActionProviderInterface
 {
     public function __construct(

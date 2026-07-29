@@ -131,7 +131,7 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
     {
         $result = $this->createResult('content-quality', [
             'hasDescription' => false,
-            'hasH1' => false,
+            'h1Count' => 0,
             'imagesWithoutAlt' => [['src' => '/media/a.jpg', 'block' => null, 'editUrl' => null]],
             'brokenLinks' => [['url' => 'https://example.com/pages/missing/', 'text' => null, 'block' => null, 'editUrl' => null]],
         ]);
@@ -141,12 +141,56 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $this->assertCount(4, $advice[$this->key('content-quality')]);
     }
 
+    public function testContentQualityAdvisesOnSeveralH1(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => true, 'h1Count' => 2, 'imagesWithoutAlt' => [], 'brokenLinks' => []]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertSame('label.health_check_advice_several_h1', $advice[0]['text']);
+    }
+
+    // First of the lines: everything below it was measured on the url the redirect landed on, not on the one declared
+    public function testContentQualityAdvisesOnARedirectingUrl(): void
+    {
+        $result = $this->createResult('content-quality', [
+            'hasDescription' => true,
+            'h1Count' => 1,
+            'imagesWithoutAlt' => [],
+            'brokenLinks' => [],
+            'redirect' => ['count' => 1, 'finalUrl' => 'https://example.com/pages/accueil'],
+        ]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertStringStartsWith('label.health_check_advice_redirects', $advice[0]['text']);
+        $this->assertStringContainsString('https://example.com/pages/accueil', $advice[0]['text']);
+    }
+
+    // Nothing to advise on the overwhelming majority of urls, which answer 200 straight away
+    public function testContentQualityAdvisesNothingWithoutARedirect(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'brokenLinks' => [], 'redirect' => null]);
+
+        $this->assertArrayNotHasKey($this->key('content-quality'), $this->createBuilder()->buildAdvice([$result]));
+    }
+
+    // Rows persisted before the check counted them hold "hasH1" alone, and must keep getting their advice until the next run replaces them
+    public function testContentQualityStillReadsTheLegacyHasH1Detail(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => true, 'hasH1' => false, 'imagesWithoutAlt' => [], 'brokenLinks' => []]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertSame('label.health_check_advice_no_h1', $advice[0]['text']);
+    }
+
     // Each offending image/link listed one by one under its own advice line, with a link straight to the block holding it
     public function testContentQualityListsEachImageAndLinkAsAnItem(): void
     {
         $result = $this->createResult('content-quality', [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => [
                 ['src' => '/media/beach.jpg', 'block' => '(#1) Hero', 'editUrl' => '/management?focusBlock=12'],
                 ['src' => '/media/team.jpg', 'block' => null, 'editUrl' => null],
@@ -171,7 +215,7 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
     {
         $result = $this->createResult('content-quality', [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => [],
             'brokenLinks' => [],
         ]);
@@ -184,7 +228,7 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
     {
         $result = $this->createResult('content-quality', [
             'hasDescription' => true,
-            'hasH1' => true,
+            'h1Count' => 1,
             'imagesWithoutAlt' => 3,
             'brokenLinks' => ['https://example.com/pages/missing/'],
         ]);

@@ -66,17 +66,6 @@
         "description": "description.site_first_online_date"
     },
     {
-        "label": "label.site_url",
-        "slug": "site-url",
-        "sensitive": true,
-        "restricted": false,
-        "value": null,
-        "kind": "text",
-        "group": "general",
-        "severity": "danger",
-        "description": "description.site_url"
-    },
-    {
         "label": "label.url_terms_of_use",
         "slug": "url-terms-of-use",
         "sensitive": false,
@@ -174,72 +163,6 @@
         "group": "general",
         "severity": null,
         "description": "description.site_preconnect"
-    },
-    {
-        "label": "label.site_backup_db_host",
-        "slug": "site-backup-db-host",
-        "sensitive": true,
-        "restricted": true,
-        "value": "localhost",
-        "kind": "text",
-        "group": "backup",
-        "severity": "danger",
-        "description": "description.site_backup_db_host"
-    },
-    {
-        "label": "label.site_backup_db_user",
-        "slug": "site-backup-db-user",
-        "sensitive": true,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "backup",
-        "severity": "danger",
-        "description": "description.site_backup_db_user"
-    },
-    {
-        "label": "label.site_backup_db_password",
-        "slug": "site-backup-db-password",
-        "sensitive": true,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "backup",
-        "severity": "danger",
-        "description": "description.site_backup_db_password"
-    },
-    {
-        "label": "label.site_backup_database",
-        "slug": "site-backup-database",
-        "sensitive": true,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "backup",
-        "severity": "danger",
-        "description": "description.site_backup_database"
-    },
-    {
-        "label": "label.site_backup_mailto",
-        "slug": "site-backup-mailto",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "backup",
-        "severity": "warning",
-        "description": "description.site_backup_mailto"
-    },
-    {
-        "label": "label.site_backup_full_interval_months",
-        "slug": "site-backup-full-interval-months",
-        "sensitive": false,
-        "restricted": true,
-        "value": "1",
-        "kind": "text",
-        "group": "backup",
-        "severity": null,
-        "description": "description.site_backup_full_interval_months"
     },
     {
         "label": "label.site_messenger_cleanup_mailto",
@@ -378,7 +301,7 @@
         "slug": "user-roles-available",
         "sensitive": false,
         "restricted": true,
-        "value": "[\"ROLE_SUPER_ADMIN\", \"ROLE_ADMIN\", \"ROLE_EDITOR\"]",
+        "value": "[\"ROLE_ADMIN\", \"ROLE_EDITOR\"]",
         "kind": "json",
         "group": "security",
         "severity": null,

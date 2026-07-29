@@ -23,8 +23,7 @@ use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 // Moved from the app-copied scaffold (previously App\Tests\Security\EmailVerifierTest) alongside the class it tests - see UPGRADE.md
 class EmailVerifierTest extends TestCase
 {
-    // Sent through EmailService (not MailerInterface directly), so ROLE_SUPER_ADMIN "email-debug" also
-    // previews the registration confirmation email, same as every other c975L email
+    // Through EmailService, so "email-debug" previews the registration email like every other one
     public function testSendEmailConfirmationSignsAndSendsThroughEmailService(): void
     {
         $user = (new UserStub('user@example.test'))->withId(42);

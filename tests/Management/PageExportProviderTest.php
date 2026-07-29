@@ -49,6 +49,7 @@ class PageExportProviderTest extends TestCase
             'isPublished' => true,
             'isIndexable' => true,
             'summarySocialNetwork' => null,
+            'options' => [],
             'ogImage' => null,
             'blocks' => [[
                 'kind' => 'text',

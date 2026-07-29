@@ -14,6 +14,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Form\Block\MenuLinkType;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Service\BlockAnchorCollector;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -42,7 +43,7 @@ class MenuLinkTypeTest extends TypeTestCase
 
     protected function getTypes(): array
     {
-        return [new MenuLinkType($this->linkableRouteRegistry, $this->pageRepository, $this->translator)];
+        return [new MenuLinkType($this->linkableRouteRegistry, $this->pageRepository, $this->translator, new BlockAnchorCollector())];
     }
 
     private function withPages(array $pages): void
@@ -136,6 +137,25 @@ class MenuLinkTypeTest extends TypeTestCase
 
         $this->assertSame(
             ['Home' => 'page:1', 'Home → Call to action' => 'page:1#cta-7'],
+            $form->get('target')->getConfig()->getOption('choices')
+        );
+    }
+
+    // The sections of a page are often nested in a container ("flex_columns" and its slots), and a "text_section" carries its anchor as an auto-derived "slug" rendered as-is - both stayed invisible in this picker while it only walked top-level blocks reading "anchor"
+    public function testAnchorsNestedInAContainerAreListed(): void
+    {
+        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $container = $this->withId((new Block())->setKind('flex_columns'), 58);
+        $section = $this->withId((new Block())->setKind('text_section'), 16);
+        $section->setData(['slug' => 'le-manifeste', 'title' => 'Le manifeste']);
+        $container->addSlot($section);
+        $page->addBlock($container);
+        $this->withPages([$page]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertSame(
+            ['Home' => 'page:1', 'Home → Le manifeste' => 'page:1#le-manifeste'],
             $form->get('target')->getConfig()->getOption('choices')
         );
     }

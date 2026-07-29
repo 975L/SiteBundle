@@ -29,7 +29,7 @@ class ContentQualityClientTest extends TestCase
         $result = $client->analyze('https://example.com/pages/home/');
 
         $this->assertTrue($result['hasDescription']);
-        $this->assertTrue($result['hasH1']);
+        $this->assertSame(1, $result['h1Count']);
         $this->assertSame([], $result['imagesWithoutAlt']);
     }
 
@@ -41,7 +41,15 @@ class ContentQualityClientTest extends TestCase
         $result = $client->analyze('https://example.com/pages/home/');
 
         $this->assertFalse($result['hasDescription']);
-        $this->assertFalse($result['hasH1']);
+        $this->assertSame(0, $result['h1Count']);
+    }
+
+    public function testAnalyzeCountsEveryH1(): void
+    {
+        $html = '<html><head></head><body><h1>Home</h1><section><h1>Our services</h1></section></body></html>';
+        $client = new ContentQualityClient($this->htmlResponse($html));
+
+        $this->assertSame(2, $client->analyze('https://example.com/pages/home/')['h1Count']);
     }
 
     public function testAnalyzeTreatsABlankDescriptionAsMissing(): void

@@ -66,30 +66,6 @@
                 <source>description.site_author</source>
                 <target>The author that will be set in the meta data</target>
             </trans-unit>
-            <trans-unit id="PZrDv2T">
-                <source>description.site_backup_database</source>
-                <target>Name of the MySQL database to back up</target>
-            </trans-unit>
-            <trans-unit id="zquqL77">
-                <source>description.site_backup_db_host</source>
-                <target>MySQL host for backups</target>
-            </trans-unit>
-            <trans-unit id="y563wVd">
-                <source>description.site_backup_db_password</source>
-                <target>MySQL password for backups</target>
-            </trans-unit>
-            <trans-unit id="P7VAMy1">
-                <source>description.site_backup_db_user</source>
-                <target>MySQL user for backups</target>
-            </trans-unit>
-            <trans-unit id="ZL..tYO">
-                <source>description.site_backup_full_interval_months</source>
-                <target>Number of calendar months between two complete file backups (partial, modified-files-only backups run in between)</target>
-            </trans-unit>
-            <trans-unit id="3_4rjYZ">
-                <source>description.site_backup_mailto</source>
-                <target>Email address for backup reports and errors</target>
-            </trans-unit>
             <trans-unit id="maeSbQ2">
                 <source>description.site_contact_email</source>
                 <target>Public contact email address displayed on legal pages</target>
@@ -205,10 +181,6 @@
             <trans-unit id="EuVrG.1">
                 <source>description.site_tagline</source>
                 <target>Tagline of the website</target>
-            </trans-unit>
-            <trans-unit id="nInyIwr">
-                <source>description.site_url</source>
-                <target>URL of the website i.e. https://example.com</target>
             </trans-unit>
             <trans-unit id="ooJKbLK">
                 <source>description.theme_color_background</source>
@@ -326,30 +298,6 @@
                 <source>label.site_author</source>
                 <target>Site Author</target>
             </trans-unit>
-            <trans-unit id="Y1PJ4Y0">
-                <source>label.site_backup_database</source>
-                <target>Backup Database</target>
-            </trans-unit>
-            <trans-unit id="iWzvwqZ">
-                <source>label.site_backup_db_host</source>
-                <target>Backup DB Host</target>
-            </trans-unit>
-            <trans-unit id="TyhqGFy">
-                <source>label.site_backup_db_password</source>
-                <target>Backup DB Password</target>
-            </trans-unit>
-            <trans-unit id="gKIoJD1">
-                <source>label.site_backup_db_user</source>
-                <target>Backup DB User</target>
-            </trans-unit>
-            <trans-unit id="NhbXiCq">
-                <source>label.site_backup_full_interval_months</source>
-                <target>Backup Full Interval (months)</target>
-            </trans-unit>
-            <trans-unit id="GvaXwxi">
-                <source>label.site_backup_mailto</source>
-                <target>Backup Mailto</target>
-            </trans-unit>
             <trans-unit id="P.LxD.a">
                 <source>label.site_contact_email</source>
                 <target>Contact Email</target>
@@ -465,10 +413,6 @@
             <trans-unit id="tN9lVY3">
                 <source>label.site_tagline</source>
                 <target>Site Tagline</target>
-            </trans-unit>
-            <trans-unit id="rDTDQ70">
-                <source>label.site_url</source>
-                <target>Site URL</target>
             </trans-unit>
             <trans-unit id="copCVwP">
                 <source>label.theme_color_background</source>

@@ -72,6 +72,8 @@ class PageImportProvider implements ImportProviderInterface
             // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
             ->setIsIndexable($item['isIndexable'] ?? true)
             ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
+            // Carried whole rather than option by option, same as PageCrudController::clonePage() - an export predating any given option simply omits its key, and the named accessors hold the default
+            ->setOptions($item['options'] ?? [])
             ->setModification($now);
     }
 

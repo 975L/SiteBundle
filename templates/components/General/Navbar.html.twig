@@ -3,29 +3,19 @@
 {% set siteName = config('site-name') %}
 {% set siteTagline = config('site-tagline') %}
 {% set showSiteName = config('site-navbar-show-name') %}
-{# Whitelisted rather than passed through as-is: this value is interpolated straight into an inline
-   style="--navbar-position: ...;" attribute below, and CSS custom properties aren't escaped by Twig's
-   html_attr context the way quotes/angle brackets are #}
+{# Whitelisted: it lands in a custom property, which Twig's html_attr context doesn't escape #}
 {% set navbarPosition = config('site-navbar-position') in ['relative', 'sticky', 'fixed', 'static', 'absolute'] ? config('site-navbar-position') : null %}
 
 {% if menu_blocks('navbar') is not empty %}
-    {# navbarPosition is free text (relative/sticky/fixed/static...) - empty leaves the template's
-       own --navbar-position default (_variables.scss) in place; "fixed" additionally needs the
-       .menu-fixed class for its edge-to-edge/z-index treatment (see _menu.scss) #}
+    {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
     <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}"{% if navbarPosition %} style="--navbar-position: {{ navbarPosition }};"{% endif %} data-controller="menu">
         <div class="menu-header">
             <div class="menu-brand">
                 <div class="menu-brand-top">
                     {% if logo is not null %}
                         <a href="{{ path('page_home') }}" class="menu-logo">
-{# eager, never lazy: the navbar logo is above the fold on every single page, so deferring it only
-   delays a request the browser could already have started from the preload scanner #}
-{# The intrinsic dimensions, not the displayed ones: they only declare the aspect ratio the browser
-   reserves room for (the displayed size comes from _menu.scss), which is what keeps the navbar from
-   shifting while the logo loads. intrinsicWidth/intrinsicHeight rather than width/height: those are
-   free-text admin fields and a "50%"/"100px" value would be discarded by the browser, taking the
-   fallback below down with it. Older Media rows have neither (see MediaDimensionsCommand), hence
-   the fallback to the displayed height alone #}
+{# eager: the navbar logo is above the fold on every page #}
+{# Intrinsic dimensions, the free-text width/height possibly holding an unusable "50%"; older rows have neither, hence the fallback #}
                             <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ siteName|default('Logo') }}"{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
                         </a>
                     {% endif %}

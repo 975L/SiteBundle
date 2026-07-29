@@ -11,14 +11,10 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\SiteBundle\Entity\Font;
 
-// Guesses a Font's name/weight/style from its uploaded filename, following the naming convention used by Google
-// Fonts and most font foundries: "FamilyName-WeightStyle.ext" (eg. "OpenSans-Bold.ttf", "Roboto-ExtraBoldItalic.woff2",
-// "Inter-VariableFont_wght.ttf") - a best-effort guess meant to save re-typing three fields per file in
-// FontBulkImportController, not a hard requirement: name/weight/style stay editable afterward like a single upload
+// Guesses a Font's name/weight/style from "FamilyName-WeightStyle.ext", a best-effort saving three fields per file
 class FontFilenameParser
 {
-    // Substring-matched (not exact) against the filename's last "-"/"_"-separated segment, longest keyword first so
-    // eg. "extrabold" wins over "bold" - values are the same OpenType/CSS weight scale as FontCrudController::WEIGHT_NAMES
+    // Substring-matched against the last segment, longest keyword first so "extrabold" beats "bold"
     private const WEIGHT_KEYWORDS = [
         'extralight' => 200,
         'ultralight' => 200,
@@ -59,7 +55,7 @@ class FontFilenameParser
         ];
     }
 
-    // The weight/style the filename's last segment stands for ("Bold", "ExtraBoldItalic", "Italic"...), or null when it carries neither - a single-segment filename ("Roboto.ttf") has no suffix to read either
+    // What the filename's last segment stands for, or null when it carries neither
     // @return array{weight: int, style: string}|null
     private function parseSuffix(array $parts): ?array
     {

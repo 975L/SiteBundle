@@ -47,6 +47,7 @@ class PageExportProvider implements ExportProviderInterface
                 'isPublished' => $page->isPublished(),
                 'isIndexable' => $page->isIndexable(),
                 'summarySocialNetwork' => $page->getSummarySocialNetwork(),
+                'options' => $page->getOptions(),
                 'ogImage' => null !== $ogImage ? $this->blockDataExporter->exportMedia($ogImage, $files) : null,
                 'blocks' => $this->blockDataExporter->exportBlocks($page->getBlocks(), $files),
             ];

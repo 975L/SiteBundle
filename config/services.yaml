@@ -18,10 +18,6 @@ services:
     # interface - CollectionItemSourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
 
-    c975L\SiteBundle\Management\TemplateRegistry:
-        arguments:
-            $providers: !tagged_iterator c975l.template_provider
-
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 100 }
@@ -90,4 +86,7 @@ services:
               category: 'label.category_navigation'
               pickable: true
               cacheable: false
-              contexts: menu
+              # "menu_navbar" is an exclusive context (see BlockRegistry::EXCLUSIVE_CONTEXTS): opting in
+              # here is what makes this the only kind a navbar ever offers, every other menu location
+              # ("menu") keeping the full picker
+              contexts: 'menu,menu_navbar'

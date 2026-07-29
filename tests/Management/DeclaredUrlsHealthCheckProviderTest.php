@@ -26,7 +26,7 @@ class DeclaredUrlsHealthCheckProviderTest extends TestCase
         'title' => 'Un titre de livre tout à fait correct',
         'description' => 'Une description de test suffisamment longue pour passer le seuil minimal recommandé.',
         'hasDescription' => true,
-        'hasH1' => true,
+        'h1Count' => 1,
         'imagesWithoutAlt' => [],
         'socialTags' => ['og:title' => 'T', 'og:description' => 'D', 'og:image' => '/media/og.png'],
         'internalLinks' => [],
@@ -181,16 +181,32 @@ class DeclaredUrlsHealthCheckProviderTest extends TestCase
         $this->assertSame('label.health_check_url_gone', $result['summary']);
     }
 
-    // A url the server refuses or fails on says nothing about the url existing - reported as the failure it is, never as "not tested"
-    public function testRunChecksReportsAForbiddenOrFailingUrlAsAnError(): void
+    // A url the server fails on says nothing about the url existing - reported as the failure it is, never as "not tested"
+    public function testRunChecksReportsAFailingUrlAsAnError(): void
     {
-        foreach ([403, 500, 503] as $status) {
+        foreach ([500, 503] as $status) {
             $provider = new DeclaredUrlsHealthCheckProvider(
                 $this->createSitemapProvider('book', [$this->url('https://example.com/livre/un-livre')]),
                 $this->createAnalyzer(status: $status),
             );
 
             $this->assertSame(HealthCheckResult::STATUS_ERROR, $provider->runChecks()[0]['status'], 'HTTP ' . $status);
+        }
+    }
+
+    // The statuses describing how the server treats this checker rather than whether the page is fine (see ContentQualityClient::INCONCLUSIVE_STATUSES) - a site behind a WAF would otherwise have every one of its declared urls reported as an error. A warning, not a skipped row: the run genuinely couldn't judge the page
+    public function testRunChecksWarnsOnAUrlWhoseStatusIsInconclusive(): void
+    {
+        foreach (ContentQualityClient::INCONCLUSIVE_STATUSES as $status) {
+            $provider = new DeclaredUrlsHealthCheckProvider(
+                $this->createSitemapProvider('book', [$this->url('https://example.com/livre/un-livre')]),
+                $this->createAnalyzer(status: $status),
+            );
+
+            $result = $provider->runChecks()[0];
+
+            $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status'], 'HTTP ' . $status);
+            $this->assertSame('label.health_check_url_inconclusive', $result['summary'], 'HTTP ' . $status);
         }
     }
 

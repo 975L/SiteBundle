@@ -6,16 +6,11 @@
  * with this source code in the file LICENSE.
  */
 
+// Only this site's own branding. Everything an email is built out of - the :root defaults, typography,
+// tables, lists, images, buttons, alerts - comes from UiBundle's sass/emails.scss, sourced before this
+// file in emails/fullLayout.html.twig. That base already carries the tighter email margins, which is
+// what retired the _email-overrides.scss this file used to end with.
+// _variables.scss stays: the footer below reads eleven --footer-* tokens that are this bundle's own, so
+// nothing else declares them. UiBundle's own :root covers what its rules read, not what this one does
 @use '_variables.scss';
-@use '_colors.scss';
-@use '_general.scss';
-@use '_typography.scss';
-@use '_containers.scss';
-@use '_dimensions.scss';
-@use '_alignments.scss';
-@use '_buttons.scss';
-@use '_images.scss';
-@use '_lists.scss';
-@use '_tables.scss';
 @use '_footer.scss';
-@use '_email-overrides.scss';

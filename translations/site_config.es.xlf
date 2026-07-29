@@ -66,30 +66,6 @@
                 <source>description.site_author</source>
                 <target>El autor que se indicará en los metadatos</target>
             </trans-unit>
-            <trans-unit id="PZrDv2T">
-                <source>description.site_backup_database</source>
-                <target>Nombre de la base de datos MySQL a respaldar</target>
-            </trans-unit>
-            <trans-unit id="zquqL77">
-                <source>description.site_backup_db_host</source>
-                <target>Host MySQL para las copias de seguridad</target>
-            </trans-unit>
-            <trans-unit id="y563wVd">
-                <source>description.site_backup_db_password</source>
-                <target>Contraseña MySQL para las copias de seguridad</target>
-            </trans-unit>
-            <trans-unit id="P7VAMy1">
-                <source>description.site_backup_db_user</source>
-                <target>Usuario MySQL para las copias de seguridad</target>
-            </trans-unit>
-            <trans-unit id="ZL..tYO">
-                <source>description.site_backup_full_interval_months</source>
-                <target>Número de meses naturales entre dos copias de seguridad completas de archivos (entre medias se realizan copias parciales, solo con los archivos modificados)</target>
-            </trans-unit>
-            <trans-unit id="3_4rjYZ">
-                <source>description.site_backup_mailto</source>
-                <target>Correo para los informes de copia de seguridad y errores</target>
-            </trans-unit>
             <trans-unit id="maeSbQ2">
                 <source>description.site_contact_email</source>
                 <target>Dirección de correo de contacto pública mostrada en las páginas legales</target>
@@ -205,10 +181,6 @@
             <trans-unit id="EuVrG.1">
                 <source>description.site_tagline</source>
                 <target>Eslogan del sitio web</target>
-            </trans-unit>
-            <trans-unit id="nInyIwr">
-                <source>description.site_url</source>
-                <target>URL del sitio web, ej. https://example.com</target>
             </trans-unit>
             <trans-unit id="ooJKbLK">
                 <source>description.theme_color_background</source>
@@ -326,30 +298,6 @@
                 <source>label.site_author</source>
                 <target>Autor del sitio</target>
             </trans-unit>
-            <trans-unit id="Y1PJ4Y0">
-                <source>label.site_backup_database</source>
-                <target>Base de datos de copia de seguridad</target>
-            </trans-unit>
-            <trans-unit id="iWzvwqZ">
-                <source>label.site_backup_db_host</source>
-                <target>Host de la base de datos de copia de seguridad</target>
-            </trans-unit>
-            <trans-unit id="TyhqGFy">
-                <source>label.site_backup_db_password</source>
-                <target>Contraseña de la base de datos de copia de seguridad</target>
-            </trans-unit>
-            <trans-unit id="gKIoJD1">
-                <source>label.site_backup_db_user</source>
-                <target>Usuario de la base de datos de copia de seguridad</target>
-            </trans-unit>
-            <trans-unit id="NhbXiCq">
-                <source>label.site_backup_full_interval_months</source>
-                <target>Intervalo copia completa (meses)</target>
-            </trans-unit>
-            <trans-unit id="GvaXwxi">
-                <source>label.site_backup_mailto</source>
-                <target>Correo de copia de seguridad</target>
-            </trans-unit>
             <trans-unit id="P.LxD.a">
                 <source>label.site_contact_email</source>
                 <target>Correo de contacto</target>
@@ -465,10 +413,6 @@
             <trans-unit id="tN9lVY3">
                 <source>label.site_tagline</source>
                 <target>Eslogan del sitio</target>
-            </trans-unit>
-            <trans-unit id="rDTDQ70">
-                <source>label.site_url</source>
-                <target>URL del sitio</target>
             </trans-unit>
             <trans-unit id="copCVwP">
                 <source>label.theme_color_background</source>

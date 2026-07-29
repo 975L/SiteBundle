@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Form\Block;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Service\BlockAnchorCollector;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -28,6 +29,7 @@ class MenuLinkType extends AbstractType
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly PageRepository $pageRepository,
         private readonly TranslatorInterface $translator,
+        private readonly BlockAnchorCollector $anchorCollector,
     ) {
     }
 
@@ -61,10 +63,12 @@ class MenuLinkType extends AbstractType
     // Every "page:ID", "page:ID#anchor-blockId" and "route:NAME" a menu link can point at, as one flat filterable autocomplete list (see MenuExtension::getMenuLinkUrl() for how each is decoded back)
     private function targetChoices(): array
     {
-        // Eager-joins blocks so building each page's anchor choices doesn't trigger one extra query per page (getBlocks() would otherwise lazy-load its ManyToMany collection on each access)
+        // Eager-joins blocks (and their nested slots, walked too - see BlockAnchorCollector) so building each page's anchor choices doesn't trigger one extra query per page/container (getBlocks()/getSlots() would otherwise lazy-load their collection on each access)
         $pages = $this->pageRepository->createQueryBuilder('p')
             ->leftJoin('p.blocks', 'b')
             ->addSelect('b')
+            ->leftJoin('b.slots', 's')
+            ->addSelect('s')
             ->andWhere('p.isDeleted = :deleted')
             ->setParameter('deleted', false)
             ->getQuery()
@@ -87,19 +91,12 @@ class MenuLinkType extends AbstractType
         return $choices;
     }
 
-    // One flat entry per in-page anchor the page's blocks declare (see UiBundle's BlockAnchorSlugger/HasAnchorFieldTrait) - no cascading/JS select needed, they sit in the same list as the pages themselves
+    // One flat entry per in-page anchor the page's blocks declare, those of a container's nested slots included (see UiBundle's BlockAnchorCollector) - no cascading/JS select needed, they sit in the same list as the pages themselves
     private function anchorChoices(Page $page, string $pageLabel): array
     {
         $choices = [];
-        foreach ($page->getBlocks() as $block) {
-            $anchor = $block->getData()['anchor'] ?? null;
-            if (null === $anchor || '' === $anchor) {
-                continue;
-            }
-
-            // strip_tags: some kinds (hero, cta_band) use a TrixEditorType title, which may carry inline markup that must not leak into this plain-text select option label
-            $sectionLabel = strip_tags((string) ($block->getData()['title'] ?? $anchor));
-            $choices[$pageLabel . ' → ' . $sectionLabel] = 'page:' . $page->getId() . '#' . $anchor . '-' . $block->getId();
+        foreach ($this->anchorCollector->collect($page->getBlocks()) as $fragment => $sectionLabel) {
+            $choices[$pageLabel . ' → ' . $sectionLabel] = 'page:' . $page->getId() . '#' . $fragment;
         }
 
         return $choices;

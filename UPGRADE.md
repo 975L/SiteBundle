@@ -2,6 +2,69 @@
 
 ## Unreleased
 
+**A menu is created from the index now, and there is no "new menu" form.** A menu's only own field is its location, one of four, each usable once — so the Menus index shows one create button per location not created yet, each creating the row and opening its edit screen in a single click (`MenuCrudController::create()`, a CSRF-protected POST). `Action::NEW` is disabled and `templates/management/menu_crud_new.html.twig` is gone: **if your app overrode that template**, drop the override, and override `@c975LSite/management/menu_crud_index.html.twig` instead if you need to say something on that screen. Existing menus are untouched, and a location that already has its row simply opens it.
+
+**A navbar only offers `menu_link` now**, through UiBundle's exclusive `menu_navbar` context — a navigation bar being a plain list of links, anything else belonging in the page itself. A navbar already holding another block kind keeps rendering it; it just can't be picked again from that screen. The other three locations keep the full picker.
+
+**`user-roles-available` no longer ships `ROLE_SUPER_ADMIN`** — it's the owner's role, granted once by `c975l:site:create`, and `UserCrudController` decides it itself rather than reading it from the config (stripped from whatever the config holds, then put back for an acting user who already holds it). Nothing to do: a site whose row still lists it sees the same choices as before.
+
+**`Page` gained a nullable `options` column** (`site_page.options`, `JSON DEFAULT NULL`), one payload holding the benign per-page display options rather than a column each — so a future option is a code change alone, with no migration for every app running this bundle to replay. Run `php bin/console doctrine:migrations:diff && php bin/console doctrine:migrations:migrate` — **before deploying the code**, since every page read 500s on "Unknown column options" until the column exists. Existing pages come out with no option set at all, each then reading as its own default, so nothing changes on an upgraded site.
+
+The first option it holds is `titleDisplayed`, exposed as the "Display title" switch on the page edit screen. It defaults to `true`, which is what the layout always did; turn it off on a page opened by a block already carrying its own `<h1>` (a "hero" or a `banner_title` left on its h1 level), where the layout's title made a second top-level heading. `content-quality` reports a page left with none, the same way it reports one with several.
+
+**The form layer moved to UiBundle.** `sass/_forms.scss` and the password behaviours of the `basic` controller (show/hide toggle, format check, confirmation match) now live in `c975l/ui-bundle`, along with `assets/js/handlers.js`, `assets/js/translations.js` and `public/icons/eye.svg`/`eye-slash.svg`. Eight c975L bundles require UiBundle and none requires this one, so a form rendered by ShopBundle or BookBundle had no styling to count on — and UiBundle is what renders the forms in the first place (its `Form`/`FormField` builder, `components/Form/Form.html.twig`, the block and captcha form themes).
+
+Requires `c975l/ui-bundle` at the matching version. Nothing to do if you use this bundle's `layout.html.twig`; **if your app overrides it**, add the controller to the body:
+
+```diff
+-<body id="top" data-controller="basic">
++<body id="top" data-controller="basic password">
+```
+
+The two checks used to target `#registration_form_plainPassword` / `#registration_form_confirmPassword`, ids belonging to the consuming app rather than to any bundle. They are driven by `data-password-pattern` / `data-password-confirm` / `data-password-message` now — see UiBundle's README. Those two ids keep working until UiBundle 2.0, so an app already using them has nothing to change yet.
+
+**`color-scheme` is now declared**, `light` on `:root` and `dark` in the dark-mode block. Left undeclared, the browser rendered its own parts — autofill, scrollbars, date pickers, select dropdowns — with the light palette whatever the site's theme was: a dark site kept showing white autofilled inputs, and a field left on `background: transparent` got a white surface on desktop (where autofill fires) and the dark page on mobile (where it does not). A site that had worked around this in its own `app.css` should drop that workaround.
+
+**Dark mode now restates every form token**, which it never did — `--form-input-color` stayed `#555` on the `#121212` page, the hover glow `#4d4d4d` was invisible against it, and a field had no surface of its own. Five new tokens come with it: `--input-background`, `--input-valid-border-color` / `--input-invalid-border-color` and their `-shadow-` pair, `--input-icon-filter` and `--form-width`. All are listed, commented out at their defaults, in the scaffolded `assets/styles/themes/theme.css`. A site with its own `theme.css` keeps that file untouched (it is only ever written on first install) and can copy the new lines in from the scaffold.
+
+**The email base moved to UiBundle, and this bundle overrides nothing anymore.** `sass/emails.scss` is down to `@use '_footer.scss'` — its branded footer, the one thing that is genuinely this site's. Everything an email is built out of (the `:root` defaults, typography, tables, lists, images, buttons, alerts) now comes from UiBundle's own `sass/emails.scss`, which `emails/fullLayout.html.twig` sources first:
+
+```diff
+ <style>
++    {{ source('@c975LUiCss/emails.min.css') }}
+     {{ source('@c975LSiteCss/emails.min.css') }}
+     {{ theme_variables_css() }}
+ </style>
+```
+
+Same reasoning as the form layer: the EmailTemplate builder is UiBundle's, and six bundles send mail while only one of them can count on this bundle being installed. `sass/_email-overrides.scss` is gone with it — the tighter email margins it restated (`section`, `h1`-`h6`) are folded into UiBundle's email typography, so nothing has to override anything. **If your app overrides `emails/fullLayout.html.twig`, add the first `source()` line.**
+
+Rendering was compared before/after on the real block structure: eleven measures identical (heading sizes, colors and margins, paragraph color, muted text, button fill and label, table header rule, cell padding, inline list, responsive image, alignment). The two that moved are a fix — `.alert`/`.alert-danger` were used by email templates in six bundles and styled by none of them, so an alert rendered with no background at all and now gets its tint.
+
+**Five more stylesheets moved to UiBundle**: `sass/_badges.scss`, `_blockquotes.scss`, `_alignments.scss`, `_colors.scss` and `_iframe.scss` — generic components and utility classes, next to UiBundle's own `.btn` / `.card` / `.alert` / `.width-*`. Nothing to do if you load both stylesheets, which every site does. They are no longer pulled by `emails.scss`, checked against every email template shipped by the six bundles that send one: none uses a `.badge`, `.flex-*` or `.primary`-style utility class (the only match was `class="btn btn-primary"`, which comes from `_buttons.scss`).
+
+**Alerts are readable in dark mode, and `--alert-danger-color` changed.** `.alert` used to set `color: #000` on itself only, so anything nested inside it — a `<p>`, a bolded word — was painted `--text` by `_typography.scss`'s own `* { color: var(--text) }`: near-white on a pale tint, measured at 1.02:1. The rule now covers the descendants, the four tints are mixed into the page background in dark mode, and the text follows a new `--alert-color` token. Because the danger color now carries a whole message rather than one bare line, it is darkened from `#b64450` to `#9c3a44` — the old value read at 4.14:1 on its own tint, under WCAG AA. Restate it in your `theme.css` to keep the previous shade.
+
+**`sass/_dimensions.scss` is emails-only now.** Its `.width-100` to `.width-300` duplicated UiBundle's `sass/_sizes.scss`, with different rules on the same class names — UiBundle's also set `width: 90vw; height: auto; margin: 0 auto`, so which of the two won came down to the order the two stylesheet providers happened to be registered in (both tag at `priority: 100`). The front-end now gets UiBundle's set alone, and `.height-100` to `.height-300` moved there with it. `emails.scss` keeps the file, inlining its own CSS without ever loading UiBundle's stylesheet.
+
+**Three tokens stop being flat neutrals and follow the site's own colors.** They were already tinted in the scaffolded `theme.css`; the defaults in `sass/_variables.scss` now match, so a site that never wrote a `theme.css` of its own sees the change:
+
+| Token | Before | Now |
+| --- | --- | --- |
+| `--section-bg-muted` | `var(--surface-alt)`, i.e. `--background` mixed with `--text` - a grey | `color-mix(in srgb, var(--background) 94%, var(--primary))` - a pale shade of the site |
+| `--footer-border` | `solid grey 2px`, ignoring the palette | `solid color-mix(in srgb, var(--footer-background) 80%, black) 2px` |
+| `--footer-link-hover-background` | `rgba(0, 0, 0, 0.1)`, a black wash | `color-mix(in srgb, var(--footer-background) 88%, var(--footer-text))` |
+
+The last one is the reason for the change: a black wash only ever darkens, so it is invisible on a dark footer band - which the default footer becomes as soon as the admin picks a dark primary color. Mixing toward `--footer-text` contrasts in whichever direction that footer needs.
+
+To keep the previous look, restate the old value in the site's `assets/styles/themes/theme.css` - the three lines in the table's "Before" column. A footer left `transparent` gets `rgba(0, 0, 0, 0.2)` out of the new border mix, i.e. a discreet dark rule rather than a grey one.
+
+`--surface-alt` itself is unchanged, so anything else reading it (a portfolio thumbnail's empty frame) stays grey.
+
+**`--button-background-secondary-light` is gone.** It was the only one of the `:root`'s 84 tokens no stylesheet ever read - declared out of symmetry with `--button-background-primary-light`, which does back something (the slider's credits strip and a page-section rule). A site that set it was setting nothing; a site reading it from its own `app.css` gets an invalid declaration now and should inline `color-mix(in srgb, var(--secondary) 50%, white)` or declare the token itself in its `theme.css`.
+
+**New `--frame-background` token**, the canvas showing on both sides of the page once the viewport is wider than `--body-max-width`. `html` now carries it in `sass/_general.scss`. It defaults to `var(--background)`, which reproduces exactly what a browser already painted there on its own - `html` having had no background, `body`'s propagated to the canvas. Nothing moves; a design framing its page inside its measure now gives this token another color instead of writing an `html { background-color: ... }` rule in its `app.css`.
+
 **The theme preset catalog is removed** - one site, one theme. Gone: `SiteThemePresetProvider`, `config/themes/*.json`, `sass/themes/*` and the compiled `public/css/themes/*.min.css`, the `theme-stylesheet` config key, and `PageController`'s `?preset=<slug>` preview (that route now treats the query param as any other unknown one). `StylesheetProvider` no longer reads any config, so its constructor takes no `ConfigServiceInterface` - only relevant if you instantiate or extend it yourself.
 
 Nothing breaks visually: the only stylesheet ever shipped, `default`, restated `sass/_variables.scss`'s own base tokens, so a site that had `theme-stylesheet` set to it rendered exactly as one that had it empty. The `site_config` row itself stays in database (`c975l:config:load-all` only inserts and updates, it never prunes) where it is simply no longer read - to be rid of it: `DELETE FROM site_config WHERE slug = 'theme-stylesheet';`, or delete it from the config screen (ROLE_SUPER_ADMIN, it is `restricted`). A site that had set it to a stylesheet of its own has to move those tokens into its `assets/styles/themes/theme.css`.

@@ -13,11 +13,7 @@ use c975L\UiBundle\Service\BlockFixtureMediaAttacher;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-// Shows "articles_slider" and "menu_link" in the block showcase (see UiBundle's GalleryShowcaseRegistry,
-// consumed by the public block showcase) - neither has a BlockFixtureProviderInterface fixture (see
-// BlockFixtureProvider's own comment for why: both only render something once resolved against a real
-// Page/route). Rendered here instead, directly against the same underlying components/markup with
-// made-up sample data, bypassing that resolution.
+// Shows "articles_slider" and "menu_link" in the showcase, neither rendering anything until resolved against a real Page or route
 class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
 {
     public function __construct(
@@ -27,9 +23,7 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
     ) {
     }
 
-    // Both stand in for their own block kind - same feature, just previewed here without the live
-    // Page/route resolution the real render depends on. The showcase suppresses each kind's own regular
-    // (empty) preview card once "kind" is set here, so neither shows up twice.
+    // Both stand in for their own kind, so the showcase suppresses that kind's own empty preview card
     public function getShowcases(): array
     {
         return [
@@ -46,10 +40,7 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
         ];
     }
 
-    // "articles_slider" ultimately just feeds a few articles' title/hook/image into the same Slider
-    // component "slider" itself uses (see ArticlesSlider.html.twig) - reusing UiBundle's own showcase
-    // placeholder images here too, same as the "slider"/"image" block previews. Drawn from
-    // BlockFixtureMediaAttacher's rotating pool, so the 3 articles don't all show the same photo.
+    // Reuses UiBundle's showcase placeholder pool, so the three articles don't share one photo
     private function articlesSliderVariant(): string
     {
         $slides = [];
@@ -70,8 +61,7 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
         ]);
     }
 
-    // Same markup/classes as MenuLink.html.twig, with a made-up target/label instead of resolving a
-    // real "page:ID"/"route:NAME" via menu_link_url()/menu_link_label() - see the class comment
+    // Same markup as MenuLink.html.twig, with a made-up target instead of a resolved one
     private function menuLinkVariant(): string
     {
         return $this->twig->createTemplate(

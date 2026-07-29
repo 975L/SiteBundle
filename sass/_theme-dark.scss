@@ -1,10 +1,33 @@
 /* DARK MODE */
 @mixin dark-tokens {
+    // The dark palette for what the browser renders itself: autofill, scrollbars, date pickers
+    color-scheme: dark;
     --background: #121212;
     --text: #e0e0e0;
     --black: #e0e0e0;
     --white: #1e1e1e;
     --card-background: #1e1e1e;
+    // Form controls, restated or a dark site keeps the light values; the eye icon is an <img>, hence the invert
+    --form-input-color: #e0e0e0;
+    --label-color: #a8a8a8;
+    --required-color: #e0e0e0;
+    --input-background: rgba(255, 255, 255, 0.05);
+    --input-border-bottom-color: #5a5a5a;
+    --input-border-color: #a8a8a8;
+    --input-shadow-color: rgba(255, 255, 255, 0.15);
+    --input-focus-border-color: rgb(96, 165, 250);
+    --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
+    --input-icon-filter: invert(1);
+    // Lightened off the danger red, which reads at 4.14:1 on the #121212 page - under the 4.5:1 WCAG AA
+    // asks of body text, and this message is set at 0.9rem
+    --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
+    // Each pale tint is mixed into the page background, keeping its hue as a real dark surface
+    --alert-color: #e0e0e0;
+    --alert-danger-color: #f0a8b0;
+    --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
+    --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
+    --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
+    --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
     // Only takes effect if the admin filled theme-color-primary/-secondary-dark-mode; otherwise falls back to the same chain --primary/--secondary use in _variables.scss. Can't write "var(--primary)" as the fallback here - since this rule can itself win the cascade for --primary, that would be a self-reference (cyclic = invalid), not a fallback to the light value
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));

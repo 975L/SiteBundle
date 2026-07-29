@@ -28,8 +28,7 @@ class CollectionGroupRepository extends ServiceEntityRepository
         return $this->findOneBy(['slug' => $slug]);
     }
 
-    // Lets a caller (CollectionItemImportProvider, CollectionItemImportCommand) resolve an existing collection by its
-    // exact name, or create a fresh one when it doesn't exist yet on this environment
+    // Resolves a collection by its exact name, creating it when this environment has none yet
     public function findOneByName(string $name): ?CollectionGroup
     {
         return $this->findOneBy(['name' => $name]);

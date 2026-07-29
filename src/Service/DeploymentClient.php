@@ -18,7 +18,7 @@ class DeploymentClient
     ) {
     }
 
-    // max_redirects: 0 so the redirect itself is the answer - following it would just report the https page that is already known to work, saying nothing about whether http reaches it
+    // max_redirects: 0, so the redirect itself is the answer rather than the https page already known to work
     // @return array{statusCode: int, location: ?string}
     public function fetchWithoutRedirect(string $url): array
     {
@@ -27,7 +27,7 @@ class DeploymentClient
         return ['statusCode' => $response->getStatusCode(), 'location' => $response->getHeaders(false)['location'][0] ?? null];
     }
 
-    // A plain GET, not a HEAD: the 404 check needs the body to tell the site's own error page from the framework's default one, not just its status code
+    // A GET, not a HEAD: the body is needed to tell the site's error page from the framework's default
     // @return array{statusCode: int, content: string}
     public function fetch(string $url): array
     {

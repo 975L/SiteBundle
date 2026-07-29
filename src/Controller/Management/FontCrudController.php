@@ -36,9 +36,7 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 use function Symfony\Component\Translation\t;
 
-// Lets an admin upload their own font files (ttf/woff/woff2), no dev/deploy needed to add one - FontCssListener
-// compiles every row here into public/bundles/build/site-fonts-uploaded.css, FontService offers their names to
-// the "font" kind config selects
+// Lets an admin upload their own font files, no deploy needed; FontCssListener compiles every row into one stylesheet
 class FontCrudController extends AbstractCrudController
 {
     private const ALLOWED_EXTENSIONS = ['ttf', 'woff', 'woff2'];
@@ -48,9 +46,7 @@ class FontCrudController extends AbstractCrudController
         'label.font_style_italic' => 'italic',
     ];
 
-    // Value => translation key, from the standard OpenType/CSS weight scale - displayed as "100 - Thin" so an admin
-    // naming a file by its named weight (Medium, SemiBold...) doesn't have to know its numeric equivalent. The
-    // Font::WEIGHT_VARIABLE entry covers variable font uploads (see Font::isVariable()) instead of a checkbox
+    // The standard OpenType weight scale, shown as "100 - Thin" so a named weight needs no conversion
     private const WEIGHT_NAMES = [
         Font::WEIGHT_VARIABLE => 'label.font_weight_variable',
         100 => 'label.font_weight_thin',

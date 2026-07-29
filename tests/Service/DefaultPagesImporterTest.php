@@ -420,8 +420,7 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertNull($this->findPersistedEmailTemplate($persisted, 'password_reset'));
     }
 
-    // Lets a Page pushed from another environment (see PageImportProvider) keep a working "contact" Form even though
-    // only the Page+Blocks themselves were exported, not the Form/EmailTemplate content
+    // Lets an imported Page keep a working "contact" Form, only the Page and Blocks being exported
     public function testEnsureFormBlockDependenciesExistSeedsTheFormForAFormBlock(): void
     {
         $persisted = [];

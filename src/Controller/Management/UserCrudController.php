@@ -97,13 +97,16 @@ class UserCrudController extends AbstractCrudController
         return $edited instanceof User && in_array('ROLE_SUPER_ADMIN', $edited->getRoles(), true);
     }
 
-    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array). ROLE_SUPER_ADMIN is stripped from the choices (so from the submitted form's allowed values too, Symfony's ChoiceType rejects anything outside them) unless the acting user already holds it — otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's "restricted" configs entirely. Kept on a frozen field: nothing is submitted back from it, and dropping it there would just hide the role the edited user really has
+    // Reads the extra roles selectable in the backoffice from the "user-roles-available" config (JSON array). ROLE_SUPER_ADMIN is decided here rather than read from the config, which no longer declares it by default (it's the owner's role, granted once by c975l:site:create): it's dropped from whatever the config holds, then put back only for an acting user who already holds it — otherwise a plain ROLE_ADMIN could grant it to themselves or anyone else and bypass ConfigBundle's "restricted" configs entirely. Out of the choices means out of the submitted form's allowed values too, Symfony's ChoiceType rejects anything outside them. Kept on a frozen field: nothing is submitted back from it, and dropping it there would just hide the role the edited user really has
     private function roleChoices(bool $keepSuperAdmin): array
     {
-        $roles = (array) $this->configService->get('user-roles-available');
+        $roles = array_values(array_filter(
+            (array) $this->configService->get('user-roles-available'),
+            static fn (string $role): bool => 'ROLE_SUPER_ADMIN' !== $role,
+        ));
 
-        if (!$keepSuperAdmin && !$this->security->isGranted('ROLE_SUPER_ADMIN')) {
-            $roles = array_filter($roles, static fn (string $role): bool => 'ROLE_SUPER_ADMIN' !== $role);
+        if ($keepSuperAdmin || $this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            array_unshift($roles, 'ROLE_SUPER_ADMIN');
         }
 
         return array_combine($roles, $roles);

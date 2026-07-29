@@ -8,13 +8,29 @@
 html {
     scroll-behavior: smooth;
     overflow-x: hidden;
+    background-color: var(--frame-background);
 }
 
+// The column keeps the footer at the bottom of the viewport on a page too short to fill it; svh over dvh so a retracting mobile URL bar doesn't make the footer jump
 body {
     max-width: var(--body-max-width);
     margin: 0 auto;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
     background-color: var(--background);
     font-weight: var(--font-body-weight);
+}
+
+// Takes the free space left, if any; shrink stays at 0 so a page longer than the viewport is never compressed
+main {
+    flex: 1 0 auto;
+}
+
+// Its bottom margin merged with the footer's top one before body became a flex container, where flex items no longer collapse margins - without this, every page gains the smaller of the two as extra space. Only when the footer does follow main directly: with .page-share in between, that margin is the gap the share buttons need above them
+main:has(+ footer) > :last-child {
+    margin-bottom: 0;
 }
 
 .box-shadow {

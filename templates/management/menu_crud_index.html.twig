@@ -3,5 +3,18 @@
 {% block main %}
     <p>{{ ('label.info_menu'|trans({}, 'site')) }}</p>
 
+    {# One button per unused location: a menu has no other field, so the button creates the row outright #}
+    {% if missing_locations|default({}) is not empty %}
+        <form method="post" action="{{ ea_url().setAction('create') }}" class="mb-3 d-flex flex-wrap gap-2 align-items-center">
+            <input type="hidden" name="_token" value="{{ csrf_token('site_menu_create') }}">
+            <span>{{ ('label.create_menu'|trans({}, 'site')) }}</span>
+            {% for location, label in missing_locations %}
+                <button type="submit" name="location" value="{{ location }}" class="btn btn-secondary">
+                    <i class="fa fa-plus"></i> {{ label }}
+                </button>
+            {% endfor %}
+        </form>
+    {% endif %}
+
     {{ parent() }}
 {% endblock main %}

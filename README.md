@@ -16,6 +16,16 @@ See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bun
 
 ---
 
+> **TL;DR** — Turns the shared UiBundle + ConfigBundle foundation into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, users and authentication, sitemap generation, legal models, and the commands to scaffold a whole new site. It also contributes eleven health check providers to ConfigBundle's Health check page.
+
+## Contents
+
+- **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
+- **Users & access** — [users and roles](#users) · [ROLE_SUPER_ADMIN configs](#role_super_admin-and-restricted-configs) · [registration anti-spam](#registration-anti-spam-protections) · [login throttling](#login-throttling) · [account activation](#account-activation-isenabled)
+- **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
+- **Components** — [general components (Matomo, CookieConsent…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [Asset and Download controllers](#asset-and-download-controllers) · [site graphics](#site-graphics) · [lists](#lists)
+- **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures)
+
 ## Features
 
 - **Base layout** with SEO-optimized meta tags (OpenGraph, robots, canonical, favicon, Apple touch icon)
@@ -151,7 +161,7 @@ The layout exposes the following Twig blocks for you to override or extend:
 | `header` | Site header |
 | `navigation` | Main navigation |
 | `main` | Main content wrapper |
-| `title` | Page `<h1>` title |
+| `title` | Page `<h1>` title — not printed for a database page whose *Display the page title* switch is unchecked (see [Pages](#pages)) |
 | `flashes` | Flash messages |
 | `container` | Container div wrapping `content` |
 | `content` | Page-specific content |
@@ -174,6 +184,8 @@ The layout exposes the following Twig blocks for you to override or extend:
 ```twig
 {% block share %}{% endblock %}
 ```
+
+`<body>` is a flex column at least as tall as the viewport, with `<main>` taking whatever space is left over: the footer is held against the bottom of the window on a page too short to fill it, instead of floating halfway up, and a page longer than the viewport is never compressed. SocialBundle's automatic share buttons (`social-enable-share-buttons`) render outside `<main>`, in their own `<aside class="page-share">` between it and the footer, so the flex column leaves them against the footer rather than in the middle of the free space — the `share` Twig block above stays inside `<main>`, for a page's own bottom navigation.
 
 ### Display mode
 
@@ -211,10 +223,13 @@ Database-managed redirects (`Redirect` entity, `fromPath`/`toUrl`/`permanent`) g
 Use the `Page` entity to manage pages through the database. Each page supports:
 
 - Title, slug (unique), summarySocialNetwork
+- **Display the page title** — on by default, the layout printing the page's own title as its `<h1>`. Uncheck it for a page opened by a block that already carries one (a `hero`/`banner_title` left on its `h1` level, see UiBundle's *Heading level* field): the page keeps its title everywhere else — browser tab, share tags, menus — it just stops being printed twice on screen. The `content-quality` health check reports a page ending up with no `<h1>`, and one ending up with several: two `<h1>` are valid HTML and Google copes with them, but a screen reader announces them as two top-level subjects for one page
 - Published status and display position
 - Sitemap fields: indexable, change frequency and priority (0–10) — unchecking *indexable* both drops the page from `sitemap-site.xml` and switches its `robots` meta tag to `noindex` (change frequency/priority are then locked, keeping their value)
 - Blocks (content blocks from [c975L/UiBundle](https://github.com/975L/UiBundle))
 - Creation / modification timestamps and author reference
+
+The *Display the page title* switch above is stored in `Page::$options`, a single JSON column holding the page's benign display options — the same reasoning as UiBundle's `Block::$data`: adding an option is then a code change alone, with no schema migration for every app running this bundle to replay. Read and write them through named accessors (`isTitleDisplayed()`/`setIsTitleDisplayed()`, over the generic `getOption()`/`setOption()`), never as raw string keys scattered around: that's where each option's default lives, and it's the property path EasyAdmin's fields and Twig both resolve. Anything the database itself has to filter, sort or join on — `slug`, `isPublished`, `isIndexable`, read by the page queries and the sitemap — stays a real column.
 
 Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` template, which displays the page title, summarySocialNetwork, and its associated blocks.
 
@@ -229,7 +244,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
 | `twig_content` | `label.category_twig` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
-| `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu` context (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page`. Not cacheable: its "active" state depends on the current request path. |
+| `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu`/`menu_navbar` contexts (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page` - and, `menu_navbar` being exclusive, it is the only kind a `navbar` offers at all. Not cacheable: its "active" state depends on the current request path. |
 
 Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias. Like any `ui.block`, `menu_link` is `pickable: true` and has no context restriction, so it also shows up in a `Page`'s own block picker - harmless (it just renders a link) but not the intended use.
 
@@ -239,15 +254,13 @@ Pages are managed in the EasyAdmin dashboard via `PageCrudController`. The menu 
 
 Selected pages can also be exported as a zip (title/slug/blocks, any Block's Media files bundled in) via the index's "Export selection" batch action, gated by `site-role-admin` — meant to be re-uploaded on another site/environment through ConfigBundle's **Import content** dashboard screen (see `PageImportProvider`, and ConfigBundle's README, "Contributing import providers from other bundles"). Ids never need to match between the two sites: pages/media are matched by slug on import. `PageExportProvider` (the same serialization, every non-deleted page) also plugs Pages into ConfigBundle's **Export sync (everything)** dashboard shortcut.
 
-### Page templates
+### Publish as replacement
 
-`config/templates/*.json` ships reusable, ordered arrangements of blocks (kind + example data) an admin can apply to a `Page` — a starting point to edit from, not a live/synced layout. `default` is a generic, content-agnostic one meant as a sane starting point regardless of the site's theme; `agency-home`/`portfolio-showcase` are fuller demo arrangements. Listed via `SiteTemplateProvider` (implements `TemplateProviderInterface`) and aggregated with any other bundle's — or the consuming app's own — templates by `TemplateRegistry`: an app that wants its own templates implements `TemplateProviderInterface` in its own service (auto-tagged), no change needed here.
+Any non-deleted page's edit screen carries a "Publish as replacement" action group, listing every other page as a target — picking one swaps the current page in for it: the target's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one).
 
-From the admin, `PageCrudController`'s per-template "Apply template" action never edits the page in place: it creates an unpublished draft copy pre-filled with the template's blocks, marked as replacing the source page. The `c975l:site:templates:apply` command (see [Commands](#commands)) still applies in place, deliberately, for scripted use across several pages/sites at once. Both share the same `TemplateApplier`.
+The usual way to prepare such a replacement is the "Duplicate" action: it builds an unpublished copy of a page, which is then reworked at leisure and swapped in once ready. A page's `replaces` field is only a fallback default for the action group's target, never a requirement.
 
-Any non-deleted page's edit screen carries its own "Publish as replacement" action group, listing every other page as a target — picking one swaps the current page in for it: the target's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one). This works for any page, not just a template-created draft (above) — that draft's "replaces" origin is now only a fallback default, no longer a requirement.
-
-A page template is entirely independent from the site's [theme](#themes) (colors/fonts/shape): neither ever references the other, and applying one never touches the other.
+There is deliberately **no page-template mechanism**: a page's block arrangement is composed in the admin, block by block, and never derived from a stored arrangement. A "template" here could only ever be a snapshot of example content copied once, with no relation kept afterwards — a maintenance cost with no matching benefit, since a page's structure is built once in a site's life. Use "Duplicate" for a page that should look like an existing one.
 
 ---
 
@@ -255,14 +268,14 @@ A page template is entirely independent from the site's [theme](#themes) (colors
 
 The site-wide navbar, footer, email header and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer`, `email-header` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via `SiteGraphicCrudController`).
 
-Every location owns a single ordered `blocks` collection (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — menu links and any other registered block kind (e.g. SocialBundle's `social_links_display`) are freely sortable together, no separate "items" collection to keep in sync. A menu link is itself a block, of kind `menu_link` (form: `MenuLinkType`), targeting either:
+Every location owns a single ordered `blocks` collection (same generic UiBundle `Block` system as `Page`, see [Blocks defined by this bundle](#blocks-defined-by-this-bundle)) — menu links and any other registered block kind (e.g. SocialBundle's `social_links_display`) are freely sortable together, no separate "items" collection to keep in sync. **Except in the `navbar`**, whose picker only ever offers `menu_link`: a navigation bar is a plain list of links, anything else belongs in the page itself (UiBundle's exclusive `BlockRegistry::MENU_NAVBAR_CONTEXT`, see its README's `contexts` section). A menu link is itself a block, of kind `menu_link` (form: `MenuLinkType`), targeting either:
 
 - an existing `Page` (linked by its id, so renaming the page's slug never breaks the link) — unpublished pages stay pickable too, flagged "(draft)" in the picker, and simply resolve to no URL until published, or
 - a route contributed by another bundle (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route) below)
 
 `menu_link` resolves to a relative URL (`UrlGeneratorInterface::generate()`), fine for `navbar`/`footer` but not usable as-is inside an email — `email-header`/`email-footer` are meant for content that doesn't need one (e.g. social icons, legal blurbs), not for reusing the site's own links.
 
-Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle.
+Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [Blocks](#blocks-defined-by-this-bundle)). Access is controlled by the `site-role-editor` key in ConfigBundle. There is no "new menu" form at all: a menu's only own field is its location, one of four, each usable once — so the index shows one **create button per location not created yet**, each creating the row and opening its edit screen in a single click (`MenuCrudController::create()`, a CSRF-protected POST; `Action::NEW` is disabled). Composing the blocks then happens there, on a menu whose location — and therefore whose available block kinds — is already settled. A location that already has its row (double submit, stale index in another tab) just opens the existing one instead of hitting the unique constraint on `Menu::$location`.
 
 `navbar` and `footer` are rendered by built-in components already wired into the bundle's layout (`navigation`/`footer` blocks) — nothing to add in your app:
 
@@ -281,7 +294,11 @@ A block disappears from the rendered menu automatically (no dangling link) if it
 
 A `menu_link`'s target can also point at a specific **section** of a page, not just the page itself - useful for a one-page nav (`#services`, `#contact`...). Any UiBundle "Page sections" block kind (`hero`, `feature_bar`, `section_cards`, `expertise_banner`, `process_steps`, `portfolio_grid`, `cta_band`, `collection` - see UiBundle's README, "Anchors (in-page navigation)") can carry an anchor; once at least one block on a page has one, `MenuLinkType`'s target select lists it right under that page's own entry (e.g. `Home → Services`), with no extra step - it's still the same flat, filterable list, just with more rows.
 
-Under the hood, the target is stored as `page:<id>#<anchor>-<blockId>` and resolved by `MenuExtension::getMenuLinkUrl()` into `/home#services-42` - the trailing `#fragment` is only added when present, so a plain `page:<id>` target keeps working exactly as before.
+Sections nested in a container (a `text_section` inside a `flex_columns`, for instance) are listed too, as are the kinds whose anchor is an auto-derived `slug` rendered as-is (`text_section`, `article`) - the whole page tree is walked by UiBundle's `BlockAnchorCollector`, which also labels the saved target back in the rendered menu, so picker and menu can't disagree.
+
+Under the hood, the target is stored as `page:<id>#<fragment>` and resolved by `MenuExtension::getMenuLinkUrl()` into `/home#services-42` - the trailing `#fragment` is only added when present, so a plain `page:<id>` target keeps working exactly as before.
+
+A site-wide band rendered by the layout rather than by a page's own blocks (e.g. SocialBundle's automatic share buttons) is **not** in that list: only anchors carried by a page's own blocks are. To make one linkable, drop its block kind (e.g. `share_buttons_display`) into the page and give it an anchor there.
 
 ### Copyright
 
@@ -331,8 +348,7 @@ The detail page is disabled (not useful on top of the index and edit pages).
 Requires `c975l/config-bundle` >= v5.4.
 
 Some configs are shared server-level secrets rather than per-site application settings — for
-example `site-backup-db-user`/`site-backup-db-password`, used by `c975l:site:backup` (see
-[Commands](#commands)): a single privileged MySQL user reused to back up the database, not
+example `site-backup-db-user`/`site-backup-db-password`, used by ConfigBundle's `c975l:config:backup`: a single privileged MySQL user reused to back up the database, not
 something a client's own site admin should ever be able to read or overwrite. ConfigBundle flags
 these with `"restricted": true` in
 `configs.json`; any config so flagged is hidden entirely (index, edit, and export) from
@@ -352,12 +368,14 @@ To make your own bundle's configs restricted the same way, just add `"restricted
 restricted too: they gate the whole admin and decide which roles exist, so a plain `ROLE_ADMIN`
 must never be able to touch them.
 
-That last point matters for the role picker itself: `UserCrudController` strips `ROLE_SUPER_ADMIN`
-from the choices offered on the `roles` field unless the acting user already holds it — server-side,
-not just visually, so Symfony's `ChoiceType` rejects a crafted submission trying to sneak it in
-anyway. Without this, listing `ROLE_SUPER_ADMIN` in `user-roles-available` would let any
-`ROLE_ADMIN` grant it to themselves through the User CRUD and bypass every restricted config in one
-step.
+That last point matters for the role picker itself: `ROLE_SUPER_ADMIN` is decided by
+`UserCrudController`, not read from the config. It's stripped from whatever `user-roles-available`
+holds — which no longer declares it at all, it being the owner's role, granted once by
+`c975l:site:create` — and put back, first in the list, only for an acting user who already holds it.
+Server-side, not just visually: out of the choices means out of the submitted form's allowed values
+too, so Symfony's `ChoiceType` rejects a crafted submission trying to sneak it in anyway. Without
+this, a site that listed `ROLE_SUPER_ADMIN` in `user-roles-available` would let any `ROLE_ADMIN`
+grant it to themselves through the User CRUD and bypass every restricted config in one step.
 
 The reverse move is blocked too. `UserManagementVoter` (handed to EasyAdmin as the entity permission,
 so it's evaluated per row: on the index, where an inaccessible row keeps its place minus its actions,
@@ -513,7 +531,7 @@ SiteBundle contributes eleven `HealthCheckProviderInterface` implementations (se
 | `ContentQualityHealthCheckProvider` | `content-quality` | Missing/too short/too long `<title>` (30-65 characters) and meta description (50-160), missing `<h1>`, missing share tags (`og:title`, `og:description`, `og:image` - read from either the `property` or the `name` attribute), images without `alt`, broken links - internal (`<a href>` pointing at this site's own host) **and** external, each unique link checked once per run regardless of how many pages link to it, and an external one only ever a warning - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider`. See [what counts as an offence](#what-content-quality-actually-flags) - a decorative image and an unreachable server are deliberately *not* flagged | None |
 | `SslCertificateHealthCheckProvider` | `ssl-certificate` | TLS certificate expiry (warns at 30 days left, errors at 7) - one check for the whole site, since the certificate is issued for the host, not per-page. Skipped entirely if `site-url` isn't `https://` | None |
 | `MixedContentHealthCheckProvider` | `mixed-content` | `http://` images/scripts/stylesheets loaded from an `https://` page, per published page - skipped entirely if `site-url` isn't `https://` | None |
-| `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable and well-formed, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
+| `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable, well-formed, not empty and not stale, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
 | `DeclaredUrlsHealthCheckProvider` | `urls-<bundle>` | The same content-quality checks, over the urls **another bundle already declares for its sitemap** — books, products, photos, campaigns. See [Checking other bundles' urls](#checking-other-bundles-urls): nothing to implement bundle-side, and one kind per bundle so each can be scheduled at its own pace | None |
 | `DeploymentHealthCheckProvider` | `deployment` | Two site-wide deployment settings nothing else covers, both silent when they break: that `http://` really redirects to `https://` (checked with `max_redirects: 0`, so the redirect itself is the answer - a relative or `http://` target is only a warning, no redirect at all an error; skipped if `site-url` isn't `https://`), and that an unknown url (`/c975l-health-check-404-probe`, a fixed path so it reads as this check in the access logs) answers a real `404` carrying the site's own error page. A soft 404 answering `200` is an error - search engines index every typo as a page otherwise. "The site's own page" is a heuristic, same spirit as the `robots.txt` one: the body mentions `site-name` somewhere (header, footer, title), which the framework's default error page never does - it only ever downgrades a correct 404 to a warning, and is skipped when no `site-name` is set | None |
 | `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
@@ -533,17 +551,18 @@ php bin/console c975l:health-check:run --kind=urls-book --kind=urls-shop
 
 ### What content-quality actually flags
 
-Three rules keep the `content-quality` kind from reporting things you cannot fix:
+What it reports, and the rules that keep it from reporting things you cannot fix:
 
+- **Redirects.** A url that answers `301`/`302` before serving its content is a warning: whatever was measured belongs to the url the hop landed on, not to the one declared, and Search Console reports the hop as a *redirect error* rather than following it the way a browser silently does. The fix is to declare the final url. It costs no extra request - the hop count and final url are read off the analysis response's own `redirect_count`/`url` info, which the transport already resolved.
 - **Share tags.** Only the three a preview actually needs to render are required (`og:title`, `og:description`, `og:image`). `og:url`/`og:type` belong to the Open Graph protocol too, but nothing visible breaks without them, so they stay out rather than turning every page orange over a tag no one sees. A tag with an empty `content` counts as absent. Schema.org/JSON-LD is deliberately **not** checked: whether a page carries structured data depends on what it is, not on whether it's well built.
 
 - **Images.** A missing `alt` attribute is always an error. An explicitly empty `alt=""` is the *correct* markup for a decorative image, so it is only flagged when nothing marks it as decorative: no `aria-hidden="true"`, no `role="presentation"`/`role="none"`, and no enclosing `<a>`/`<button>` already carrying its own `aria-label`/`aria-labelledby`. A share button's icon inside a labelled link, or a logo inside a labelled link, is therefore correct as-is and stays out of the report - flagging it would leave the page in warning forever with nothing to fix.
 - **Every offender is listed individually** under its advice line on the page's own "Health check" tab (a collapsed list, so a page with a dozen images without `alt` doesn't bury the rest of the table), each linking straight to the block that produced it (`PageBlockLocator`, best-effort: it traces the rendered `src`/`href` back through the page's blocks, and falls back to the page's plain edit url when no block claims it).
 - **Links.** Only a conclusive HTTP status `>= 400` counts as broken. A transport failure (timeout, DNS, refused connection) and any status describing how the server treats *this client* rather than whether the url exists — `405`/`501` (the `HEAD` method refused), `403` and LinkedIn's non-standard `999` (bot filtering, which most big retailers and social sites apply to datacenter IPs), `429` (rate limiting) — are retried once with a `GET`, and if they still can't be concluded they are left out rather than reported. Link checks identify themselves as `Mozilla/5.0 (compatible; c975LHealthCheck/1.0; +https://github.com/975L/SiteBundle)`: honest enough that a WAF operator can look it up and allow it, while keeping the crawler shape far fewer filters reject outright than a bare library default. **External links are checked too, but a dead one is only ever a warning** — it isn't yours to fix on your own schedule, and it's the check most exposed to a false positive; a dead link on your own pages stays an error. Both are listed separately, in the same dedup/batching pass, so an external host is hit once per run and not once per page linking to it. Link checks are also fired in batches of 10 instead of all at once: Symfony's `HttpClient` caps concurrent connections per host, so a site-wide burst only queues the surplus while each queued request's own timeout is already running - which used to turn perfectly valid links into timeouts, and timeouts into "broken" rows.
 
-`W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) to skip a page that doesn't resolve on the checked environment with a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - not a warning/error, there's nothing to act on until the page is actually deployed), instead of forwarding a confusing raw HTTP error to the actual check. `'home'` maps to the site root, any other slug to `/pages/{slug}`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
+`W3cHtmlHealthCheckProvider`/`W3cCssHealthCheckProvider` share their page-existence-check-then-validate logic via `AbstractW3cValidationHealthCheckProvider`, only their `W3cValidatorClient` method and translation ids differ. `SitePageHealthCheckProvider`, both W3C providers and `ContentQualityHealthCheckProvider` resolve each page's public URL the same way (`PagePublicUrlResolver`, shared to avoid duplicating it) and its EasyAdmin edit URL the same way too (`PageEditUrlResolver`, so each row also links straight to the page behind it, alongside `MixedContentHealthCheckProvider`); the W3C providers and `ContentQualityHealthCheckProvider` also share `PageExistenceChecker` (a single `HEAD` request) so a page that doesn't resolve never reaches the actual check as a confusing raw HTTP error. The two react to it differently, on purpose: the W3C providers (like `SitePageHealthCheckProvider`) emit a "not tested" row (`HealthCheckResult::STATUS_SKIPPED`, shown neutrally - there is nothing for a validator to say about a page it never got, and nothing to spend a paid quota call on), while `ContentQualityHealthCheckProvider` reports what the page actually answered: **`404` is an error**, `410` a warning (removed on purpose, still listed), any other `4xx`/`5xx` an error carrying its own code, and a host that never answered at all an "unreachable" error told apart from the rest (`PageExistenceChecker::status()`, which returns the code where `exists()` only returns a bool). It used to be skipped there too, which meant a published page 404ing in production raised no dashboard alert at all - the very 404s Search Console reports. One kind reports each 404, not four. `'home'` maps to the site root, any other slug to `/pages/{slug}`, matching the routing `ContentAccessTest` already exercises. None of these providers run from a controller: only `c975l:health-check:run` (manually, or via your app's own [scheduler](#scheduler)) invokes `runChecks()`, so a slow or paid API call never blocks a request.
 
-**Run this against production's own database**, same constraint as `c975l:sitemaps:create`/`c975l:site:backup`: the page list comes from `PageRepository::findAllOrdered()` against whichever database the command is connected to, while the urls it builds always point at `site-url` (production). Run it from a dev/staging environment whose database has pages not yet synced to production (see [Contributing export providers](https://github.com/975L/ConfigBundle#contributing-export-providers-from-other-bundles)'s "Sync" zip) and you'll get failures for pages that simply aren't live yet - not a bug, just the wrong database for the question being asked. In normal operation this is a non-issue: the scheduler consumer already runs on production.
+**Run this against production's own database**, same constraint as `c975l:sitemaps:create`/`c975l:config:backup`: the page list comes from `PageRepository::findAllOrdered()` against whichever database the command is connected to, while the urls it builds always point at `site-url` (production). Run it from a dev/staging environment whose database has pages not yet synced to production (see [Contributing export providers](https://github.com/975L/ConfigBundle#contributing-export-providers-from-other-bundles)'s "Sync" zip) and you'll get failures for pages that simply aren't live yet - not a bug, just the wrong database for the question being asked. In normal operation this is a non-issue: the scheduler consumer already runs on production.
 
 **On WCAG/accessibility specifically**: there is no free, pure-PHP equivalent to a real WCAG scanner (tools like axe-core need a headless browser, i.e. Node) - `SitePageHealthCheckProvider`'s `accessibility` score is the only automated signal here, a rougher one than an itemized audit (it's the same axe-core engine under the hood, but reports one score, not per-criterion detail). A prior version of this bundle called WebAIM's WAVE API for itemized RGAA/WCAG detail; it was removed as credit-based pricing (~$0.04/page) doesn't scale to checking many pages across many sites. If you need an itemized audit trail for an accessibility declaration (RGAA 4.1's 106 criteria map to WCAG 2.1 AA, EAA enforceable since June 2025), run WAVE's own browser extension manually per page, or reintroduce a paid provider on your own `HealthCheckProviderInterface` implementation.
 
@@ -617,9 +636,11 @@ That file is for **shapes and layout** — radii, navbar/footer, section flats (
 
 A navbar painted with `--navbar-background: var(--primary)` has three tokens to inverse what would otherwise be invisible on it: `--navbar-site-name-color`/`--navbar-site-tagline-color` for the brand block, and `--navbar-btn-background`/`-background-hover`/`-color` for the single "primary" nav item's pill, whose defaults are UiBundle's `.btn-primary` colors.
 
-Navbar and footer both bleed full-viewport-width past `--body-max-width`, each through its own pair of tokens: `--navbar-width`/`--navbar-margin-x` and `--footer-width`/`--footer-margin-x`. A design that frames the page inside that max-width sets the pairs it needs to `auto`/`0` here, instead of overriding `.menu`/`footer` from `app.css`.
+Navbar and footer both bleed full-viewport-width past `--body-max-width`, each through its own pair of tokens: `--navbar-width`/`--navbar-margin-x` and `--footer-width`/`--footer-margin-x`. A design that frames the page inside that max-width sets the pairs it needs to `auto`/`0` here, instead of overriding `.menu`/`footer` from `app.css`. `--footer-margin-top` goes with them: a design stacking colored flats sets it to `0` so the footer band follows the previous flat with no strip of page background between the two.
 
 Rules that override a bundle's own classes belong in `app.css`, not in `theme.css` — the split is "values on one side, rules on the other", not "mine versus the bundle's".
+
+Only this bundle's and UiBundle's tokens are listed, not those of every c975L bundle a site happens to install — `theme.css` ships with SiteBundle, which has no business enumerating what it doesn't own. Each bundle documents its own (e.g. SocialBundle's `--social-share-*`), and several of them are read per-variant, so declaring one in `:root` collapses every variant that bundle offers into a single look — SocialBundle's share button styles, picked from its dashboard, stop having any visible effect. A design that really needs one overrides it in `app.css`, where taking a bundle's own rules over already belongs.
 
 ---
 
@@ -836,9 +857,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | --- | --- |
 | `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
 | `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project |
-| `php bin/console c975l:site:backup` | Backs up the database and `public/` files |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
-| `php bin/console c975l:site:templates:apply <template> <page>` | Creates or updates a page from a [page template](#page-templates) (`--title`, `--replace`, `--publish` options) |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
 | `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets, a site in maintenance is skipped entirely) |
 | `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collections) rows for a given collection (`--images-dir`, `--dry-run` options) |
@@ -914,7 +933,7 @@ Same backup behavior as the wizard: any target file it would overwrite is moved 
 the scaffold source is left untouched — so running it again on an unmodified project is a no-op.
 `assets/` files are the one exception: once a target exists there, it's left alone for good (no
 backup, no overwrite, even if the bundle's own copy later changes) since it's meant to become the
-app's own editable file from that first copy onward — see [A site's own one-off theme](#a-sites-own-one-off-theme).
+app's own editable file from that first copy onward — see [A site's own theme](#a-sites-own-theme).
 
 #### Translating the questions
 
@@ -995,7 +1014,7 @@ A dashboard alert (ConfigBundle's `AlertProviderInterface`) also surfaces import
 
 ## Scheduler
 
-The bundle provides `c975l:site:backup` and `c975l:site:messenger-cleanup` as schedulable commands, alongside ConfigBundle's own `c975l:sitemaps:create`/`c975l:health-check:run`. The schedule itself is defined in your app so each project controls its own timing.
+The bundle provides `c975l:site:messenger-cleanup` as a schedulable command, alongside ConfigBundle's own `c975l:sitemaps:create`/`c975l:health-check:run`/`c975l:config:backup`/`c975l:config:backup:digest` (see [ConfigBundle's Backup section](https://github.com/975L/ConfigBundle#backup) — it used to live here, and every satellite bundle needs it whether or not it has SiteBundle installed). The schedule itself is defined in your app so each project controls its own timing.
 
 ### 1. Create the schedule class
 
@@ -1024,9 +1043,9 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             // Sitemap: daily at 00:05
             ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('c975l:sitemaps:create')))
             // Backup: every 6 hours (DB dumped table by table; files: complete on the first run and every site-backup-full-interval-months after that, modified-since-last-run in between)
-            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:site:backup')))
-            // Same backup + a summary email: every Monday at 03:07
-            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:site:backup --report')))
+            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:config:backup')))
+            // Digest of the week's backups, emailed every Monday at 03:07 - a separate command running no backup of its own, so the summary doesn't depend on one particular run reaching its last line
+            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:config:backup:digest')))
             // Messenger cleanup: daily at 03:00
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             // Health check (see below): every registered provider is free, weekly is plenty

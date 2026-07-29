@@ -87,8 +87,7 @@ class SiteShortcutController extends AbstractController
         return $this->redirectToRoute('management');
     }
 
-    // Downloads the export of all "site_*" tables directly, same non-file-persisting approach as
-    // ConfigShortcutController::exportSql; writeFile is set to false so nothing lingers in var/export
+    // Streamed back directly, writeFile being false so nothing lingers in var/export
     #[AdminRoute(
         path: '/site/export-tables',
         name: 'site_export_tables',

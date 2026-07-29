@@ -26,7 +26,7 @@ use DateTimeImmutable;
  * The file truncates each table and disables FK checks around the inserts, so it can be replayed
  * as-is even if the target tables already contain data. site_config is always excluded, since
  * ConfigBundle has its own dedicated non-destructive export (see ConfigCrudController::exportSql).
- * Uses the same DB credentials as c975l:site:backup (site-backup-db-* config keys), so it works
+ * Uses the same DB credentials as ConfigBundle's c975l:config:backup (site-backup-db-* config keys), so it works
  * even when the DB user used by external GUI tools (DBeaver...) lacks export privileges.
  *
  * Usage:
@@ -83,9 +83,7 @@ class ExportTablesCommand extends Command
         return Command::SUCCESS;
     }
 
-    // Exports table data to SQL; public so it can also be triggered from the dashboard (see SiteShortcutController).
-    // $writeFile controls whether the dump is also persisted to var/export (CLI usage); the dashboard shortcut
-    // sets it to false since it streams the "content" straight back to the browser as a download instead
+    // Public so the dashboard can trigger it too; $writeFile is false there, the dump being streamed back
     public function exportTables(string $prefix = 'site_', ?string $outputPath = null, bool $writeFile = true): array
     {
         $database = (string) $this->configService->get('site-backup-database');
@@ -144,9 +142,8 @@ class ExportTablesCommand extends Command
         return $tmpFile;
     }
 
-    // Returns [tables, error]: error is null on success, the mysql stderr otherwise
-    // site_config is excluded: ConfigBundle has its own dedicated export (ConfigCrudController::exportSql) with
-    // upsert semantics that preserve sensitive values already set in production, which a TRUNCATE would destroy
+    // Returns [tables, error], error being null on success
+    // site_config is excluded: ConfigBundle's own export has upsert semantics a TRUNCATE would destroy
     private function getTableList(string $database, string $prefix, string $credentialsFile): array
     {
         $query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "

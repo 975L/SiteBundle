@@ -23,8 +23,6 @@ use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
-use c975L\SiteBundle\Management\TemplateApplier;
-use c975L\SiteBundle\Management\TemplateRegistry;
 use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
 use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Repository\PageRepository;
@@ -98,8 +96,6 @@ class PageCrudController extends AbstractCrudController
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
         private readonly ContentExporter $contentExporter,
-        private readonly TemplateRegistry $templateRegistry,
-        private readonly TemplateApplier $templateApplier,
         private readonly PageExportProvider $pageExportProvider,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
@@ -161,7 +157,7 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Data
-            // Confirms with the user before letting them change the title, since it will also change the slug (see updateEntity); handled by the "title-confirm" Stimulus controller (assets/js/title-confirm.js), loaded admin-wide via admin.js; not needed on a new page, since there's no existing slug/redirect to preserve yet and the confirmation modal isn't even rendered on the "new" crud page (only edit/index/detail)
+            // Confirmed with the user, the title change also changing the slug; not needed on a new page
             TextField::new('title')
                 ->setLabel(t('label.title', [], 'site'))
                 ->setRequired(true)
@@ -176,11 +172,14 @@ class PageCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->setHelp(t('label.slug_help', [], 'site'))
                 ->setFormTypeOption('disabled', $isHomePage),
+            // Unchecking it drops the layout's own <h1> for this page, for one opened by a block already carrying it (a "hero" left on its h1 level) - the page keeps its title everywhere else (browser tab, share tags, menus), it just stops being printed twice on screen
+            BooleanField::new('isTitleDisplayed')
+                ->setLabel(t('label.is_title_displayed', [], 'site'))
+                ->setHelp(t('label.is_title_displayed_help', [], 'site'))
+                ->hideOnIndex(),
 
             // Content
-            // "data-ai-rephrase" opts this plain textarea into UiBundle's rephrase button (see its
-            // block_theme.html.twig's textarea_widget) - off by default there since a plain textarea is
-            // also used for non-prose values (e.g. ConfigBundle's JSON config values) that must never get it
+            // Opts this textarea into UiBundle's rephrase button, off by default there for non-prose values
             TextareaField::new('summarySocialNetwork')
                 ->setLabel(t('label.summary_social_network', [], 'site'))
                 ->setHelp(t('label.summary_social_network_help', [], 'site'))
@@ -189,8 +188,8 @@ class PageCrudController extends AbstractCrudController
             $isPublishedField,
 
             // Sitemaps
-            // Unchecking it drops the page from the sitemap and switches its "robots" meta tag to "noindex", and locks changeFrequency/priority below - handled by the "sitemap-fields" Stimulus controller (assets/js/sitemap-fields.js), loaded admin-wide via controllers-admin.js. Locked read-only rather than disabled, so both keep their value across a save (see the controller): re-checking the box gives the page back the settings it had, and neither field is required anyway
-            // Set on the row rather than on the checkbox itself: a BooleanField rendered as a switch (the default) goes through EasyAdmin's <twig:ea:Switch> component, which only forwards id/name/value/checked/disabled/required/variant and drops "attr" entirely - "row_attr" is rendered by its form_row, and the "change" event bubbles up to it anyway
+            // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value
+            // Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
             BooleanField::new('isIndexable')
                 ->setLabel(t('label.is_indexable', [], 'site'))
                 ->setHelp(t('label.is_indexable_help', [], 'site'))
@@ -217,7 +216,7 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // SEO
-            // TextField, not Field: "ogImage" is a real Doctrine ManyToOne (to Media), so a plain Field::new() gets silently rebuilt by EasyAdmin into an AssociationField, which then force-injects EntityType-style "class"/"query_builder" form options regardless of the custom setFormType() below - and OgImageType (a plain AbstractType) doesn't declare those options, so the form crashes. TextField isn't auto-guessed as an association, so this injection never happens; setFormType() fully takes over as intended.
+            // TextField, not Field: an association would be rebuilt as an AssociationField, force-injecting options OgImageType doesn't declare
             TextField::new('ogImage')
                 ->setLabel(t('label.og_image', [], 'site'))
                 ->setHelp(t('label.og_image_help', [], 'site'))
@@ -226,10 +225,11 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // Blocks
-            // row_attr markers read by ea-sortable.js to allow dragging an already-saved Block into a
-            // container present on this same page (or back out to top-level) - see BlockMoveController.
+            // row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
             CollectionField::new('blocks')
                 ->setLabel(t('label.blocks', [], 'ui'))
+                // CollectionField's own default is "col-md-8 col-xxl-7" - every nesting level of blocks-in-blocks eats into that same width (EasyAdmin lays each entry out as a 20% label + the rest), so the block editor is given the full row instead of 7/12 of it
+                ->setColumns('col-12')
                 ->setEntryType(BlockType::class)
                 ->allowAdd()
                 ->allowDelete()
@@ -254,7 +254,7 @@ class PageCrudController extends AbstractCrudController
                 ->onlyWhenUpdating(),
 
             // Health check
-            // Only on edit: a page has to exist (and be checked at least once by c975l:health-check:run) before there's anything to show here - see PageHealthCheckExtension/PageHealthCheckPanelType/page_crud_form_theme.html.twig
+            // Edit only: the page must exist and have been checked once before there is anything to show
             FormField::addTab(t('label.tab_health_check', [], 'site'))
                 ->hideOnIndex()
                 ->onlyWhenUpdating(),
@@ -269,7 +269,6 @@ class PageCrudController extends AbstractCrudController
         $role = $this->configService->get('site-role-editor');
 
         $this->addPublishAsReplacementGroup($actions, $role);
-        $this->addTemplatesGroup($actions, $role);
 
         // Exports the checked pages with their Blocks (see exportSelection()/PageImportProvider) as a zip, meant to be re-uploaded elsewhere via ConfigBundle's ContentImportController - restricted to site-role-admin since it's a heavier/less common action than the regular editor permissions
         $actions->add(Crud::PAGE_INDEX, Action::new('exportSelection', t('action.export_selection', [], 'site'), 'fa fa-file-export')
@@ -304,8 +303,8 @@ class PageCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
     }
 
-    // Publishes this (non-deleted) page in place of another one, picked from this dropdown - one sub-action per existing other page, same pattern as addTemplatesGroup(). No longer requires having gone through applyTemplate()'s getReplaces() pre-fill: that field is now only a convenience default (see publishAsReplacement()), the actual target is always the id carried by the link
-    // Edit screen only, not among the row/detail inline actions - it's a rarer, deliberate act (swaps a live page out), warranting its own visual weight rather than sitting next to preview/duplicate. asWarningActionGroup() (not a raw addCssClass('btn-warning'), which would just sit alongside the group's own default "btn-secondary" and lose out to it in the cascade) flags that weight without implying danger the way asDangerActionGroup()'s red would. Not built/added at all when there's no other page to offer - an EasyAdmin ActionGroup can't be added with zero actions
+    // Publishes this page in place of another, one sub-action per page; the target is always the id the link carries
+    // Edit screen only, being a rarer deliberate act; not added at all with no other page, an ActionGroup needing at least one action
     private function addPublishAsReplacementGroup(Actions $actions, string $role): void
     {
         $subActions = [];
@@ -337,8 +336,8 @@ class PageCrudController extends AbstractCrudController
         ));
     }
 
-    // Only queried on the edit screen (the only place the group is ever added) - skips a full "every non-deleted page" query and one Action/closure per page on every index/detail render, where the dropdown couldn't be shown anyway
-    // Reads the request's crudAction attribute directly rather than via adminContextProvider->getContext(): the AdminContext is only attached to the request by AdminRouterSubscriber AFTER configureActions() runs, so getContext() is always null here. It's a request *attribute*, not a query param - Symfony's router merges it in from the matched route's defaults before EasyAdmin's own subscriber even runs, regardless of whether the URL is query-string or pretty-path based
+    // Edit screen only, skipping a full page query and one closure per page on every other render
+    // Read off the request attribute: the AdminContext is only attached after configureActions() runs
     private function replaceableTargets(): array
     {
         if (Crud::PAGE_EDIT !== $this->requestStack->getCurrentRequest()?->attributes->get(EA::CRUD_ACTION)) {
@@ -350,34 +349,6 @@ class PageCrudController extends AbstractCrudController
             ->setParameter('deleted', false)
             ->getQuery()
             ->getResult();
-    }
-
-    // Adds the Blocks of a shipped template (config/templates/*.json) to the page being edited - one action per template, only shown once at least one is registered
-    private function addTemplatesGroup(Actions $actions, string $role): void
-    {
-        $templates = $this->templateRegistry->all();
-        if ([] === $templates) {
-            return;
-        }
-
-        $group = ActionGroup::new('templates', t('label.templates', [], 'site'), 'fa fa-th-large');
-        foreach ($templates as $id => $template) {
-            $actionName = 'applyTemplate_' . $id;
-            $group->addAction(
-                // 'label' belongs to whichever bundle contributed the template (see TemplateProviderInterface) - 'site' is only the fallback for a provider that hasn't declared one
-                Action::new($actionName, $this->translator->trans($template['label'], [], $template['domain'] ?? 'site'))
-                    ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
-                        ->setController(self::class)
-                        ->setAction('applyTemplate')
-                        ->setEntityId($page->getId())
-                        ->set('template', $id)
-                        ->generateUrl())
-                    ->askConfirmation(t('confirm.apply_template', [], 'site'))
-            );
-            $actions->setPermission($actionName, $role);
-        }
-
-        $actions->add(Crud::PAGE_EDIT, $group);
     }
 
     // Every action this CRUD adds on top of EasyAdmin's own built-in ones, and where each of them shows
@@ -642,7 +613,7 @@ class PageCrudController extends AbstractCrudController
         );
     }
 
-    // Builds (but does not persist) a clone of a page and all its content (blocks, medias, og-image), unpublished - shared by duplicate() and applyTemplate(), so both stay consistent
+    // Builds (but does not persist) a clone of a page and all its content (blocks, medias, og-image), unpublished - used by duplicate()
     private function clonePage(Page $source): Page
     {
         $user = $this->security->getUser();
@@ -661,6 +632,8 @@ class PageCrudController extends AbstractCrudController
             ->setChangeFrequency($source->getChangeFrequency())
             // Carried over like the other SEO attributes - a copy of a deliberately noindex page (eg. "creer-un-compte") must not silently reappear in sitemap-site.xml and in Google's index
             ->setIsIndexable($source->isIndexable())
+            // The whole payload rather than option by option: the copy holds the same blocks, so every display option the source had answered stays true of it - and a new option needs nothing here
+            ->setOptions($source->getOptions())
             ->setIsPublished(false)
             ->setCreation($now)
             ->setModification($now);
@@ -679,43 +652,7 @@ class PageCrudController extends AbstractCrudController
         return $copy;
     }
 
-    // Applies a template's Blocks (kind + example data, in the template's order) to a fresh, unpublished copy of the page being edited - never mutates the live page in place, so this is safe to use on an already-published page (see clonePage()). The admin then edits the copy's pre-filled content and, once happy with it, uses publishAsReplacement() to swap it in for the original. Same idea as ConfigBundle's ThemeCrudController::applyPreset(), but via a copy instead of in place - TemplateApplyCommand (CLI) still applies in place, deliberately, for scripted use.
-    #[AdminRoute('/{entityId}/apply-template')]
-    public function applyTemplate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
-
-        $source = $context->getEntity()->getInstance();
-        $template = $this->templateRegistry->get((string) $request->query->get('template'));
-
-        if (null === $template) {
-            return $this->redirect(
-                $this->adminUrlGenerator
-                    ->setController(self::class)
-                    ->setAction(Action::EDIT)
-                    ->setEntityId($source->getId())
-                    ->generateUrl()
-            );
-        }
-
-        $copy = $this->clonePage($source)->setReplaces($source->getId());
-        $this->templateApplier->apply($copy, $template, $this->security->getUser());
-
-        $entityManager->persist($copy);
-        $entityManager->flush();
-
-        $this->addFlash('success', $this->translator->trans('flash.template_applied_to_copy', [], 'site'));
-
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction(Action::EDIT)
-                ->setEntityId($copy->getId())
-                ->generateUrl()
-        );
-    }
-
-    // Swaps this (unpublished) page in for the one it replaces: the original's slug is archived, this page takes it over and gets published, and the original is moved to trash (recoverable, see restore()). Looked up by id, not slug - the original's slug may have changed since this copy was created (e.g. archived by another draft's own publishAsReplacement()), and an id stays correct regardless. Since the public slug is never held by both rows at once, and never reassigned back to the trashed original, visitors are never routed to a deleted page (no 410) - two separate flushes so the unique constraint on slug is never violated by the swap itself, wrapped in one transaction so a failure between them can't leave neither row holding the live slug. The target's id comes from the "replaces" query param (picked from the $publishAsReplacementGroup dropdown in configureActions()), falling back to getReplaces() for a page created via applyTemplate() that hasn't had its dropdown target overridden.
+    // Swaps this (unpublished) page in for the one it replaces: the original's slug is archived, this page takes it over and gets published, and the original is moved to trash (recoverable, see restore()). Looked up by id, not slug - the original's slug may have changed since this copy was created (e.g. archived by another draft's own publishAsReplacement()), and an id stays correct regardless. Since the public slug is never held by both rows at once, and never reassigned back to the trashed original, visitors are never routed to a deleted page (no 410) - two separate flushes so the unique constraint on slug is never violated by the swap itself, wrapped in one transaction so a failure between them can't leave neither row holding the live slug. The target's id comes from the "replaces" query param (picked from the $publishAsReplacementGroup dropdown in configureActions()), falling back to getReplaces() for a page that already carries a target and hasn't had its dropdown target overridden.
     #[AdminRoute('/{entityId}/publish-as-replacement')]
     public function publishAsReplacement(AdminContext $context, EntityManagerInterface $entityManager, ?Request $request = null): Response
     {

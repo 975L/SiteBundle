@@ -26,8 +26,7 @@ class EmailVerifier
     ) {
     }
 
-    // Sent through EmailService (not MailerInterface directly) so registration confirmation gets the same
-    // ROLE_SUPER_ADMIN "email-debug" preview as every other c975L email, instead of always really sending
+    // Through EmailService, so registration gets the same "email-debug" preview as every other email
     public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, string $subject, string $template, string $to): bool
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(

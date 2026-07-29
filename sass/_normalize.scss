@@ -199,13 +199,7 @@
     -webkit-appearance: button;
   }
 
-  /**
-   * Dropped from normalize.css v8 here: the ::-moz-focus-inner rule (removing Firefox's inner dotted
-   * focus border) and the :-moz-focusring rule that only existed to restore what it unset. Firefox
-   * stopped drawing that inner border years ago and draws its focus ring through :focus-visible like
-   * every other engine, so the pair is a no-op today - and eight vendor-extension warnings on the
-   * W3C CSS validator. The -webkit- rules around them are kept: those still matter on iOS/Safari.
-   */
+  /* The ::-moz-focus-inner/:-moz-focusring pair is dropped: a no-op today, and eight validator warnings */
 
   /**
    * Correct the padding in Firefox.

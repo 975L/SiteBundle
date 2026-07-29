@@ -19,6 +19,7 @@ use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Twig\MenuExtension;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Service\BlockAnchorCollector;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
@@ -130,6 +131,7 @@ class MenuExtensionTest extends TestCase
             $configService ?? $this->createConfigService(),
             $defaultPagesImporter ?? $this->createDefaultPagesImporter(),
             $copyrightExtension ?? $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
         );
     }
 
@@ -208,6 +210,7 @@ class MenuExtensionTest extends TestCase
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
         );
 
         $first = $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -245,6 +248,7 @@ class MenuExtensionTest extends TestCase
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -274,6 +278,7 @@ class MenuExtensionTest extends TestCase
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -388,6 +393,22 @@ class MenuExtensionTest extends TestCase
         $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
 
         $this->assertSame('contact', $extension->getMenuLinkLabel('page:42#contact-7'));
+    }
+
+    // A section nested in a container ("flex_columns" and its slots), targeted by its own "slug"-based id - resolved through the very collector MenuLinkType lists its choices with, so a link offered by the picker is always labelled here
+    public function testGetMenuLinkLabelResolvesASectionNestedInAContainer(): void
+    {
+        $section = (new Block())->setKind('text_section')->setData(['slug' => 'le-manifeste', 'title' => 'Le manifeste']);
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($section, 16);
+        $container = (new Block())->setKind('flex_columns');
+        (new \ReflectionProperty(Block::class, 'id'))->setValue($container, 58);
+        $container->addSlot($section);
+
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page->addBlock($container);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page]);
+
+        $this->assertSame('Le manifeste', $extension->getMenuLinkLabel('page:42#le-manifeste'));
     }
 
     // The section's block was since removed/moved off the page - falls back to the page's own title rather than an empty/broken label

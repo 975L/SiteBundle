@@ -1,5 +1,101 @@
 # Changelog
 
+## v7.12.0
+
+- Removed SocialBundle's `--social-share-*` custom properties from the scaffolded `theme.css` (29/07/2026)
+- Declaring them in `:root` flattened every share buttons style into one (29/07/2026)
+- A page answering 404 is now a `content-quality` error instead of a "not tested" row (29/07/2026) [BC-Break]
+- A page answering 410 is now a `content-quality` warning, and any other 4xx/5xx an error carrying its own code (29/07/2026)
+- A host that never answered is now told apart from a page that answers 404 (29/07/2026)
+- Added `PageExistenceChecker::status()`, returning the code where `exists()` only returns a bool (29/07/2026)
+- `content-quality` now warns on a url that redirects before serving its content (29/07/2026)
+- `PageHealthCheckAdviceBuilder` now advises on a redirecting url (29/07/2026)
+- `seo-files` now warns on a sitemap declaring no url (29/07/2026)
+- `seo-files` now warns on a sitemap file not rewritten for over 30 days (29/07/2026)
+- `SeoFilesClient::fetch()` now also returns the response's `Last-Modified` date (29/07/2026)
+- Added `Page::$options`, a JSON payload holding the per-page display options (29/07/2026)
+- Added `Page::$isTitleDisplayed`, the first of them, shown as a switch on the page edit screen (29/07/2026)
+- `Page`'s export/import now carries `options` (29/07/2026)
+- A page answering 403, 405, 429, 501 or 999 is now a `content-quality` warning instead of an error (29/07/2026)
+- `ContentQualityClient::INCONCLUSIVE_STATUSES` is now public (29/07/2026)
+- Added the `label.health_check_url_inconclusive` translation (29/07/2026)
+- Added the `label.health_check_url_not_found`/`_http_error`/`_unreachable`, `label.health_check_content_quality_redirects`, `label.health_check_advice_redirects`, `label.health_check_sitemap_empty`/`_stale`/`_ok_urls` translations (29/07/2026)
+- Moved the `site-url` config entry and its translations to ConfigBundle (29/07/2026) [BC-Break]
+- Moved `BackupCommand` to ConfigBundle (29/07/2026) [BC-Break]
+- Moved the `site-backup-*` config entries and their translations to ConfigBundle, slugs unchanged (29/07/2026) [BC-Break]
+- The scaffold's `MaintenanceSchedule` now runs `c975l:config:backup`, the former name kept as an alias (29/07/2026)
+- The scaffold's `MaintenanceSchedule` now runs ConfigBundle's `c975l:config:backup:digest` on Mondays, instead of `c975l:config:backup --report` (29/07/2026)
+- `PageHealthCheckAdviceBuilder` no longer logs the `backup` kind as unmapped (29/07/2026)
+- Moved `sass/_forms.scss` to UiBundle (29/07/2026) [BC-Break]
+- Moved the password behaviours out of the `basic` controller into UiBundle's own `password` one, along with `assets/js/handlers.js` and `translations.js` (29/07/2026) [BC-Break]
+- `layout.html.twig` now writes `data-controller="basic password"` (29/07/2026)
+- Moved `public/icons/eye.svg`/`eye-slash.svg` to UiBundle (29/07/2026)
+- Added `color-scheme` to `:root` and to the dark-mode block (29/07/2026)
+- Dark mode now restates every form token (`--form-input-color`, `--label-color`, `--required-color`, `--input-*`) (29/07/2026)
+- Fixed a dark site showing `#555` field text on its `#121212` page, an invisible hover glow and a field with no surface of its own (29/07/2026)
+- Added `--input-background`, `--input-valid-border-color`/`--input-invalid-border-color` and their `-shadow-` pair, `--input-icon-filter` and `--form-width` (29/07/2026)
+- `sass/_dimensions.scss` is now used by `emails.scss` alone, its width classes duplicating UiBundle's `sass/_sizes.scss` (29/07/2026) [BC-Break]
+- Moved `sass/_badges.scss`, `_blockquotes.scss`, `_alignments.scss`, `_colors.scss` and `_iframe.scss` to UiBundle (29/07/2026) [BC-Break]
+- Added `--alert-color`, and dark mode now restates it along with the four alert backgrounds and `--alert-danger-color` (29/07/2026)
+- `--alert-danger-color` darkened to `#9c3a44`, `#b64450` failing WCAG AA on its own tint (29/07/2026)
+- Added `--input-invalid-text-color`, lightened in dark mode (29/07/2026)
+- Added `--input-margin-block`, the room kept above and below a field (29/07/2026)
+- Added `--input-glyph-offset`, the distance from the bottom of a field's wrapper to its validation glyph (29/07/2026)
+- `sass/emails.scss` now holds this site's branding alone, the email base coming from UiBundle's own (29/07/2026) [BC-Break]
+- Removed `sass/_email-overrides.scss` (29/07/2026) [BC-Break]
+- `emails/fullLayout.html.twig` now sources `@c975LUiCss/emails.min.css` before this bundle's own (29/07/2026)
+- `emails/fullLayout.html.twig` now runs the whole `<style>` through `resolve_css_variables` before inlining (29/07/2026)
+- `sass/emails.scss` keeps `_variables.scss` for the footer's own tokens (29/07/2026)
+- Moved `tests/TranslationsJsTest` to UiBundle with the file it guards (29/07/2026)
+- Removed the "new menu" form, the index now offering one create button per location not created yet (29/07/2026) [BC-Break]
+- Removed `templates/management/menu_crud_new.html.twig` (29/07/2026) [BC-Break]
+- Added `MenuCrudController::create()`, creating the row for the posted location and opening its edit screen (29/07/2026)
+- A menu's location is now frozen on every screen (29/07/2026)
+- The menu index now shows its row actions inlined (29/07/2026)
+- Added the `label.create_menu` translation (29/07/2026)
+- A navbar now only offers `menu_link`, through UiBundle's exclusive `menu_navbar` context (29/07/2026) [BC-Break]
+- `menu_link` is now tagged `contexts: 'menu,menu_navbar'` (29/07/2026)
+- `MenuLinkType` now builds its anchor choices with UiBundle's `BlockAnchorCollector`, a container's nested sections included (29/07/2026)
+- `MenuLinkType` now eager-joins the blocks' slots (29/07/2026)
+- `MenuExtension` now resolves an anchor's label through that same collector, memoized per page (29/07/2026)
+- The blocks collection now takes the full row on the page and menu edit screens (29/07/2026)
+- `body` is now a flex column, keeping the footer at the bottom of a page too short to fill the viewport (29/07/2026)
+- The share buttons moved out of `<main>` into their own `<aside class="page-share">` (29/07/2026)
+- Added `StickyFooterTest` (29/07/2026)
+- `user-roles-available` no longer ships ROLE_SUPER_ADMIN, `UserCrudController` offering it to an acting super admin alone (29/07/2026)
+- Added a TL;DR and a contents index to the readme (29/07/2026)
+- Trimmed the comments across the bundle (29/07/2026)
+
+## v7.11.0
+
+- `--section-bg-muted`, `--footer-border` and `--footer-link-hover-background` are now mixed out of the site's own colors in `sass/_variables.scss` itself, where they were only tinted in the scaffolded theme: the muted flat comes from `--primary` instead of `--surface-alt`'s grey, the footer rule and its link hover from `--footer-background` instead of a flat grey and a black wash (29/07/2026)
+- A site with no `assets/styles/themes/theme.css` of its own therefore renders those three differently - see UPGRADE (29/07/2026)
+- `--surface-alt` keeps its neutral definition, still backing what genuinely wants a grey (a portfolio thumbnail's empty frame) (29/07/2026)
+- Added `--frame-background`, the canvas on both sides of the page once the viewport is wider than `--body-max-width`, with `html` now carrying it in `sass/_general.scss`. Defaults to `var(--background)`, which is what a browser already painted there on its own (29/07/2026)
+- The scaffolded `theme.css` now lists the whole override surface - every custom property SiteBundle, UiBundle and SocialBundle read, 101 of them against 31 before - instead of the shape tokens alone (29/07/2026)
+- It ships entirely commented out, at the bundle's own defaults: a fresh site freezes nothing, so a later change to a default reaches it, and the file's active lines are exactly what its design decides (29/07/2026)
+- Added `ScaffoldThemeTest`, locking that copy against the compiled `:root` - every declared token offered, every offered value current, nothing left active (29/07/2026)
+- Removed `--button-background-secondary-light`, the only token of the `:root` no stylesheet ever read - its `-primary-light` counterpart backs the slider's credits strip and a page-section rule, this one backed nothing (29/07/2026) [BC-Break]
+- Recompiled `public/css/emails.css`, which had gone stale on `--footer-margin-top` (29/07/2026)
+- Removed the page-template mechanism entirely: `TemplateProviderInterface`, `TemplateRegistry`, `SiteTemplateProvider`, `TemplateApplier`, its `c975l.template_provider` compiler pass, the three shipped `config/templates/*.json` arrangements, `PageCrudController::applyTemplate()` and its "Templates" action group (28/07/2026) [BC-Break]
+- Removed the `c975l:site:templates:apply` command, the only real use of the mechanism, and one no site had scripted (28/07/2026) [BC-Break]
+- A "template" here was only ever a snapshot of example content copied once into Blocks, with no relation kept afterwards: it read as a maintained source of truth while being none, for a page structure a site composes once in its life. "Duplicate" covers a page meant to look like an existing one (28/07/2026)
+- `Page::$replaces` and "Publish as replacement" are untouched, both having stopped depending on `applyTemplate()` before this (28/07/2026)
+- The scaffolded `assets/styles/themes/theme.css`, now the only starting point a new site gets for its theme, has its three flat neutrals tinted with the site's own colors: `--footer-border` and `--footer-link-hover-background` are mixed out of `--footer-background`, and `--section-bg-muted` out of `--primary` in place of `--surface-alt`'s grey (28/07/2026)
+- Being under `scaffold/assets`, that file is only ever written on a first install (`ScaffoldInstaller` leaves an existing asset alone), so every site already running keeps its own theme untouched (28/07/2026)
+- `ThemeVariablesCssListener` no longer mentions "an admin applying a preset", the theme-preset mechanism it referred to having been removed from ConfigBundle (28/07/2026)
+
+- Added `Page::$options`, one JSON payload for the page's benign display options (same reasoning as UiBundle's `Block::$data`): every option added from now on is a code change alone, with no schema migration for the apps running this bundle to replay (28/07/2026)
+- Added `Page::getOptions()`/`setOptions()`/`getOption()`/`setOption()`, and its first option: `isTitleDisplayed()`/`setIsTitleDisplayed()`, letting an editor drop the layout's own `<h1>` on a page opened by a block already carrying one (28/07/2026)
+- `PageCrudController` offers it right under the slug, and carries the whole payload over when a page is duplicated (28/07/2026)
+- Added `PageTest`, covering the option accessors, their defaults and the property path EasyAdmin and the layout read them through (28/07/2026)
+- `ContentQualityClient` now returns `h1Count` in place of `hasH1`, the check having no way to see a page carrying several `<h1>` until now (28/07/2026) [BC-Break]
+- The `content-quality` check reports a page holding several `<h1>` as a warning, valid HTML but as many top-level subjects announced for one page (28/07/2026)
+- `PageHealthCheckAdviceBuilder` advises on that case, and still reads the `hasH1` detail of the rows persisted before (28/07/2026)
+- Added `--footer-margin-top`, the gap before the footer band being hardcoded while every other footer property already read a token (28/07/2026)
+- The scaffolded `assets/styles/themes/theme.css` restates it at its default value (28/07/2026)
+- A published page no longer renders the empty `.container` holding the preview alert, its own bottom margin and padding opening a gap between the navbar and the page's first block (28/07/2026)
+
 ## v7.10.1
 
 - Replaced ids by hash in translations (27/07/2026)

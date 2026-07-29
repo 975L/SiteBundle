@@ -22,10 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Lets an admin upload several font files (ttf/woff/woff2) at once instead of one FontCrudController row at a
-// time - name/weight/style are guessed from each file's own filename (see FontFilenameParser), then each file
-// goes through the very same Font entity/FontCssListener pipeline as a single upload. A wrong guess is fixed
-// afterward on that row's own FontCrudController edit screen, same as manually correcting a typo
+// Uploads several font files at once, guessing name/weight/style from each filename; a wrong guess is fixed on that row afterward
 class FontBulkImportController extends AbstractController
 {
     private const ALLOWED_EXTENSIONS = ['ttf', 'woff', 'woff2'];

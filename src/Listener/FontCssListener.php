@@ -23,11 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-// Fires for any Font flushed through the EntityManager and regenerates public/bundles/build/site-fonts-uploaded.css
-// from every currently uploaded Font - same "compiled from DB, single source of truth" pattern as ThemeVariablesCssListener,
-// but for the fonts rather than the theme colors (see FontService, which offers their names to the "font" kind config
-// selects). Also a CacheWarmer for the same reason: rows persisted/restored without firing
-// a fresh Doctrine event must still produce an up-to-date file on cache:warmup/cache:clear.
+// Regenerates the compiled @font-face stylesheet from every uploaded Font, on flush and on cache warmup
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::postRemove)]
@@ -82,8 +78,7 @@ class FontCssListener implements CacheWarmerInterface
     // Rewrites the whole file from every current Font row, not just the one that changed
     private function regenerate(): void
     {
-        // The <head>'s font preloads are computed from the very same rows (see FontPreloadExtension), so they go stale
-        // at exactly the same moment as the compiled CSS below
+        // The <head>'s preloads are computed from the same rows, so they go stale at the same moment
         $this->cache->delete(FontPreloadExtension::CACHE_KEY);
 
         $blocks = [];
@@ -113,8 +108,7 @@ class FontCssListener implements CacheWarmerInterface
             str_replace('"', '\\"', $font->getName() ?? ''),
             $font->getFilename(),
             $format,
-            // A variable font's real axis range is hidden behind its .woff2 Brotli encoding - declaring the full
-            // 100-900 span is always safe, the browser clamps to what the file's own fvar table actually supports
+            // The full 100-900 span is always safe, the browser clamping to what the file supports
             $font->isVariable() ? '100 900' : (string) $font->getWeight(),
             $font->getStyle(),
         );

@@ -68,7 +68,7 @@ class PageHealthCheckExtensionTest extends TestCase
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_WARNING)
             ->setSummary('summary')
-            ->setDetails(['hasDescription' => false, 'hasH1' => true, 'imagesWithoutAlt' => [], 'brokenLinks' => []]);
+            ->setDetails(['hasDescription' => false, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'brokenLinks' => []]);
 
         $repository = $this->createMock(HealthCheckResultRepository::class);
         $repository->expects($this->once())->method('findLatestByUrl')->with('https://example.com/')->willReturn([$result]);
@@ -96,7 +96,7 @@ class PageHealthCheckExtensionTest extends TestCase
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_OK)
             ->setSummary('summary')
-            ->setDetails(['hasDescription' => true, 'hasH1' => true, 'imagesWithoutAlt' => 0, 'brokenLinks' => []]);
+            ->setDetails(['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => 0, 'brokenLinks' => []]);
 
         $repository = $this->createStub(HealthCheckResultRepository::class);
         $repository->method('findLatestByUrl')->willReturn([$securityHeaders, $contentQuality]);

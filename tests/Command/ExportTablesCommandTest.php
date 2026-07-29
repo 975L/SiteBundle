@@ -26,8 +26,7 @@ class ExportTablesCommandTest extends TestCase
         return $bag;
     }
 
-    // A bogus host/user makes the mysql client fail instantly with "Access denied", driving
-    // getTableList() into its error branch without ever needing a real database
+    // Bogus credentials make mysql fail instantly, driving getTableList() into its error branch
     private function createConfigService(): ConfigServiceInterface
     {
         $values = [

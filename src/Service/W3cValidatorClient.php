@@ -17,12 +17,7 @@ class W3cValidatorClient
     private const HTML_ENDPOINT = 'https://validator.w3.org/nu/';
     private const CSS_ENDPOINT = 'https://jigsaw.w3.org/css-validator/validator';
 
-    // Warnings the CSS validator raises about constructs that are correct and deliberate rather than defects to
-    // fix - its own CSS3 profile simply predates them. They are returned in full (readCss()'s "benignWarnings"),
-    // only counted apart from the actionable ones: the Health check summary still shows the same warning total as
-    // the W3C report it links to, and only the row's status follows the actionable count. Without this, a
-    // stylesheet built on custom properties (one warning per var() usage, ~65 on a c975L site) leaves the
-    // "w3c-css" row permanently orange, which is a light nobody looks at any more
+    // Warnings the CSS validator's own profile predates; returned in full, only counted apart so custom properties don't leave the row permanently orange
     private const BENIGN_CSS_WARNING_PATTERNS = [
         // "Due to their dynamic nature, CSS variables are currently not statically checked" - custom properties are a W3C Recommendation the validator cannot resolve statically, not a defect
         'not statically checked',

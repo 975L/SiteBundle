@@ -1,4 +1,3 @@
-@charset "UTF-8";
 /*
  * (c) 2018: 975L <contact@975l.com>
  * (c) 2018: Laurent Marquet <laurent.marquet@laposte.net>
@@ -183,13 +182,7 @@ button,
   -webkit-appearance: button;
 }
 
-/**
- * Dropped from normalize.css v8 here: the ::-moz-focus-inner rule (removing Firefox's inner dotted
- * focus border) and the :-moz-focusring rule that only existed to restore what it unset. Firefox
- * stopped drawing that inner border years ago and draws its focus ring through :focus-visible like
- * every other engine, so the pair is a no-op today - and eight vendor-extension warnings on the
- * W3C CSS validator. The -webkit- rules around them are kept: those still matter on iOS/Safari.
- */
+/* The ::-moz-focus-inner/:-moz-focusring pair is dropped: a no-op today, and eight validator warnings */
 /**
  * Correct the padding in Firefox.
  */
@@ -302,7 +295,9 @@ template {
 }
 
 :root {
-  --alert-danger-color: #b64450;
+  color-scheme: light;
+  --alert-color: #000;
+  --alert-danger-color: #9c3a44;
   --alert-danger-background: #f2dede;
   --alert-info-background: #d9edf7;
   --alert-success-background: #d0e9c6;
@@ -319,7 +314,6 @@ template {
   --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
   --button-background-secondary: rgb(218, 126, 57);
   --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black);
-  --button-background-secondary-light: color-mix(in srgb, var(--secondary) 50%, white);
   --button-background-success: rgb(40, 167, 69);
   --button-background-success-dark: rgb(40, 167, 69, 0.9);
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -337,7 +331,8 @@ template {
   --border-accent: color-mix(in srgb, var(--primary) 35%, var(--background));
   --surface-inverse: #232323;
   --text-on-inverse: #d8d8d8;
-  --section-bg-muted: var(--surface-alt);
+  --frame-background: var(--background);
+  --section-bg-muted: color-mix(in srgb, var(--background) 94%, var(--primary));
   --section-bg-primary: var(--primary);
   --section-bg-dark: var(--text);
   --radius-btn: 5px;
@@ -364,11 +359,12 @@ template {
   --footer-text-hover: var(--footer-text);
   --footer-items-direction: column;
   --footer-items-justify: flex-start;
-  --footer-border: solid grey 2px;
+  --footer-border: solid color-mix(in srgb, var(--footer-background) 80%, black) 2px;
   --footer-width: 100vw;
   --footer-margin-x: calc(50% - 50vw);
   --footer-padding: 2em 15px 3em 15px;
-  --footer-link-hover-background: rgba(0, 0, 0, 0.1);
+  --footer-margin-top: 3em;
+  --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text));
   --disabled: #808080;
   --font-family-title: var(--c975l-font-family-title, sans-serif);
   --font-family-body: var(--c975l-font-family-body, sans-serif);
@@ -383,6 +379,16 @@ template {
   --input-focus-border-color: rgb(24, 115, 200);
   --input-focus-shadow-color: rgb(66, 130, 189);
   --input-shadow-color: #4d4d4d;
+  --input-background: transparent;
+  --input-margin-block: 0.4em 1em;
+  --input-glyph-offset: 9.5px;
+  --input-valid-border-color: var(--button-background-success);
+  --input-valid-shadow-color: var(--button-background-success);
+  --input-invalid-border-color: var(--button-background-danger);
+  --input-invalid-shadow-color: var(--button-background-danger);
+  --input-invalid-text-color: var(--button-background-danger);
+  --input-icon-filter: none;
+  --form-width: min(70vw, 1000px);
   --readmore-lines: 5;
   --required-color: #000;
   --white: #fff;
@@ -390,79 +396,62 @@ template {
 
 /* DARK MODE */
 :root[data-theme=dark] {
+  color-scheme: dark;
   --background: #121212;
   --text: #e0e0e0;
   --black: #e0e0e0;
   --white: #1e1e1e;
   --card-background: #1e1e1e;
+  --form-input-color: #e0e0e0;
+  --label-color: #a8a8a8;
+  --required-color: #e0e0e0;
+  --input-background: rgba(255, 255, 255, 0.05);
+  --input-border-bottom-color: #5a5a5a;
+  --input-border-color: #a8a8a8;
+  --input-shadow-color: rgba(255, 255, 255, 0.15);
+  --input-focus-border-color: rgb(96, 165, 250);
+  --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
+  --input-icon-filter: invert(1);
+  --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
+  --alert-color: #e0e0e0;
+  --alert-danger-color: #f0a8b0;
+  --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
+  --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
+  --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
+  --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
   --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
   --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
+    color-scheme: dark;
     --background: #121212;
     --text: #e0e0e0;
     --black: #e0e0e0;
     --white: #1e1e1e;
     --card-background: #1e1e1e;
+    --form-input-color: #e0e0e0;
+    --label-color: #a8a8a8;
+    --required-color: #e0e0e0;
+    --input-background: rgba(255, 255, 255, 0.05);
+    --input-border-bottom-color: #5a5a5a;
+    --input-border-color: #a8a8a8;
+    --input-shadow-color: rgba(255, 255, 255, 0.15);
+    --input-focus-border-color: rgb(96, 165, 250);
+    --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
+    --input-icon-filter: invert(1);
+    --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
+    --alert-color: #e0e0e0;
+    --alert-danger-color: #f0a8b0;
+    --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
+    --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
+    --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
+    --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
   }
 }
-/* COLORS */
-.primary {
-  color: var(--primary);
-}
-
-.secondary {
-  color: var(--secondary);
-}
-
-.blue {
-  color: #00f;
-}
-
-.lightgrey {
-  color: #d3d3d3;
-}
-
-.darkgrey {
-  color: #585858;
-}
-
-.green {
-  color: #008000;
-}
-
-.grey {
-  color: #808080;
-}
-
-.maroon {
-  color: #800000;
-}
-
-.orange {
-  color: #e56717;
-}
-
-.pink {
-  color: #ff4081;
-}
-
-.purple {
-  color: #800080;
-}
-
-.red {
-  color: #f00;
-}
-
-.white {
-  color: #fff;
-}
-
 /* GENERAL */
 *,
 *::before,
@@ -473,13 +462,26 @@ template {
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  background-color: var(--frame-background);
 }
 
 body {
   max-width: var(--body-max-width);
   margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
   background-color: var(--background);
   font-weight: var(--font-body-weight);
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+main:has(+ footer) > :last-child {
+  margin-bottom: 0;
 }
 
 .box-shadow {
@@ -654,68 +656,6 @@ section {
   margin: 1em auto;
 }
 
-/* DIMENSIONS */
-.width-100 {
-  max-width: 100px;
-}
-
-.width-125 {
-  max-width: 125px;
-}
-
-.width-150 {
-  max-width: 150px;
-}
-
-.width-200 {
-  max-width: 200px;
-}
-
-.width-250 {
-  max-width: 250px;
-}
-
-.width-300 {
-  max-width: 300px;
-}
-
-.height-100 {
-  max-height: 100px;
-}
-
-.height-125 {
-  max-height: 125px;
-}
-
-.height-150 {
-  max-height: 150px;
-}
-
-.height-200 {
-  max-height: 200px;
-}
-
-.height-250 {
-  max-height: 250px;
-}
-
-.height-300 {
-  max-height: 300px;
-}
-
-/* ALIGNMENTS */
-.flex-center {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1em;
-}
-
-.flex-start {
-  align-items: flex-start;
-}
-
 /* ADDONS */
 .external {
   padding: 0 13px 0 0;
@@ -756,312 +696,6 @@ a:hover.pullDown {
 
 .fade-out {
   animation: fadeOut 1s forwards;
-}
-
-/* BADGES */
-.badge {
-  display: inline-block;
-  border-radius: var(--radius-btn);
-  padding: 0.3em 0.75em;
-  font-family: var(--font-family-accent);
-  font-size: 0.75rem;
-  font-weight: bold;
-  letter-spacing: 0.02em;
-  line-height: 1.4;
-  text-align: center;
-  white-space: nowrap;
-  color: var(--button-color);
-  background-color: var(--primary);
-}
-
-.badge-primary {
-  background-color: var(--primary);
-}
-
-.badge-secondary {
-  background-color: var(--secondary);
-  color: var(--button-secondary-color);
-}
-
-.badge-success {
-  background-color: var(--button-background-success);
-}
-
-.badge-danger {
-  background-color: var(--button-background-danger);
-}
-
-.badge-pill {
-  border-radius: 999px;
-}
-
-/* Without these, an <a class="badge ..."> falls back to the global a:hover rule (_links.scss),
-   which sets color to --link-color - itself an alias for --primary, i.e. the same color as
-   .badge-primary's own background, making the text invisible on hover */
-.badge:hover,
-.badge-primary:hover {
-  color: var(--button-color);
-  background-color: var(--button-background-primary-dark);
-  text-decoration: none;
-}
-
-.badge-secondary:hover {
-  color: var(--button-secondary-color);
-  background-color: var(--button-background-secondary-dark);
-  text-decoration: none;
-}
-
-.badge-success:hover {
-  color: var(--button-color);
-  background-color: var(--button-background-success-dark);
-  text-decoration: none;
-}
-
-.badge-danger:hover {
-  color: var(--button-color);
-  background-color: var(--button-background-danger-dark);
-  text-decoration: none;
-}
-
-/* BLOCKQUOTES */
-blockquote {
-  padding: 10px 20px;
-  margin: 0 0 20px;
-  font-size: 17.5px;
-  border-left: 5px solid #eee;
-}
-
-blockquote footer,
-blockquote small,
-blockquote .small {
-  display: block;
-  font-size: 80%;
-  line-height: 1.42857143;
-  color: #777;
-}
-
-blockquote footer::before,
-blockquote small::before,
-blockquote .small::before {
-  content: "— ";
-}
-
-.blockquote-reverse,
-blockquote.pull-right {
-  padding-right: 15px;
-  padding-left: 0;
-  border-right: 5px solid #eee;
-  border-left: 0;
-  text-align: right;
-}
-
-.blockquote-reverse footer::before,
-blockquote.pull-right footer::before,
-.blockquote-reverse small::before,
-blockquote.pull-right small::before,
-.blockquote-reverse .small::before,
-blockquote.pull-right .small::before {
-  content: "";
-}
-
-.blockquote-reverse footer::after,
-blockquote.pull-right footer::after,
-.blockquote-reverse small::after,
-blockquote.pull-right small::after,
-.blockquote-reverse .small::after,
-blockquote.pull-right .small::after {
-  content: " —";
-}
-
-/* FORMS */
-form {
-  width: min(70vw, 1000px);
-  margin: 0 auto 1em auto;
-}
-
-button,
-input,
-select,
-textarea {
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-}
-
-label {
-  display: block;
-  max-width: 100%;
-  margin-bottom: 5px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--black);
-}
-
-label.required::after {
-  content: "*";
-}
-
-input {
-  margin-bottom: 1em;
-}
-
-input[type=date],
-input[type=datetime-local],
-input[type=email],
-input[type=month],
-input[type=number],
-input[type=search],
-input[type=tel],
-input[type=time],
-input[type=url],
-input[type=week],
-input[type=password],
-input[type=text] {
-  display: block;
-  width: 100%;
-  height: 34px;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.4;
-  background: transparent;
-  border: 1px solid transparent;
-  border-bottom: 2px solid var(--input-border-bottom-color);
-  border-radius: 0;
-  outline: none;
-  box-shadow: none;
-  color: var(--form-input-color);
-}
-
-input[type=text] {
-  writing-mode: horizontal-tb !important;
-  padding-block: 1px;
-  padding-inline: 2px;
-}
-
-button[type=submit],
-input[type=submit] {
-  width: 100%;
-  border: none;
-}
-
-form div div:has(input[type=radio]),
-form div div:has(input[type=checkbox]) {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: left;
-}
-
-form div div:has(input[type=radio]) label,
-form div div:has(input[type=checkbox]) label {
-  font-weight: normal;
-  margin-left: 2px;
-}
-
-textarea {
-  margin-bottom: 1em;
-  width: 100%;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.4;
-  background: transparent;
-  border: 1px solid var(--input-border-bottom-color);
-  border-radius: 0;
-  outline: none;
-  box-shadow: none;
-  color: var(--form-input-color);
-}
-
-textarea:hover,
-input[type=date]:hover,
-input[type=datetime-local]:hover,
-input[type=email]:hover,
-input[type=month]:hover,
-input[type=number]:hover,
-input[type=search]:hover,
-input[type=tel]:hover,
-input[type=time]:hover,
-input[type=url]:hover,
-input[type=week]:hover,
-input[type=password]:hover,
-input[type=text]:hover {
-  border: 1px solid var(--input-border-color);
-  border-bottom: 2px solid var(--input-border-color);
-  box-shadow: 0 0 10px 2px var(--input-shadow-color);
-}
-
-textarea:focus,
-input[type=date]:focus,
-input[type=datetime-local]:focus,
-input[type=email]:focus,
-input[type=month]:focus,
-input[type=number]:focus,
-input[type=search]:focus,
-input[type=tel]:focus,
-input[type=time]:focus,
-input[type=url]:focus,
-input[type=week]:focus,
-input[type=password]:focus,
-input[type=text]:focus {
-  border: 1px solid var(--input-focus-border-color);
-  border-bottom: 2px solid var(--input-focus-border-color);
-  box-shadow: 0 0 10px 2px var(--input-focus-shadow-color);
-  color: var(--black);
-}
-
-.control-label {
-  color: var(--label-color);
-}
-
-.control-label.required {
-  color: var(--required-color);
-}
-
-.control-label.required::after {
-  content: "*";
-}
-
-.has-toggle {
-  position: relative;
-}
-
-.has-toggle input[type=password],
-.has-toggle input[type=text] {
-  padding-right: 40px;
-}
-
-.has-toggle .toggle-password {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-}
-
-.toggle-password img {
-  width: 20px;
-  height: 20px;
-  display: block;
-}
-
-input.error {
-  border-color: red;
-  background-color: #ffe6e6;
-  border-width: 3px;
-}
-
-input.success {
-  border-color: green;
-  background-color: #e6ffe6;
-  border-width: 3px;
-}
-
-.error-message {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 5px;
 }
 
 /* MENU */
@@ -1326,14 +960,6 @@ nav img {
   width: auto;
 }
 
-iframe {
-  width: 95vw;
-  max-width: 400px;
-  aspect-ratio: 560/315;
-  border-radius: 10px;
-  margin: 0.5em auto 0.5em auto;
-}
-
 a,
 h1 a {
   text-decoration: none;
@@ -1383,17 +1009,11 @@ ul.dropdown-menu > li {
   list-style-image: none;
 }
 
-/* A marker only makes sense against a left-aligned edge - centered, the chevrons stay pinned to the
-   left while the text floats in the middle, and the padding they reserve shifts that text off-centre.
-   Mostly hit by rich text entered in a centered container (a collection item's card, see UiBundle's
-   CollectionItem.html.twig), where the <ul> comes from the editor and can't be given .list-unstyled */
 .text-center ul {
   list-style: none;
   padding-left: 0;
 }
 
-/* An ordered list's numbers carry meaning, so they can't be dropped like the chevrons above - "inside"
-   moves the marker into the text flow, where it gets centered along with it */
 .text-center ol {
   list-style-position: inside;
   padding-left: 0;
@@ -1445,7 +1065,7 @@ tfoot td {
 footer {
   background-color: var(--footer-background);
   border-top: var(--footer-border);
-  margin-top: 3em;
+  margin-top: var(--footer-margin-top);
   margin-left: var(--footer-margin-x);
   margin-right: var(--footer-margin-x);
   padding: var(--footer-padding);

@@ -75,9 +75,7 @@ body.navbar-fixed {
     // Trix (backoffice rich-text editor) wraps the saved value in its own <div>
     div {
         margin: 0;
-        // _typography.scss's "* { color: var(--text) }" matches that <div> directly, and a color set on an
-        // element always beats the one it would have inherited - so without this the tagline's own color
-        // never reaches the only element actually holding its text
+        // The global "*" rule matches that <div> directly, beating the color it would have inherited
         color: inherit;
     }
 }
@@ -113,11 +111,7 @@ body.navbar-fixed {
     transition: all 0.3s linear;
 }
 
-// The global "* { color: var(--text) }" rule (_general.scss) targets the <path> directly too - SVG's
-// inherited "fill: currentColor" re-resolves per-element, so without this the <path>'s own clobbered
-// color would paint instead of the navbar color above (same fix as footer/slider links, applied to an
-// SVG child instead of an <a>) - also covers the .is-scrolled state below for free, since it only
-// changes the ancestor's color and this always re-inherits it
+// The global "*" rule reaches the <path> too, and "fill: currentColor" re-resolves per element
 .menu-toggle-icon * {
     color: inherit;
 }
@@ -184,8 +178,7 @@ body.navbar-fixed {
     }
 }
 
-// .menu-label always sets its own explicit color (mobile/desktop, below) - hovering .menu-link alone
-// has no visible effect on the label text, so the color change has to target the label itself here
+// .menu-label sets its own color, so the hover has to target the label rather than the link
 .menu-link:hover .menu-label,
 .menu-link:focus .menu-label {
     color: var(--navbar-active-color);
@@ -196,11 +189,7 @@ body.navbar-fixed {
     flex-shrink: 0;
 }
 
-// A single stand-out item (e.g. "Contact") among a Menu's otherwise plain links - see MenuLinkType's
-// "primary" field. Its three colors go through tokens defaulting to UiBundle's .btn-primary ones (that
-// class itself isn't reused, its display:block/max-width/margin:auto layout not being meant for an inline
-// flex nav item): a navbar painted with --navbar-background: var(--primary) makes a --primary pill
-// invisible, exactly like --navbar-site-name-color's case, and inverts them instead
+// Its colors go through tokens: a navbar already painted --primary would swallow a --primary pill
 .menu-item--primary .menu-link {
     background-color: var(--navbar-btn-background);
     border-radius: var(--radius-btn);

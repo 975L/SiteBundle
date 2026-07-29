@@ -20,15 +20,21 @@ class PageExistenceChecker
 
     public function exists(string $url): bool
     {
+        $status = $this->status($url);
+
+        return null !== $status && $status < 400;
+    }
+
+    // The url's own status code, or null when the request never completed (timeout, DNS, refused connection) - "the page answers 404" and "the host didn't answer at all" are two different verdicts to report, and exists() flattens both into the same false (see ContentQualityAnalyzer, which needs the code itself)
+    public function status(string $url): ?int
+    {
         try {
-            $response = $this->httpClient->request('HEAD', $url, [
+            return $this->httpClient->request('HEAD', $url, [
                 'headers' => ['User-Agent' => 'Mozilla/5.0 (compatible; c975l-health-check)'],
                 'timeout' => 15,
-            ]);
-
-            return $response->getStatusCode() < 400;
+            ])->getStatusCode();
         } catch (\Throwable) {
-            return false;
+            return null;
         }
     }
 }

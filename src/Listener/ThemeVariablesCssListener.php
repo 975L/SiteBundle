@@ -23,8 +23,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-// Fires for any Config flushed through the EntityManager, regardless of which controller or app code triggered the change - filters down to the "theme" group (colors/fonts editable by the admin in ThemeCrudController) and regenerates the compiled CSS file every time one of them changes, so there is a single source of truth (site_config) for both the site's stylesheet and the email layout (see ThemeVariablesExtension for the email side)
-// Also a CacheWarmer: Config rows persisted before this listener existed (or restored from a backup) never fire a Doctrine event again on their own, so without this the compiled file could stay missing/stale until an admin happens to re-save a theme config - warming up on every cache:warmup/cache:clear guarantees it always reflects the current site_config, deploy or not
+// Regenerates the compiled theme CSS whenever a "theme" Config is flushed, site_config being the single source of truth
+// Also a CacheWarmer: rows restored from a backup fire no Doctrine event of their own
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::postRemove)]
@@ -32,14 +32,10 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
 {
     use BuildFileWriterTrait;
 
-    // Theme-group configs that are never a CSS value themselves, so must stay out of the compiled :root block:
-    // "theme-mode" drives the data-theme HTML attribute server-side (see layout.html.twig), never consumed
-    // via var(--c975l-...)
+    // Theme configs that are never a CSS value, so must stay out of the compiled :root block
     private const EXCLUDED_SLUGS = ['theme-mode'];
 
-    // Generic CSS family each font-family slug falls back to if the chosen custom font fails to load at runtime -
-    // same defaults already baked into _variables.scss's var(..., fallback) for the "config left empty" case,
-    // reused here for the "a font is set but its @font-face 404s/is slow" case
+    // Generic fallback per font slug, for when a chosen custom font fails to load at runtime
     private const FONT_FALLBACKS = [
         'theme-font-family-title' => 'sans-serif',
         'theme-font-family-body' => 'sans-serif',
@@ -93,8 +89,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
     // Rewrites the whole file from every current theme config, not just the one that changed
     private function regenerate(): void
     {
-        // The <head>'s font preloads are computed from the very same rows (see FontPreloadExtension), so they go stale
-        // at exactly the same moment as the compiled CSS below
+        // The <head>'s preloads are computed from the same rows, so they go stale at the same moment
         $this->cache->delete(FontPreloadExtension::CACHE_KEY);
 
         $lines = [];
@@ -107,7 +102,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
 
         $this->writeBuildFile('site-theme.css', [] === $lines ? '' : ":root {\n" . implode("\n", $lines) . "\n}\n");
 
-        // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, an admin applying a preset would regenerate site-theme.css but still see the previous theme until the next deploy/warmup
+        // In prod, the real site never reads this file directly - it links UiBundle's concatenated bundles/build/site.css instead (see StylesheetExtension), which is otherwise only rebuilt on cache:warmup. Without this, an admin editing a "theme" config would regenerate site-theme.css but still see the previous theme until the next deploy/warmup
         $this->stylesheetCacheWarmer->compileAll();
     }
 
@@ -123,9 +118,7 @@ class ThemeVariablesCssListener implements CacheWarmerInterface
         return sprintf('    --c975l-%s: %s;', substr($slug, strlen('theme-')), $this->withFontFallback($slug, $value));
     }
 
-    // A bare custom font name (from the new ChoiceField) gets its generic fallback appended. A value already
-    // containing a comma is left untouched - it's either a generic keyword's own fallback-free case, or a
-    // full stack an admin already typed by hand before this kind existed (e.g. '"Georgia", serif')
+    // A bare font name gets its generic fallback appended; a value already holding a comma is left alone
     private function withFontFallback(string $slug, string $value): string
     {
         $fallback = self::FONT_FALLBACKS[$slug] ?? null;

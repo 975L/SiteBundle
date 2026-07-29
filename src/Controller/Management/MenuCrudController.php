@@ -19,6 +19,9 @@ use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
+use c975L\UiBundle\Registry\BlockRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -30,9 +33,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -50,12 +56,16 @@ class MenuCrudController extends AbstractCrudController
         Menu::LOCATION_EMAIL_FOOTER => 'label.email_footer',
     ];
 
+    // Guards create(), the one action creating a Menu row (see the index template's own buttons)
+    private const CREATE_CSRF_TOKEN = 'site_menu_create';
+
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly MenuRepository $menuRepository,
         private readonly TranslatorInterface $translator,
         private readonly AdminContextProvider $adminContextProvider,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
@@ -98,10 +108,10 @@ class MenuCrudController extends AbstractCrudController
         return $crud
             ->overrideTemplate('crud/index', '@c975LSite/management/menu_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/menu_crud_edit.html.twig')
-            ->overrideTemplate('crud/new', '@c975LSite/management/menu_crud_new.html.twig')
             ->setEntityLabelInSingular(t('label.menu', [], 'site'))
             ->setEntityLabelInPlural(t('label.menus', [], 'site'))
             ->setEntityPermission($this->configService->get('site-role-editor'))
+            ->showEntityActionsInlined()
         ;
     }
 
@@ -115,7 +125,6 @@ class MenuCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         return $actions
-            ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
@@ -126,51 +135,105 @@ class MenuCrudController extends AbstractCrudController
                 $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
             ->setPermission(Action::INDEX, $role)
-            ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
-            // Detail adds no information beyond what edit already shows
-            ->disable(Action::DETAIL)
+            // A menu's only field is its location, so the index offers one creating button per unused one
+            ->disable(Action::DETAIL, Action::NEW)
         ;
     }
 
     public function configureFields(string $pageName): iterable
     {
-        $isNew = Crud::PAGE_NEW === $pageName;
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
-
-        // Only locations not yet used can be picked when creating a new row - avoids ever hitting the DB-level unique constraint on Menu::$location
-        $usedLocations = $this->menuRepository->createQueryBuilder('m')
-            ->select('m.location')
-            ->getQuery()
-            ->getSingleColumnResult();
-        $selectableLocations = $isNew ? array_diff_key(self::LOCATION_LABELS, array_flip($usedLocations)) : self::LOCATION_LABELS;
+        $isNavbar = $entity instanceof Menu && Menu::LOCATION_NAVBAR === $entity->getLocation();
 
         $locationChoices = [];
-        foreach ($selectableLocations as $locationSlug => $labelKey) {
+        foreach (self::LOCATION_LABELS as $locationSlug => $labelKey) {
             $locationChoices[$locationSlug] = t($labelKey, [], 'site');
         }
 
         return [
             IdField::new('id')->onlyOnIndex(),
 
+            // Never editable: a row's location is set once by create() and fixed for good, only reassignable by deleting and recreating the row - which is also what keeps the DB-level unique constraint on Menu::$location out of reach
             ChoiceField::new('location')
                 ->setLabel(t('label.location', [], 'site'))
                 ->setTranslatableChoices($locationChoices)
-                ->setFormTypeOption('disabled', !$isNew)
+                ->setFormTypeOption('disabled', true)
                 ->setRequired(true),
 
-            // row_attr markers read by ea-sortable.js - see PageCrudController's own "blocks" field for
-            // the full explanation
+            // row_attr markers read by ea-sortable.js
             CollectionField::new('blocks')
                 ->setLabel(t('label.blocks', [], 'ui'))
+                // Same reasoning as PageCrudController: CollectionField's "col-md-8 col-xxl-7" default leaves a nested block editor working in 7/12 of the row
+                ->setColumns('col-12')
                 ->setEntryType(BlockType::class)
                 ->allowAdd()
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
-                ->setFormTypeOption('entry_options.context', 'menu')
+                // A navbar only offers "menu_link", a navigation bar being a plain list of links
+                ->setFormTypeOption('entry_options.context', $isNavbar ? BlockRegistry::MENU_NAVBAR_CONTEXT : BlockRegistry::MENU_CONTEXT)
                 ->setFormTypeOption('row_attr', $this->blockMoveRowAttr(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
-                ->hideOnIndex(),
+                ->onlyWhenUpdating(),
         ];
+    }
+
+    // Hands the index template the locations no row exists for yet, each rendered as its own "create" button (see menu_crud_index.html.twig) - the whole replacement for the removed "new" form
+    public function index(AdminContext $context): KeyValueStore|Response
+    {
+        $responseParameters = parent::index($context);
+
+        if ($responseParameters instanceof KeyValueStore) {
+            $responseParameters->set('missing_locations', $this->missingLocations());
+        }
+
+        return $responseParameters;
+    }
+
+    // Creates the row for the posted location and opens it straight away: a menu's only own field is that location, so asking for it in a form would only repeat what the clicked button already says. Idempotent - a location already created (double submit, stale index in another tab) just opens the existing row instead of hitting the DB-level unique constraint on Menu::$location
+    #[AdminRoute(path: '/create', options: ['methods' => ['POST']])]
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        if (!$this->isCsrfTokenValid(self::CREATE_CSRF_TOKEN, $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $location = $request->request->getString('location');
+        if (!isset(self::LOCATION_LABELS[$location])) {
+            throw $this->createNotFoundException();
+        }
+
+        $menu = $this->menuRepository->findOneByLocation($location);
+        if (null === $menu) {
+            $menu = (new Menu())->setLocation($location);
+            $entityManager->persist($menu);
+            $entityManager->flush();
+        }
+
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($menu->getId())
+                ->generateUrl()
+        );
+    }
+
+    // The locations still to create, as "slug => translated label" - empty once all four exist
+    private function missingLocations(): array
+    {
+        $usedLocations = $this->menuRepository->createQueryBuilder('m')
+            ->select('m.location')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        $missing = [];
+        foreach (array_diff_key(self::LOCATION_LABELS, array_flip($usedLocations)) as $locationSlug => $labelKey) {
+            $missing[$locationSlug] = $this->translator->trans($labelKey, [], 'site');
+        }
+
+        return $missing;
     }
 }

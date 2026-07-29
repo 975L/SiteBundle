@@ -1,19 +1,4 @@
-{#
-    <twig:c975LUi:General:RichSnippet
-        itemscope="https://schema.org/XXX"
-        name=""
-        description=""
-        [openingHours=""]
-        [image="images/og-image.svg"]
-        [priceRange=""]
-        [addressStreetAddress=""]
-        [addressAddressLocality=""]
-        [addressPostalCode=""]
-        [addressAddressCountryCode=""]
-        [addressAddressCountryName=""]
-        [telephone=""]
-    />
-#}
+{# Static usage: <twig:c975LUi:General:RichSnippet itemscope="https://schema.org/XXX" name="" description="" [openingHours=""] [image=""] [priceRange=""] [addressStreetAddress=""] [addressAddressLocality=""] [addressPostalCode=""] [addressAddressCountryCode=""] [addressAddressCountryName=""] [telephone=""]/> #}
 {% trans_default_domain 'site' %}
 <div itemscope itemtype="{{ itemscope }}" class="rich-snippet">
     <span itemprop="name">{{ name }}</span><br><br>
