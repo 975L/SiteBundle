@@ -3,6 +3,16 @@
         "date": "2026-07-29",
         "description": [
             {
+                "en": "The dashboard now offers guided projects for the site itself: creating a page, putting it in a menu, building a collection, and reworking a page already online without ever showing a half-finished version",
+                "fr": "Le tableau de bord propose désormais des parcours guidés pour le site lui-même : créer une page, la mettre dans un menu, construire une collection, et réviser une page déjà en ligne sans jamais montrer de version à moitié faite",
+                "es": "El panel ofrece ahora recorridos guiados para el sitio en sí: crear una página, ponerla en un menú, construir una colección y revisar una página ya publicada sin mostrar nunca una versión a medias"
+            }
+        ]
+    },
+    {
+        "date": "2026-07-29",
+        "description": [
+            {
                 "en": "The Health check now reports a page answering 404 as an error, where it used to show it as \"not tested\" and raise no alert at all - the very pages Search Console lists as not found",
                 "fr": "Le Bilan de santé signale désormais une page répondant 404 comme une erreur, là où elle s'affichait comme « non testée » sans déclencher la moindre alerte - exactement les pages que la Search Console liste comme introuvables",
                 "es": "El Estado de salud ahora informa de una página que responde 404 como un error, donde antes se mostraba como «no probada» sin generar ninguna alerta: precisamente las páginas que Search Console indica como no encontradas"

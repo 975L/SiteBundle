@@ -230,13 +230,9 @@
                 </main>
             {% endblock %}
 {# Share #}
-            {# Outside main so the flex column leaves it against the footer, inside a landmark so it isn't orphan content for a screen reader - "complementary" being what buttons tangential to the page's content are #}
+            {# Outside main so the flex column leaves it against the footer. SocialBundle owns the band's markup and its config guard: including its fragment keeps that bundle optional, where calling share_buttons_default() here would fail at compile time on a site not installing it #}
             {% if display != 'pdf' %}
-                {% if config('social-enable-share-buttons') %}
-                    <aside class="page-share">
-                        {{ share_buttons_default() }}
-                    </aside>
-                {% endif %}
+                {{ include('@c975LSocial/shareButtons/default.html.twig', ignore_missing: true) }}
             {% endif %}
 {# Footer #}
             {% block footer %}

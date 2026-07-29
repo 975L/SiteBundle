@@ -118,6 +118,122 @@
                 <source>description.essential_action_pages</source>
                 <target>La page sur laquelle arrive chaque visiteur en premier</target>
             </trans-unit>
+            <trans-unit id="CU5AyIK">
+                <source>description.guided_project_collection</source>
+                <target>Regrouper des contenus qui se répètent (équipe, réalisations, événements) et les afficher dans une page</target>
+            </trans-unit>
+            <trans-unit id="zYKbnmM">
+                <source>description.guided_project_page_creation</source>
+                <target>Créer une page, y mettre du contenu, la publier et la voir en ligne</target>
+            </trans-unit>
+            <trans-unit id="lRbEz1o">
+                <source>description.guided_project_page_menu</source>
+                <target>Ajouter un lien vers une page dans la barre de navigation, pour que vos visiteurs la trouvent</target>
+            </trans-unit>
+            <trans-unit id="wu5WCSH">
+                <source>description.guided_project_page_revision</source>
+                <target>Retravailler une page publiée sur une copie, puis la mettre en ligne d'un coup, sans jamais montrer de version à moitié faite</target>
+            </trans-unit>
+            <trans-unit id="QO2ehIE">
+                <source>description.guided_step_collection_add_item</source>
+                <target>Titre, texte, image, lien : remplissez ce dont vous avez besoin, laissez le reste vide.</target>
+            </trans-unit>
+            <trans-unit id="zRhb8OX">
+                <source>description.guided_step_collection_display</source>
+                <target>Retournez sur une page, ajoutez-y un block de collection et choisissez celle que vous venez de créer.</target>
+            </trans-unit>
+            <trans-unit id="XYbqA8D">
+                <source>description.guided_step_collection_items</source>
+                <target>La collection est un contenant : ce sont ses éléments qui portent le contenu.</target>
+            </trans-unit>
+            <trans-unit id="4d.y7pE">
+                <source>description.guided_step_collection_name</source>
+                <target>Le nom est celui que vous retrouverez dans les blocks : « Équipe », « Réalisations »…</target>
+            </trans-unit>
+            <trans-unit id="n7v3zVC">
+                <source>description.guided_step_collection_open</source>
+                <target>Une collection tient une liste d'éléments qui se ressemblent, au lieu d'autant de pages construites à la main.</target>
+            </trans-unit>
+            <trans-unit id="0u_15J4">
+                <source>description.guided_step_page_creation_blocks</source>
+                <target>Le contenu d'une page est fait de blocks : texte, image, galerie, formulaire… Ajoutez-en un et remplissez-le.</target>
+            </trans-unit>
+            <trans-unit id="ot0jQxm">
+                <source>description.guided_step_page_creation_new</source>
+                <target>Le bouton en haut de la liste ouvre le formulaire de création.</target>
+            </trans-unit>
+            <trans-unit id="B.A2wZj">
+                <source>description.guided_step_page_creation_open</source>
+                <target>Toutes les pages du site sont ici, publiées ou non.</target>
+            </trans-unit>
+            <trans-unit id="RGI0ZHq">
+                <source>description.guided_step_page_creation_publish</source>
+                <target>Tant que cet interrupteur est éteint, la page n'est visible que de vous, en prévisualisation.</target>
+            </trans-unit>
+            <trans-unit id="ZLl62rT">
+                <source>description.guided_step_page_creation_reopen</source>
+                <target>Le contenu s'ajoute sur l'écran de modification, une fois la page créée.</target>
+            </trans-unit>
+            <trans-unit id="Fu7HfYi">
+                <source>description.guided_step_page_creation_save</source>
+                <target>Vous revenez à la liste : la page existe, encore vide et non publiée.</target>
+            </trans-unit>
+            <trans-unit id="FVLV7Pr">
+                <source>description.guided_step_page_creation_title</source>
+                <target>L'adresse de la page se remplit toute seule à partir du titre, et reste modifiable.</target>
+            </trans-unit>
+            <trans-unit id="ZGnJv64">
+                <source>description.guided_step_page_creation_view</source>
+                <target>La page est maintenant publique : ce bouton l'ouvre telle que la voient vos visiteurs.</target>
+            </trans-unit>
+            <trans-unit id="vqEaHFx">
+                <source>description.guided_step_page_menu_add_link</source>
+                <target>Un menu est fait de blocks, comme une page : ajoutez-en un de type « Lien de menu ».</target>
+            </trans-unit>
+            <trans-unit id="vYT2I9L">
+                <source>description.guided_step_page_menu_check</source>
+                <target>Ouvrez le site dans un autre onglet : le lien est dans la barre de navigation, à la place que vous lui avez donnée.</target>
+            </trans-unit>
+            <trans-unit id="GRaA0Fy">
+                <source>description.guided_step_page_menu_create</source>
+                <target>Un bouton par emplacement pas encore créé. Si la barre de navigation est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id=".hlSfo_">
+                <source>description.guided_step_page_menu_edit</source>
+                <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « Barre de navigation ».</target>
+            </trans-unit>
+            <trans-unit id="_YVF1At">
+                <source>description.guided_step_page_menu_open</source>
+                <target>Un menu par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+            </trans-unit>
+            <trans-unit id="TkXHcvz">
+                <source>description.guided_step_page_menu_target</source>
+                <target>Le lien peut viser une page du site, une de ses ancres, ou une adresse extérieure.</target>
+            </trans-unit>
+            <trans-unit id="dr5AYYx">
+                <source>description.guided_step_page_revision_done</source>
+                <target>L'originale reste récupérable depuis la corbeille tant que vous ne la supprimez pas définitivement.</target>
+            </trans-unit>
+            <trans-unit id="xQXwn1q">
+                <source>description.guided_step_page_revision_duplicate</source>
+                <target>La copie reprend tout le contenu de l'originale, mais n'est pas publiée : elle s'ouvre directement.</target>
+            </trans-unit>
+            <trans-unit id="3eae6FD">
+                <source>description.guided_step_page_revision_open</source>
+                <target>Repérez la page en ligne que vous voulez retravailler.</target>
+            </trans-unit>
+            <trans-unit id="ltTRPzw">
+                <source>description.guided_step_page_revision_preview</source>
+                <target>Une page non publiée reste visible de vous seul, à cette adresse de prévisualisation.</target>
+            </trans-unit>
+            <trans-unit id="ZHZyEGA">
+                <source>description.guided_step_page_revision_replace</source>
+                <target>La copie prend l'adresse de l'originale et passe en ligne ; l'originale part à la corbeille.</target>
+            </trans-unit>
+            <trans-unit id="aYYJ_YC">
+                <source>description.guided_step_page_revision_rework</source>
+                <target>Prenez le temps qu'il faut : vos visiteurs continuent de voir l'originale pendant ce temps.</target>
+            </trans-unit>
             <trans-unit id="vDZMvYG">
                 <source>description.messenger_alert_admin</source>
                 <target>Problème technique signalé automatiquement à l'équipe. Aucune action requise.</target>
@@ -577,6 +693,138 @@
             <trans-unit id="QjQ95bW">
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Lien vers une page ou une route, utilisé dans les menus du site.</target>
+            </trans-unit>
+            <trans-unit id="K3pbZfO">
+                <source>label.guided_project_collection</source>
+                <target>Créer une collection</target>
+            </trans-unit>
+            <trans-unit id="PEScSjB">
+                <source>label.guided_project_page_creation</source>
+                <target>Créer une page</target>
+            </trans-unit>
+            <trans-unit id="Zbgfe3U">
+                <source>label.guided_project_page_menu</source>
+                <target>Mettre une page dans un menu</target>
+            </trans-unit>
+            <trans-unit id="QQfWYAW">
+                <source>label.guided_project_page_revision</source>
+                <target>Réviser une page déjà en ligne</target>
+            </trans-unit>
+            <trans-unit id="0WfyPjZ">
+                <source>label.guided_step_collection_add_item</source>
+                <target>Ajouter un élément</target>
+            </trans-unit>
+            <trans-unit id="GmMutwN">
+                <source>label.guided_step_collection_display</source>
+                <target>Afficher la collection dans une page</target>
+            </trans-unit>
+            <trans-unit id="A9QBctX">
+                <source>label.guided_step_collection_items</source>
+                <target>Ouvrir ses éléments</target>
+            </trans-unit>
+            <trans-unit id="8aNSnE1">
+                <source>label.guided_step_collection_name</source>
+                <target>Nommer la collection</target>
+            </trans-unit>
+            <trans-unit id="e3FGDx.">
+                <source>label.guided_step_collection_new</source>
+                <target>Créer une collection</target>
+            </trans-unit>
+            <trans-unit id="sVeCvtb">
+                <source>label.guided_step_collection_open</source>
+                <target>Ouvrir les collections</target>
+            </trans-unit>
+            <trans-unit id="V5C4S.y">
+                <source>label.guided_step_collection_save</source>
+                <target>Enregistrer la collection</target>
+            </trans-unit>
+            <trans-unit id="coxrX3D">
+                <source>label.guided_step_page_creation_blocks</source>
+                <target>Ajouter un block</target>
+            </trans-unit>
+            <trans-unit id="qKcJkhs">
+                <source>label.guided_step_page_creation_new</source>
+                <target>Créer une page</target>
+            </trans-unit>
+            <trans-unit id="mLgw2mX">
+                <source>label.guided_step_page_creation_open</source>
+                <target>Ouvrir la liste des pages</target>
+            </trans-unit>
+            <trans-unit id="CdaJzTk">
+                <source>label.guided_step_page_creation_publish</source>
+                <target>Publier la page</target>
+            </trans-unit>
+            <trans-unit id="dUy7BIv">
+                <source>label.guided_step_page_creation_reopen</source>
+                <target>Rouvrir la page</target>
+            </trans-unit>
+            <trans-unit id="i7dHQN_">
+                <source>label.guided_step_page_creation_save</source>
+                <target>Enregistrer la page</target>
+            </trans-unit>
+            <trans-unit id="k78x8gw">
+                <source>label.guided_step_page_creation_save_again</source>
+                <target>Enregistrer à nouveau</target>
+            </trans-unit>
+            <trans-unit id="He2ILVu">
+                <source>label.guided_step_page_creation_title</source>
+                <target>Donner un titre à la page</target>
+            </trans-unit>
+            <trans-unit id="BO9Oiu9">
+                <source>label.guided_step_page_creation_view</source>
+                <target>Voir la page en ligne</target>
+            </trans-unit>
+            <trans-unit id="of6P8Dq">
+                <source>label.guided_step_page_menu_add_link</source>
+                <target>Ajouter un lien de menu</target>
+            </trans-unit>
+            <trans-unit id="mMM6W5A">
+                <source>label.guided_step_page_menu_check</source>
+                <target>Vérifier sur le site</target>
+            </trans-unit>
+            <trans-unit id="YbQc98q">
+                <source>label.guided_step_page_menu_create</source>
+                <target>Créer le menu s'il manque</target>
+            </trans-unit>
+            <trans-unit id="SR9HxrC">
+                <source>label.guided_step_page_menu_edit</source>
+                <target>Ouvrir la barre de navigation</target>
+            </trans-unit>
+            <trans-unit id="g82q6ta">
+                <source>label.guided_step_page_menu_open</source>
+                <target>Ouvrir les menus</target>
+            </trans-unit>
+            <trans-unit id="uBH6im.">
+                <source>label.guided_step_page_menu_save</source>
+                <target>Enregistrer le menu</target>
+            </trans-unit>
+            <trans-unit id="16VguCs">
+                <source>label.guided_step_page_menu_target</source>
+                <target>Choisir la page visée</target>
+            </trans-unit>
+            <trans-unit id="qPXN0Se">
+                <source>label.guided_step_page_revision_done</source>
+                <target>C'est en ligne</target>
+            </trans-unit>
+            <trans-unit id="ISaD9Ql">
+                <source>label.guided_step_page_revision_duplicate</source>
+                <target>Dupliquer la page</target>
+            </trans-unit>
+            <trans-unit id="znrv.g1">
+                <source>label.guided_step_page_revision_open</source>
+                <target>Ouvrir la liste des pages</target>
+            </trans-unit>
+            <trans-unit id="CYq1ne1">
+                <source>label.guided_step_page_revision_preview</source>
+                <target>Prévisualiser la copie</target>
+            </trans-unit>
+            <trans-unit id="DjVVd.1">
+                <source>label.guided_step_page_revision_replace</source>
+                <target>Publier à la place de l'originale</target>
+            </trans-unit>
+            <trans-unit id="is2PIcW">
+                <source>label.guided_step_page_revision_rework</source>
+                <target>Retravailler la copie</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>

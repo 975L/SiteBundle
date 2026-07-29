@@ -20,7 +20,6 @@
     "require": {
         "php": ">=8.1",
         "c975l/config-bundle": "*",
-        "c975l/social-bundle": "*",
         "c975l/ui-bundle": "^1.10",
         "doctrine/orm": "*",
         "dragonmantank/cron-expression": "*",
@@ -46,6 +45,7 @@
         "phpunit/phpunit": "^13.2"
     },
     "suggest": {
+        "c975l/social-bundle": "Adds the share buttons band to layout.html.twig, and the social links block",
         "nelmio/security-bundle": "Enables layout.html.twig's CSP nonce on Turbo-executed scripts, and a Turbo-safe session-based nonce generator instead of Nelmio's default per-request one"
     },
     "minimum-stability": "dev",

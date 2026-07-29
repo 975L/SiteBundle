@@ -1,5 +1,23 @@
 # Changelog
 
+## v7.12.1
+
+Added the guided projects, and made SocialBundle optional
+
+- Moved `c975l/social-bundle` from the requirements to the suggestions (29/07/2026) [BC-Break]
+- `layout.html.twig` now includes `@c975LSocial/shareButtons/default.html.twig` with `ignore_missing`, instead of calling `share_buttons_default()` (29/07/2026)
+- Fixed a site without SocialBundle answering 500 on every front page, Twig resolving a function call at compile time (29/07/2026)
+- Added `OptionalBundleTemplateTest`, keeping a suggested bundle's Twig function out of this bundle's templates (29/07/2026)
+- Added `SiteGuidedProjectProvider`, contributing this bundle's guided projects to the dashboard (29/07/2026)
+- Added the "Créer une page", "Mettre une page dans un menu", "Créer une collection" and "Réviser une page déjà en ligne" projects (29/07/2026)
+- Added the `label.guided_project_*`/`description.guided_project_*` and `label.guided_step_*`/`description.guided_step_*` translations (29/07/2026)
+- The four guided projects are now gated by `site-role-editor` (29/07/2026)
+- Fixed the guided steps highlighting `.action-save`, EasyAdmin naming that button `action-saveAndReturn` (29/07/2026)
+- Fixed the "create the menu" step highlighting the first create button whatever its location (29/07/2026)
+- The `publishAsReplacement` action group now states its own `action-publishAsReplacement` class, EasyAdmin only giving a default one to an action (29/07/2026)
+- Added `SiteGuidedProjectProviderTest` (29/07/2026)
+- `PageServiceInterface`'s comments are now PHPDoc blocks, `findAll()` declaring its `Page[]` return (29/07/2026)
+
 ## v7.12.0
 
 - Removed SocialBundle's `--social-share-*` custom properties from the scaffolded `theme.css` (29/07/2026)

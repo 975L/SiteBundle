@@ -332,6 +332,8 @@ class PageCrudController extends AbstractCrudController
             static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
             ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
                 ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+                // ActionFactory only gives an ActionDto its default "action-<name>" class, never an ActionGroupDto, whose cssClass would stay empty - stated here so SiteGuidedProjectProvider's ".action-publishAsReplacement" step has something to highlight
+                ->setCssClass('action-publishAsReplacement')
                 ->asWarningActionGroup()
         ));
     }

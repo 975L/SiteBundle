@@ -18,12 +18,20 @@ use c975L\SiteBundle\Entity\Page;
  */
 interface PageServiceInterface
 {
-    // Find all pages
+    /**
+     * Find all pages
+     *
+     * @return Page[]
+     */
     public function findAll(): array;
 
-    // Gets the page (published only)
+    /**
+     * Gets the page (published only)
+     */
     public function findOneBySlug(string $slug): ?Page;
 
-    // Gets the page regardless of status (for display: handles redirects and 410)
+    /**
+     * Gets the page regardless of status (for display: handles redirects and 410)
+     */
     public function findForDisplay(string $slug): ?Page;
 }

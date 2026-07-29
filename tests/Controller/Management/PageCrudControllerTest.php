@@ -842,6 +842,38 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Actions::class, $actions);
     }
 
+    // ActionFactory only gives an ActionDto its default "action-<name>" class, so the group has to state its own - SiteGuidedProjectProvider's revision parcours highlights ".action-publishAsReplacement"
+    public function testPublishAsReplacementGroupCarriesItsOwnCssClass(): void
+    {
+        $other = (new Page())->setTitle('Other')->setSlug('other');
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($other, 99);
+
+        $queryBuilder = $this->createStub(QueryBuilder::class);
+        $queryBuilder->method('andWhere')->willReturnSelf();
+        $queryBuilder->method('setParameter')->willReturnSelf();
+        $query = $this->createStub(Query::class);
+        $query->method('getResult')->willReturn([$other]);
+        $queryBuilder->method('getQuery')->willReturn($query);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
+
+        $actions = $this->createController(
+            pageRepository: $pageRepository,
+            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
+        )->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $group = $actions->getAsDto(Crud::PAGE_EDIT)->getActions()['publishAsReplacement'] ?? null;
+
+        $this->assertNotNull($group, 'The publishAsReplacement group is no longer added to the edit screen.');
+        $this->assertSame('action-publishAsReplacement', $group->getCssClass());
+    }
+
     public function testConfigureFiltersBuildsWithoutError(): void
     {
         $filters = $this->createController()->configureFilters(Filters::new());
