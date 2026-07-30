@@ -5,6 +5,7 @@ Symfony bundle that provides a complete foundation for building websites — lay
 [![GitHub](https://img.shields.io/github/license/975L/SiteBundle)](https://github.com/975L/SiteBundle/blob/master/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
+[![Codacy Grade](https://app.codacy.com/project/badge/Grade/612a27f799464950b0c5cfd13577ec20)](https://app.codacy.com/gh/975L/SiteBundle/dashboard)
 
 ## Why SiteBundle
 

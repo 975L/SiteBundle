@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.13.2
+
+Add the Codacy grade badge to the README
+
+- Added the Codacy grade badge to the README (30/07/2026)
+
 ## v7.13.1
 
 Pin the CI's third-party actions to a commit SHA
