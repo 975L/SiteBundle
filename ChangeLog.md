@@ -1,10 +1,14 @@
 # Changelog
 
-## Unreleased
+## v7.13.1
+
+Pin the CI's third-party actions to a commit SHA
 
 - `sass/_normalize.scss` (normalize.css v8.0.1) is replaced by `sass/_modern-normalize.scss` (modern-normalize v3.0.1) (30/07/2026) [BC-Break]
 - The MIT attribution of that file now survives minification, `/*!` replacing `/*` (30/07/2026)
 - Added a `.stylelintrc.json`, read by Codacy in place of its default ruleset (30/07/2026)
+- The `CI` workflow now uses `actions/checkout@v5` instead of `v4` (30/07/2026)
+- `shivammathur/setup-php` and `codacy/codacy-coverage-reporter-action` are now pinned to a commit SHA (30/07/2026)
 
 ## v7.13.0
 
