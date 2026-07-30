@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,7 +13,7 @@ class RegistrationControllerTest extends FunctionalTestCase
     // The real "Créer un compte" Page (see DefaultPagesImporter) normally carries the "register" form Block - unpublishing it within the test transaction (rolled back after) genuinely reproduces redirectAfterVerification()'s fallback to the home page
     private function unpublishRegisterPage(EntityManagerInterface $entityManager): void
     {
-        $page = $entityManager->getRepository(Page::class)->findOneByFormBlockName('register');
+        $page = static::getContainer()->get(PageRepository::class)->findOneByFormBlockName('register');
         $page?->setIsPublished(false);
         $entityManager->flush();
     }

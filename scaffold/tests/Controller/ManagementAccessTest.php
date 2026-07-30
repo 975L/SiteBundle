@@ -2,12 +2,13 @@
 
 namespace App\Tests\Controller;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 // Anonymous, not FunctionalTestCase: /management stays reachable during maintenance (see MaintenanceListener) and ManagementAuthenticationListener runs before it anyway - this test is exactly about the anonymous case, so it must not log in.
 class ManagementAccessTest extends WebTestCase
 {
-    private $client;
+    private KernelBrowser $client;
 
     public function setUp(): void
     {

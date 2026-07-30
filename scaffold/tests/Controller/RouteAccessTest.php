@@ -2,9 +2,11 @@
 
 namespace App\Tests\Controller;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+
 class RouteAccessTest extends FunctionalTestCase
 {
-    private $client;
+    private KernelBrowser $client;
 
     public function setUp(): void
     {

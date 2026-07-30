@@ -3,6 +3,7 @@
 namespace App\Tests\Controller;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -35,7 +36,7 @@ class ResetPasswordControllerTest extends FunctionalTestCase
         $client = $this->createAuthenticatedClient();
 
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $page = $entityManager->getRepository(Page::class)->findOneByFormBlockName('reset_password_request');
+        $page = static::getContainer()->get(PageRepository::class)->findOneByFormBlockName('reset_password_request');
         $page?->setIsPublished(false);
         $entityManager->flush();
 

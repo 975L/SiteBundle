@@ -36,6 +36,7 @@ class MaintenanceScheduleTest extends TestCase
     }
 
     // Provides the expected recurring messages, in the order they are added
+    /** @return list<array{int, string, string}> */
     public static function recurringMessages(): array
     {
         return [

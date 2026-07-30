@@ -1,5 +1,17 @@
 # Changelog
 
+## v7.13.3
+
+Analyse the scaffold at PHPStan level 6, the level the apps run
+
+- Added `phpstan-scaffold.dist.neon`, running the static analysis at level 6 on the scaffold only (30/07/2026)
+- The `CI` workflow now runs that second static analysis pass (30/07/2026)
+- The scaffold's `App\Entity\User::$roles` and `setRoles()` now declare `string[]` (30/07/2026)
+- The scaffold's `ResetPasswordRequestRepository` now declares `@extends ServiceEntityRepository<ResetPasswordRequest>` (30/07/2026)
+- The scaffold's tests now type their `$client` property `KernelBrowser` (30/07/2026)
+- The scaffold's tests now fetch `PageRepository` from the container instead of `EntityManagerInterface::getRepository()` (30/07/2026)
+- `MaintenanceScheduleTest::recurringMessages()` now declares its return type (30/07/2026)
+
 ## v7.13.2
 
 Add the Codacy grade badge to the README

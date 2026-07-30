@@ -7,10 +7,11 @@ use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 class ContentAccessTest extends FunctionalTestCase
 {
-    private $client;
+    private KernelBrowser $client;
 
     public function setUp(): void
     {
