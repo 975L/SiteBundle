@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -44,7 +45,8 @@ class FontPreloadExtension extends AbstractExtension
         private readonly ConfigServiceInterface $configService,
         private readonly FontRepository $fontRepository,
         private readonly CacheInterface $cache,
-    ) {}
+    ) {
+    }
 
     public function getFunctions(): array
     {

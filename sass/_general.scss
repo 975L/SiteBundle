@@ -5,9 +5,13 @@
   box-sizing: border-box;
 }
 
+// The 100vw full-bleeds (navbar, footer, banner title, colored flats) are as wide as the viewport plus its
+// scrollbar, so they stick out by half of it on each side and have to be swallowed here. "clip" and not
+// "hidden": both swallow it, but "hidden" also makes the root a scroll container of its own, which nothing
+// on the page wants - "clip" leaves overflow-y "visible", so the document keeps scrolling as the viewport
 html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    overflow-x: clip;
     background-color: var(--frame-background);
 }
 

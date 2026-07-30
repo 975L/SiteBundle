@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -10,10 +11,10 @@
 namespace c975L\SiteBundle\Listener;
 
 use c975L\SiteBundle\Entity\Font;
-use c975L\SiteBundle\Repository\FontRepository;
-use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
 use c975L\SiteBundle\Listener\Trait\BuildFileWriterTrait;
+use c975L\SiteBundle\Repository\FontRepository;
 use c975L\SiteBundle\Twig\FontPreloadExtension;
+use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
@@ -37,7 +38,8 @@ class FontCssListener implements CacheWarmerInterface
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
         private readonly CacheInterface $cache,
-    ) {}
+    ) {
+    }
 
     public function postPersist(PostPersistEventArgs $args): void
     {

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2019: 975L <contact@975l.com>
  * (c) 2019: Laurent Marquet <laurent.marquet@laposte.net>
@@ -17,11 +18,10 @@ class RouteExists extends AbstractExtension
 {
     public function __construct(
         /**
-         * Stores Router
+         * Stores Router.
          */
-        private readonly RouterInterface $router
-    )
-    {
+        private readonly RouterInterface $router,
+    ) {
     }
 
     public function getFunctions(): array
@@ -31,6 +31,6 @@ class RouteExists extends AbstractExtension
 
     public function routeExists($route)
     {
-        return ($this->router->getRouteCollection()->get($route));
+        return $this->router->getRouteCollection()->get($route);
     }
 }

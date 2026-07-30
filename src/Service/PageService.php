@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -13,7 +14,8 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 
 /**
- * Services related to PageServiceInterface
+ * Services related to PageServiceInterface.
+ *
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2026 975L <contact@975l.com>
  */

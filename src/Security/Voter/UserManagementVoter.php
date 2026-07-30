@@ -10,7 +10,7 @@
 
 namespace c975L\SiteBundle\Security\Voter;
 
-use App\Entity\User;
+use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -45,6 +45,6 @@ class UserManagementVoter extends Voter
             return false;
         }
 
-        return !$subject instanceof User || !\in_array('ROLE_SUPER_ADMIN', $subject->getRoles(), true);
+        return !$subject instanceof UserInterface || !\in_array('ROLE_SUPER_ADMIN', $subject->getRoles(), true);
     }
 }

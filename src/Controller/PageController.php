@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2025: 975L <contact@975l.com>
  * (c) 2025: Laurent Marquet <laurent.marquet@laposte.net>
@@ -20,14 +21,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
+
 /**
- * Main Site Controller class
+ * Main Site Controller class.
+ *
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2026 975L <contact@975l.com>
  */
 class PageController extends AbstractController
 {
-
     public function __construct(
         private readonly PageServiceInterface $pageService,
         private readonly ConfigServiceInterface $configService,
@@ -37,7 +39,7 @@ class PageController extends AbstractController
     ) {
     }
 
-// REDIRECT HOME
+    // REDIRECT HOME
     #[Route(
         path: '/pages',
         name: 'redirect_home_pages'
@@ -47,7 +49,7 @@ class PageController extends AbstractController
         return $this->redirectToRoute('page_home');
     }
 
-// REDIRECT HOME POST, PUT, PATCH REQUESTS
+    // REDIRECT HOME POST, PUT, PATCH REQUESTS
     #[Route(
         path: '/',
         name: 'redirect_home_wrong_methods',
@@ -59,7 +61,7 @@ class PageController extends AbstractController
         return $this->redirectToRoute('page_home', [], 303);
     }
 
-//HOME
+    // HOME
     #[Route(
         path: '/',
         name: 'page_home',
@@ -81,12 +83,12 @@ class PageController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-// REDIRECT PAGES POST, PUT, PATCH REQUESTS
+    // REDIRECT PAGES POST, PUT, PATCH REQUESTS
     #[Route(
         path: '/pages/{page}',
         name: 'redirect_pages_wrong_methods',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'
+            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
         ],
         methods: ['POST', 'PUT', 'PATCH']
     )]
@@ -96,12 +98,12 @@ class PageController extends AbstractController
         return $this->redirectToRoute('page_home', [], 303);
     }
 
-//DISPLAY
+    // DISPLAY
     #[Route(
         path: '/pages/{page}',
         name: 'page_display',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'
+            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
         ],
         methods: ['GET']
     )]
@@ -130,6 +132,7 @@ class PageController extends AbstractController
             if (!$pageObject->isPublished()) {
                 throw $this->createNotFoundException();
             }
+
             return $this->render(
                 '@c975LSite/pages/page.html.twig',
                 ['page' => $pageObject, 'detailHtml' => $detailHtml, 'detailTitle' => $detailTitle]
@@ -192,12 +195,12 @@ class PageController extends AbstractController
         ];
     }
 
-// PREVIEW
+    // PREVIEW
     #[Route(
         path: '/pages/{page}/preview',
         name: 'page_preview',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)'
+            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
         ],
         methods: ['GET'],
         priority: 1

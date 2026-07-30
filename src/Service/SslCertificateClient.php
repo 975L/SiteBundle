@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -6,6 +7,7 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
+
 namespace c975L\SiteBundle\Service;
 
 // Reads a host's TLS certificate expiry via a raw TLS handshake - openssl_x509_parse() needs the certificate itself, not an HTTP response, so this opens (then immediately closes) a bare TLS socket rather than issuing a real request. Peer verification is deliberately disabled: this is a read-only diagnostic reading whatever certificate the host presents (including an expired or self-signed one), not a connection meant to carry real traffic. Used by SslCertificateHealthCheckProvider, only ever from the c975l:health-check:run command

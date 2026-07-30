@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -13,10 +14,10 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Listener\ArticleBlockCacheInvalidationListener;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 

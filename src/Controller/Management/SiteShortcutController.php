@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -103,13 +104,15 @@ class SiteShortcutController extends AbstractController
 
         $result = $this->exportTablesCommand->exportTables(writeFile: false);
 
-        if ($result['error'] !== null) {
+        if (null !== $result['error']) {
             $this->addFlash('danger', $result['error']);
+
             return $this->redirectToRoute('management');
         }
 
         if (empty($result['tables'])) {
             $this->addFlash('warning', $result['message']);
+
             return $this->redirectToRoute('management');
         }
 

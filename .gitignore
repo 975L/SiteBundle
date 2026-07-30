@@ -1,8 +1,15 @@
 *.bak
+.php-cs-fixer.cache
+.phpunit.result.cache
 .phpunit.cache
+coverage
 composer.lock
 vendor
-.vendor
+
+### Codacy CLI (généré localement) ###
+/.codacy/cli-config.yaml
+/.codacy/logs/
+/.codacy/tools-configs/
 
 ### Outillage local (IA / IDE) ###
 /.claude/

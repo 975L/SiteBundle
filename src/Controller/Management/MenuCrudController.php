@@ -179,7 +179,7 @@ class MenuCrudController extends AbstractCrudController
     }
 
     // Hands the index template the locations no row exists for yet, each rendered as its own "create" button (see menu_crud_index.html.twig) - the whole replacement for the removed "new" form
-    public function index(AdminContext $context): KeyValueStore|Response
+    public function index(AdminContext $context): KeyValueStore | Response
     {
         $responseParameters = parent::index($context);
 

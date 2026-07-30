@@ -10,11 +10,14 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
+use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
+use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\OgImageType;
@@ -23,8 +26,6 @@ use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
-use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
@@ -34,7 +35,6 @@ use c975L\UiBundle\Form\Util\CollectionReconciler;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Endroid\QrCode\Builder\Builder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -63,6 +63,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Endroid\QrCode\Builder\Builder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -493,7 +494,7 @@ class PageCrudController extends AbstractCrudController
         SearchDto $searchDto,
         EntityDto $entityDto,
         FieldCollection $fields,
-        FilterCollection $filters
+        FilterCollection $filters,
     ): QueryBuilder {
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
 
@@ -618,7 +619,7 @@ class PageCrudController extends AbstractCrudController
     // Builds (but does not persist) a clone of a page and all its content (blocks, medias, og-image), unpublished - used by duplicate()
     private function clonePage(Page $source): Page
     {
-        $user = $this->security->getUser();
+        $user = $this->currentUser();
         $now = new \DateTime();
         $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
 
@@ -721,7 +722,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Clones a block (kind, data, animation, position) and its medias - used when duplicating a page
-    private function cloneBlock(Block $source, mixed $user): Block
+    private function cloneBlock(Block $source, ?UserInterface $user): Block
     {
         $copy = (new Block())
             ->setKind($source->getKind())
@@ -740,7 +741,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Clones a media row, including its physical file - reusing the existing file as the new Media's upload runs it back through Vich's normal pipeline (see UiMediaNamer/VichImageResizeListener), so the copy ends up with its own independent file rather than sharing the source's. Needs Vich's own ReplacingFile, not a plain File: UploadHandler::hasUploadedFile() only triggers the upload for an UploadedFile or a ReplacingFile, silently ignoring a plain File (leaving filename/size/mimeType null) - ReplacingFile exists precisely for "upload this already-on-disk file programmatically". removeReplacedFile defaults to false, so the source file is left untouched.
-    private function cloneMedia(Media $source, mixed $user): Media
+    private function cloneMedia(Media $source, ?UserInterface $user): Media
     {
         $copy = (new Media())
             ->setRole($source->getRole())
@@ -853,10 +854,17 @@ class PageCrudController extends AbstractCrudController
     // Defines the user for the page
     private function setUser(Page $page): void
     {
-        $user = $this->security->getUser();
-        if (null !== $user) {
+        if (null !== $user = $this->currentUser()) {
             $page->setUser($user);
         }
+    }
+
+    // Security only guarantees its own UserInterface, the c975L entities relate to the one the application's User entity implements through the scaffold
+    private function currentUser(): ?UserInterface
+    {
+        $user = $this->security->getUser();
+
+        return $user instanceof UserInterface ? $user : null;
     }
 
     // Generates on the fly the QR code pointing to the page, shown in the edit view (see page_crud_edit.html.twig)
@@ -924,5 +932,4 @@ class PageCrudController extends AbstractCrudController
 
         return $this->contentExporter->export(PageImportProvider::KIND, $data['items'], $data['files']);
     }
-
 }

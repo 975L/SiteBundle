@@ -35,7 +35,7 @@ class DefaultPagesImportCommand extends Command
 
         $result = $this->defaultPagesImporter->import();
 
-        if ($result['created'] === 0) {
+        if (0 === $result['created']) {
             $io->warning('All default pages already exist, nothing was created.');
 
             return Command::SUCCESS;

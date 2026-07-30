@@ -32,7 +32,7 @@ class RegistrationController extends AbstractController
             : $this->redirectToRoute('page_home');
     }
 
-// VERIFY EMAIL
+    // VERIFY EMAIL
     #[Route(
         path: '/verification/email',
         name: 'app_verify_email',

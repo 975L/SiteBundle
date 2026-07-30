@@ -45,22 +45,22 @@ class ScaffoldInstaller
                     if (is_file($target)) {
                         // 'assets' is the app's own editable copy from the first install onward (see themeImportReminder()) - unlike src/templates/tests/translations, it's never backed up/overwritten again once it exists, whether its content differs or not
                         if ('assets' === $dir) {
-                            $skipped++;
+                            ++$skipped;
                             continue;
                         }
                         if (file_get_contents($target) === file_get_contents($file->getPathname())) {
-                            $skipped++;
+                            ++$skipped;
                             continue;
                         }
                         $this->backup($relativePath, $target);
-                        $backedUp++;
+                        ++$backedUp;
                     }
 
                     if (!is_dir(\dirname($target))) {
                         mkdir(\dirname($target), 0775, true);
                     }
                     copy($file->getPathname(), $target);
-                    $copied++;
+                    ++$copied;
                 }
             }
         }
@@ -114,5 +114,4 @@ class ScaffoldInstaller
             file_put_contents($gitignore, rtrim($content) . "\n\nexistingFiles/\n");
         }
     }
-
 }

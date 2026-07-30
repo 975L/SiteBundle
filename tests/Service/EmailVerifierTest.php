@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -44,9 +45,9 @@ class EmailVerifierTest extends TestCase
         $emailService->expects($this->once())
             ->method('send')
             ->with($this->callback(function (EmailSendRequest $request) use ($signature) {
-                return $request->subject === 'Confirm your email'
-                    && $request->template === '@c975LSite/emails/confirmation_email.html.twig'
-                    && $request->to === 'user@example.test'
+                return 'Confirm your email' === $request->subject
+                    && '@c975LSite/emails/confirmation_email.html.twig' === $request->template
+                    && 'user@example.test' === $request->to
                     && $request->context['signedUrl'] === $signature->getSignedUrl()
                     && $request->context['expiresAtMessageKey'] === $signature->getExpirationMessageKey()
                     && $request->context['expiresAtMessageData'] === $signature->getExpirationMessageData();
@@ -67,7 +68,7 @@ class EmailVerifierTest extends TestCase
         $request = Request::create('/verification/email?id=42');
 
         // validateEmailConfirmationFromRequest() is only documented via @method on the interface (it lives on the final VerifyEmailHelper class), so PHPUnit's mock generator can't stub it from the interface alone. A hand-written stub can.
-        $verifyEmailHelper = new class($request, $user) implements VerifyEmailHelperInterface {
+        $verifyEmailHelper = new class ($request, $user) implements VerifyEmailHelperInterface {
             public int $calls = 0;
 
             public function __construct(

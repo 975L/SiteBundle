@@ -326,7 +326,7 @@ class SiteCreateCommand extends Command
         }
 
         return match ($kind) {
-            Config::TYPE_INT  => is_numeric($answer) ? $answer : throw new \RuntimeException('Cette valeur doit être un nombre.'),
+            Config::TYPE_INT => is_numeric($answer) ? $answer : throw new \RuntimeException('Cette valeur doit être un nombre.'),
             Config::TYPE_DATE => false !== \DateTime::createFromFormat('Y-m-d', $answer) ? $answer : throw new \RuntimeException('Cette valeur doit être une date au format AAAA-MM-JJ.'),
             Config::TYPE_JSON => null !== json_decode($answer) ? $answer : throw new \RuntimeException('Cette valeur doit être un JSON valide.'),
             default => $answer,

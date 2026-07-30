@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -19,7 +20,8 @@ class ThemeVariablesExtension extends AbstractExtension
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
-    ) {}
+    ) {
+    }
 
     public function getFunctions(): array
     {

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -129,10 +130,10 @@ class CollectionItemSourceProviderTest extends TestCase
         $detail = ($sources['site.collection.projects']['detail'])('papa-calin');
 
         $this->assertSame([
-            'title'       => 'Papa Câlin',
+            'title' => 'Papa Câlin',
             'description' => "Des histoires inventées à partir des idées d'enfants.",
-            'imageUrl'    => '/medias/site/collection-projects-42-abc.webp',
-            'url'         => 'https://papa-calin.com',
+            'imageUrl' => '/medias/site/collection-projects-42-abc.webp',
+            'url' => 'https://papa-calin.com',
         ], $detail);
     }
 

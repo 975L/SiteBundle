@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -6,6 +7,7 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
+
 namespace c975L\SiteBundle\Command;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
@@ -17,7 +19,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Process\Process;
-use DateTimeImmutable;
 
 /**
  * Console command to export the data (no CREATE TABLE) of all tables matching a prefix to a
@@ -33,6 +34,7 @@ use DateTimeImmutable;
  *   php bin/console c975l:site:export-tables                  # dumps data of every "site_*" table
  *   php bin/console c975l:site:export-tables --prefix=shop_    # dumps data of every "shop_*" table
  *   php bin/console c975l:site:export-tables --output=my.sql   # custom output path
+ *
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2026 975L <contact@975l.com>
  */
@@ -65,13 +67,15 @@ class ExportTablesCommand extends Command
             (string) $input->getOption('output') ?: null,
         );
 
-        if ($result['error'] !== null) {
+        if (null !== $result['error']) {
             $io->error($result['error']);
+
             return Command::FAILURE;
         }
 
         if (empty($result['tables'])) {
             $io->warning($result['message']);
+
             return Command::SUCCESS;
         }
 
@@ -95,7 +99,7 @@ class ExportTablesCommand extends Command
 
         try {
             [$tables, $listError] = $this->getTableList($database, $prefix, $credentialsFile);
-            if ($listError !== null) {
+            if (null !== $listError) {
                 return ['error' => "mysql failed while listing tables: {$listError}", 'tables' => [], 'path' => null, 'content' => null, 'message' => null];
             }
             if (empty($tables)) {
@@ -103,7 +107,7 @@ class ExportTablesCommand extends Command
             }
 
             $content = $this->dumpTables($database, $tables, $credentialsFile);
-            if ($content === null) {
+            if (null === $content) {
                 return ['error' => 'mysqldump failed while exporting table data.', 'tables' => [], 'path' => null, 'content' => null, 'message' => null];
             }
 
@@ -146,7 +150,7 @@ class ExportTablesCommand extends Command
     // site_config is excluded: ConfigBundle's own export has upsert semantics a TRUNCATE would destroy
     private function getTableList(string $database, string $prefix, string $credentialsFile): array
     {
-        $query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
+        $query = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES '
             . "WHERE TABLE_SCHEMA = '{$database}' AND TABLE_NAME LIKE '{$prefix}%' AND TABLE_TYPE != 'VIEW' "
             . "AND TABLE_NAME != 'site_config'";
 
@@ -166,7 +170,7 @@ class ExportTablesCommand extends Command
 
         $tables = array_values(array_filter(
             array_map('trim', explode("\n", $process->getOutput())),
-            fn($t) => $t && $t !== 'TABLE_NAME'
+            fn ($t) => $t && 'TABLE_NAME' !== $t
         ));
 
         return [$tables, null];
@@ -206,11 +210,12 @@ class ExportTablesCommand extends Command
     {
         $projectDir = $this->parameterBag->get('kernel.project_dir');
 
-        if ($output !== '') {
+        if ('' !== $output) {
             return str_starts_with($output, '/') ? $output : $projectDir . '/' . $output;
         }
 
-        $timestamp = (new DateTimeImmutable())->format('Y-m-d_H-i-s');
+        $timestamp = (new \DateTimeImmutable())->format('Y-m-d_H-i-s');
+
         return sprintf('%s/var/export/%s_%s.sql', $projectDir, rtrim($prefix, '_'), $timestamp);
     }
 }

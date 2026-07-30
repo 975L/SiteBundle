@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -31,7 +32,7 @@ class FontPreloadExtensionTest extends TestCase
     private function createExtension(array $configs, array $fonts): FontPreloadExtension
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturnCallback(fn(string $key) => $configs[$key] ?? null);
+        $configService->method('get')->willReturnCallback(fn (string $key) => $configs[$key] ?? null);
 
         $fontRepository = $this->createStub(FontRepository::class);
         $fontRepository->method('findAllOrdered')->willReturn($fonts);

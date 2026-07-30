@@ -58,10 +58,12 @@ h6 {
     font-size: 90%;
 }
 
+// The measure body copy is laid out on, well under the page's own --body-max-width: 1440px frames a page, it never carries a line of text
+// min() over a breakpoint: at a viewport of exactly 800px the old pair sized the box to the full width, leaving the text against both edges
 .legal div,
 .text,
 .site-article {
-  max-width: 90vw;
+  max-width: var(--reading-max-width, min(75ch, 90vw));
   margin: 1em auto;
   // Reserves room above the anchor target so a fixed/sticky header doesn't cover it after a #article-{slug} jump. Override --scroll-offset per site to match the header's height.
   scroll-margin-top: var(--scroll-offset, 80px);
@@ -112,15 +114,7 @@ blockquote {
     border-left: 10px solid var(--primary);
 }
 
-.site-article > div {
+// The hook excluded: this rule is one point more specific than its own, and would take back the margin it sets
+.site-article > div:not(.text-hook) {
     margin-top: 1em;
-}
-
-
-@media only screen and (min-width: 768px) {
-    .legal div,
-    .text,
-    .site-article {
-        max-width: 800px;
-    }
 }

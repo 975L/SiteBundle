@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -67,7 +68,7 @@ class SiteEssentialActionProviderTest extends TestCase
 
             return $generator;
         });
-        $generator->method('setEntityId')->willReturnCallback(function (int|string $entityId) use ($generator, &$calls) {
+        $generator->method('setEntityId')->willReturnCallback(function (int | string $entityId) use ($generator, &$calls) {
             $calls[array_key_last($calls)]['entityId'] = $entityId;
 
             return $generator;

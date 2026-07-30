@@ -39,7 +39,7 @@ class ResetPasswordController extends AbstractController
             : $this->redirectToRoute('page_home');
     }
 
-// RESET
+    // RESET
     #[Route(
         path: '/reset/{token}',
         name: 'app_reset_password',

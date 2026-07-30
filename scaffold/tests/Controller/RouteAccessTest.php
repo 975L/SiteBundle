@@ -12,7 +12,7 @@ class RouteAccessTest extends FunctionalTestCase
         $this->client = $this->createAuthenticatedClient();
     }
 
-    //Checks an URL matching no route at all still 404s (distinct from page_display's "route matched, entity missing" 404)
+    // Checks an URL matching no route at all still 404s (distinct from page_display's "route matched, entity missing" 404)
     public function testInexistingUrlReturns404(): void
     {
         $this->client->request('GET', '/inexisting-page');

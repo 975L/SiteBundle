@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -9,7 +10,7 @@
 
 namespace c975L\SiteBundle\Entity;
 
-use App\Entity\User;
+use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\UiBundle\Contract\VichImageResizableInterface;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
@@ -82,9 +83,9 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: UserInterface::class)]
     #[ORM\JoinColumn(nullable: true)]
-    private ?User $user = null;
+    private ?UserInterface $user = null;
 
     public function getId(): ?int
     {
@@ -216,12 +217,12 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(?UserInterface $user): self
     {
         $this->user = $user;
 

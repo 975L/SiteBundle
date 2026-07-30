@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -14,12 +15,12 @@ use c975L\SiteBundle\Listener\FontCssListener;
 use c975L\SiteBundle\Repository\FontRepository;
 use c975L\SiteBundle\Twig\FontPreloadExtension;
 use c975L\UiBundle\CacheWarmer\StylesheetCacheWarmer;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class FontCssListenerTest extends TestCase
 {

@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-07-30",
+        "description": [
+            {
+                "en": "An article's summary no longer shows codes like &amp; where you typed a \"&\", neither in a slider caption nor in the description search engines display",
+                "fr": "Le résumé d'un article n'affiche plus de codes comme &amp; là où vous avez saisi un « & », ni dans la légende d'un carrousel ni dans la description affichée par les moteurs de recherche",
+                "es": "El resumen de un artículo ya no muestra códigos como &amp; donde usted escribió un «&», ni en el pie de un carrusel ni en la descripción que muestran los buscadores"
+            },
+            {
+                "en": "Text pages and articles now keep a comfortable line length on every screen, instead of stretching edge to edge on a tablet",
+                "fr": "Les pages de texte et les articles conservent désormais une longueur de ligne confortable sur tous les écrans, au lieu de s'étirer d'un bord à l'autre sur une tablette",
+                "es": "Las páginas de texto y los artículos mantienen ahora una longitud de línea cómoda en todas las pantallas, en lugar de extenderse de borde a borde en una tableta"
+            },
+            {
+                "en": "Visitors already browsing the site now get the new version as soon as it goes live, instead of keeping the previous one until they reload",
+                "fr": "Les visiteurs déjà en train de naviguer reçoivent désormais la nouvelle version dès sa mise en ligne, au lieu de garder la précédente jusqu'à ce qu'ils rechargent la page",
+                "es": "Los visitantes que ya están navegando reciben ahora la nueva versión en cuanto se publica, en lugar de conservar la anterior hasta que recarguen la página"
+            }
+        ]
+    },
+    {
         "date": "2026-07-29",
         "description": [
             {

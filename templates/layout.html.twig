@@ -84,8 +84,8 @@
                     {% endif %}
 {# Description #}
                     {% if summarySocialNetwork is defined and summarySocialNetwork is not empty %}
-                        <meta name="description" content="{{ summarySocialNetwork|striptags }}">
-                        <meta property="og:description" content="{{ summarySocialNetwork|striptags|slice(0,150) }}">
+                        <meta name="description" content="{{ summarySocialNetwork|plain_text }}">
+                        <meta property="og:description" content="{{ summarySocialNetwork|plain_text|slice(0,150) }}">
                     {% endif %}
 {# Title #}
                     {% if pageTitle is defined %}
@@ -139,8 +139,9 @@
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
+{# data-turbo-track="reload" : Turbo Drive ne re-evalue pas le <head> entre deux navigations, donc apres un deploiement le visiteur deja sur le site recoit le nouveau HTML avec les anciens assets. Marquees ainsi, ces balises sont comparees par Turbo a chaque navigation (par leur outerHTML) et un href different - le ?v=<mtime> change a chaque cache:warmup - declenche un rechargement complet de la page #}
                 {% for stylesheet in bundle_stylesheets() %}
-                    <link rel="stylesheet" href="{{ stylesheet }}">
+                    <link rel="stylesheet" href="{{ stylesheet }}" data-turbo-track="reload">
                 {% endfor %}
             {% endblock %}
 {# Preconnect #}
@@ -159,7 +160,9 @@
             {% if display != 'pdf' %}
                 {% block javascripts %}
                     {% block importmap %}
-                        {{ importmap(['app']|merge(bundle_scripts()), {'nonce': csp_nonce('script')}) }}
+{# data-turbo-track="reload" ne s'applique qu'aux balises <script> rendues ici, pas aux <link rel="modulepreload">, ce qui suffit : le JSON inline du <script type="importmap"> liste toutes les URLs digestees du JS et sert donc d'empreinte complete. Le nonce, different a chaque requete, ne provoque pas de faux positif : Turbo le vide avant de comparer les signatures #}
+{# Symfony pose aussi cet attribut sur le <script> que le loader du polyfill es-module-shims injecte dans le <head>, ce qui ferait echouer la comparaison de signature a chaque navigation. Assume : le polyfill ne se declenche que si HTMLScriptElement.supports('importmap') est faux, donc sur un navigateur anterieur a 2023 #}
+                        {{ importmap(['app']|merge(bundle_scripts()), {'nonce': csp_nonce('script'), 'data-turbo-track': 'reload'}) }}
                     {% endblock %}
                 {% endblock %}
 {# End display for html #}

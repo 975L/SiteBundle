@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -30,6 +31,37 @@ class ScaffoldThemeTest extends TestCase
     private const RUNTIME_ONLY = [
         '--image-compare-position',
         '--slider-freeflow-vw',
+    ];
+
+    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into
+    // site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on
+    // the row and on each column's own span modifier - one value in :root would size every column alike
+    private const NOT_THEMABLE = [
+        '--c975l-color-background',
+        '--c975l-color-primary',
+        '--c975l-color-primary-dark-mode',
+        '--c975l-color-secondary',
+        '--c975l-color-secondary-dark-mode',
+        '--c975l-color-text',
+        '--c975l-font-family-accent',
+        '--c975l-font-family-body',
+        '--c975l-font-family-title',
+        '--bs-primary',
+        '--bs-secondary-bg',
+        '--bs-tertiary-bg',
+        '--flex-columns-gap',
+        '--flex-columns-span',
+    ];
+
+    // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root
+    // would collapse the three variants into a single look (the scaffold's own header says as much)
+    private const PER_VARIANT = [
+        '--section-background',
+        '--section-text',
+        '--section-text-soft',
+        '--section-accent',
+        '--section-border',
+        '--section-overlay',
     ];
 
     // A. Every token the bundle declares is offered, so the file stays the single place to look
@@ -79,8 +111,61 @@ class ScaffoldThemeTest extends TestCase
         ));
     }
 
+    // D. A token read with an inline fallback never reaches :root, so test A above is blind to it - and a
+    // whole batch of form and alert tokens did stay out of the scaffold for a release because of that
+    public function testScaffoldOffersEveryTokenReadWithAnInlineFallback(): void
+    {
+        $missing = array_diff(
+            array_keys($this->tokensReadFromSass()),
+            array_keys($this->scaffoldTokens()),
+            self::ADMIN_EDITABLE,
+            self::RUNTIME_ONLY,
+            self::NOT_THEMABLE,
+            self::PER_VARIANT
+        );
+
+        $this->assertSame([], array_values($missing), sprintf(
+            'The sass reads %s with a fallback, so no :root ever carries it and the scaffolded theme.css never offers it: a design has no way to discover it.',
+            implode(', ', $missing)
+        ));
+    }
+
     /**
-     * Declarations of the compiled :root - the defaults actually served, rather than the sass that produced them
+     * Every "var(--x, …)" this bundle and UiBundle read, the fallback being where such a token's default lives.
+     *
+     * @return array<string, true>
+     */
+    private function tokensReadFromSass(): array
+    {
+        $roots = [dirname(__DIR__) . '/sass', dirname(__DIR__) . '/vendor/c975l/ui-bundle/sass'];
+        $tokens = [];
+
+        foreach ($roots as $root) {
+            // UiBundle is a hard requirement, so a missing root is an anomaly to report rather than a half-blind pass
+            $this->assertDirectoryExists($root, sprintf('"%s" is missing, so the tokens it holds would go unchecked.', $root));
+
+            /** @var iterable<\SplFileInfo> $files */
+            $files = new \RegexIterator(
+                new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root)),
+                '/\.scss$/'
+            );
+
+            foreach ($files as $file) {
+                preg_match_all('/var\(\s*(--[a-z0-9-]+)/', (string) file_get_contents($file->getPathname()), $matches);
+
+                foreach ($matches[1] as $token) {
+                    $tokens[$token] = true;
+                }
+            }
+        }
+
+        $this->assertNotEmpty($tokens, 'No sass was read, this test no longer checks anything.');
+
+        return $tokens;
+    }
+
+    /**
+     * Declarations of the compiled :root - the defaults actually served, rather than the sass that produced them.
      *
      * @return array<string, string>
      */
@@ -99,7 +184,7 @@ class ScaffoldThemeTest extends TestCase
     }
 
     /**
-     * Declarations of the scaffold, commented ones included - being all commented out is the point of the file
+     * Declarations of the scaffold, commented ones included - being all commented out is the point of the file.
      *
      * @return array<string, string>
      */

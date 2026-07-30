@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -157,7 +158,7 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     /**
-     * EasyAdmin's own actions, this bundle's custom ones, and the groups stating a class of their own
+     * EasyAdmin's own actions, this bundle's custom ones, and the groups stating a class of their own.
      *
      * @return string[]
      */

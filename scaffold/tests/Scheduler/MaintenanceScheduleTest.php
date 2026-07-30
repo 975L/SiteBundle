@@ -35,7 +35,7 @@ class MaintenanceScheduleTest extends TestCase
         $this->assertSame($command, $messages[0]->input);
     }
 
-// Provides the expected recurring messages, in the order they are added
+    // Provides the expected recurring messages, in the order they are added
     public static function recurringMessages(): array
     {
         return [

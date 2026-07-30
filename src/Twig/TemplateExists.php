@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2019: 975L <contact@975l.com>
  * (c) 2019: Laurent Marquet <laurent.marquet@laposte.net>
@@ -25,7 +26,7 @@ class TemplateExists extends AbstractExtension
     }
 
     /**
-     * Checks if the template exists
+     * Checks if the template exists.
      */
     public function templateExists($template)
     {

@@ -7,7 +7,7 @@
             {% set slides = slides|merge([{
                 image: articleBlock.media.first,
                 title: articleBlock.data.title|default(''),
-                text: articleBlock.data.hook|default('')|striptags|slice(0, 160),
+                text: articleBlock.data.hook|default('')|plain_text|slice(0, 160),
                 url: path('page_display', {page: page.slug}) ~ '#article-' ~ articleBlock.data.slug|default('')
             }]) %}
         {% endif %}

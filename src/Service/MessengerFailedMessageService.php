@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -6,6 +7,7 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
+
 namespace c975L\SiteBundle\Service;
 
 use c975L\SiteBundle\Messenger\SingleEnvelopeReceiver;
@@ -49,7 +51,7 @@ class MessengerFailedMessageService
         private readonly Connection $connection,
         // Matches the "failed" transport name assumed by the raw SQL below, per the Symfony Messenger recipe default (framework.messenger.failure_transport: failed)
         #[Autowire(service: 'messenger.transport.failed')]
-        private readonly ReceiverInterface&ListableReceiverInterface $failureReceiver,
+        private readonly ReceiverInterface & ListableReceiverInterface $failureReceiver,
         private readonly MessageBusInterface $messageBus,
         private readonly EventDispatcherInterface $eventDispatcher,
     ) {

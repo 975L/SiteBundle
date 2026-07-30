@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -18,7 +19,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RedirectSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly RedirectRepository $redirectRepository
+        private readonly RedirectRepository $redirectRepository,
     ) {
     }
 

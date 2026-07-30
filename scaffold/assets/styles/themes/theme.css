@@ -68,12 +68,44 @@
     /* --navbar-site-name-color: var(--primary); */
     /* --navbar-site-tagline-color: var(--text); */
 
+    /* The measure body copy is laid out on - an article, a "text" block, a legal page, and the sliders
+       and comparisons sharing that column. Well under --body-max-width, which frames the page and never
+       carries a line of text. Set it in "ch" rather than "px" for a measure that follows the body font */
+    /* --reading-max-width: min(75ch, 90vw); */
+
+    /* The room kept above and below a slider and a comparison, the two block kinds laying out their own
+       vertical rhythm rather than taking the one the section-level blocks share */
+    /* --slider-margin-block: 3em; */
+    /* --image-compare-margin-block: 3em; */
+
+    /* The measures of the section-level blocks (UiBundle) */
+    /* --section-head-max-width: 640px; */
+    /* --hero-text-max-width: 720px; */
+    /* --hero-media-max-width: 520px; */
+    /* --cta-band-text-max-width: 560px; */
+    /* --alert-max-width: 700px; */
+
     /* Hero block (UiBundle) - its own typographic scale, independent from the page's headings */
     /* --hero-title-size: clamp(40px, 6vw, 66px); */
     /* --hero-title-letter-spacing: -0.01em; */
     /* --hero-title-line-height: 1.03; */
     /* --hero-sub-size: 19px; */
     /* --hero-sub-max-width: 480px; */
+
+    /* Text hook (UiBundle) - the lead-in phrase of the "text_hook" block and of an article */
+    /* --text-hook-size: clamp(17px, 1.7vw, 20px); */
+    /* --text-hook-line-height: 1.65; */
+    /* --text-hook-max-width: 62ch; */
+    /* --text-hook-color: var(--section-text, var(--text)); */
+    /* --text-hook-margin-bottom: 24px; */
+    /* The bar the standalone block is marked out by, where an article's hook is marked out by its color */
+    /* --text-hook-bar-width: 3px; */
+    /* --text-hook-bar-gap: 20px; */
+    /* --text-hook-standalone-margin: 32px; */
+    /* An article's hook falls back to --primary, so set this on a theme whose primary is its text color */
+    /* --text-hook-article-color: var(--section-accent, var(--primary)); */
+    /* --text-hook-article-max-width: none; */
+    /* --text-hook-article-margin: 24px; */
 
     /* The three flats a page section can be painted with, when an editor sets its "background" field
        (UiBundle). Only the background is set here: the text, dividers and translucent chips of each

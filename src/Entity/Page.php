@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -9,7 +10,7 @@
 
 namespace c975L\SiteBundle\Entity;
 
-use App\Entity\User;
+use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\HasBlocksInterface;
 use c975L\UiBundle\Entity\Block;
@@ -55,7 +56,7 @@ class Page implements HasBlocksInterface
     private ?\DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne]
-    private ?User $user = null;
+    private ?UserInterface $user = null;
 
     // Whether the page is meant to be referenced by search engines. True by default - opting a page out is the exception, meant for pages with no SEO value (e.g. "creer-un-compte", "mot-de-passe-oublie", created by DefaultPagesImporter). Drives both its presence in sitemap-site.xml (see SitePageSitemapProvider::getUrls()) and its "robots" meta tag (see layout.html.twig): excluding a page from the sitemap alone wouldn't prevent indexing, since the sitemap is only a crawl hint
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
@@ -150,7 +151,7 @@ class Page implements HasBlocksInterface
 
     public function getCreation(): ?\DateTimeInterface
     {
-        return $this->creation  ;
+        return $this->creation;
     }
 
     public function setCreation(\DateTimeInterface $creation): self
@@ -172,12 +173,12 @@ class Page implements HasBlocksInterface
         return $this;
     }
 
-     public function getUser(): ?User
+    public function getUser(): ?UserInterface
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?UserInterface $user): static
     {
         $this->user = $user;
 

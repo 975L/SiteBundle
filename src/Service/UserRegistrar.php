@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -24,10 +25,7 @@ class UserRegistrar
     ) {
     }
 
-    /**
-     * @param PasswordAuthenticatedUserInterface&UserInterface $user
-     */
-    public function register(PasswordAuthenticatedUserInterface&UserInterface $user, string $plainPassword, string $verifyEmailRouteName, string $subject, string $template, string $to): bool
+    public function register(PasswordAuthenticatedUserInterface & UserInterface $user, string $plainPassword, string $verifyEmailRouteName, string $subject, string $template, string $to): bool
     {
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 

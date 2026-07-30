@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -14,10 +15,10 @@ use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
-use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
-use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Entity\Redirect;
+use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
+use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\BlockDataExporter;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
@@ -52,9 +53,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -623,7 +624,7 @@ class PageCrudControllerTest extends TestCase
     {
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturnMap([
-            [['slug' => 'my-page'], null, (new Page())],
+            [['slug' => 'my-page'], null, new Page()],
             [['slug' => 'my-page-2'], null, null],
         ]);
 

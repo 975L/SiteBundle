@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -22,7 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ArticlesSliderType extends AbstractType
 {
     public function __construct(
-        private readonly PageRepository $pageRepository
+        private readonly PageRepository $pageRepository,
     ) {
     }
 
@@ -35,16 +36,16 @@ class ArticlesSliderType extends AbstractType
 
         $builder
             ->add('pageId', ChoiceType::class, [
-                'label'   => 'label.page',
+                'label' => 'label.page',
                 'choices' => $choices,
             ])
             ->add('duration', IntegerType::class, [
                 'label' => 'label.duration',
             ])
             ->add('ratio', ChoiceType::class, [
-                'label'              => 'label.ratio',
-                'help'               => 'label.ratio_help',
-                'choices'            => SliderType::RATIO_CHOICES,
+                'label' => 'label.ratio',
+                'help' => 'label.ratio_help',
+                'choices' => SliderType::RATIO_CHOICES,
                 'translation_domain' => 'ui',
             ])
         ;
@@ -69,7 +70,7 @@ class ArticlesSliderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => null,
+            'data_class' => null,
             'translation_domain' => 'site',
         ]);
     }

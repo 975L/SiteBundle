@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -17,7 +18,7 @@ use Twig\TwigFunction;
 class PageExtension extends AbstractExtension
 {
     public function __construct(
-        private readonly PageRepository $pageRepository
+        private readonly PageRepository $pageRepository,
     ) {
     }
 

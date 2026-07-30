@@ -53,13 +53,16 @@ See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bun
 
 ## Requirements
 
-- PHP >= 8.1
-- [c975L/ConfigBundle](https://github.com/975L/ConfigBundle)
+- PHP >= 8.4
+- Symfony ^8.0
+- [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) >= 5.13
 - [c975L/UiBundle](https://github.com/975L/UiBundle)
 - Doctrine ORM
 - EasyAdmin
 - symfony/ux-twig-component
 - twig/cssinliner-extra
+
+Your `App\Entity\User` must implement `c975L\ConfigBundle\Contract\UserInterface`, `Page::$user` and `CollectionItem::$user` being typed against it. The scaffolded `User` already does; an older one adds the `implements` itself, with no migration and no configuration change.
 
 Optional: [nelmio/security-bundle](https://github.com/nelmio/NelmioSecurityBundle), if installed, has its CSP nonce generator decorated by `SessionNonceGenerator` — keeps the nonce stable for the whole session instead of per-request, so Turbo Drive/Frames/Streams re-executing `<script>` tags from a fetched page doesn't get them blocked by a mismatched nonce. A no-op if the bundle isn't installed.
 
@@ -641,6 +644,8 @@ That file is for **shapes and layout** — radii, navbar/footer, section flats (
 A navbar painted with `--navbar-background: var(--primary)` has three tokens to inverse what would otherwise be invisible on it: `--navbar-site-name-color`/`--navbar-site-tagline-color` for the brand block, and `--navbar-btn-background`/`-background-hover`/`-color` for the single "primary" nav item's pill, whose defaults are UiBundle's `.btn-primary` colors.
 
 Navbar and footer both bleed full-viewport-width past `--body-max-width`, each through its own pair of tokens: `--navbar-width`/`--navbar-margin-x` and `--footer-width`/`--footer-margin-x`. A design that frames the page inside that max-width sets the pairs it needs to `auto`/`0` here, instead of overriding `.menu`/`footer` from `app.css`. `--footer-margin-top` goes with them: a design stacking colored flats sets it to `0` so the footer band follows the previous flat with no strip of page background between the two.
+
+`--reading-max-width` is the measure body copy is laid out on — `.legal div`, `.text`, `.site-article` and the sliders sharing that column — well under `--body-max-width`, which frames the page and never carries a line of text. It defaults to `min(75ch, 90vw)`, in `ch` so the measure follows the body font instead of drifting as it changes; a design that kept the previous 800px sets `--reading-max-width: min(800px, 90vw)` here.
 
 Rules that override a bundle's own classes belong in `app.css`, not in `theme.css` — the split is "values on one side, rules on the other", not "mine versus the bundle's".
 

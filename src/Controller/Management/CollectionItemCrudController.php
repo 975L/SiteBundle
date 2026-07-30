@@ -66,7 +66,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // Items only ever make sense scoped to one collection - without a resolvable ?collectionGroup=<id>, bounces back to CollectionCrudController's own list instead of showing an ambiguous/empty grid
-    public function index(AdminContext $context): KeyValueStore|Response
+    public function index(AdminContext $context): KeyValueStore | Response
     {
         if (null === $this->currentCollectionGroup()) {
             return $this->redirectToCollectionsList();
@@ -76,7 +76,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // Same guard as index() - reachable directly (e.g. a stale bookmark) without ever having browsed into a collection first
-    public function new(AdminContext $context): KeyValueStore|Response
+    public function new(AdminContext $context): KeyValueStore | Response
     {
         if (null === $this->currentCollectionGroup()) {
             return $this->redirectToCollectionsList();

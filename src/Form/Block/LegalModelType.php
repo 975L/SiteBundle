@@ -1,4 +1,5 @@
 <?php
+
 /*
  * (c) 2026: 975L <contact@975l.com>
  * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
@@ -24,21 +25,21 @@ class LegalModelType extends AbstractType
                 'label' => 'label.model',
                 'choices' => [
                     'France' => [
-                        'label.cookies_policy'  => 'france/cookies',
-                        'label.copyright'        => 'france/copyright',
-                        'label.legal_notice'     => 'france/legal-notice',
-                        'label.privacy_policy'   => 'france/privacy-policy',
-                        'label.terms_of_sales'   => 'france/terms-of-sales',
-                        'label.terms_of_use'     => 'france/terms-of-use',
+                        'label.cookies_policy' => 'france/cookies',
+                        'label.copyright' => 'france/copyright',
+                        'label.legal_notice' => 'france/legal-notice',
+                        'label.privacy_policy' => 'france/privacy-policy',
+                        'label.terms_of_sales' => 'france/terms-of-sales',
+                        'label.terms_of_use' => 'france/terms-of-use',
                     ],
                 ],
             ])
             ->add('latestUpdate', DateType::class, [
-                'label'        => 'label.latest_update',
-                'widget'       => 'single_text',
-                'input'        => 'string',
+                'label' => 'label.latest_update',
+                'widget' => 'single_text',
+                'input' => 'string',
                 'input_format' => 'Y-m-d',
-                'required'     => false,
+                'required' => false,
             ])
         ;
     }
@@ -46,7 +47,7 @@ class LegalModelType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => null,
+            'data_class' => null,
             'translation_domain' => 'site',
         ]);
     }

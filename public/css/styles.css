@@ -461,7 +461,7 @@ template {
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--frame-background);
 }
 
@@ -559,7 +559,7 @@ h6 {
 .legal div,
 .text,
 .site-article {
-  max-width: 90vw;
+  max-width: var(--reading-max-width, min(75ch, 90vw));
   margin: 1em auto;
   scroll-margin-top: var(--scroll-offset, 80px);
 }
@@ -609,17 +609,10 @@ blockquote {
   border-left: 10px solid var(--primary);
 }
 
-.site-article > div {
+.site-article > div:not(.text-hook) {
   margin-top: 1em;
 }
 
-@media only screen and (min-width: 768px) {
-  .legal div,
-  .text,
-  .site-article {
-    max-width: 800px;
-  }
-}
 /* CONTAINERS */
 .container {
   margin: 0 auto 1.5em auto;

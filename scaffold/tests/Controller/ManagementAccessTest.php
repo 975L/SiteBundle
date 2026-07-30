@@ -14,7 +14,7 @@ class ManagementAccessTest extends WebTestCase
         $this->client = static::createClient();
     }
 
-    //Checks every /management route redirects an anonymous visitor to the login page
+    // Checks every /management route redirects an anonymous visitor to the login page
     public function testAllManagementRoutesRedirectAnonymousToLogin(): void
     {
         $router = static::getContainer()->get('router');

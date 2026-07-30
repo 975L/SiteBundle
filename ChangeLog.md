@@ -1,5 +1,58 @@
 # Changelog
 
+## v7.13.0
+
+Require PHP 8.4 and Symfony 8, and type User on ConfigBundle's contract
+
+- `php` is now required in `>=8.4` instead of `>=8.1` (30/07/2026) [BC-Break]
+- The `symfony/*` requirements are now constrained to `^8.0` instead of `*` (30/07/2026) [BC-Break]
+- The `symfony/ux-*` requirements are now constrained to `^3.3` instead of `*` (30/07/2026)
+- The third-party requirements left in `*` are now bounded on their installed version (30/07/2026)
+- `c975l/config-bundle` is now required in `^5.13`, the version declaring `Contract\UserInterface` (30/07/2026)
+- `c975l/ui-bundle` is now required in `^1.12` instead of `*` (30/07/2026)
+- `Page::$user` and `CollectionItem::$user` are now typed `c975L\ConfigBundle\Contract\UserInterface` instead of `App\Entity\User` (30/07/2026) [BC-Break]
+- The scaffold's `App\Entity\User` now implements `c975L\ConfigBundle\Contract\UserInterface` (30/07/2026)
+- `UserManagementVoter` now type-checks its subject against `c975L\ConfigBundle\Contract\UserInterface` (30/07/2026)
+- `PageCrudController::cloneBlock()`, `cloneMedia()` and `DefaultPagesImporter::importDefinition()`, `buildPage()` now type their `$user` argument instead of taking `mixed` (30/07/2026) [BC-Break]
+- Added `.codacy.yaml`, `phpcs.xml.dist` and `eslint.config.mjs` (30/07/2026)
+- Applied PSR-12 to the codebase (30/07/2026)
+- Added `.php-cs-fixer.dist.php`, applying the Symfony coding standards (30/07/2026)
+- Added `phpstan.dist.neon`, running the static analysis at level 5 (30/07/2026)
+- Added `phpstan-baseline.neon`, freezing the errors that predate the analysis (30/07/2026)
+- Added the `CI` GitHub Actions workflow, running PSR-12, the static analysis, the tests and the coverage upload (30/07/2026)
+- The local Codacy CLI now runs `eslint@9.39.5` (30/07/2026)
+- Added `ComponentCenteringCascadeTest`, running UiBundle's `ComponentCenteringAnalyzer` over both bundles' stylesheets in the order a page loads them (30/07/2026)
+- Catches what neither bundle can see from inside itself: this bundle's page-wide `section { margin: 1em auto }` against a UiBundle component's own centering, the pair UiBundle's block reset was written for (30/07/2026)
+- Skips itself until the installed `c975l/ui-bundle` carries that analyzer (v1.12.3), rather than failing a suite over a version it cannot ask for (30/07/2026)
+- The `Exception/*.html.twig` pages now serve their images through `asset()`, in place of `absolute_url(asset())` (30/07/2026)
+- `phpcs`, `php-cs-fixer` and `phpstan` now cover `scaffold/` too, which this bundle ships but never linted (30/07/2026)
+- `phpstan` skips `scaffold/tests/Controller`, as `phpunit.xml.dist` already does (30/07/2026)
+- Applied PSR-12 to `scaffold/` (30/07/2026)
+- Removed the scaffolded `SecurityController::login()` guard on a null `getLastUsername()`, which is typed `string` and would have redirected the route onto itself (30/07/2026)
+- `html` now clips its horizontal overflow with `clip` instead of `hidden` (30/07/2026)
+- Fixed the root becoming a scroll container of its own, `hidden` also pinning `overflow-y` (30/07/2026)
+- The stylesheets and the importmap now carry `data-turbo-track="reload"` (30/07/2026)
+- Fixed a visitor already on the site keeping the old assets after a deploy, Turbo Drive never re-evaluating the `<head>` (30/07/2026)
+- Added `HorizontalOverflowTest` and `HeadAssetTrackingTest` (30/07/2026)
+- The requirements section of the readme now states PHP 8.4, Symfony 8 and the `UserInterface` a site's `User` must implement (30/07/2026)
+- Documented `--reading-max-width` in the readme's `theme.css` section (30/07/2026)
+- The `articles_slider` block now reads an article's hook through `plain_text`, in place of `striptags` (30/07/2026)
+- Fixed a slide's caption showing `&amp;` where the hook holds an `&`, Twig escaping the entity `striptags` had left behind (30/07/2026)
+- The `description`/`og:description` meta tags now read that same filter, having carried the doubly-escaped text too (30/07/2026)
+- Needs `c975l/ui-bundle` v1.12.3, the version declaring `plain_text` and `.text-hook--article` (30/07/2026)
+- `.site-article > div` now excludes `.text-hook`, that rule being one point more specific and having taken back the margin the hook sets (30/07/2026)
+- Added the `--text-hook-*` tokens to the scaffolded `theme.css`, none of them documented there before (30/07/2026)
+- Added `--reading-max-width`, the measure `.legal div`/`.text`/`.site-article` are laid out on, previously a bare 800px (30/07/2026)
+- It defaults to `min(75ch, 90vw)` and the `min-width: 768px` breakpoint restating the measure is gone, one rule in place of two (30/07/2026) [BC-Break]
+- Body copy read at 90 characters to the line on the 800px it had, past the 45-75 a line is comfortably read on (30/07/2026)
+- Set in `ch` rather than `px`, so the measure follows the body font (30/07/2026)
+- A design that kept the old measure sets `--reading-max-width: min(800px, 90vw)` in its own `theme.css` (30/07/2026)
+- Fixed an article rendering edge to edge between 768px and ~890px, the 800px matching or outrunning the viewport and leaving `margin: auto` nothing to split (30/07/2026)
+- Added the measure tokens to the scaffolded `theme.css`, alongside the five UiBundle reads for its own sections (30/07/2026)
+- Added `ReadingMeasureTest`, locking the three rules to one tokenised measure and keeping a bare length out of the compiled sheets (30/07/2026)
+- `ScaffoldThemeTest` now also reads every `var(--x, …)` of this bundle's and UiBundle's sass, a token carrying an inline fallback reaching no `:root` and having been invisible to the existing check (30/07/2026)
+- Fixed the scaffolded `theme.css` having shipped a whole release without the `--form-width`/`--input-*`/`--alert-color` batch, none of them declared in `sass/_variables.scss` (30/07/2026)
+
 ## v7.12.1
 
 Added the guided projects, and made SocialBundle optional

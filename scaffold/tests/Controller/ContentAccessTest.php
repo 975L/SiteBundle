@@ -17,7 +17,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->client = $this->createAuthenticatedClient();
     }
 
-    //Checks every published page is accessible ('home' redirects to the site root instead, see PageController::display())
+    // Checks every published page is accessible ('home' redirects to the site root instead, see PageController::display())
     public function testAllPublishedPagesAreAccessible(): void
     {
         $pages = static::getContainer()->get(PageRepository::class)->findAllOrdered();
