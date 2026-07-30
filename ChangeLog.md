@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- `sass/_normalize.scss` (normalize.css v8.0.1) is replaced by `sass/_modern-normalize.scss` (modern-normalize v3.0.1) (30/07/2026) [BC-Break]
+- The MIT attribution of that file now survives minification, `/*!` replacing `/*` (30/07/2026)
+- Added a `.stylelintrc.json`, read by Codacy in place of its default ruleset (30/07/2026)
+
 ## v7.13.0
 
 Require PHP 8.4 and Symfony 8, and type User on ConfigBundle's contract
