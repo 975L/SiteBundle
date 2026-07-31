@@ -234,6 +234,22 @@
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Tómese el tiempo que necesite: mientras tanto, sus visitantes siguen viendo el original.</target>
             </trans-unit>
+            <trans-unit id="emqi7.W">
+                <source>description.legal_customize</source>
+                <target>Los textos siguientes son los del bundle: modifíquelos directamente. Mientras no toque una sección, esta sigue actualizándose con el bundle; en cuanto la modifica, pasa a ser suya y usted asume la responsabilidad. Arrastre una tarjeta por su encabezado para cambiar el orden. En cualquier caso, el contenido de estas páginas es su responsabilidad editorial y jurídica.</target>
+            </trans-unit>
+            <trans-unit id="YgzofbB">
+                <source>description.legal_drift</source>
+                <target>El texto que el bundle proporciona para esta sección ha cambiado desde que usted la reescribió. No se ha modificado nada: esta es la nueva versión, usted decide si le concierne.</target>
+            </trans-unit>
+            <trans-unit id="EBXU68o">
+                <source>description.legal_extra_sections</source>
+                <target>Sus propias secciones, añadidas al final del nivel elegido. El bundle no las conoce y nunca las modificará.</target>
+            </trans-unit>
+            <trans-unit id="THY3L8B">
+                <source>description.legal_placeholders</source>
+                <target>Estos marcadores se sustituyen por la configuración del sitio al mostrarse la página, también en sus propios textos:</target>
+            </trans-unit>
             <trans-unit id="vDZMvYG">
                 <source>description.messenger_alert_admin</source>
                 <target>Problema técnico notificado automáticamente al equipo. No requiere ninguna acción.</target>
@@ -261,6 +277,10 @@
             <trans-unit id="KdHpBKb">
                 <source>flash.font_bulk_import_success</source>
                 <target>%count% fuente(s) importada(s).</target>
+            </trans-unit>
+            <trans-unit id="oGPPygw">
+                <source>flash.legal_model_customized</source>
+                <target>Personalización guardada.</target>
             </trans-unit>
             <trans-unit id="z.Yxr72">
                 <source>flash.messenger_deleted</source>
@@ -486,6 +506,10 @@
                 <source>label.create_page</source>
                 <target>Crear página</target>
             </trans-unit>
+            <trans-unit id="iripoC5">
+                <source>label.create_site_graphic</source>
+                <target>Crear un gráfico:</target>
+            </trans-unit>
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
                 <target>Creación</target>
@@ -693,6 +717,14 @@
             <trans-unit id="QjQ95bW">
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Enlace a una página o ruta, usado en los menús del sitio.</target>
+            </trans-unit>
+            <trans-unit id="qrvRsVy">
+                <source>label.gone</source>
+                <target>Suprimida (410)</target>
+            </trans-unit>
+            <trans-unit id="AcObL2B">
+                <source>label.gone_help</source>
+                <target>Marcado = la url se declara suprimida definitivamente (410 Gone), sin redirección: «Url de origen» puede terminar en * para cubrir toda una carpeta (ej. /apidoc/*), y «Url de destino» queda vacía</target>
             </trans-unit>
             <trans-unit id="K3pbZfO">
                 <source>label.guided_project_collection</source>
@@ -1014,6 +1046,10 @@
                 <source>label.health_check_https_redirect_ok</source>
                 <target>http redirige correctamente a https</target>
             </trans-unit>
+            <trans-unit id="epZIsrh">
+                <source>label.health_check_legal_model_drift</source>
+                <target>%count% sección(es) que usted reescribió han cambiado en el modelo «%model%» : %sections%</target>
+            </trans-unit>
             <trans-unit id="4HIWk23">
                 <source>label.health_check_mixed_content_call_failed</source>
                 <target>Fallo en la comprobación de contenido mixto: %message%</target>
@@ -1218,6 +1254,10 @@
                 <source>label.info_font</source>
                 <target>Archivos de fuentes personalizadas subidos para el sitio (ttf, woff, woff2). Añada, modifique o elimine una fuente; cada peso y estilo forma una variante distinta utilizable en la configuración del tema.</target>
             </trans-unit>
+            <trans-unit id="KDIeeFV">
+                <source>label.info_legal_model</source>
+                <target>Los textos legales incluidos en el bundle siguen mantenidos y actualizados. Página por página, puede ocultar una sección, reescribirla, moverla o añadir las suyas: solo lo que modifica deja de seguir las actualizaciones.</target>
+            </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
                 <target>Lista de los menús del sitio (barra de navegación, pie de página, cabecera/pie de correo). Edite un menú para añadir, quitar o reordenar sus enlaces; cada ubicación (navbar, footer...) solo puede usarse una vez.</target>
@@ -1278,9 +1318,73 @@
                 <source>label.latest_update</source>
                 <target>Ultima actualización</target>
             </trans-unit>
+            <trans-unit id="xeLDFrp">
+                <source>label.legal_customize</source>
+                <target>Personalizar</target>
+            </trans-unit>
+            <trans-unit id="VSv_bRo">
+                <source>label.legal_customize_help</source>
+                <target>La personalización sección por sección se hace desde «Modelos legales», en el menú.</target>
+            </trans-unit>
+            <trans-unit id="DOLV88Z">
+                <source>label.legal_drift</source>
+                <target>Actualización disponible</target>
+            </trans-unit>
+            <trans-unit id="n10xHFc">
+                <source>label.legal_drift_count</source>
+                <target>%count% sección(es)</target>
+            </trans-unit>
+            <trans-unit id="ZqqDoeS">
+                <source>label.legal_extra_add</source>
+                <target>Añadir una sección</target>
+            </trans-unit>
+            <trans-unit id="GlT9ghq">
+                <source>label.legal_extra_parent</source>
+                <target>Adjuntar a</target>
+            </trans-unit>
+            <trans-unit id="7IwEdF.">
+                <source>label.legal_extra_parent_top</source>
+                <target>Primer nivel</target>
+            </trans-unit>
+            <trans-unit id="LT7uKbV">
+                <source>label.legal_extra_remove</source>
+                <target>Eliminar esta sección</target>
+            </trans-unit>
+            <trans-unit id="xAZplVp">
+                <source>label.legal_extra_sections</source>
+                <target>Secciones añadidas</target>
+            </trans-unit>
+            <trans-unit id="IAyzYCW">
+                <source>label.legal_models</source>
+                <target>Modelos legales</target>
+            </trans-unit>
+            <trans-unit id="AnsvoFg">
+                <source>label.legal_models_none</source>
+                <target>Ninguna página contiene un modelo legal.</target>
+            </trans-unit>
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Aviso Legal</target>
+            </trans-unit>
+            <trans-unit id="tetbtS5">
+                <source>label.legal_unit_content</source>
+                <target>Texto</target>
+            </trans-unit>
+            <trans-unit id="vmakjCm">
+                <source>label.legal_unit_hidden</source>
+                <target>Oculta</target>
+            </trans-unit>
+            <trans-unit id="Xqx0K.j">
+                <source>label.legal_unit_reset</source>
+                <target>Volver al texto del bundle</target>
+            </trans-unit>
+            <trans-unit id="Kd9zmXR">
+                <source>label.legal_unit_title</source>
+                <target>Título</target>
+            </trans-unit>
+            <trans-unit id="mQCftNN">
+                <source>label.legal_units_overridden</source>
+                <target>Secciones reescritas</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>
@@ -1470,6 +1574,10 @@
                 <source>label.no_reset_password_token_found</source>
                 <target>No se encontró un token de restablecimiento de contraseña en la URL o en la sesión.</target>
             </trans-unit>
+            <trans-unit id="VZ9ErQ0">
+                <source>label.not_published</source>
+                <target>No publicada</target>
+            </trans-unit>
             <trans-unit id="GJNimRX">
                 <source>label.og_image</source>
                 <target>Imagen Open Graph</target>
@@ -1613,6 +1721,10 @@
             <trans-unit id="7sshO_4">
                 <source>label.route</source>
                 <target>Ruta</target>
+            </trans-unit>
+            <trans-unit id="znwE9XF">
+                <source>label.save</source>
+                <target>Guardar</target>
             </trans-unit>
             <trans-unit id="UsWSixX">
                 <source>label.sign_in</source>

@@ -20,7 +20,7 @@ use Twig\Loader\ArrayLoader;
 
 class GalleryShowcaseProviderTest extends TestCase
 {
-    private function createProvider(): GalleryShowcaseProvider
+    private function createProvider(bool $hasPlaceholderImages = true): GalleryShowcaseProvider
     {
         // TemplateWrapper is final, so a real Environment is used and createTemplate() works for real
         $twig = new Environment(new ArrayLoader([
@@ -31,7 +31,7 @@ class GalleryShowcaseProviderTest extends TestCase
         $translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
 
         $mediaAttacher = $this->createStub(BlockFixtureMediaAttacher::class);
-        $mediaAttacher->method('nextPlaceholderImage')->willReturnCallback(static fn () => new Media());
+        $mediaAttacher->method('nextPlaceholderImage')->willReturnCallback(static fn (): ?Media => $hasPlaceholderImages ? new Media() : null);
 
         return new GalleryShowcaseProvider($twig, $translator, $mediaAttacher);
     }
@@ -62,5 +62,14 @@ class GalleryShowcaseProviderTest extends TestCase
 
         $this->assertSame('articles_slider', $showcases['label.gallery_showcase_articles_slider']['kind']);
         $this->assertSame('menu_link', $showcases['label.gallery_showcase_menu_link']['kind']);
+    }
+
+    // UiBundle ships no placeholder image of its own anymore - an app declaring none has no photo to build a slide around, so that preview is skipped rather than rendered with broken images. The menu_link one, needing no photo, still renders.
+    public function testArticlesSliderPreviewIsSkippedWhenNoPlaceholderImageIsAvailable(): void
+    {
+        $showcases = $this->createProvider(hasPlaceholderImages: false)->getShowcases();
+
+        $this->assertSame('', $showcases['label.gallery_showcase_articles_slider']['variants']['']);
+        $this->assertNotSame('', $showcases['label.gallery_showcase_menu_link']['variants']['']);
     }
 }

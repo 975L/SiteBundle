@@ -72,4 +72,46 @@ class RedirectImportProviderTest extends TestCase
         $this->assertSame('/new-page', $existing->getToUrl());
         $this->assertTrue($existing->isPermanent());
     }
+
+    // A url declared gone travels between environments like any other row
+    public function testImportKeepsTheGoneFlag(): void
+    {
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new RedirectImportProvider($em, $this->createRedirectRepository());
+
+        $provider->import([[
+            'fromPath' => '/removed',
+            'toUrl' => null,
+            'permanent' => true,
+            'gone' => true,
+        ]]);
+
+        $this->assertTrue($persisted[0]->isGone());
+        $this->assertNull($persisted[0]->getToUrl());
+    }
+
+    // An export predating the field keeps importing as the plain redirect it was
+    public function testImportDefaultsToNotGoneWhenTheFieldIsAbsent(): void
+    {
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new RedirectImportProvider($em, $this->createRedirectRepository());
+
+        $provider->import([[
+            'fromPath' => '/old-page',
+            'toUrl' => '/new-page',
+        ]]);
+
+        $this->assertFalse($persisted[0]->isGone());
+        $this->assertSame('/new-page', $persisted[0]->getToUrl());
+    }
 }

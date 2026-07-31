@@ -29,7 +29,7 @@ class DefaultPagesImportCommandTest extends TestCase
     // At least one page created: a success message reporting both counts is shown
     public function testExecuteReportsCreatedAndSkippedCounts(): void
     {
-        $tester = $this->createTester(['created' => 2, 'skipped' => 1]);
+        $tester = $this->createTester(['created' => 2, 'skipped' => 1, 'summarised' => []]);
 
         $statusCode = $tester->execute([]);
 
@@ -40,11 +40,34 @@ class DefaultPagesImportCommandTest extends TestCase
     // Nothing created (every default page already exists): a warning is shown instead, still a success
     public function testExecuteWarnsWhenNothingWasCreated(): void
     {
-        $tester = $this->createTester(['created' => 0, 'skipped' => 5]);
+        $tester = $this->createTester(['created' => 0, 'skipped' => 5, 'summarised' => []]);
 
         $statusCode = $tester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $statusCode);
-        $this->assertStringContainsString('All default pages already exist, nothing was created.', $tester->getDisplay());
+        $this->assertStringContainsString('All default pages already exist, nothing was created', $tester->getDisplay());
+    }
+
+    // Filling a description in is the only thing the command rewrites on a page that already existed, so it must name every one of them rather than report a count
+    public function testExecuteNamesEveryPageWhoseDescriptionWasFilledIn(): void
+    {
+        $tester = $this->createTester(['created' => 0, 'skipped' => 9, 'summarised' => ['cookies', 'copyright']]);
+
+        $tester->execute([]);
+
+        $display = $tester->getDisplay();
+        $this->assertStringContainsString('2 description(s) filled in on existing pages', $display);
+        $this->assertStringContainsString('cookies', $display);
+        $this->assertStringContainsString('copyright', $display);
+    }
+
+    // Nothing was rewritten: no section about descriptions at all, so a re-run stays quiet
+    public function testExecuteSaysNothingAboutDescriptionsWhenNoneWereFilledIn(): void
+    {
+        $tester = $this->createTester(['created' => 0, 'skipped' => 9, 'summarised' => []]);
+
+        $tester->execute([]);
+
+        $this->assertStringNotContainsString('description(s) filled in', $tester->getDisplay());
     }
 }

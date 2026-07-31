@@ -35,8 +35,14 @@ class DefaultPagesImportCommand extends Command
 
         $result = $this->defaultPagesImporter->import();
 
+        // Named one by one rather than counted: this is the only thing the command rewrites on a page that already existed, so whoever runs it has to see exactly which content changed - a silent edit spread over every site running this bundle is the kind that only gets noticed months later
+        if ([] !== $result['summarised']) {
+            $io->section(sprintf('%d description(s) filled in on existing pages', \count($result['summarised'])));
+            $io->listing($result['summarised']);
+        }
+
         if (0 === $result['created']) {
-            $io->warning('All default pages already exist, nothing was created.');
+            $io->warning(sprintf('All default pages already exist, nothing was created (%d skipped).', $result['skipped']));
 
             return Command::SUCCESS;
         }

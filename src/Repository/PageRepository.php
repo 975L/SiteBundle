@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Repository;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\UiBundle\Entity\Block;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -164,5 +165,38 @@ class PageRepository extends ServiceEntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * Every non-deleted page carrying a legal_model block, published or not - what the "Legal models" screen
+     * lists and what the drift check walks. Unpublished pages are in on purpose: a draft legal page is exactly
+     * the one still being customized.
+     *
+     * @return list<array{page: Page, block: Block}>
+     */
+    public function findWithLegalModelBlocks(): array
+    {
+        $pages = $this->createQueryBuilder('p')
+            ->select('p, b')
+            ->innerJoin('p.blocks', 'b')
+            ->andWhere('b.kind = :kind')
+            ->andWhere('p.isDeleted = :deleted')
+            ->setParameter('kind', 'legal_model')
+            ->setParameter('deleted', false)
+            ->orderBy('p.title', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        $pairs = [];
+        foreach ($pages as $page) {
+            foreach ($page->getBlocks() as $block) {
+                if ('legal_model' === $block->getKind()) {
+                    $pairs[] = ['page' => $page, 'block' => $block];
+                }
+            }
+        }
+
+        return $pairs;
     }
 }

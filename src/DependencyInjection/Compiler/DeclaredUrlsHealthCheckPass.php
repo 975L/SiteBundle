@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\DependencyInjection\Compiler;
 
+use c975L\ConfigBundle\Attribute\AsHealthCheck;
 use c975L\ConfigBundle\Management\SitemapProviderInterface;
 use c975L\SiteBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Management\DeclaredUrlsHealthCheckProvider;
@@ -42,10 +43,22 @@ class DeclaredUrlsHealthCheckPass implements CompilerPassInterface
             $container->setDefinition(
                 'c975l.site.declared_urls_health_check.' . $this->suffix($class),
                 (new Definition(DeclaredUrlsHealthCheckProvider::class))
-                    ->setArguments([new Reference($id), new Reference(ContentQualityAnalyzer::class)])
+                    ->setArguments([new Reference($id), new Reference(ContentQualityAnalyzer::class), $this->frequencyOf($class)])
                     ->addTag('c975l.health_check_provider'),
             );
         }
+    }
+
+    // The cadence is read off the bundle's own sitemap provider, the only class that knows how much it declares: GalleryBundle marks its own #[AsHealthCheck(monthly)] because it holds one url per photo, where books and products stay on the weekly default. Nothing to add here when a new bundle ships a heavy sitemap - it says so itself
+    private function frequencyOf(string $class): string
+    {
+        try {
+            $attributes = (new \ReflectionClass($class))->getAttributes(AsHealthCheck::class);
+        } catch (\Throwable) {
+            return AsHealthCheck::FREQUENCY_WEEKLY;
+        }
+
+        return $attributes ? $attributes[0]->newInstance()->frequency : AsHealthCheck::FREQUENCY_WEEKLY;
     }
 
     // SiteBundle's own pages are deliberately left out: ContentQualityHealthCheckProvider already checks every one of them, and does it better (each offence traced back to the block holding it, each row linking to the page's own edit screen)

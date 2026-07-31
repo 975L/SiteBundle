@@ -234,6 +234,22 @@
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Take all the time you need: your visitors keep seeing the original meanwhile.</target>
             </trans-unit>
+            <trans-unit id="emqi7.W">
+                <source>description.legal_customize</source>
+                <target>The texts below are the bundle's own: edit them in place. As long as you leave a section alone it keeps being updated along with the bundle; the moment you change it, it becomes yours and you take responsibility for it. Drag a card by its header to reorder. The content of these pages is your editorial and legal responsibility either way.</target>
+            </trans-unit>
+            <trans-unit id="YgzofbB">
+                <source>description.legal_drift</source>
+                <target>The text the bundle ships for this section has changed since you rewrote it. Nothing was modified on your side: here is the new wording, yours to judge.</target>
+            </trans-unit>
+            <trans-unit id="EBXU68o">
+                <source>description.legal_extra_sections</source>
+                <target>Your own sections, appended at the end of the level you pick. The bundle knows nothing about them and will never change them.</target>
+            </trans-unit>
+            <trans-unit id="THY3L8B">
+                <source>description.legal_placeholders</source>
+                <target>These markers are replaced by the site configuration when the page is displayed, in your own text too:</target>
+            </trans-unit>
             <trans-unit id="vDZMvYG">
                 <source>description.messenger_alert_admin</source>
                 <target>Technical issue auto-reported to the dev team. No action required.</target>
@@ -261,6 +277,10 @@
             <trans-unit id="KdHpBKb">
                 <source>flash.font_bulk_import_success</source>
                 <target>%count% font(s) imported.</target>
+            </trans-unit>
+            <trans-unit id="oGPPygw">
+                <source>flash.legal_model_customized</source>
+                <target>Customization saved.</target>
             </trans-unit>
             <trans-unit id="z.Yxr72">
                 <source>flash.messenger_deleted</source>
@@ -486,6 +506,10 @@
                 <source>label.create_page</source>
                 <target>Create page</target>
             </trans-unit>
+            <trans-unit id="iripoC5">
+                <source>label.create_site_graphic</source>
+                <target>Create a graphic:</target>
+            </trans-unit>
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
                 <target>Creation</target>
@@ -693,6 +717,14 @@
             <trans-unit id="QjQ95bW">
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Link to a page or a route, used in the site's menus.</target>
+            </trans-unit>
+            <trans-unit id="qrvRsVy">
+                <source>label.gone</source>
+                <target>Gone (410)</target>
+            </trans-unit>
+            <trans-unit id="AcObL2B">
+                <source>label.gone_help</source>
+                <target>Checked = the url is declared permanently removed (410 Gone), with no redirect: "From path" may end with * to cover a whole folder (e.g. /apidoc/*), and "To url" stays empty</target>
             </trans-unit>
             <trans-unit id="K3pbZfO">
                 <source>label.guided_project_collection</source>
@@ -1014,6 +1046,10 @@
                 <source>label.health_check_https_redirect_ok</source>
                 <target>http correctly redirects to https</target>
             </trans-unit>
+            <trans-unit id="epZIsrh">
+                <source>label.health_check_legal_model_drift</source>
+                <target>%count% section(s) you rewrote have changed in the "%model%" model: %sections%</target>
+            </trans-unit>
             <trans-unit id="4HIWk23">
                 <source>label.health_check_mixed_content_call_failed</source>
                 <target>Mixed content check failed: %message%</target>
@@ -1218,6 +1254,10 @@
                 <source>label.info_font</source>
                 <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
             </trans-unit>
+            <trans-unit id="KDIeeFV">
+                <source>label.info_legal_model</source>
+                <target>The legal texts shipped with the bundle stay maintained and updated. Page by page, you can hide a section, rewrite it, move it or add your own: only what you change stops following the updates.</target>
+            </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
                 <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
@@ -1278,9 +1318,73 @@
                 <source>label.latest_update</source>
                 <target>Latest update</target>
             </trans-unit>
+            <trans-unit id="xeLDFrp">
+                <source>label.legal_customize</source>
+                <target>Customize</target>
+            </trans-unit>
+            <trans-unit id="VSv_bRo">
+                <source>label.legal_customize_help</source>
+                <target>Section by section customization is done from "Legal models", in the menu.</target>
+            </trans-unit>
+            <trans-unit id="DOLV88Z">
+                <source>label.legal_drift</source>
+                <target>Update available</target>
+            </trans-unit>
+            <trans-unit id="n10xHFc">
+                <source>label.legal_drift_count</source>
+                <target>%count% section(s)</target>
+            </trans-unit>
+            <trans-unit id="ZqqDoeS">
+                <source>label.legal_extra_add</source>
+                <target>Add a section</target>
+            </trans-unit>
+            <trans-unit id="GlT9ghq">
+                <source>label.legal_extra_parent</source>
+                <target>Attach to</target>
+            </trans-unit>
+            <trans-unit id="7IwEdF.">
+                <source>label.legal_extra_parent_top</source>
+                <target>Top level</target>
+            </trans-unit>
+            <trans-unit id="LT7uKbV">
+                <source>label.legal_extra_remove</source>
+                <target>Remove this section</target>
+            </trans-unit>
+            <trans-unit id="xAZplVp">
+                <source>label.legal_extra_sections</source>
+                <target>Added sections</target>
+            </trans-unit>
+            <trans-unit id="IAyzYCW">
+                <source>label.legal_models</source>
+                <target>Legal models</target>
+            </trans-unit>
+            <trans-unit id="AnsvoFg">
+                <source>label.legal_models_none</source>
+                <target>No page holds a legal model.</target>
+            </trans-unit>
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Legal notice</target>
+            </trans-unit>
+            <trans-unit id="tetbtS5">
+                <source>label.legal_unit_content</source>
+                <target>Text</target>
+            </trans-unit>
+            <trans-unit id="vmakjCm">
+                <source>label.legal_unit_hidden</source>
+                <target>Hidden</target>
+            </trans-unit>
+            <trans-unit id="Xqx0K.j">
+                <source>label.legal_unit_reset</source>
+                <target>Back to the bundle's text</target>
+            </trans-unit>
+            <trans-unit id="Kd9zmXR">
+                <source>label.legal_unit_title</source>
+                <target>Title</target>
+            </trans-unit>
+            <trans-unit id="mQCftNN">
+                <source>label.legal_units_overridden</source>
+                <target>Rewritten sections</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>
@@ -1470,6 +1574,10 @@
                 <source>label.no_reset_password_token_found</source>
                 <target>No reset password token found in the URL or in the session.</target>
             </trans-unit>
+            <trans-unit id="VZ9ErQ0">
+                <source>label.not_published</source>
+                <target>Not published</target>
+            </trans-unit>
             <trans-unit id="GJNimRX">
                 <source>label.og_image</source>
                 <target>Open Graph image</target>
@@ -1613,6 +1721,10 @@
             <trans-unit id="7sshO_4">
                 <source>label.route</source>
                 <target>Route</target>
+            </trans-unit>
+            <trans-unit id="znwE9XF">
+                <source>label.save</source>
+                <target>Save</target>
             </trans-unit>
             <trans-unit id="UsWSixX">
                 <source>label.sign_in</source>

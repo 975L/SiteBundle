@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\DependencyInjection\Compiler;
 
+use c975L\ConfigBundle\Attribute\AsHealthCheck;
 use c975L\ConfigBundle\Management\SitemapProviderInterface;
 use c975L\SiteBundle\DependencyInjection\Compiler\DeclaredUrlsHealthCheckPass;
 use c975L\SiteBundle\Management\ContentQualityAnalyzer;
@@ -148,6 +149,47 @@ class DeclaredUrlsHealthCheckPassTest extends TestCase
 
         $this->assertCount(2, array_unique(array_keys($this->healthCheckDefinitions($container))));
     }
+
+    // What a site sells or funds is worth catching weekly: a bundle saying nothing lands on the weekly entry
+    public function testProcessPassesTheWeeklyCadenceByDefault(): void
+    {
+        $container = $this->createContainer();
+        $container->setDefinition('book.sitemap', new Definition(FakeBookSitemapProvider::class));
+
+        (new DeclaredUrlsHealthCheckPass())->process($container);
+
+        $definition = array_values($this->healthCheckDefinitions($container))[0];
+        $this->assertSame(AsHealthCheck::FREQUENCY_WEEKLY, $definition->getArgument(2));
+    }
+
+    // One class serves every bundle, so the cadence is read off each bundle's own sitemap provider - the only class that knows how much it declares
+    public function testProcessReadsTheCadenceOffTheSitemapProvider(): void
+    {
+        $container = $this->createContainer();
+        $container->setDefinition('gallery.sitemap', new Definition(FakeGallerySitemapProvider::class));
+
+        (new DeclaredUrlsHealthCheckPass())->process($container);
+
+        $definition = array_values($this->healthCheckDefinitions($container))[0];
+        $this->assertSame(AsHealthCheck::FREQUENCY_MONTHLY, $definition->getArgument(2));
+    }
+
+    // The heavy bundle going monthly must not take the others with it
+    public function testEachBundleKeepsItsOwnCadence(): void
+    {
+        $container = $this->createContainer();
+        $container->setDefinition('book.sitemap', new Definition(FakeBookSitemapProvider::class));
+        $container->setDefinition('gallery.sitemap', new Definition(FakeGallerySitemapProvider::class));
+
+        (new DeclaredUrlsHealthCheckPass())->process($container);
+
+        $frequencies = array_map(
+            static fn (Definition $definition) => $definition->getArgument(2),
+            array_values($this->healthCheckDefinitions($container)),
+        );
+
+        $this->assertSame([AsHealthCheck::FREQUENCY_WEEKLY, AsHealthCheck::FREQUENCY_MONTHLY], $frequencies);
+    }
 }
 
 class FakeBookSitemapProvider implements SitemapProviderInterface
@@ -168,6 +210,21 @@ class FakeShopSitemapProvider implements SitemapProviderInterface
     public function getSitemapName(): string
     {
         return 'shop';
+    }
+
+    public function getUrls(): array
+    {
+        return [];
+    }
+}
+
+// What GalleryBundle's own sitemap provider carries: one declared url per photo is the volume run of the family
+#[AsHealthCheck(frequency: AsHealthCheck::FREQUENCY_MONTHLY)]
+class FakeGallerySitemapProvider implements SitemapProviderInterface
+{
+    public function getSitemapName(): string
+    {
+        return 'gallery';
     }
 
     public function getUrls(): array

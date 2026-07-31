@@ -26,57 +26,57 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DefaultPagesImporter
 {
-    // name => [type, label, placeholder, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
+    // name => [type, label, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). No placeholder is ever seeded, a field showing its label alone until an admin types one in the back-office. "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
     private const CONTACT_CORE_FIELDS = [
         'fr' => [
-            'name' => [FormField::TYPE_TEXT, 'Nom', 'Jean Dupont', null],
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'email', null],
-            'subject' => [FormField::TYPE_TEXT, 'Sujet', null, null],
-            'message' => [FormField::TYPE_TEXTAREA, 'Message', null, null],
+            'name' => [FormField::TYPE_TEXT, 'Nom', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'subject' => [FormField::TYPE_TEXT, 'Sujet', null],
+            'message' => [FormField::TYPE_TEXTAREA, 'Message', null],
         ],
         'en' => [
-            'name' => [FormField::TYPE_TEXT, 'Name', 'John Doe', null],
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'john.doe@example.com', null],
-            'subject' => [FormField::TYPE_TEXT, 'Subject', null, null],
-            'message' => [FormField::TYPE_TEXTAREA, 'Message', null, null],
+            'name' => [FormField::TYPE_TEXT, 'Name', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'subject' => [FormField::TYPE_TEXT, 'Subject', null],
+            'message' => [FormField::TYPE_TEXTAREA, 'Message', null],
         ],
         'es' => [
-            'name' => [FormField::TYPE_TEXT, 'Nombre', 'Juan Pérez', null],
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'juan.perez@ejemplo.es', null],
-            'subject' => [FormField::TYPE_TEXT, 'Asunto', null, null],
-            'message' => [FormField::TYPE_TEXTAREA, 'Mensaje', null, null],
+            'name' => [FormField::TYPE_TEXT, 'Nombre', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'subject' => [FormField::TYPE_TEXT, 'Asunto', null],
+            'message' => [FormField::TYPE_TEXTAREA, 'Mensaje', null],
         ],
     ];
 
     // Same shape as CONTACT_CORE_FIELDS, for the "register" Form - processed the same generic way as "contact" (c975L\UiBundle\Controller\FormController), see scaffold's App\Service\RegisterFormAction for the "register" FormActionInterface key. "cgu"'s url points at that locale's own terms-of-use legal page, seeded a few lines below in each locale's page list - kept as a plain relative "/pages/{slug}" path (no router involved here) since it's only ever read back once by FormSubmissionType, exactly like every other seeded field
     private const REGISTER_CORE_FIELDS = [
         'fr' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'email', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Mot de passe', null, null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'J\'accepte les conditions générales d\'utilisation', null, '/pages/conditions-generales-d-utilisation'],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Mot de passe', null],
+            'cgu' => [FormField::TYPE_CHECKBOX, 'J\'accepte les conditions générales d\'utilisation', '/pages/conditions-generales-d-utilisation'],
         ],
         'en' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'john.doe@example.com', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Password', null, null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'I accept the terms of use', null, '/pages/terms-of-use'],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Password', null],
+            'cgu' => [FormField::TYPE_CHECKBOX, 'I accept the terms of use', '/pages/terms-of-use'],
         ],
         'es' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'juan.perez@ejemplo.es', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Contraseña', null, null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'Acepto las condiciones de uso', null, '/pages/condiciones-de-uso'],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
+            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Contraseña', null],
+            'cgu' => [FormField::TYPE_CHECKBOX, 'Acepto las condiciones de uso', '/pages/condiciones-de-uso'],
         ],
     ];
 
     // Same shape as CONTACT_CORE_FIELDS, for the "reset_password_request" Form - see scaffold's App\Service\ResetPasswordRequestFormAction for the "reset_password_request" FormActionInterface key
     private const RESET_PASSWORD_REQUEST_CORE_FIELDS = [
         'fr' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'email', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
         ],
         'en' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'john.doe@example.com', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
         ],
         'es' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', 'juan.perez@ejemplo.es', null],
+            'email' => [FormField::TYPE_EMAIL, 'Email', null],
         ],
     ];
 
@@ -153,10 +153,11 @@ class DefaultPagesImporter
     ) {
     }
 
-    // $onPage, if given, is called for each page not yet in database as fn(array $def): array{import: bool, isPublished: bool} and lets a command decide interactively whether to import it and with which isPublished value. Without it (default), every page is imported using the isPublished value from getDefinitions(). Returns ['created' => int, 'skipped' => int]
+    // $onPage, if given, is called for each page not yet in database as fn(array $def): array{import: bool, isPublished: bool} and lets a command decide interactively whether to import it and with which isPublished value. Without it (default), every page is imported using the isPublished value from getDefinitions(). Returns ['created' => int, 'skipped' => int, 'summarised' => list<string>] - the slugs rather than a count for the last one, since it is the only case where the command rewrites content of a page that already existed, and a caller has to be able to name them back to whoever ran it
     public function import(?callable $onPage = null): array
     {
-        $counts = ['created' => 0, 'skipped' => 0, 'backfilled' => 0];
+        $counts = ['created' => 0, 'skipped' => 0, 'backfilled' => 0, 'summarised' => 0, 'formBackfilled' => 0];
+        $summarised = [];
         $now = new \DateTime();
         // Security only guarantees its own UserInterface, Page relates to the c975L one the application's User entity implements
         $user = $this->security->getUser();
@@ -166,8 +167,13 @@ class DefaultPagesImporter
         // Always imports the default locale, plus any locale declared in framework.enabled_locales; the default locale comes first so the homepage keeps a deterministic title
         foreach (array_unique([$this->defaultLocale, ...$this->enabledLocales]) as $locale) {
             foreach ($definitions[$locale] ?? [] as $def) {
-                foreach ($this->importDefinition($def, $now, $user, $onPage) as $counter) {
+                $counters = $this->importDefinition($def, $now, $user, $onPage);
+                foreach ($counters as $counter) {
                     ++$counts[$counter];
+                }
+
+                if (\in_array('summarised', $counters, true)) {
+                    $summarised[] = $def['slug'];
                 }
             }
         }
@@ -176,7 +182,19 @@ class DefaultPagesImporter
             $this->em->flush();
         }
 
-        return ['created' => $counts['created'], 'skipped' => $counts['skipped']];
+        return ['created' => $counts['created'], 'skipped' => $counts['skipped'], 'summarised' => $summarised];
+    }
+
+    // Fills in the meta/og description of a page that already existed, and says whether it did. Only ever writes into an empty field: a description an admin typed - or deliberately emptied back to nothing else than whitespace - is never overwritten, however many times the command is re-run. Pages are matched on their slug alone by the caller, so one renamed in the back-office simply matches no definition and is left alone
+    private function backfillSummary(Page $page, array $def): bool
+    {
+        if (!isset($def['summary']) || '' !== trim((string) $page->getSummarySocialNetwork())) {
+            return false;
+        }
+
+        $page->setSummarySocialNetwork($def['summary']);
+
+        return true;
     }
 
     // The counters import() must increment for this definition, empty when it contributes nothing
@@ -188,16 +206,28 @@ class DefaultPagesImporter
             return [];
         }
 
-        if ($this->pageRepository->findOneBy(['slug' => $def['slug']])) {
-            // The page exists but its Form/EmailTemplate may not, buildPage() never running for it
-            $formName = $this->formBlockNameFromPageDef($def);
-            if (null === $formName) {
-                return ['skipped'];
+        $existingPage = $this->pageRepository->findOneBy(['slug' => $def['slug']]);
+        if ($existingPage) {
+            $counters = ['skipped'];
+
+            // A page created before this bundle seeded descriptions renders none at all - filled in here so re-running the command is all it takes, on this site and on every other one
+            if ($this->backfillSummary($existingPage, $def)) {
+                $counters[] = 'summarised';
             }
 
-            $this->ensureFormAndEmailTemplateExist($formName);
+            // The page exists but its Form/EmailTemplate may not, buildPage() never running for it
+            $formName = $this->formBlockNameFromPageDef($def);
+            if (null !== $formName) {
+                $this->ensureFormAndEmailTemplateExist($formName);
+                $counters[] = 'formBackfilled';
+            }
 
-            return ['skipped', 'backfilled'];
+            // Anything written above needs the flush import() only performs when something actually changed
+            if (\count($counters) > 1) {
+                $counters[] = 'backfilled';
+            }
+
+            return $counters;
         }
 
         if (null !== $onPage) {
@@ -221,6 +251,8 @@ class DefaultPagesImporter
             ->setChangeFrequency($def['changeFrequency'])
             ->setPriority($def['priority'])
             ->setIsPublished($def['isPublished'])
+            // The meta description AND og:description of the page, see layout.html.twig. Seeded for every default page whose content is standardized enough to describe once here - the legal ones, "contact", and the account ones: left empty they render no description at all, which is one of the reasons a search engine crawls a page and then declines to index it. The account pages get one despite being non-indexable, since og:description is what a messaging app or a social network renders when someone shares the link, and "noindex" does nothing to stop that. Every text is kept within ContentQualityAnalyzer's own 50-160 character window, so a freshly created site doesn't start with a health check warning on the very pages it just seeded. Only "home" is left null: its description belongs to the site itself, not to a bundle default
+            ->setSummarySocialNetwork($def['summary'] ?? null)
             // Only the account-related pages opt out (see the definitions below), every other default page is indexable
             ->setIsIndexable($def['isIndexable'] ?? true)
             ->setCreation($now)
@@ -330,7 +362,7 @@ class DefaultPagesImporter
         }
 
         foreach ($form->getFields() as $field) {
-            $url = $fields[$field->getName()][3] ?? null;
+            $url = $fields[$field->getName()][2] ?? null;
             if ($field->isRestricted() && null === $field->getUrl() && null !== $url) {
                 $field->setUrl($url);
                 $this->em->persist($field);
@@ -338,7 +370,7 @@ class DefaultPagesImporter
         }
     }
 
-    // $fields entries are [type, label, placeholder, url] tuples, in the order they're declared
+    // $fields entries are [type, label, url] tuples, in the order they're declared
     private function buildForm(string $name, array $fields, ?string $action, ?array $actionConfig): Form
     {
         $form = (new Form())
@@ -348,13 +380,12 @@ class DefaultPagesImporter
             ->setActionConfig($actionConfig);
 
         $position = 0;
-        foreach ($fields as $fieldName => [$type, $label, $placeholder, $url]) {
+        foreach ($fields as $fieldName => [$type, $label, $url]) {
             $form->addField(
                 (new FormField())
                     ->setName($fieldName)
                     ->setLabel($label)
                     ->setType($type)
-                    ->setPlaceholder($placeholder)
                     ->setUrl($url)
                     ->setRequired(true)
                     ->setPosition($position++)
@@ -432,6 +463,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Mentions légales',
                     'slug' => 'mentions-legales',
+                    'summary' => 'Mentions légales du site : éditeur, directeur de la publication, hébergeur et coordonnées de contact, conformément à la réglementation en vigueur.',
                     'model' => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -440,6 +472,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Règles de confidentialité',
                     'slug' => 'regles-de-confidentialite',
+                    'summary' => 'Comment vos données personnelles sont collectées, utilisées et conservées, et comment exercer vos droits d\'accès, de rectification et de suppression.',
                     'model' => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -448,6 +481,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Conditions générales d\'utilisation',
                     'slug' => 'conditions-generales-d-utilisation',
+                    'summary' => 'Les conditions générales d\'utilisation du site : accès au service, droits et obligations de chacun, propriété intellectuelle et responsabilités.',
                     'model' => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -456,6 +490,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Conditions générales de vente',
                     'slug' => 'conditions-generales-de-vente',
+                    'summary' => 'Les conditions générales de vente : commande, prix, paiement, livraison, droit de rétractation et garanties applicables aux achats sur ce site.',
                     'model' => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -465,6 +500,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Utilisation des cookies',
                     'slug' => 'cookies',
+                    'summary' => 'Quels cookies ce site dépose, à quoi ils servent, combien de temps ils sont conservés, et comment accepter, refuser ou modifier votre choix.',
                     'model' => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -473,6 +509,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Copyright',
                     'slug' => 'copyright',
+                    'summary' => 'Les conditions de réutilisation des contenus de ce site : textes, images et documents, droits d\'auteur et démarche pour demander une autorisation.',
                     'model' => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -481,6 +518,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Créer un compte',
                     'slug' => 'creer-un-compte',
+                    'summary' => 'Créez votre compte en quelques instants pour accéder à votre espace personnel et suivre vos demandes.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -490,6 +528,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Mot de passe oublié',
                     'slug' => 'mot-de-passe-oublie',
+                    'summary' => 'Mot de passe oublié ? Indiquez votre adresse email pour recevoir un lien de réinitialisation et retrouver l\'accès à votre compte.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -499,6 +538,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Contact',
                     'slug' => 'contact',
+                    'summary' => 'Un formulaire pour nous écrire : question, demande d\'information ou de devis. Nous vous répondons dans les meilleurs délais.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -516,6 +556,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Legal notice',
                     'slug' => 'legal-notice',
+                    'summary' => 'Legal notice for this website: publisher, publication director, hosting provider and contact details, as required by applicable regulations.',
                     'model' => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -524,6 +565,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Privacy policy',
                     'slug' => 'privacy-policy',
+                    'summary' => 'How your personal data is collected, used and stored on this website, and how to exercise your rights of access, correction and deletion.',
                     'model' => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -532,6 +574,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Terms of use',
                     'slug' => 'terms-of-use',
+                    'summary' => 'The terms of use of this website: access to the service, rights and obligations of each party, intellectual property and liability.',
                     'model' => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -540,6 +583,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Terms of sales',
                     'slug' => 'terms-of-sales',
+                    'summary' => 'The terms of sale: ordering, prices, payment, delivery, right of withdrawal and warranties applying to purchases made on this website.',
                     'model' => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -548,6 +592,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Cookies usage',
                     'slug' => 'cookies-usage',
+                    'summary' => 'Which cookies this website sets, what they are used for, how long they are kept, and how to accept, refuse or change your choice.',
                     'model' => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -556,6 +601,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Copyright',
                     'slug' => 'copyright-notice',
+                    'summary' => 'The conditions for reusing the contents of this website: texts, images and documents, copyright and how to request permission.',
                     'model' => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -564,6 +610,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Register',
                     'slug' => 'register',
+                    'summary' => 'Create your account in a few moments to access your personal area and keep track of your requests.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -573,6 +620,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Forgot password',
                     'slug' => 'forgot-password',
+                    'summary' => 'Forgot your password? Enter your email address to receive a reset link and get back into your account.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -582,6 +630,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Contact',
                     'slug' => 'contact',
+                    'summary' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -599,6 +648,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Aviso legal',
                     'slug' => 'aviso-legal',
+                    'summary' => 'Aviso legal del sitio: editor, director de publicación, proveedor de alojamiento y datos de contacto, conforme a la normativa vigente.',
                     'model' => 'france/legal-notice',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -607,6 +657,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Política de privacidad',
                     'slug' => 'politica-de-privacidad',
+                    'summary' => 'Cómo se recogen, utilizan y conservan sus datos personales en este sitio, y cómo ejercer sus derechos de acceso, rectificación y supresión.',
                     'model' => 'france/privacy-policy',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -615,6 +666,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Condiciones de uso',
                     'slug' => 'condiciones-de-uso',
+                    'summary' => 'Las condiciones de uso del sitio: acceso al servicio, derechos y obligaciones de cada parte, propiedad intelectual y responsabilidades.',
                     'model' => 'france/terms-of-use',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -623,6 +675,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Condiciones de venta',
                     'slug' => 'condiciones-de-venta',
+                    'summary' => 'Las condiciones de venta: pedido, precios, pago, entrega, derecho de desistimiento y garantías aplicables a las compras en este sitio.',
                     'model' => 'france/terms-of-sales',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -631,6 +684,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Uso de cookies',
                     'slug' => 'uso-de-cookies',
+                    'summary' => 'Qué cookies deposita este sitio, para qué sirven, cuánto tiempo se conservan y cómo aceptar, rechazar o modificar su elección.',
                     'model' => 'france/cookies',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -639,6 +693,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Copyright',
                     'slug' => 'aviso-de-copyright',
+                    'summary' => 'Las condiciones de reutilización de los contenidos de este sitio: textos, imágenes y documentos, derechos de autor y cómo pedir autorización.',
                     'model' => 'france/copyright',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
@@ -647,6 +702,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Crear una cuenta',
                     'slug' => 'crear-una-cuenta',
+                    'summary' => 'Cree su cuenta en unos instantes para acceder a su espacio personal y hacer seguimiento de sus solicitudes.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -656,6 +712,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Contraseña olvidada',
                     'slug' => 'contrasena-olvidada',
+                    'summary' => '¿Ha olvidado su contraseña? Indique su correo electrónico para recibir un enlace de restablecimiento y recuperar el acceso.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,
@@ -665,6 +722,7 @@ class DefaultPagesImporter
                 [
                     'title' => 'Contacto',
                     'slug' => 'contacto',
+                    'summary' => 'Un formulario para escribirnos: una pregunta, una solicitud de información o de presupuesto. Le respondemos lo antes posible.',
                     'changeFrequency' => 'yearly',
                     'priority' => 1,
                     'isPublished' => true,

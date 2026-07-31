@@ -5,34 +5,34 @@
 		{{ 'label.latest_update'|trans({}, 'site') }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
-	<section>
+	<section data-legal-id="purpose">
 		<h2>Objet</h2>
 		<div>
 			Les présentes Conditions générales d'utilisation (CGU) ont pour objet de définir les termes et conditions dans lesquelles le site
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			fournit les services aux utilisateurs/trices. Toute utilisation de l'un des services offerts par
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			se fera dans le respect des présentes CGU.<br>
 			Celles-ci ont été conçues pour que le site fonctionne de manière satisfaisante pour tous.<br>
 			Les présentes CGU sont applicables dès leur publication.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="acceptance">
 		<h2>Acceptation</h2>
 		<div>
 			L'utilisateur/trice, déclare avoir pris connaissance et avoir accepté expressément et de manière inconditionnelle les présentes CGU en vigueur au jour de l'accès à ce site Internet, si tel n'est pas le cas, veuillez ne pas utiliser et/ou accéder à ce site Internet.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="modification">
 		<h2>Modification</h2>
 		<div>
 			Nous nous réservons la possibilité de modifier, tout ou partie, et à tout moment, ces présentes CGU. Vous êtes invités à les consulter régulièrement pour prendre connaissance des changements apportés. Elles sont applicables au moment de leur publication.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="internet-risks">
 		<h2>Acceptation des risques de l'Internet</h2>
 		<div>
 			L'utilisateur/trice déclare bien connaître Internet, ses caractéristiques et ses limites et en particulier reconnaît :
@@ -49,7 +49,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="responsibility">
 		<h2>Responsabilité</h2>
 		<div>
 			L'utilisateur/trice accepte de ne pas tenir ce site Internet et son éditeur pour responsables des contenus mis en ligne par d'autres utilisateurs/trices ou par leurs agissements. Nous ne pouvons pas garantir l'exactitude de ces contenus tiers, relatifs à la qualité, la sécurité ou la licéité. Nous vous conseillons de faire systématiquement un essai préalable, de s'informer, d'observer et de réfléchir avant toute action.<br>
@@ -85,7 +85,7 @@
 		</ul>
 	</section>
 
-	<section>
+	<section data-legal-id="content">
 		<h2>Contenu</h2>
 		<div>
 			En acceptant les présentes CGU, vous nous accordez, pour la durée des droits de propriété intellectuelle, le droit de reproduire sur ce site Internet le contenu que vous fournissez. Ces droits sont accordés à titre non exclusif, pour le monde entier de manière irrévocable, gratuite et transférable (nous avons notamment besoin de ces droits pour héberger et afficher votre contenu).<br>
@@ -100,14 +100,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="information">
 		<h2>Informations</h2>
 		<div>
 			Les informations présentes sur ce site Internet sont fournies à titre indicatif. Elles doivent en tout état de cause être prises en considération au moment de leur mise en ligne et non au moment de la consultation du site. Notre responsabilité ne saurait être engagée du fait de ces informations.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="hyperlinks">
 		<h2>Liens hypertextes</h2>
 		<div>
 			Ce site contient des liens hypertextes renvoyant vers d'autres sites Internet gérés par des tiers et sur lesquels nous n'exerçons aucun contrôle.<br>
@@ -116,7 +116,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="intellectual-property">
 		<h2>Propriété intellectuelle</h2>
 		<div>
 			L'utilisateur/trice reconnaît que ce site Internet est seul propriétaire des droits de propriété intellectuelle afférents à ce même site Internet et au contenu éditorial.<br>
@@ -127,7 +127,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="accessibility">
 		<h2>Accessibilité aux services</h2>
 		<div>
 			Nous nous efforçons, dans la mesure du possible, de maintenir accessible notre site Internet 7 jours sur 7 et 24 heures sur 24 mais nous pouvons en interrompre l'accès, notamment pour des raisons de maintenance et de mises à niveau ou pour toute autre raison, notamment technique. Nous ne sommes en aucun cas responsables des conséquences qui peuvent en découler pour l'utilisateur/trice.<br>
@@ -135,14 +135,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="access-conditions-content">
 		<h2>Conditions d'accès au contenu</h2>
 		<div>
 			L'accès au contenu éditorial du site Internet est totalement libre et gratuit.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="access-conditions-services">
 		<h2>Conditions d'accès aux services spécifiques</h2>
 		<div>
 			L'utilisation des services spécifiques suppose le respect par l'utilisateur/trice d'une procédure d'inscription par laquelle ce dernier doit founir ses coordonnées. L'utilisateur/trice s'engage à ce que les informations communiquées, notamment les informations personnelles, soient exactes, complètes et à jour et à effectuer les modifications nécessaires à cette fin.<br>
@@ -151,7 +151,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="personal-data">
 		<h2>Données personnelles</h2>
 		<div>
 			Nous collectons des informations fournies par les utilisateurs/trices par le biais de formulaires. Conscients de ce que la collecte et le traitement des données personnelles sur Internet, doivent respecter les droits fondamentaux des personnes, nous nous engageons à ce que tout traitement de données nominatives sur ce site Internet soit conforme à la loi n°78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés. L'utilisateur/trice dispose d'un droit d'accès (article 34 à 38 de la loi de 1978) et d'un droit de rectification (article 36 de la loi de 1978) aux données personnelles le concernant.<br>
@@ -160,14 +160,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="abuse">
 		<h2>Abus</h2>
 		<div>
 			L'utilisateur/trice peut porter à notre attention tout problème ou contenu offensant à l'aide du système de signalement afin qu'ensemble nous puissions assurer le bon fonctionnement de ce site Internet. Nous pourrons résilier ou réduire l'accès à nos services, retirer certains contenus hébergés et prendre des mesures techniques et juridiques afin d'interdire l'accès à ce site Internet à certains utilisateurs/trices si nous estimons qu'ils posent problème, ou se comportent d'une manière incompatible avec nos règlements ou l'esprit de ceux-ci. Toutefois, que nous décidions ou non d'interdire à un utilisateur/trice d'accéder à ce site Internet, nous dégageons toute responsabilité en cas d'usage non autorisé ou illicite de ce site Internet par ses utilisateurs/trices.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="disputes">
 		<h2>Litiges</h2>
 		<div>
 			En cas de litige, la procédure à suivre sera la suivante :
@@ -181,15 +181,15 @@
 		</ol>
 	</section>
 
-	<section>
+	<section data-legal-id="applicable-law">
 		<h2>Loi applicable - Attribution de compétence</h2>
 		<div>
 			Les présentes CGU sont soumises à la loi Française. Tout litige relatif à l'interprétation et à l'exécution de ces conditions sera de la compétence exclusive des tribunaux français et plus particulièrement de ceux localisés dans le départment Français du siège de l'entreprise éditrice de
-			<strong>{{ config('site-name') }}</strong>, que ce soit pour les utilisateurs/trices professionnel/les ou particuliers.
+			<strong>{{ legal_var('site-name') }}</strong>, que ce soit pour les utilisateurs/trices professionnel/les ou particuliers.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="miscellaneous">
 		<h2>Divers</h2>
 		<div>
 			Les présentes CGU ainsi que les autres règlements présents sur ce site Internet constituent l'intégralité de l'accord existant entre l'utilisateur/trice et ce site Internet par l'intermédiaire de son éditeur et remplacent tout accord préalable.<br>

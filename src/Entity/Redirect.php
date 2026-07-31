@@ -31,13 +31,21 @@ class Redirect
     #[Assert\Length(max: 255)]
     private ?string $fromPath = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    // Nullable since a "gone" row has nothing to redirect to - still required for every other one, hence the conditional constraint rather than a plain NotBlank
+    #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Assert\When(
+        expression: 'false === this.isGone()',
+        constraints: [new Assert\NotBlank()],
+    )]
     private ?string $toUrl = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $permanent = true;
+
+    // Answers 410 Gone rather than redirecting - for a url removed with no equivalent to send anyone to (a documentation folder that no longer exists, the routes of a previous architecture). Search engines drop a 410 far faster than the plain 404 the same url would otherwise return, and unlike a Page in the trash (see PageController::display(), whose own 410 only lasts as long as the page can still be restored) this one is permanent and covers any path, not just "/pages/<slug>"
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $gone = false;
 
     public function __toString(): string
     {
@@ -66,7 +74,7 @@ class Redirect
         return $this->toUrl;
     }
 
-    public function setToUrl(string $toUrl): self
+    public function setToUrl(?string $toUrl): self
     {
         $this->toUrl = $toUrl;
 
@@ -81,6 +89,18 @@ class Redirect
     public function setPermanent(bool $permanent): self
     {
         $this->permanent = $permanent;
+
+        return $this;
+    }
+
+    public function isGone(): bool
+    {
+        return $this->gone;
+    }
+
+    public function setGone(bool $gone): self
+    {
+        $this->gone = $gone;
 
         return $this;
     }

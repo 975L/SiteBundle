@@ -13,7 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\ExportProviderInterface;
 use c975L\SiteBundle\Repository\RedirectRepository;
 
-// Serializes Redirects (fromPath/toUrl/permanent) into the shape ContentExporter/RedirectImportProvider expect, for the "export sync all" dashboard shortcut (see ConfigBundle's SyncAllExporter). No files: a Redirect carries no upload of its own
+// Serializes Redirects (fromPath/toUrl/permanent/gone) into the shape ContentExporter/RedirectImportProvider expect, for the "export sync all" dashboard shortcut (see ConfigBundle's SyncAllExporter). No files: a Redirect carries no upload of its own
 class RedirectExportProvider implements ExportProviderInterface
 {
     public function __construct(
@@ -40,6 +40,7 @@ class RedirectExportProvider implements ExportProviderInterface
                 'fromPath' => $redirect->getFromPath(),
                 'toUrl' => $redirect->getToUrl(),
                 'permanent' => $redirect->isPermanent(),
+                'gone' => $redirect->isGone(),
             ];
         }
 

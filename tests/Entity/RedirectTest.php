@@ -38,4 +38,19 @@ class RedirectTest extends TestCase
 
         $this->assertSame('/old-page', $redirect->getFromPath());
     }
+
+    // A new row redirects, answering 410 being the deliberate exception
+    public function testANewRedirectIsNotGone(): void
+    {
+        $this->assertFalse((new Redirect())->isGone());
+    }
+
+    // A "gone" row has nothing to redirect to, hence the nullable toUrl
+    public function testAGoneRedirectCarriesNoTarget(): void
+    {
+        $redirect = (new Redirect())->setFromPath('/removed')->setGone(true)->setToUrl(null);
+
+        $this->assertTrue($redirect->isGone());
+        $this->assertNull($redirect->getToUrl());
+    }
 }

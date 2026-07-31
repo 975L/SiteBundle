@@ -5,34 +5,34 @@
 		{{ 'label.latest_update'|trans({}, 'site') }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
-	<section>
+	<section data-legal-id="purpose">
 		<h2>Purpose</h2>
 		<div>
 			These General Terms and Conditions (GTC) are intended to define the terms and conditions under which the website
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			provides services to users. Any use of any of the services offered by
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			shall be in compliance with these GTC.<br>
 			These have been designed so that the website functions satisfactorily for everyone.<br>
 			These GTC are applicable from their publication.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="acceptance">
 		<h2>Acceptance</h2>
 		<div>
 			The user declares having read and explicitly and unconditionally accepted these GTC in force at the time of access to this website; if this is not the case, please do not use and/or access this website.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="modification">
 		<h2>Modification</h2>
 		<div>
 			We reserve the right to modify, in whole or in part, and at any time, these GTC. You are invited to consult them regularly to become aware of the changes made. They are applicable at the time of their publication.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="internet-risks">
 		<h2>Acceptance of Internet Risks</h2>
 		<div>
 			The user declares having good knowledge of the Internet, its characteristics and limitations and in particular acknowledges:
@@ -49,7 +49,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="responsibility">
 		<h2>Responsibility</h2>
 		<div>
 			The user accepts not to hold this website and its publisher responsible for content posted online by other users or their actions. We cannot guarantee the accuracy of this third-party content, regarding quality, safety or legality. We advise you to systematically carry out a preliminary test, to inform yourself, observe and reflect before any action.<br>
@@ -85,7 +85,7 @@
 		</ul>
 	</section>
 
-	<section>
+	<section data-legal-id="content">
 		<h2>Content</h2>
 		<div>
 			By accepting these GTC, you grant us, for the duration of intellectual property rights, the right to reproduce on this website the content you provide. These rights are granted on a non-exclusive basis, worldwide, irrevocably, free of charge and transferable (we particularly need these rights to host and display your content).<br>
@@ -100,14 +100,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="information">
 		<h2>Information</h2>
 		<div>
 			The information present on this website is provided for informational purposes only. In any case, they must be considered at the time they are posted and not at the time of consultation of the website. Our responsibility cannot be engaged because of this information.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="hyperlinks">
 		<h2>Hyperlinks</h2>
 		<div>
 			This website contains hyperlinks referring to other websites managed by third parties and over which we exercise no control.<br>
@@ -116,7 +116,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="intellectual-property">
 		<h2>Intellectual Property</h2>
 		<div>
 			The user acknowledges that this website is the sole owner of the intellectual property rights relating to this same website and editorial content.<br>
@@ -127,7 +127,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="accessibility">
 		<h2>Accessibility to Services</h2>
 		<div>
 			We strive, to the extent possible, to keep our website accessible 7 days a week and 24 hours a day but we may interrupt access, particularly for maintenance and upgrade reasons or for any other reason, including technical ones. We are in no way responsible for the consequences that may result for the user.<br>
@@ -135,14 +135,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="access-conditions-content">
 		<h2>Access Conditions to Content</h2>
 		<div>
 			Access to the editorial content of the website is completely free of charge.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="access-conditions-services">
 		<h2>Access Conditions to Specific Services</h2>
 		<div>
 			The use of specific services requires the user to comply with a registration procedure through which they must provide their contact details. The user undertakes that the information communicated, in particular personal information, is accurate, complete and up-to-date and to make the necessary changes for this purpose.<br>
@@ -151,7 +151,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="personal-data">
 		<h2>Personal Data</h2>
 		<div>
 			We collect information provided by users through forms. Aware that the collection and processing of personal data on the Internet must respect the fundamental rights of individuals, we undertake that any processing of personal data on this website shall comply with law no. 78-17 of January 6, 1978 relating to data processing, files and freedoms. The user has a right of access (articles 34 to 38 of the 1978 law) and a right of rectification (article 36 of the 1978 law) to their personal data.<br>
@@ -160,14 +160,14 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="abuse">
 		<h2>Abuse</h2>
 		<div>
 			The user can bring to our attention any problem or offensive content using the reporting system so that together we can ensure the proper functioning of this website. We may terminate or reduce access to our services, remove certain hosted content and take technical and legal measures to prohibit access to this website to certain users if we believe they are problematic or are behaving in a manner inconsistent with our regulations or the spirit thereof. However, whether or not we decide to prohibit a user from accessing this website, we disclaim any liability in case of unauthorized or illegal use of this website by its users.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="disputes">
 		<h2>Disputes</h2>
 		<div>
 			In case of dispute, the procedure to follow will be as follows:
@@ -181,16 +181,16 @@
 		</ol>
 	</section>
 
-	<section>
+	<section data-legal-id="applicable-law">
 		<h2>Applicable Law - Jurisdiction</h2>
 		<div>
 			These GTC are subject to French law. Any dispute relating to the interpretation and performance of these terms shall be within the exclusive jurisdiction of the French courts and more particularly those located in the French department where the company editing
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			is headquartered, whether for professional or private users.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="miscellaneous">
 		<h2>Miscellaneous</h2>
 		<div>
 			These GTC as well as the other regulations on this website constitute the entire agreement existing between the user and this website through its publisher and supersede any prior agreement.<br>

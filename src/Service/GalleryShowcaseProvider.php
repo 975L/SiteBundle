@@ -42,13 +42,18 @@ class GalleryShowcaseProvider implements GalleryShowcaseProviderInterface
         ];
     }
 
-    // Reuses UiBundle's showcase placeholder pool, so the three articles don't share one photo
+    // Reuses UiBundle's showcase placeholder pool, so the three articles don't share one photo. That pool is whatever the app declares (see PlaceholderMediaProviderInterface) and is empty on an app declaring none - no photo to build a slide around then, so the preview is skipped rather than rendered with broken images
     private function articlesSliderVariant(): string
     {
         $slides = [];
         for ($i = 1; $i <= 3; ++$i) {
+            $image = $this->mediaAttacher->nextPlaceholderImage();
+            if (null === $image) {
+                return '';
+            }
+
             $slides[] = [
-                'image' => $this->mediaAttacher->nextPlaceholderImage()->setAlt("Article {$i}"),
+                'image' => $image->setAlt("Article {$i}"),
                 'title' => "Article {$i}",
                 'text' => 'Extrait de l\'article, tronqué pour l\'aperçu...',
                 'url' => '#',

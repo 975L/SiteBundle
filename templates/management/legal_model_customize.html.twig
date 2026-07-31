@@ -1,0 +1,110 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% form_theme form '@c975LUi/form/block_theme.html.twig' %}
+
+{# One unit's card. The markup mirrors an EasyAdmin collection row on purpose - ea-sortable.js (reused from
+   the block collections) looks for .field-collection-item inside .ea-form-collection-items, and writes the
+   row's new index into its [position] field #}
+{% macro unit_card(rows, node, drifted) %}
+    {# A macro sees no ambient context: the rows collection and the recursion's own import both come in here #}
+    {% import _self as macros %}
+    {% set row = rows[node.index] %}
+    {% set unit = node.unit %}
+    <div class="field-collection-item card mb-3"
+         data-legal-title="{{ unit.title|e('html_attr') }}"
+         data-legal-content="{{ unit.html|e('html_attr') }}">
+        <div class="accordion-header card-header">
+            <strong>{{ unit.title|default(unit.id) }}</strong>
+            <code class="ml-2">{{ unit.id }}</code>
+            {% if drifted[unit.id] is defined %}
+                <span class="badge badge-info ml-2">{{ ('label.legal_drift'|trans({}, 'site')) }}</span>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% if drifted[unit.id] is defined %}
+                <div class="alert alert-info">
+                    <p>{{ ('description.legal_drift'|trans({}, 'site')) }}</p>
+                    <div class="legal">{{ drifted[unit.id].html|raw }}</div>
+                </div>
+            {% endif %}
+
+            {{ form_widget(row.id) }}
+            {{ form_widget(row.position) }}
+            {{ form_row(row.title) }}
+            {{ form_row(row.content) }}
+
+            <div class="d-flex align-items-center" style="gap: 1rem;">
+                {{ form_row(row.hidden) }}
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-action="legal-model#reset">
+                    {{ ('label.legal_unit_reset'|trans({}, 'site')) }}
+                </button>
+            </div>
+
+            {% if node.children is not empty %}
+                <div data-ea-collection-field class="mt-3">
+                    <div class="ea-form-collection-items">
+                        {% for child in node.children %}
+                            {{ macros.unit_card(rows, child, drifted) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% import _self as macros %}
+
+{% block main %}
+    <h1>{{ (label|trans({}, 'site')) }}</h1>
+
+    <p>{{ ('description.legal_customize'|trans({}, 'site')) }}</p>
+
+    <p>
+        {{ ('description.legal_placeholders'|trans({}, 'site')) }}
+        {% for slug in placeholders %}<code>%{{ slug }}%</code>{{ not loop.last ? ' · ' }}{% endfor %}
+    </p>
+
+    <p>
+        <a href="{{ path('management_site_legal_models') }}">{{ ('label.back_to_list'|trans({}, 'site')) }}</a>
+    </p>
+
+    <div data-controller="legal-model"
+         data-legal-model-remove-label-value="{{ ('label.legal_extra_remove'|trans({}, 'site'))|e('html_attr') }}">
+        {{ form_start(form) }}
+            <div data-ea-collection-field>
+                <div class="ea-form-collection-items">
+                    {% for node in tree %}
+                        {{ macros.unit_card(form.units, node, drifted) }}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <h2>{{ ('label.legal_extra_sections'|trans({}, 'site')) }}</h2>
+            <p>{{ ('description.legal_extra_sections'|trans({}, 'site')) }}</p>
+
+            <div data-legal-model-target="holder"
+                 data-prototype="{{ form_widget(form.extra.vars.prototype)|e('html_attr') }}"
+                 data-index="{{ form.extra|length }}">
+                {% for section in form.extra %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            {{ form_widget(section) }}
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-action="legal-model#remove">
+                                {{ ('label.legal_extra_remove'|trans({}, 'site')) }}
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" class="btn btn-outline-secondary mb-3" data-action="legal-model#add">
+                {{ ('label.legal_extra_add'|trans({}, 'site')) }}
+            </button>
+
+            <div>
+                <button type="submit" class="btn btn-primary">{{ ('label.save'|trans({}, 'site')) }}</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock main %}

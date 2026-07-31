@@ -11,8 +11,10 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
 use c975L\SiteBundle\Controller\Management\FontCrudController;
+use c975L\SiteBundle\Controller\Management\LegalModelController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
@@ -24,6 +26,11 @@ use c975L\UiBundle\Controller\Management\MediaCrudController;
 
 class MenuProvider implements MenuProviderInterface
 {
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+    ) {
+    }
+
     public function getMenuSection(): array
     {
         return [
@@ -117,6 +124,19 @@ class MenuProvider implements MenuProviderInterface
 
     public function getLinks(): array
     {
-        return [];
+        return [
+            'site_legal_models' => [
+                'name' => LegalModelController::INDEX_ROUTE,
+                'label' => 'label.legal_models',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-scale-balanced',
+                // Same gate as the screen itself (see LegalModelController) - without it the link shows to a
+                // back-office user who would only ever get a 403 out of it
+                'role' => $this->configService->get('site-role-editor'),
+                // Set up once when the site opens, revisited a couple of times a year at most
+                'tier' => 'advanced',
+                'description' => 'label.info_legal_model',
+            ],
+        ];
     }
 }

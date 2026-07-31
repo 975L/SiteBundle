@@ -116,6 +116,11 @@ class PageController extends AbstractController
             return $this->redirectToRoute('page_home', [], 301);
         }
 
+        // "/pages/slug/" used to answer 200 with the exact same content as "/pages/slug", leaving the crawler two urls for one page - a 301 to the slashless form (the one the sitemap declares) settles it, where the canonical link alone is only a hint. Checked after the 'home' case above, so "/pages/home/" reaches the site root in a single hop rather than through a redirect chain
+        if ($page !== $slug) {
+            return $this->redirectToRoute('page_display', ['page' => $slug], 301);
+        }
+
         $pageObject = $this->pageService->findForDisplay($slug);
         $detailHtml = null;
         $detailTitle = null;

@@ -58,14 +58,19 @@ class RedirectCrudController extends AbstractCrudController
                 ->setHelp(t('label.from_path_help', [], 'site'))
                 ->setRequired(true),
 
+            // No longer required at the form level: a "gone" row has nothing to redirect to. Redirect::$toUrl carries the conditional constraint that still enforces it for every other row
             TextField::new('toUrl')
                 ->setLabel(t('label.to_url', [], 'site'))
                 ->setHelp(t('label.to_url_help', [], 'site'))
-                ->setRequired(true),
+                ->setRequired(false),
 
             BooleanField::new('permanent')
                 ->setLabel(t('label.permanent', [], 'site'))
                 ->setHelp(t('label.permanent_help', [], 'site')),
+
+            BooleanField::new('gone')
+                ->setLabel(t('label.gone', [], 'site'))
+                ->setHelp(t('label.gone_help', [], 'site')),
         ];
     }
 

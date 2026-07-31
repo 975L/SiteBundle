@@ -5,60 +5,60 @@
 		{{ 'label.latest_update'|trans({}, 'site') }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
-	<p class="text text-center">
+	<p class="text text-center" data-legal-id="preamble">
 		Las Normas de privacidad forman parte integral de los Terminos y condiciones de uso (TYC) de
-		<strong>{{ config('site-name') }}</strong>.
+		<strong>{{ legal_var('site-name') }}</strong>.
 	</p>
 
-	<section>
+	<section data-legal-id="personal-data">
 		<h2>Datos personales</h2>
 		<div>
 			Puede, en general, navegar por
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			sin decirnos quien es. Al navegar por
-			<strong>{{ config('site-name') }}</strong>, su navegador transmite automaticamente varios datos que permiten asegurar el seguimiento tecnico de la navegacion. Cierta informacion se analiza con fines puramente estadisticos y luego se elimina.
+			<strong>{{ legal_var('site-name') }}</strong>, su navegador transmite automaticamente varios datos que permiten asegurar el seguimiento tecnico de la navegacion. Cierta informacion se analiza con fines puramente estadisticos y luego se elimina.
 		</div>
 		<div>
 			Para respetar la proteccion de su privacidad y los datos personales que nos confia voluntariamente y por su propia iniciativa (por ejemplo, al crear una cuenta de usuario), nos comprometemos a NO divulgar esta informacion a otras empresas u organizaciones para que la utilicen, sin su consentimiento.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="email-addresses">
 		<h2>Direcciones de correo electronico</h2>
 		<div>
 			No difundimos las direcciones de correo electronico que nos deja. Se utilizan unicamente para comunicarnos con usted y constituyen el identificador de inicio de sesion en el sitio web.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="account">
 		<h2>Cuenta</h2>
 		<div>
 			Su cuenta en
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			contendra como minimo una direccion de correo electronico valida y una contrasena personal. La informacion de su cuenta esta protegida por las leyes de proteccion de datos aplicables en el pais que nos aloja.<br>
 			La informacion registrada esta reservada para el uso de
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			y NO se comunica a terceros.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="password-policy">
 		<h2>Politica de contrasenas</h2>
 		<div>
 			Su contrasena esta cifrada
 			<strong>(cifrado unidireccional que hace que no pueda ser descifrado)</strong>
 			para que sea segura. Sin embargo, se recomienda no utilizar la misma contrasena en varios sitios web diferentes. Su contrasena es el medio de acceso a su cuenta en
-			<strong>{{ config('site-name') }}</strong>, por favor guardela con cuidado. En ningun caso, una persona asociada a nuestros servicios o a un tercero puede pedirle legitimamente su contrasena.<br>
+			<strong>{{ legal_var('site-name') }}</strong>, por favor guardela con cuidado. En ningun caso, una persona asociada a nuestros servicios o a un tercero puede pedirle legitimamente su contrasena.<br>
 			Si olvida la contrasena de su cuenta, puede usar la funcion "Contrasena olvidada", este procedimiento le pedira que especifique su direccion de correo electronico y le permitira ingresar una nueva contrasena, para que pueda retomar su cuenta en
-			<strong>{{ config('site-name') }}</strong>.
+			<strong>{{ legal_var('site-name') }}</strong>.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="your-rights">
 		<h2>Sus derechos</h2>
 		<div>
 			De conformidad con la normativa vigente, los usuarios de
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			tienen los siguientes derechos:
 		</div>
 		<ul class="text text-justify">
@@ -71,28 +71,28 @@
 		</ul>
 		<div>
 			Si desea saber como
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			utiliza sus datos personales, solicitar que los rectifique u oponerse a un tratamiento, puede contactarnos a traves del formulario de contacto o a traves de los medios indicados en el Aviso legal.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="regulations">
 		<h2>Reglamento</h2>
 		<div>
 			Esta regulacion sobre las normas de privacidad describe como tratamos su informacion personal. Recopilamos, utilizamos y compartimos datos personales para permitir que
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			funcione correctamente y para protegerlo. En otras palabras, somos el "responsable del tratamiento" de sus datos personales. Esta regulacion es aplicable a partir de la fecha de su publicacion.
 		</div>
 
-		<h3>Modificacion de la regulacion</h3>
+		<h3 data-legal-id="regulations.modification">Modificacion de la regulacion</h3>
 		<div>
 			Nos reservamos el derecho de modificar, en su totalidad o en parte, y en cualquier momento, esta regulacion. Se le invita a consultarla regularmente para conocer los cambios realizados. Es aplicable en el momento de su publicacion.
 		</div>
 
-		<h3>Recopilacion de datos</h3>
+		<h3 data-legal-id="regulations.data-collection">Recopilacion de datos</h3>
 		<div>
 			La informacion publicada en
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			es accesible al publico. Nuestros servidores y nuestros proveedores de servicios se encuentran en el espacio europeo. Por lo tanto, si desea proporcionarnos informacion personal, acepta que sea transferida, tratada y almacenada en el espacio europeo.
 		</div>
 		<div>
@@ -101,12 +101,12 @@
 		<ul class="text text-justify">
 			<li>direccion de correo electronico</li>
 			<li>datos de inicio de sesion, estadisticas relativas a la consulta de paginas, al trafico hacia y desde
-				<strong>{{ config('site-name') }}</strong>
+				<strong>{{ legal_var('site-name') }}</strong>
 			</li>
 			<li>otra informacion, incluyendo la direccion IP del usuario e informacion estandar del registro del servidor</li>
 		</ul>
 
-		<h3>Uso de datos</h3>
+		<h3 data-legal-id="regulations.use-of-data">Uso de datos</h3>
 		<div>
 			Utilizamos la informacion personal de los usuarios para:
 		</div>
@@ -117,20 +117,20 @@
 			<li>beneficiarse de la experiencia de nuestros usuarios, medir el interes en nuestros servicios e informar a los usuarios sobre nuestros servicios y su actualizacion</li>
 		</ul>
 
-		<h3>Comunicacion de datos</h3>
+		<h3 data-legal-id="regulations.data-sharing">Comunicacion de datos</h3>
 		<div>
 			<strong>No vendemos ni arrendamos su informacion personal a terceros</strong>, pero podemos estar obligados a comunicar informacion personal para cumplir con obligaciones legales, hacer cumplir nuestras regulaciones, responder a quejas o proteger los derechos o bienes de cualquier persona o asegurar su seguridad.
 		</div>
 
-		<h3>Retencion de datos</h3>
+		<h3 data-legal-id="regulations.data-retention">Retencion de datos</h3>
 		<div>
 			Conservamos sus datos personales solo durante el tiempo necesario para los fines perseguidos, de conformidad con las disposiciones legales.
 		</div>
 
-		<h3>Archivos de registro</h3>
+		<h3 data-legal-id="regulations.log-files">Archivos de registro</h3>
 		<div>
 			Cada vez que se consulta
-			<strong>{{ config('site-name') }}</strong>, nuestro sistema registra, en nuestros archivos de registro y de manera automatizada, datos e informacion sobre el sistema informatico de la computadora consultante. Se recopilan los siguientes datos:
+			<strong>{{ legal_var('site-name') }}</strong>, nuestro sistema registra, en nuestros archivos de registro y de manera automatizada, datos e informacion sobre el sistema informatico de la computadora consultante. Se recopilan los siguientes datos:
 		</div>
 		<ul class="text text-justify">
 			<li>informacion sobre el tipo de navegador, su idioma y la version utilizada;</li>
@@ -148,7 +148,7 @@
 			Si hay una anomalia al consultar una pagina, registramos el identificador, la direccion IP, la solicitud http correspondiente y los datos necesarios para analizar y eliminar la anomalia.
 		</div>
 
-		<h3>Seguridad de datos</h3>
+		<h3 data-legal-id="regulations.data-security">Seguridad de datos</h3>
 		<div>
 			Utilizamos una serie de herramientas tecnicas y organizacionales generalmente reconocidas para asegurar la proteccion de sus datos personales contra acceso o comunicacion no autorizada. Sin embargo, como probablemente sepa, no existe proteccion perfecta. Por lo tanto, no ofrecemos garantia alguna al respecto.
 		</div>
@@ -156,15 +156,15 @@
 			La seguridad de los datos personales tambien es responsabilidad de los usuarios que se comprometen a mantener confidencial su identificador y contrasena. Los usuarios tambien se comprometen a no compartir su cuenta.
 		</div>
 
-		<h3>Archivado de datos</h3>
+		<h3 data-legal-id="regulations.data-archiving">Archivado de datos</h3>
 		<div>
 			Los datos eliminados se archivan, pero no son accesibles al publico, durante el periodo legal de un ano. Luego se eliminan definitivamente.
 		</div>
 
-		<h3>Data Protection Officer (DPO)</h3>
+		<h3 data-legal-id="regulations.dpo">Data Protection Officer (DPO)</h3>
 		<div>
 			El responsable del tratamiento y la proteccion de datos es
-			<strong>{{ config('site-dpo') }}</strong>. Puede contactarlo a traves del formulario de contacto o a traves de los medios indicados en el Aviso legal.
+			<strong>{{ legal_var('site-dpo') }}</strong>. Puede contactarlo a traves del formulario de contacto o a traves de los medios indicados en el Aviso legal.
 		</div>
 	</section>
 </div>

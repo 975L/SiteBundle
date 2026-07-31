@@ -1,16 +1,16 @@
 <div class="legal">
-	<section>
+	<section data-legal-id="all-rights-reserved">
 		<h2>All Rights Reserved</h2>
 		<p class="text text-center">
-			<strong>All rights of all kinds, in all countries and in all languages, are reserved by {{ config('site-name') }}.</strong>
+			<strong>All rights of all kinds, in all countries and in all languages, are reserved by {{ legal_var('site-name') }}.</strong>
 		</p>
 		<div>
-			The trademarks mentioned on <strong>{{ config('site-name') }}</strong> are registered trademarks or trade names belonging to their respective owners.
+			The trademarks mentioned on <strong>{{ legal_var('site-name') }}</strong> are registered trademarks or trade names belonging to their respective owners.
 		</div>
 		<div>
-			<strong>{{ config('site-name') }}</strong> is protected by international copyright and intellectual property laws.<br>
+			<strong>{{ legal_var('site-name') }}</strong> is protected by international copyright and intellectual property laws.<br>
 			It is strictly forbidden to reproduce it, in its form or content, in whole or in part, without written permission from the author.<br>
-			Likewise, all documents and photos hosted on <strong>{{ config('site-name') }}</strong> are protected by copyright in favor of their respective authors.
+			Likewise, all documents and photos hosted on <strong>{{ legal_var('site-name') }}</strong> are protected by copyright in favor of their respective authors.
 		</div>
 		<div>
 			In France, the law of March 11, 1957 only authorizes, under paragraphs 2 and 3 of article 4, on the one hand, copies or reproductions strictly reserved for the copier's private use and not intended for collective use, and on the other hand, analyses and short quotations for example and illustration purposes. Any representation or reproduction, in whole or in part, made without the consent of the author or right holders is unlawful (first paragraph of article 40).<br>
@@ -18,7 +18,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="intellectual-property">
 		<h2>Intellectual Property</h2>
 		<div>
 			The elements of the website, including texts, presentations, illustrations, photographs, structures, and layouts, are our exclusive property or that of our partners.
@@ -29,7 +29,7 @@
 	</section>
 
 	{% if config('site-other-copyright') %}
-		<section>
+		<section data-legal-id="other-copyrights">
 			<h2>Other Copyrights</h2>
 			<div class="text text-justify">
 				{{ config('site-other-copyright')|raw|nl2br }}

@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\UiBundle\Entity\EmailTemplate;
@@ -35,13 +36,17 @@ class DefaultPagesImporterTest extends TestCase
         return $em;
     }
 
-    // Builds a PageRepository double whose findOneBy() answers according to $existingSlugs
-    private function createPageRepository(array $existingSlugs = []): PageRepository
+    // Builds a PageRepository double whose findOneBy() answers according to $existingSlugs - $existingSummary is the description those already-existing pages carry, null standing for the page of a site created before this bundle seeded any
+    private function createPageRepository(array $existingSlugs = [], ?string $existingSummary = null): PageRepository
     {
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findOneBy')->willReturnCallback(
-            static function (array $criteria) use ($existingSlugs): ?Page {
-                return \in_array($criteria['slug'], $existingSlugs, true) ? new Page() : null;
+            static function (array $criteria) use ($existingSlugs, $existingSummary): ?Page {
+                if (!\in_array($criteria['slug'], $existingSlugs, true)) {
+                    return null;
+                }
+
+                return (new Page())->setSlug($criteria['slug'])->setSummarySocialNetwork($existingSummary);
             }
         );
 
@@ -111,7 +116,7 @@ class DefaultPagesImporterTest extends TestCase
         $result = $importer->import();
 
         // terms-of-sales is gated behind c975L\ShopBundle, not installed here, so it's neither created nor skipped
-        $this->assertSame(['created' => 9, 'skipped' => 0], $result);
+        $this->assertSame(['created' => 9, 'skipped' => 0, 'summarised' => []], $result);
         $pages = array_values(array_filter($persisted, static fn ($entity) => $entity instanceof Page));
         $this->assertCount(9, $pages);
         $this->assertSame('home', $pages[0]->getSlug());
@@ -138,6 +143,65 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertTrue($indexable['contact']);
     }
 
+    // A page rendering no meta description at all is one of the reasons a search engine crawls it and then declines to index it
+    public function testImportSeedsAMetaDescriptionOnEveryDefaultPageButHome(): void
+    {
+        $summaries = $this->importedSummaries();
+
+        foreach (['mentions-legales', 'regles-de-confidentialite', 'conditions-generales-d-utilisation', 'cookies', 'copyright', 'contact'] as $slug) {
+            $this->assertNotNull($summaries[$slug], sprintf('The "%s" page is seeded without a meta description.', $slug));
+        }
+
+        // A home page's description belongs to the site itself, not to a bundle default
+        $this->assertNull($summaries['home']);
+    }
+
+    // og:description is what a messaging app or a social network renders when someone shares the link, and "noindex" does nothing to stop a page being shared
+    public function testImportSeedsADescriptionOnTheAccountPagesToo(): void
+    {
+        $summaries = $this->importedSummaries();
+
+        $this->assertNotNull($summaries['creer-un-compte']);
+        $this->assertNotNull($summaries['mot-de-passe-oublie']);
+    }
+
+    // @return array<string, ?string> the seeded description of every page created by a full import, by slug
+    private function importedSummaries(): array
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->import();
+
+        $summaries = [];
+        foreach ($persisted as $entity) {
+            if ($entity instanceof Page) {
+                $summaries[$entity->getSlug()] = $entity->getSummarySocialNetwork();
+            }
+        }
+
+        return $summaries;
+    }
+
+    // Seeding a description outside ContentQualityAnalyzer's own window would have a fresh site start with a health check warning on the very pages it just created
+    public function testTheSeededDescriptionsRespectTheContentQualityThresholds(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->import();
+
+        foreach ($persisted as $entity) {
+            $summary = $entity instanceof Page ? $entity->getSummarySocialNetwork() : null;
+            if (null === $summary) {
+                continue;
+            }
+
+            $this->assertGreaterThanOrEqual(ContentQualityAnalyzer::DESCRIPTION_MIN_LENGTH, mb_strlen($summary), sprintf('The "%s" description is too short.', $entity->getSlug()));
+            $this->assertLessThanOrEqual(ContentQualityAnalyzer::DESCRIPTION_MAX_LENGTH, mb_strlen($summary), sprintf('The "%s" description is too long.', $entity->getSlug()));
+        }
+    }
+
     // Re-running the import on a site that already has every page, Form and EmailTemplate must not duplicate anything
     public function testImportSkipsPagesAlreadyPresentInDatabase(): void
     {
@@ -150,8 +214,50 @@ class DefaultPagesImporterTest extends TestCase
 
         $result = $importer->import();
 
-        $this->assertSame(['created' => 0, 'skipped' => 9], $result);
+        $this->assertSame(0, $result['created']);
+        $this->assertSame(9, $result['skipped']);
         $this->assertSame([], $persisted);
+    }
+
+    // A site running since before this bundle seeded descriptions gets them filled in by re-running the command - that is the whole point of the backfill, no page being created for it
+    public function testImportBackfillsTheDescriptionOfPagesThatAlreadyExistWithoutOne(): void
+    {
+        $existingSlugs = ['home', 'cookies', 'copyright', 'contact'];
+        $persisted = [];
+        $repository = $this->createPageRepository($existingSlugs);
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
+
+        $result = $importer->import();
+
+        $this->assertContains('cookies', $result['summarised']);
+        $this->assertContains('copyright', $result['summarised']);
+        $this->assertContains('contact', $result['summarised']);
+        // "home" carries no seeded description, so there is nothing to fill in for it
+        $this->assertNotContains('home', $result['summarised']);
+    }
+
+    // A description an admin typed is never overwritten, however many times the command is re-run
+    public function testImportNeverOverwritesADescriptionAlreadySet(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository(['cookies'], 'Le texte que Laurent a écrit lui-même');
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
+
+        $result = $importer->import();
+
+        $this->assertNotContains('cookies', $result['summarised']);
+    }
+
+    // Whitespace is not a description an admin meant to keep, so it gets filled in like an empty one
+    public function testImportBackfillsOverBlankWhitespace(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository(['cookies'], '   ');
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
+
+        $result = $importer->import();
+
+        $this->assertContains('cookies', $result['summarised']);
     }
 
     // Definitions carrying a legal 'model' get an attached legal_model block pre-filled with today's date
@@ -234,6 +340,23 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertTrue($form->isRestricted());
         $this->assertSame(['senderEmailField' => 'email', 'offerReceiveCopy' => true, 'template' => '@c975LSite/emails/contact_notification.html.twig'], $form->getActionConfig());
         $this->assertCount(4, $form->getFields());
+    }
+
+    // No seeded field carries a placeholder - a field shows its label alone, and it's the admin's call to type one in the back-office
+    public function testImportSeedsNoPlaceholderOnAnyFormField(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $importer->import();
+
+        foreach ($persisted as $entity) {
+            if ($entity instanceof Form) {
+                foreach ($entity->getFields() as $field) {
+                    $this->assertNull($field->getPlaceholder(), \sprintf('%s.%s', $entity->getName(), $field->getName()));
+                }
+            }
+        }
     }
 
     // Re-running the import must not touch the "contact" Form if it already exists with the expected action
@@ -357,7 +480,7 @@ class DefaultPagesImporterTest extends TestCase
         $result = $importer->import($onPage);
 
         // Pages declined by the callback are neither created nor counted as skipped
-        $this->assertSame(['created' => 1, 'skipped' => 0], $result);
+        $this->assertSame(['created' => 1, 'skipped' => 0, 'summarised' => []], $result);
         $this->assertCount(1, $persisted);
         $this->assertFalse($persisted[0]->isPublished());
     }
@@ -371,7 +494,7 @@ class DefaultPagesImporterTest extends TestCase
 
         $result = $importer->import();
 
-        $this->assertSame(['created' => 9, 'skipped' => 0], $result);
+        $this->assertSame(['created' => 9, 'skipped' => 0, 'summarised' => []], $result);
     }
 
     // The contact/register/reset-password-request pages each seed the matching restricted EmailTemplate too

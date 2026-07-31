@@ -127,4 +127,30 @@ class RedirectChainHealthCheckProviderTest extends TestCase
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
         $this->assertTrue($result['details']['loop']);
     }
+
+    // A "gone" row carries no target at all: the chain ends there, it isn't a chain and it certainly isn't a crash
+    public function testRunChecksStatusIsOkForAGoneRedirect(): void
+    {
+        $gone = (new Redirect())->setFromPath('/removed')->setGone(true);
+
+        $provider = new RedirectChainHealthCheckProvider($this->createRepository([$gone]), $this->createConfigService('https://example.com'), $this->createTranslator());
+
+        $result = $provider->runChecks()[0];
+        $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
+        $this->assertSame(['hops' => 0, 'loop' => false], $result['details']);
+    }
+
+    // A redirect landing on a "gone" url is still one hop, and the walk stops there rather than going on
+    public function testRunChecksStopsTheChainOnAGoneTarget(): void
+    {
+        $redirect = $this->createRedirect('/old', '/removed');
+        $gone = (new Redirect())->setFromPath('/removed')->setGone(true);
+
+        $provider = new RedirectChainHealthCheckProvider($this->createRepository([$redirect, $gone]), $this->createConfigService('https://example.com'), $this->createTranslator());
+
+        $results = $provider->runChecks();
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $results[0]['status']);
+        $this->assertSame(1, $results[0]['details']['hops']);
+        $this->assertFalse($results[0]['details']['loop']);
+    }
 }

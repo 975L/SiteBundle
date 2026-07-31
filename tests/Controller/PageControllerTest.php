@@ -69,9 +69,10 @@ class PageControllerTest extends TestCase
             new CollectionItemContext(),
         );
 
+        // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(
-            static fn (string $name): string => '/' . $name
+            static fn (string $name, array $parameters = []): string => '/' . $name . (isset($parameters['page']) ? '/' . $parameters['page'] : '')
         );
 
         $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
@@ -161,6 +162,22 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(), $this->createConfigService());
 
         $this->assertSame(301, $controller->display('home/')->getStatusCode());
+    }
+
+    // Both forms used to answer 200 with the same content, leaving the crawler two urls for one page
+    public function testDisplayRedirectsATrailingSlashToTheSlashlessUrl(): void
+    {
+        $page = (new Page())->setTitle('Blocks')->setSlug('blocks')->setIsPublished(true);
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['blocks' => $page]),
+            $this->createConfigService(),
+        );
+
+        $response = $controller->display('blocks/');
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame(301, $response->getStatusCode());
+        $this->assertSame('/page_display/blocks', $response->getTargetUrl());
     }
 
     // A deleted page yields a 410 Gone, not a plain 404 - lets clients/search engines know it's permanent

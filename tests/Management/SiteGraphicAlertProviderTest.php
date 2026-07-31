@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Management\SiteGraphicAlertProvider;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Repository\MediaRepository;
@@ -30,13 +31,29 @@ class SiteGraphicAlertProviderTest extends TestCase
         return $repository;
     }
 
+    // Replays the generated url with the role each alert asked for, the pre-filled "new" form being the whole point of the link
     private function createAdminUrlGenerator(): AdminUrlGeneratorInterface
     {
+        $requestedRole = null;
+
         $generator = $this->createStub(AdminUrlGeneratorInterface::class);
         $generator->method('unsetAll')->willReturnSelf();
         $generator->method('setController')->willReturnSelf();
         $generator->method('setAction')->willReturnSelf();
-        $generator->method('generateUrl')->willReturn('/admin/site-graphic/new');
+        $generator->method('set')->willReturnCallback(
+            function (string $name, mixed $value) use (&$generator, &$requestedRole): AdminUrlGeneratorInterface {
+                if (SiteGraphicCrudController::ROLE_PARAMETER === $name) {
+                    $requestedRole = $value;
+                }
+
+                return $generator;
+            }
+        );
+        $generator->method('generateUrl')->willReturnCallback(
+            static function () use (&$requestedRole): string {
+                return '/admin/site-graphic/new?' . SiteGraphicCrudController::ROLE_PARAMETER . '=' . $requestedRole;
+            }
+        );
 
         return $generator;
     }
@@ -58,7 +75,7 @@ class SiteGraphicAlertProviderTest extends TestCase
 
         $this->assertCount(4, $alerts);
         $this->assertSame('label.favicon', $alerts[0]['label']);
-        $this->assertSame('/admin/site-graphic/new', $alerts[0]['url']);
+        $this->assertSame('/admin/site-graphic/new?graphicRole=favicon', $alerts[0]['url']);
     }
 
     // A role already having its Media uploaded must not raise an alert

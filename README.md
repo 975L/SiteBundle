@@ -13,11 +13,11 @@ Symfony bundle that provides a complete foundation for building websites — lay
 
 Add SiteBundle on top of the shared [UiBundle](https://github.com/975L/UiBundle) + [ConfigBundle](https://github.com/975L/ConfigBundle) foundation and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
 
-See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bundle), and browse every block kind live in the [block gallery](https://975l.com/pages/blocks).
+See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.com/pages/site-bundle), and browse every block kind live in the [block gallery](https://bundles.975l.com/pages/blocks).
 
 ---
 
-> **TL;DR** — Turns the shared UiBundle + ConfigBundle foundation into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, users and authentication, sitemap generation, legal models, and the commands to scaffold a whole new site. It also contributes eleven health check providers to ConfigBundle's Health check page.
+> **TL;DR** — Turns the shared UiBundle + ConfigBundle foundation into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, users and authentication, sitemap generation, legal models, and the commands to scaffold a whole new site. It also contributes twelve health check providers to ConfigBundle's Health check page.
 
 ## Contents
 
@@ -38,10 +38,9 @@ See it in action at [975l.com/pages/site-bundle](https://975l.com/pages/site-bun
 - **Admin CRUD** for the site's graphics (favicon, Apple touch icon, logo, default Open Graph image) via EasyAdmin
 - **Sitemap generation** from database pages, collecting any other bundle's sitemap through `SitemapProviderInterface`, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
-- **Legal model templates** for France (French): cookies, copyright, legal notice, privacy policy, terms of sales, terms of use
+- **Legal model templates** for France, in French, English and Spanish: cookies, copyright, legal notice, privacy policy, terms of sales, terms of use - maintained by the bundle, and customizable section by section from the back-office without losing the updates
 - **Matomo analytics** integration
 - **CookieConsent** integration
-- **Alternate language** hreflang meta tags
 - **Open Graph** image support
 - **Email templates** with CSS inlining
 - **Asset serving** controller (inline display, access-protected)
@@ -222,7 +221,13 @@ They are **not declared in the sitemap** — only database pages are (see [Sitem
 | `templates/pages/redirected/{slug}.html.twig` | Redirects to the slug written inside the file |
 | `templates/pages/deleted/{slug}.html.twig` | Throws a 410 Gone exception |
 
-Database-managed redirects (`Redirect` entity, `fromPath`/`toUrl`/`permanent`) go through `RedirectExportProvider`/`RedirectImportProvider`, plugging them into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `fromPath`, `Redirect`'s own unique constraint.
+Database-managed redirects (`Redirect` entity, `fromPath`/`toUrl`/`permanent`/`gone`) go through `RedirectExportProvider`/`RedirectImportProvider`, plugging them into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `fromPath`, `Redirect`'s own unique constraint.
+
+A row can also be marked **gone** instead of carrying a target: the url then answers `410 Gone` rather than redirecting — for content removed with no equivalent to send anyone to (a documentation folder that no longer exists, the routes of a previous architecture). Search engines drop a 410 far faster than the plain 404 the same url would otherwise return. `toUrl` is required on every other row, a conditional constraint on the entity rather than a form-level one.
+
+`fromPath` also accepts a trailing `*`: `/apidoc/*` covers every url below it, however deep. An exact row always wins over a prefix covering it, and among prefixes the longest one wins — so `/apidoc/c975L/*` still beats a broader `/apidoc/*`, and one url of a removed tree can keep an answer of its own. The `*` is a convention of this bundle, resolved in `RedirectSubscriber`, not a SQL wildcard.
+
+Deleting a page permanently (see [Admin management](#admin-management)) leaves gone rows behind on its own: one for the page's own `/pages/{slug}` url — the trash's 410 only lasts as long as the page can still be restored — and one for each redirect that pointed at it, turned gone rather than deleted. `home` is skipped, being served at the site root, and a path an admin already redirects deliberately is left alone.
 
 ### Database pages
 
@@ -247,7 +252,7 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 
 | Kind | Category | Description |
 | --- | --- | --- |
-| `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), localized under `templates/models/{country}/{model}.html.twig`. Optionally displays a "latest update" date. |
+| `legal_model` | `label.category_legal` | Renders one of the built-in legal page models (cookies policy, copyright, legal notice, privacy policy, terms of sales, terms of use), picked from `templates/models/{country}/{model}.{locale}.html.twig` for the current request locale. Optionally displays a "latest update" date. See [Legal models](#legal-models). |
 | `twig_content` | `label.category_twig` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
 | `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu`/`menu_navbar` contexts (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page` - and, `menu_navbar` being exclusive, it is the only kind a `navbar` offers at all. Not cacheable: its "active" state depends on the current request path. |
@@ -433,6 +438,16 @@ security:
                 max_attempts: 5
 ```
 
+### Back-office access control
+
+`c975l:site:create` also declares `- { path: ^/management, roles: IS_AUTHENTICATED_FULLY }` under `access_control` in `config/packages/security.yaml` (same step again), so an anonymous visitor gets the login form instead of a bare 403. On the skeleton's `lazy: true` firewall it also makes the token resolve up front, without which `c975l/config-bundle`'s dashboard runs before the firewall has restored it. `IS_AUTHENTICATED_FULLY` rather than an admin role, on purpose: which role grants the back-office is `site-role-admin`, editable from the dashboard, so the controllers check it themselves. If your site predates this, add it yourself:
+
+```yaml
+security:
+    access_control:
+        - { path: ^/management, roles: IS_AUTHENTICATED_FULLY }
+```
+
 ### Account activation (`isEnabled`)
 
 `App\Entity\User::isEnabled` gates login independently from `isVerified`. `c975L\SiteBundle\Service\EmailVerifier::handleEmailConfirmation` (a bundle service, called from the scaffolded `RegistrationController`) sets both `isVerified` and `isEnabled` to `true` once the user confirms their email — `c975l:site:create` does the same for the bootstrap admin account, since there's no email to confirm. Registration itself (hashing the password, persisting the user, sending the confirmation email) goes through the bundle's `UserRegistrar` service, called from the scaffolded `App\Service\RegisterFormAction` (see [Registration anti-spam protections](#registration-anti-spam-protections)); `PasswordResetter` is its equivalent for the reset-password flow.
@@ -470,19 +485,28 @@ On a site scaffolded before this, `App\Command\SitemapCreateCommand` (`app:sitem
 
 To contribute a sitemap from another bundle, see [Contributing a sitemap](https://github.com/975L/ConfigBundle#contributing-a-sitemap-from-other-bundles) in ConfigBundle's own README — it's a two-method interface, and the file/index writing is none of the contributing bundle's business.
 
-### Alternate languages (hreflang)
+### Canonical url
 
-Define `languagesAlt` to add `<link rel="alternate" hreflang="...">` tags and enable a language switcher navbar component:
+`<link rel="canonical">` and `og:url` are built by the `canonical_url()` Twig function, out of the `site-url`
+config value and the current path — not out of `app.request.uri`, which made every variant of a url declare
+itself canonical: its query string (`?fbclid=…`, `?utm_source=…` each counted as a page of their own), its
+trailing slash and its scheme/host (`www` vs apex, `http` vs `https`). The query string is dropped, and the
+path is the slashless form the sitemap declares (the site root keeping its own slash). Nothing is emitted at
+all outside an http request or before `site-url` is set, rather than a tag pointing at the wrong host.
 
-```twig
-{% set languagesAlt = {
-    en: { title: 'English' },
-    fr: { title: 'Français' },
-    es: { title: 'Español' }
-} %}
-```
+`/pages/{slug}/` is answered with a `301` to `/pages/{slug}` on top of that: both used to serve the same
+content under two urls, and a canonical link alone is only a hint.
 
-URLs are built as `https://example.com/{locale}/pages/{slug}`.
+### Error pages are not indexable
+
+The layout defaults the `robots` meta to `noindex, follow` on every error page (`status_code` is only ever set
+by Symfony's error renderer) — a 404 rendered with the site's own layout used to inherit the `index, follow`
+default and offer itself to the index. `follow` is kept, so the links the page carries still pass on. It is
+defaulted in the layout rather than set in each error template, so none of them can forget it.
+
+`hreflang` tags are no longer emitted: the previous implementation was built on `app.request.uri` and, with no
+`languagesAlt` defined, declared every page its own alternate — query string included. A site serving several
+languages does it through its own locale-prefixed routes for now.
 
 ### Open Graph image
 
@@ -526,7 +550,7 @@ Note the difference with the health check and the smoke test above: both fetch t
 
 ## Health check
 
-SiteBundle contributes eleven `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains, http/https and 404 deployment), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
+SiteBundle contributes twelve `HealthCheckProviderInterface` implementations (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and how to contribute one from another bundle) — together they cover every published page's technical health, plus a handful of site-wide checks (TLS certificate, robots.txt/sitemap, redirect chains, http/https and 404 deployment), without any Node/Lighthouse-CLI/JS tooling, over plain Symfony HttpClient calls:
 
 | Provider | `getKind()` | Checks | API key |
 | --- | --- | --- | --- |
@@ -540,6 +564,7 @@ SiteBundle contributes eleven `HealthCheckProviderInterface` implementations (se
 | `SeoFilesHealthCheckProvider` | `seo-files` | `robots.txt` and `sitemap-site.xml` are reachable, well-formed, not empty and not stale, and that `robots.txt` doesn't accidentally block every crawler (a `Disallow: /` under `User-agent: *`) | None |
 | `DeclaredUrlsHealthCheckProvider` | `urls-<bundle>` | The same content-quality checks, over the urls **another bundle already declares for its sitemap** — books, products, photos, campaigns. See [Checking other bundles' urls](#checking-other-bundles-urls): nothing to implement bundle-side, and one kind per bundle so each can be scheduled at its own pace | None |
 | `DeploymentHealthCheckProvider` | `deployment` | Two site-wide deployment settings nothing else covers, both silent when they break: that `http://` really redirects to `https://` (checked with `max_redirects: 0`, so the redirect itself is the answer - a relative or `http://` target is only a warning, no redirect at all an error; skipped if `site-url` isn't `https://`), and that an unknown url (`/c975l-health-check-404-probe`, a fixed path so it reads as this check in the access logs) answers a real `404` carrying the site's own error page. A soft 404 answering `200` is an error - search engines index every typo as a page otherwise. "The site's own page" is a heuristic, same spirit as the `robots.txt` one: the body mentions `site-name` somewhere (header, footer, title), which the framework's default error page never does - it only ever downgrades a correct 404 to a warning, and is skipped when no `site-name` is set | None |
+| `LegalModelDriftHealthCheckProvider` | `legal_model` | Sections of a legal model the site rewrote in the back-office, whose bundle wording has since changed. Reported as `ok`, never a warning: it feeds neither the dashboard alerts nor the digest email, because a legal text the site took over is theirs and our having improved our own canvas is news, not a fault. Nothing is ever merged - see [Legal models](#legal-models). A site that customized nothing reports no row at all | None |
 | `RedirectChainHealthCheckProvider` | `redirect-chains` | Chains/loops among your own `Redirect` rows, walked purely from the database (`fromPath`/`toUrl`, no HTTP calls) - only same-site relative-path chaining is followed, an absolute `toUrl` on another host always ends the chain | None |
 
 ### Checking other bundles' urls
@@ -547,11 +572,13 @@ SiteBundle contributes eleven `HealthCheckProviderInterface` implementations (se
 `content-quality` only knows about SiteBundle's own `Page` entities. Everything else a site publishes — a book, a product, a photo, a crowdfunding campaign — is checked by `DeclaredUrlsHealthCheckProvider`, which reuses the exact same `ContentQualityAnalyzer` over the urls a bundle **already declares for its sitemap**:
 
 - **Nothing to implement.** `DeclaredUrlsHealthCheckPass` registers one provider per `SitemapProviderInterface` found in the container. A bundle that declares a sitemap is health-checked; that's the whole contract. Services are discovered by interface rather than by ConfigBundle's tag, so it doesn't matter which bundle's compiler pass ran first.
-- **One kind per bundle**, named after the sitemap it already declares: `urls-book`, `urls-shop`, `urls-gallery`, `urls-crowdfunding`. All of them land on the same Health check dashboard, but each can be run on its own — what the site sells or funds is worth catching weekly, while a gallery declaring two thousand photos is better off on its own, less frequent entry (that split is what the scaffolded `MaintenanceSchedule` ships):
+- **One kind per bundle**, named after the sitemap it already declares: `urls-book`, `urls-shop`, `urls-gallery`, `urls-crowdfunding`. All of them land on the same Health check dashboard, and each can still be run on its own from the command line:
 
 ```bash
 php bin/console c975l:health-check:run --kind=urls-book --kind=urls-shop
 ```
+
+  On a **schedule**, though, ask for a cadence rather than naming kinds — a kind whose bundle isn't installed matches no provider, and a cron entry written before a bundle existed never picks it up. Each bundle's cadence is read off **its own sitemap provider**: books, products and campaigns stay **weekly** (the default — a dead product page costs a sale), while GalleryBundle marks its `GallerySitemapProvider` with `#[AsHealthCheck(frequency: monthly)]` because it declares one url per photo. One class serves every bundle here, so the cadence travels on the instance (`HealthCheckFrequencyAwareInterface`, see ConfigBundle's readme) rather than on the class. A new bundle shipping a heavy sitemap says so itself, with nothing to change in SiteBundle.
 
 - **SiteBundle's own `SitePageSitemapProvider` is deliberately skipped**: `content-quality` already checks every `Page`, and does it better (each offence traced back to the block holding it, each row linking to the page's own edit screen). A declared url has no `Page` and no admin screen behind it, so its rows carry no edit link and no block link — every other check is identical, down to the advice lines.
 
@@ -575,6 +602,8 @@ What it reports, and the rules that keep it from reporting things you cannot fix
 ## Site graphics
 
 The site's favicon, Apple touch icon, logo and default Open Graph image are each a `c975L\UiBundle\Entity\Media` row carrying a `role` (`Media::ROLE_FAVICON`, `ROLE_APPLE_TOUCH_ICON`, `ROLE_LOGO`, `ROLE_OG_IMAGE`) — not plain ConfigBundle text paths. Managed via `SiteGraphicCrudController` (one row per role, uploaded file always saved at a fixed well-known path, e.g. `/favicon.ico`, whatever gets re-uploaded). Dashboard alerts (via ConfigBundle's `AlertProviderInterface`) flag any role not yet uploaded, and UiBundle's Media library shows where each one is used (via `SiteMediaUsageProvider`) — as a site graphic, a page's og-image, or a media attached to a page's block.
+
+The index shows one button per graphic still missing, in place of the alerts panel it used to repeat from the dashboard: each opens the upload form with the role already picked and the choice frozen, and so does the dashboard alert itself. Only the file is left to choose. The buttons disappear once the four singleton graphics exist — `error-image` is a pool, added through the plain "new" action.
 
 Access is controlled by the `site-role-editor` key in ConfigBundle, same as pages.
 
@@ -729,22 +758,38 @@ Follow the Symfony guide on [customizing error pages](https://symfony.com/doc/cu
 
 ## Legal models
 
-Pre-built legal templates are available for **France** in **French** (`fr`). Available models:
+Pre-built legal templates are available for **France**, in French (`fr`), English (`en`) and Spanish (`es`).
+Templates live under `templates/models/{country}/{model}.{locale}.html.twig` — the country is a directory,
+the locale a filename suffix:
 
 | Model | Path |
 | --- | --- |
-| Cookies policy | `@c975LSite/models/france/fr/cookies.html.twig` |
-| Copyright | `@c975LSite/models/france/fr/copyright.html.twig` |
-| Legal notice | `@c975LSite/models/france/fr/legal-notice.html.twig` |
-| Privacy policy | `@c975LSite/models/france/fr/privacy-policy.html.twig` |
-| Terms of sales | `@c975LSite/models/france/fr/terms-of-sales.html.twig` |
-| Terms of use | `@c975LSite/models/france/fr/terms-of-use.html.twig` |
+| Cookies policy | `@c975LSite/models/france/cookies.{locale}.html.twig` |
+| Copyright | `@c975LSite/models/france/copyright.{locale}.html.twig` |
+| Legal notice | `@c975LSite/models/france/legal-notice.{locale}.html.twig` |
+| Privacy policy | `@c975LSite/models/france/privacy-policy.{locale}.html.twig` |
+| Terms of sales | `@c975LSite/models/france/terms-of-sales.{locale}.html.twig` |
+| Terms of use | `@c975LSite/models/france/terms-of-use.{locale}.html.twig` |
 
-Each model is also available in Markdown format (`.md`).
+They pull the site's own data from ConfigBundle as they render, and a few sections only appear once the
+matching config value is filled in — `site-other-cookies` and `site-other-copyright` add their own section,
+`site-owner` the "Owner" one, and the Matomo opt-out link in the cookies policy needs `site-matomo-url`.
 
 **Feel free to contribute translations or add templates for other countries.**
 
-### Include the whole model
+### Rendering a model
+
+The normal way is the `legal_model` block: pick a model and, optionally, a "latest update" date from the
+back-office. `c975l:site:pages:import-defaults` already creates one such page per model (see
+[Import default pages](#import-default-pages)). The block renders the model for the *current request locale*, so a page
+served in `en` picks `legal-notice.en.html.twig` on its own — no per-locale page needed.
+
+The four models that carry a date (legal notice, privacy policy, terms of sales, terms of use) display the
+**later** of two values: the model's own revision date, hardcoded at the top of the template, and the
+`latestUpdate` set on the block. A model revised upstream therefore can never display a date older than its
+own content. The cookies policy and the copyright notice display no date at all.
+
+To render a model outside the block system — from a Twig-served page, for instance:
 
 ```twig
 {% extends 'layout.html.twig' %}
@@ -753,33 +798,78 @@ Each model is also available in Markdown format (`.md`).
 {% set title = 'label.terms_of_sales'|trans %}
 
 {% block content %}
-    {% set latestUpdate = '2024-01-01' %}
-    {% include '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
+    {% include '@c975LSite/models/france/terms-of-sales.fr.html.twig' with {latestUpdate: '2026-01-01'} %}
 {% endblock %}
 ```
 
-### Select specific blocks (embed)
+Always pass `latestUpdate`, even as `null` — the four dated models read it unguarded, so omitting it entirely
+throws under `strict_variables`. Passing `null` falls back on the model's own revision date.
 
-```twig
-{% extends 'layout.html.twig' %}
+The models are plain markup, with no Twig `{% block %}` of their own: there is nothing to `{% embed %}`. To
+rework a model wholesale as a developer, override the template in the app
+(`templates/bundles/c975LSiteBundle/models/france/…`) — Symfony's usual bundle template override. To let the
+site's own owner adjust it from the back-office, see below.
 
-{% trans_default_domain 'site' %}
-{% set title = 'label.terms_of_sales'|trans %}
+### Customizing a model, unit by unit
 
-{% block content %}
-    {% set latestUpdate = '2024-01-01' %}
-    {% embed '@c975LSite/models/france/fr/terms-of-sales.html.twig' %}
-        {# Disable a block #}
-        {% block acceptation %}{% endblock %}
+**Management → Legal models** (in the sidebar's collapsed "Advanced" submenu) lists every page carrying a
+`legal_model` block and opens a screen where the site's owner can, section by section:
 
-        {# Or extend a block #}
-        {% block acceptation %}
-            {{ parent() }}
-            Additional content here.
-        {% endblock %}
-    {% endembed %}
-{% endblock %}
-```
+- **hide** a section that doesn't apply (a showcase site with no terms of sales),
+- **rewrite** its wording, and retitle it,
+- **move** it, by dragging its card,
+- **add** sections of their own, at the top level or nested under one of the model's, and remove them again.
+
+The screen shows the bundle's own text, editable in place - not empty "override me" fields. Each card has a
+"back to the bundle's text" button, which is also how a section is put back on the updatable path. Reordering
+reuses the same drag and drop as the block collections (`ea-sortable`), scoped per level: a sub-section is
+dragged inside its own section and never climbs out of it.
+
+What makes this different from copying the model into the page: **only what was explicitly changed is
+stored**. What comes back from the editor is compared against the bundle's own wording, so opening the screen
+and saving it untouched stores nothing at all. The comparison ignores the `class`/`style` attributes, because
+Trix re-serializes whatever it is handed and drops them - taking that for a rewrite would freeze every section
+of the document on its first save. The delta lives in the block's `data` under `customization`, keyed by the `data-legal-id` each
+`<section>` and `<h3>` of the templates carries — identifiers slugified from the English headings, so they
+mean the same thing in all three locales and a delta survives a locale switch. Everything untouched keeps
+being rendered from the bundle's own template, which means **it keeps arriving with every `composer update`**.
+A block with no delta at all skips the DOM pass entirely and renders exactly what it rendered before this
+existed — nothing to migrate, on any existing site.
+
+The granularity is the `<section>` and, inside it, the `<h3>`: a section's own body is what sits between its
+heading and its first sub-section, so rewriting a section leaves its sub-sections alone, and vice versa.
+
+### `%config%` markers
+
+The models read the site's own data through `legal_var()` rather than `config()`: `site-name`, `site-owner`,
+`site-director`, `site-director-location`, `site-contact-email`, `site-contact-phone`, `site-producer`,
+`site-hosting-provider` and `site-dpo`. It resolves on the spot, so a model rendered any way at all — a
+`legal_model` block, or the plain `{% include %}` shown above — reads as finished text, with nothing to
+post-process.
+
+The customization screen is the one place that sees them as `%site-name%` markers instead, and what the client
+writes there is stored carrying those markers. `LegalModelRenderer` substitutes whatever is left over the
+finished document.
+
+That's what keeps a rewritten section alive: a client who retypes the liability clause can still write
+`%site-name%` in it, and renaming the site later still updates their text. Only those nine slugs substitute;
+anything else stays inert text, so no back-office field can read a config value the models never showed. The
+markers are listed on the customization screen itself.
+
+Note that a `legal_model` block is cached per (block, locale) like any other. Saving the customization flushes
+it; changing a ConfigBundle value does not — use the "Clear the block cache" dashboard shortcut, exactly as
+for every other block that reads the configuration.
+
+### When the bundle reworks a text you had rewritten
+
+Each override stores a fingerprint of the bundle wording it replaced. When a later release rewords that same
+passage, the `legal_model` health check provider reports it on ConfigBundle's **Health check** page — as an
+`ok` row, never a warning: it feeds neither the dashboard alerts nor the digest email. The customization
+screen then shows the new wording next to the section, and nothing else happens. Merging two versions of a
+legal text is not something a bundle gets to decide: the page is the site owner's responsibility, and the
+update is offered, never applied.
+
+A site that never customized anything reports nothing at all — it simply keeps receiving the updates.
 
 ---
 
@@ -819,6 +909,7 @@ File names may contain letters (including accented), digits, `-`, `_`, `/`, and 
 | `route_exists('route_name')` | Returns `true` if the named route exists |
 | `template_exists('template.html.twig')` | Returns `true` if the template file exists |
 | `asset_exists('path/to/file')` | Returns `true` if the asset exists in `public/` or `assets/` |
+| `canonical_url()` | The canonical url of the page being rendered, built from `site-url` and the current path (see [Canonical url](#canonical-url)) — `null` outside an http request or before `site-url` is set |
 | `\|nl2br` | Applies PHP's `nl2br()` with HTML output safe |
 | `\|linkify` | Turns bare `http(s)://` URLs in a raw string into `<a target="_blank" rel="noopener noreferrer">` links, HTML-escaping the rest |
 | `theme_variables_css()` | Returns the CSS compiled by `ThemeVariablesCssListener` from the admin-editable theme configs (see [Themes](#themes)), for inlining where a `<link>` isn't possible (e.g. emails) |
@@ -899,7 +990,10 @@ It walks through, in order:
    c975L bundle (`vendor/c975l/*/scaffold`) into the project. Unlike a plain overwrite, any file
    it would replace is first moved to `existingFiles/<same path>.old` at the project root, so
    nothing generated by `make:*` is silently lost. Add `existingFiles/` to your own workflow if
-   you don't want it committed (the command adds it to `.gitignore` automatically).
+   you don't want it committed (the command adds it to `.gitignore` automatically, alongside
+   `public/medias` and the singleton graphics written at the root of `public/` — what the
+   back-office uploads at runtime travels between environments through the content export/import,
+   never through git, or the next deploy's working-tree reset would wipe it).
 2. **Default config** — runs `c975l:config:load-all` internally.
 3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet.
 4. **Admin account** — asks for an email and password (typed in clear text, not masked, so you can
@@ -1014,6 +1108,8 @@ The last three each carry a generic `form` Block pointing at their matching `c97
 
 `home` is always the same slug across locales — `PageController` looks it up literally, so only one homepage can ever exist. All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped, so re-running the command after adding a new `enabled_locales` entry only creates the missing locale's pages.
 
+The legal pages and `contact` are seeded with a meta description of their own, each within the 50-160 character window `content-quality` checks, so a fresh site doesn't start with a health check warning on the pages it just created. `home` and the account pages get none: a home page's description belongs to the site, not to a default. The seeded form fields carry no placeholder either — a field shows its label alone until an admin types one in.
+
 ### Messenger cleanup
 
 Purges failed `messenger_messages` rows (`queue_name = 'failed'`) older than `site-messenger-cleanup-retention-days` days (default 30). Each failure is classified minor (spam/blacklist-related, matched against the exception message) or important; new important failures since the last alert trigger a single digest email to `site-messenger-cleanup-mailto` (both configs `restricted`, the mailto also `sensitive`, same pattern as the backup mailto — see [ROLE_SUPER_ADMIN and restricted configs](#role_super_admin-and-restricted-configs)), never more than once per new batch.
@@ -1058,12 +1154,10 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:config:backup:digest')))
             // Messenger cleanup: daily at 03:00
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
-            // Health check (see below): every registered provider is free, weekly is plenty
-            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains --kind=deployment')))
-            // Other bundles' own declared urls (see "Checking other bundles' urls"), one kind per bundle: what the site sells or funds is caught weekly too, a dead product/book/campaign page costs a sale
-            ->add(RecurringMessage::cron('0 5 * * 0', new RunCommandMessage('c975l:health-check:run --kind=urls-book --kind=urls-shop --kind=urls-crowdfunding')))
-            // The gallery on its own: one declared url per photo makes it by far the longest run, and a stale photo page is nothing like a product page going down
-            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --kind=urls-gallery')));
+            // Health check (see below): a cadence, never a list of kinds - each provider declares its own with ConfigBundle's AsHealthCheck (weekly unless it says otherwise), so these two lines already account for whatever bundles this site installs later
+            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --frequency=weekly')))
+            // The heavy ones on their own: a gallery declares one url per photo, by far the longest run
+            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --frequency=monthly')));
     }
 }
 ```
@@ -1128,12 +1222,6 @@ $bots = file(
 
 ```twig
 {% extends '@c975LSite/layout.html.twig' %}
-
-{% set languagesAlt = {
-    en: { title: 'English' },
-    fr: { title: 'Français' },
-    es: { title: 'Español' }
-} %}
 
 {% block meta %}
     {{ parent() }}

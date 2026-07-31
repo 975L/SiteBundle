@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Form\Block;
 
+use c975L\SiteBundle\Service\LegalModelCatalog;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -18,21 +19,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LegalModelType extends AbstractType
 {
+    public function __construct(
+        private readonly LegalModelCatalog $catalog,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('model', ChoiceType::class, [
                 'label' => 'label.model',
-                'choices' => [
-                    'France' => [
-                        'label.cookies_policy' => 'france/cookies',
-                        'label.copyright' => 'france/copyright',
-                        'label.legal_notice' => 'france/legal-notice',
-                        'label.privacy_policy' => 'france/privacy-policy',
-                        'label.terms_of_sales' => 'france/terms-of-sales',
-                        'label.terms_of_use' => 'france/terms-of-use',
-                    ],
-                ],
+                'choices' => $this->catalog->choices(),
+                // Section by section customization lives on its own screen (see LegalModelController): the
+                // rows depend on which model is picked here, which the block's ajax sub-form never knows
+                'help' => 'label.legal_customize_help',
             ])
             ->add('latestUpdate', DateType::class, [
                 'label' => 'label.latest_update',

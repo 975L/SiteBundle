@@ -104,6 +104,7 @@ class SiteCreateCommand extends Command
         }
         $this->ensureUserChecker($io);
         $this->ensureLoginThrottling($io);
+        $this->ensureManagementAccessControl($io);
 
         $io->section('2/7 — Configuration par défaut');
         $this->getApplication()?->find('c975l:config:load-all')->run(new ArrayInput([]), $output);
@@ -222,6 +223,39 @@ class SiteCreateCommand extends Command
         }
 
         $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "login_throttling: { max_attempts: 5 }" toi-même.');
+    }
+
+    // Declares /management as off-limits to anonymous visitors, which sends them to the login form instead of a bare 403. On the skeleton's "lazy: true" firewall it also makes the token resolve up front, without which c975l/config-bundle's dashboard runs before the firewall has restored it. IS_AUTHENTICATED_FULLY rather than an admin role: which role grants the back-office is site-role-admin, editable from the dashboard, so the controllers check it themselves. Same plain-text edit approach as ensureUserChecker(), for the same reason.
+    private function ensureManagementAccessControl(SymfonyStyle $io): void
+    {
+        $path = $this->projectDir . '/config/packages/security.yaml';
+        if (!is_file($path)) {
+            $io->text('  ⚠ config/packages/security.yaml introuvable, ajoute "- { path: ^/management, roles: IS_AUTHENTICATED_FULLY }" à "access_control" toi-même.');
+
+            return;
+        }
+
+        $content = file_get_contents($path);
+        if (preg_match('#path:\s*\^/management#', $content)) {
+            return;
+        }
+
+        $lines = explode("\n", $content);
+        foreach ($lines as $i => $line) {
+            if (!preg_match('/^(\s*)access_control:\s*$/', $line, $m)) {
+                continue;
+            }
+
+            // "access_control:" ships empty in the skeleton (every rule commented out), so the next line is no help: fall back on its own indentation plus one level
+            $childIndent = preg_match('/^(\s+)-\s/', $lines[$i + 1] ?? '', $ci) ? $ci[1] : $m[1] . '    ';
+            array_splice($lines, $i + 1, 0, [$childIndent . '- { path: ^/management, roles: IS_AUTHENTICATED_FULLY }']);
+            file_put_contents($path, implode("\n", $lines));
+            $io->text('  ✓ /management protégé par access_control dans security.yaml');
+
+            return;
+        }
+
+        $io->text('  ⚠ "access_control" introuvable dans security.yaml, ajoute "- { path: ^/management, roles: IS_AUTHENTICATED_FULLY }" toi-même.');
     }
 
     // Returns [email, password] (password is intentionally shown in clear text: this account is created outside any email-verification flow, so echoing it avoids losing it)

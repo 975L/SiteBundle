@@ -49,10 +49,12 @@ class SiteGraphicAlertProvider implements AlertProviderInterface
                 'label' => $this->translator->trans($labelKey, [], 'site'),
                 'description' => $this->translator->trans('label.site_graphic_missing', [], 'site'),
                 'severity' => Config::SEVERITY_WARNING,
+                // Straight to the upload form with the role already picked, the same target as the index buttons
                 'url' => $this->adminUrlGenerator
                     ->unsetAll()
                     ->setController(SiteGraphicCrudController::class)
                     ->setAction(Action::NEW)
+                    ->set(SiteGraphicCrudController::ROLE_PARAMETER, $role)
                     ->generateUrl(),
             ];
         }

@@ -43,8 +43,10 @@ class RedirectImportProvider implements ImportProviderInterface
 
             $redirect
                 ->setFromPath($item['fromPath'])
-                ->setToUrl($item['toUrl'])
-                ->setPermanent($item['permanent'] ?? true);
+                // Defaults to false, so an export predating this field keeps importing as the plain redirect it was
+                ->setToUrl($item['toUrl'] ?? null)
+                ->setPermanent($item['permanent'] ?? true)
+                ->setGone($item['gone'] ?? false);
 
             $this->em->persist($redirect);
             $isNew ? $created++ : $updated++;

@@ -90,9 +90,12 @@ class RedirectChainHealthCheckProvider implements HealthCheckProviderInterface
         }
     }
 
-    // Null if toUrl leaves the site entirely (an absolute url) - only a relative path can chain into another Redirect's own fromPath
-    private function toRedirectPath(string $toUrl): ?string
+    // Null if toUrl leaves the site entirely (an absolute url) or if the row is a "gone" one carrying none at all - a chain ends there in both cases, only a relative path can chain into another Redirect's own fromPath
+    private function toRedirectPath(?string $toUrl): ?string
     {
+        if (null === $toUrl) {
+            return null;
+        }
         if (str_starts_with($toUrl, '/')) {
             return $toUrl;
         }

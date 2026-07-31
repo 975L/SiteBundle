@@ -1,16 +1,16 @@
 <div class="legal">
-	<section>
+	<section data-legal-id="all-rights-reserved">
 		<h2>Todos los derechos reservados</h2>
 		<p class="text text-center">
-			<strong>Todos los derechos, de cualquier tipo, en todos los paises y en todos los idiomas, estan reservados a {{ config('site-name') }}.</strong>
+			<strong>Todos los derechos, de cualquier tipo, en todos los paises y en todos los idiomas, estan reservados a {{ legal_var('site-name') }}.</strong>
 		</p>
 		<div>
-			Las marcas citadas en <strong>{{ config('site-name') }}</strong> son marcas registradas o marcas comerciales pertenecientes a sus respectivos propietarios.
+			Las marcas citadas en <strong>{{ legal_var('site-name') }}</strong> son marcas registradas o marcas comerciales pertenecientes a sus respectivos propietarios.
 		</div>
 		<div>
-			<strong>{{ config('site-name') }}</strong> esta protegido por las leyes internacionales sobre derechos de autor y proteccion de la propiedad intelectual.<br>
+			<strong>{{ legal_var('site-name') }}</strong> esta protegido por las leyes internacionales sobre derechos de autor y proteccion de la propiedad intelectual.<br>
 			Esta estrictamente prohibido reproducirlo, en su forma o en su contenido, total o parcialmente, sin una autorizacion escrita del autor.<br>
-			Del mismo modo, todos los documentos y fotos alojados en <strong>{{ config('site-name') }}</strong> estan sujetos a copyright que protege a sus respectivos autores.
+			Del mismo modo, todos los documentos y fotos alojados en <strong>{{ legal_var('site-name') }}</strong> estan sujetos a copyright que protege a sus respectivos autores.
 		</div>
 		<div>
 			En Francia, la ley de 11 de marzo de 1957 solo autoriza, conforme a los apartados 2 y 3 del articulo 4, por una parte, las copias o reproducciones estrictamente reservadas al uso privado del copista y no destinadas a un uso colectivo, y por otra parte, los analisis y las citas breves con finalidad de ejemplo e ilustracion. Toda representacion o reproduccion, total o parcial, realizada sin el consentimiento del autor o de sus derechohabientes es ilicita (apartado primero del articulo 40).<br>
@@ -18,7 +18,7 @@
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="intellectual-property">
 		<h2>Propiedad intelectual</h2>
 		<div>
 			Los elementos del sitio web, en particular los textos, presentaciones, ilustraciones, fotografias, estructuras y maquetaciones, son de nuestra propiedad exclusiva o de nuestros socios.
@@ -29,7 +29,7 @@
 	</section>
 
 	{% if config('site-other-copyright') %}
-		<section>
+		<section data-legal-id="other-copyrights">
 			<h2>Otros derechos de autor</h2>
 			<div class="text text-justify">
 				{{ config('site-other-copyright')|raw|nl2br }}

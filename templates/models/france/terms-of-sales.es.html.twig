@@ -5,55 +5,55 @@
 		{{ 'label.latest_update'|trans({}, 'site') }} : {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
-	<section>
+	<section data-legal-id="purpose">
 		<h2>Objeto</h2>
 		<div>
 			Las presentes Condiciones Generales de Venta (CGV) tienen por objeto definir las condiciones contractuales aplicables a toda compra realizada por un/a usuario/a en el sitio
-			<strong>{{ config('site-name') }}</strong>.
+			<strong>{{ legal_var('site-name') }}</strong>.
 			Se aplican desde su publicación.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="acceptance">
 		<h2>Aceptacion</h2>
 		<div>
 			Toda compra en
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			implica la aceptacion plena y total de las CGV vigentes.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="modification">
 		<h2>Modificacion</h2>
 		<div>
 			Nos reservamos la posibilidad de modificar, total o parcialmente, y en cualquier momento, las presentes CGV. Se le invita a consultarlas regularmente para conocer los cambios introducidos. Son aplicables desde su publicacion.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="prices">
 		<h2>Precios</h2>
 		<div>
 			Los precios aplicados son los vigentes el dia de la compra en
-			<strong>{{ config('site-name') }}</strong>. Pueden modificarse en cualquier momento. Todos nuestros precios se indican con impuestos incluidos.
+			<strong>{{ legal_var('site-name') }}</strong>. Pueden modificarse en cualquier momento. Todos nuestros precios se indican con impuestos incluidos.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="payment">
 		<h2>Pago</h2>
 		<div>
 			La compra se realiza mediante los medios de pago propuestos en
-			<strong>{{ config('site-name') }}</strong>.
+			<strong>{{ legal_var('site-name') }}</strong>.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="refund">
 		<h2>Reembolso</h2>
 		<div>
 			Los servicios no consumidos son reembolsables dentro del plazo legal de desistimiento.<br>
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="withdrawal">
 		<h2>Desistimiento</h2>
 		<div>
 			En aplicacion del articulo L 221-18 del codigo de consumo, el/la usuario/a dispone de un plazo de catorce (14) dias naturales para desistir y retractarse de sus compromisos. Este plazo empieza al dia siguiente de la aceptacion de la oferta en el caso de prestaciones de servicios. Si termina en sabado, domingo o dia festivo, se prorroga hasta el siguiente dia laborable. No obstante, al validar el servicio, el/la usuario/a particular acepta que empecemos a ejecutar la prestacion inmediatamente y renuncia expresamente a su derecho de desistimiento para los servicios de pago utilizados y consumidos antes de la expiracion del plazo legal de desistimiento.
@@ -69,14 +69,14 @@
 		</ol>
 	</section>
 
-	<section>
+	<section data-legal-id="liability">
 		<h2>Responsabilidad</h2>
 		<div>
 			Nuestra responsabilidad no podra verse comprometida en caso de no ejecucion o mala ejecucion del pedido debida, ya sea al/a la usuario/a, ya sea a un caso de fuerza mayor no duradero en el tiempo. En caso contrario, podra iniciarse un procedimiento de reembolso.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="disputes">
 		<h2>Litigios</h2>
 		<div>
 			En caso de litigio, el procedimiento sera el siguiente:
@@ -90,19 +90,19 @@
 		</ol>
 	</section>
 
-	<section>
+	<section data-legal-id="applicable-law">
 		<h2>Ley aplicable - Jurisdiccion competente</h2>
 		<div>
 			Las presentes CGV estan sometidas a la ley francesa. Todo litigio relativo a la interpretacion y ejecucion de estas condiciones sera competencia exclusiva de los tribunales franceses y, en particular, de los localizados en el departamento frances de la sede de la empresa editora de
-			<strong>{{ config('site-name') }}</strong>, tanto para usuarios/as profesionales como particulares.
+			<strong>{{ legal_var('site-name') }}</strong>, tanto para usuarios/as profesionales como particulares.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="miscellaneous">
 		<h2>Disposiciones varias</h2>
 		<div>
 			Si una parte de las CGV resultara ilegal, invalida o inaplicable, por cualquier motivo, las disposiciones en cuestion se consideraran no escritas, sin afectar a la validez de las demas disposiciones que seguiran aplicandose, salvo si se trata de una clausula determinante que haya llevado a la compra en
-			<strong>{{ config('site-name') }}</strong>.<br>
+			<strong>{{ legal_var('site-name') }}</strong>.<br>
 			Toda reclamacion debe enviarse mediante las modalidades de contacto definidas en el sitio.<br>
 			Las CGV estan sometidas al derecho frances.
 		</div>

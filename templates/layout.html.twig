@@ -68,8 +68,8 @@
                 <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
 {# Display for html #}
                 {% if display != 'pdf' %}
-{# "noindex, follow" when a Page has been marked as non-indexable (see pages/page.html.twig and Page::isIndexable()) - "follow" is kept so the links it carries still pass on #}
-                    <meta name="robots" content="{{ robots|default('index, follow') }}">
+{# "noindex, follow" when a Page has been marked as non-indexable (see pages/page.html.twig and Page::isIndexable()), and on every error page: "status_code" is only ever set by Symfony's error renderer, and a 404/410/500 rendered with the site's own layout would otherwise inherit the "index, follow" default and invite search engines to index it. "follow" is kept in both cases so the links the page carries still pass on. Defaulted here rather than set in each Exception template, so no error template can forget it - not the six this bundle ships, not the six more its scaffold installs, not one an app adds later #}
+                    <meta name="robots" content="{{ robots|default(status_code is defined and status_code >= 400 ? 'noindex, follow' : 'index, follow') }}">
 {# Site #}
                     {% if site is defined %}
                         <meta property="og:site_name" content="{{ site }}">
@@ -100,8 +100,11 @@
                         <meta property="og:image" content="{{ ogImage }}">
                     {% endif %}
 {# Url #}
-                    <meta property="og:url" content="{{ app.request.uri }}">
-                    <link rel="canonical" href="{{ app.request.uri }}">
+                    {% set canonicalUrl = canonical_url() %}
+                    {% if canonicalUrl %}
+                        <meta property="og:url" content="{{ canonicalUrl }}">
+                        <link rel="canonical" href="{{ canonicalUrl }}">
+                    {% endif %}
 {# Favicon #}
                     {% if favicon is defined%}
                         <link rel="icon" type="image/x-icon" href="{{ favicon }}">
@@ -110,21 +113,6 @@
                     {% if appleTouchIcon is defined%}
                         <link rel="apple-touch-icon" href="{{ appleTouchIcon }}">
                         <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}">
-                    {% endif %}
-{# hreflang #}
-                    {% if languagesAlt is defined %}
-                        {% for languageAlt, item in languagesAlt %}
-                            {% if app.request.uri ends with '/' ~ locale %}
-                                {% set sourceLanguage = '/' ~ locale %}
-                                {% set targetLanguage = '/' ~ languageAlt %}
-                            {% else %}
-                                {% set sourceLanguage = '/' ~ locale ~ '/' %}
-                                {% set targetLanguage = '/' ~ languageAlt ~ '/' %}
-                            {% endif %}
-                            <link rel="alternate" hreflang="{{ languageAlt }}" href="{{ app.request.uri|replace({(sourceLanguage): targetLanguage}) }}">
-                        {% endfor %}
-                    {% else %}
-                        <link rel="alternate" hreflang="{{ locale }}" href="{{ app.request.uri }}">
                     {% endif %}
 {# End display for html #}
                 {% endif %}

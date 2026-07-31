@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\UiBundle\Entity\Media;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Finder\Finder;
 
@@ -110,8 +111,24 @@ class ScaffoldInstaller
         $gitignore = $this->projectDir . '/.gitignore';
         $content = is_file($gitignore) ? file_get_contents($gitignore) : '';
 
-        if (!str_contains($content, 'existingFiles/')) {
-            file_put_contents($gitignore, rtrim($content) . "\n\nexistingFiles/\n");
+        $missing = array_values(array_filter(
+            $this->gitignoreRules(),
+            static fn (string $rule): bool => !str_contains($content, $rule)
+        ));
+
+        if ($missing) {
+            file_put_contents($gitignore, rtrim($content) . "\n\n" . implode("\n", $missing) . "\n");
         }
+    }
+
+    // What the back-office writes into the project at runtime, carried between environments by the export/import (see SiteGraphicExportProvider/SiteGraphicImportProvider), never by git: tracking any of it means the next deploy resetting the working tree wipes whatever was uploaded in production. Singleton graphics sit at the root of public/ under their own role name, with the extension the role's fixed spec imposes (see c975L\UiBundle\Namer\UiMediaNamer), hence the wildcard rather than a hardcoded list of filenames
+    private function gitignoreRules(): array
+    {
+        $rules = ['existingFiles/', 'public/medias'];
+        foreach (Media::getSingletonRoles() as $role) {
+            $rules[] = 'public/' . $role . '.*';
+        }
+
+        return $rules;
     }
 }

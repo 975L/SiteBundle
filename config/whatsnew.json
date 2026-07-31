@@ -1,5 +1,70 @@
 [
     {
+        "date": "2026-07-31",
+        "description": [
+            {
+                "en": "Your legal pages can now be adjusted section by section from the back-office: the bundle's own text is there, editable in place, draggable to reorder - and everything you leave alone keeps receiving our updates",
+                "fr": "Vos pages légales s'ajustent désormais section par section depuis l'administration : le texte fourni est là, modifiable directement, déplaçable par glisser-déposer - et tout ce que vous ne touchez pas continue de recevoir nos mises à jour",
+                "es": "Sus páginas legales se pueden ajustar ahora sección por sección desde la administración: el texto proporcionado está ahí, modificable directamente, y se puede reordenar arrastrando; todo lo que no toque sigue recibiendo nuestras actualizaciones"
+            },
+            {
+                "en": "Markers like %site-name% keep working inside the text you rewrote, so renaming the site still updates your own wording",
+                "fr": "Les marqueurs comme %site-name% continuent de fonctionner dans le texte que vous avez réécrit : renommer le site met donc toujours à jour vos propres formulations",
+                "es": "Los marcadores como %site-name% siguen funcionando en el texto que usted reescribió, de modo que renombrar el sitio actualiza también sus propias formulaciones"
+            },
+            {
+                "en": "You can also add sections of your own, at the top level or inside one of ours, and remove them again whenever you want",
+                "fr": "Vous pouvez aussi ajouter vos propres sections, au premier niveau ou à l'intérieur d'une des nôtres, et les supprimer quand vous le souhaitez",
+                "es": "También puede añadir sus propias secciones, en el primer nivel o dentro de una de las nuestras, y eliminarlas cuando quiera"
+            },
+            {
+                "en": "When we reword a passage you had rewritten yourself, the health check tells you about it - for information only, nothing is ever changed on your pages",
+                "fr": "Lorsque nous reformulons un passage que vous aviez réécrit, le contrôle de santé vous le signale - à titre d'information seulement, rien n'est jamais modifié sur vos pages",
+                "es": "Cuando reformulamos un pasaje que usted había reescrito, la comprobación de estado se lo indica, solo a título informativo: nunca se modifica nada en sus páginas"
+            },
+            {
+                "en": "The health check schedule no longer needs editing when you add or remove a bundle: each check now states how often it wants to run, and your site simply asks for it",
+                "fr": "La planification du contrôle de santé n'a plus à être modifiée quand vous ajoutez ou retirez un bundle : chaque contrôle indique désormais lui-même sa fréquence, et votre site la demande simplement",
+                "es": "La planificación del control de estado ya no necesita modificarse cuando añade o quita un bundle: cada control indica ahora por sí mismo su frecuencia, y su sitio simplemente la solicita"
+            },
+            {
+                "en": "A redirection can now simply declare a page removed: its address answers \"gone for good\" instead of a plain \"not found\", and search engines drop it far faster",
+                "fr": "Une redirection peut désormais déclarer une page définitivement supprimée : son adresse répond « supprimée » au lieu d'un simple « introuvable », et les moteurs de recherche la retirent bien plus vite",
+                "es": "Una redirección puede ahora declarar una página definitivamente suprimida: su dirección responde «suprimida» en lugar de un simple «no encontrada», y los buscadores la retiran mucho más rápido"
+            },
+            {
+                "en": "One redirection can cover a whole branch of the site at once, by ending its address with a star - useful for a folder of pages that no longer exists",
+                "fr": "Une seule redirection peut couvrir toute une branche du site, en terminant son adresse par une étoile - pratique pour un dossier de pages qui n'existe plus",
+                "es": "Una sola redirección puede cubrir toda una rama del sitio, terminando su dirección con un asterisco: práctico para una carpeta de páginas que ya no existe"
+            },
+            {
+                "en": "Deleting a page for good now leaves its address properly declared as removed, along with every redirection that pointed to it - nothing to do by hand",
+                "fr": "Supprimer définitivement une page déclare désormais son adresse comme supprimée, ainsi que toutes les redirections qui y menaient - rien à faire à la main",
+                "es": "Suprimir definitivamente una página declara ahora su dirección como suprimida, así como todas las redirecciones que llevaban a ella: nada que hacer a mano"
+            },
+            {
+                "en": "Search engines are now given a single address per page, whatever tracking parameters or final slash a visitor arrived with - the same page no longer counts as several",
+                "fr": "Les moteurs de recherche reçoivent désormais une seule adresse par page, quels que soient les paramètres de suivi ou le slash final par lesquels un visiteur est arrivé - une même page ne compte plus pour plusieurs",
+                "es": "Los buscadores reciben ahora una sola dirección por página, sean cuales sean los parámetros de seguimiento o la barra final con los que llegó un visitante: una misma página ya no cuenta por varias"
+            },
+            {
+                "en": "Error pages no longer offer themselves to search engines: a \"page not found\" has nothing to do in the results",
+                "fr": "Les pages d'erreur ne se proposent plus aux moteurs de recherche : une page « introuvable » n'a rien à faire dans les résultats",
+                "es": "Las páginas de error ya no se ofrecen a los buscadores: una página «no encontrada» no tiene nada que hacer en los resultados"
+            },
+            {
+                "en": "The site graphics screen now offers one button per graphic still missing, each opening the upload form with the right kind already chosen - only the file is left to pick",
+                "fr": "L'écran des graphismes du site propose désormais un bouton par graphisme manquant, chacun ouvrant le formulaire avec le type déjà choisi - il ne reste que le fichier à sélectionner",
+                "es": "La pantalla de los gráficos del sitio ofrece ahora un botón por cada gráfico que falta, cada uno abriendo el formulario con el tipo ya elegido: solo queda seleccionar el archivo"
+            },
+            {
+                "en": "New default colors for a site that hasn't picked its own: a deep blue, an azure to accent it, and a page barely tinted toward them - all readable, whatever the light or dark mode",
+                "fr": "Nouvelles couleurs par défaut pour un site qui n'a pas choisi les siennes : un bleu profond, un azur pour l'accompagner, et une page à peine teintée vers eux - le tout lisible, en mode clair comme en mode sombre",
+                "es": "Nuevos colores por defecto para un sitio que no ha elegido los suyos: un azul profundo, un azur que lo acompaña y una página apenas teñida hacia ellos, todo legible tanto en modo claro como oscuro"
+            }
+        ]
+    },
+    {
         "date": "2026-07-30",
         "description": [
             {

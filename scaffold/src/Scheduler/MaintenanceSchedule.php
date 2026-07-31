@@ -26,12 +26,10 @@ class MaintenanceSchedule implements ScheduleProviderInterface
             ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
             // Weekly digest of the backups above, on its own entry rather than as --report on the Monday run: a summary riding on a backup only exists if that run reaches its last line, and no mail at all is what nobody notices
             ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:config:backup:digest')))
-            // Weekly: every registered health check provider is free (no paid API involved)
-            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --kind=pagespeed --kind=security-headers --kind=w3c-html --kind=w3c-css --kind=content-quality --kind=ssl-certificate --kind=mixed-content --kind=seo-files --kind=redirect-chains --kind=deployment')))
-            // Weekly, an hour after the pages; drop the kinds whose bundles you don't have installed
-            ->add(RecurringMessage::cron('0 5 * * 0', new RunCommandMessage('c975l:health-check:run --kind=urls-book --kind=urls-shop --kind=urls-crowdfunding')))
-            // Monthly and on its own: a gallery declares one url per photo, by far the longest run
-            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --kind=urls-gallery')))
+            // These two ask for a cadence, never for kinds: every provider states its own (see ConfigBundle's AsHealthCheck, weekly unless it says otherwise), so installing or removing a bundle is already accounted for here and these lines never need editing
+            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --frequency=weekly')))
+            // The heavy ones, alone on their own entry: a gallery declares one url per photo, by far the longest run
+            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --frequency=monthly')))
         ;
     }
 }

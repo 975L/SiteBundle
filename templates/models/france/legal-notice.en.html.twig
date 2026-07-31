@@ -5,68 +5,68 @@
 		{{ 'label.latest_update'|trans({}, 'site') }}: {{ max(updateDate, latestUpdate)|format_datetime('long', 'none', '') }}
 	</p>
 
-	<section>
+	<section data-legal-id="website-access">
 		<h2>Website access</h2>
 		<div>
 			We remind you of the characteristics and limitations of the Internet network and disclaim any liability related to the consequences of your connection to this network through
-			<strong>{{ config('site-name') }}</strong>.<br>
+			<strong>{{ legal_var('site-name') }}</strong>.<br>
 			In particular, we cannot be held liable for any damage, whether material or immaterial, caused to your computer equipment and the data stored on it, nor for any consequences that may result for your personal, professional, or business activity.<br>
 			We also cannot be held liable if you are unable to connect to
-			<strong>{{ config('site-name') }}</strong>
+			<strong>{{ legal_var('site-name') }}</strong>
 			due to any technical defect or any issue related in particular to network congestion.
 		</div>
 	</section>
 
 	{% if config('site-owner') %}
-		<section>
+		<section data-legal-id="owner">
 			<h2>Owner</h2>
 			<div>
-				{{ config('site-owner')|raw }}
+				{{ legal_var('site-owner') }}
 			</div>
 		</section>
 	{% endif %}
 
-	<section>
+	<section data-legal-id="publishing">
 		<h2>Publishing</h2>
 		<div>
 			The publication director is
-			<strong>{{ config('site-director') }}</strong>
+			<strong>{{ legal_var('site-director') }}</strong>
 			located in
-			<strong>{{ config('site-director-location') }}</strong>.
+			<strong>{{ legal_var('site-director-location') }}</strong>.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="contact">
 		<h2>Contact</h2>
 		<div>
 			You can contact us through one of the following means:
 		</div>
 		<ul class="text text-justify">
 			<li>contact form</li>
-			<li>{{ config('site-contact-email') }}</li>
+			<li>{{ legal_var('site-contact-email') }}</li>
 			<li>by phone
-				{{ config('site-contact-phone') }}</li>
+				{{ legal_var('site-contact-phone') }}</li>
 		</ul>
 	</section>
 
-	<section>
+	<section data-legal-id="production">
 		<h2>Production</h2>
 		<div>
 			This website is produced by
-			{{ config('site-producer')|raw }}.
+			{{ legal_var('site-producer') }}.
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="website-hosting">
 		<h2>Website hosting</h2>
 		<div>
 			This website is hosted by
 			<br>
-			{{ config('site-hosting-provider')|raw|nl2br }}
+			{{ legal_var('site-hosting-provider') }}
 		</div>
 	</section>
 
-	<section>
+	<section data-legal-id="annexes">
 		<h2>Annexes</h2>
 		{% set legalPages = site_legal_pages(['france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright']) %}
 		{% if legalPages %}

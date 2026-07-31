@@ -38,7 +38,26 @@ class RedirectExportProviderTest extends TestCase
             'fromPath' => '/old-page',
             'toUrl' => '/new-page',
             'permanent' => true,
+            'gone' => false,
         ]], $data['items']);
         $this->assertSame([], $data['files']);
+    }
+
+    // A "gone" row carries no target: the export must keep the null rather than drop the key, which the import reads back as-is
+    public function testExportAllSerializesAGoneRedirectWithoutATarget(): void
+    {
+        $redirect = (new Redirect())->setFromPath('/apidoc/*')->setGone(true);
+
+        $redirectRepository = $this->createMock(RedirectRepository::class);
+        $redirectRepository->expects($this->once())->method('findAll')->willReturn([$redirect]);
+
+        $data = (new RedirectExportProvider($redirectRepository))->exportAll();
+
+        $this->assertSame([[
+            'fromPath' => '/apidoc/*',
+            'toUrl' => null,
+            'permanent' => true,
+            'gone' => true,
+        ]], $data['items']);
     }
 }

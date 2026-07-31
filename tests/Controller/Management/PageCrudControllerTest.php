@@ -1021,6 +1021,81 @@ class PageCrudControllerTest extends TestCase
         );
     }
 
+    // --- deletePermanently leaves a "gone" redirect behind -----------------------------------------------
+
+    private function deletePermanentlyWith(Page $page, EntityManagerInterface $manager, ?Redirect $existing = null, array $pointingAtIt = []): void
+    {
+        $redirectRepository = $this->createStub(RedirectRepository::class);
+        $redirectRepository->method('findByToUrl')->willReturn($pointingAtIt);
+        $redirectRepository->method('findOneByFromPath')->willReturn($existing);
+
+        $controller = $this->createController(redirectRepository: $redirectRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->deletePermanently($this->createAdminContext($page), $manager);
+    }
+
+    // The trash's own 410 (see PageController::display()) dies with the row - without this the url would drop back to a plain 404
+    public function testDeletePermanentlyPersistsAGoneRedirectForThePageUrl(): void
+    {
+        $page = (new Page())->setTitle('Old')->setSlug('old-page');
+
+        // A stub rather than a mock: what matters is the entity handed to persist(), captured here, not that the call happened
+        $persisted = null;
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted = $entity;
+        });
+
+        $this->deletePermanentlyWith($page, $manager);
+
+        $this->assertInstanceOf(Redirect::class, $persisted);
+        $this->assertSame('/pages/old-page', $persisted->getFromPath());
+        $this->assertTrue($persisted->isGone());
+        $this->assertNull($persisted->getToUrl());
+    }
+
+    // A target the admin set up deliberately says more than a dead end, and fromPath is unique anyway
+    public function testDeletePermanentlyLeavesAnExistingRedirectOnThatPathAlone(): void
+    {
+        $page = (new Page())->setTitle('Old')->setSlug('old-page');
+        $existing = (new Redirect())->setFromPath('/pages/old-page')->setToUrl('/pages/bundles');
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('persist');
+
+        $this->deletePermanentlyWith($page, $manager, $existing);
+    }
+
+    // The urls that redirected to this page led to content just as removed - they answer 410 too, rather than being deleted and dropping back to a 404
+    public function testDeletePermanentlyTurnsRedirectsPointingAtThePageIntoGoneOnes(): void
+    {
+        $page = (new Page())->setTitle('Old')->setSlug('old-page');
+        $alias = (new Redirect())->setFromPath('/pages/legacy-name')->setToUrl('/pages/old-page')->setPermanent(true);
+
+        $manager = $this->createStub(EntityManagerInterface::class);
+
+        $this->deletePermanentlyWith($page, $manager, pointingAtIt: [$alias]);
+
+        $this->assertTrue($alias->isGone());
+        $this->assertNull($alias->getToUrl());
+        $this->assertSame('/pages/legacy-name', $alias->getFromPath());
+    }
+
+    // "home" is served at the site root, which RedirectSubscriber skips by design - a "/pages/home" row would only ever shadow the 301 PageController already answers there
+    public function testDeletePermanentlyCreatesNoGoneRedirectForTheHomePage(): void
+    {
+        $page = (new Page())->setTitle('Home')->setSlug('home');
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('persist');
+
+        $this->deletePermanentlyWith($page, $manager);
+    }
+
     // --- access-denied smoke tests ---------------------------------------------------------------------
 
     public function testDeletePermanentlyDeniesAccessBelowAdmin(): void

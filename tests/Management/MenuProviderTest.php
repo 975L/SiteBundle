@@ -10,7 +10,9 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
+use c975L\SiteBundle\Controller\Management\LegalModelController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Controller\Management\RedirectCrudController;
@@ -27,7 +29,7 @@ class MenuProviderTest extends TestCase
     // The dashboard section this bundle contributes must carry the 'site' translation domain
     public function testGetMenuSectionReturnsLabelAndDomain(): void
     {
-        $section = (new MenuProvider())->getMenuSection();
+        $section = $this->provider()->getMenuSection();
 
         $this->assertSame('label.management', $section['label']);
         $this->assertSame('site', $section['translation_domain']);
@@ -36,7 +38,7 @@ class MenuProviderTest extends TestCase
     // Every CRUD entry this bundle contributes to the dashboard, including UiBundle's media library (wired here because UiBundle can't register its own menu item without a circular dependency)
     public function testGetMenusReturnsEveryContributedControllerEntry(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = $this->provider()->getMenus();
 
         $this->assertSame(PageCrudController::class, $menus['page']['controller']);
         $this->assertSame(RedirectCrudController::class, $menus['redirect']['controller']);
@@ -55,7 +57,7 @@ class MenuProviderTest extends TestCase
     // Day-to-day content items stay at the top level; setup-once/occasional-use screens are tucked into MenuBuilder's collapsed "Advanced" submenu (see MenuProviderInterface::getMenus())
     public function testAdvancedTierIsSetOnlyOnSetupOnceScreens(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = $this->provider()->getMenus();
 
         foreach (['page', 'user', 'media', 'collection'] as $essential) {
             $this->assertArrayNotHasKey('tier', $menus[$essential], $essential . ' should stay essential');
@@ -66,16 +68,26 @@ class MenuProviderTest extends TestCase
         }
     }
 
-    // This provider contributes no standalone links (only CRUD menus)
-    public function testGetLinksReturnsEmptyArray(): void
+    // The only non-CRUD screen this provider contributes: customizing a legal model is not an entity CRUD, it
+    // edits one block's delta against templates the bundle ships (see LegalModelController)
+    public function testGetLinksContributesTheLegalModelsScreen(): void
     {
-        $this->assertSame([], (new MenuProvider())->getLinks());
+        $links = $this->provider()->getLinks();
+
+        $this->assertSame(['site_legal_models'], array_keys($links));
+        $this->assertSame(LegalModelController::INDEX_ROUTE, $links['site_legal_models']['name']);
+        $this->assertSame('site', $links['site_legal_models']['translation_domain']);
+        // Gated on the same role the screen itself demands, so it never shows to someone it would 403 on
+        $this->assertSame('ROLE_EDITOR', $links['site_legal_models']['role']);
+        // Set up once, then revisited rarely - it belongs in the collapsed "Avancé" submenu, not the sidebar's
+        // own "Liens" section
+        $this->assertSame('advanced', $links['site_legal_models']['tier']);
     }
 
     // Every entry's 'description' reuses the exact same key as its own crud/index+crud/edit override template's explanatory text (see eg. page_crud_index.html.twig) - one text, not a separate onboarding-only string
     public function testGetMenusDescriptionReusesEachScreensOwnExplanatoryText(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = $this->provider()->getMenus();
 
         $this->assertSame('label.info_page', $menus['page']['description']);
         $this->assertSame('label.info_redirect', $menus['redirect']['description']);
@@ -87,5 +99,13 @@ class MenuProviderTest extends TestCase
         $this->assertSame('label.info_font', $menus['font']['description']);
         $this->assertSame('label.info_form', $menus['form']['description']);
         $this->assertSame('label.info_email_template', $menus['email_template']['description']);
+    }
+
+    private function provider(): MenuProvider
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturn('ROLE_EDITOR');
+
+        return new MenuProvider($configService);
     }
 }

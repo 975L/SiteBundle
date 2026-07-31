@@ -167,13 +167,13 @@
     /* Buttons - the primary/secondary pair follows the admin's palette through color-mix, the status
        three are fixed by convention (red danger, green success). */
     /* --button-color: #fff; */
-    /* --button-secondary-color: #000; */
+    /* --button-secondary-color: #fff; */
     /* --button-link-color: #fff; */
     /* --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5); */
-    /* --button-background-primary: rgb(11, 55, 178); */
+    /* --button-background-primary: #0a2d6b; */
     /* --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, black); */
     /* --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white); */
-    /* --button-background-secondary: rgb(218, 126, 57); */
+    /* --button-background-secondary: #0a7ba3; */
     /* --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black); */
     /* --button-background-success: rgb(40, 167, 69); */
     /* --button-background-success-dark: rgb(40, 167, 69, 0.9); */

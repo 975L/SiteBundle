@@ -10,10 +10,12 @@
 
 namespace c975L\SiteBundle\EventSubscriber;
 
+use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Repository\RedirectRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class RedirectSubscriber implements EventSubscriberInterface
@@ -40,12 +42,40 @@ class RedirectSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $redirect = $this->redirectRepository->findOneByFromPath($path);
+        $redirect = $this->resolve($path);
         if (null === $redirect) {
             return;
         }
 
+        // Left to the exception listener like any other http exception, so the app's own error page renders it - there is no url to send anyone to, which is the whole point of the row
+        if ($redirect->isGone()) {
+            throw new GoneHttpException();
+        }
+
         $status = $redirect->isPermanent() ? 301 : 302;
         $event->setResponse(new RedirectResponse($redirect->getToUrl(), $status));
+    }
+
+    // An exact fromPath always wins, so a single "/apidoc/*" row can cover a whole tree of removed urls while one of them keeps its own specific answer. Among prefixes the longest one wins, so "/apidoc/c975L/*" still beats a broader "/apidoc/*" covering it
+    private function resolve(string $path): ?Redirect
+    {
+        $prefixMatch = null;
+        $prefixMatchLength = -1;
+
+        foreach ($this->redirectRepository->findCandidatesForPath($path) as $redirect) {
+            $fromPath = (string) $redirect->getFromPath();
+
+            if ($fromPath === $path) {
+                return $redirect;
+            }
+
+            $prefix = rtrim($fromPath, '*');
+            if (str_starts_with($path, $prefix) && \strlen($prefix) > $prefixMatchLength) {
+                $prefixMatch = $redirect;
+                $prefixMatchLength = \strlen($prefix);
+            }
+        }
+
+        return $prefixMatch;
     }
 }

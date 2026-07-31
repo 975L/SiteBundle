@@ -43,14 +43,18 @@ class SiteCreateCommandTest extends TestCase
     protected function tearDown(): void
     {
         // Only ever holds the few files each test writes below, so a flat cleanup is enough
-        foreach (['/src/Entity/User.php', '/.c975l-site-created'] as $file) {
+        foreach (['/src/Entity/User.php', '/.c975l-site-created', '/config/packages/security.yaml'] as $file) {
             if (is_file($this->projectDir . $file)) {
                 unlink($this->projectDir . $file);
             }
         }
-        rmdir($this->projectDir . '/src/Entity');
-        rmdir($this->projectDir . '/src');
-        rmdir($this->projectDir);
+
+        // Deepest first, and only the ones a test actually created
+        foreach (['/config/packages', '/config', '/src/Entity', '/src', ''] as $dir) {
+            if (is_dir($this->projectDir . $dir)) {
+                rmdir($this->projectDir . $dir);
+            }
+        }
     }
 
     private function createCommand(?EntityManagerInterface $em = null, ?UserPasswordHasherInterface $passwordHasher = null): SiteCreateCommand
@@ -140,6 +144,71 @@ class SiteCreateCommandTest extends TestCase
         $this->assertSame('admin@example.com', $email);
         $this->assertSame('(compte déjà existant)', $password);
         $this->assertStringNotContainsString('Mot de passe', $display);
+    }
+
+    // The skeleton ships "access_control:" with every rule commented out, so the rule has to land on a key with no child to copy the indentation from
+    public function testEnsureManagementAccessControlAddsTheRuleUnderAnEmptyAccessControl(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    access_control:\n");
+
+        $display = $this->callEnsureManagementAccessControl();
+
+        $this->assertStringContainsString('        - { path: ^/management, roles: IS_AUTHENTICATED_FULLY }', file_get_contents($path));
+        $this->assertStringContainsString('access_control', $display);
+    }
+
+    // Existing rules give the indentation to match, rather than assuming one level below "access_control:"
+    public function testEnsureManagementAccessControlMatchesTheExistingRulesIndentation(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    access_control:\n      - { path: ^/gestion, roles: ROLE_ADMIN }\n");
+
+        $this->callEnsureManagementAccessControl();
+
+        $this->assertStringContainsString("\n      - { path: ^/management, roles: IS_AUTHENTICATED_FULLY }", file_get_contents($path));
+    }
+
+    // Re-running the command on a site already created must not stack a second rule
+    public function testEnsureManagementAccessControlLeavesAnExistingRuleAlone(): void
+    {
+        $yaml = "security:\n    access_control:\n        - { path: ^/management, roles: ROLE_ADMIN }\n";
+        $path = $this->writeSecurityYaml($yaml);
+
+        $this->callEnsureManagementAccessControl();
+
+        $this->assertSame($yaml, file_get_contents($path));
+    }
+
+    // No firewall to edit: the command reports it instead of writing a broken file
+    public function testEnsureManagementAccessControlReportsAMissingAccessControl(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
+
+        $display = $this->callEnsureManagementAccessControl();
+
+        $this->assertStringNotContainsString('^/management', file_get_contents($path));
+        $this->assertStringContainsString('⚠', $display);
+    }
+
+    private function writeSecurityYaml(string $content): string
+    {
+        $path = $this->projectDir . '/config/packages/security.yaml';
+        if (!is_dir(dirname($path))) {
+            mkdir(dirname($path), 0775, true);
+        }
+        file_put_contents($path, $content);
+
+        return $path;
+    }
+
+    // Private and only reached mid-command, so it is driven directly rather than through CommandTester
+    private function callEnsureManagementAccessControl(): string
+    {
+        $command = $this->createCommand();
+        $output = new BufferedOutput();
+        (new \ReflectionMethod($command, 'ensureManagementAccessControl'))
+            ->invoke($command, new SymfonyStyle(new ArrayInput([]), $output));
+
+        return $output->fetch();
     }
 
     // Private and past the scaffold install, so it is driven directly rather than through CommandTester

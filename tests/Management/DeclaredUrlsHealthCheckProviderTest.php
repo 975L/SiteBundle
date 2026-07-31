@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\ConfigBundle\Attribute\AsHealthCheck;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\SitemapProviderInterface;
 use c975L\SiteBundle\Management\ContentQualityAnalyzer;
@@ -250,5 +251,25 @@ class DeclaredUrlsHealthCheckProviderTest extends TestCase
 
         $this->assertCount(1, $results);
         $this->assertSame('https://example.com/livres', $results[0]['url']);
+    }
+
+    // A bundle saying nothing about its volume is checked weekly, like the site's own pages
+    public function testFrequencyDefaultsToWeekly(): void
+    {
+        $provider = new DeclaredUrlsHealthCheckProvider($this->createSitemapProvider('book', []), $this->createAnalyzer());
+
+        $this->assertSame(AsHealthCheck::FREQUENCY_WEEKLY, $provider->getFrequency());
+    }
+
+    // The cadence is carried per instance, not per class: one class serves every bundle (see DeclaredUrlsHealthCheckPass)
+    public function testFrequencyIsTheOneHandedOver(): void
+    {
+        $provider = new DeclaredUrlsHealthCheckProvider(
+            $this->createSitemapProvider('gallery', []),
+            $this->createAnalyzer(),
+            AsHealthCheck::FREQUENCY_MONTHLY,
+        );
+
+        $this->assertSame(AsHealthCheck::FREQUENCY_MONTHLY, $provider->getFrequency());
     }
 }

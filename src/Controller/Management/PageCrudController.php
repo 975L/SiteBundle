@@ -542,9 +542,15 @@ class PageCrudController extends AbstractCrudController
 
         $page = $context->getEntity()->getInstance();
 
-        // Redirects pointing to this page's slug would otherwise dangle once it's gone
+        // Redirects pointing to this page's slug would otherwise dangle once it's gone. Turned into "gone" rows rather than deleted: their own urls led to content that is now just as removed, so they answer 410 like the page's own url below instead of dropping back to a 404 that says nothing
         foreach ($this->redirectRepository->findByToUrl('/pages/' . $page->getSlug()) as $redirect) {
-            $entityManager->remove($redirect);
+            $redirect->setGone(true)->setToUrl(null);
+        }
+
+        // The page's own url would fall back to a plain 404 once the row is deleted - the 410 the trash served (see PageController::display()) only lasts as long as the page can still be restored. A "gone" Redirect keeps answering 410 for good, which search engines act on far faster. Skipped for "home", served at the site root that RedirectSubscriber leaves alone by design, and whenever a Redirect already covers that path: a target the admin set up deliberately says more than a dead end
+        $fromPath = '/pages/' . $page->getSlug();
+        if ('home' !== $page->getSlug() && null === $this->redirectRepository->findOneByFromPath($fromPath)) {
+            $entityManager->persist((new Redirect())->setFromPath($fromPath)->setGone(true));
         }
 
         $entityManager->remove($page);

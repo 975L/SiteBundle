@@ -1,3 +1,2 @@
-{% set locale = app.request.locale|default('fr') %}
-
-{% include '@c975LSite/models/' ~ model ~ '.' ~ locale ~ '.html.twig' with {latestUpdate: latestUpdate|default(null)} %}
+{# The whole document - model, locale fallback, customization delta and %config% markers - is resolved by LegalModelRenderer #}
+{{ legal_model(block) }}

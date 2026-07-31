@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Service\ScaffoldInstaller;
+use c975L\UiBundle\Entity\Media;
 use PHPUnit\Framework\TestCase;
 
 class ScaffoldInstallerTest extends TestCase
@@ -115,6 +116,33 @@ class ScaffoldInstallerTest extends TestCase
         $gitignore = file_get_contents($this->projectDir . '/.gitignore');
         $this->assertSame(1, substr_count($gitignore, 'existingFiles/'));
         $this->assertStringContainsString('vendor/', $gitignore);
+    }
+
+    // Back-office written content (uploaded medias, site-wide graphics under their role name) gets ignored too, so a deploy resetting the working tree never wipes what production uploaded
+    public function testInstallGitignoresBackOfficeWrittenContent(): void
+    {
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $installer->install();
+
+        $gitignore = file_get_contents($this->projectDir . '/.gitignore');
+        $this->assertStringContainsString('public/medias', $gitignore);
+        foreach (Media::getSingletonRoles() as $role) {
+            $this->assertStringContainsString('public/' . $role . '.*', $gitignore);
+        }
+    }
+
+    // A rule already present (however the site spelled it) is not appended a second time
+    public function testInstallDoesNotDuplicateAlreadyPresentRules(): void
+    {
+        file_put_contents($this->projectDir . '/.gitignore', "public/medias\npublic/favicon.*\n");
+        $installer = new ScaffoldInstaller($this->projectDir);
+
+        $installer->install();
+
+        $gitignore = file_get_contents($this->projectDir . '/.gitignore');
+        $this->assertSame(1, substr_count($gitignore, 'public/medias'));
+        $this->assertSame(1, substr_count($gitignore, 'public/favicon.*'));
     }
 
     // No vendor/c975l directory at all (e.g. a dry run before composer install): install() must not error out

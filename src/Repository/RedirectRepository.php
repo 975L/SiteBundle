@@ -26,6 +26,21 @@ class RedirectRepository extends ServiceEntityRepository
         return $this->findOneBy(['fromPath' => $fromPath]);
     }
 
+    // The row matching this path exactly plus every "/prefix/*" row, in a single query - RedirectSubscriber runs on every request, so this must not cost more than the one lookup it replaces. Which of them actually applies is decided there (see RedirectSubscriber::resolve()): "*" is a convention of this bundle, not a SQL wildcard, and no two engines write a prefix comparison the same way
+    /**
+     * @return Redirect[]
+     */
+    public function findCandidatesForPath(string $path): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.fromPath = :path OR r.fromPath LIKE :wildcard')
+            ->setParameter('path', $path)
+            ->setParameter('wildcard', '%*')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /**
      * @return Redirect[]
      */
