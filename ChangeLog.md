@@ -1,5 +1,14 @@
 # Changelog
 
+## v7.14.1
+
+The scaffold's `ContentAccessTest` catching up with the canonical url and the gone redirects
+
+- The scaffold's `ContentAccessTest` now requests pages on their canonical (slashless) url, the trailing slash form having become a 301 in v7.14.0 (31/07/2026)
+- Added its `testTrailingSlashRedirectsToCanonicalUrl()` case covering that redirect (31/07/2026)
+- Its redirect case now expects 410 on a gone row and fabricates one, so that path is covered on a site with none (31/07/2026)
+- `LegalModelRenderer` now serializes through the document instead of `Dom\Element::$outerHTML`, absent in PHP 8.4 (31/07/2026)
+
 ## v7.14.0
 
 Legal models customizable section by section, without losing updates

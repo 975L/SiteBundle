@@ -18,7 +18,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->client = $this->createAuthenticatedClient();
     }
 
-    // Checks every published page is accessible ('home' redirects to the site root instead, see PageController::display())
+    // Checks every published page is accessible on its canonical (slashless) url ('home' redirects to the site root instead, see PageController::display())
     public function testAllPublishedPagesAreAccessible(): void
     {
         $pages = static::getContainer()->get(PageRepository::class)->findAllOrdered();
@@ -26,7 +26,7 @@ class ContentAccessTest extends FunctionalTestCase
 
         $failures = [];
         foreach ($pages as $page) {
-            $url = '/pages/' . $page->getSlug() . '/';
+            $url = '/pages/' . $page->getSlug();
             $this->client->request('GET', $url);
             $status = $this->client->getResponse()->getStatusCode();
             $expectedStatus = 'home' === $page->getSlug() ? 301 : 200;
@@ -38,7 +38,28 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    // Checks every stored redirect points to its target, plus a fabricated temporary one (no permanent=0 row currently exists, DAMA rolls this back after the test)
+    // Checks the trailing slash form redirects to the canonical url instead of serving the same content twice, on the first published page that is not 'home' (which reaches the site root in one hop instead, see PageController::display())
+    public function testTrailingSlashRedirectsToCanonicalUrl(): void
+    {
+        foreach (static::getContainer()->get(PageRepository::class)->findAllOrdered() as $page) {
+            if ('home' === $page->getSlug()) {
+                continue;
+            }
+
+            $url = '/pages/' . $page->getSlug();
+            $this->client->request('GET', $url . '/');
+            $response = $this->client->getResponse();
+
+            $this->assertSame(301, $response->getStatusCode());
+            $this->assertSame($url, $response->headers->get('Location'));
+
+            return;
+        }
+
+        $this->fail('Aucune page publiée en base, le test ne couvre rien');
+    }
+
+    // Checks every stored redirect answers as declared, plus fabricated temporary and "gone" ones so both code paths are always exercised even on a site with no such row right now (DAMA rolls them back after the test)
     public function testAllRedirectsPointToTheirTarget(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -48,6 +69,11 @@ class ContentAccessTest extends FunctionalTestCase
             ->setPermanent(false)
         ;
         $entityManager->persist($temporaryRedirect);
+        $goneRedirect = (new Redirect())
+            ->setFromPath('/temporary-gone-test')
+            ->setGone(true)
+        ;
+        $entityManager->persist($goneRedirect);
         $entityManager->flush();
 
         $redirects = static::getContainer()->get(RedirectRepository::class)->findAll();
@@ -55,6 +81,16 @@ class ContentAccessTest extends FunctionalTestCase
         foreach ($redirects as $redirect) {
             $this->client->request('GET', $redirect->getFromPath());
             $response = $this->client->getResponse();
+
+            // A "gone" row has no target at all: the subscriber throws a GoneHttpException instead of redirecting (see RedirectSubscriber::onKernelRequest())
+            if ($redirect->isGone()) {
+                if (410 !== $response->getStatusCode()) {
+                    $failures[] = sprintf('%s -> %d (attendu 410)', $redirect->getFromPath(), $response->getStatusCode());
+                }
+
+                continue;
+            }
+
             $expectedStatus = $redirect->isPermanent() ? 301 : 302;
             if ($response->getStatusCode() !== $expectedStatus || $response->headers->get('Location') !== $redirect->getToUrl()) {
                 $failures[] = sprintf(
@@ -89,7 +125,7 @@ class ContentAccessTest extends FunctionalTestCase
         $deletedPages = $entityManager->getRepository(Page::class)->findBy(['isDeleted' => true]);
         $failures = [];
         foreach ($deletedPages as $page) {
-            $url = '/pages/' . $page->getSlug() . '/';
+            $url = '/pages/' . $page->getSlug();
             $this->client->request('GET', $url);
             $status = $this->client->getResponse()->getStatusCode();
             if (410 !== $status) {
@@ -118,7 +154,7 @@ class ContentAccessTest extends FunctionalTestCase
         $drafts = $entityManager->getRepository(Page::class)->findBy(['isPublished' => false, 'isDeleted' => false]);
         $failures = [];
         foreach ($drafts as $page) {
-            $url = '/pages/' . $page->getSlug() . '/';
+            $url = '/pages/' . $page->getSlug();
             $this->client->request('GET', $url);
             $status = $this->client->getResponse()->getStatusCode();
             if (404 !== $status) {

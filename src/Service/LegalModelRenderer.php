@@ -169,7 +169,16 @@ class LegalModelRenderer
         $this->addExtra($root, '', $extra);
         $this->reorder($root, $this->asUnits($this->taggedChildren($root)), $positions);
 
-        return $root->outerHTML;
+        return $this->serialize($root);
+    }
+
+    // Dom\Element::$outerHTML only exists since PHP 8.5, and the bundle runs on 8.4: the owning document
+    // serializes the node instead, which answers exactly the same HTML
+    private function serialize(\Dom\Node $node): string
+    {
+        $document = $node->ownerDocument;
+
+        return $document instanceof \Dom\HTMLDocument ? $document->saveHtml($node) : '';
     }
 
     // A section's own lead (what sits between its <h2> and its first <h3>) plus everything that happens
@@ -438,7 +447,7 @@ class LegalModelRenderer
 
         $html = '';
         foreach ($body as $node) {
-            $html .= $node instanceof \Dom\Element ? $node->outerHTML : $node->textContent;
+            $html .= $node instanceof \Dom\Element ? $this->serialize($node) : $node->textContent;
         }
 
         return [
