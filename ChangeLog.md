@@ -1,5 +1,12 @@
 # Changelog
 
+## v7.15.5
+
+Card accent hues offered by the scaffolded theme.css
+
+- The scaffolded `theme.css` now lists UiBundle's twelve `--block-accent-*` tokens (01/08/2026)
+- Documented the accent hues in the readme's `theme.css` section (01/08/2026)
+
 ## v7.15.4
 
 One health check row for the site root

@@ -122,6 +122,21 @@
     /* --link-color: var(--primary); */
     /* --label-color: #808080; */
     /* --card-background: #fff; */
+    /* The twelve hues a card's "accent" field offers (UiBundle), painting the rule across its top edge.
+       Point one at this site's own palette to fold that hue into the design - the value stored on a card
+       is the color's name, not a meaning, so it never has to change when the hue does */
+    /* --block-accent-red: #e5484d; */
+    /* --block-accent-orange: #f76b15; */
+    /* --block-accent-yellow: #ffb224; */
+    /* --block-accent-lime: #99d52a; */
+    /* --block-accent-green: #30a46c; */
+    /* --block-accent-teal: #12a594; */
+    /* --block-accent-cyan: #00a2c7; */
+    /* --block-accent-blue: #0090ff; */
+    /* --block-accent-indigo: #3e63dd; */
+    /* --block-accent-violet: #6e56cf; */
+    /* --block-accent-pink: #d6409f; */
+    /* --block-accent-grey: #8b8d98; */
     /* --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5); */
     /* Lines shown before a "read more" block clamps its text */
     /* --readmore-lines: 5; */
