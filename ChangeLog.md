@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.15.2
+
+Drop the dead RichSnippet component
+
+- Removed `templates/components/General/RichSnippet.html.twig`, a copy of UiBundle's own, itself now removed (01/08/2026)
+
 ## v7.15.1
 
 The scaffold's `ContentAccessTest` skipping redirect-covered pages
