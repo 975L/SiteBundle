@@ -131,6 +131,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         ?string $siteUrl = 'https://example.com',
         ?PageExistenceChecker $pageExistenceChecker = null,
         ?PageBlockLocator $pageBlockLocator = null,
+        ?TranslatorInterface $translator = null,
     ): ContentQualityHealthCheckProvider {
         // The real ContentQualityAnalyzer rather than a stub: it holds every check this provider is about, so testing through it is testing what actually runs
         return new ContentQualityHealthCheckProvider(
@@ -141,7 +142,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
                 $client,
                 $pageExistenceChecker ?? $this->createPageExistenceChecker(),
                 $pageBlockLocator ?? $this->createPageBlockLocator(),
-                $this->createTranslator(),
+                $translator ?? $this->createTranslator(),
             ),
         );
     }
@@ -577,6 +578,22 @@ class ContentQualityHealthCheckProviderTest extends TestCase
 
         $this->assertNull($result['details']['descriptionIssue']);
         $this->assertStringNotContainsString('label.health_check_content_quality_description_too_short', $result['summary']);
+    }
+
+    // The clause names the form field the user has to go and fill, by the very label that form shows - nothing in the back office calls it a "meta description"
+    public function testRunChecksSummaryNamesTheFormFieldBehindTheDescription(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['description' => '', 'hasDescription' => false] + self::GOOD_ANALYSIS);
+        // This one appends the parameters instead of substituting them, the translation ids carrying no placeholder of their own
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            static fn (string $id, array $parameters = []) => $id . implode('', array_values($parameters))
+        );
+
+        $result = $this->createProvider([$this->createPage('home')], $client, translator: $translator)->runChecks()[0];
+
+        $this->assertStringContainsString(ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL, $result['summary']);
     }
 
     public function testRunChecksStatusIsWarningWhenShareTagsAreMissing(): void

@@ -1,30 +1,7 @@
-/* This site's own theme - radii, type weights, measure, navbar, hero, section flats and footer.
-   Freely editable: not synced back from c975l/site-bundle after this first copy.
-
-   One site, one theme: there is no catalog to pick from, this file IS the site's theme. It lists the WHOLE
-   surface a design can retune - every custom property SiteBundle and UiBundle read - so nothing has to be
-   fished out of their stylesheets.
-
-   Everything ships commented out, at the bundle's own default. Uncomment a line to take that value over;
-   what stays commented keeps following the bundle, later changes to its default included. Two consequences
-   worth the format: the active lines of this file are, at a glance, exactly what this design decides - and
-   since the file is copied once and never re-synced, nothing else is frozen by that copy. The defaults
-   themselves live in sass/_variables.scss, which is what the commented values mirror (ScaffoldThemeTest
-   fails if they drift apart).
-
-   Four things are deliberately NOT here:
-   - Colors and fonts (--primary, --secondary, --background, --text, --font-family-*): admin-editable from
-     the backoffice ("theme" config group) and compiled into bundles/build/site-theme.css. Overriding them
-     here would take the site's palette away from its admin.
-   - Per-variant section tokens (--section-text, --section-accent, --section-border, --section-overlay...):
-     UiBundle mixes them out of each flat's own background, inside the .section--bg-* rules. Setting them
-     in :root would collapse the three variants into one. Retune --section-bg-* below instead.
-   - Runtime tokens written by JS on the element (--image-compare-position, --slider-freeflow-vw).
-   - Any other bundle's own tokens, SocialBundle's --social-share-* among them: this file ships with
-     SiteBundle, which has no business knowing what else a site installs. Each bundle documents its own in
-     its readme. Beyond the layering, several of those are read per-variant - listing them in :root would
-     flatten every style their dashboard offers into a single look, the way --section-* above collapses the
-     section variants. A design that really needs one overrides it in the app's own assets/styles/app.css. */
+/* This site's own theme, in c975l/site-bundle's format: everything ships commented out at the bundle's own
+   default, so the active lines below are, at a glance, exactly what this design decides. The format and how
+   it layers are documented in the bundle's readme ("Themes" > "A site's own theme"), the defaults themselves
+   in sass/_variables.scss. */
 :root {
     /* --radius-btn: 5px; */
     /* --radius-card: 10px; */

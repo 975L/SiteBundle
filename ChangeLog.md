@@ -1,5 +1,20 @@
 # Changelog
 
+## v7.15.3
+
+Health check advice pointing at the field to fill
+
+- The content quality advice and summary now name the `Social network summary` field instead of "meta description" (01/08/2026)
+- Added `ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL` (01/08/2026)
+- The description advice now opens the page's edit form on that field, through UiBundle's `focusField` param (01/08/2026)
+- The advice line is left unlinked for a url with no `Page` behind it (01/08/2026)
+- The w3c html/css advice lines now list the validator's own messages under their count (01/08/2026)
+- Raised the `c975l/ui-bundle` requirement to `^1.15.2`, for its `fieldFocus` controller (01/08/2026)
+- Condensed the scaffolded `theme.css` header from 27 lines to 4 (01/08/2026)
+- Documented the `theme.css` format and both advice changes in the readme (01/08/2026)
+- Added the `PageHealthCheckAdviceBuilderTest` cases covering the listed messages and the field link (01/08/2026)
+- Added the `ContentQualityHealthCheckProviderTest` case covering the field named in the summary (01/08/2026)
+
 ## v7.15.2
 
 Drop the dead RichSnippet component

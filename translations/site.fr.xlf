@@ -872,7 +872,7 @@
             </trans-unit>
             <trans-unit id="eUyCpWs">
                 <source>label.health_check_advice_description_length</source>
-                <target>Ajuster la description meta : %length% caractères, %min% à %max% recommandés</target>
+                <target>Ajuster « %field% » : %length% caractères, %min% à %max% recommandés</target>
             </trans-unit>
             <trans-unit id="n3afLC_">
                 <source>label.health_check_advice_edit_block</source>
@@ -896,7 +896,7 @@
             </trans-unit>
             <trans-unit id="eaPaHXh">
                 <source>label.health_check_advice_no_description</source>
-                <target>Ajouter une description meta (environ 50 à 160 caractères)</target>
+                <target>Renseigner « %field% » (environ 50 à 160 caractères)</target>
             </trans-unit>
             <trans-unit id="u_vJVOo">
                 <source>label.health_check_advice_no_h1</source>
@@ -980,11 +980,11 @@
             </trans-unit>
             <trans-unit id="LFH1s4O">
                 <source>label.health_check_content_quality_description_too_long</source>
-                <target>description trop longue (%length% caractères)</target>
+                <target>« %field% » trop long (%length% caractères)</target>
             </trans-unit>
             <trans-unit id="Ox8evki">
                 <source>label.health_check_content_quality_description_too_short</source>
-                <target>description trop courte (%length% caractères)</target>
+                <target>« %field% » trop court (%length% caractères)</target>
             </trans-unit>
             <trans-unit id="ME83NQd">
                 <source>label.health_check_content_quality_images_without_alt</source>
@@ -996,7 +996,7 @@
             </trans-unit>
             <trans-unit id="BJy8gU9">
                 <source>label.health_check_content_quality_no_description</source>
-                <target>description meta manquante</target>
+                <target>« %field% » manquant</target>
             </trans-unit>
             <trans-unit id="wg7L155">
                 <source>label.health_check_content_quality_no_h1</source>

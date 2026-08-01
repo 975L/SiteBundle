@@ -34,6 +34,9 @@ class ContentQualityAnalyzer
     public const DESCRIPTION_MIN_LENGTH = 50;
     public const DESCRIPTION_MAX_LENGTH = 160;
 
+    // The Page form field holding that description (it feeds both <meta name="description"> and og:description, see PageCrudController). Every summary clause and advice line about it names the field by the very label the form shows, rather than by "meta description" - the user has to find that field to act on the advice, and nothing in the back office calls it that. Public so PageHealthCheckAdviceBuilder words its own lines identically
+    public const DESCRIPTION_FIELD_LABEL = 'label.summary_social_network';
+
     // What a share preview actually needs to render on Facebook/LinkedIn/WhatsApp. og:url and og:type belong to the Open Graph protocol too, but nothing visible breaks without them, so they stay out rather than turning every page orange over a tag no one sees
     public const REQUIRED_SOCIAL_TAGS = ['og:title', 'og:description', 'og:image'];
 
@@ -292,12 +295,14 @@ class ContentQualityAnalyzer
         } elseif ('long' === $details['titleIssue']) {
             $issues[] = $this->translator->trans('label.health_check_content_quality_title_too_long', ['%length%' => $details['titleLength']], 'site');
         }
+        // Named by the form's own label rather than "meta description": the clause is only useful if the user can tell which field to go and fill
+        $descriptionField = ['%field%' => $this->translator->trans(self::DESCRIPTION_FIELD_LABEL, [], 'site')];
         if (!$details['hasDescription']) {
-            $issues[] = $this->translator->trans('label.health_check_content_quality_no_description', [], 'site');
+            $issues[] = $this->translator->trans('label.health_check_content_quality_no_description', $descriptionField, 'site');
         } elseif ('short' === $details['descriptionIssue']) {
-            $issues[] = $this->translator->trans('label.health_check_content_quality_description_too_short', ['%length%' => $details['descriptionLength']], 'site');
+            $issues[] = $this->translator->trans('label.health_check_content_quality_description_too_short', $descriptionField + ['%length%' => $details['descriptionLength']], 'site');
         } elseif ('long' === $details['descriptionIssue']) {
-            $issues[] = $this->translator->trans('label.health_check_content_quality_description_too_long', ['%length%' => $details['descriptionLength']], 'site');
+            $issues[] = $this->translator->trans('label.health_check_content_quality_description_too_long', $descriptionField + ['%length%' => $details['descriptionLength']], 'site');
         }
         // Several <h1> are valid HTML and Google copes with them, so this is a warning like the rest: what it costs is a screen reader announcing two top-level subjects for one page (typically the layout's own page title plus a "hero" block left on its h1 level - see Page::$isTitleDisplayed)
         if (0 === $details['h1Count']) {

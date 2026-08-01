@@ -35,11 +35,12 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         return $kind . '|' . $url;
     }
 
-    private function createResult(string $kind, array $details, string $url = 'https://example.com/'): HealthCheckResult
+    private function createResult(string $kind, array $details, string $url = 'https://example.com/', ?string $editUrl = null): HealthCheckResult
     {
         return (new HealthCheckResult())
             ->setKind($kind)
             ->setUrl($url)
+            ->setEditUrl($editUrl)
             ->setStatus(HealthCheckResult::STATUS_WARNING)
             ->setSummary('summary')
             ->setDetails($details);
@@ -126,6 +127,37 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $result = $this->createResult('w3c-css', ['errors' => [], 'warnings' => []]);
 
         $this->assertSame([], $this->createBuilder()->buildAdvice([$result]));
+    }
+
+    // The stored messages travel with their count, so the row says which errors that very run found - the "full report" link revalidates live and cannot answer for a past run
+    public function testW3cListsTheValidatorsOwnMessagesUnderEachLine(): void
+    {
+        $result = $this->createResult('w3c-html', [
+            'errors' => ['line 303: Duplicate ID "slider-f49f0e20".'],
+            'warnings' => ['line 12: Section lacks heading.', 'line 40: Empty heading.'],
+        ]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result]);
+
+        $this->assertSame(
+            [['text' => 'line 303: Duplicate ID "slider-f49f0e20".', 'url' => null, 'label' => null]],
+            $advice[$this->key('w3c-html')][0]['items'],
+        );
+        $this->assertCount(2, $advice[$this->key('w3c-html')][1]['items']);
+        $this->assertSame('line 40: Empty heading.', $advice[$this->key('w3c-html')][1]['items'][1]['text']);
+    }
+
+    // Anything that isn't a plain message is skipped rather than rendered as "Array" under the line - the count still comes from the details themselves, so a row holding something unexpected keeps its advice line
+    public function testW3cListsOnlyTheMessagesItCanRender(): void
+    {
+        $result = $this->createResult('w3c-css', ['errors' => ['line 1: Parse error.', ['line' => 2], null], 'warnings' => []]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result]);
+
+        $this->assertSame(
+            [['text' => 'line 1: Parse error.', 'url' => null, 'label' => null]],
+            $advice[$this->key('w3c-css')][0]['items'],
+        );
     }
 
     public function testContentQualityAdvisesOnEveryIssue(): void
@@ -273,7 +305,38 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
         $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
 
         $this->assertCount(1, $advice);
-        $this->assertSame('label.health_check_advice_no_description', $advice[0]['text']);
+        // The stub translator echoes back its parameters, so the field label the line is worded with lands in the text
+        $this->assertSame('label.health_check_advice_no_description label.summary_social_network', $advice[0]['text']);
+    }
+
+    // The advice names the form's own field label rather than "meta description" - the user has to find that field to act on the line
+    public function testTheDescriptionAdviceNamesTheFormFieldItAsksToFill(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => true, 'descriptionIssue' => 'short', 'descriptionLength' => 12]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertStringContainsString(ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL, $advice[0]['text']);
+    }
+
+    // The fix is a single form field, so the line links back into the back office at that very field instead of out to an external report
+    public function testTheDescriptionAdviceLinksToTheFieldToFill(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => false], 'https://example.com/', '/management?crudAction=edit&entityId=7');
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertSame('/management?crudAction=edit&entityId=7&focusField=summarySocialNetwork', $advice[0]['url']);
+    }
+
+    // A url with no Page behind it (another bundle's declared url) has no form to send the user to - left unlinked rather than pointing at one that doesn't exist
+    public function testTheDescriptionAdviceIsLeftUnlinkedWithoutAnEditUrl(): void
+    {
+        $result = $this->createResult('content-quality', ['hasDescription' => false]);
+
+        $advice = $this->createBuilder()->buildAdvice([$result])[$this->key('content-quality')];
+
+        $this->assertNull($advice[0]['url']);
     }
 
     public function testContentQualityAdvisesOnMissingShareTagsByName(): void

@@ -22,6 +22,9 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     // Kinds another bundle already writes advice for through its own HealthCheckAdviceProvider (here ConfigBundle's BackupHealthCheckAdviceProvider) - skipped silently rather than logged as unmapped, unknownKindAdvice() being there to catch a kind *nobody* advises on, not one this bundle simply has no business advising on
     private const KINDS_ADVISED_ELSEWHERE = ['backup'];
 
+    // Page property behind the meta description, as the form names it - what the "focusField" param carries so the advice line lands on that very textarea (see fieldFocusUrl(), and PageCrudController for the field itself)
+    private const DESCRIPTION_FIELD_NAME = 'summarySocialNetwork';
+
     // Same threshold PageSpeed/Lighthouse itself uses for its own green/orange split - a score in the orange band is still worth calling out, only red (<50) is truly urgent, but both get advice here since either falls short of "good"
     private const PAGESPEED_GOOD_THRESHOLD = 90;
 
@@ -123,10 +126,10 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
 
         $advice = [];
         if ($errors > 0) {
-            $advice[] = $this->line('label.health_check_advice_w3c_html_errors', ['%count%' => $errors], $reportUrl);
+            $advice[] = $this->line('label.health_check_advice_w3c_html_errors', ['%count%' => $errors], $reportUrl, $this->messageItems($details['errors'] ?? []));
         }
         if ($warnings > 0) {
-            $advice[] = $this->line('label.health_check_advice_w3c_html_warnings', ['%count%' => $warnings], $reportUrl);
+            $advice[] = $this->line('label.health_check_advice_w3c_html_warnings', ['%count%' => $warnings], $reportUrl, $this->messageItems($details['warnings'] ?? []));
         }
 
         return $advice;
@@ -141,13 +144,22 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
 
         $advice = [];
         if ($errors > 0) {
-            $advice[] = $this->line('label.health_check_advice_w3c_css_errors', ['%count%' => $errors], $reportUrl);
+            $advice[] = $this->line('label.health_check_advice_w3c_css_errors', ['%count%' => $errors], $reportUrl, $this->messageItems($details['errors'] ?? []));
         }
         if ($warnings > 0) {
-            $advice[] = $this->line('label.health_check_advice_w3c_css_warnings', ['%count%' => $warnings], $reportUrl);
+            $advice[] = $this->line('label.health_check_advice_w3c_css_warnings', ['%count%' => $warnings], $reportUrl, $this->messageItems($details['warnings'] ?? []));
         }
 
         return $advice;
+    }
+
+    // The validator's own messages ("line N: text", see W3cValidatorClient::messageLine()), listed under their count so the row says *which* errors were found - and says it for the run it displays. The "full report" link cannot: it revalidates live, so a page fixed since the run reads as the validator contradicting the dashboard. No editUrl on these, unlike contentQualityAdvice()'s offenders: a validator message points at a line of rendered html, which no single block owns
+    private function messageItems(mixed $messages): array
+    {
+        return array_map(
+            static fn (string $message): array => ['text' => $message, 'url' => null, 'label' => null],
+            array_values(array_filter(\is_array($messages) ? $messages : [], '\is_string')),
+        );
     }
 
     // No external validator for this one - it's this bundle's own local check, there's no third-party report to link to. Each image/link is listed individually under its advice line instead, linking to the block holding it (see ContentQualityAnalyzer::describeImages()/describeLinks())
@@ -158,7 +170,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         return array_merge(
             $this->redirectAdvice($details),
             $this->titleAdvice($details),
-            $this->descriptionAdvice($details),
+            $this->descriptionAdvice($details, $result->getEditUrl()),
             $this->headingAdvice($details),
             $this->socialTagsAdvice($details),
             $this->offendersAdvice($details),
@@ -191,21 +203,34 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
         ], null)];
     }
 
-    // A description that isn't there at all gets "add one" rather than "make it longer", same split as the summary's own
-    private function descriptionAdvice(array $details): array
+    // A description that isn't there at all gets "add one" rather than "make it longer", same split as the summary's own. Unlike the other lines this one links back into the back office instead of out to an external report: the fix is a single form field, so the link lands straight on it (see fieldFocusUrl()). $editUrl is null for a url with no Page behind it (another bundle's declared url, see DeclaredUrlsHealthCheckProvider), which leaves the line unlinked rather than pointing at a form that doesn't exist
+    private function descriptionAdvice(array $details, ?string $editUrl): array
     {
+        $field = ['%field%' => $this->translator->trans(ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL, [], 'site')];
+        $url = $this->fieldFocusUrl($editUrl, self::DESCRIPTION_FIELD_NAME);
+
         if (false === ($details['hasDescription'] ?? true)) {
-            return [$this->line('label.health_check_advice_no_description', [], null)];
+            return [$this->line('label.health_check_advice_no_description', $field, $url)];
         }
         if (!\in_array($details['descriptionIssue'] ?? null, ['short', 'long'], true)) {
             return [];
         }
 
-        return [$this->line('label.health_check_advice_description_length', [
+        return [$this->line('label.health_check_advice_description_length', $field + [
             '%length%' => $details['descriptionLength'] ?? 0,
             '%min%' => ContentQualityAnalyzer::DESCRIPTION_MIN_LENGTH,
             '%max%' => ContentQualityAnalyzer::DESCRIPTION_MAX_LENGTH,
-        ], null)];
+        ], $url)];
+    }
+
+    // Adds the "focusField" param UiBundle's field-focus.js reads, opening the field's own tab, scrolling to it and focusing it - same idea as the "focusBlock" one the offender lists already use, for a plain form field rather than a block row
+    private function fieldFocusUrl(?string $editUrl, string $field): ?string
+    {
+        if (null === $editUrl) {
+            return null;
+        }
+
+        return $editUrl . (str_contains($editUrl, '?') ? '&' : '?') . 'focusField=' . rawurlencode($field);
     }
 
     // "hasH1" is read as a fallback for the rows persisted before the check counted them, whose details hold that key alone - they get the same advice until the next run replaces them

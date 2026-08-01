@@ -11,6 +11,16 @@
                 "en": "The speed analysis no longer repeats your Google key in the messages it leaves on the health check screen",
                 "fr": "L'analyse de vitesse ne reprend plus votre clé Google dans les messages qu'elle laisse sur l'écran de contrôle de santé",
                 "es": "El análisis de velocidad ya no repite su clave de Google en los mensajes que deja en la pantalla de control de estado"
+            },
+            {
+                "en": "The health check now names the page field to fill in for a description, and its advice opens the page's form straight on that field",
+                "fr": "Le contrôle de santé nomme désormais le champ de la page à remplir pour une description, et son conseil ouvre le formulaire de la page directement sur ce champ",
+                "es": "El control de estado ahora nombra el campo de la página que hay que rellenar para una descripción, y su consejo abre el formulario de la página directamente en ese campo"
+            },
+            {
+                "en": "The HTML and CSS validation results now list the errors and warnings found, instead of only counting them",
+                "fr": "Les résultats de validation HTML et CSS listent désormais les erreurs et avertissements trouvés, au lieu de seulement les compter",
+                "es": "Los resultados de validación HTML y CSS ahora enumeran los errores y avisos encontrados, en lugar de solo contarlos"
             }
         ]
     },
