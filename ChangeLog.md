@@ -1,5 +1,20 @@
 # Changelog
 
+## v7.16.0
+
+One theme file per bundle, concatenated into a single request
+
+- The scaffolded `theme.css` became `site.css`, pruned to this bundle's own chrome (01/08/2026) [BC-Break]
+- Everything UiBundle reads moved to its own `themes/ui.css` (01/08/2026)
+- Added `scaffold/src/Service/ThemeStylesheetProvider.php`, contributing `assets/styles/themes/*.css` to the compiled stylesheet (01/08/2026)
+- A theme no longer needs an import in `app.js` (01/08/2026)
+- `ScaffoldInstaller::themeImportReminder()` now warns about a stale theme import instead of reminding to add one (01/08/2026) [BC-Break]
+- That warning keeps the import until `App\Service\ThemeStylesheetProvider` is installed (01/08/2026)
+- Dropped `--font-body-weight` from `site.css`, UiBundle's `ui.css` offering it (01/08/2026)
+- `ScaffoldThemeTest` checks `site.css` and the installed UiBundle's `ui.css` together (01/08/2026)
+- `ScaffoldThemeTest` now rejects a token offered by both theme files (01/08/2026)
+- Raised the `c975l/ui-bundle` requirement to `^1.17`, for its app-asset stylesheet registry (01/08/2026)
+
 ## v7.15.5
 
 Card accent hues offered by the scaffolded theme.css

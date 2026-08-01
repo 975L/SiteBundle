@@ -1,0 +1,63 @@
+/* This site's SiteBundle tokens, in the c975L theme format: everything ships commented out at the bundle's
+   own default, so the active lines below are, at a glance, exactly what this design decides. The format and
+   how it layers are documented in this bundle's readme ("Themes" > "A site's own theme"), the defaults
+   themselves in sass/_variables.scss.
+
+   One file per bundle, each holding what that bundle reads. This one is the site's own chrome - the bar at
+   the top, the band at the bottom, the back strip and the anchor offset. Everything else a design retunes
+   (shapes, buttons, forms, alerts, surfaces, sections, hero, and the canvas the page sits on) is read by
+   UiBundle, which SiteBundle sits on and which can run without it, so it travels in themes/ui.css instead.
+
+   Colors and fonts are deliberately absent (--primary, --secondary, --background, --text, --font-family-*):
+   admin-editable from the backoffice and compiled into bundles/build/site-theme.css. Overriding them here
+   would take the site's palette away from its admin. */
+:root {
+    /* Gap left above an anchor target, so a sticky navbar doesn't cover it - match the navbar's height */
+    /* --scroll-offset: 80px; */
+
+    /* --navbar-background: var(--white); */
+    /* --navbar-text: var(--black); */
+    /* --navbar-active-color: var(--primary); */
+    /* --shadow-nav: 0 2px 4px var(--primary); */
+    /* --border-nav: none; */
+    /* --navbar-position: relative; */
+    /* --navbar-z-index: auto; */
+    /* Navbar once the page is scrolled - both default to the unscrolled values, i.e. no change */
+    /* --navbar-background-scrolled: var(--navbar-background); */
+    /* --navbar-text-scrolled: var(--navbar-text); */
+    /* The single "primary" nav item's pill - invert them if the navbar is a colored flat, where the
+       default .btn-primary colors would be invisible */
+    /* --navbar-btn-background: var(--primary); */
+    /* --navbar-btn-background-hover: var(--button-background-primary-dark); */
+    /* --navbar-btn-color: var(--button-color); */
+    /* The bar bleeds full-viewport-width, past --body-max-width - set both to auto/0 for a design
+       that frames the page, so the navbar stays inside the frame. Same pair as the footer's below */
+    /* --navbar-width: 100vw; */
+    /* --navbar-margin-x: calc(50% - 50vw); */
+    /* Site name and tagline, left of the nav - point both at var(--navbar-text) if the navbar is a
+       colored flat, where the default --primary/--text would be unreadable */
+    /* --navbar-site-name-color: var(--primary); */
+    /* --navbar-site-tagline-color: var(--text); */
+
+    /* --footer-background: var(--primary); */
+    /* --footer-text: var(--white); */
+    /* --footer-text-hover: var(--footer-text); */
+    /* --footer-items-direction: column; */
+    /* --footer-items-justify: flex-start; */
+    /* Mixed out of the footer's own background rather than a flat grey, so the rule between the page
+       and the band stays in the site's own hue - and follows it if the admin retunes the primary color */
+    /* --footer-border: solid color-mix(in srgb, var(--footer-background) 80%, black) 2px; */
+    /* --footer-width: 100vw; */
+    /* --footer-margin-x: calc(50% - 50vw); */
+    /* --footer-padding: 2em 15px 3em 15px; */
+    /* Gap before the footer band - set it to 0 for a design stacking colored flats, where a strip of
+       page background between the last section and the footer would break the run */
+    /* --footer-margin-top: 3em; */
+    /* Toward the footer's own text color, not a black wash: a wash only ever darkens, so it disappears
+       on a dark footer band - this contrasts in whichever direction the footer needs */
+    /* --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text)); */
+
+    /* "Pull to go back" strip, on touch devices. */
+    /* --back-pull-background-color: #bababa; */
+    /* --back-pull-background-color-hover: #90ee90; */
+}

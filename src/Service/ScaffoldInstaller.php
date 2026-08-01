@@ -18,6 +18,12 @@ class ScaffoldInstaller
 {
     private const SCAFFOLD_DIRS = ['src', 'templates', 'tests', 'translations', 'assets'];
 
+    private const THEMES_DIR_NAME = 'themes';
+
+    private const THEMES_DIR = 'assets/styles/' . self::THEMES_DIR_NAME;
+
+    private const THEME_PROVIDER = 'src/Service/ThemeStylesheetProvider.php';
+
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
@@ -104,30 +110,39 @@ class ScaffoldInstaller
         return $relativePath === $path || str_starts_with($relativePath, $path . '/');
     }
 
-    // Never writes to the app's own assets/styles/app.css or assets/app.js - editing a developer-owned file in place is too risky to automate reliably. Returns a one-line reminder for the calling command to display when the scaffolded assets/styles/themes/theme.css exists but nothing imports it yet, null otherwise (already wired, or this project doesn't have either file)
+    // Never writes to the app's own assets/styles/app.css or assets/app.js - editing a developer-owned file in place is too risky to automate reliably. Returns a one-line warning for the calling command to display when either file still imports a scaffolded assets/styles/themes/*.css by hand: with the provider installed that import now loads a stylesheet the compiled one already holds, and it is the developer's own move to remove it - without the provider it is still the only thing loading the theme, and the warning says to keep it until "c975l:scaffold:install" has run. Null when no theme file, no import, or no wiring point at all
     public function themeImportReminder(): ?string
     {
-        if (!is_file($this->projectDir . '/assets/styles/themes/theme.css')) {
+        $themes = glob($this->projectDir . '/' . self::THEMES_DIR . '/*.css') ?: [];
+        if (!$themes) {
             return null;
         }
 
-        // assets/app.js counts too, and is in fact the better place: AssetMapper doesn't merge CSS, so an @import forces the browser to download and parse app.css before it even discovers the theme, while two imports from app.js are fetched in parallel. Either file alone is enough to wire the theme, so an app.js-only project gets the reminder just like an app.css one - only a project with neither has nowhere to put the import, and nothing to be reminded of
-        $wiringPoints = array_filter([
-            $this->projectDir . '/assets/styles/app.css',
-            $this->projectDir . '/assets/app.js',
-        ], 'is_file');
+        // Nothing has to be imported by hand anymore: the scaffolded App\Service\ThemeStylesheetProvider contributes the whole themes/ directory to UiBundle's stylesheet registry, which concatenates it into the single bundles/build/site.css. A site migrated from the era when the theme was one file imported from app.js (or @import-ed from app.css) still carries that line, and it now fetches a sheet the compiled one already holds - hence a warning about what is there rather than a reminder about what is missing
+        $stale = [];
+        foreach ([$this->projectDir . '/assets/app.js', $this->projectDir . '/assets/styles/app.css'] as $path) {
+            if (!is_file($path)) {
+                continue;
+            }
 
-        if (!$wiringPoints) {
-            return null;
-        }
-
-        foreach ($wiringPoints as $path) {
-            if (str_contains(file_get_contents($path), 'themes/theme.css')) {
-                return null;
+            $content = (string) file_get_contents($path);
+            foreach ($themes as $theme) {
+                if (str_contains($content, self::THEMES_DIR_NAME . '/' . basename($theme))) {
+                    $stale[] = substr($path, \strlen($this->projectDir) + 1) . ' → ' . basename($theme);
+                }
             }
         }
 
-        return 'Import the theme to activate it: add "import \'./styles/themes/theme.css\';" to assets/app.js, before the ./styles/app.css import (preferred - AssetMapper doesn\'t merge CSS, so both sheets are then fetched in parallel), or @import url("./themes/theme.css"); at the top of assets/styles/app.css.';
+        if (!$stale) {
+            return null;
+        }
+
+        // Nothing takes that import's place until the provider is there - a run restricted by --path, or an UiBundle predating the registry, leaves it out - so the advice is reversed rather than dropped: telling a site to remove the only line loading its theme is worse than saying nothing
+        if (!is_file($this->projectDir . '/' . self::THEME_PROVIDER)) {
+            return sprintf('Keep the theme import for now (%s): %s is missing, so nothing else loads the theme - run "c975l:scaffold:install", then remove the import.', implode(', ', $stale), self::THEME_PROVIDER);
+        }
+
+        return sprintf('Remove the theme import, it now loads a stylesheet twice: %s. App\Service\ThemeStylesheetProvider already contributes every assets/styles/themes/*.css to the compiled bundles/build/site.css.', implode(', ', $stale));
     }
 
     private function backup(string $relativePath, string $target): void

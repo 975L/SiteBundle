@@ -38,13 +38,13 @@ class ScaffoldInstallCommandTest extends TestCase
     {
         $scaffoldInstaller = $this->createConfiguredStub(ScaffoldInstaller::class, [
             'install' => ['copied' => 1, 'backedUp' => 0, 'skipped' => 0, 'files' => [], 'unmatched' => []],
-            'themeImportReminder' => 'Add @import url("./themes/theme.css"); to assets/styles/app.css.',
+            'themeImportReminder' => 'Add @import url("./themes/site.css"); to assets/styles/app.css.',
         ]);
         $tester = new CommandTester(new ScaffoldInstallCommand($scaffoldInstaller));
 
         $tester->execute([]);
 
-        $this->assertStringContainsString('themes/theme.css', $tester->getDisplay());
+        $this->assertStringContainsString('themes/site.css', $tester->getDisplay());
     }
 
     // A regression silently dropping either option would overwrite files the site diverged from, so the call itself is what is asserted here, the resulting behaviour being ScaffoldInstallerTest's job

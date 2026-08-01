@@ -68,6 +68,13 @@ class ScaffoldInstallerTest extends TestCase
         }
     }
 
+    // The scaffolded class the reminder checks for before advising the import's removal
+    private function addThemeProvider(): void
+    {
+        mkdir($this->projectDir . '/src/Service', 0775, true);
+        file_put_contents($this->projectDir . '/src/Service/ThemeStylesheetProvider.php', '<?php');
+    }
+
     // A brand-new project with no pre-existing files: every scaffold file is copied, nothing backed up
     public function testInstallCopiesEveryScaffoldFileWhenNoneExistYet(): void
     {
@@ -178,91 +185,83 @@ class ScaffoldInstallerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
 
-    // Unlike src/templates/tests/translations, an existing "assets" file is never backed up/overwritten again once it's there, even if the bundle's own copy has since changed - it's the app's own editable file from the first install onward (e.g. a customized assets/styles/themes/theme.css)
+    // Unlike src/templates/tests/translations, an existing "assets" file is never backed up/overwritten again once it's there, even if the bundle's own copy has since changed - it's the app's own editable file from the first install onward (e.g. a customized assets/styles/themes/site.css)
     public function testInstallNeverOverwritesAnExistingAssetsFileEvenWhenContentDiffers(): void
     {
-        $this->addScaffoldBundle('site-bundle', ['assets/styles/themes/theme.css' => ':root { --radius-btn: 0; }']);
+        $this->addScaffoldBundle('site-bundle', ['assets/styles/themes/site.css' => ':root { --radius-btn: 0; }']);
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root { --radius-btn: 999px; }');
+        file_put_contents($this->projectDir . '/assets/styles/themes/site.css', ':root { --radius-btn: 999px; }');
         $installer = new ScaffoldInstaller($this->projectDir);
 
         $result = $installer->install();
 
         $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $this->counts($result));
-        $this->assertSame(':root { --radius-btn: 999px; }', file_get_contents($this->projectDir . '/assets/styles/themes/theme.css'));
+        $this->assertSame(':root { --radius-btn: 999px; }', file_get_contents($this->projectDir . '/assets/styles/themes/site.css'));
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
 
-    // Both theme.css and app.css present, app.css doesn't import it yet: the caller gets a reminder to add it by hand - install() itself never writes to app.css
-    public function testThemeImportReminderIsReturnedWhenNotYetWired(): void
+    // A migrated site still importing its theme by hand: the provider already contributes it, so the import now fetches a sheet the compiled stylesheet holds - the caller is warned about what is there, not reminded of what is missing
+    public function testThemeImportReminderWarnsAboutAStaleAppJsImport(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
-        file_put_contents($this->projectDir . '/assets/styles/app.css', "body { color: red; }\n");
+        file_put_contents($this->projectDir . '/assets/styles/themes/ui.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/app.js', "import './styles/themes/ui.css';\n");
+        $this->addThemeProvider();
         $installer = new ScaffoldInstaller($this->projectDir);
 
         $reminder = $installer->themeImportReminder();
 
         $this->assertNotNull($reminder);
-        $this->assertStringContainsString('themes/theme.css', $reminder);
-        $this->assertSame("body { color: red; }\n", file_get_contents($this->projectDir . '/assets/styles/app.css'));
+        $this->assertStringContainsString('Remove the theme import', $reminder);
+        $this->assertStringContainsString('ui.css', $reminder);
+        // install() never writes to app.js: the removal is the developer's own move
+        $this->assertSame("import './styles/themes/ui.css';\n", file_get_contents($this->projectDir . '/assets/app.js'));
     }
 
-    // Already wired through app.css's @import: no reminder needed
-    public function testThemeImportReminderIsNullWhenAlreadyWired(): void
+    // Same through app.css's @import, the other way a theme used to be wired
+    public function testThemeImportReminderWarnsAboutAStaleAppCssImport(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
-        file_put_contents($this->projectDir . '/assets/styles/app.css', "@import url(\"./themes/theme.css\");\n");
+        file_put_contents($this->projectDir . '/assets/styles/themes/site.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/styles/app.css', "@import url(\"./themes/site.css\");\n");
+        $this->addThemeProvider();
         $installer = new ScaffoldInstaller($this->projectDir);
 
-        $this->assertNull($installer->themeImportReminder());
+        $reminder = (string) $installer->themeImportReminder();
+
+        $this->assertStringContainsString('Remove the theme import', $reminder);
+        $this->assertStringContainsString('site.css', $reminder);
     }
 
-    // Wired from app.js instead (the preferred way: AssetMapper doesn't merge CSS, so both sheets are fetched in parallel) - app.css stays free of any @import and must not trigger the reminder
-    public function testThemeImportReminderIsNullWhenWiredFromAppJs(): void
+    // Without the provider, that import is the only thing loading the theme: advising its removal would take the theme down with it
+    public function testThemeImportReminderKeepsTheImportUntilTheProviderIsInstalled(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
-        file_put_contents($this->projectDir . '/assets/styles/app.css', "body { color: red; }\n");
-        file_put_contents($this->projectDir . '/assets/app.js', "import './styles/themes/theme.css';\nimport './styles/app.css';\n");
+        file_put_contents($this->projectDir . '/assets/styles/themes/site.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/app.js', "import './styles/themes/site.css';\n");
         $installer = new ScaffoldInstaller($this->projectDir);
 
-        $this->assertNull($installer->themeImportReminder());
+        $reminder = (string) $installer->themeImportReminder();
+
+        $this->assertStringContainsString('Keep the theme import', $reminder);
+        $this->assertStringContainsString('src/Service/ThemeStylesheetProvider.php', $reminder);
     }
 
-    // Neither app.css nor app.js imports it: the caller still gets the reminder, and it names app.js as the preferred place
-    public function testThemeImportReminderPointsAtAppJsWhenNothingImportsTheTheme(): void
+    // The normal state of a site on the provider: theme files present, nothing importing them
+    public function testThemeImportReminderIsNullWhenNothingImportsTheThemes(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
-        file_put_contents($this->projectDir . '/assets/styles/app.css', "body { color: red; }\n");
+        file_put_contents($this->projectDir . '/assets/styles/themes/ui.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/styles/themes/site.css', ':root {}');
         file_put_contents($this->projectDir . '/assets/app.js', "import './styles/app.css';\n");
+        file_put_contents($this->projectDir . '/assets/styles/app.css', "body { color: red; }\n");
         $installer = new ScaffoldInstaller($this->projectDir);
 
-        $reminder = $installer->themeImportReminder();
-
-        $this->assertNotNull($reminder);
-        $this->assertStringContainsString('assets/app.js', $reminder);
-        $this->assertSame("import './styles/app.css';\n", file_get_contents($this->projectDir . '/assets/app.js'));
+        $this->assertNull($installer->themeImportReminder());
     }
 
-    // A project wiring its assets from app.js alone, with no assets/styles/app.css: app.js is a wiring point in its own right, so the theme it doesn't import yet is exactly what the reminder is for
-    public function testThemeImportReminderIsReturnedWhenTheProjectOnlyHasAppJs(): void
-    {
-        mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
-        file_put_contents($this->projectDir . '/assets/app.js', "import './bootstrap.js';\n");
-        $installer = new ScaffoldInstaller($this->projectDir);
-
-        $reminder = $installer->themeImportReminder();
-
-        $this->assertNotNull($reminder);
-        $this->assertStringContainsString('assets/app.js', $reminder);
-    }
-
-    // No scaffolded theme.css yet: nothing to remind about
-    public function testThemeImportReminderIsNullWithoutAScaffoldedTheme(): void
+    // No scaffolded theme yet: nothing to warn about
+    public function testThemeImportReminderIsNullWithoutAnyScaffoldedTheme(): void
     {
         $installer = new ScaffoldInstaller($this->projectDir);
 
@@ -273,7 +272,7 @@ class ScaffoldInstallerTest extends TestCase
     public function testThemeImportReminderIsNullWithoutAnyWiringPoint(): void
     {
         mkdir($this->projectDir . '/assets/styles/themes', 0775, true);
-        file_put_contents($this->projectDir . '/assets/styles/themes/theme.css', ':root {}');
+        file_put_contents($this->projectDir . '/assets/styles/themes/ui.css', ':root {}');
         $installer = new ScaffoldInstaller($this->projectDir);
 
         $this->assertNull($installer->themeImportReminder());

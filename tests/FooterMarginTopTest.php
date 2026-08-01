@@ -44,10 +44,10 @@ class FooterMarginTopTest extends TestCase
         );
     }
 
-    // The scaffolded theme.css restates every shape token at its default value, this one included
+    // The scaffolded site.css restates every chrome token at its default value, this one included
     public function testScaffoldedThemeRestatesTheToken(): void
     {
-        $path = dirname(__DIR__) . '/scaffold/assets/styles/themes/theme.css';
+        $path = dirname(__DIR__) . '/scaffold/assets/styles/themes/site.css';
         $this->assertFileExists($path);
 
         $this->assertStringContainsString('--footer-margin-top: 3em;', (string) file_get_contents($path));
