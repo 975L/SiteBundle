@@ -35,7 +35,9 @@ class ScaffoldThemeTest extends TestCase
 
     // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into
     // site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on
-    // the row and on each column's own span modifier - one value in :root would size every column alike
+    // the row and on each column's own span modifier - one value in :root would size every column alike.
+    // Same for "--slider-freeflow-item", declared on ".slider-freeflow" itself, where the local
+    // declaration beats anything inherited from :root
     private const NOT_THEMABLE = [
         '--c975l-color-background',
         '--c975l-color-primary',
@@ -51,6 +53,7 @@ class ScaffoldThemeTest extends TestCase
         '--bs-tertiary-bg',
         '--flex-columns-gap',
         '--flex-columns-span',
+        '--slider-freeflow-item',
     ];
 
     // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root

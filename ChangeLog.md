@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.15.1
+
+The scaffold's `ContentAccessTest` skipping redirect-covered pages
+
+- The scaffold's `ContentAccessTest` now skips the deleted and draft pages whose url is answered by a redirect row (01/08/2026)
+
 ## v7.15.0
 
 Maintenance commands declared by the bundles, not by the scaffold

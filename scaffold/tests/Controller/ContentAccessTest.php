@@ -107,7 +107,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    // Checks every deleted page returns 410 Gone: real ones (if any) plus a fabricated one, so this code path is always exercised even on a site with no deleted page right now
+    // Checks every deleted page returns 410 Gone: real ones (if any) plus a fabricated one, so this code path is always exercised even on a site with no deleted page right now. A deleted page whose url is covered by a redirect row is skipped, see isCoveredByRedirect()
     public function testDeletedPagesReturn410(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -123,9 +123,14 @@ class ContentAccessTest extends FunctionalTestCase
         $entityManager->flush();
 
         $deletedPages = $entityManager->getRepository(Page::class)->findBy(['isDeleted' => true]);
+        $redirects = static::getContainer()->get(RedirectRepository::class)->findAll();
         $failures = [];
         foreach ($deletedPages as $page) {
             $url = '/pages/' . $page->getSlug();
+            if ($this->isCoveredByRedirect($url, $redirects)) {
+                continue;
+            }
+
             $this->client->request('GET', $url);
             $status = $this->client->getResponse()->getStatusCode();
             if (410 !== $status) {
@@ -136,7 +141,7 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertEmpty($failures, implode("\n", $failures));
     }
 
-    // Checks every draft (unpublished, not deleted) page returns 404: real ones (if any) plus a fabricated one, so this code path is always exercised even once every real draft has been published
+    // Checks every draft (unpublished, not deleted) page returns 404: real ones (if any) plus a fabricated one, so this code path is always exercised even once every real draft has been published. A draft whose url is covered by a redirect row is skipped, see isCoveredByRedirect()
     public function testUnpublishedPagesReturn404(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
@@ -152,9 +157,14 @@ class ContentAccessTest extends FunctionalTestCase
         $entityManager->flush();
 
         $drafts = $entityManager->getRepository(Page::class)->findBy(['isPublished' => false, 'isDeleted' => false]);
+        $redirects = static::getContainer()->get(RedirectRepository::class)->findAll();
         $failures = [];
         foreach ($drafts as $page) {
             $url = '/pages/' . $page->getSlug();
+            if ($this->isCoveredByRedirect($url, $redirects)) {
+                continue;
+            }
+
             $this->client->request('GET', $url);
             $status = $this->client->getResponse()->getStatusCode();
             if (404 !== $status) {
@@ -163,5 +173,23 @@ class ContentAccessTest extends FunctionalTestCase
         }
 
         $this->assertEmpty($failures, implode("\n", $failures));
+    }
+
+    // Tells whether a redirect row answers for the url, exactly or through a "*" prefix one. The RedirectSubscriber runs before the router (priority 33), so such a page never reaches PageController and answers with the redirect instead of its own 410/404 - which is the point of the row, the content moved somewhere else. Those rows are covered on their own by testAllRedirectsPointToTheirTarget()
+    /** @param Redirect[] $redirects */
+    private function isCoveredByRedirect(string $url, array $redirects): bool
+    {
+        foreach ($redirects as $redirect) {
+            $fromPath = (string) $redirect->getFromPath();
+            if ($fromPath === $url) {
+                return true;
+            }
+
+            if (str_ends_with($fromPath, '*') && str_starts_with($url, rtrim($fromPath, '*'))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
