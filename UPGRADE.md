@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+**The scaffolded `App\Scheduler\MaintenanceSchedule` takes a `MaintenanceScheduleBuilder` now, and lists no command of its own.** Each bundle declares the commands it needs run through ConfigBundle's `MaintenanceTaskProviderInterface`, so the class is the same file on every site and a bundle installed later schedules its tasks without an edit here (see the readme). Its scaffolded test moved with it - **re-scaffold the two together**, the test being written against that new two-argument constructor:
+
+```bash
+php bin/console c975l:scaffold:install --dry-run --path=src/Scheduler --path=tests/Scheduler
+php bin/console c975l:scaffold:install --path=src/Scheduler --path=tests/Scheduler
+```
+
+Your own copies are moved aside into `existingFiles/*.old`, so a command you had added by hand is read back from there and re-added after the call to `addTasks()` - and a command a bundle declares that this site shouldn't run at all is named in its second argument rather than dropping the bundle. Requires `c975l/config-bundle` >= v5.16.
+
 **The bundle now requires PHP 8.4 and Symfony 8.** It used to declare `"php": ">=8.1"` and `"symfony/*": "*"`, an unbound constraint that let Composer resolve Symfony against whatever PHP the application ran on - so an application on PHP 8.2 silently got Symfony 7 with a bundle only ever tested against Symfony 8. The requirements now say what is actually built and tested: `"php": ">=8.4"` and `"symfony/*": "^8.0"`. If your application is still on Symfony 7, stay on the previous release until you migrate - `composer update` will simply refuse to move rather than break anything.
 
 **Your `App\Entity\User` must now implement `c975L\ConfigBundle\Contract\UserInterface`**, `Page::$user` and `CollectionItem::$user` being typed against it instead of `App\Entity\User`. See `c975l/config-bundle`'s own UPGRADE for the one-line change and why nothing else moves - no migration, no configuration, the column and the join stay identical. The scaffold's `User` already implements it, so a site created from `c975l:site:create` after this release has nothing to do; an older one adds the `implements` itself.

@@ -1,5 +1,29 @@
 # Changelog
 
+## v7.15.0
+
+Maintenance commands declared by the bundles, not by the scaffold
+
+- The scaffold's `MaintenanceSchedule` now delegates to ConfigBundle's `MaintenanceScheduleBuilder` and lists no command of its own (01/08/2026)
+- Added `SiteMaintenanceTaskProvider`, declaring `c975l:site:messenger-cleanup` (01/08/2026)
+- The scaffold's `MaintenanceScheduleTest` now asserts what stays the app's responsibility, not the bundles' own commands (01/08/2026)
+- Added `SiteMaintenanceTaskProviderTest` (01/08/2026)
+- Added `--path` to `c975l:scaffold:install`, restricting a run to a directory or a single file (01/08/2026)
+- Added `--dry-run` to `c975l:scaffold:install`, listing what would be copied and backed up without writing anything (01/08/2026)
+- `ScaffoldInstaller::install()` now takes those two arguments and returns the list of files alongside its counts (01/08/2026)
+- `c975l:scaffold:install` now fails on a `--path` no scaffold file answers to, instead of reporting zero counts (01/08/2026)
+- `ScaffoldInstaller::install()` now returns those unmatched paths (01/08/2026)
+- Documented the scaffolded schedule's new constructor in the upgrade notes (01/08/2026)
+- Raised the `c975l/config-bundle` requirement to `^5.16` (01/08/2026)
+- Updated the readme's scheduler and scaffold sections (01/08/2026)
+- Added the `ScaffoldInstallerTest` cases covering `--path` and `--dry-run` (01/08/2026)
+- Added the `ScaffoldInstallCommandTest` cases covering both options reaching the installer (01/08/2026)
+- `PageSpeedInsightsClient` exceptions no longer carry the requested url, which held the api key (01/08/2026)
+- The delete action on a page now asks its own confirmation, stating the page goes to the trash and stays restorable (01/08/2026)
+- Fixed the container compilation of an app without `nelmio/security-bundle` (01/08/2026)
+- The `SessionNonceGenerator` decoration moved to `config/services_nelmio.yaml`, imported by `c975LSiteBundle` only when `NelmioSecurityBundle` is installed (01/08/2026)
+- Added `SessionNonceGeneratorRegistrationTest` (01/08/2026)
+
 ## v7.14.1
 
 The scaffold's `ContentAccessTest` catching up with the canonical url and the gone redirects

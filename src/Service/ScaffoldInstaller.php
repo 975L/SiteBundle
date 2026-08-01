@@ -24,12 +24,14 @@ class ScaffoldInstaller
     ) {
     }
 
-    // Copies scaffold/{src,templates,tests,translations,assets} from every installed c975L bundle into the project, backing up any file it would overwrite into existingFiles/<same relative path>.old instead of silently erasing it - a target already identical to the scaffold source is left untouched (no backup, no copy), so re-running this on an unmodified project is a no-op. 'assets' is the one exception: once a target exists there, it's left alone even if its content now differs from the bundle's - it's the app's own editable file from then on (see themeImportReminder())
-    public function install(): array
+    // Copies scaffold/{src,templates,tests,translations,assets} from every installed c975L bundle into the project, backing up any file it would overwrite into existingFiles/<same relative path>.old instead of silently erasing it - a target already identical to the scaffold source is left untouched (no backup, no copy), so re-running this on an unmodified project is a no-op. 'assets' is the one exception: once a target exists there, it's left alone even if its content now differs from the bundle's - it's the app's own editable file from then on (see themeImportReminder()). $paths restricts the run to the relative paths given ('src/Scheduler', or a single file), $dryRun reports what would happen without writing anything - propagating one upgraded scaffold file across many sites otherwise means passing over every other file they may have diverged on. The returned 'unmatched' lists the given paths no scaffold file answered to, a run restricted to nothing at all being indistinguishable from an up-to-date site otherwise
+    public function install(array $paths = [], bool $dryRun = false): array
     {
         $copied = 0;
         $backedUp = 0;
         $skipped = 0;
+        $files = [];
+        $matchedPaths = [];
 
         foreach (glob($this->projectDir . '/vendor/c975l/*') ?: [] as $bundleDir) {
             foreach (self::SCAFFOLD_DIRS as $dir) {
@@ -43,6 +45,16 @@ class ScaffoldInstaller
                     $relativePath = $dir . '/' . $file->getRelativePathname();
                     $target = $this->projectDir . '/' . $relativePath;
 
+                    if ($paths) {
+                        $matched = array_filter($paths, static fn (string $path): bool => self::matches($relativePath, $path));
+                        if (!$matched) {
+                            continue;
+                        }
+
+                        // Kept whatever the file's fate is (copied, backed up, or already identical): the path did name something, which is all the caller needs to tell a real no-op from a typo
+                        $matchedPaths = array_merge($matchedPaths, $matched);
+                    }
+
                     if (is_file($target)) {
                         // 'assets' is the app's own editable copy from the first install onward (see themeImportReminder()) - unlike src/templates/tests/translations, it's never backed up/overwritten again once it exists, whether its content differs or not
                         if ('assets' === $dir) {
@@ -53,22 +65,43 @@ class ScaffoldInstaller
                             ++$skipped;
                             continue;
                         }
-                        $this->backup($relativePath, $target);
+                        if (!$dryRun) {
+                            $this->backup($relativePath, $target);
+                        }
                         ++$backedUp;
                     }
 
-                    if (!is_dir(\dirname($target))) {
-                        mkdir(\dirname($target), 0775, true);
+                    if (!$dryRun) {
+                        if (!is_dir(\dirname($target))) {
+                            mkdir(\dirname($target), 0775, true);
+                        }
+                        copy($file->getPathname(), $target);
                     }
-                    copy($file->getPathname(), $target);
                     ++$copied;
+                    $files[] = $relativePath;
                 }
             }
         }
 
-        $this->ensureGitignored();
+        if (!$dryRun) {
+            $this->ensureGitignored();
+        }
 
-        return ['copied' => $copied, 'backedUp' => $backedUp, 'skipped' => $skipped];
+        return [
+            'copied' => $copied,
+            'backedUp' => $backedUp,
+            'skipped' => $skipped,
+            'files' => $files,
+            'unmatched' => array_values(array_diff($paths, $matchedPaths)),
+        ];
+    }
+
+    // A file is in scope when the path is the file itself or a directory it sits under - 'src/Scheduler' must not match 'src/SchedulerOther/...', hence the separator
+    private static function matches(string $relativePath, string $path): bool
+    {
+        $path = trim($path, '/');
+
+        return $relativePath === $path || str_starts_with($relativePath, $path . '/');
     }
 
     // Never writes to the app's own assets/styles/app.css or assets/app.js - editing a developer-owned file in place is too risky to automate reliably. Returns a one-line reminder for the calling command to display when the scaffolded assets/styles/themes/theme.css exists but nothing imports it yet, null otherwise (already wired, or this project doesn't have either file)

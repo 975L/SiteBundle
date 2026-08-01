@@ -13,8 +13,6 @@ namespace c975L\SiteBundle\Tests\Service;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Service\PageSpeedInsightsClient;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpClient\Exception\ClientException;
-use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -131,16 +129,22 @@ class PageSpeedInsightsClientTest extends TestCase
         $this->assertStringNotContainsString('key=', $requestedUrl);
     }
 
-    public function testAnalyzePropagatesTransportExceptions(): void
+    public function testAnalyzeWrapsTransportExceptionsWithoutTheUrl(): void
     {
-        $this->expectException(TransportException::class);
-
         $httpClient = new MockHttpClient(
             fn (string $method, string $url, array $options) => new MockResponse('', ['error' => 'Connection refused'])
         );
 
-        $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService(null));
-        $client->analyze('https://example.com/pages/home/');
+        $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService('my-key'));
+
+        try {
+            $client->analyze('https://example.com/pages/home/');
+            $this->fail('Expected a RuntimeException.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringNotContainsString('my-key', $e->getMessage());
+            $this->assertStringNotContainsString('googleapis.com', $e->getMessage());
+            $this->assertNull($e->getPrevious());
+        }
     }
 
     public function testAnalyzeThrowsAClearMessageOn429WithoutAnApiKey(): void
@@ -159,15 +163,21 @@ class PageSpeedInsightsClientTest extends TestCase
         }
     }
 
-    public function testAnalyzePropagatesTheOriginal429WhenAnApiKeyIsConfigured(): void
+    public function testAnalyzeWrapsThe429WithoutTheUrlWhenAnApiKeyIsConfigured(): void
     {
-        $this->expectException(ClientException::class);
-
         $httpClient = new MockHttpClient(
             fn (string $method, string $url, array $options) => new MockResponse('', ['http_code' => 429])
         );
 
         $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService('some-key'));
-        $client->analyze('https://example.com/pages/home/');
+
+        try {
+            $client->analyze('https://example.com/pages/home/');
+            $this->fail('Expected a RuntimeException.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('PageSpeed Insights returned HTTP 429', $e->getMessage());
+            $this->assertStringNotContainsString('some-key', $e->getMessage());
+            $this->assertNull($e->getPrevious());
+        }
     }
 }

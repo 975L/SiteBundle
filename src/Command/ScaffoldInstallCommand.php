@@ -14,6 +14,7 @@ use c975L\SiteBundle\Service\ScaffoldInstaller;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -30,18 +31,44 @@ class ScaffoldInstallCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this
+            ->addOption('path', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Restrict the run to these relative paths (--path=src/Scheduler, repeatable), instead of the whole scaffold of every installed bundle')
+            ->addOption('dry-run', null, InputOption::VALUE_NONE, 'List what would be copied and backed up, write nothing')
+        ;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $dryRun = (bool) $input->getOption('dry-run');
 
-        $result = $this->scaffoldInstaller->install();
+        $result = $this->scaffoldInstaller->install($input->getOption('path'), $dryRun);
 
-        $io->success(sprintf(
-            '%d fichier(s) copié(s), %d sauvegardé(s) dans existingFiles/, %d déjà à jour.',
+        // What would be overwritten is the whole point of the dry run, a count alone saying nothing about which files diverged
+        if ($dryRun && $result['files']) {
+            $io->listing($result['files']);
+        }
+
+        $message = sprintf(
+            $dryRun
+                ? '%d fichier(s) à copier, dont %d à sauvegarder dans existingFiles/, %d déjà à jour. Rien n\'a été écrit.'
+                : '%d fichier(s) copié(s), %d sauvegardé(s) dans existingFiles/, %d déjà à jour.',
             $result['copied'],
             $result['backedUp'],
             $result['skipped']
-        ));
+        );
+
+        // A --path naming nothing reports zero everywhere, which reads exactly like an already up-to-date site: a typo, or a path given as it stands in the bundle ('scaffold/src/Scheduler'), would otherwise go unnoticed across the dozen sites it was being propagated to - hence the non-zero exit code too, so a loop over them stops instead of scrolling green
+        if ($result['unmatched']) {
+            $io->warning($message);
+            $io->error(sprintf('Aucun fichier de scaffold ne correspond à : %s', implode(', ', $result['unmatched'])));
+
+            return Command::FAILURE;
+        }
+
+        $io->success($message);
 
         $reminder = $this->scaffoldInstaller->themeImportReminder();
         if (null !== $reminder) {

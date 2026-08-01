@@ -435,6 +435,7 @@ class PageCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action
                     ->setIcon('fa fa-box-archive')
+                    ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'site'),
             ))
@@ -442,6 +443,7 @@ class PageCrudController extends AbstractCrudController
                 return $action
                     ->setLabel(t('action.move_to_trash', [], 'site'))
                     ->setIcon('fa fa-box-archive')
+                    ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
             })
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(

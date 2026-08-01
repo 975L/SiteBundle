@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-01",
+        "description": [
+            {
+                "en": "Sending a page to the trash now asks for a confirmation of its own, saying the page is only unpublished and can be restored",
+                "fr": "La mise à la corbeille d'une page demande désormais sa propre confirmation, qui précise que la page est seulement dépubliée et qu'elle peut être restaurée",
+                "es": "Enviar una página a la papelera ahora pide su propia confirmación, que indica que la página solo se despublica y que puede restaurarse"
+            },
+            {
+                "en": "The speed analysis no longer repeats your Google key in the messages it leaves on the health check screen",
+                "fr": "L'analyse de vitesse ne reprend plus votre clé Google dans les messages qu'elle laisse sur l'écran de contrôle de santé",
+                "es": "El análisis de velocidad ya no repite su clave de Google en los mensajes que deja en la pantalla de control de estado"
+            }
+        ]
+    },
+    {
         "date": "2026-07-31",
         "description": [
             {

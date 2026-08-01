@@ -98,6 +98,10 @@
                 <source>confirm.duplicate</source>
                 <target>Se creará una copia no publicada de esta página y de todo su contenido (bloques, medios). ¿Continuar?</target>
             </trans-unit>
+            <trans-unit id="dm8sVDz">
+                <source>confirm.move_to_trash</source>
+                <target>Esta página se moverá a la papelera: se despublicará, pero su contenido se conserva y podrá restaurarla. ¿Continuar?</target>
+            </trans-unit>
             <trans-unit id="AJcGJ1z">
                 <source>confirm.publish_as_replacement</source>
                 <target>Esta página se publicará en lugar de «%title%»: tomará su dirección, y la original se moverá a la papelera (recuperable). ¿Continuar?</target>

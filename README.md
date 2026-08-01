@@ -957,7 +957,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | Command | Description |
 | --- | --- |
 | `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
-| `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project |
+| `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project (`--path=` to restrict it, `--dry-run` to only list what would change) |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
 | `php bin/console c975l:site:messenger-cleanup` | Purges old failed Messenger messages and alerts admins of new important ones |
 | `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets, a site in maintenance is skipped entirely) |
@@ -1038,6 +1038,27 @@ the scaffold source is left untouched — so running it again on an unmodified p
 `assets/` files are the one exception: once a target exists there, it's left alone for good (no
 backup, no overwrite, even if the bundle's own copy later changes) since it's meant to become the
 app's own editable file from that first copy onward — see [A site's own theme](#a-sites-own-theme).
+
+Two options narrow that down, for the case the command was awkward at: propagating **one** upgraded
+scaffold file to a site (or to a dozen of them), without passing over every other file that site may
+have diverged on since.
+
+```bash
+# What would change, writing nothing - the files are listed, not just counted
+php bin/console c975l:scaffold:install --dry-run
+
+# Only this subtree, or only this file (repeatable)
+php bin/console c975l:scaffold:install --path=src/Scheduler --path=tests/Scheduler
+```
+
+`--path` takes a path relative to the project, naming a directory or a single file — never a mere
+prefix of one, so `--path=src/Scheduler` leaves a `src/SchedulerOther/` alone. Combine the two and
+`--dry-run` wins: nothing is written, no backup is moved, and the `.gitignore` isn't touched either.
+
+A path no scaffold file answers to — a typo, or a path given as it stands in the bundle
+(`scaffold/src/Scheduler`) — is named and the command exits non-zero, rather than reporting the zero
+counts of an already up-to-date site: a loop propagating one file across a dozen sites stops there
+instead of scrolling green.
 
 #### Translating the questions
 
@@ -1125,12 +1146,11 @@ The bundle provides `c975l:site:messenger-cleanup` as a schedulable command, alo
 ### 1. Create the schedule class
 
 ```php
-// src/Scheduler/SiteSchedule.php
+// src/Scheduler/MaintenanceSchedule.php
 namespace App\Scheduler;
 
-use Symfony\Component\Console\Messenger\RunCommandMessage;
+use c975L\ConfigBundle\Scheduler\MaintenanceScheduleBuilder;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
-use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
 use Symfony\Component\Scheduler\ScheduleProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -1139,32 +1159,42 @@ use Symfony\Contracts\Cache\CacheInterface;
 class MaintenanceSchedule implements ScheduleProviderInterface
 {
     public function __construct(
+        private readonly MaintenanceScheduleBuilder $builder,
         private readonly CacheInterface $cache,
     ) {}
 
     public function getSchedule(): Schedule
     {
-        return (new Schedule())
-            ->stateful($this->cache)
-            // Sitemap: daily at 00:05
-            ->add(RecurringMessage::cron('5 0 * * *', new RunCommandMessage('c975l:sitemaps:create')))
-            // Backup: every 6 hours (DB dumped table by table; files: complete on the first run and every site-backup-full-interval-months after that, modified-since-last-run in between)
-            ->add(RecurringMessage::cron('7 */6 * * *', new RunCommandMessage('c975l:config:backup')))
-            // Digest of the week's backups, emailed every Monday at 03:07 - a separate command running no backup of its own, so the summary doesn't depend on one particular run reaching its last line
-            ->add(RecurringMessage::cron('7 3 * * 1', new RunCommandMessage('c975l:config:backup:digest')))
-            // Messenger cleanup: daily at 03:00
-            ->add(RecurringMessage::cron('0 3 * * *', new RunCommandMessage('c975l:site:messenger-cleanup')))
-            // Health check (see below): a cadence, never a list of kinds - each provider declares its own with ConfigBundle's AsHealthCheck (weekly unless it says otherwise), so these two lines already account for whatever bundles this site installs later
-            ->add(RecurringMessage::cron('0 4 * * 0', new RunCommandMessage('c975l:health-check:run --frequency=weekly')))
-            // The heavy ones on their own: a gallery declares one url per photo, by far the longest run
-            ->add(RecurringMessage::cron('0 6 1 * *', new RunCommandMessage('c975l:health-check:run --frequency=monthly')));
+        return $this->builder->addTasks(
+            (new Schedule())->stateful($this->cache)
+        );
     }
 }
 ```
 
 The `stateful()` call persists the last-run time via Symfony Cache so tasks are not re-run if the worker restarts.
 
-This class is scaffolded once (`c975l:scaffold:install`, or `c975l:site:create` on a brand new site) into your app's own `src/Scheduler/MaintenanceSchedule.php` — a bundle upgrade that changes the *scaffold* (like the health check cron entries above) never touches your already-scaffolded copy. Re-apply the diff by hand, or re-run `c975l:scaffold:install` and merge the moved-aside `existingFiles/*.old` copy back in.
+**This file lists no command at all**, and that's the point: each bundle declares the commands it needs run through ConfigBundle's [`MaintenanceTaskProviderInterface`](https://github.com/975L/ConfigBundle#contributing-maintenance-tasks-from-other-bundles) — this bundle declares `c975l:site:messenger-cleanup`, ConfigBundle its backup/sitemaps/health-check ones, ShopBundle its own. Installing a bundle schedules its tasks, removing it stops them, and neither needs an edit here. Their exact minutes are drawn from this site's own identity ([`ScheduleSpreader`](https://github.com/975L/ConfigBundle#spreading-scheduled-commands-across-installs)), so sites sharing a server don't all dump their database at the same minute; `bin/console debug:scheduler` shows the times this one ended up with.
+
+Two things stay yours. A command no bundle knows about is added after the call, spread (inject `ScheduleSpreader` alongside the builder) or on a fixed time with a plain `RecurringMessage::cron()`:
+
+```php
+$schedule = $this->builder->addTasks((new Schedule())->stateful($this->cache));
+$schedule->add($this->spreader->spread('# #(4-7) # * *', new RunCommandMessage('app:check-external-links')));
+
+return $schedule;
+```
+
+And a declared command this site shouldn't run at all is named as the second argument, rather than having to drop the bundle:
+
+```php
+return $this->builder->addTasks(
+    (new Schedule())->stateful($this->cache),
+    ['c975l:health-check:run --frequency=monthly']
+);
+```
+
+This class is scaffolded once (`c975l:scaffold:install`, or `c975l:site:create` on a brand new site) into your app's own `src/Scheduler/MaintenanceSchedule.php`. Since it carries no command list of its own anymore, a bundle upgrade that changes the *scaffold* can be taken as it stands: `c975l:scaffold:install --dry-run --path=src/Scheduler --path=tests/Scheduler` to see what would change, then the same command without `--dry-run` to apply it — instead of being merged back by hand from the moved-aside `existingFiles/*.old` copy. Take the two together: the scaffolded test is written against this class's constructor, and re-scaffolding one without the other leaves them disagreeing on it.
 
 ### 2. Start the worker
 

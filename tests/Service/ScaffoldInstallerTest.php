@@ -48,12 +48,22 @@ class ScaffoldInstallerTest extends TestCase
         rmdir($dir);
     }
 
+    // The counts alone, the list of files install() also returns being asserted on its own where it matters (Finder gives no guaranteed order)
+    private function counts(array $result): array
+    {
+        unset($result['files'], $result['unmatched']);
+
+        return $result;
+    }
+
     // Fabricates vendor/c975l/<bundleName>/scaffold/{src,templates} with the given file => content map
     private function addScaffoldBundle(string $bundleName, array $files): void
     {
         foreach ($files as $relativePath => $content) {
             $target = $this->projectDir . '/vendor/c975l/' . $bundleName . '/scaffold/' . $relativePath;
-            mkdir(\dirname($target), 0775, true);
+            if (!is_dir(\dirname($target))) {
+                mkdir(\dirname($target), 0775, true);
+            }
             file_put_contents($target, $content);
         }
     }
@@ -69,7 +79,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $result);
+        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $this->counts($result));
         $this->assertFileExists($this->projectDir . '/src/Controller/FooController.php');
         $this->assertSame('foo', file_get_contents($this->projectDir . '/src/Controller/FooController.php'));
         $this->assertFileExists($this->projectDir . '/templates/foo.html.twig');
@@ -85,7 +95,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 1, 'backedUp' => 1, 'skipped' => 0], $result);
+        $this->assertSame(['copied' => 1, 'backedUp' => 1, 'skipped' => 0], $this->counts($result));
         $this->assertSame('new-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
         $this->assertSame('original-content', file_get_contents($this->projectDir . '/existingFiles/src/Kernel.php.old'));
     }
@@ -99,7 +109,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $result);
+        $this->assertSame(['copied' => 2, 'backedUp' => 0, 'skipped' => 0], $this->counts($result));
         $this->assertFileExists($this->projectDir . '/templates/a.html.twig');
         $this->assertFileExists($this->projectDir . '/templates/b.html.twig');
     }
@@ -150,7 +160,7 @@ class ScaffoldInstallerTest extends TestCase
     {
         $installer = new ScaffoldInstaller($this->projectDir);
 
-        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 0], $installer->install());
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 0], $this->counts($installer->install()));
     }
 
     // A target already identical to the scaffold source is left untouched: no backup, no re-copy - re-running install() on an unmodified project must not litter existingFiles/ with no-op backups
@@ -163,7 +173,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $result);
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $this->counts($result));
         $this->assertSame('same-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
@@ -178,7 +188,7 @@ class ScaffoldInstallerTest extends TestCase
 
         $result = $installer->install();
 
-        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $result);
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $this->counts($result));
         $this->assertSame(':root { --radius-btn: 999px; }', file_get_contents($this->projectDir . '/assets/styles/themes/theme.css'));
         $this->assertDirectoryDoesNotExist($this->projectDir . '/existingFiles');
     }
@@ -267,5 +277,72 @@ class ScaffoldInstallerTest extends TestCase
         $installer = new ScaffoldInstaller($this->projectDir);
 
         $this->assertNull($installer->themeImportReminder());
+    }
+
+    // Propagating one upgraded scaffold file must not pass over every other file the project may have diverged on
+    public function testInstallRestrictedToAPathLeavesTheRestAlone(): void
+    {
+        $this->addScaffoldBundle('site-bundle', [
+            'src/Scheduler/MaintenanceSchedule.php' => 'new-schedule',
+            'src/Kernel.php' => 'new-kernel',
+        ]);
+        mkdir($this->projectDir . '/src', 0775, true);
+        file_put_contents($this->projectDir . '/src/Kernel.php', 'my-own-kernel');
+
+        $result = (new ScaffoldInstaller($this->projectDir))->install(['src/Scheduler']);
+
+        $this->assertSame(['copied' => 1, 'backedUp' => 0, 'skipped' => 0], $this->counts($result));
+        $this->assertSame('new-schedule', file_get_contents($this->projectDir . '/src/Scheduler/MaintenanceSchedule.php'));
+        $this->assertSame('my-own-kernel', file_get_contents($this->projectDir . '/src/Kernel.php'));
+    }
+
+    // A path names a directory or a file, and never a mere prefix of either: 'src/Scheduler' must leave src/SchedulerOther alone
+    public function testAPathIsNotMatchedAsAPrefix(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['src/SchedulerOther/Foo.php' => 'foo']);
+
+        $result = (new ScaffoldInstaller($this->projectDir))->install(['src/Scheduler']);
+
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 0], $this->counts($result));
+        $this->assertFileDoesNotExist($this->projectDir . '/src/SchedulerOther/Foo.php');
+    }
+
+    // A typo, or a path given as it stands in the bundle ('scaffold/src/...'), otherwise reports zero everywhere just like an up-to-date site
+    public function testInstallReportsThePathsNoScaffoldFileAnsweredTo(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['src/Scheduler/MaintenanceSchedule.php' => 'new-schedule']);
+
+        $result = (new ScaffoldInstaller($this->projectDir))->install(['src/Scheduler', 'src/Sheduler', 'scaffold/src/Scheduler']);
+
+        $this->assertSame(['src/Sheduler', 'scaffold/src/Scheduler'], $result['unmatched']);
+    }
+
+    // A path whose every file is already identical did name something: it's a no-op, not a mistake
+    public function testAPathMatchingOnlyUpToDateFilesIsNotReportedAsUnmatched(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['src/Scheduler/MaintenanceSchedule.php' => 'same-content']);
+        mkdir($this->projectDir . '/src/Scheduler', 0775, true);
+        file_put_contents($this->projectDir . '/src/Scheduler/MaintenanceSchedule.php', 'same-content');
+
+        $result = (new ScaffoldInstaller($this->projectDir))->install(['src/Scheduler']);
+
+        $this->assertSame(['copied' => 0, 'backedUp' => 0, 'skipped' => 1], $this->counts($result));
+        $this->assertSame([], $result['unmatched']);
+    }
+
+    // A dry run reports what would happen and writes nothing at all - not the copy, not the backup, not the .gitignore
+    public function testDryRunWritesNothing(): void
+    {
+        $this->addScaffoldBundle('site-bundle', ['src/Kernel.php' => 'new-content']);
+        mkdir($this->projectDir . '/src', 0775, true);
+        file_put_contents($this->projectDir . '/src/Kernel.php', 'original-content');
+
+        $result = (new ScaffoldInstaller($this->projectDir))->install([], true);
+
+        $this->assertSame(['copied' => 1, 'backedUp' => 1, 'skipped' => 0], $this->counts($result));
+        $this->assertSame(['src/Kernel.php'], $result['files']);
+        $this->assertSame('original-content', file_get_contents($this->projectDir . '/src/Kernel.php'));
+        $this->assertFileDoesNotExist($this->projectDir . '/existingFiles/src/Kernel.php.old');
+        $this->assertFileDoesNotExist($this->projectDir . '/.gitignore');
     }
 }

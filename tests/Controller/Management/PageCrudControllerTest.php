@@ -67,6 +67,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // App\Entity\User (the type Page::setUser() actually requires) belongs to the consuming application, not to this standalone bundle checkout - so Security::getUser() is always stubbed to null here, covering the "nobody logged in" branch only, same limitation as UiBundle's BlockUserListenerTest
@@ -766,6 +767,26 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, 'cancel'));
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'exportSelection'));
+    }
+
+    // Deleting a page only moves it to the trash (see deleteEntity()), so it must carry its own confirmation message: left at the default "true", EasyAdmin's ActionFactory would show its delete_modal.content, telling the admin the action cannot be undone
+    public function testConfigureActionsGivesDeleteATrashConfirmationRatherThanEasyAdminsIrreversibleOne(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        foreach ([Crud::PAGE_INDEX, Crud::PAGE_DETAIL] as $pageName) {
+            $confirmation = $actions->getAsDto($pageName)->getAction($pageName, Action::DELETE)->getConfirmationMessage();
+
+            $this->assertNotTrue($confirmation, sprintf('The delete action on "%s" still uses EasyAdmin default confirmation.', $pageName));
+            $this->assertInstanceOf(TranslatableInterface::class, $confirmation);
+            $this->assertSame('confirm.move_to_trash', $confirmation->getMessage());
+        }
     }
 
     // Not on the edit screen: the "publishAsReplacement" dropdown is never shown there (only added to Crud::PAGE_EDIT, see configureActions()), so its every-non-deleted-page query must not even run

@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/config-bundle": "^5.15",
+        "c975l/config-bundle": "^5.16",
         "c975l/ui-bundle": "^1.14",
         "doctrine/orm": "^3.6",
         "dragonmantank/cron-expression": "^3.6",

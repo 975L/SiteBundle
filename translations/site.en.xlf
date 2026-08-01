@@ -98,6 +98,10 @@
                 <source>confirm.duplicate</source>
                 <target>An unpublished copy of this page and all its content (blocks, medias) will be created. Continue?</target>
             </trans-unit>
+            <trans-unit id="dm8sVDz">
+                <source>confirm.move_to_trash</source>
+                <target>This page will be moved to the trash: it will be unpublished, but its content is kept and you will be able to restore it. Continue?</target>
+            </trans-unit>
             <trans-unit id="AJcGJ1z">
                 <source>confirm.publish_as_replacement</source>
                 <target>This page will be published in place of "%title%": it will take over its address, and the original will be moved to trash (recoverable). Continue?</target>

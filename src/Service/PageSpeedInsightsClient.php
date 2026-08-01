@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -30,7 +31,11 @@ class PageSpeedInsightsClient
     // Fires the request and returns immediately without waiting for a response - Symfony's HttpClient transports (e.g. CurlHttpClient) multiplex every in-flight response, so a caller can request() several urls up front and read() them afterwards to run them concurrently. Do NOT do that across pages of one same site: PSI answers by loading the page itself, so N in-flight analyses means N simultaneous hits on that site, inflating the very TTFB being measured and dragging every score down (see SitePageHealthCheckProvider, which used to and no longer does). analyze() is the right entry point in all but very unusual cases
     public function request(string $url): ResponseInterface
     {
-        return $this->httpClient->request('GET', self::buildUrl($url, $this->configService->get('healthcheck-pagespeed-api-key')), ['timeout' => 60]);
+        try {
+            return $this->httpClient->request('GET', self::buildUrl($url, $this->configService->get('healthcheck-pagespeed-api-key')), ['timeout' => 60]);
+        } catch (\Throwable $e) {
+            throw self::withoutUrl($e);
+        }
     }
 
     // Blocks until the given in-flight response completes and parses it - same return shape/exceptions as analyze()
@@ -69,11 +74,21 @@ class PageSpeedInsightsClient
         } catch (ClientExceptionInterface $e) {
             // Without a key, PSI's anonymous quota is shared across every unauthenticated caller worldwide and is exhausted almost instantly - a 429 here almost always means exactly that, not a per-site rate limit
             if (429 === $e->getResponse()->getStatusCode() && !$hasApiKey) {
-                throw new \RuntimeException('PageSpeed Insights rate limit reached (HTTP 429) - no API key configured, set "healthcheck-pagespeed-api-key" to get a much higher quota', previous: $e);
+                throw new \RuntimeException('PageSpeed Insights rate limit reached (HTTP 429) - no API key configured, set "healthcheck-pagespeed-api-key" to get a much higher quota');
             }
 
-            throw $e;
+            throw self::withoutUrl($e);
+        } catch (\Throwable $e) {
+            throw self::withoutUrl($e);
         }
+    }
+
+    // Google only accepts its API key in the query string, so HttpClient quotes the whole url - key included - in the message of every exception it raises. That message is what HealthCheckErrorRowTrait stores as a row's summary AND details, which means the database, the dashboard, the CSV export and any status report leaving the site. None of those is a place for a credential, and the status code alone is all that's actionable anyway - the row already carries the url it was checking. The original exception is deliberately NOT kept as "previous": Symfony's error logging unrolls the whole chain, which would put the key straight back in the logs
+    private static function withoutUrl(\Throwable $e): \RuntimeException
+    {
+        $status = $e instanceof HttpExceptionInterface ? $e->getResponse()->getStatusCode() : null;
+
+        return new \RuntimeException($status ? sprintf('PageSpeed Insights returned HTTP %d', $status) : 'PageSpeed Insights could not be reached');
     }
 
     private static function parseScores(array $data): array

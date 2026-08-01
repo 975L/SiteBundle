@@ -12,6 +12,7 @@ namespace c975L\SiteBundle;
 
 use c975L\SiteBundle\DependencyInjection\Compiler\DeclaredUrlsHealthCheckPass;
 use c975L\UiBundle\Namer\UiMediaNamer;
+use Nelmio\SecurityBundle\ContentSecurityPolicy\NonceGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -26,6 +27,11 @@ class c975LSiteBundle extends AbstractBundle
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
+
+        // SessionNonceGenerator implements a NelmioSecurityBundle interface, so its class isn't loadable without that (optional) bundle - importing its definition unconditionally would break the container compilation of any app that doesn't use it
+        if (interface_exists(NonceGeneratorInterface::class)) {
+            $containerConfigurator->import('../config/services_nelmio.yaml');
+        }
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void

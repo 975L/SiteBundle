@@ -98,6 +98,10 @@
                 <source>confirm.duplicate</source>
                 <target>Une copie non publiée de cette page et de tout son contenu (blocs, médias) va être créée. Continuer ?</target>
             </trans-unit>
+            <trans-unit id="dm8sVDz">
+                <source>confirm.move_to_trash</source>
+                <target>Cette page va être mise à la corbeille : elle sera dépubliée, mais son contenu est conservé et vous pourrez la restaurer. Continuer ?</target>
+            </trans-unit>
             <trans-unit id="AJcGJ1z">
                 <source>confirm.publish_as_replacement</source>
                 <target>Cette page va être publiée à la place de « %title% » : elle reprendra son adresse, l'originale sera mise à la corbeille (récupérable). Continuer ?</target>
