@@ -12,7 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\SslCertificateClient;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -23,7 +23,7 @@ class SslCertificateHealthCheckProvider implements HealthCheckProviderInterface
     private const ERROR_THRESHOLD_DAYS = 7;
 
     public function __construct(
-        private readonly ConfigServiceInterface $configService,
+        private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly SslCertificateClient $sslCertificateClient,
         private readonly TranslatorInterface $translator,
     ) {
@@ -36,15 +36,16 @@ class SslCertificateHealthCheckProvider implements HealthCheckProviderInterface
 
     public function runChecks(): array
     {
-        $siteUrl = $this->configService->get('site-url');
-        if (!$siteUrl) {
+        // The site root as PagePublicUrlResolver spells it, not raw "site-url": this check has no Page of its own, and the two spellings of that same root ("https://example.com" and "https://example.com/") would show as two rows on the Health check dashboard, which groups by url
+        $homeUrl = $this->pagePublicUrlResolver->resolveSiteRoot();
+        if (null === $homeUrl) {
             return [];
         }
 
-        $host = parse_url($siteUrl, \PHP_URL_HOST);
-        if (!$host || 'https' !== parse_url($siteUrl, \PHP_URL_SCHEME)) {
+        $host = parse_url($homeUrl, \PHP_URL_HOST);
+        if (!$host || 'https' !== parse_url($homeUrl, \PHP_URL_SCHEME)) {
             return [[
-                'url' => $siteUrl,
+                'url' => $homeUrl,
                 'label' => null,
                 'status' => HealthCheckResult::STATUS_SKIPPED,
                 'summary' => $this->translator->trans('label.health_check_ssl_certificate_not_https', [], 'site'),
@@ -56,7 +57,7 @@ class SslCertificateHealthCheckProvider implements HealthCheckProviderInterface
             $expiresAt = $this->sslCertificateClient->fetchExpiry($host);
         } catch (\Throwable $e) {
             return [[
-                'url' => $siteUrl,
+                'url' => $homeUrl,
                 'label' => null,
                 'status' => HealthCheckResult::STATUS_ERROR,
                 'summary' => $this->translator->trans('label.health_check_ssl_certificate_call_failed', ['%message%' => $e->getMessage()], 'site'),
@@ -67,7 +68,7 @@ class SslCertificateHealthCheckProvider implements HealthCheckProviderInterface
         $daysLeft = (int) (new \DateTimeImmutable())->diff($expiresAt)->format('%r%a');
 
         return [[
-            'url' => $siteUrl,
+            'url' => $homeUrl,
             'label' => null,
             'status' => $this->resolveStatus($daysLeft),
             'summary' => $this->translator->trans('label.health_check_summary_ssl_certificate', [

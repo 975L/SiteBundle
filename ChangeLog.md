@@ -1,5 +1,16 @@
 # Changelog
 
+## v7.15.4
+
+One health check row for the site root
+
+- `SslCertificateHealthCheckProvider` now records the home page's own url instead of raw `site-url` (01/08/2026) [BC-Break]
+- Added `PagePublicUrlResolver::resolveSiteRoot()` (01/08/2026)
+- Fixed `PagePublicUrlResolver` doubling the slash of a `site-url` saved with a trailing one (01/08/2026)
+- `ContentQualityAnalyzer::TITLE_MIN_LENGTH` lowered from 30 to 10 characters (01/08/2026)
+- A missing `og:title`/`og:description` is no longer listed on top of the empty field it comes from (01/08/2026)
+- Updated the readme's content-quality rows on the title window and the share tags (01/08/2026)
+
 ## v7.15.3
 
 Health check advice pointing at the field to fill

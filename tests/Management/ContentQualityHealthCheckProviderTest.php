@@ -30,7 +30,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
 {
     use PagePublicUrlGeneratorTestTrait;
 
-    // 42 characters, inside the recommended 30-65 window
+    // 42 characters, inside the recommended 10-65 window
     private const GOOD_TITLE = 'Une page de test au titre bien dimensionné';
     // 84 characters, inside the recommended 50-160 window
     private const GOOD_DESCRIPTION = 'Une description de test suffisamment longue pour passer le seuil minimal recommandé.';
@@ -533,6 +533,18 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame(7, $result['details']['titleLength']);
     }
 
+    // The lower bound is editorial, not a search engine rule: a title long enough to say what the page is must not be flagged just for sitting under an SEO tool's conventional 30 characters (see ContentQualityAnalyzer::TITLE_MIN_LENGTH)
+    public function testRunChecksAcceptsAShortButExplicitTitle(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['title' => 'Nos tarifs - Editions Lolant'] + self::GOOD_ANALYSIS);
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
+        $this->assertNull($result['details']['titleIssue']);
+    }
+
     public function testRunChecksStatusIsWarningWhenTheTitleIsTooLong(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
@@ -606,6 +618,54 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertStringContainsString('label.health_check_content_quality_missing_social_tags', $result['summary']);
         $this->assertSame(['og:description', 'og:image'], $result['details']['missingSocialTags']);
+    }
+
+    // One empty field, one clause: the layout emits og:description only alongside the description itself, so listing the tag too would send the reader looking for a second thing to do
+    public function testRunChecksDoesNotReportOgDescriptionWhenTheDescriptionItselfIsMissing(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['hasDescription' => false, 'description' => '', 'socialTags' => ['og:title' => 'T', 'og:image' => 'i.jpg']] + self::GOOD_ANALYSIS);
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame([], $result['details']['missingSocialTags']);
+        $this->assertStringContainsString('label.health_check_content_quality_no_description', $result['summary']);
+        $this->assertStringNotContainsString('label.health_check_content_quality_missing_social_tags', $result['summary']);
+    }
+
+    // The other way round: the field is filled and the tag still isn't emitted, which is a real template bug and has no other line to report it
+    public function testRunChecksReportsOgDescriptionWhenTheDescriptionIsThere(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['socialTags' => ['og:title' => 'T', 'og:image' => 'i.jpg']] + self::GOOD_ANALYSIS);
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame(['og:description'], $result['details']['missingSocialTags']);
+    }
+
+    // Same rule on the title's side: an empty title is already its own line, og:title mirrors it and must not add a second one
+    public function testRunChecksDoesNotReportOgTitleWhenTheTitleItselfIsMissing(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['title' => '', 'socialTags' => ['og:description' => 'D', 'og:image' => 'i.jpg']] + self::GOOD_ANALYSIS);
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame([], $result['details']['missingSocialTags']);
+        $this->assertStringContainsString('label.health_check_content_quality_no_title', $result['summary']);
+        $this->assertStringNotContainsString('label.health_check_content_quality_missing_social_tags', $result['summary']);
+    }
+
+    // The other way round again: the title is there and og:title still isn't emitted
+    public function testRunChecksReportsOgTitleWhenTheTitleIsThere(): void
+    {
+        $client = $this->createStub(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['socialTags' => ['og:description' => 'D', 'og:image' => 'i.jpg']] + self::GOOD_ANALYSIS);
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame(['og:title'], $result['details']['missingSocialTags']);
     }
 
     // A dead link on someone else's site isn't yours to fix on your own schedule, and it's the check most exposed to a false positive - warning, never error

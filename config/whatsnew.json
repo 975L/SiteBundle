@@ -21,6 +21,26 @@
                 "en": "The HTML and CSS validation results now list the errors and warnings found, instead of only counting them",
                 "fr": "Les résultats de validation HTML et CSS listent désormais les erreurs et avertissements trouvés, au lieu de seulement les compter",
                 "es": "Los resultados de validación HTML y CSS ahora enumeran los errores y avisos encontrados, en lugar de solo contarlos"
+            },
+            {
+                "en": "A page title is no longer reported as too short just for being under thirty characters - the site name it ends with was counted in, so explicit titles were flagged for nothing",
+                "fr": "Un titre de page n'est plus signalé comme trop court simplement parce qu'il fait moins de trente caractères - le nom du site qui le termine était compté dedans, si bien que des titres explicites l'étaient pour rien",
+                "es": "El título de una página ya no se señala como demasiado corto solo por tener menos de treinta caracteres - el nombre del sitio con el que termina se contaba dentro, por lo que se señalaban títulos explícitos sin motivo"
+            },
+            {
+                "en": "A page missing its social network summary now shows one thing to correct instead of two saying the same",
+                "fr": "Une page sans résumé réseaux sociaux affiche désormais une seule chose à corriger au lieu de deux qui disaient la même",
+                "es": "Una página sin resumen para redes sociales ahora muestra una sola cosa que corregir en lugar de dos que decían lo mismo"
+            },
+            {
+                "en": "The certificate check and the home page's own checks now share a single line on the health check screen, instead of showing the site twice",
+                "fr": "Le contrôle du certificat et ceux de la page d'accueil partagent désormais une seule ligne sur l'écran du bilan de santé, au lieu d'afficher le site deux fois",
+                "es": "La comprobación del certificado y las de la página de inicio ahora comparten una sola línea en la pantalla del estado de salud, en lugar de mostrar el sitio dos veces"
+            },
+            {
+                "en": "A site address saved with a slash at the end no longer breaks the addresses the health check builds from it",
+                "fr": "Une adresse de site enregistrée avec une barre oblique à la fin ne casse plus les adresses que le bilan de santé construit à partir d'elle",
+                "es": "Una dirección de sitio guardada con una barra al final ya no rompe las direcciones que el estado de salud construye a partir de ella"
             }
         ]
     },

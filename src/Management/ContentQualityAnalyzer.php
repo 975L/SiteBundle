@@ -26,8 +26,8 @@ class ContentQualityAnalyzer
     // How many requests are kept in flight at once, for the page analyses as well as the link checks. Symfony's HttpClient caps concurrent connections per host, so firing every url of the whole site at once only queues the surplus - while each queued request's own timeout is already running, turning perfectly valid pages/links into timeouts, and timeouts into "broken" rows. It also bounds how many responses are held in memory at once, which matters for a bundle declaring thousands of urls (see DeclaredUrlsHealthCheckProvider)
     private const BATCH_SIZE = 10;
 
-    // Recommended <title> window, in characters. Both ends are how search results render it, not a ranking rule: under 30 wastes the strongest on-page signal a page has, over 65 gets truncated mid-word in the results page. Public so PageHealthCheckAdviceBuilder states the same numbers in its advice line rather than keeping its own copy
-    public const TITLE_MIN_LENGTH = 30;
+    // Recommended <title> window, in characters. The upper bound is the only one search engines actually impose: past 65 the results page truncates it mid-word. The lower one is editorial, and deliberately far below the 30 characters SEO tools conventionally flag - a title is built here as "Page title - Site name" (see layout.html.twig), so a short site name alone can push a perfectly explicit title under such a threshold, and a warning raised one character short of it only teaches the reader to ignore the table. Ten catches what it is meant to catch: a title reduced to a word or two. Public so PageHealthCheckAdviceBuilder states the same numbers in its advice line rather than keeping its own copy
+    public const TITLE_MIN_LENGTH = 10;
     public const TITLE_MAX_LENGTH = 65;
 
     // Same for the meta description - under 50 characters says too little to earn a click, over 160 is cut off
@@ -256,7 +256,7 @@ class ContentQualityAnalyzer
             'descriptionIssue' => $analysis['hasDescription'] ? $this->lengthIssue($descriptionLength, self::DESCRIPTION_MIN_LENGTH, self::DESCRIPTION_MAX_LENGTH) : null,
             'descriptionLength' => $descriptionLength,
             'h1Count' => $analysis['h1Count'],
-            'missingSocialTags' => array_values(array_diff(self::REQUIRED_SOCIAL_TAGS, array_keys($analysis['socialTags'] ?? []))),
+            'missingSocialTags' => $this->missingSocialTags($analysis),
             'imagesWithoutAlt' => $this->describeImages($entry['page'], $analysis['imagesWithoutAlt']),
             'brokenLinks' => $this->describeBrokenLinks($entry, $brokenLinks, 'internalLinks'),
             'brokenExternalLinks' => $this->describeBrokenLinks($entry, $brokenLinks, 'externalLinks'),
@@ -318,6 +318,18 @@ class ContentQualityAnalyzer
         }
 
         return $issues;
+    }
+
+    // The share tags absent from the page, minus the ones whose own source field is already reported missing on its own line: layout.html.twig only ever emits og:title/og:description alongside the title/description they mirror, so an empty field would otherwise be reported twice - once as the field to fill, once as the tag it didn't produce - and send the reader looking for two things to do where there is one. Both stay listed when their source is there, since the tag is then genuinely missing from the template
+    private function missingSocialTags(array $analysis): array
+    {
+        $missing = array_diff(self::REQUIRED_SOCIAL_TAGS, array_keys($analysis['socialTags'] ?? []));
+        $reportedAsTheirOwnField = array_merge(
+            '' === (string) ($analysis['title'] ?? '') ? ['og:title'] : [],
+            $analysis['hasDescription'] ? [] : ['og:description'],
+        );
+
+        return array_values(array_diff($missing, $reportedAsTheirOwnField));
     }
 
     // 'missing'/'short'/'long', or null when the length sits inside the recommended window

@@ -13,18 +13,23 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Management\SslCertificateHealthCheckProvider;
+use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\SslCertificateClient;
+use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SslCertificateHealthCheckProviderTest extends TestCase
 {
-    private function createConfigService(?string $siteUrl): ConfigServiceInterface
+    use PagePublicUrlGeneratorTestTrait;
+
+    // A real resolver rather than a stub, so these tests assert the very url the dashboard will group the row under (see PagePublicUrlResolver::resolveSiteRoot())
+    private function createResolver(?string $siteUrl): PagePublicUrlResolver
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return $configService;
+        return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
     }
 
     private function createClient(): SslCertificateClient
@@ -44,21 +49,21 @@ class SslCertificateHealthCheckProviderTest extends TestCase
 
     public function testGetKindReturnsSslCertificate(): void
     {
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService(null), $this->createClient(), $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver(null), $this->createClient(), $this->createTranslator());
 
         $this->assertSame('ssl-certificate', $provider->getKind());
     }
 
     public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
     {
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService(null), $this->createClient(), $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver(null), $this->createClient(), $this->createTranslator());
 
         $this->assertSame([], $provider->runChecks());
     }
 
     public function testRunChecksSkipsAHttpSiteUrl(): void
     {
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('http://example.com'), $this->createClient(), $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('http://example.com'), $this->createClient(), $this->createTranslator());
 
         $result = $provider->runChecks()[0];
         $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $result['status']);
@@ -69,11 +74,12 @@ class SslCertificateHealthCheckProviderTest extends TestCase
         $client = $this->createClient();
         $client->method('fetchExpiry')->willReturn(new \DateTimeImmutable('+89 days'));
 
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('https://example.com'), $client, $this->createTranslator());
 
         $result = $provider->runChecks()[0];
         $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
-        $this->assertSame('https://example.com', $result['url']);
+        // The site root's canonical form, the same url the home page's own checks record - one dashboard row for the site root, not one per spelling
+        $this->assertSame('https://example.com/', $result['url']);
     }
 
     public function testRunChecksStatusIsWarningWithinThirtyDays(): void
@@ -81,7 +87,7 @@ class SslCertificateHealthCheckProviderTest extends TestCase
         $client = $this->createClient();
         $client->method('fetchExpiry')->willReturn(new \DateTimeImmutable('+15 days'));
 
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('https://example.com'), $client, $this->createTranslator());
 
         $this->assertSame(HealthCheckResult::STATUS_WARNING, $provider->runChecks()[0]['status']);
     }
@@ -91,7 +97,7 @@ class SslCertificateHealthCheckProviderTest extends TestCase
         $client = $this->createClient();
         $client->method('fetchExpiry')->willReturn(new \DateTimeImmutable('+3 days'));
 
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('https://example.com'), $client, $this->createTranslator());
 
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $provider->runChecks()[0]['status']);
     }
@@ -101,7 +107,7 @@ class SslCertificateHealthCheckProviderTest extends TestCase
         $client = $this->createClient();
         $client->method('fetchExpiry')->willReturn(new \DateTimeImmutable('-2 days'));
 
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('https://example.com'), $client, $this->createTranslator());
 
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $provider->runChecks()[0]['status']);
     }
@@ -111,7 +117,7 @@ class SslCertificateHealthCheckProviderTest extends TestCase
         $client = $this->createStub(SslCertificateClient::class);
         $client->method('fetchExpiry')->willThrowException(new \RuntimeException('Connection refused'));
 
-        $provider = new SslCertificateHealthCheckProvider($this->createConfigService('https://example.com'), $client, $this->createTranslator());
+        $provider = new SslCertificateHealthCheckProvider($this->createResolver('https://example.com'), $client, $this->createTranslator());
 
         $result = $provider->runChecks()[0];
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);

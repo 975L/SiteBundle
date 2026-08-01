@@ -26,12 +26,25 @@ class PagePublicUrlResolver
     // Null if "site-url" isn't configured yet - every HealthCheckProvider using this treats that the same way (nothing to check)
     public function resolve(Page $page): ?string
     {
-        $siteUrl = $this->configService->get('site-url');
-        if (!$siteUrl) {
-            return null;
-        }
+        $siteUrl = $this->siteUrl();
 
-        return $siteUrl . $this->resolvePath($page);
+        return null === $siteUrl ? null : $siteUrl . $this->resolvePath($page);
+    }
+
+    // The site root's own canonical url ("https://example.com/"), for a site-wide check having no Page to resolve from - a TLS certificate is issued for the host, not for a page (see SslCertificateHealthCheckProvider). Exactly what the home page resolves to, so both land on a single row of the Health check dashboard, which groups its rows by url: raw "site-url" would spell that same root without its trailing slash and show as a second, permanent row
+    public function resolveSiteRoot(): ?string
+    {
+        $siteUrl = $this->siteUrl();
+
+        return null === $siteUrl ? null : $siteUrl . $this->urlGenerator->generate('page_home', [], UrlGeneratorInterface::ABSOLUTE_PATH);
+    }
+
+    // The configured host without its trailing slash, null when unconfigured - every path appended to it already opens with a slash, and a "site-url" saved as "https://example.com/" would otherwise double it
+    private function siteUrl(): ?string
+    {
+        $siteUrl = trim((string) $this->configService->get('site-url'));
+
+        return '' === $siteUrl ? null : rtrim($siteUrl, '/');
     }
 
     // The local part of that url, without the host - what PageDevProfilePathProvider hands to the kernel, since profiling the developer's own machine has nothing to do with "site-url" (which points at the live site even from a dev environment)

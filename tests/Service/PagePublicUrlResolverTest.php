@@ -59,6 +59,31 @@ class PagePublicUrlResolverTest extends TestCase
         $this->assertSame('https://example.com/pages/contact', $resolver->resolve($this->createPage('contact')));
     }
 
+    // The exact form home resolves to, so a site-wide check (see SslCertificateHealthCheckProvider) records the same url as the page checks
+    public function testResolveSiteRootMatchesTheHomePageUrl(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com'), $this->createUrlGenerator());
+
+        $this->assertSame('https://example.com/', $resolver->resolveSiteRoot());
+        $this->assertSame($resolver->resolve($this->createPage('home')), $resolver->resolveSiteRoot());
+    }
+
+    public function testResolveSiteRootReturnsNullWithoutASiteUrl(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService(null), $this->createUrlGenerator());
+
+        $this->assertNull($resolver->resolveSiteRoot());
+    }
+
+    // A "site-url" saved with a trailing slash must not double the one every generated path already opens with
+    public function testASiteUrlEndingWithASlashDoesNotDoubleIt(): void
+    {
+        $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com/'), $this->createUrlGenerator());
+
+        $this->assertSame('https://example.com/', $resolver->resolveSiteRoot());
+        $this->assertSame('https://example.com/pages/contact', $resolver->resolve($this->createPage('contact')));
+    }
+
     public function testResolvePathBuildsTheSiteRootForHome(): void
     {
         $resolver = new PagePublicUrlResolver($this->createConfigService('https://example.com'), $this->createUrlGenerator());
