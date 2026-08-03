@@ -286,10 +286,6 @@
                 <source>label.articles</source>
                 <target>Articles</target>
             </trans-unit>
-            <trans-unit id="aXXRVuG">
-                <source>label.audio_not_supported</source>
-                <target>Your browser does not support the audio tag.</target>
-            </trans-unit>
             <trans-unit id="1GXuSep">
                 <source>label.back_to_list</source>
                 <target>Back to list</target>
@@ -386,10 +382,6 @@
                 <source>label.creation</source>
                 <target>Creation</target>
             </trans-unit>
-            <trans-unit id="z7EoShC">
-                <source>label.current</source>
-                <target>current</target>
-            </trans-unit>
             <trans-unit id="TlcjSFt">
                 <source>label.daily</source>
                 <target>Daily</target>
@@ -405,10 +397,6 @@
             <trans-unit id="0.g7Tcu">
                 <source>label.detail</source>
                 <target>Detail</target>
-            </trans-unit>
-            <trans-unit id="tLGn0en">
-                <source>label.download</source>
-                <target>Download</target>
             </trans-unit>
             <trans-unit id="lm9YUiz">
                 <source>label.draft</source>
@@ -902,10 +890,6 @@
                 <source>label.new_password</source>
                 <target>New password</target>
             </trans-unit>
-            <trans-unit id="qQ0RGVI">
-                <source>label.next_slide</source>
-                <target>Next slide</target>
-            </trans-unit>
             <trans-unit id="VZ9ErQ0">
                 <source>label.not_published</source>
                 <target>Not published</target>
@@ -933,10 +917,6 @@
             <trans-unit id="dfCuHTM">
                 <source>label.pages</source>
                 <target>Pages</target>
-            </trans-unit>
-            <trans-unit id="eJLxUVx">
-                <source>label.pages_gallery</source>
-                <target>Pages gallery</target>
             </trans-unit>
             <trans-unit id="hz5aZk6">
                 <source>label.password_confirm</source>
@@ -966,10 +946,6 @@
                 <source>label.preview_mode</source>
                 <target>Unpublished preview - not visible to the public.</target>
             </trans-unit>
-            <trans-unit id="02hgMl1">
-                <source>label.previous_slide</source>
-                <target>Previous slide</target>
-            </trans-unit>
             <trans-unit id="wqV.yBO">
                 <source>label.price_range</source>
                 <target>Price range</target>
@@ -998,14 +974,6 @@
                 <source>label.qrcode_help</source>
                 <target>Right-click to save the image, use it wherever you want</target>
             </trans-unit>
-            <trans-unit id="UmK6KNk">
-                <source>label.readless</source>
-                <target>Read less</target>
-            </trans-unit>
-            <trans-unit id="DAM4HGA">
-                <source>label.readmore</source>
-                <target>Read more...</target>
-            </trans-unit>
             <trans-unit id="Cn7F.4b">
                 <source>label.register</source>
                 <target>Register</target>
@@ -1018,14 +986,6 @@
                 <source>label.save</source>
                 <target>Save</target>
             </trans-unit>
-            <trans-unit id="7V5.lpF">
-                <source>label.slide</source>
-                <target>Slide</target>
-            </trans-unit>
-            <trans-unit id="PzRJxVB">
-                <source>label.slide_navigation</source>
-                <target>Slide navigation</target>
-            </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>
                 <target>Slug</target>
@@ -1037,10 +997,6 @@
             <trans-unit id="71_aLjk">
                 <source>label.start_animation</source>
                 <target>Start animation</target>
-            </trans-unit>
-            <trans-unit id="ru2vORh">
-                <source>label.stop_animation</source>
-                <target>Stop animation</target>
             </trans-unit>
             <trans-unit id="qGVcC.N">
                 <source>label.summary_social_network_help</source>
@@ -1073,10 +1029,6 @@
             <trans-unit id="ExAFOiH">
                 <source>label.user</source>
                 <target>User</target>
-            </trans-unit>
-            <trans-unit id="LOa9pVD">
-                <source>label.video_not_supported</source>
-                <target>Your browser does not support the video tag.</target>
             </trans-unit>
             <trans-unit id="rJFIqnF">
                 <source>label.website</source>

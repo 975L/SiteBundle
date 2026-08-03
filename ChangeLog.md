@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.0.4
+
+Slider, audio and readmore labels follow their components to UiBundle
+
+- Removed the twelve `label.*` entries UiBundle's Slider, Audio and Readmore components used, now served from its own `ui` domain (03/08/2026)
+
 ## v8.0.3
 
 Database pages render through the site's own layout
