@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.0.2
+
+The wizard delivers the scaffold it says it delivered
+
+- `c975l:site:create` installs the scaffold forcefully, a first install having nothing of the site's own to preserve (03/08/2026)
+- Added `SiteCreateCommandTest::testExecuteInstallsTheScaffoldForcefully` (03/08/2026)
+- `c975l/core-bundle` required at `^1.0.1`, where `ScaffoldInstaller::install()` takes `$force` (03/08/2026)
+- Documented `c975l:scaffold:install`'s no-force default in the readme, the wizard no longer being its exact equivalent (03/08/2026)
+
 ## v8.0.1
 
 A page cut short by PHP is refused instead of losing its blocks

@@ -91,7 +91,8 @@ class SiteCreateCommand extends Command
         $this->banner($io);
 
         $io->section('1/7 — Installation du scaffold');
-        $scaffold = $this->scaffoldInstaller->install();
+        // Forced: a first install has nothing of the site's own to preserve, and whatever was there goes to existingFiles/. Left to the installer's no-force default, every file absent from its manifest would stay in place - starting with the src/Entity/User.php and src/Repository/UserRepository.php "make:user", required above, has just written - and the wizard would go on to create the admin account against the bare skeleton User
+        $scaffold = $this->scaffoldInstaller->install(force: true);
         $io->text(sprintf(
             '  ✓ %d fichier(s) copié(s), %d sauvegardé(s) dans existingFiles/, %d déjà à jour',
             $scaffold['copied'],

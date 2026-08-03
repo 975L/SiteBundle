@@ -42,7 +42,7 @@ class SiteCreateCommandTest extends TestCase
     protected function tearDown(): void
     {
         // Only ever holds the few files each test writes below, so a flat cleanup is enough
-        foreach (['/src/Entity/User.php', '/.c975l-site-created', '/config/packages/security.yaml'] as $file) {
+        foreach (['/src/Entity/User.php', '/.c975l-site-created', '/config/packages/security.yaml', '/.env.local'] as $file) {
             if (is_file($this->projectDir . $file)) {
                 unlink($this->projectDir . $file);
             }
@@ -56,10 +56,10 @@ class SiteCreateCommandTest extends TestCase
         }
     }
 
-    private function createCommand(?EntityManagerInterface $em = null, ?AdminUserCreator $adminUserCreator = null): SiteCreateCommand
+    private function createCommand(?EntityManagerInterface $em = null, ?AdminUserCreator $adminUserCreator = null, ?ScaffoldInstaller $scaffoldInstaller = null): SiteCreateCommand
     {
         return new SiteCreateCommand(
-            $this->createStub(ScaffoldInstaller::class),
+            $scaffoldInstaller ?? $this->createStub(ScaffoldInstaller::class),
             $this->createStub(ConfigRepository::class),
             $this->createStub(ConfigServiceInterface::class),
             $this->createStub(VaultEncryptor::class),
@@ -96,6 +96,34 @@ class SiteCreateCommandTest extends TestCase
 
         $this->assertSame(Command::FAILURE, $statusCode);
         $this->assertStringContainsString('Ce site a déjà été créé', $tester->getDisplay());
+    }
+
+    /*
+     * The wizard requires App\Entity\User to exist, so "make:user" has always just written a src/Entity/User.php
+     * and a src/Repository/UserRepository.php the scaffold ships its own version of. Left to its no-force default,
+     * "c975l:scaffold:install" keeps any file its manifest does not vouch for - both of those - and the wizard
+     * would go on to create the admin account against the bare skeleton User. A first install has nothing to
+     * preserve: everything is delivered, and what was there goes to existingFiles/.
+     */
+    public function testExecuteInstallsTheScaffoldForcefully(): void
+    {
+        file_put_contents($this->projectDir . '/src/Entity/User.php', '<?php');
+
+        $forced = null;
+        $installer = $this->createMock(ScaffoldInstaller::class);
+        $installer->method('install')->willReturnCallback(function (array $paths = [], bool $dryRun = false, bool $force = false) use (&$forced): array {
+            $forced = $force;
+
+            return ['copied' => 0, 'backedUp' => 0, 'skipped' => 0, 'files' => [], 'diverged' => [], 'unmatched' => []];
+        });
+
+        // The wizard goes on to prompt for the admin account, which is not what this locks - it stops on the unanswered prompt
+        try {
+            (new CommandTester($this->createCommand(scaffoldInstaller: $installer)))->execute([]);
+        } catch (\Throwable) {
+        }
+
+        $this->assertTrue($forced, 'The site-creation wizard installed the scaffold without --force, leaving make:user\'s own User entity in place.');
     }
 
     // No confirmation prompt, the password being echoed; the stream's third answer must stay unread. What the account itself ends up holding (hashing, roles, verified/enabled) is ConfigBundle's AdminUserCreator's own business, covered by its own test

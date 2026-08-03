@@ -753,7 +753,7 @@ of which bundle's `configs.json` defined it); slugs that aren't found (bundle no
 
 ### Installing a bundle's scaffold on an existing site
 
-`c975l:scaffold:install` is shipped by [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) — the tool installing every bundle's `scaffold/` has no reason to live in one of them — and is the standalone, re-runnable equivalent of step 1 of `c975l:site:create`
+`c975l:scaffold:install` is shipped by [c975L/ConfigBundle](https://github.com/975L/ConfigBundle) — the tool installing every bundle's `scaffold/` has no reason to live in one of them — and is the standalone, re-runnable counterpart of step 1 of `c975l:site:create`
 (the one gated by `.c975l-site-created`). Use it whenever you `composer require` a c975L bundle
 into a site that's already past the one-shot wizard, to pull in that bundle's
 `scaffold/{src,templates,tests,translations,assets}` files:
@@ -762,9 +762,12 @@ into a site that's already past the one-shot wizard, to pull in that bundle's
 php bin/console c975l:scaffold:install
 ```
 
-Same backup behavior as the wizard: any target file it would overwrite is moved to
-`existingFiles/<same path>.old` first (never silently erased), and a target already identical to
-the scaffold source is left untouched — so running it again on an unmodified project is a no-op.
+Where the wizard forces its install — a brand new site has nothing of its own to preserve — this
+one keeps what the site made its own: a target already identical to the scaffold source is left
+untouched (so running it again on an unmodified project is a no-op), a target the site never
+touched is refreshed silently, and a target the site has customized since is reported rather than
+overwritten. `--force` takes the wizard's behavior back for those, each moved to
+`existingFiles/<same path>.old` first (never silently erased).
 `assets/` files are the one exception: once a target exists there, it's left alone for good (no
 backup, no overwrite, even if the bundle's own copy later changes) since it's meant to become the
 app's own editable file from that first copy onward — see [A site's own theme](#a-sites-own-theme).
