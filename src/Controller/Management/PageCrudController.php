@@ -31,6 +31,7 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\OgImageType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
+use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\DBAL\Connection;
@@ -67,6 +68,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Endroid\QrCode\Builder\Builder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
@@ -104,7 +106,17 @@ class PageCrudController extends AbstractCrudController
         return Page::class;
     }
 
-    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling entirely for the whole field.
+    /*
+     * Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent
+     * an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove
+     * handling entirely for the whole field.
+     *
+     * A whole page is one form - every block, every nested slot, every media in a single POST - so it is also the
+     * one that reaches PHP's max_input_vars first. Past that limit PHP drops the rest of the body silently, and
+     * the blocks that fell past the cut arrive as that same absent key: read as "the editor removed them", they
+     * are deleted for good. Nothing here can recover what PHP never parsed, so a short body is refused outright
+     * and said so, rather than half-saved. BlockType applies the same guard to a container's own slots.
+     */
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -112,6 +124,15 @@ class PageCrudController extends AbstractCrudController
         $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
             $data = $event->getData();
             if (!is_array($data)) {
+                return;
+            }
+
+            // Read once and passed on, so the limit the check ran against is the one the message names
+            $limit = (int) ini_get('max_input_vars');
+            if (SubmissionIntegrity::isTruncated($this->requestStack->getCurrentRequest()?->request->all() ?? [], $limit)) {
+                // Added in PRE_SUBMIT, before validation, so it survives to the rendered form; the whole submission is invalid from here and nothing is written
+                $event->getForm()->addError(new FormError($this->translator->trans('text.page_submission_truncated', ['%limit%' => $limit], 'site')));
+
                 return;
             }
 

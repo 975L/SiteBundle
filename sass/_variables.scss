@@ -99,8 +99,8 @@
     --footer-width: 100vw;
     --footer-margin-x: calc(50% - 50vw);
     --footer-padding: 2em 15px 3em 15px;
-    // Gap between the page's last content and the footer band - a template stacking colored flats sets it to 0 so the footer follows the previous flat with no strip of page background between them
-    --footer-margin-top: 3em;
+    // Gap between the page's last content and the footer band - a template stacking colored flats sets it to 0 so the footer follows the previous flat with no strip of page background between them. The page's own step (UiBundle's --section-space, read with the same fallback so a site retuning it moves both), rather than a fixed 3em: the mobile base doesn't move (48px, what 3em gave and where the step starts) and the gap grows from there with the viewport, up to the 84px the sections part by, where a fixed value stayed short
+    --footer-margin-top: var(--section-space, clamp(48px, 8vw, 84px));
     // Toward the footer's own text color, not the black wash .menu-link uses (_menu.scss): a wash only ever darkens, so it disappears on a dark footer band - which the default one becomes as soon as the admin picks a dark primary. Mixing toward --footer-text contrasts in whichever direction that footer needs (it lightens a dark band, darkens a pale one). A template going for a plain/minimal footer sets this to transparent instead
     --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text));
     --disabled: #808080;

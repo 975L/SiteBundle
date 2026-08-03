@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.0.1
+
+A page cut short by PHP is refused instead of losing its blocks
+
+- `ContentAccessTest` imports `Redirect` and `RedirectRepository` from ConfigBundle, where they moved (03/08/2026)
+- `--footer-margin-top` reads UiBundle's `--section-space` instead of a fixed `3em` (03/08/2026)
+- `FooterMarginTopTest` and the scaffolded `site.css` follow, the token's default no longer being a bare length (03/08/2026)
+- `PageCrudController` refuses a submission PHP truncated at `max_input_vars` instead of deleting the blocks that fell past the cut (03/08/2026)
+- Added the `text.page_submission_truncated` message in the three locales (03/08/2026)
+- Added `PageSubmissionGuardTest`, locking the guard ahead of the pruning and the normalization (03/08/2026)
+- Documented `max_input_vars` in the readme's page management section (03/08/2026)
+
 ## v8.0.0
 
 A satellite bundle like the others, sitting on Core (Config + Ui)

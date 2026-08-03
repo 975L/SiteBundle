@@ -37,10 +37,11 @@ class FooterMarginTopTest extends TestCase
             sprintf('"%s" hardcodes the footer\'s top margin instead of reading its token.', $file)
         );
 
+        // The page's own step, so the footer is parted from the last section the way any two sections are
         $this->assertStringContainsString(
-            '--footer-margin-top:3em',
+            '--footer-margin-top:var(--section-space,clamp(48px,8vw,84px))',
             $css,
-            sprintf('"%s" does not declare the token\'s default value, leaving the footer with no gap.', $file)
+            sprintf('"%s" does not declare the token\'s default value, leaving the footer with no gap - or declares it as a fixed length, which stops following the page\'s rhythm as soon as the viewport widens.', $file)
         );
     }
 
@@ -50,7 +51,7 @@ class FooterMarginTopTest extends TestCase
         $path = dirname(__DIR__) . '/scaffold/assets/styles/themes/site.css';
         $this->assertFileExists($path);
 
-        $this->assertStringContainsString('--footer-margin-top: 3em;', (string) file_get_contents($path));
+        $this->assertStringContainsString('--footer-margin-top: var(--section-space, clamp(48px, 8vw, 84px));', (string) file_get_contents($path));
     }
 
     // Strips comments and collapses whitespace, so the same assertions hold on the minified sheet

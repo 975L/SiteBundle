@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-03",
+        "description": [
+            {
+                "en": "A page holding too many blocks to be sent in one go is now refused with an explanation, instead of being saved with the blocks the browser couldn't send missing",
+                "fr": "Une page comptant trop de blocs pour être envoyée d'un seul tenant est désormais refusée avec une explication, au lieu d'être enregistrée sans les blocs que le navigateur n'a pas pu envoyer",
+                "es": "Una página con demasiados bloques para enviarse de una vez ahora se rechaza con una explicación, en lugar de guardarse sin los bloques que el navegador no pudo enviar"
+            }
+        ]
+    },
+    {
         "date": "2026-08-02",
         "description": [
             {

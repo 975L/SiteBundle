@@ -2,10 +2,10 @@
 
 namespace App\Tests\Controller;
 
+use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Repository\RedirectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 

@@ -38,9 +38,10 @@
     /* --footer-width: 100vw; */
     /* --footer-margin-x: calc(50% - 50vw); */
     /* --footer-padding: 2em 15px 3em 15px; */
-    /* Gap before the footer band - set it to 0 for a design stacking colored flats, where a strip of
-       page background between the last section and the footer would break the run */
-    /* --footer-margin-top: 3em; */
+    /* Gap before the footer band - the page's own step, so the footer follows the same rhythm as any two
+       sections at every width. Set it to 0 for a design stacking colored flats, where a strip of page
+       background between the last section and the footer would break the run */
+    /* --footer-margin-top: var(--section-space, clamp(48px, 8vw, 84px)); */
     /* Toward the footer's own text color, not a black wash: a wash only ever darkens, so it disappears
        on a dark footer band - this contrasts in whichever direction the footer needs */
     /* --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text)); */

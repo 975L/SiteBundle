@@ -1138,6 +1138,10 @@
                 <source>text.only_french</source>
                 <target>Solo el texto en francés es válido, los demás idiomas son traducciones.</target>
             </trans-unit>
+            <trans-unit id="MlF.VJl">
+                <source>text.page_submission_truncated</source>
+                <target>La página no se ha guardado: el navegador envió suficientes campos para alcanzar el límite de %limit% de PHP, más allá del cual el resto del cuerpo se descarta sin avisar. Guardar habría eliminado los bloques que faltaban. Aumente "max_input_vars" (php.ini), o divida esta página en dos.</target>
+            </trans-unit>
             <trans-unit id="LgVtsQ.">
                 <source>text.registration_disabled</source>
                 <target>El registro no está abierto en este momento.</target>

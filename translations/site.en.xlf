@@ -1138,6 +1138,10 @@
                 <source>text.only_french</source>
                 <target>Only the French text is authoritative, the other languages being translations.</target>
             </trans-unit>
+            <trans-unit id="MlF.VJl">
+                <source>text.page_submission_truncated</source>
+                <target>The page was not saved: the browser sent enough fields to reach PHP's limit of %limit%, past which the rest of the body is dropped without warning. Saving would have deleted the blocks that went missing. Raise "max_input_vars" (php.ini), or split this page in two.</target>
+            </trans-unit>
             <trans-unit id="LgVtsQ.">
                 <source>text.registration_disabled</source>
                 <target>Registration is not currently open.</target>

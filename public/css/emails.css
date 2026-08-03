@@ -74,7 +74,7 @@
   --footer-width: 100vw;
   --footer-margin-x: calc(50% - 50vw);
   --footer-padding: 2em 15px 3em 15px;
-  --footer-margin-top: 3em;
+  --footer-margin-top: var(--section-space, clamp(48px, 8vw, 84px));
   --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text));
   --disabled: #808080;
   --font-family-title: var(--c975l-font-family-title, sans-serif);
@@ -178,5 +178,3 @@ footer a:hover .img-above,
 footer a:visited:hover .img-above {
   color: var(--footer-text-hover);
 }
-
-/*# sourceMappingURL=emails.css.map */

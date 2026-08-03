@@ -1138,6 +1138,10 @@
                 <source>text.only_french</source>
                 <target>Seul le texte en français fait foi, les autres langues étant des traductions.</target>
             </trans-unit>
+            <trans-unit id="MlF.VJl">
+                <source>text.page_submission_truncated</source>
+                <target>La page n'a pas été enregistrée : le navigateur a envoyé assez de champs pour atteindre la limite de %limit% de PHP, au-delà de laquelle le reste du corps est coupé sans prévenir. Enregistrer aurait supprimé les blocs manquants. Faites porter à « max_input_vars » (php.ini) une valeur plus haute, ou scindez cette page en plusieurs.</target>
+            </trans-unit>
             <trans-unit id="LgVtsQ.">
                 <source>text.registration_disabled</source>
                 <target>La création de compte n'est pas ouverte pour le moment.</target>
