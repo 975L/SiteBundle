@@ -11,13 +11,13 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\EssentialActionProviderInterface;
-use c975L\SiteBundle\Controller\Management\FontCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Menu;
-use c975L\SiteBundle\Repository\FontRepository;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Controller\Management\FontCrudController;
+use c975L\UiBundle\Repository\FontRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 

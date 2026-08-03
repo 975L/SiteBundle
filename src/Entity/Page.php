@@ -185,6 +185,15 @@ class Page implements HasBlocksInterface
         return $this;
     }
 
+    // An unpublished page is never referenced either: whatever unpublished it (the edit form, the trash, publishAsReplacement(), a duplication, an import) and in whatever order its setters were called, isIndexable follows isPublished down. Republishing never puts it back - referencing a page again is a deliberate call, made by re-checking the field. Enforced here rather than in setIsPublished(), which the edit form calls before setIsIndexable() and would let the submitted "true" win right after. PreFlush and not PreUpdate: the changeset is computed after this runs, where a PreUpdate callback's own writes come too late to be persisted
+    #[ORM\PreFlush]
+    public function unreferenceWhenUnpublished(): void
+    {
+        if (!$this->isPublished) {
+            $this->isIndexable = false;
+        }
+    }
+
     public function isIndexable(): bool
     {
         return $this->isIndexable;

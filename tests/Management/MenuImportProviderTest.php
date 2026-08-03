@@ -11,11 +11,11 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Menu;
-use c975L\SiteBundle\Management\BlockDataImporter;
 use c975L\SiteBundle\Management\MenuImportProvider;
 use c975L\SiteBundle\Repository\MenuRepository;
-use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Management\BlockDataImporter;
+use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -32,7 +32,7 @@ class MenuImportProviderTest extends TestCase
     public function testSupportsImportOnlyMatchesSiteMenuKind(): void
     {
         $em = $this->createStub(EntityManagerInterface::class);
-        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $this->assertTrue($provider->supportsImport('site_menu'));
         $this->assertFalse($provider->supportsImport('site_page'));
@@ -46,7 +46,7 @@ class MenuImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $result = $provider->import([[
             'location' => Menu::LOCATION_FOOTER,
@@ -76,7 +76,7 @@ class MenuImportProviderTest extends TestCase
         $existingMenu->addBlock($existingBlock);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $result = $provider->import([[
             'location' => Menu::LOCATION_NAVBAR,

@@ -13,9 +13,9 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\SiteEssentialActionProvider;
-use c975L\SiteBundle\Repository\FontRepository;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Repository\FontRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 

@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Listener;
 
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Listener\AbstractBlockCacheInvalidationListener;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;

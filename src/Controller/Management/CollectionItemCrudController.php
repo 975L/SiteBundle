@@ -12,12 +12,12 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
-use c975L\SiteBundle\Form\VichImageOptions;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\UiBundle\Form\VichImageOptions;
+use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -47,8 +47,6 @@ use function Symfony\Component\Translation\t;
 // Generic "title/description/image/link" item, belonging to a CollectionGroup (e.g. "Projects") so this one CRUD/table can back several unrelated collections across sites - see CollectionItemSourceProvider, exposing one CollectionSourceProviderInterface source per CollectionGroup to UiBundle's "collection" block.
 class CollectionItemCrudController extends AbstractCrudController
 {
-    use UniqueSlugTrait;
-
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
@@ -272,7 +270,7 @@ class CollectionItemCrudController extends AbstractCrudController
             return;
         }
 
-        $collectionItem->setSlug($this->uniqueSlug(
+        $collectionItem->setSlug(UniqueSlug::build(
             $this->slugger,
             $slug,
             fn (string $candidate): bool => $this->slugCollides($collectionItem, $candidate)

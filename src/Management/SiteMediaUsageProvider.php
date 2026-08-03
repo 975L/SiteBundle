@@ -11,29 +11,18 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\SiteBundle\Controller\Management\PageCrudController;
-use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\MediaUsageProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use c975L\UiBundle\Service\BlockFocusUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// Resolves, for UiBundle's generic Media library, where a Media is used within SiteBundle's own entities: as a site-wide graphic role, as a Page's og-image, or attached to a Block owned by a Page
+// Resolves, for UiBundle's generic Media library, where a Media is used within SiteBundle's own entities: as a Page's og-image, or attached to a Block owned by a Page. The site-wide graphic roles (favicon, logo...) are UiBundle's own, see its SiteGraphicMediaUsageProvider
 class SiteMediaUsageProvider implements MediaUsageProviderInterface
 {
-    use BlockFocusUrlTrait;
-
-    private const ROLE_LABELS = [
-        Media::ROLE_FAVICON => 'label.favicon',
-        Media::ROLE_APPLE_TOUCH_ICON => 'label.apple_touch_icon',
-        Media::ROLE_OG_IMAGE => 'label.og_image',
-        Media::ROLE_LOGO => 'label.logo',
-        Media::ROLE_ERROR_IMAGE => 'label.error_image',
-    ];
-
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
@@ -44,31 +33,10 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
     public function getUsages(array $medias): array
     {
         $usages = [];
-        $this->addRoleUsages($usages, $medias);
         $this->addBlockUsages($usages, $medias);
         $this->addOgImageUsages($usages, array_map(static fn (Media $media): ?int => $media->getId(), $medias));
 
         return $usages;
-    }
-
-    // A media carrying a role is one of the site's own graphics (favicon, logo...), edited from its own screen rather than from a page
-    private function addRoleUsages(array &$usages, array $medias): void
-    {
-        foreach ($medias as $media) {
-            if (null === $media->getRole()) {
-                continue;
-            }
-
-            $usages[$media->getId()][] = [
-                'label' => $this->translator->trans(self::ROLE_LABELS[$media->getRole()] ?? $media->getRole(), [], 'site'),
-                'url' => $this->adminUrlGenerator
-                    ->unsetAll()
-                    ->setController(SiteGraphicCrudController::class)
-                    ->setAction(Action::EDIT)
-                    ->setEntityId($media->getId())
-                    ->generateUrl(),
-            ];
-        }
     }
 
     // Every page holding a block one of these medias belongs to, in a single query for the whole batch rather than one per media
@@ -121,6 +89,6 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
     // $block: when given, the URL also opens/scrolls straight to that block's row on the Page edit form (see BlockFocusController) instead of leaving the user to find it among every other block
     private function pageEditUrl(Page $page, ?Block $block = null): string
     {
-        return $this->blockFocusUrl($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
+        return BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
     }
 }

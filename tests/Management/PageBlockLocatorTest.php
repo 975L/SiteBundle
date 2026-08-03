@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class PageBlockLocatorTest extends TestCase
 {
-    // Every setter returns the generator itself (BlockFocusUrlTrait chains them), and generateUrl() echoes back whatever focusBlock was set - all this test cares about is which block was pointed at
+    // Every setter returns the generator itself (BlockFocusUrl chains them), and generateUrl() echoes back whatever focusBlock was set - all this test cares about is which block was pointed at
     private function createLocator(): PageBlockLocator
     {
         $focusBlock = null;

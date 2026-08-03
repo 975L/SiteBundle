@@ -10,21 +10,22 @@
 
 namespace c975L\SiteBundle\Tests\Controller\Management;
 
+use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Entity\Redirect;
 use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
 use c975L\SiteBundle\Form\Type\PageQrCodeType;
-use c975L\SiteBundle\Management\BlockDataExporter;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Management\BlockDataExporter;
+use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -154,7 +155,7 @@ class PageCrudControllerTest extends TestCase
         ?TableExporter $tableExporter = null,
         ?ContentExporter $contentExporter = null,
         ?PageExportProvider $pageExportProvider = null,
-        ?CsrfTokenManagerInterface $csrfTokenManager = null,
+        ?BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder = null,
     ): PageCrudController {
         $translatorStub = $translator ?? $this->createStub(TranslatorInterface::class);
         if (null === $translator) {
@@ -177,7 +178,7 @@ class PageCrudControllerTest extends TestCase
             $tableExporter ?? $this->createStub(TableExporter::class),
             $contentExporter ?? $this->createStub(ContentExporter::class),
             $pageExportProvider ?? new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
-            $csrfTokenManager ?? $this->createStub(CsrfTokenManagerInterface::class),
+            $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
         );
     }
 
@@ -202,6 +203,21 @@ class PageCrudControllerTest extends TestCase
     }
 
     // --- persistEntity ------------------------------------------------------------------------------
+
+    // A real builder over stubs: what these tests assert is the row_attr a field ends up carrying, not the builder's own wiring (covered by UiBundle)
+    private function createBlockMoveRowAttrBuilder(string $url = '/admin/ui/block/move', string $token = 'token123'): BlockMoveRowAttrBuilder
+    {
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')->willReturn($url);
+
+        $csrfTokenManager = $this->createStub(CsrfTokenManagerInterface::class);
+        $csrfTokenManager->method('getToken')->willReturn(new CsrfToken(BlockMoveRowAttrBuilder::ROUTE, $token));
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+
+        return new BlockMoveRowAttrBuilder($urlGenerator, $csrfTokenManager, $translator);
+    }
 
     public function testPersistEntitySetsDatesSlugifiesAndDelegatesToParent(): void
     {
@@ -420,32 +436,6 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($capturedCopy->isPublished());
     }
 
-    // A copy of a deliberately noindex page (eg. "creer-un-compte") must not silently reappear in the sitemap, so isIndexable is carried over like the other SEO attributes
-    public function testDuplicateCarriesOverIsIndexable(): void
-    {
-        $source = (new Page())->setTitle('Original')->setSlug('original')->setIsIndexable(false);
-
-        $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findOneBy')->willReturn(null);
-
-        $capturedCopy = null;
-        $manager = $this->createStub(EntityManagerInterface::class);
-        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$capturedCopy): void {
-            $capturedCopy = $entity;
-        });
-
-        $controller = $this->createController(pageRepository: $pageRepository);
-        $controller->setContainer($this->createContainer([
-            'security.authorization_checker' => $this->createAuthorizationChecker(true),
-            'request_stack' => $this->createRequestStackWithSession(),
-        ]));
-
-        $controller->duplicate($this->createAdminContext($source), $manager);
-
-        $this->assertInstanceOf(Page::class, $capturedCopy);
-        $this->assertFalse($capturedCopy->isIndexable());
-    }
-
     public function testDuplicateClonesEachBlockWithItsOwnMedias(): void
     {
         $source = (new Page())->setTitle('Original')->setSlug('original');
@@ -532,6 +522,38 @@ class PageCrudControllerTest extends TestCase
         $this->assertNull($copy->getReplaces());
     }
 
+    // The copy takes the original's referencing state over along with its slug, so an indexed url doesn't silently turn noindex the day the page behind it is replaced. The value has to be read before the swap: the first flush unpublishes the original and Page::unreferenceWhenUnpublished() drops its own isIndexable right there - the callback below plays that PreFlush rule on each flush, as Doctrine would
+    public function testPublishAsReplacementCarriesOverIsIndexableFromTheOriginal(): void
+    {
+        $original = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true)->setIsIndexable(true);
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($original, 7);
+        $copy = (new Page())->setTitle('Home (copy)')->setSlug('home-copy')->setReplaces(7)->setIsIndexable(false);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('find')->willReturn($original);
+        $pageRepository->method('findOneBy')->willReturn(null);
+
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('flush')->willReturnCallback(static function () use ($original, $copy): void {
+            $original->unreferenceWhenUnpublished();
+            $copy->unreferenceWhenUnpublished();
+        });
+        $manager->method('wrapInTransaction')->willReturnCallback(
+            static fn (callable $func) => $func()
+        );
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->publishAsReplacement($this->createAdminContext($copy), $manager);
+
+        $this->assertTrue($copy->isIndexable());
+        $this->assertFalse($original->isIndexable());
+    }
+
     // The original may already be gone (deleted/renamed since the copy was created) - aborts safely, flashes an error, never touches the copy
     public function testPublishAsReplacementFlashesErrorWhenOriginalNotFound(): void
     {
@@ -608,32 +630,6 @@ class PageCrudControllerTest extends TestCase
     }
 
     // --- uniqueSlug (private) -------------------------------------------------------------------------
-
-    public function testUniqueSlugReturnsTheBaseSlugWhenAvailable(): void
-    {
-        $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findOneBy')->willReturn(null);
-
-        $controller = $this->createController(pageRepository: $pageRepository);
-        $collides = static fn (string $candidate): bool => null !== $pageRepository->findOneBy(['slug' => $candidate]);
-
-        $this->assertSame('my-page', $this->invokePrivate($controller, 'uniqueSlug', [new AsciiSlugger(), 'My Page', $collides]));
-    }
-
-    // Appends -2, -3... on collision, matching the class comment's own documented behavior
-    public function testUniqueSlugAppendsASuffixOnCollision(): void
-    {
-        $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findOneBy')->willReturnMap([
-            [['slug' => 'my-page'], null, new Page()],
-            [['slug' => 'my-page-2'], null, null],
-        ]);
-
-        $controller = $this->createController(pageRepository: $pageRepository);
-        $collides = static fn (string $candidate): bool => null !== $pageRepository->findOneBy(['slug' => $candidate]);
-
-        $this->assertSame('my-page-2', $this->invokePrivate($controller, 'uniqueSlug', [new AsciiSlugger(), 'My Page', $collides]));
-    }
 
     // --- slugifyPage (private) -------------------------------------------------------------------------
 
@@ -948,6 +944,15 @@ class PageCrudControllerTest extends TestCase
         $this->assertArrayNotHasKey('data-controller', $isIndexable->getAsDto()->getFormTypeOptions()['attr'] ?? []);
     }
 
+    // Both switches toggle the entity through ajax on the index, where unpublishing also unreferences (see Page::unreferenceWhenUnpublished()) - "publication-switch" is what keeps the "isIndexable" one from showing a value the database no longer holds. Set as an html attribute: that's what EasyAdmin renders on the index <td>, form type options never reaching it
+    public function testConfigureFieldsAddsPublicationSwitchControllerOnIsPublishedCell(): void
+    {
+        $fields = $this->createController()->configureFields(Crud::PAGE_INDEX);
+        $isPublished = $this->findFieldByProperty($fields, 'isPublished');
+
+        $this->assertSame('publication-switch', $isPublished->getAsDto()->getHtmlAttributes()['data-controller'] ?? null);
+    }
+
     // No entity yet (new page) - blockMoveRowAttr() has nothing to key the move on, so the "blocks" field gets no row_attr at all rather than a partial/broken one
     public function testConfigureFieldsBlocksFieldHasNoRowAttrOnNewPage(): void
     {
@@ -957,7 +962,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame([], $blocks->getAsDto()->getFormTypeOptions()['row_attr'] ?? null);
     }
 
-    // Editing an already-saved page - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see BlockMoveRowAttrTrait)
+    // Editing an already-saved page - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see UiBundle's BlockMoveRowAttrBuilder)
     public function testConfigureFieldsBlocksFieldRowAttrCarriesBlockMoveDataOnEditPage(): void
     {
         $page = (new Page())->setTitle('x')->setSlug('about');
@@ -966,12 +971,9 @@ class PageCrudControllerTest extends TestCase
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturn('/admin/ui/block/move');
 
-        $csrfTokenManager = $this->createStub(CsrfTokenManagerInterface::class);
-        $csrfTokenManager->method('getToken')->willReturn(new CsrfToken('management_ui_block_move', 'token123'));
-
         $controller = $this->createController(
             adminContextProvider: $this->createAdminContextProvider($this->createAdminContext($page)),
-            csrfTokenManager: $csrfTokenManager,
+            blockMoveRowAttrBuilder: $this->createBlockMoveRowAttrBuilder(),
         );
         $controller->setContainer($this->createContainer(['router' => $router]));
 

@@ -13,10 +13,10 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\MixedContentClient;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -28,7 +28,7 @@ class MixedContentHealthCheckProvider implements HealthCheckProviderInterface
         private readonly MixedContentClient $mixedContentClient,
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly PageEditUrlResolver $pageEditUrlResolver,
-        private readonly PageExistenceChecker $pageExistenceChecker,
+        private readonly UrlStatusChecker $urlStatusChecker,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
     ) {
@@ -60,7 +60,7 @@ class MixedContentHealthCheckProvider implements HealthCheckProviderInterface
 
     private function checkPage(string $url, ?string $label, ?string $editUrl): array
     {
-        if (!$this->pageExistenceChecker->exists($url)) {
+        if (!$this->urlStatusChecker->exists($url)) {
             return [
                 'url' => $url,
                 'label' => $label,

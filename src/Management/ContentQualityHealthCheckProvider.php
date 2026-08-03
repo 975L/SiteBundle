@@ -10,12 +10,13 @@
 
 namespace c975L\SiteBundle\Management;
 
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 
-// Runs the content-quality checks (see ContentQualityAnalyzer, which does the actual work and is shared with DeclaredUrlsHealthCheckProvider) over this bundle's own published pages. Only the url list is this class's business: each Page is carried along with its url so every offence found in the rendered html can be traced back to the block holding it
+// Runs the content-quality checks (see ConfigBundle's ContentQualityAnalyzer, which does the actual work and is shared with DeclaredUrlsHealthCheckProvider) over this bundle's own published pages. Only the url list is this class's business: each Page is carried along with its url as the entry's 'source', which PageContentOffenceLocator turns back into the block holding each offence found in the rendered html
 class ContentQualityHealthCheckProvider implements HealthCheckProviderInterface
 {
     public function __construct(
@@ -40,7 +41,7 @@ class ContentQualityHealthCheckProvider implements HealthCheckProviderInterface
                 return [];
             }
 
-            $pages[] = ['url' => $url, 'label' => $page->getTitle(), 'editUrl' => $this->pageEditUrlResolver->resolve($page), 'page' => $page];
+            $pages[] = ['url' => $url, 'label' => $page->getTitle(), 'editUrl' => $this->pageEditUrlResolver->resolve($page), 'source' => $page];
         }
 
         return $this->contentQualityAnalyzer->analyze($pages);

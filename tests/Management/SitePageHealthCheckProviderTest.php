@@ -14,11 +14,11 @@ use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\SitePageHealthCheckProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageSpeedInsightsClient;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
@@ -60,9 +60,9 @@ class SitePageHealthCheckProviderTest extends TestCase
         return $configService;
     }
 
-    private function createPageExistenceChecker(bool $exists = true): PageExistenceChecker
+    private function createUrlStatusChecker(bool $exists = true): UrlStatusChecker
     {
-        $checker = $this->createStub(PageExistenceChecker::class);
+        $checker = $this->createStub(UrlStatusChecker::class);
         $checker->method('exists')->willReturn($exists);
 
         return $checker;
@@ -106,7 +106,7 @@ class SitePageHealthCheckProviderTest extends TestCase
         ConfigServiceInterface $configService,
         ?ConfigRepository $configRepository = null,
         ?ConfigEditUrlResolver $configEditUrlResolver = null,
-        ?PageExistenceChecker $pageExistenceChecker = null,
+        ?UrlStatusChecker $urlStatusChecker = null,
         ?PageEditUrlResolver $pageEditUrlResolver = null,
     ): SitePageHealthCheckProvider {
         return new SitePageHealthCheckProvider(
@@ -114,7 +114,7 @@ class SitePageHealthCheckProviderTest extends TestCase
             $pageSpeedInsightsClient,
             new PagePublicUrlResolver($configService, $this->createUrlGenerator()),
             $pageEditUrlResolver ?? $this->createPageEditUrlResolver(),
-            $pageExistenceChecker ?? $this->createPageExistenceChecker(),
+            $urlStatusChecker ?? $this->createUrlStatusChecker(),
             $configService,
             $configRepository ?? $this->createConfigRepository(),
             $configEditUrlResolver ?? $this->createConfigEditUrlResolver(),
@@ -313,7 +313,7 @@ class SitePageHealthCheckProviderTest extends TestCase
             $this->createPageRepository([$this->createPage('home', 'Home')]),
             $pageSpeedInsightsClient,
             $this->createConfigService('https://example.com'),
-            pageExistenceChecker: $this->createPageExistenceChecker(false),
+            urlStatusChecker: $this->createUrlStatusChecker(false),
         );
 
         $result = $provider->runChecks()[0];
@@ -331,8 +331,8 @@ class SitePageHealthCheckProviderTest extends TestCase
             'consoleErrors' => [],
         ]);
 
-        $pageExistenceChecker = $this->createStub(PageExistenceChecker::class);
-        $pageExistenceChecker->method('exists')->willReturnCallback(
+        $urlStatusChecker = $this->createStub(UrlStatusChecker::class);
+        $urlStatusChecker->method('exists')->willReturnCallback(
             static fn (string $url): bool => !str_contains($url, 'contact')
         );
 
@@ -340,7 +340,7 @@ class SitePageHealthCheckProviderTest extends TestCase
             $this->createPageRepository([$this->createPage('home', 'Home'), $this->createPage('contact', 'Contact'), $this->createPage('about', 'About')]),
             $pageSpeedInsightsClient,
             $this->createConfigService('https://example.com'),
-            pageExistenceChecker: $pageExistenceChecker,
+            urlStatusChecker: $urlStatusChecker,
         );
 
         $results = $provider->runChecks();

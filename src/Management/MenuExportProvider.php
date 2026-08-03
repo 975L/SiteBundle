@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ExportProviderInterface;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\UiBundle\Management\BlockDataExporter;
 
 // Serializes Menus (one row per location - see Menu::LOCATION_*, own Block collection) into the shape ContentExporter/MenuImportProvider expect, for the "export sync all" dashboard shortcut (see ConfigBundle's SyncAllExporter)
 class MenuExportProvider implements ExportProviderInterface

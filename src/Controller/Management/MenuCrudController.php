@@ -12,7 +12,6 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\MenuRepository;
@@ -20,6 +19,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Registry\BlockRegistry;
+use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -39,7 +39,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Symfony\Component\Translation\t;
@@ -47,8 +46,6 @@ use function Symfony\Component\Translation\t;
 // Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
-    use BlockMoveRowAttrTrait;
-
     private const LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
@@ -64,7 +61,7 @@ class MenuCrudController extends AbstractCrudController
         private readonly MenuRepository $menuRepository,
         private readonly TranslatorInterface $translator,
         private readonly AdminContextProvider $adminContextProvider,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
         private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
@@ -173,7 +170,7 @@ class MenuCrudController extends AbstractCrudController
                 ->setFormTypeOption('by_reference', false)
                 // A navbar only offers "menu_link", a navigation bar being a plain list of links
                 ->setFormTypeOption('entry_options.context', $isNavbar ? BlockRegistry::MENU_NAVBAR_CONTEXT : BlockRegistry::MENU_CONTEXT)
-                ->setFormTypeOption('row_attr', $this->blockMoveRowAttr(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
+                ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
                 ->onlyWhenUpdating(),
         ];
     }

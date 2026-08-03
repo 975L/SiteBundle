@@ -18,7 +18,8 @@ class ReadingMeasureTest extends TestCase
     // As it reads once normalized: the space following each comma is squeezed out along with the rest
     private const MEASURE = 'max-width:var(--reading-max-width,min(75ch,90vw))';
 
-    private const MEASURED_SELECTORS = ['.legal div', '.text', '.site-article'];
+    // ".legal div" left with the legal models themselves: UiBundle now states the same measure for them
+    private const MEASURED_SELECTORS = ['.text', '.site-article'];
 
     /**
      * @return array<string, array{string}>
@@ -32,7 +33,7 @@ class ReadingMeasureTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
-    public function testTheThreeReadingRulesShareOneTokenisedMeasure(string $file): void
+    public function testTheReadingRulesShareOneTokenisedMeasure(string $file): void
     {
         $declarations = $this->declarationsOf($this->normalize($file), self::MEASURED_SELECTORS, $file);
 
@@ -69,7 +70,7 @@ class ReadingMeasureTest extends TestCase
     }
 
     /**
-     * The body of the one rule carrying every selector, the three being meant to stay in a single rule.
+     * The body of the one rule carrying every selector, all of them being meant to stay in a single rule.
      *
      * @param list<string> $selectors
      */

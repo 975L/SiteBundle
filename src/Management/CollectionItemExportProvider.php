@@ -10,17 +10,15 @@
 
 namespace c975L\SiteBundle\Management;
 
+use c975L\ConfigBundle\Management\ArchiveFileRegistrar;
 use c975L\ConfigBundle\Management\ExportProviderInterface;
 use c975L\SiteBundle\Entity\CollectionItem;
-use c975L\SiteBundle\Management\Trait\ArchiveFileTrait;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 // Serializes CollectionItems (title/description/url/position + the real file bundled in the archive, if any) into the shape ContentExporter/CollectionItemImportProvider expect - for the "export sync all" dashboard shortcut (see ConfigBundle's SyncAllExporter). The "user" who uploaded an item is deliberately left out: App\Entity\User ids never match between dev and prod
 class CollectionItemExportProvider implements ExportProviderInterface
 {
-    use ArchiveFileTrait;
-
     public function __construct(
         private readonly CollectionItemRepository $collectionItemRepository,
         #[Autowire('%kernel.project_dir%')]
@@ -67,7 +65,7 @@ class CollectionItemExportProvider implements ExportProviderInterface
             return $data;
         }
 
-        $registered = $this->registerArchiveFile($this->projectDir, $filename, $files);
+        $registered = ArchiveFileRegistrar::register($this->projectDir, $filename, $files);
         if (null === $registered) {
             return $data;
         }

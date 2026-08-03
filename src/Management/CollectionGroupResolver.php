@@ -10,16 +10,14 @@
 
 namespace c975L\SiteBundle\Management;
 
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
+use c975L\UiBundle\Service\UniqueSlug;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 // Shared by CollectionItemImportProvider (Sync import) and CollectionItemImportCommand (legacy JSON import) - both used to match an existing collection differently (exact name vs normalized slug), letting the same input name resolve to two different/duplicate CollectionGroup rows depending on which entry point ran the import
 class CollectionGroupResolver
 {
-    use UniqueSlugTrait;
-
     public function __construct(
         private readonly CollectionGroupRepository $collectionGroupRepository,
         private readonly SluggerInterface $slugger,
@@ -35,7 +33,7 @@ class CollectionGroupResolver
             return [$collectionGroup, false];
         }
 
-        $uniqueSlug = $this->uniqueSlug(
+        $uniqueSlug = UniqueSlug::build(
             $this->slugger,
             $name,
             fn (string $candidate): bool => isset($usedSlugs[$candidate]) || null !== $this->collectionGroupRepository->findOneBySlug($candidate)

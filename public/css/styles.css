@@ -454,16 +454,11 @@ h6 {
   font-size: 90%;
 }
 
-.legal div,
 .text,
 .site-article {
   max-width: var(--reading-max-width, min(75ch, 90vw));
   margin: 1em auto;
   scroll-margin-top: var(--scroll-offset, 80px);
-}
-
-.legal div {
-  text-align: justify;
 }
 
 .text-left {

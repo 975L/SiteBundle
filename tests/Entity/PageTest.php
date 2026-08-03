@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests\Entity;
 
 use c975L\SiteBundle\Entity\Page;
+use Doctrine\ORM\Mapping\PreFlush;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -59,5 +60,38 @@ class PageTest extends TestCase
 
         $this->assertFalse($accessor->getValue($page, 'isTitleDisplayed'));
         $this->assertSame(['titleDisplayed' => false], $page->getOptions());
+    }
+
+    // An unpublished page must never stay referenced, whatever order its setters were called in - the edit form submits isPublished before isIndexable
+    public function testUnpublishedPageIsNotIndexable(): void
+    {
+        $page = (new Page())
+            ->setIsPublished(false)
+            ->setIsIndexable(true)
+        ;
+
+        $page->unreferenceWhenUnpublished();
+
+        $this->assertFalse($page->isIndexable());
+    }
+
+    public function testPublishedPageKeepsItsIndexableValue(): void
+    {
+        $indexable = (new Page())->setIsPublished(true);
+        $notIndexable = (new Page())->setIsPublished(true)->setIsIndexable(false);
+
+        $indexable->unreferenceWhenUnpublished();
+        $notIndexable->unreferenceWhenUnpublished();
+
+        $this->assertTrue($indexable->isIndexable());
+        $this->assertFalse($notIndexable->isIndexable());
+    }
+
+    // The rule only holds if Doctrine actually runs it, and only PreFlush runs early enough for its write to be persisted (a PreUpdate callback's own writes come after the changeset is computed)
+    public function testUnreferenceWhenUnpublishedIsAPreFlushCallback(): void
+    {
+        $attributes = (new \ReflectionMethod(Page::class, 'unreferenceWhenUnpublished'))->getAttributes(PreFlush::class);
+
+        $this->assertCount(1, $attributes);
     }
 }

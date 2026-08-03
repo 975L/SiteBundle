@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\ConfigBundle\Management\SelfCheckedSitemapProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\SitePageSitemapProvider;
@@ -51,6 +52,12 @@ class SitePageSitemapProviderTest extends TestCase
     public function testSitemapNameIsSite(): void
     {
         $this->assertSame('site', $this->createProvider()->getSitemapName());
+    }
+
+    // Self-checked, so DeclaredUrlsHealthCheckPass builds no generic declared-urls check for this sitemap - ContentQualityHealthCheckProvider already reports these very pages, in more detail
+    public function testProviderIsSelfChecked(): void
+    {
+        $this->assertInstanceOf(SelfCheckedSitemapProviderInterface::class, $this->createProvider());
     }
 
     // Each page is turned into an absolute URL, using its own priority/changeFrequency

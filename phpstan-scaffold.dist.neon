@@ -2,6 +2,9 @@
 parameters:
     level: 6
 
+    # Les motifs ignorés plus bas sont partagés par tous les bundles c975L, ils ne s'appliquent donc pas tous à chacun
+    reportUnmatchedIgnoredErrors: false
+
     paths:
         - scaffold/src
         - scaffold/tests

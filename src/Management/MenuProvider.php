@@ -11,26 +11,12 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
-use c975L\SiteBundle\Controller\Management\FontCrudController;
-use c975L\SiteBundle\Controller\Management\LegalModelController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
-use c975L\SiteBundle\Controller\Management\RedirectCrudController;
-use c975L\SiteBundle\Controller\Management\SiteGraphicCrudController;
-use c975L\SiteBundle\Controller\Management\UserCrudController;
-use c975L\UiBundle\Controller\Management\EmailTemplateCrudController;
-use c975L\UiBundle\Controller\Management\FormCrudController;
-use c975L\UiBundle\Controller\Management\MediaCrudController;
 
 class MenuProvider implements MenuProviderInterface
 {
-    public function __construct(
-        private readonly ConfigServiceInterface $configService,
-    ) {
-    }
-
     public function getMenuSection(): array
     {
         return [
@@ -50,29 +36,6 @@ class MenuProvider implements MenuProviderInterface
                 // Same key as page_crud_index.html.twig/page_crud_edit.html.twig's own explanatory text - one text, reused, not a separate onboarding-only string (see MenuProviderInterface::getMenus())
                 'description' => 'label.info_page',
             ],
-            'redirect' => [
-                'controller' => RedirectCrudController::class,
-                'label' => 'label.redirects',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-arrow-right',
-                'tier' => 'advanced',
-                'description' => 'label.info_redirect',
-            ],
-            'user' => [
-                'controller' => UserCrudController::class,
-                'label' => 'label.users',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-users',
-                'description' => 'label.info_user',
-            ],
-            'site_graphic' => [
-                'controller' => SiteGraphicCrudController::class,
-                'label' => 'label.site_graphics',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-image',
-                'tier' => 'advanced',
-                'description' => 'label.info_site_graphic',
-            ],
             'menu' => [
                 'controller' => MenuCrudController::class,
                 'label' => 'label.menus',
@@ -81,13 +44,6 @@ class MenuProvider implements MenuProviderInterface
                 'tier' => 'advanced',
                 'description' => 'label.info_menu',
             ],
-            'media' => [
-                'controller' => MediaCrudController::class,
-                'label' => 'label.media_library',
-                'translation_domain' => 'ui',
-                'icon' => 'fas fa-photo-film',
-                'description' => 'label.info_media',
-            ],
             'collection' => [
                 'controller' => CollectionCrudController::class,
                 'label' => 'label.collections',
@@ -95,48 +51,13 @@ class MenuProvider implements MenuProviderInterface
                 'icon' => 'fas fa-layer-group',
                 'description' => 'label.info_collections',
             ],
-            'font' => [
-                'controller' => FontCrudController::class,
-                'label' => 'label.fonts',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-font',
-                'tier' => 'advanced',
-                'description' => 'label.info_font',
-            ],
-            'form' => [
-                'controller' => FormCrudController::class,
-                'label' => 'label.forms',
-                'translation_domain' => 'ui',
-                'icon' => 'fas fa-wpforms',
-                'tier' => 'advanced',
-                'description' => 'label.info_form',
-            ],
-            'email_template' => [
-                'controller' => EmailTemplateCrudController::class,
-                'label' => 'label.email_templates',
-                'translation_domain' => 'ui',
-                'icon' => 'fas fa-envelope-open-text',
-                'tier' => 'advanced',
-                'description' => 'label.info_email_template',
-            ],
         ];
     }
 
+    // None of its own: the "Legal models" screen this used to declare moved to UiBundle along with the models
+    // themselves, so a site running Ui without page management still reaches it
     public function getLinks(): array
     {
-        return [
-            'site_legal_models' => [
-                'name' => LegalModelController::INDEX_ROUTE,
-                'label' => 'label.legal_models',
-                'translation_domain' => 'site',
-                'icon' => 'fas fa-scale-balanced',
-                // Same gate as the screen itself (see LegalModelController) - without it the link shows to a
-                // back-office user who would only ever get a 403 out of it
-                'role' => $this->configService->get('site-role-editor'),
-                // Set up once when the site opens, revisited a couple of times a year at most
-                'tier' => 'advanced',
-                'description' => 'label.info_legal_model',
-            ],
-        ];
+        return [];
     }
 }

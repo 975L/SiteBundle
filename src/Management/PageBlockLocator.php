@@ -13,14 +13,13 @@ namespace c975L\SiteBundle\Management;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Service\BlockFocusUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
 // Traces something in a page's rendered HTML back to the Block that produced it, best-effort: rendered markup
 // carries no block id for an anonymous visitor, so a miss returns null and the caller falls back to the page url
 class PageBlockLocator
 {
-    use BlockFocusUrlTrait;
-
     // Below this, a needle is too generic to substring-match on and is only ever used as an exact match
     private const MIN_LOOSE_NEEDLE_LENGTH = 4;
 
@@ -131,7 +130,7 @@ class PageBlockLocator
     {
         return [
             'label' => (string) $block,
-            'editUrl' => $this->blockFocusUrl($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block),
+            'editUrl' => BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block),
         ];
     }
 }

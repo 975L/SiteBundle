@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;

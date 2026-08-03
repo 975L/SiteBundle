@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ExportProviderInterface;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Management\BlockDataExporter;
 
 // Serializes Pages (title/slug/summary/ogImage/Blocks, Media files bundled in the archive) into the shape ContentExporter/PageImportProvider expect - shared by PageCrudController::exportSelection() (a checked subset) and exportAll() below (every Page, for the "export sync all" dashboard shortcut, see ConfigBundle's SyncAllExporter)
 class PageExportProvider implements ExportProviderInterface

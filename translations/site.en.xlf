@@ -14,10 +14,6 @@
                 <source>action.export_selection</source>
                 <target>Export selection</target>
             </trans-unit>
-            <trans-unit id="7TaPAuT">
-                <source>action.font_bulk_import</source>
-                <target>Bulk import</target>
-            </trans-unit>
             <trans-unit id="vUjYe27">
                 <source>action.move_to_trash</source>
                 <target>Move to trash</target>
@@ -49,14 +45,6 @@
             <trans-unit id="oQH.wPQ">
                 <source>block.articles_slider_description</source>
                 <target>Slideshow highlighting a selection of articles</target>
-            </trans-unit>
-            <trans-unit id="C4gS09K">
-                <source>block.legal_model</source>
-                <target>Legal Model</target>
-            </trans-unit>
-            <trans-unit id="48e0zxX">
-                <source>block.legal_model_description</source>
-                <target>Inserts an existing legal text template (T&amp;Cs, legal notice...)</target>
             </trans-unit>
             <trans-unit id="PizX88K">
                 <source>block.menu_link</source>
@@ -238,78 +226,6 @@
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Take all the time you need: your visitors keep seeing the original meanwhile.</target>
             </trans-unit>
-            <trans-unit id="emqi7.W">
-                <source>description.legal_customize</source>
-                <target>The texts below are the bundle's own: edit them in place. As long as you leave a section alone it keeps being updated along with the bundle; the moment you change it, it becomes yours and you take responsibility for it. Drag a card by its header to reorder. The content of these pages is your editorial and legal responsibility either way.</target>
-            </trans-unit>
-            <trans-unit id="YgzofbB">
-                <source>description.legal_drift</source>
-                <target>The text the bundle ships for this section has changed since you rewrote it. Nothing was modified on your side: here is the new wording, yours to judge.</target>
-            </trans-unit>
-            <trans-unit id="EBXU68o">
-                <source>description.legal_extra_sections</source>
-                <target>Your own sections, appended at the end of the level you pick. The bundle knows nothing about them and will never change them.</target>
-            </trans-unit>
-            <trans-unit id="THY3L8B">
-                <source>description.legal_placeholders</source>
-                <target>These markers are replaced by the site configuration when the page is displayed, in your own text too:</target>
-            </trans-unit>
-            <trans-unit id="vDZMvYG">
-                <source>description.messenger_alert_admin</source>
-                <target>Technical issue auto-reported to the dev team. No action required.</target>
-            </trans-unit>
-            <trans-unit id="khpNT6d">
-                <source>description.messenger_alert_super_admin</source>
-                <target>Send failures unrelated to a blacklisted address. Click for details.</target>
-            </trans-unit>
-            <trans-unit id="5OjCR2m">
-                <source>description.messenger_failed</source>
-                <target>Messages that failed to send; minor cases (blacklist, spam) are purged after retention.</target>
-            </trans-unit>
-            <trans-unit id="tymp2.R">
-                <source>flash.font_bulk_import_invalid_token</source>
-                <target>Invalid or expired form, please try again.</target>
-            </trans-unit>
-            <trans-unit id="ZpEnHov">
-                <source>flash.font_bulk_import_no_files</source>
-                <target>No font file selected.</target>
-            </trans-unit>
-            <trans-unit id="qpZ4cFd">
-                <source>flash.font_bulk_import_skipped</source>
-                <target>Skipped (invalid format or too large): %files%</target>
-            </trans-unit>
-            <trans-unit id="KdHpBKb">
-                <source>flash.font_bulk_import_success</source>
-                <target>%count% font(s) imported.</target>
-            </trans-unit>
-            <trans-unit id="oGPPygw">
-                <source>flash.legal_model_customized</source>
-                <target>Customization saved.</target>
-            </trans-unit>
-            <trans-unit id="z.Yxr72">
-                <source>flash.messenger_deleted</source>
-                <target>Message #%id% deleted</target>
-            </trans-unit>
-            <trans-unit id="liKyPhk">
-                <source>flash.messenger_group_deleted</source>
-                <target>%count% message(s) deleted</target>
-            </trans-unit>
-            <trans-unit id="7wqIvFf">
-                <source>flash.messenger_not_found</source>
-                <target>Message #%id% not found (already processed?)</target>
-            </trans-unit>
-            <trans-unit id="td7ZlY3">
-                <source>flash.messenger_purged</source>
-                <target>%count% message(s) purged</target>
-            </trans-unit>
-            <trans-unit id="ZBV1Jze">
-                <source>flash.messenger_retry_failed</source>
-                <target>Retry of message #%id% failed: %error%</target>
-            </trans-unit>
-            <trans-unit id="vmblKo8">
-                <source>flash.messenger_retry_success</source>
-                <target>Message #%id% sent successfully</target>
-            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>The page has been permanently deleted.</target>
@@ -333,14 +249,6 @@
             <trans-unit id="IAF7ZBQ">
                 <source>flash.page_to_replace_not_found</source>
                 <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
-            </trans-unit>
-            <trans-unit id="ZD8H9hY">
-                <source>flash.user_registration_disabled</source>
-                <target>User registration disabled</target>
-            </trans-unit>
-            <trans-unit id="DX2vnwV">
-                <source>flash.user_registration_enabled</source>
-                <target>User registration enabled</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -370,10 +278,6 @@
                 <source>label.always</source>
                 <target>Always</target>
             </trans-unit>
-            <trans-unit id="gBMbs0d">
-                <source>label.apple_touch_icon</source>
-                <target>Apple touch icon</target>
-            </trans-unit>
             <trans-unit id="TUImAIH">
                 <source>label.article</source>
                 <target>Article</target>
@@ -389,10 +293,6 @@
             <trans-unit id="1GXuSep">
                 <source>label.back_to_list</source>
                 <target>Back to list</target>
-            </trans-unit>
-            <trans-unit id="_13H57u">
-                <source>label.category_legal</source>
-                <target>Legal</target>
             </trans-unit>
             <trans-unit id="tKFuD86">
                 <source>label.category_navigation</source>
@@ -454,17 +354,9 @@
                 <source>label.collections</source>
                 <target>Collections</target>
             </trans-unit>
-            <trans-unit id="WFsxQCT">
-                <source>label.confirm_email_title</source>
-                <target>Hi! Please confirm your email!</target>
-            </trans-unit>
             <trans-unit id="LYjyQ.S">
                 <source>label.confirm_my_email</source>
                 <target>Confirm my Email</target>
-            </trans-unit>
-            <trans-unit id="MYK2PZj">
-                <source>label.confirm_your_email</source>
-                <target>Confirm your email</target>
             </trans-unit>
             <trans-unit id="f7w7ZE0">
                 <source>label.content</source>
@@ -474,22 +366,6 @@
                 <source>label.content_help</source>
                 <target>Paste the old .html.twig file's content here - interpreted as Twig (config(), path(), etc.).</target>
             </trans-unit>
-            <trans-unit id="rpDgbSi">
-                <source>label.cookies_accept</source>
-                <target>Accept</target>
-            </trans-unit>
-            <trans-unit id="qrNBASP">
-                <source>label.cookies_dialog</source>
-                <target>Cookie consent</target>
-            </trans-unit>
-            <trans-unit id="HCj0D9c">
-                <source>label.cookies_policy</source>
-                <target>Cookies Policy</target>
-            </trans-unit>
-            <trans-unit id="QqHGDx.">
-                <source>label.cookies_reject</source>
-                <target>Reject</target>
-            </trans-unit>
             <trans-unit id="eyjXZ2b">
                 <source>label.copy_suffix</source>
                 <target>copy</target>
@@ -498,10 +374,6 @@
                 <source>label.copyright</source>
                 <target>Copyright</target>
             </trans-unit>
-            <trans-unit id="BOyuRcf">
-                <source>label.create_account</source>
-                <target>Create an account</target>
-            </trans-unit>
             <trans-unit id="V.XSzNW">
                 <source>label.create_menu</source>
                 <target>Create a menu:</target>
@@ -509,10 +381,6 @@
             <trans-unit id="AvnDzC2">
                 <source>label.create_page</source>
                 <target>Create page</target>
-            </trans-unit>
-            <trans-unit id="iripoC5">
-                <source>label.create_site_graphic</source>
-                <target>Create a graphic:</target>
             </trans-unit>
             <trans-unit id="emPIlPf">
                 <source>label.creation</source>
@@ -550,14 +418,6 @@
                 <source>label.duration</source>
                 <target>Duration</target>
             </trans-unit>
-            <trans-unit id="ykW6lkh">
-                <source>label.email</source>
-                <target>Email</target>
-            </trans-unit>
-            <trans-unit id="Uy9DSA6">
-                <source>label.email_address_verified</source>
-                <target>Your email address has been verified.</target>
-            </trans-unit>
             <trans-unit id="3C3YrgK">
                 <source>label.email_footer</source>
                 <target>Email footer</target>
@@ -573,10 +433,6 @@
             <trans-unit id="RYdVt_3">
                 <source>label.error_code</source>
                 <target>Error %code%</target>
-            </trans-unit>
-            <trans-unit id="fZX2vH1">
-                <source>label.error_image</source>
-                <target>Error image</target>
             </trans-unit>
             <trans-unit id="8SGIe4o">
                 <source>label.essential_action_fonts</source>
@@ -594,117 +450,9 @@
                 <source>label.export</source>
                 <target>Export</target>
             </trans-unit>
-            <trans-unit id="TRqZ6vK">
-                <source>label.export_tables</source>
-                <target>Export (SQL) "site_xxx" tables</target>
-            </trans-unit>
-            <trans-unit id="akTKyKA">
-                <source>label.favicon</source>
-                <target>Favicon</target>
-            </trans-unit>
-            <trans-unit id="DmcAvc0">
-                <source>label.file</source>
-                <target>File</target>
-            </trans-unit>
-            <trans-unit id="ZbTNTSZ">
-                <source>label.font</source>
-                <target>Font</target>
-            </trans-unit>
-            <trans-unit id="7NbFp1S">
-                <source>label.font_bulk_import</source>
-                <target>Bulk font import</target>
-            </trans-unit>
-            <trans-unit id="n9yTG4w">
-                <source>label.font_bulk_import_help</source>
-                <target>Select several TTF, WOFF or WOFF2 files at once (max 5 MB each) - each file's name, weight and style are guessed from its filename (eg. "OpenSans-Bold.ttf", "Roboto-ExtraLightItalic.woff2"). Review the imported fonts afterward and fix any wrong guess.</target>
-            </trans-unit>
-            <trans-unit id="x75HSFP">
-                <source>label.font_file_help</source>
-                <target>Accepted formats: TTF, WOFF, WOFF2 (max 5 MB). Stored in public/medias/fonts and turned into a @font-face rule offered by the theme's font pickers.</target>
-            </trans-unit>
-            <trans-unit id="pAzRTZZ">
-                <source>label.font_file_invalid_extension</source>
-                <target>Invalid file: only TTF, WOFF and WOFF2 fonts are accepted.</target>
-            </trans-unit>
-            <trans-unit id="WAbfqVw">
-                <source>label.font_name</source>
-                <target>Font name</target>
-            </trans-unit>
-            <trans-unit id="SvJOd0k">
-                <source>label.font_style</source>
-                <target>Style</target>
-            </trans-unit>
-            <trans-unit id="gxpM4OM">
-                <source>label.font_style_italic</source>
-                <target>Italic</target>
-            </trans-unit>
-            <trans-unit id="N4V609U">
-                <source>label.font_style_normal</source>
-                <target>Normal</target>
-            </trans-unit>
-            <trans-unit id="EtdrCKk">
-                <source>label.font_weight</source>
-                <target>Weight</target>
-            </trans-unit>
-            <trans-unit id="DcBb0E8">
-                <source>label.font_weight_black</source>
-                <target>Black</target>
-            </trans-unit>
-            <trans-unit id="8OpFiI0">
-                <source>label.font_weight_bold</source>
-                <target>Bold</target>
-            </trans-unit>
-            <trans-unit id="rsh_BqU">
-                <source>label.font_weight_extra_bold</source>
-                <target>Extra Bold</target>
-            </trans-unit>
-            <trans-unit id="vwDLQY.">
-                <source>label.font_weight_extra_light</source>
-                <target>Extra Light</target>
-            </trans-unit>
-            <trans-unit id="Mp.YqFV">
-                <source>label.font_weight_light</source>
-                <target>Light</target>
-            </trans-unit>
-            <trans-unit id="qL7Gp9j">
-                <source>label.font_weight_medium</source>
-                <target>Medium</target>
-            </trans-unit>
-            <trans-unit id="zLV2aBT">
-                <source>label.font_weight_regular</source>
-                <target>Regular</target>
-            </trans-unit>
-            <trans-unit id=".hfRymY">
-                <source>label.font_weight_semibold</source>
-                <target>SemiBold</target>
-            </trans-unit>
-            <trans-unit id="2A7.7yO">
-                <source>label.font_weight_thin</source>
-                <target>Thin</target>
-            </trans-unit>
-            <trans-unit id="0SfE11h">
-                <source>label.font_weight_variable</source>
-                <target>Variable (100-900)</target>
-            </trans-unit>
-            <trans-unit id="kjFy2J8">
-                <source>label.fonts</source>
-                <target>Fonts</target>
-            </trans-unit>
             <trans-unit id="y9I5gZL">
                 <source>label.footer</source>
                 <target>Footer</target>
-            </trans-unit>
-            <trans-unit id="9kwOG_r">
-                <source>label.forgot_password</source>
-                <target>Forgot your password?</target>
-            </trans-unit>
-            <trans-unit id="gN2_MMc">
-                <source>label.from_path</source>
-                <target>Source path</target>
-            </trans-unit>
-            <trans-unit id="GnuqUyG">
-                <source>label.from_path_help</source>
-                <target>URL path with leading / (e.g. /la-guilde-des-seigneurs)</target>
             </trans-unit>
             <trans-unit id="ZPdQcNU">
                 <source>label.gallery_showcase_articles_slider</source>
@@ -721,14 +469,6 @@
             <trans-unit id="QjQ95bW">
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Link to a page or a route, used in the site's menus.</target>
-            </trans-unit>
-            <trans-unit id="qrvRsVy">
-                <source>label.gone</source>
-                <target>Gone (410)</target>
-            </trans-unit>
-            <trans-unit id="AcObL2B">
-                <source>label.gone_help</source>
-                <target>Checked = the url is declared permanently removed (410 Gone), with no redirect: "From path" may end with * to cover a whole folder (e.g. /apidoc/*), and "To url" stays empty</target>
             </trans-unit>
             <trans-unit id="K3pbZfO">
                 <source>label.guided_project_collection</source>
@@ -966,94 +706,6 @@
                 <source>label.health_check_console_errors</source>
                 <target>%count% console error(s)</target>
             </trans-unit>
-            <trans-unit id="z_WhL6.">
-                <source>label.health_check_content_quality_broken_external_links</source>
-                <target>%count% broken external link(s)</target>
-            </trans-unit>
-            <trans-unit id="KNYNgu2">
-                <source>label.health_check_content_quality_broken_links</source>
-                <target>%count% broken internal link(s)</target>
-            </trans-unit>
-            <trans-unit id="FnwQdHx">
-                <source>label.health_check_content_quality_call_failed</source>
-                <target>Content check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="LFH1s4O">
-                <source>label.health_check_content_quality_description_too_long</source>
-                <target>"%field%" too long (%length% characters)</target>
-            </trans-unit>
-            <trans-unit id="Ox8evki">
-                <source>label.health_check_content_quality_description_too_short</source>
-                <target>"%field%" too short (%length% characters)</target>
-            </trans-unit>
-            <trans-unit id="ME83NQd">
-                <source>label.health_check_content_quality_images_without_alt</source>
-                <target>%count% image(s) without alt text</target>
-            </trans-unit>
-            <trans-unit id="I4Rz7aG">
-                <source>label.health_check_content_quality_missing_social_tags</source>
-                <target>%count% missing share tag(s)</target>
-            </trans-unit>
-            <trans-unit id="BJy8gU9">
-                <source>label.health_check_content_quality_no_description</source>
-                <target>"%field%" missing</target>
-            </trans-unit>
-            <trans-unit id="wg7L155">
-                <source>label.health_check_content_quality_no_h1</source>
-                <target>missing &lt;h1&gt;</target>
-            </trans-unit>
-            <trans-unit id="n0fEOV8">
-                <source>label.health_check_content_quality_no_title</source>
-                <target>missing title</target>
-            </trans-unit>
-            <trans-unit id="VeQ3n7J">
-                <source>label.health_check_content_quality_ok</source>
-                <target>No content issues found</target>
-            </trans-unit>
-            <trans-unit id="BqgaVw8">
-                <source>label.health_check_content_quality_redirects</source>
-                <target>Redirects in %count% hop(s) to %url%</target>
-            </trans-unit>
-            <trans-unit id="nbaBi.g">
-                <source>label.health_check_content_quality_several_h1</source>
-                <target>%count% &lt;h1&gt; on the page</target>
-            </trans-unit>
-            <trans-unit id="rALqDws">
-                <source>label.health_check_content_quality_title_too_long</source>
-                <target>title too long (%length% characters)</target>
-            </trans-unit>
-            <trans-unit id="3V1EipY">
-                <source>label.health_check_content_quality_title_too_short</source>
-                <target>title too short (%length% characters)</target>
-            </trans-unit>
-            <trans-unit id="ZEoDmkn">
-                <source>label.health_check_deployment_call_failed</source>
-                <target>Deployment check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="O9kLgA7">
-                <source>label.health_check_deployment_https</source>
-                <target>https redirect</target>
-            </trans-unit>
-            <trans-unit id="7ZjpK.P">
-                <source>label.health_check_deployment_not_found</source>
-                <target>404 page</target>
-            </trans-unit>
-            <trans-unit id="5oHSgYP">
-                <source>label.health_check_https_redirect_insecure</source>
-                <target>http redirects to an insecure url</target>
-            </trans-unit>
-            <trans-unit id="Zyn9CBY">
-                <source>label.health_check_https_redirect_missing</source>
-                <target>http does not redirect to https (HTTP %status%)</target>
-            </trans-unit>
-            <trans-unit id="c5wEJdP">
-                <source>label.health_check_https_redirect_ok</source>
-                <target>http correctly redirects to https</target>
-            </trans-unit>
-            <trans-unit id="epZIsrh">
-                <source>label.health_check_legal_model_drift</source>
-                <target>%count% section(s) you rewrote have changed in the "%model%" model: %sections%</target>
-            </trans-unit>
             <trans-unit id="4HIWk23">
                 <source>label.health_check_mixed_content_call_failed</source>
                 <target>Mixed content check failed: %message%</target>
@@ -1065,18 +717,6 @@
             <trans-unit id="2_4UG6U">
                 <source>label.health_check_mixed_content_ok</source>
                 <target>No insecure resources found</target>
-            </trans-unit>
-            <trans-unit id="YvTkRdQ">
-                <source>label.health_check_not_found_default_page</source>
-                <target>Generic 404 page, not the site's own</target>
-            </trans-unit>
-            <trans-unit id="uCcSKeY">
-                <source>label.health_check_not_found_ok</source>
-                <target>Custom 404 page</target>
-            </trans-unit>
-            <trans-unit id="ywo1XVT">
-                <source>label.health_check_not_found_wrong_status</source>
-                <target>An unknown url answers HTTP %status% instead of 404</target>
             </trans-unit>
             <trans-unit id="mmRyN6V">
                 <source>label.health_check_page_not_found</source>
@@ -1094,105 +734,9 @@
                 <source>label.health_check_panel_empty</source>
                 <target>No health check results yet for this page.</target>
             </trans-unit>
-            <trans-unit id="tn.Riea">
-                <source>label.health_check_redirect_chain</source>
-                <target>Chains through %hops% other redirect(s)</target>
-            </trans-unit>
-            <trans-unit id="nkB4fxf">
-                <source>label.health_check_redirect_loop</source>
-                <target>Redirect loop detected</target>
-            </trans-unit>
-            <trans-unit id="tYM8NWt">
-                <source>label.health_check_redirect_ok</source>
-                <target>Direct redirect, no chaining</target>
-            </trans-unit>
-            <trans-unit id="QDn5iu_">
-                <source>label.health_check_robots_blocks_everything</source>
-                <target>robots.txt disallows all crawling (Disallow: / for User-agent: *)</target>
-            </trans-unit>
-            <trans-unit id="r4uXdga">
-                <source>label.health_check_robots_missing</source>
-                <target>robots.txt is missing or empty</target>
-            </trans-unit>
-            <trans-unit id="o1UGYYf">
-                <source>label.health_check_robots_ok</source>
-                <target>robots.txt is reachable and does not block everything</target>
-            </trans-unit>
-            <trans-unit id="D2qT.fs">
-                <source>label.health_check_security_headers_call_failed</source>
-                <target>Security headers check failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="YByjYVO">
-                <source>label.health_check_security_headers_cors_wildcard</source>
-                <target>CORS allows any origin (*)</target>
-            </trans-unit>
-            <trans-unit id="_ls5_jv">
-                <source>label.health_check_security_headers_missing</source>
-                <target>missing: %headers%</target>
-            </trans-unit>
-            <trans-unit id="JOx_E7E">
-                <source>label.health_check_security_headers_scope</source>
-                <target>these headers apply to the whole site, checked once via the homepage</target>
-            </trans-unit>
-            <trans-unit id="Z5MQYLr">
-                <source>label.health_check_seo_files_call_failed</source>
-                <target>Request failed: %message%</target>
-            </trans-unit>
-            <trans-unit id="STCbZQM">
-                <source>label.health_check_sitemap_empty</source>
-                <target>%file% declares no url</target>
-            </trans-unit>
-            <trans-unit id="P8iNFef">
-                <source>label.health_check_sitemap_index_empty</source>
-                <target>sitemap-index.xml does not reference any sitemap</target>
-            </trans-unit>
-            <trans-unit id="vdPK5K0">
-                <source>label.health_check_sitemap_index_invalid</source>
-                <target>sitemap-index.xml does not look like a valid sitemap index</target>
-            </trans-unit>
-            <trans-unit id="FOd3j4t">
-                <source>label.health_check_sitemap_index_ok</source>
-                <target>sitemap-index.xml is reachable and references %count% sitemap(s)</target>
-            </trans-unit>
-            <trans-unit id="D6twj5K">
-                <source>label.health_check_sitemap_invalid</source>
-                <target>%file% does not look like a valid sitemap</target>
-            </trans-unit>
-            <trans-unit id="hRrR7wP">
-                <source>label.health_check_sitemap_missing</source>
-                <target>%file% is missing</target>
-            </trans-unit>
-            <trans-unit id="ixM01t_">
-                <source>label.health_check_sitemap_ok</source>
-                <target>%file% is reachable and well-formed</target>
-            </trans-unit>
-            <trans-unit id="fbeNKQY">
-                <source>label.health_check_sitemap_ok_urls</source>
-                <target>%file% is reachable and declares %count% url(s)</target>
-            </trans-unit>
-            <trans-unit id="f06Aer8">
-                <source>label.health_check_sitemap_stale</source>
-                <target>%file% has not been regenerated since %date%</target>
-            </trans-unit>
-            <trans-unit id="t.pDm_y">
-                <source>label.health_check_ssl_certificate_call_failed</source>
-                <target>Could not read the TLS certificate: %message%</target>
-            </trans-unit>
-            <trans-unit id="huusFBh">
-                <source>label.health_check_ssl_certificate_not_https</source>
-                <target>Site not served over HTTPS, certificate not checked</target>
-            </trans-unit>
             <trans-unit id="hXo9hSM">
                 <source>label.health_check_summary_pagespeed</source>
                 <target>Performance %performance% · Accessibility %accessibility% · Best practices %bestPractices% · SEO %seo%</target>
-            </trans-unit>
-            <trans-unit id="tVOszC6">
-                <source>label.health_check_summary_security_headers</source>
-                <target>%present%/%total% security headers present</target>
-            </trans-unit>
-            <trans-unit id="lF7WRuH">
-                <source>label.health_check_summary_ssl_certificate</source>
-                <target>Expires in %days% day(s) (%date%)</target>
             </trans-unit>
             <trans-unit id="IQOS79g">
                 <source>label.health_check_summary_w3c_css</source>
@@ -1201,26 +745,6 @@
             <trans-unit id="mbz6Kqg">
                 <source>label.health_check_summary_w3c_html</source>
                 <target>%errors% error(s), %warnings% warning(s)</target>
-            </trans-unit>
-            <trans-unit id="5NWxr7E">
-                <source>label.health_check_url_gone</source>
-                <target>Deliberately removed (HTTP 410), but still declared</target>
-            </trans-unit>
-            <trans-unit id="m8vgu62">
-                <source>label.health_check_url_http_error</source>
-                <target>Answers HTTP %status%</target>
-            </trans-unit>
-            <trans-unit id="NPIEmDn">
-                <source>label.health_check_url_inconclusive</source>
-                <target>Answers HTTP %status% to the checker, page not analysed</target>
-            </trans-unit>
-            <trans-unit id="k22BaC2">
-                <source>label.health_check_url_not_found</source>
-                <target>Not found (HTTP 404) although it is declared</target>
-            </trans-unit>
-            <trans-unit id="_ldsYSV">
-                <source>label.health_check_url_unreachable</source>
-                <target>Unreachable (no answer from the server)</target>
             </trans-unit>
             <trans-unit id="Ag5xH55">
                 <source>label.health_check_w3c_benign_warnings</source>
@@ -1254,14 +778,6 @@
                 <source>label.info_collections</source>
                 <target>Create a collection, then click "Items" to add content to it. Once created, a collection becomes available as a source in the "Collection" block on any page.</target>
             </trans-unit>
-            <trans-unit id="z7IyPeJ">
-                <source>label.info_font</source>
-                <target>Custom font files uploaded for the site (ttf, woff, woff2). Add, edit or delete a font; each weight and style forms a distinct variant usable in the theme configuration.</target>
-            </trans-unit>
-            <trans-unit id="KDIeeFV">
-                <source>label.info_legal_model</source>
-                <target>The legal texts shipped with the bundle stay maintained and updated. Page by page, you can hide a section, rewrite it, move it or add your own: only what you change stops following the updates.</target>
-            </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
                 <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
@@ -1269,26 +785,6 @@
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>
                 <target>List of all the site's pages. You can create, edit, duplicate, publish, preview, move to trash or permanently delete a page; a deleted page can only be recovered from the trash until it's permanently deleted.</target>
-            </trans-unit>
-            <trans-unit id="rszWvKi">
-                <source>label.info_redirect</source>
-                <target>List of the site's URL redirects. You can create, edit or delete a redirect; double-check the source and target URLs, a mistake can break a link or cause a redirect loop.</target>
-            </trans-unit>
-            <trans-unit id="MwU6S3V">
-                <source>label.info_site_graphic</source>
-                <target>Site-wide graphics: favicon, Apple Touch icon, default Open Graph image, logo and error images. Each role (except error image) can only be used once; replace the file to update it.</target>
-            </trans-unit>
-            <trans-unit id="14MwZnc">
-                <source>label.info_user</source>
-                <target>List of the site's users. You can edit a user's roles or delete them; be careful, changing roles immediately changes their back-office access rights.</target>
-            </trans-unit>
-            <trans-unit id="cxSqi5b">
-                <source>label.info_user_registration</source>
-                <target>Visitor registration toggles in one click from %link_open%the dashboard%link_close% (admin-only).</target>
-            </trans-unit>
-            <trans-unit id="waNryE6">
-                <source>label.info_user_roles</source>
-                <target>Roles listed below (other than ROLE_SUPER_ADMIN) come from %link_open%this key%link_close%.</target>
             </trans-unit>
             <trans-unit id="p2lI9Fi">
                 <source>label.is_deleted</source>
@@ -1300,7 +796,7 @@
             </trans-unit>
             <trans-unit id="uHgxjl3">
                 <source>label.is_indexable_help</source>
-                <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password)</target>
+                <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password). Unpublishing the page unreferences it automatically: if you publish it again, check this box back to have it referenced</target>
             </trans-unit>
             <trans-unit id="f7EAy._">
                 <source>label.is_published</source>
@@ -1322,73 +818,9 @@
                 <source>label.latest_update</source>
                 <target>Latest update</target>
             </trans-unit>
-            <trans-unit id="xeLDFrp">
-                <source>label.legal_customize</source>
-                <target>Customize</target>
-            </trans-unit>
-            <trans-unit id="VSv_bRo">
-                <source>label.legal_customize_help</source>
-                <target>Section by section customization is done from "Legal models", in the menu.</target>
-            </trans-unit>
-            <trans-unit id="DOLV88Z">
-                <source>label.legal_drift</source>
-                <target>Update available</target>
-            </trans-unit>
-            <trans-unit id="n10xHFc">
-                <source>label.legal_drift_count</source>
-                <target>%count% section(s)</target>
-            </trans-unit>
-            <trans-unit id="ZqqDoeS">
-                <source>label.legal_extra_add</source>
-                <target>Add a section</target>
-            </trans-unit>
-            <trans-unit id="GlT9ghq">
-                <source>label.legal_extra_parent</source>
-                <target>Attach to</target>
-            </trans-unit>
-            <trans-unit id="7IwEdF.">
-                <source>label.legal_extra_parent_top</source>
-                <target>Top level</target>
-            </trans-unit>
-            <trans-unit id="LT7uKbV">
-                <source>label.legal_extra_remove</source>
-                <target>Remove this section</target>
-            </trans-unit>
-            <trans-unit id="xAZplVp">
-                <source>label.legal_extra_sections</source>
-                <target>Added sections</target>
-            </trans-unit>
-            <trans-unit id="IAyzYCW">
-                <source>label.legal_models</source>
-                <target>Legal models</target>
-            </trans-unit>
-            <trans-unit id="AnsvoFg">
-                <source>label.legal_models_none</source>
-                <target>No page holds a legal model.</target>
-            </trans-unit>
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Legal notice</target>
-            </trans-unit>
-            <trans-unit id="tetbtS5">
-                <source>label.legal_unit_content</source>
-                <target>Text</target>
-            </trans-unit>
-            <trans-unit id="vmakjCm">
-                <source>label.legal_unit_hidden</source>
-                <target>Hidden</target>
-            </trans-unit>
-            <trans-unit id="Xqx0K.j">
-                <source>label.legal_unit_reset</source>
-                <target>Back to the bundle's text</target>
-            </trans-unit>
-            <trans-unit id="Kd9zmXR">
-                <source>label.legal_unit_title</source>
-                <target>Title</target>
-            </trans-unit>
-            <trans-unit id="mQCftNN">
-                <source>label.legal_units_overridden</source>
-                <target>Rewritten sections</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>
@@ -1397,10 +829,6 @@
             <trans-unit id="vLldAk9">
                 <source>label.login</source>
                 <target>Login</target>
-            </trans-unit>
-            <trans-unit id="CicLx_A">
-                <source>label.logo</source>
-                <target>Logo</target>
             </trans-unit>
             <trans-unit id="3hZO6SI">
                 <source>label.logout</source>
@@ -1450,102 +878,6 @@
                 <source>label.menus</source>
                 <target>Menus</target>
             </trans-unit>
-            <trans-unit id="CzQFJOJ">
-                <source>label.messenger_actions</source>
-                <target>Actions</target>
-            </trans-unit>
-            <trans-unit id="4Fh5Zeh">
-                <source>label.messenger_alert_admin</source>
-                <target>A technical issue has been automatically reported</target>
-            </trans-unit>
-            <trans-unit id="dEw0nxL">
-                <source>label.messenger_alert_super_admin</source>
-                <target>%count% important Messenger failure(s)</target>
-            </trans-unit>
-            <trans-unit id="rTPONzA">
-                <source>label.messenger_by_error</source>
-                <target>Summary by error</target>
-            </trans-unit>
-            <trans-unit id="q9nBbQt">
-                <source>label.messenger_count</source>
-                <target>Count</target>
-            </trans-unit>
-            <trans-unit id="mciG46c">
-                <source>label.messenger_delete</source>
-                <target>Delete</target>
-            </trans-unit>
-            <trans-unit id="vbhcK2l">
-                <source>label.messenger_delete_confirm</source>
-                <target>Permanently delete this message?</target>
-            </trans-unit>
-            <trans-unit id="z7Q92q7">
-                <source>label.messenger_delete_group</source>
-                <target>Delete the %count%</target>
-            </trans-unit>
-            <trans-unit id="ZeJTUAH">
-                <source>label.messenger_delete_group_confirm</source>
-                <target>Permanently delete these %count% message(s)?</target>
-            </trans-unit>
-            <trans-unit id="TQZxTCT">
-                <source>label.messenger_detail</source>
-                <target>Detail</target>
-            </trans-unit>
-            <trans-unit id="UoTyvJn">
-                <source>label.messenger_error</source>
-                <target>Error</target>
-            </trans-unit>
-            <trans-unit id="2XKsaDm">
-                <source>label.messenger_error_class</source>
-                <target>Error class</target>
-            </trans-unit>
-            <trans-unit id="PdEOB0V">
-                <source>label.messenger_error_code</source>
-                <target>Code</target>
-            </trans-unit>
-            <trans-unit id="T2GT4MH">
-                <source>label.messenger_failed</source>
-                <target>Failed messages</target>
-            </trans-unit>
-            <trans-unit id="27CLL4k">
-                <source>label.messenger_from</source>
-                <target>Sender</target>
-            </trans-unit>
-            <trans-unit id="fT5KqIP">
-                <source>label.messenger_important</source>
-                <target>Important</target>
-            </trans-unit>
-            <trans-unit id="KgJXzDG">
-                <source>label.messenger_minor</source>
-                <target>Minor</target>
-            </trans-unit>
-            <trans-unit id="odFrop6">
-                <source>label.messenger_none</source>
-                <target>No failed messages</target>
-            </trans-unit>
-            <trans-unit id=".FS8LLE">
-                <source>label.messenger_purge_now</source>
-                <target>Purge now</target>
-            </trans-unit>
-            <trans-unit id="CXyZbmf">
-                <source>label.messenger_retries</source>
-                <target>Retries</target>
-            </trans-unit>
-            <trans-unit id="Jjf5VFk">
-                <source>label.messenger_retry</source>
-                <target>Retry</target>
-            </trans-unit>
-            <trans-unit id="OBazAhq">
-                <source>label.messenger_subject</source>
-                <target>Subject</target>
-            </trans-unit>
-            <trans-unit id="_DmTgAf">
-                <source>label.messenger_to</source>
-                <target>Recipient</target>
-            </trans-unit>
-            <trans-unit id="IkuuVf9">
-                <source>label.messenger_transport</source>
-                <target>Original transport</target>
-            </trans-unit>
             <trans-unit id="lXynwwU">
                 <source>label.model</source>
                 <target>Model</target>
@@ -1573,10 +905,6 @@
             <trans-unit id="qQ0RGVI">
                 <source>label.next_slide</source>
                 <target>Next slide</target>
-            </trans-unit>
-            <trans-unit id="ZixQpOO">
-                <source>label.no_reset_password_token_found</source>
-                <target>No reset password token found in the URL or in the session.</target>
             </trans-unit>
             <trans-unit id="VZ9ErQ0">
                 <source>label.not_published</source>
@@ -1610,10 +938,6 @@
                 <source>label.pages_gallery</source>
                 <target>Pages gallery</target>
             </trans-unit>
-            <trans-unit id="yaiKGee">
-                <source>label.password</source>
-                <target>Password</target>
-            </trans-unit>
             <trans-unit id="hz5aZk6">
                 <source>label.password_confirm</source>
                 <target>Repeat password</target>
@@ -1622,25 +946,9 @@
                 <source>label.password_help</source>
                 <target>At least 8 characters, with a lowercase, uppercase, digit and special character</target>
             </trans-unit>
-            <trans-unit id="LLkv7Ba">
-                <source>label.password_reset_request</source>
-                <target>Your password reset request</target>
-            </trans-unit>
-            <trans-unit id="A.D0sBG">
-                <source>label.permanent</source>
-                <target>Permanent (301)</target>
-            </trans-unit>
-            <trans-unit id="DOLd5Pf">
-                <source>label.permanent_help</source>
-                <target>Checked = permanent redirect 301 (SEO), unchecked = temporary 302</target>
-            </trans-unit>
             <trans-unit id="KXf3t5l">
                 <source>label.phone</source>
                 <target>Phone</target>
-            </trans-unit>
-            <trans-unit id="ozwU3T.">
-                <source>label.please_sign_in</source>
-                <target>Please sign in</target>
             </trans-unit>
             <trans-unit id="0qUSPNu">
                 <source>label.point_error</source>
@@ -1698,29 +1006,9 @@
                 <source>label.readmore</source>
                 <target>Read more...</target>
             </trans-unit>
-            <trans-unit id="h5p4XS_">
-                <source>label.redirect</source>
-                <target>Redirect</target>
-            </trans-unit>
-            <trans-unit id="MJxBTAS">
-                <source>label.redirects</source>
-                <target>Redirects</target>
-            </trans-unit>
             <trans-unit id="Cn7F.4b">
                 <source>label.register</source>
                 <target>Register</target>
-            </trans-unit>
-            <trans-unit id="pvYiOoS">
-                <source>label.reset_password</source>
-                <target>Reset your password</target>
-            </trans-unit>
-            <trans-unit id="Gj4Ca1d">
-                <source>label.role</source>
-                <target>Role</target>
-            </trans-unit>
-            <trans-unit id="0PZB8zr">
-                <source>label.roles</source>
-                <target>Roles</target>
             </trans-unit>
             <trans-unit id="7sshO_4">
                 <source>label.route</source>
@@ -1729,30 +1017,6 @@
             <trans-unit id="znwE9XF">
                 <source>label.save</source>
                 <target>Save</target>
-            </trans-unit>
-            <trans-unit id="UsWSixX">
-                <source>label.sign_in</source>
-                <target>Sign in</target>
-            </trans-unit>
-            <trans-unit id="lnfUWu.">
-                <source>label.signout</source>
-                <target>Sign out</target>
-            </trans-unit>
-            <trans-unit id="rttit_o">
-                <source>label.site_graphic</source>
-                <target>Site graphic</target>
-            </trans-unit>
-            <trans-unit id="0pHTiGE">
-                <source>label.site_graphic_file_help</source>
-                <target>Auto-resized: favicon to 48×48 px (.ico), Apple touch icon to 114×114 px (.png).</target>
-            </trans-unit>
-            <trans-unit id="6.3yMVA">
-                <source>label.site_graphic_missing</source>
-                <target>No file has been uploaded yet</target>
-            </trans-unit>
-            <trans-unit id="sDMW24b">
-                <source>label.site_graphics</source>
-                <target>Site graphics</target>
             </trans-unit>
             <trans-unit id="7V5.lpF">
                 <source>label.slide</source>
@@ -1777,10 +1041,6 @@
             <trans-unit id="ru2vORh">
                 <source>label.stop_animation</source>
                 <target>Stop animation</target>
-            </trans-unit>
-            <trans-unit id="sIJNQm6">
-                <source>label.summary_social_network</source>
-                <target>Social network summary</target>
             </trans-unit>
             <trans-unit id="qGVcC.N">
                 <source>label.summary_social_network_help</source>
@@ -1810,29 +1070,9 @@
                 <source>label.title</source>
                 <target>Title</target>
             </trans-unit>
-            <trans-unit id="pU0wOZ0">
-                <source>label.to_url</source>
-                <target>Target URL</target>
-            </trans-unit>
-            <trans-unit id="AVZ1p4W">
-                <source>label.to_url_help</source>
-                <target>Full URL (https://...) or absolute path (/series/la-guilde)</target>
-            </trans-unit>
             <trans-unit id="ExAFOiH">
                 <source>label.user</source>
                 <target>User</target>
-            </trans-unit>
-            <trans-unit id="hKJPguf">
-                <source>label.user_registration_disable</source>
-                <target>Disable user registration</target>
-            </trans-unit>
-            <trans-unit id="IpO0rga">
-                <source>label.user_registration_enable</source>
-                <target>Enable user registration</target>
-            </trans-unit>
-            <trans-unit id="GQQkfB3">
-                <source>label.users</source>
-                <target>Users</target>
             </trans-unit>
             <trans-unit id="LOa9pVD">
                 <source>label.video_not_supported</source>
@@ -1857,10 +1097,6 @@
             <trans-unit id="NKuTZhq">
                 <source>text.confirm_email_instructions</source>
                 <target>Please confirm your email address by clicking the following link:</target>
-            </trans-unit>
-            <trans-unit id="2lWOypu">
-                <source>text.cookies_banner</source>
-                <target>This site uses a session cookie required for it to work, and may embed third-party content (videos, etc.) requiring your consent.</target>
             </trans-unit>
             <trans-unit id="39RTBwl">
                 <source>text.err</source>
@@ -1889,14 +1125,6 @@
             <trans-unit id="fqCFO6G">
                 <source>text.gdpr</source>
                 <target>I agree that this website stores the submitted data so that it can answer my request</target>
-            </trans-unit>
-            <trans-unit id="m3ORa7e">
-                <source>text.link_expires_in</source>
-                <target>This link will expire in</target>
-            </trans-unit>
-            <trans-unit id="vcT08Ej">
-                <source>text.logged_in_as</source>
-                <target>You are logged in as %user%,</target>
             </trans-unit>
             <trans-unit id="npvFfuM">
                 <source>text.no_articles</source>

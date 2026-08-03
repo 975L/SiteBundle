@@ -10,8 +10,9 @@
 
 namespace c975L\SiteBundle\Tests\Service;
 
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
+use c975L\ConfigBundle\Service\UserFormSeeder;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\UiBundle\Entity\EmailTemplate;
@@ -19,6 +20,7 @@ use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Entity\FormField;
 use c975L\UiBundle\Repository\EmailTemplateRepository;
 use c975L\UiBundle\Repository\FormRepository;
+use c975L\UiBundle\Service\FormSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -63,7 +65,8 @@ class DefaultPagesImporterTest extends TestCase
                     return null;
                 }
 
-                return (new Form())->setName($criteria['name'])->setRestricted(true)->setAction($existingForms[$criteria['name']]);
+                // The "links" key is what tells FormSeeder this Form is up to date and needs no backfill - set directly, setLinks([]) removing it instead
+                return (new Form())->setName($criteria['name'])->setRestricted(true)->setAction($existingForms[$criteria['name']])->setActionConfig(['links' => []]);
             }
         );
 
@@ -95,11 +98,19 @@ class DefaultPagesImporterTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
 
+        // Real seeders rather than doubles: they are the thing under test here as much as the importer is - what ends up persisted is exactly what a consuming app would get
+        $formSeeder = new FormSeeder(
+            $em,
+            $formRepository ?? $this->createFormRepository(),
+            $emailTemplateRepository ?? $this->createEmailTemplateRepository(),
+            $defaultLocale,
+        );
+
         return new DefaultPagesImporter(
             $em,
             $pageRepository,
-            $formRepository ?? $this->createFormRepository(),
-            $emailTemplateRepository ?? $this->createEmailTemplateRepository(),
+            $formSeeder,
+            new UserFormSeeder($formSeeder, $em),
             $security,
             $defaultLocale,
             $enabledLocales,
@@ -483,6 +494,24 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertSame(['created' => 1, 'skipped' => 0, 'summarised' => []], $result);
         $this->assertCount(1, $persisted);
         $this->assertFalse($persisted[0]->isPublished());
+    }
+
+    // The indexable default only holds for a page seeded published: a page seeded unpublished (a definition holding 'isPublished' => false like "conditions-generales-de-vente", or one the callback above answered "no" for) is unreferenced by Page::unreferenceWhenUnpublished() at the very flush that creates it - played here as Doctrine would - and publishing it later is where its referencing is decided again, by hand
+    public function testAPageSeededUnpublishedIsSeededUnreferencedToo(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository();
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
+
+        $onPage = static fn (array $def): array => [
+            'import' => 'home' === $def['slug'],
+            'isPublished' => false,
+        ];
+
+        $importer->import($onPage);
+        $persisted[0]->unreferenceWhenUnpublished();
+
+        $this->assertFalse($persisted[0]->isIndexable());
     }
 
     // A locale absent from getDefinitions() (no translation yet) must be silently ignored, not error out

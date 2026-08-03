@@ -11,15 +11,17 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\ContentOffenceLocatorRegistry;
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\ContentQualityClient;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Management\ContentQualityHealthCheckProvider;
 use c975L\SiteBundle\Management\PageBlockLocator;
+use c975L\SiteBundle\Management\PageContentOffenceLocator;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Service\ContentQualityClient;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
@@ -65,9 +67,9 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     }
 
     // null stands for a url the HEAD never got an answer from (timeout, DNS, refused connection), which the analyzer tells apart from a real status
-    private function createPageExistenceChecker(?int $status = 200): PageExistenceChecker
+    private function createUrlStatusChecker(?int $status = 200): UrlStatusChecker
     {
-        $checker = $this->createStub(PageExistenceChecker::class);
+        $checker = $this->createStub(UrlStatusChecker::class);
         $checker->method('status')->willReturn($status);
 
         return $checker;
@@ -129,7 +131,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         array $pages,
         ContentQualityClient $client,
         ?string $siteUrl = 'https://example.com',
-        ?PageExistenceChecker $pageExistenceChecker = null,
+        ?UrlStatusChecker $urlStatusChecker = null,
         ?PageBlockLocator $pageBlockLocator = null,
         ?TranslatorInterface $translator = null,
     ): ContentQualityHealthCheckProvider {
@@ -140,8 +142,8 @@ class ContentQualityHealthCheckProviderTest extends TestCase
             $this->createPageEditUrlResolver(),
             new ContentQualityAnalyzer(
                 $client,
-                $pageExistenceChecker ?? $this->createPageExistenceChecker(),
-                $pageBlockLocator ?? $this->createPageBlockLocator(),
+                $urlStatusChecker ?? $this->createUrlStatusChecker(),
+                new ContentOffenceLocatorRegistry([new PageContentOffenceLocator($pageBlockLocator ?? $this->createPageBlockLocator())]),
                 $translator ?? $this->createTranslator(),
             ),
         );
@@ -229,7 +231,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $client = $this->createMock(ContentQualityClient::class);
         $client->expects($this->never())->method('request');
 
-        $provider = $this->createProvider([$this->createPage('home')], $client, pageExistenceChecker: $this->createPageExistenceChecker(404));
+        $provider = $this->createProvider([$this->createPage('home')], $client, urlStatusChecker: $this->createUrlStatusChecker(404));
 
         $result = $provider->runChecks()[0];
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
@@ -242,7 +244,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider(
             [$this->createPage('home')],
             $this->createStub(ContentQualityClient::class),
-            pageExistenceChecker: $this->createPageExistenceChecker(503),
+            urlStatusChecker: $this->createUrlStatusChecker(503),
         );
 
         $result = $provider->runChecks()[0];
@@ -256,7 +258,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider(
             [$this->createPage('home')],
             $this->createStub(ContentQualityClient::class),
-            pageExistenceChecker: $this->createPageExistenceChecker(410),
+            urlStatusChecker: $this->createUrlStatusChecker(410),
         );
 
         $result = $provider->runChecks()[0];
@@ -270,7 +272,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider(
             [$this->createPage('home')],
             $this->createStub(ContentQualityClient::class),
-            pageExistenceChecker: $this->createPageExistenceChecker(null),
+            urlStatusChecker: $this->createUrlStatusChecker(null),
         );
 
         $result = $provider->runChecks()[0];
@@ -367,15 +369,15 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $client = $this->createStub(ContentQualityClient::class);
         $this->stubAnalyze($client, self::GOOD_ANALYSIS);
 
-        $pageExistenceChecker = $this->createStub(PageExistenceChecker::class);
-        $pageExistenceChecker->method('status')->willReturnCallback(
+        $urlStatusChecker = $this->createStub(UrlStatusChecker::class);
+        $urlStatusChecker->method('status')->willReturnCallback(
             static fn (string $url): int => str_contains($url, 'contact') ? 404 : 200
         );
 
         $provider = $this->createProvider(
             [$this->createPage('home'), $this->createPage('contact'), $this->createPage('about')],
             $client,
-            pageExistenceChecker: $pageExistenceChecker,
+            urlStatusChecker: $urlStatusChecker,
         );
 
         $results = $provider->runChecks();

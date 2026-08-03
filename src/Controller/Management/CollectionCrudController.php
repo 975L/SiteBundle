@@ -12,9 +12,9 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
+use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -32,8 +32,6 @@ use function Symfony\Component\Translation\t;
 // Named, slugified grouping of CollectionItems - creating one here (rather than free-typing a "group" string on the item, as before) makes it a real, browsable entry point: its "Items" action leads into CollectionItemCrudController scoped to it (see ?collectionGroup=<id>). Its slug is what CollectionItemSourceProvider exposes to UiBundle's "Collection" block as a pickable source.
 class CollectionCrudController extends AbstractCrudController
 {
-    use UniqueSlugTrait;
-
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
@@ -142,7 +140,7 @@ class CollectionCrudController extends AbstractCrudController
             return;
         }
 
-        $collectionGroup->setSlug($this->uniqueSlug(
+        $collectionGroup->setSlug(UniqueSlug::build(
             $this->slugger,
             $slug,
             fn (string $candidate): bool => $this->slugCollides($collectionGroup, $candidate)

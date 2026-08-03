@@ -22,8 +22,16 @@ class ConfigsJsonTest extends TestCase
      */
     private function loadConfigs(): array
     {
-        $configs = json_decode((string) file_get_contents(__DIR__ . '/../config/configs.json'), true, 512, \JSON_THROW_ON_ERROR);
-        $this->assertIsArray($configs);
+        // Every configs*.json, not just configs.json: ConfigDeclarationLocator globs them all at runtime, so a bundle shipping a second declaration file would otherwise ship it untested
+        $files = glob(__DIR__ . '/../config/configs*.json') ?: [];
+        $this->assertNotSame([], $files);
+
+        $configs = [];
+        foreach ($files as $file) {
+            $declared = json_decode((string) file_get_contents($file), true, 512, \JSON_THROW_ON_ERROR);
+            $this->assertIsArray($declared, basename($file) . ' is not a list of entries');
+            $configs = array_merge($configs, $declared);
+        }
 
         return $configs;
     }

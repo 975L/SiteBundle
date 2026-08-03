@@ -18,12 +18,6 @@ class BlockFixtureProvider implements BlockFixtureProviderInterface
     public function getFixtures(): array
     {
         return [
-            'legal_model' => [
-                '' => [
-                    'model' => 'france/legal-notice',
-                    'latestUpdate' => '2026-01-01',
-                ],
-            ],
             'twig_content' => [
                 '' => [
                     'templatePath' => '@c975LSite/examples/twig_content_example.html.twig',

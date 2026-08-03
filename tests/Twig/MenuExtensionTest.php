@@ -12,12 +12,12 @@ namespace c975L\SiteBundle\Tests\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
-use c975L\SiteBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Twig\MenuExtension;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockAnchorCollector;

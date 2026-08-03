@@ -11,11 +11,11 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Menu;
-use c975L\SiteBundle\Management\BlockDataExporter;
 use c975L\SiteBundle\Management\MenuExportProvider;
 use c975L\SiteBundle\Management\MenuImportProvider;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Management\BlockDataExporter;
 use PHPUnit\Framework\TestCase;
 
 class MenuExportProviderTest extends TestCase

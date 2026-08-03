@@ -14,23 +14,16 @@ use c975L\ConfigBundle\Management\ShortcutProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\SiteShortcutController;
 use c975L\SiteBundle\Management\SiteShortcutProvider;
-use c975L\UiBundle\Entity\Form;
-use c975L\UiBundle\Repository\FormRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SiteShortcutProviderTest extends TestCase
 {
-    private function createTranslator(): TranslatorInterface
+    private function createProvider(): SiteShortcutProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $id): string => $id);
 
-        return $translator;
-    }
-
-    private function createConfigService(): ConfigServiceInterface
-    {
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturnCallback(
             static fn (string $key) => match ($key) {
@@ -40,76 +33,24 @@ class SiteShortcutProviderTest extends TestCase
             }
         );
 
-        return $configService;
+        return new SiteShortcutProvider($translator, $configService);
     }
 
-    // The "register" Form's own $enabled flag now drives this shortcut - null (Form not seeded yet) counts as disabled
-    private function createFormRepository(?bool $registerEnabled): FormRepository
+    // The only shortcut left here: "Regenerate sitemap" is contributed by ConfigBundle (which owns SitemapWriter), and so are the table export and the registration toggle since the account flow moved there
+    public function testGetShortcutsContributesThePageCreationEntryAlone(): void
     {
-        $repository = $this->createStub(FormRepository::class);
-        $repository->method('findOneBy')->willReturn(
-            null === $registerEnabled ? null : (new Form())->setName('register')->setEnabled($registerEnabled)
-        );
+        $shortcuts = $this->createProvider()->getShortcuts();
 
-        return $repository;
-    }
-
-    // When registration is disabled, the shortcut offers to enable it and is not marked active
-    public function testGetShortcutsOffersToEnableRegistrationWhenDisabled(): void
-    {
-        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(false));
-
-        $shortcuts = $provider->getShortcuts();
-        $registrationShortcut = $shortcuts[1];
-
-        $this->assertSame('label.user_registration_enable', $registrationShortcut['label']);
-        $this->assertFalse($registrationShortcut['active']);
-        $this->assertSame(SiteShortcutController::REGISTRATION_ENABLED_TOGGLE_ROUTE, $registrationShortcut['route']);
-    }
-
-    // When registration is already enabled, the shortcut offers to disable it and is marked active
-    public function testGetShortcutsOffersToDisableRegistrationWhenEnabled(): void
-    {
-        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(true));
-
-        $registrationShortcut = $provider->getShortcuts()[1];
-
-        $this->assertSame('label.user_registration_disable', $registrationShortcut['label']);
-        $this->assertTrue($registrationShortcut['active']);
-    }
-
-    // No "register" Form seeded yet (e.g. before the first c975l:site:pages:import-defaults) counts as disabled, same as an explicit false
-    public function testGetShortcutsTreatsAMissingRegisterFormAsDisabled(): void
-    {
-        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(null));
-
-        $registrationShortcut = $provider->getShortcuts()[1];
-
-        $this->assertFalse($registrationShortcut['active']);
-    }
-
-    // The 3 shortcuts are always contributed, each with its dedicated route and role - "Regenerate sitemap" isn't one of them anymore, it's contributed by ConfigBundle (which owns SitemapWriter, see its ConfigShortcutProvider)
-    public function testGetShortcutsReturnsAllThreeEntries(): void
-    {
-        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(false));
-
-        $shortcuts = $provider->getShortcuts();
-
-        $this->assertCount(3, $shortcuts);
+        $this->assertCount(1, $shortcuts);
+        $this->assertSame('label.create_page', $shortcuts[0]['label']);
+        $this->assertSame(SiteShortcutController::CREATE_PAGE_ROUTE, $shortcuts[0]['route']);
         $this->assertSame('ROLE_EDITOR', $shortcuts[0]['role']);
-        $this->assertSame('ROLE_SUPER_ADMIN', $shortcuts[2]['role']);
-        $this->assertSame(SiteShortcutController::EXPORT_TABLES_ROUTE, $shortcuts[2]['route']);
+        $this->assertFalse($shortcuts[0]['active']);
     }
 
-    // The dashboard groups shortcuts by category - the table export is the only one belonging to "export", the rest to "site"
-    public function testGetShortcutsCategorizesEachEntry(): void
+    // The dashboard groups shortcuts by category
+    public function testGetShortcutsCategorizesItsEntryUnderSite(): void
     {
-        $provider = new SiteShortcutProvider($this->createTranslator(), $this->createConfigService(), $this->createFormRepository(false));
-
-        $shortcuts = $provider->getShortcuts();
-
-        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $shortcuts[0]['category']);
-        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $shortcuts[1]['category']);
-        $this->assertSame(ShortcutProviderInterface::CATEGORY_EXPORT, $shortcuts[2]['category']);
+        $this->assertSame(ShortcutProviderInterface::CATEGORY_SITE, $this->createProvider()->getShortcuts()[0]['category']);
     }
 }

@@ -1,5 +1,35 @@
 [
     {
+        "date": "2026-08-02",
+        "description": [
+            {
+                "en": "On a legal page, the \"Edit\" button that appears when hovering a section now opens the customization screen straight on that section",
+                "fr": "Sur une page légale, le bouton « Modifier » qui apparaît au survol d'une section ouvre désormais l'écran de personnalisation directement sur cette section",
+                "es": "En una página legal, el botón «Editar» que aparece al pasar el ratón por una sección ahora abre la pantalla de personalización directamente en esa sección"
+            },
+            {
+                "en": "Unpublishing a page now unreferences it, and republishing it leaves it out of the sitemap until \"Reference the page\" is checked back",
+                "fr": "Dépublier une page la déréférence désormais, et la republier la laisse hors du plan du site tant que « Référencer la page » n'est pas recoché",
+                "es": "Despublicar una página ahora la desreferencia, y volver a publicarla la deja fuera del mapa del sitio mientras no se vuelva a marcar «Referenciar la página»"
+            },
+            {
+                "en": "A page published in replacement of another takes its referencing over along with its address, so an indexed url doesn't silently leave the sitemap",
+                "fr": "Une page publiée en remplacement d'une autre reprend son référencement en même temps que son adresse, pour qu'une url indexée ne sorte pas du plan du site sans prévenir",
+                "es": "Una página publicada en sustitución de otra asume su referenciación junto con su dirección, para que una url indexada no salga del mapa del sitio sin avisar"
+            },
+            {
+                "en": "The health check now reports the uploaded SVG files whose text isn't vectorized, which display with the wrong font on a visitor's browser",
+                "fr": "Le contrôle de santé signale désormais les fichiers SVG téléversés dont le texte n'est pas vectorisé, qui s'affichent avec une mauvaise police chez le visiteur",
+                "es": "El control de estado ahora informa de los archivos SVG subidos cuyo texto no está vectorizado, que se muestran con una fuente incorrecta en el navegador del visitante"
+            },
+            {
+                "en": "User accounts and part of the settings are now managed at the dashboard level, shared by every bundle of the ecosystem",
+                "fr": "Les comptes utilisateurs et une partie des réglages sont désormais gérés au niveau du tableau de bord, partagé par tous les bundles de l'écosystème",
+                "es": "Las cuentas de usuario y parte de los ajustes se gestionan ahora a nivel del panel de control, compartido por todos los paquetes del ecosistema"
+            }
+        ]
+    },
+    {
         "date": "2026-08-01",
         "description": [
             {

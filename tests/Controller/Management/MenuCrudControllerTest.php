@@ -15,6 +15,7 @@ use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\UiBundle\Registry\BlockRegistry;
+use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query;
@@ -108,7 +109,7 @@ class MenuCrudControllerTest extends TestCase
     private function createController(
         ?MenuRepository $menuRepository = null,
         ?AdminContextProvider $adminContextProvider = null,
-        ?CsrfTokenManagerInterface $csrfTokenManager = null,
+        ?BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder = null,
     ): MenuCrudController {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -121,7 +122,7 @@ class MenuCrudControllerTest extends TestCase
             $menuRepository ?? $this->createMenuRepositoryReturning([]),
             $translator,
             $adminContextProvider ?? $this->createAdminContextProvider(),
-            $csrfTokenManager ?? $this->createStub(CsrfTokenManagerInterface::class),
+            $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
             $this->createAdminUrlGenerator(),
         );
     }
@@ -146,6 +147,21 @@ class MenuCrudControllerTest extends TestCase
     // --- configureActions --------------------------------------------------------------------------------
 
     // Detail adds no information beyond what edit already shows, and New is replaced by the index's own per-location buttons (see create()) - a Cancel action lets the admin back out of an edit without saving
+    // A real builder over stubs: what these tests assert is the row_attr a field ends up carrying, not the builder's own wiring (covered by UiBundle)
+    private function createBlockMoveRowAttrBuilder(string $url = '/admin/ui/block/move', string $token = 'token123'): BlockMoveRowAttrBuilder
+    {
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')->willReturn($url);
+
+        $csrfTokenManager = $this->createStub(CsrfTokenManagerInterface::class);
+        $csrfTokenManager->method('getToken')->willReturn(new CsrfToken(BlockMoveRowAttrBuilder::ROUTE, $token));
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+
+        return new BlockMoveRowAttrBuilder($urlGenerator, $csrfTokenManager, $translator);
+    }
+
     public function testConfigureActionsDisablesDetailAndNewAndAddsCancelOnEdit(): void
     {
         $controller = $this->createController();
@@ -234,18 +250,15 @@ class MenuCrudControllerTest extends TestCase
         $this->assertSame([], $blocks->getAsDto()->getFormTypeOptions()['row_attr'] ?? null);
     }
 
-    // Editing an already-saved menu - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see BlockMoveRowAttrTrait)
+    // Editing an already-saved menu - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see UiBundle's BlockMoveRowAttrBuilder)
     public function testConfigureFieldsBlocksFieldRowAttrCarriesBlockMoveDataOnEditPage(): void
     {
         $menu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR);
         (new \ReflectionProperty(Menu::class, 'id'))->setValue($menu, 7);
 
-        $csrfTokenManager = $this->createStub(CsrfTokenManagerInterface::class);
-        $csrfTokenManager->method('getToken')->willReturn(new CsrfToken('management_ui_block_move', 'token123'));
-
         $controller = $this->createController(
             adminContextProvider: $this->createAdminContextProvider($this->createAdminContext($menu)),
-            csrfTokenManager: $csrfTokenManager,
+            blockMoveRowAttrBuilder: $this->createBlockMoveRowAttrBuilder(),
         );
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturn('/admin/ui/block/move');

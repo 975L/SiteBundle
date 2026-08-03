@@ -13,7 +13,6 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\ShortcutProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\SiteShortcutController;
-use c975L\UiBundle\Repository\FormRepository;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SiteShortcutProvider implements ShortcutProviderInterface
@@ -21,15 +20,11 @@ class SiteShortcutProvider implements ShortcutProviderInterface
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly ConfigServiceInterface $configService,
-        private readonly FormRepository $formRepository,
     ) {
     }
 
     public function getShortcuts(): array
     {
-        // False if the "register" Form doesn't exist yet either (nothing seeded, e.g. before the first c975l:site:pages:import-defaults) - same as it being explicitly disabled
-        $userRegistrationEnabled = $this->formRepository->findOneBy(['name' => 'register'])?->isEnabled() ?? false;
-
         return [
             [
                 'label' => $this->translator->trans('label.create_page', [], 'site'),
@@ -38,26 +33,6 @@ class SiteShortcutProvider implements ShortcutProviderInterface
                 'active' => false,
                 'role' => $this->configService->get('site-role-editor'),
                 'category' => ShortcutProviderInterface::CATEGORY_SITE,
-            ],
-            [
-                'label' => $this->translator->trans(
-                    $userRegistrationEnabled ? 'label.user_registration_disable' : 'label.user_registration_enable',
-                    [],
-                    'site',
-                ),
-                'icon' => 'fas fa-wrench',
-                'route' => SiteShortcutController::REGISTRATION_ENABLED_TOGGLE_ROUTE,
-                'active' => $userRegistrationEnabled,
-                'role' => $this->configService->get('site-role-admin'),
-                'category' => ShortcutProviderInterface::CATEGORY_SITE,
-            ],
-            [
-                'label' => $this->translator->trans('label.export_tables', [], 'site'),
-                'icon' => 'fas fa-database',
-                'route' => SiteShortcutController::EXPORT_TABLES_ROUTE,
-                'active' => false,
-                'role' => 'ROLE_SUPER_ADMIN',
-                'category' => ShortcutProviderInterface::CATEGORY_EXPORT,
             ],
         ];
     }

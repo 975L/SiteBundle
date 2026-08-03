@@ -11,19 +11,24 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\SiteBundle\Controller\Management\PageCrudController;
+use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\BlockEditUrlProviderInterface;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Service\BlockFocusUrl;
+use c975L\UiBundle\Service\LegalModelCatalog;
+use c975L\UiBundle\Service\LegalModelEditUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // Resolves, for UiBundle's front-end "Edit this block" hover button, the EasyAdmin edit URL of the Page owning a given Block
 class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
 {
-    use BlockFocusUrlTrait;
-
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LegalModelCatalog $catalog,
     ) {
     }
 
@@ -39,11 +44,21 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
         foreach ($this->pageRepository->findByBlockIds($blockIds) as $page) {
             foreach ($page->getBlocks() as $block) {
                 if (\in_array($block->getId(), $blockIds, true)) {
-                    $urls[$block->getId()] = $this->blockFocusUrl($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
+                    $urls[$block->getId()] = $this->editUrl($page, $block);
                 }
             }
         }
 
         return $urls;
+    }
+
+    // A legal_model block's row in the Page form only holds the model it points at: what an editor reaching it
+    // from the document itself means to change is its wording, which lives on its own customization screen -
+    // UiBundle answers where that is (see LegalModelEditUrl), and null for anything else, including a model it
+    // doesn't ship, which would 404 there and keeps the Page's form instead
+    private function editUrl(Page $page, Block $block): string
+    {
+        return LegalModelEditUrl::build($this->urlGenerator, $this->catalog, $block)
+            ?? BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
     }
 }

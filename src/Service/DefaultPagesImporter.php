@@ -11,20 +11,19 @@
 namespace c975L\SiteBundle\Service;
 
 use c975L\ConfigBundle\Contract\UserInterface;
+use c975L\ConfigBundle\Service\UserFormSeeder;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Contract\FormBlockDependencyProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\EmailBlock;
-use c975L\UiBundle\Entity\EmailTemplate;
-use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Entity\FormField;
-use c975L\UiBundle\Repository\EmailTemplateRepository;
-use c975L\UiBundle\Repository\FormRepository;
+use c975L\UiBundle\Service\FormSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class DefaultPagesImporter
+class DefaultPagesImporter implements FormBlockDependencyProviderInterface
 {
     // name => [type, label, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). No placeholder is ever seeded, a field showing its label alone until an admin types one in the back-office. "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
     private const CONTACT_CORE_FIELDS = [
@@ -48,38 +47,6 @@ class DefaultPagesImporter
         ],
     ];
 
-    // Same shape as CONTACT_CORE_FIELDS, for the "register" Form - processed the same generic way as "contact" (c975L\UiBundle\Controller\FormController), see scaffold's App\Service\RegisterFormAction for the "register" FormActionInterface key. "cgu"'s url points at that locale's own terms-of-use legal page, seeded a few lines below in each locale's page list - kept as a plain relative "/pages/{slug}" path (no router involved here) since it's only ever read back once by FormSubmissionType, exactly like every other seeded field
-    private const REGISTER_CORE_FIELDS = [
-        'fr' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Mot de passe', null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'J\'accepte les conditions générales d\'utilisation', '/pages/conditions-generales-d-utilisation'],
-        ],
-        'en' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Password', null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'I accept the terms of use', '/pages/terms-of-use'],
-        ],
-        'es' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-            'plainPassword' => [FormField::TYPE_PASSWORD_REPEATED, 'Contraseña', null],
-            'cgu' => [FormField::TYPE_CHECKBOX, 'Acepto las condiciones de uso', '/pages/condiciones-de-uso'],
-        ],
-    ];
-
-    // Same shape as CONTACT_CORE_FIELDS, for the "reset_password_request" Form - see scaffold's App\Service\ResetPasswordRequestFormAction for the "reset_password_request" FormActionInterface key
-    private const RESET_PASSWORD_REQUEST_CORE_FIELDS = [
-        'fr' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-        ],
-        'en' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-        ],
-        'es' => [
-            'email' => [FormField::TYPE_EMAIL, 'Email', null],
-        ],
-    ];
-
     // One EmailBlock tuple set per locale, unused positions left null; placeholders are resolved at send time
     private const CONTACT_NOTIFICATION_BLOCKS = [
         'fr' => [
@@ -96,55 +63,11 @@ class DefaultPagesImporter
         ],
     ];
 
-    // "{{ signed_url }}"/"{{ expires_at }}" are resolved by EmailVerifier's caller
-    private const ACCOUNT_VALIDATION_BLOCKS = [
-        'fr' => [
-            [EmailBlock::TYPE_HEADING, 'Confirmez votre adresse email', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'Merci de votre inscription. Cliquez sur le bouton ci-dessous pour confirmer votre adresse email.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Confirmer mon email', '{{ signed_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-        'en' => [
-            [EmailBlock::TYPE_HEADING, 'Confirm your email address', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'Thanks for registering. Click the button below to confirm your email address.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Confirm my email', '{{ signed_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-        'es' => [
-            [EmailBlock::TYPE_HEADING, 'Confirma tu dirección de email', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'Gracias por registrarte. Haz clic en el botón de abajo para confirmar tu dirección de email.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Confirmar mi email', '{{ signed_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-    ];
-
-    // "{{ reset_url }}"/"{{ expires_at }}" are resolved by ResetPasswordRequestFormAction
-    private const PASSWORD_RESET_BLOCKS = [
-        'fr' => [
-            [EmailBlock::TYPE_HEADING, 'Réinitialisation de votre mot de passe', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'Vous avez demandé la réinitialisation de votre mot de passe. Cliquez sur le bouton ci-dessous pour en choisir un nouveau.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Réinitialiser mon mot de passe', '{{ reset_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-        'en' => [
-            [EmailBlock::TYPE_HEADING, 'Reset your password', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'You requested a password reset. Click the button below to choose a new one.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Reset my password', '{{ reset_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-        'es' => [
-            [EmailBlock::TYPE_HEADING, 'Restablece tu contraseña', EmailBlock::LEVEL_H1, null, null, null],
-            [EmailBlock::TYPE_TEXT, null, null, 'Has solicitado restablecer tu contraseña. Haz clic en el botón de abajo para elegir una nueva.', null, null],
-            [EmailBlock::TYPE_BUTTON, null, null, null, 'Restablecer mi contraseña', '{{ reset_url }}'],
-            [EmailBlock::TYPE_TEXT, null, null, '{{ expires_at }}', null, null],
-        ],
-    ];
-
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly PageRepository $pageRepository,
-        private readonly FormRepository $formRepository,
-        private readonly EmailTemplateRepository $emailTemplateRepository,
+        private readonly FormSeeder $formSeeder,
+        private readonly UserFormSeeder $userFormSeeder,
         private readonly Security $security,
         #[Autowire('%kernel.default_locale%')]
         private readonly string $defaultLocale,
@@ -253,7 +176,7 @@ class DefaultPagesImporter
             ->setIsPublished($def['isPublished'])
             // The meta description AND og:description of the page, see layout.html.twig. Seeded for every default page whose content is standardized enough to describe once here - the legal ones, "contact", and the account ones: left empty they render no description at all, which is one of the reasons a search engine crawls a page and then declines to index it. The account pages get one despite being non-indexable, since og:description is what a messaging app or a social network renders when someone shares the link, and "noindex" does nothing to stop that. Every text is kept within ContentQualityAnalyzer's own 50-160 character window, so a freshly created site doesn't start with a health check warning on the very pages it just seeded. Only "home" is left null: its description belongs to the site itself, not to a bundle default
             ->setSummarySocialNetwork($def['summary'] ?? null)
-            // Only the account-related pages opt out (see the definitions below), every other default page is indexable
+            // Only the account-related pages opt out (see the definitions below), every other default page is seeded indexable. It only holds for the pages seeded published: Page::unreferenceWhenUnpublished() unreferences the others at this very flush (the ones defined 'isPublished' => false, and any page the interactive command was answered "no" for above), and publishing one later is where its referencing is decided again - by hand, like for any other page
             ->setIsIndexable($def['isIndexable'] ?? true)
             ->setCreation($now)
             ->setModification($now);
@@ -313,117 +236,17 @@ class DefaultPagesImporter
     {
         match ($formName) {
             'contact' => $this->ensureContactFormExists(),
-            'register' => $this->ensureRegisterFormExists(),
-            'reset_password_request' => $this->ensureResetPasswordRequestFormExists(),
+            'register' => $this->userFormSeeder->ensureRegisterForm(),
+            'reset_password_request' => $this->userFormSeeder->ensureResetPasswordRequestForm(),
             default => null,
         };
     }
 
+    // The only Form this bundle declares itself - "register"/"reset_password_request" belong to the account flow, so ConfigBundle seeds them (see UserFormSeeder), an app without a site foundation needing them just as much
     private function ensureContactFormExists(): void
     {
-        $this->ensureFormExists('contact', self::CONTACT_CORE_FIELDS, 'send_email', ['senderEmailField' => 'email', 'offerReceiveCopy' => true, 'template' => '@c975LSite/emails/contact_notification.html.twig']);
-        $this->ensureEmailTemplateExists('contact_notification', self::CONTACT_NOTIFICATION_BLOCKS);
-    }
-
-    private function ensureRegisterFormExists(): void
-    {
-        $this->ensureFormExists('register', self::REGISTER_CORE_FIELDS, 'register');
-        $this->ensureEmailTemplateExists('account_validation', self::ACCOUNT_VALIDATION_BLOCKS);
-    }
-
-    private function ensureResetPasswordRequestFormExists(): void
-    {
-        $this->ensureFormExists('reset_password_request', self::RESET_PASSWORD_REQUEST_CORE_FIELDS, 'reset_password_request');
-        $this->ensureEmailTemplateExists('password_reset', self::PASSWORD_RESET_BLOCKS);
-    }
-
-    // Idempotent - seeds a restricted c975L\UiBundle\Entity\Form (name/fields locked, label/placeholder/order still editable, see FormCrudController) so the Block referencing it works right away. $action names the FormActionInterface key processing a submission (c975L\UiBundle\Service\SendEmailFormAction for "contact", scaffold's own RegisterFormAction/ResetPasswordRequestFormAction for the other two). A Form seeded by an earlier version of this bundle (e.g. before register/reset_password_request gained their own action, or before FormField gained "url" - see UPGRADE.md) is backfilled in place instead of left stale. Only touches a field's "url" when it's still null (its seeded default) - once an admin has edited it (blank or otherwise), that edit is never overwritten
-    private function ensureFormExists(string $name, array $coreFieldsByLocale, ?string $action = null, ?array $actionConfig = null): void
-    {
-        $fields = $coreFieldsByLocale[$this->defaultLocale] ?? $coreFieldsByLocale['en'];
-
-        $existing = $this->formRepository->findOneBy(['name' => $name]);
-        if (null !== $existing) {
-            $this->backfillForm($existing, $fields, $action, $actionConfig);
-
-            return;
-        }
-
-        $this->em->persist($this->buildForm($name, $fields, $action, $actionConfig));
-    }
-
-    // A Form seeded by an earlier version of this bundle brought up to date in place - only ever on a still-restricted Form/field, so nothing an admin has taken over is touched
-    private function backfillForm(Form $form, array $fields, ?string $action, ?array $actionConfig): void
-    {
-        if ($form->isRestricted() && $form->getAction() !== $action) {
-            $form->setAction($action);
-            $form->setActionConfig($actionConfig);
-            $this->em->persist($form);
-        }
-
-        foreach ($form->getFields() as $field) {
-            $url = $fields[$field->getName()][2] ?? null;
-            if ($field->isRestricted() && null === $field->getUrl() && null !== $url) {
-                $field->setUrl($url);
-                $this->em->persist($field);
-            }
-        }
-    }
-
-    // $fields entries are [type, label, url] tuples, in the order they're declared
-    private function buildForm(string $name, array $fields, ?string $action, ?array $actionConfig): Form
-    {
-        $form = (new Form())
-            ->setName($name)
-            ->setAction($action)
-            ->setRestricted(true)
-            ->setActionConfig($actionConfig);
-
-        $position = 0;
-        foreach ($fields as $fieldName => [$type, $label, $url]) {
-            $form->addField(
-                (new FormField())
-                    ->setName($fieldName)
-                    ->setLabel($label)
-                    ->setType($type)
-                    ->setUrl($url)
-                    ->setRequired(true)
-                    ->setPosition($position++)
-                    ->setRestricted(true)
-            );
-        }
-
-        return $form;
-    }
-
-    // Idempotent, seeding a restricted EmailTemplate whose name is locked but whose blocks stay editable
-    private function ensureEmailTemplateExists(string $name, array $blocksByLocale): void
-    {
-        if (null !== $this->emailTemplateRepository->findOneBy(['name' => $name])) {
-            return;
-        }
-
-        $blocks = $blocksByLocale[$this->defaultLocale] ?? $blocksByLocale['en'];
-
-        $emailTemplate = (new EmailTemplate())
-            ->setName($name)
-            ->setRestricted(true);
-
-        $position = 0;
-        foreach ($blocks as [$type, $heading, $level, $content, $label, $url]) {
-            $block = (new EmailBlock())
-                ->setType($type)
-                ->setHeading($heading)
-                ->setLevel($level)
-                ->setContent($content)
-                ->setLabel($label)
-                ->setUrl($url)
-                ->setPosition($position++)
-            ;
-            $emailTemplate->addBlock($block);
-        }
-
-        $this->em->persist($emailTemplate);
+        $this->formSeeder->ensureForm('contact', self::CONTACT_CORE_FIELDS, 'send_email', ['senderEmailField' => 'email', 'offerReceiveCopy' => true, 'template' => '@c975LSite/emails/contact_notification.html.twig']);
+        $this->formSeeder->ensureEmailTemplate('contact_notification', self::CONTACT_NOTIFICATION_BLOCKS);
     }
 
     // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without ShopBundle) is skipped.

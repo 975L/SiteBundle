@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\ConfigBundle\Management\HealthCheckAdviceBuilder;
 use c975L\ConfigBundle\Management\HealthCheckAdviceProviderInterface;
 use Psr\Log\LoggerInterface;
@@ -206,7 +207,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     // A description that isn't there at all gets "add one" rather than "make it longer", same split as the summary's own. Unlike the other lines this one links back into the back office instead of out to an external report: the fix is a single form field, so the link lands straight on it (see fieldFocusUrl()). $editUrl is null for a url with no Page behind it (another bundle's declared url, see DeclaredUrlsHealthCheckProvider), which leaves the line unlinked rather than pointing at a form that doesn't exist
     private function descriptionAdvice(array $details, ?string $editUrl): array
     {
-        $field = ['%field%' => $this->translator->trans(ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL, [], 'site')];
+        $field = ['%field%' => $this->translator->trans(ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL, [], 'config')];
         $url = $this->fieldFocusUrl($editUrl, self::DESCRIPTION_FIELD_NAME);
 
         if (false === ($details['hasDescription'] ?? true)) {

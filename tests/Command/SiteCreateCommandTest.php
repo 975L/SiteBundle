@@ -12,22 +12,21 @@ namespace c975L\SiteBundle\Tests\Command;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Repository\ConfigRepository;
+use c975L\ConfigBundle\Service\AdminUserCreator;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\ScaffoldInstaller;
 use c975L\ConfigBundle\Service\VaultEncryptor;
 use c975L\SiteBundle\Command\SiteCreateCommand;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
-use c975L\SiteBundle\Service\ScaffoldInstaller;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SiteCreateCommandTest extends TestCase
@@ -57,7 +56,7 @@ class SiteCreateCommandTest extends TestCase
         }
     }
 
-    private function createCommand(?EntityManagerInterface $em = null, ?UserPasswordHasherInterface $passwordHasher = null): SiteCreateCommand
+    private function createCommand(?EntityManagerInterface $em = null, ?AdminUserCreator $adminUserCreator = null): SiteCreateCommand
     {
         return new SiteCreateCommand(
             $this->createStub(ScaffoldInstaller::class),
@@ -65,7 +64,7 @@ class SiteCreateCommandTest extends TestCase
             $this->createStub(ConfigServiceInterface::class),
             $this->createStub(VaultEncryptor::class),
             $em ?? $this->createStub(EntityManagerInterface::class),
-            $passwordHasher ?? $this->createStub(UserPasswordHasherInterface::class),
+            $adminUserCreator ?? $this->createStub(AdminUserCreator::class),
             $this->createStub(DefaultPagesImporter::class),
             $this->createStub(PageRepository::class),
             $this->createStub(MenuRepository::class),
@@ -75,10 +74,9 @@ class SiteCreateCommandTest extends TestCase
         );
     }
 
-    // The guard must read the file on disk: App\Entity\User is autoloadable here, so class_exists() would wrongly pass
-    public function testExecuteFailsWhenUserEntityFileIsMissingEvenThoughTheClassIsAutoloadable(): void
+    // The guard must read the file on disk rather than call class_exists(): in a real app the class is autoloadable from the moment ConfigBundle's scaffold has been installed, and autoloading it here would freeze that pre-scaffold version in memory for the whole process
+    public function testExecuteFailsWhenUserEntityFileIsMissing(): void
     {
-        $this->assertTrue(class_exists(\App\Entity\User::class), 'Sanity check: App\Entity\User is autoloadable in this test suite');
         $tester = new CommandTester($this->createCommand());
 
         $statusCode = $tester->execute([]);
@@ -100,22 +98,15 @@ class SiteCreateCommandTest extends TestCase
         $this->assertStringContainsString('Ce site a déjà été créé', $tester->getDisplay());
     }
 
-    // No confirmation prompt, the password being echoed; the stream's third answer must stay unread
+    // No confirmation prompt, the password being echoed; the stream's third answer must stay unread. What the account itself ends up holding (hashing, roles, verified/enabled) is ConfigBundle's AdminUserCreator's own business, covered by its own test
     public function testCreateAdminUserDoesNotAskForPasswordConfirmation(): void
     {
-        $persisted = [];
-        $userRepository = $this->createStub(EntityRepository::class);
-        $userRepository->method('findOneBy')->willReturn(null);
-        $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('getRepository')->willReturn($userRepository);
-        $em->method('persist')->willReturnCallback(function (object $entity) use (&$persisted): void {
-            $persisted[] = $entity;
-        });
-        $passwordHasher = $this->createStub(UserPasswordHasherInterface::class);
-        $passwordHasher->method('hashPassword')->willReturn('hashed-password');
+        $adminUserCreator = $this->createMock(AdminUserCreator::class);
+        $adminUserCreator->method('exists')->willReturn(false);
+        $adminUserCreator->expects($this->once())->method('create')->with('admin@example.com', 'secret1234');
 
         [$email, $password] = $this->callCreateAdminUser(
-            $this->createCommand($em, $passwordHasher),
+            $this->createCommand(null, $adminUserCreator),
             "admin@example.com\nsecret1234\nsecret1234\n",
             $display
         );
@@ -123,23 +114,16 @@ class SiteCreateCommandTest extends TestCase
         $this->assertSame('admin@example.com', $email);
         $this->assertSame('secret1234', $password);
         $this->assertStringNotContainsString('Confirmer', $display);
-        $this->assertCount(1, $persisted);
-        $this->assertSame('hashed-password', $persisted[0]->getPassword());
-        $this->assertTrue($persisted[0]->isVerified());
-        $this->assertTrue($persisted[0]->isEnabled());
-        // Every backoffice role, ROLE_EDITOR included: no role_hierarchy is shipped, so ROLE_ADMIN alone wouldn't pass the "site-role-editor" gated actions
-        $this->assertSame(['ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN', 'ROLE_USER'], $persisted[0]->getRoles());
     }
 
     // Existing email: no password is ever asked, the creation is skipped
     public function testCreateAdminUserSkipsCreationWhenTheEmailAlreadyExists(): void
     {
-        $userRepository = $this->createStub(EntityRepository::class);
-        $userRepository->method('findOneBy')->willReturn(new \App\Entity\User());
-        $em = $this->createStub(EntityManagerInterface::class);
-        $em->method('getRepository')->willReturn($userRepository);
+        $adminUserCreator = $this->createMock(AdminUserCreator::class);
+        $adminUserCreator->method('exists')->willReturn(true);
+        $adminUserCreator->expects($this->never())->method('create');
 
-        [$email, $password] = $this->callCreateAdminUser($this->createCommand($em), "admin@example.com\n", $display);
+        [$email, $password] = $this->callCreateAdminUser($this->createCommand(null, $adminUserCreator), "admin@example.com\n", $display);
 
         $this->assertSame('admin@example.com', $email);
         $this->assertSame('(compte déjà existant)', $password);

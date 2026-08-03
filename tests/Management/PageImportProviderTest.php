@@ -11,12 +11,12 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\BlockDataImporter;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Management\BlockDataImporter;
+use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +36,7 @@ class PageImportProviderTest extends TestCase
         $provider = new PageImportProvider(
             $em,
             $this->createPageRepository(),
-            new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)),
         );
 
         $this->assertTrue($provider->supportsImport('site_page'));
@@ -52,12 +52,13 @@ class PageImportProviderTest extends TestCase
         });
         $em->expects($this->once())->method('flush');
 
-        $defaultPagesImporter = $this->createMock(DefaultPagesImporter::class);
-        $defaultPagesImporter->expects($this->once())
-            ->method('ensureFormBlockDependenciesExist')
+        // The Form/EmailTemplate a "form" Block points at is backfilled through UiBundle's registry, every bundle owning some of those names answering in turn (this one for "contact", ConfigBundle for "register"/"reset_password_request")
+        $formBlockDependencyRegistry = $this->createMock(FormBlockDependencyRegistry::class);
+        $formBlockDependencyRegistry->expects($this->once())
+            ->method('ensureDependenciesExist')
             ->with(['kind' => 'form', 'position' => 0, 'data' => ['name' => 'contact']]);
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $defaultPagesImporter));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $formBlockDependencyRegistry));
 
         $result = $provider->import([[
             'title' => 'Contact',
@@ -95,7 +96,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([
             ['title' => 'Créer un compte', 'slug' => 'creer-un-compte', 'isPublished' => true, 'isIndexable' => false, 'blocks' => []],
@@ -116,7 +117,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([
             ['title' => 'Accueil', 'slug' => 'accueil', 'isPublished' => true, 'options' => ['titleDisplayed' => false], 'blocks' => []],
@@ -143,7 +144,7 @@ class PageImportProviderTest extends TestCase
         $provider = new PageImportProvider(
             $em,
             $this->createPageRepository($existingPage),
-            new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)),
         );
 
         $result = $provider->import([[
@@ -176,7 +177,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -226,7 +227,7 @@ class PageImportProviderTest extends TestCase
         $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
             $persisted[] = $entity;
         });
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -283,7 +284,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -324,7 +325,7 @@ class PageImportProviderTest extends TestCase
             $removed[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(DefaultPagesImporter::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
 
         $provider->import([[
             'title' => 'About',

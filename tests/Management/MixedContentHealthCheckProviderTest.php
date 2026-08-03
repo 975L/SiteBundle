@@ -12,12 +12,12 @@ namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\MixedContentHealthCheckProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\MixedContentClient;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
@@ -60,9 +60,9 @@ class MixedContentHealthCheckProviderTest extends TestCase
         return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
     }
 
-    private function createPageExistenceChecker(bool $exists = true): PageExistenceChecker
+    private function createUrlStatusChecker(bool $exists = true): UrlStatusChecker
     {
-        $checker = $this->createStub(PageExistenceChecker::class);
+        $checker = $this->createStub(UrlStatusChecker::class);
         $checker->method('exists')->willReturn($exists);
 
         return $checker;
@@ -93,7 +93,7 @@ class MixedContentHealthCheckProviderTest extends TestCase
             $client,
             $this->createUrlResolver($siteUrl),
             $this->createPageEditUrlResolver(),
-            $this->createPageExistenceChecker($pageExists),
+            $this->createUrlStatusChecker($pageExists),
             $this->createConfigService($siteUrl),
             $this->createTranslator(),
         );

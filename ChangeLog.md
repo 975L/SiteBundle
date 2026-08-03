@@ -1,5 +1,65 @@
 # Changelog
 
+## v8.0.0
+
+A satellite bundle like the others, sitting on Core (Config + Ui)
+
+- Requires `c975l/core-bundle`, which ships ConfigBundle and UiBundle as one package, instead of the two separate requirements (03/08/2026) [BC-Break]
+- Added `ManagementTargetsTest`, checking every screen this bundle's management providers point at (03/08/2026)
+- The Packagist description rewritten around what stays here after the move (03/08/2026)
+- The tests locate UiBundle through its bundle class, `vendor/c975l/ui-bundle` no longer being where it sits (03/08/2026)
+- `ImportmapProvider` declares its two entrypoints relative to this bundle, `ImportmapRegistry` resolving where it sits under `vendor/` (03/08/2026) [BC-Break]
+- The theme compiler moved to UiBundle: `ThemeVariablesCssListener`, `theme_variables_css()` and the ten `theme-*` configs (02/08/2026) [BC-Break]
+- The site graphics moved to UiBundle: `SiteGraphicCrudController`, its alert/export/import providers and `OgImageType` (02/08/2026) [BC-Break]
+- The cookie banner moved to UiBundle, guard included, along with `site-enable-cookie-consent` and `url-cookies-policy` (02/08/2026) [BC-Break]
+- `Redirect` moved to ConfigBundle, entity, subscriber, CRUD, export/import and `redirect-chains` check (02/08/2026) [BC-Break]
+- `SessionNonceGenerator` and `site_copyright()` moved to ConfigBundle, with `site-author` and `site-first-online-date` (02/08/2026) [BC-Break]
+- The content-quality machinery moved to ConfigBundle: analyzer, client, `urls-<bundle>` check and its pass (02/08/2026) [BC-Break]
+- `PageExistenceChecker` became ConfigBundle's `UrlStatusChecker` (02/08/2026) [BC-Break]
+- Added `PageContentOffenceLocator`, tracing a page's image/link back to its block for that analyzer (02/08/2026)
+- `SitePageSitemapProvider` implements `SelfCheckedSitemapProviderInterface` (02/08/2026)
+- `PagePublicUrlResolver::resolveSiteRoot()` removed, ConfigBundle's `SiteUrlResolver` spelling it now (02/08/2026) [BC-Break]
+- `AssetController` and its `/asset/{file}` route removed (02/08/2026) [BC-Break]
+- `svg-fonts` health check moved to UiBundle, reading only Media rows (02/08/2026) [BC-Break]
+- The front "Edit" button of a `legal_model` block now opens its customization screen, on the very section hovered (02/08/2026)
+- The legal models moved to UiBundle (02/08/2026) [BC-Break]
+- Added `SiteBlockLocationProvider`, telling UiBundle which page a block sits on, and at which public address (02/08/2026)
+- The six legal identity configs moved to ConfigBundle (02/08/2026) [BC-Break]
+- `site-other-copyright` and `site-other-cookies` moved to UiBundle, its legal models being their only readers (03/08/2026) [BC-Break]
+- `PageRepository::findWithLegalModelBlocks()` removed, UiBundle walking the blocks themselves (02/08/2026) [BC-Break]
+- The account layer moved to ConfigBundle: CRUD, voter, three services, two templates, and the account half of the scaffold (02/08/2026) [BC-Break]
+- The scaffolded `base.html.twig`/`layout.html.twig` moved to ConfigBundle, which ships one file resolving to this bundle's layout when installed (02/08/2026) [BC-Break]
+- The two account email templates are gone, both being composed from their EmailTemplate now (02/08/2026) [BC-Break]
+- The Fonts stack moved to UiBundle, along with the `nl2br`/`linkify`/`route_exists`/`template_exists`/`asset_exists` helpers (02/08/2026) [BC-Break]
+- `MenuProvider` no longer declares UiBundle's or ConfigBundle's own entries (02/08/2026) [BC-Break]
+- The failed-Messenger stack, `ExportTablesCommand` and `ScaffoldInstaller` moved to ConfigBundle (02/08/2026) [BC-Break]
+- The `deployment`, `ssl-certificate`, `security-headers` and `seo-files` health checks moved to ConfigBundle, none of them needing a Page (02/08/2026) [BC-Break]
+- `SiteShortcutProvider` keeps "Create a page" alone, the two others moving to ConfigBundle (02/08/2026) [BC-Break]
+- `SiteMaintenanceTaskProvider` removed, its only task being declared by ConfigBundle now (02/08/2026) [BC-Break]
+- The scaffolded `App\Scheduler\MaintenanceSchedule` is shipped by ConfigBundle now (02/08/2026)
+- `DefaultPagesImporter` delegates its seeding to UiBundle's `FormSeeder` and ConfigBundle's `UserFormSeeder` (02/08/2026)
+- `SiteCreateCommand` delegates its admin creation to ConfigBundle's `AdminUserCreator` (02/08/2026)
+- `SiteCreateCommand` answers "no" by default when offering a route (login form, backoffice dashboard…) in the footer menu, the legal pages keeping their "yes" (02/08/2026)
+- Added `SiteFormPageUrlProvider`, answering UiBundle's `form_url()` with the real Page (02/08/2026)
+- Fixed `publishAsReplacement()` publishing the copy unreferenced, taking the replaced page's url out of the sitemap (02/08/2026)
+- Dropped eight Composer requirements that followed the code using them (02/08/2026)
+- The email address configs, `site-name` and the "made by" pair moved to ConfigBundle, `site-form-delay`/`site-form-gdpr` to UiBundle (02/08/2026) [BC-Break]
+- Only the five `email-text-*` keys stay in the `email` group (02/08/2026)
+- `url-terms-of-use` is declared by ConfigBundle, this bundle's identical copy being dropped (02/08/2026) [BC-Break]
+- `config/configs-css.json` merged into `configs.json` (02/08/2026)
+- `ConfigsJsonTest` now globs `configs*.json` (02/08/2026)
+- Nine shared pieces left for UiBundle or ConfigBundle: Vich options, unique slug, block focus/move helpers, block cache abstraction, block export/import, download controller, health check error row, canonical url (02/08/2026) [BC-Break]
+- `DefaultPagesImporter` implements UiBundle's `FormBlockDependencyProviderInterface` instead of being called directly by the importer (02/08/2026)
+- Documented the whole move in the readme and in UPGRADE.md (02/08/2026)
+- Added `Page::unreferenceWhenUnpublished()`, a `PreFlush` callback dropping `isIndexable` on any unpublished page (02/08/2026)
+- Republishing a page leaves it unreferenced until "Référencer la page" is checked back (02/08/2026) [BC-Break]
+- `sitemap-fields.js` now unchecks and locks the referencing switch when the page isn't published (02/08/2026)
+- Added `assets/js/publication-switch.js`, doing the same to the referencing toggle of a page index row (02/08/2026)
+- Documented the rule in the field's help text, in the three translations (02/08/2026)
+- Shortened the scaffolded `themes/site.css` header to four one-line comments (02/08/2026)
+- Added `SvgFontsHealthCheckProvider` (kind `svg-fonts`), reporting the uploaded SVG files whose text isn't vectorized (02/08/2026)
+- `SiteGraphicCrudController` now shows its index actions inlined, like every other CRUD of the ecosystem (02/08/2026)
+
 ## v7.16.0
 
 One theme file per bundle, concatenated into a single request

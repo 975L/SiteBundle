@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests;
 
+use c975L\UiBundle\c975LUiBundle;
 use PHPUnit\Framework\TestCase;
 
 // The scaffolded theme.css is a hand-maintained copy of the token defaults, so it drifts on its own
@@ -67,6 +68,12 @@ class ScaffoldThemeTest extends TestCase
         '--section-border',
         '--section-overlay',
     ];
+
+    // UiBundle's own directory, located through its bundle class rather than through "vendor/c975l/ui-bundle": it ships inside c975l/core-bundle, one directory deeper than that guess ever looked - same reasoning as ConfigBundle's BundleLocator, which reads it off the kernel at runtime
+    public static function uiBundleDir(): string
+    {
+        return dirname((string) (new \ReflectionClass(c975LUiBundle::class))->getFileName(), 2);
+    }
 
     // A. Every token the bundle declares is offered, so the file stays the single place to look
     public function testScaffoldOffersEveryDeclaredToken(): void
@@ -143,7 +150,7 @@ class ScaffoldThemeTest extends TestCase
      */
     private function tokensReadFromSass(): array
     {
-        $roots = [dirname(__DIR__) . '/sass', dirname(__DIR__) . '/vendor/c975l/ui-bundle/sass'];
+        $roots = [dirname(__DIR__) . '/sass', self::uiBundleDir() . '/sass'];
         $tokens = [];
 
         foreach ($roots as $root) {
@@ -207,12 +214,12 @@ class ScaffoldThemeTest extends TestCase
      */
     private function scaffoldPaths(): array
     {
-        $ui = dirname(__DIR__) . '/vendor/c975l/ui-bundle/scaffold/assets/styles/themes/ui.css';
+        $ui = self::uiBundleDir() . '/scaffold/assets/styles/themes/ui.css';
 
         // Half of the catalogue lives there, and composer requires a UiBundle that ships it: a missing file
         // is an installed vendor predating the split, an anomaly to report rather than a half-blind pass -
         // skipping instead would leave every assertion below silent for as long as the vendor lags behind
-        $this->assertFileExists($ui, sprintf('"%s" is missing: the installed c975l/ui-bundle predates the theme split, so the two halves of the catalogue cannot be checked together - run "composer update c975l/ui-bundle".', $ui));
+        $this->assertFileExists($ui, sprintf('"%s" is missing: the installed c975l/core-bundle predates the theme split, so the two halves of the catalogue cannot be checked together - run "composer update c975l/core-bundle".', $ui));
 
         return [dirname(__DIR__) . '/scaffold/assets/styles/themes/site.css', $ui];
     }

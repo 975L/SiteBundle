@@ -1,8 +1,12 @@
 {
     "name": "c975l/site-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony bundle that provides a complete foundation for building websites — layout, pages, SEO, admin, sitemap, legal templates, and more.",
-    "keywords": ["symfony", "bundle", "website"],
+    "description": "Symfony bundle that turns the c975L core into a complete website — full layout, database-driven pages, navbar and footer menus, collections, branded emails, per-page SEO and health check.",
+    "keywords": [
+        "symfony",
+        "bundle",
+        "website"
+    ],
     "homepage": "https://github.com/975L/SiteBundle",
     "license": "MIT",
     "authors": [
@@ -19,23 +23,14 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/config-bundle": "^5.16",
-        "c975l/ui-bundle": "^1.17",
+        "c975l/core-bundle": "^1.0",
         "doctrine/orm": "^3.6",
-        "dragonmantank/cron-expression": "^3.6",
         "easycorp/easyadmin-bundle": "^5.1",
         "endroid/qr-code": "^6",
         "symfony/form": "^8.0",
         "symfony/framework-bundle": "^8.0",
-        "symfony/mailer": "^8.0",
-        "symfony/messenger": "^8.0",
-        "symfony/process": "^8.0",
-        "symfony/rate-limiter": "^8.0",
-        "symfony/scheduler": "^8.0",
         "symfony/string": "^8.0",
         "symfony/ux-twig-component": "^3.3",
-        "symfonycasts/reset-password-bundle": "^1.25",
-        "symfonycasts/verify-email-bundle": "^1.18",
         "twig/cssinliner-extra": "^3.26",
         "twig/intl-extra": "^3.26",
         "vich/uploader-bundle": "^2.9"
@@ -46,7 +41,7 @@
     },
     "suggest": {
         "c975l/social-bundle": "Adds the share buttons band to layout.html.twig, and the social links block",
-        "nelmio/security-bundle": "Enables layout.html.twig's CSP nonce on Turbo-executed scripts, and a Turbo-safe session-based nonce generator instead of Nelmio's default per-request one"
+        "nelmio/security-bundle": "Enables layout.html.twig's CSP nonce on Turbo-executed scripts - the Turbo-safe nonce generator behind it now ships with ConfigBundle"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

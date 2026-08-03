@@ -13,13 +13,14 @@ namespace c975L\SiteBundle\Command;
 use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Repository\ConfigRepository;
+use c975L\ConfigBundle\Service\AdminUserCreator;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\ScaffoldInstaller;
 use c975L\ConfigBundle\Service\VaultEncryptor;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
-use c975L\SiteBundle\Service\ScaffoldInstaller;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -29,7 +30,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -59,7 +59,7 @@ class SiteCreateCommand extends Command
         private readonly ConfigServiceInterface $configService,
         private readonly VaultEncryptor $vaultEncryptor,
         private readonly EntityManagerInterface $em,
-        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly AdminUserCreator $adminUserCreator,
         private readonly DefaultPagesImporter $defaultPagesImporter,
         private readonly PageRepository $pageRepository,
         private readonly MenuRepository $menuRepository,
@@ -269,8 +269,7 @@ class SiteCreateCommand extends Command
             return $answer;
         });
 
-        $userRepository = $this->em->getRepository(\App\Entity\User::class);
-        if (null !== $userRepository->findOneBy(['email' => $email])) {
+        if ($this->adminUserCreator->exists($email)) {
             $io->warning(sprintf('Un utilisateur avec l\'email "%s" existe déjà, création ignorée.', $email));
 
             return [$email, '(compte déjà existant)'];
@@ -285,18 +284,8 @@ class SiteCreateCommand extends Command
             return $answer;
         });
 
-        $now = new \DateTime();
-        $user = new \App\Entity\User();
-        $user->setEmail($email);
-        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
-        // Bootstrap user is the site's owner (producer or self-hoster), so it gets every role the backoffice knows: ROLE_SUPER_ADMIN is the only one allowed to see/edit the "backup" config group (DB credentials, see ConfigCrudController), and ROLE_EDITOR has to be granted explicitly since no role_hierarchy is shipped - ROLE_ADMIN alone wouldn't pass the "site-role-editor" gated actions
-        $user->setRoles(['ROLE_EDITOR', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN']);
-        $user->setIsVerified(true);
-        $user->setIsEnabled(true);
-        $user->setCreation($now);
-        $user->setModification($now);
-        $this->em->persist($user);
-        $this->em->flush();
+        // Same account ConfigBundle's own c975l:config:user-create produces, roles included - the wizard only adds the questions around it
+        $this->adminUserCreator->create($email, $password);
 
         $io->text('  ✓ Utilisateur admin créé');
 
@@ -391,9 +380,10 @@ class SiteCreateCommand extends Command
         );
         $position = $menu->getBlocks()->count();
 
+        // Answered "no" by default, unlike the legal pages below: a route like the login form or the backoffice dashboard is a shortcut a site chooses to expose, where the legal pages belong in every footer
         foreach ($this->linkableRouteRegistry->all() as $routeName => $meta) {
             $label = $this->translator->trans($meta['label'], [], $meta['translation_domain']);
-            $this->offerFooterLink($io, $menu, 'route:' . $routeName, $existingTargets, $position, sprintf('Ajouter "%s" au menu du footer ?', $label));
+            $this->offerFooterLink($io, $menu, 'route:' . $routeName, $existingTargets, $position, sprintf('Ajouter "%s" au menu du footer ?', $label), false);
         }
 
         foreach ($this->defaultPagesImporter->getLegalPageSlugsByModel() as $slug) {
@@ -412,9 +402,9 @@ class SiteCreateCommand extends Command
     }
 
     // Asks about one target and appends it as a "menu_link" Block when accepted - a target the menu already carries is never offered again, which is what keeps re-running the command from creating duplicates
-    private function offerFooterLink(SymfonyStyle $io, Menu $menu, string $target, array $existingTargets, int &$position, string $question): void
+    private function offerFooterLink(SymfonyStyle $io, Menu $menu, string $target, array $existingTargets, int &$position, string $question, bool $default = true): void
     {
-        if (\in_array($target, $existingTargets, true) || !$io->confirm($question, true)) {
+        if (\in_array($target, $existingTargets, true) || !$io->confirm($question, $default)) {
             return;
         }
 

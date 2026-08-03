@@ -11,12 +11,12 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Management\BlockDataExporter;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Management\BlockDataExporter;
 use PHPUnit\Framework\TestCase;
 
 class PageExportProviderTest extends TestCase

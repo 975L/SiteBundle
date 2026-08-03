@@ -26,12 +26,12 @@ class ComponentCenteringCascadeTest extends TestCase
     // The two bundles' sheets in the order a page loads them, source order deciding between equal specificities
     public function testNoRuleOfEitherBundleClobbersTheOthersCentering(): void
     {
-        $site = dirname(__DIR__);
-        $ui = $site . '/vendor/c975l/ui-bundle';
-
         if (!class_exists(ComponentCenteringAnalyzer::class)) {
-            $this->markTestSkipped('The installed c975l/ui-bundle predates its Testing/ namespace (v1.12.3), nothing to run the analysis with.');
+            $this->markTestSkipped('The installed c975l/core-bundle predates UiBundle\'s Testing/ namespace, nothing to run the analysis with.');
         }
+
+        $site = dirname(__DIR__);
+        $ui = ScaffoldThemeTest::uiBundleDir();
 
         $analyzer = new ComponentCenteringAnalyzer(StylesheetCascade::fromFiles(
             $site . '/public/css/styles.css',

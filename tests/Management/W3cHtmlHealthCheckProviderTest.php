@@ -12,11 +12,11 @@ namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\W3cHtmlHealthCheckProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\W3cValidatorClient;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
@@ -53,9 +53,9 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
     }
 
-    private function createPageExistenceChecker(bool $exists = true): PageExistenceChecker
+    private function createUrlStatusChecker(bool $exists = true): UrlStatusChecker
     {
-        $checker = $this->createStub(PageExistenceChecker::class);
+        $checker = $this->createStub(UrlStatusChecker::class);
         $checker->method('exists')->willReturn($exists);
 
         return $checker;
@@ -100,14 +100,14 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         array $pages,
         W3cValidatorClient $client,
         ?string $siteUrl = 'https://example.com',
-        ?PageExistenceChecker $pageExistenceChecker = null,
+        ?UrlStatusChecker $urlStatusChecker = null,
     ): W3cHtmlHealthCheckProvider {
         return new W3cHtmlHealthCheckProvider(
             $this->createPageRepository($pages),
             $client,
             $this->createUrlResolver($siteUrl),
             $this->createPageEditUrlResolver(),
-            $pageExistenceChecker ?? $this->createPageExistenceChecker(),
+            $urlStatusChecker ?? $this->createUrlStatusChecker(),
             $this->createTranslator(),
         );
     }
@@ -176,15 +176,15 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
     {
         $client = $this->createClient(['errors' => [], 'warnings' => []]);
 
-        $pageExistenceChecker = $this->createStub(PageExistenceChecker::class);
-        $pageExistenceChecker->method('exists')->willReturnCallback(
+        $urlStatusChecker = $this->createStub(UrlStatusChecker::class);
+        $urlStatusChecker->method('exists')->willReturnCallback(
             static fn (string $url): bool => !str_contains($url, 'contact')
         );
 
         $provider = $this->createProvider(
             [$this->createPage('home'), $this->createPage('contact'), $this->createPage('about')],
             $client,
-            pageExistenceChecker: $pageExistenceChecker,
+            urlStatusChecker: $urlStatusChecker,
         );
 
         $results = $provider->runChecks();
@@ -201,7 +201,7 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $client->expects($this->never())->method('requestHtml');
         $client->expects($this->never())->method('requestCss');
 
-        $provider = $this->createProvider([$this->createPage('home')], $client, pageExistenceChecker: $this->createPageExistenceChecker(false));
+        $provider = $this->createProvider([$this->createPage('home')], $client, urlStatusChecker: $this->createUrlStatusChecker(false));
 
         $result = $provider->runChecks()[0];
 

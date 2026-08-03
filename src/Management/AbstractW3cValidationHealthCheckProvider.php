@@ -11,11 +11,11 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\HealthCheckErrorRow;
 use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
-use c975L\SiteBundle\Management\Trait\HealthCheckErrorRowTrait;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\W3cValidatorClient;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -24,14 +24,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Shared by W3cHtmlHealthCheckProvider/W3cCssHealthCheckProvider - HTML and CSS validation used to be a single "w3c" row/kind combining both, hard to scan at a glance (eg. "51 CSS warnings" buried in one long summary alongside HTML's own counts); each is now its own kind/row, this holds everything but which W3cValidatorClient method to call and which translations to use
 abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckProviderInterface
 {
-    use HealthCheckErrorRowTrait;
-
     public function __construct(
         protected readonly PageRepository $pageRepository,
         protected readonly W3cValidatorClient $w3cValidatorClient,
         protected readonly PagePublicUrlResolver $pagePublicUrlResolver,
         protected readonly PageEditUrlResolver $pageEditUrlResolver,
-        protected readonly PageExistenceChecker $pageExistenceChecker,
+        protected readonly UrlStatusChecker $urlStatusChecker,
         protected readonly TranslatorInterface $translator,
     ) {
     }
@@ -57,7 +55,7 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckPr
             }
 
             $editUrl = $this->pageEditUrlResolver->resolve($page);
-            if (!$this->pageExistenceChecker->exists($url)) {
+            if (!$this->urlStatusChecker->exists($url)) {
                 $results[$index] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
                 continue;
             }
@@ -91,7 +89,7 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckPr
         try {
             $result = $this->read($response);
         } catch (\Throwable $e) {
-            return $this->errorRow($url, $label, $this->callFailedTranslationId(), $e->getMessage(), $editUrl);
+            return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, $this->callFailedTranslationId(), $e->getMessage(), $editUrl);
         }
 
         $errorCount = \count($result['errors']);

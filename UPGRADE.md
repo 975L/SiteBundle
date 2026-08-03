@@ -1,6 +1,104 @@
 # UPGRADE
 
-## Unreleased
+## v8.0.0
+
+**Twelve more shared pieces left this bundle, and nothing they did depended on having pages.** A site running Config + Ui plus a shop, a catalogue or a gallery had no theme compiled, no favicon to upload, no cookie banner, no redirects and half the health checks missing. All of it moved to the bundle owning the domain; the slugs, route names, table names and Twig function names are unchanged, so **nothing to run**:
+
+| Removed from this bundle | Now |
+|---|---|
+| `Listener\ThemeVariablesCssListener`, `Twig\ThemeVariablesExtension` | `c975L\UiBundle\*` |
+| the ten `theme-*` configs | declared by `c975l/ui-bundle` |
+| `Controller\Management\SiteGraphicCrudController` | `c975L\UiBundle\Controller\Management\SiteGraphicCrudController` |
+| `Management\SiteGraphic{Alert,Export,Import}Provider` | `c975L\UiBundle\Management\*` |
+| `Form\OgImageType` | `c975L\UiBundle\Form\OgImageType` |
+| `templates/components/General/CookieConsent.html.twig` | `<twig:c975LUi:Cookie:Consent />` |
+| `site-enable-cookie-consent`, `url-cookies-policy` | declared by `c975l/ui-bundle` |
+| `Management\SvgFontsHealthCheckProvider` | `c975L\UiBundle\Management\SvgFontsHealthCheckProvider` |
+| `Entity\Redirect`, `Repository\RedirectRepository`, `EventSubscriber\RedirectSubscriber` | `c975L\ConfigBundle\*` |
+| `Controller\Management\RedirectCrudController`, `Management\Redirect{Export,Import,Chain*}Provider` | `c975L\ConfigBundle\*` |
+| `Service\Security\SessionNonceGenerator` | `c975L\ConfigBundle\Security\SessionNonceGenerator` |
+| `Twig\CopyrightExtension` | `c975L\ConfigBundle\Twig\CopyrightExtension` |
+| `site-author`, `site-first-online-date` | declared by `c975l/config-bundle` |
+| `Management\{Ssl*,SecurityHeaders*,SeoFiles*}HealthCheckProvider` and their clients | `c975L\ConfigBundle\*` |
+| `Management\ContentQualityAnalyzer`, `Service\ContentQualityClient` | `c975L\ConfigBundle\*` |
+| `Management\DeclaredUrlsHealthCheckProvider` and its compiler pass | `c975L\ConfigBundle\*` |
+| `Service\PageExistenceChecker` | `c975L\ConfigBundle\Service\UrlStatusChecker` |
+| `Service\PagePublicUrlResolver::resolveSiteRoot()` | `c975L\ConfigBundle\Service\SiteUrlResolver::siteRoot()` |
+| `Controller\AssetController` and its `/asset/{file}` route | removed, nothing called it and the web server already serves `public/` |
+
+`site_copyright()`, `site_media()`, `theme_variables_css()` and the `site_redirect` table keep their names, so a template, a query or a migration using any of them is untouched. Two things to know:
+
+- **The `content-quality` check keeps every one of its rows**, block links included: the analyzer is generic now and gets them back through `Management\PageContentOffenceLocator`, which this bundle registers. A bundle whose urls have no such mapping still gets the check, just without the links.
+- **`security-headers` no longer resolves the home Page**, it reads the site root (`SiteUrlResolver::siteRoot()`). Same url on the dashboard as before, and it now runs on a site with no pages at all. Its row label is `null` rather than the home page's title.
+- **Twelve `label.*` keys moved domain**: the site-graphic and cookie-banner ones to `ui`, the redirect and site-wide health-check ones to `config`, `label.summary_social_network` to `config` (read from two bundles now). If your app overrode any of them in its own `translations/`, move the override to the matching domain.
+
+**Nine more shared pieces left this bundle.** None of them concerned the notion of a site, and several were hand-duplicated by bundles requiring Config + Ui and not this one. See the UPGRADE of `c975l/ui-bundle` and `c975l/config-bundle` for the full tables; from here:
+
+| Removed | Now |
+|---|---|
+| `Form\VichImageOptions` | `c975L\UiBundle\Form\VichImageOptions` |
+| `Controller\Management\Trait\UniqueSlugTrait` | `c975L\UiBundle\Service\UniqueSlug` |
+| `Controller\Management\Trait\BlockMoveRowAttrTrait` | `c975L\UiBundle\Service\BlockMoveRowAttrBuilder` |
+| `Management\BlockFocusUrlTrait` | `c975L\UiBundle\Service\BlockFocusUrl` |
+| `Listener\AbstractBlockCacheInvalidationListener` | `c975L\UiBundle\Listener\*` |
+| `Management\BlockDataExporter` / `BlockDataImporter` | `c975L\UiBundle\Management\*` |
+| `Controller\DownloadController` | `c975L\UiBundle\Controller\DownloadController` |
+| `Management\Trait\HealthCheckErrorRowTrait` | `c975L\ConfigBundle\Management\HealthCheckErrorRow` |
+| `Twig\CanonicalUrlExtension` | `c975L\ConfigBundle\Twig\CanonicalUrlExtension` |
+
+`canonical_url()` and the `download_file` route keep their names, so a template calling either is untouched. `PageCrudController` and `MenuCrudController` swapped their `CsrfTokenManagerInterface` argument for a `BlockMoveRowAttrBuilder` one — **only relevant if your app instantiates them itself**, which nothing normally does.
+
+**`url-terms-of-use` is declared by ConfigBundle now**, this bundle's identical copy being dropped along with ShopBundle's and PaymentBundle's — `PaymentBundle` reads it and requires none of the three. Same slug, same group, **nothing to run**.
+
+**Fifteen config keys left the `email` and `general` groups.** The six addresses `EmailService` resolves (`email-from`/`email-to`/`email-reply-to` and their `-name` counterparts) plus `site-name`, `site-contact-email`, `site-director`, `site-made-by-logo` and `site-made-by-url` are declared by ConfigBundle now, and `site-form-delay`/`site-form-gdpr` by UiBundle — each of them was read by code in those bundles, so a site not installing this one had no way to fill them. `email-from` was even declared twice, here and there, identically. **Nothing to run**: the slugs are unchanged and an existing `site_config` row is matched as it is; only the bundle that declares it changes. The five `email-text-*` keys stay here, being the copy of this bundle's own branded email layout.
+
+**The account layer left this bundle for ConfigBundle.** Every satellite bundle requires Config + Ui and none requires this one, yet all of them relate their entities to `Contract\UserInterface` — so the back-office, the registration flow and the account scaffold now live where the contract already did. See `c975l/config-bundle`'s own UPGRADE for the full class-by-class table and the re-scaffold to run; from here, what disappears is:
+
+| Removed from this bundle | Now |
+|---|---|
+| `Controller\Management\UserCrudController` | `c975L\ConfigBundle\Controller\Management\UserCrudController` |
+| `Security\Voter\UserManagementVoter` | `c975L\ConfigBundle\Security\Voter\UserManagementVoter` |
+| `Service\UserRegistrar` / `EmailVerifier` / `PasswordResetter` | `c975L\ConfigBundle\Service\*` |
+| `templates/management/user_crud_{index,edit}.html.twig` | `@c975LConfig/management/*` |
+| `templates/emails/{confirmation,reset_password}_email.html.twig` | removed, composed from their EmailTemplate instead |
+| the whole account half of `scaffold/` | `c975l/config-bundle`'s scaffold |
+| the `user-roles-available` config and the `label.users`/`label.roles`/`label.info_user*` keys | `c975l/config-bundle` |
+
+**Update `c975l/config-bundle` at the same time**, and re-scaffold: `php bin/console c975l:scaffold:install`. Nothing to run on the database — `site_user` is the app's own table and never moved.
+
+**The legal models moved to UiBundle**, for the same reason: a site running a shop, a book catalogue or a gallery without page management still owes its visitors a privacy policy and its buyers terms of sales, and nothing in a legal document is about pages. The 18 templates, `LegalModelCatalog`, `LegalModelRenderer`, `LegalModelPlaceholders`, `LegalModelCustomizer`, `LegalModelExtension`, the four form types, `LegalModelController` and `LegalModelDriftHealthCheckProvider` are `c975L\UiBundle\*` now, the models being reached at `@c975LUi/models/…` and their labels living in the `ui` translation domain.
+
+**Nothing to run**: blocks keep their `legal_model` kind and their whole `data`, customization delta included. What changes:
+
+| Was | Now |
+|---|---|
+| `@c975LSite/models/{country}/{model}.{locale}.html.twig` | `@c975LUi/models/…` |
+| `templates/bundles/c975LSiteBundle/models/…` (app override) | `templates/bundles/c975LUiBundle/models/…` |
+| `management_site_legal_models` / `…_customize` | `management_ui_legal_models` / `…_customize` |
+| the `site` translation domain, for every `label.legal_*` key | the `ui` domain |
+| `PageRepository::findWithLegalModelBlocks()` | removed - UiBundle walks the blocks themselves |
+
+Two things stay here, both being about pages: `c975l:site:pages:import-defaults` still creates one page per model, and `site_legal_pages()` still lists them. `SiteBlockLocationProvider` is new, and is what tells UiBundle's screens which page a document sits on — implement `BlockLocationProviderInterface` yourself if your own entity carries `legal_model` blocks.
+
+**Six more config keys left the `legal` group.** `site-owner`, `site-producer`, `site-hosting-provider`, `site-dpo`, `site-director-location` and `site-contact-phone` are declared by ConfigBundle now, next to `site-name`, `site-director` and `site-contact-email` — the models reading all nine had no way to fill them on a site without this bundle. Same slugs, same group, **nothing to run**.
+
+**`site-other-copyright` and `site-other-cookies` are declared by UiBundle now**, the copyright and cookies models being the only readers. Same slugs, same group, **nothing to run**.
+
+If your app overrode a model template, move it under `templates/bundles/c975LUiBundle/`; if it rendered one with a plain `{% include %}`, change the namespace. A site that only ever used the block and the back-office screen has nothing to do.
+
+**Fonts moved to UiBundle**, which already owned the `FontProviderInterface` they answer and the blocks that pick them: `Entity\Font`, `FontRepository`, `FontCrudController`, `FontBulkImportController`, `FontService`, `FontFilenameParser`, `FontCssListener`, `FontPreloadExtension`, `Font{Export,Import}Provider` and the four `font_*` templates are `c975L\UiBundle\*` now. The `site_font` table, the `theme-font-family-*` configs and the compiled `bundles/build/site-fonts-uploaded.css` are unchanged — only the namespaces are, so **nothing to run**. The "Fonts" menu entry is contributed by UiBundle's own `MenuProvider`, as are "Media library", "Forms" and "Email templates", which this bundle used to declare on UiBundle's behalf.
+
+**Five generic Twig helpers moved to UiBundle**: `nl2br`, `linkify`, `route_exists`, `template_exists` and `asset_exists`. None had anything to do with the notion of a site, and `asset_exists` was already being called from BookBundle templates — which don't require this bundle, so those calls only worked by accident. Same names, same behaviour, available to every bundle now.
+
+**The failed-Messenger screen, the table export, the scaffold installer and the `deployment` health check moved to ConfigBundle**, with three renames: `c975l:site:messenger-cleanup` → `c975l:config:messenger-cleanup`, `c975l:site:export-tables` → `c975l:config:export-tables`, and the `management_site_messenger_failed*` routes → `management_config_messenger_failed*`. `c975l:scaffold:install` keeps its name. Both commands run on the Symfony scheduler through `MaintenanceTaskProviderInterface`, so **there is no crontab to edit**. The "Export tables" and "Enable/disable registration" shortcuts are contributed by ConfigBundle now; this bundle keeps "Create a page" alone.
+
+**Seven Composer requirements are gone**: `symfonycasts/reset-password-bundle`, `symfonycasts/verify-email-bundle`, `symfony/rate-limiter`, `symfony/messenger`, `symfony/process`, `symfony/mailer`, `symfony/scheduler` and `dragonmantank/cron-expression` — all of them followed the code that used them. They are required by `c975l/config-bundle` instead, which this bundle requires, so an application composing both keeps every one of them installed.
+
+**`SiteMaintenanceTaskProvider` is removed.** Its only task was the messenger cleanup, now declared by ConfigBundle's own provider. Nothing referenced the class.
+
+**Added `Service\SiteFormPageUrlProvider`**, implementing UiBundle's new `FormPageUrlProviderInterface`: it answers `form_url('register')` with the real `Page` carrying that `form` Block, so the scaffolded login page keeps linking the admin-editable per-locale slug even though the page itself is shipped by ConfigBundle now. `site_page_for_form_block()` still exists and is unchanged, but `form_url()` is what a template should call from now on.
+
+**Unpublishing a page now unreferences it too.** `isIndexable` follows `isPublished` down on every save (`Page::unreferenceWhenUnpublished()`, a `PreFlush` callback), whatever unpublished the page — the edit form, the trash, *Publish as replacement*, a duplication or an import. **Publishing a page again no longer references it back**: the switch stays unchecked until an admin checks it, which is the deliberate call it should be. On the Pages index, where both switches save through ajax, unpublishing a row unchecks and disables its own referencing toggle right away (`publication-switch`), so it never offers to "uncheck" something the database already holds as false. Nothing to run: no schema change, and an already-unpublished page is corrected on its next save — the sitemap has always excluded unpublished pages anyway (`PageRepository::findAllOrdered()`), so what changes is the page's own `robots` meta tag and what the edit screen honestly shows.
 
 **The scaffolded `App\Scheduler\MaintenanceSchedule` takes a `MaintenanceScheduleBuilder` now, and lists no command of its own.** Each bundle declares the commands it needs run through ConfigBundle's `MaintenanceTaskProviderInterface`, so the class is the same file on every site and a bundle installed later schedules its tasks without an edit here (see the readme). Its scaffolded test moved with it - **re-scaffold the two together**, the test being written against that new two-argument constructor:
 

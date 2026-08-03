@@ -10,28 +10,16 @@
 
 namespace c975L\SiteBundle;
 
-use c975L\SiteBundle\DependencyInjection\Compiler\DeclaredUrlsHealthCheckPass;
 use c975L\UiBundle\Namer\UiMediaNamer;
-use Nelmio\SecurityBundle\ContentSecurityPolicy\NonceGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
 class c975LSiteBundle extends AbstractBundle
 {
-    public function build(ContainerBuilder $container): void
-    {
-        $container->addCompilerPass(new DeclaredUrlsHealthCheckPass());
-    }
-
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
-
-        // SessionNonceGenerator implements a NelmioSecurityBundle interface, so its class isn't loadable without that (optional) bundle - importing its definition unconditionally would break the container compilation of any app that doesn't use it
-        if (interface_exists(NonceGeneratorInterface::class)) {
-            $containerConfigurator->import('../config/services_nelmio.yaml');
-        }
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void
@@ -56,15 +44,6 @@ class c975LSiteBundle extends AbstractBundle
             $builder->prependExtensionConfig('vich_uploader', [
                 'mappings' => [
                     'collection_item' => [
-                        'uri_prefix' => '',
-                        'upload_destination' => '%kernel.project_dir%/public',
-                        'namer' => UiMediaNamer::class,
-                        'inject_on_load' => false,
-                        'delete_on_update' => true,
-                        'delete_on_remove' => true,
-                    ],
-                    // Admin-uploaded font files (ttf/woff/woff2), stored under public/medias/fonts (see Font::getVichMediaPath) - see FontCssListener for the generated @font-face rules
-                    'site_font' => [
                         'uri_prefix' => '',
                         'upload_destination' => '%kernel.project_dir%/public',
                         'namer' => UiMediaNamer::class,

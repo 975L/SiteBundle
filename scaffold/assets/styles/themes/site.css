@@ -1,20 +1,8 @@
-/* This site's SiteBundle tokens, in the c975L theme format: everything ships commented out at the bundle's
-   own default, so the active lines below are, at a glance, exactly what this design decides. The format and
-   how it layers are documented in this bundle's readme ("Themes" > "A site's own theme"), the defaults
-   themselves in sass/_variables.scss.
-
-   One file per bundle, each holding what that bundle reads. This one is the site's own chrome - the bar at
-   the top, the band at the bottom, the back strip and the anchor offset. Everything else a design retunes
-   (shapes, buttons, forms, alerts, surfaces, sections, hero, and the canvas the page sits on) is read by
-   UiBundle, which SiteBundle sits on and which can run without it, so it travels in themes/ui.css instead.
-
-   Colors and fonts are deliberately absent (--primary, --secondary, --background, --text, --font-family-*):
-   admin-editable from the backoffice and compiled into bundles/build/site-theme.css. Overriding them here
-   would take the site's palette away from its admin. */
+/* This site's SiteBundle tokens: every line ships commented out at its default, so what stays active is what the design decides */
+/* Format in this bundle's readme ("Themes" > "A site's own theme"), defaults in sass/_variables.scss */
+/* One file per bundle - this one is the site's chrome; everything else a design retunes is UiBundle's, in themes/ui.css */
+/* Colors and fonts are absent on purpose: admin-editable, compiled into bundles/build/site-theme.css */
 :root {
-    /* Gap left above an anchor target, so a sticky navbar doesn't cover it - match the navbar's height */
-    /* --scroll-offset: 80px; */
-
     /* --navbar-background: var(--white); */
     /* --navbar-text: var(--black); */
     /* --navbar-active-color: var(--primary); */

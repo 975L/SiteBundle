@@ -83,7 +83,7 @@ class PageSpeedInsightsClient
         }
     }
 
-    // Google only accepts its API key in the query string, so HttpClient quotes the whole url - key included - in the message of every exception it raises. That message is what HealthCheckErrorRowTrait stores as a row's summary AND details, which means the database, the dashboard, the CSV export and any status report leaving the site. None of those is a place for a credential, and the status code alone is all that's actionable anyway - the row already carries the url it was checking. The original exception is deliberately NOT kept as "previous": Symfony's error logging unrolls the whole chain, which would put the key straight back in the logs
+    // Google only accepts its API key in the query string, so HttpClient quotes the whole url - key included - in the message of every exception it raises. That message is what HealthCheckErrorRow stores as a row's summary AND details, which means the database, the dashboard, the CSV export and any status report leaving the site. None of those is a place for a credential, and the status code alone is all that's actionable anyway - the row already carries the url it was checking. The original exception is deliberately NOT kept as "previous": Symfony's error logging unrolls the whole chain, which would put the key straight back in the logs
     private static function withoutUrl(\Throwable $e): \RuntimeException
     {
         $status = $e instanceof HttpExceptionInterface ? $e->getResponse()->getStatusCode() : null;

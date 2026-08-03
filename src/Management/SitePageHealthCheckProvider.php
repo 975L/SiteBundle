@@ -11,13 +11,13 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\HealthCheckErrorRow;
 use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\SiteBundle\Management\Trait\HealthCheckErrorRowTrait;
+use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PageExistenceChecker;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageSpeedInsightsClient;
 use c975L\UiBundle\Service\ConfigEditUrlResolver;
@@ -26,8 +26,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Runs PageSpeed Insights (Lighthouse performance/accessibility/best-practices/SEO scores, including the detailed WCAG-related audits under "accessibility", plus the errors-in-console audit) against every published page, for ConfigBundle's "Health check" dashboard page (see HealthCheckProviderInterface, run only from c975l:health-check:run)
 class SitePageHealthCheckProvider implements HealthCheckProviderInterface
 {
-    use HealthCheckErrorRowTrait;
-
     // Lighthouse's own thresholds for its 0-100 category scores (see https://developer.chrome.com/docs/lighthouse/performance/performance-scoring)
     private const SCORE_THRESHOLD_OK = 90;
     private const SCORE_THRESHOLD_WARNING = 50;
@@ -40,7 +38,7 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
         private readonly PageSpeedInsightsClient $pageSpeedInsightsClient,
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly PageEditUrlResolver $pageEditUrlResolver,
-        private readonly PageExistenceChecker $pageExistenceChecker,
+        private readonly UrlStatusChecker $urlStatusChecker,
         private readonly ConfigServiceInterface $configService,
         private readonly ConfigRepository $configRepository,
         private readonly ConfigEditUrlResolver $configEditUrlResolver,
@@ -69,7 +67,7 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
         foreach ($this->pageRepository->findAllOrdered() as $page) {
             $url = $this->pagePublicUrlResolver->resolve($page);
             $editUrl = $this->pageEditUrlResolver->resolve($page);
-            if (!$this->pageExistenceChecker->exists($url)) {
+            if (!$this->urlStatusChecker->exists($url)) {
                 $pageRows[] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
                 continue;
             }
@@ -111,7 +109,7 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
         try {
             $analysis = $this->pageSpeedInsightsClient->analyze($url);
         } catch (\Throwable $e) {
-            return $this->errorRow($url, $label, 'label.health_check_pagespeed_call_failed', $e->getMessage(), $editUrl);
+            return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, 'label.health_check_pagespeed_call_failed', $e->getMessage(), $editUrl);
         }
 
         $scores = $analysis['scores'];

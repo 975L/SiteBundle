@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\ImportProviderInterface;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\UiBundle\Management\BlockDataImporter;
 use Doctrine\ORM\EntityManagerInterface;
 
 // Imports a "site_menu" content export (see MenuExportProvider) - matches by location, Menu's own unique constraint (one row per location, see Menu::LOCATION_*). Existing Blocks have no natural key of their own, so the whole collection is replaced, same as PageImportProvider does for a Page

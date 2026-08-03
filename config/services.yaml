@@ -4,10 +4,9 @@ services:
         autoconfigure: true
         public: true
 
-    # DeclaredUrlsHealthCheckProvider is excluded on purpose: it takes a SitemapProviderInterface, of which there are as many as there are bundles declaring one, so it can't be autowired - DeclaredUrlsHealthCheckPass registers one instance per sitemap provider instead
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Messenger,Service/Security,Management/DeclaredUrlsHealthCheckProvider.php}'
+        exclude: '../src/Entity/'
 
     # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own
     # interface - CollectionItemSourceProvider autowires against the interface for testability
@@ -21,20 +20,6 @@ services:
         tags:
             - { name: 'ui.script', priority: 100 }
             - { name: 'ui.admin_script', priority: 100 }
-
-    site.block.legal_model:
-        class: stdClass
-        tags:
-            - name: ui.block
-              kind: legal_model
-              label: "block.legal_model"
-              description: "block.legal_model_description"
-              translation_domain: 'site'
-              form: c975L\SiteBundle\Form\Block\LegalModelType
-              template: '@c975LSite/blocks/LegalModel.html.twig'
-              category: 'label.category_legal'
-              pickable: true
-              cacheable: true
 
     site.block.twig_content:
         class: stdClass

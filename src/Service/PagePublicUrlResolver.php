@@ -14,7 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// Builds a Page's canonical public URL - the single source of urls for every HealthCheckProviderInterface implementation (PageSpeed, security headers, W3C) and for SitePageSitemapProvider (the sitemap), so they can't drift apart. No trailing slash: both forms answer 200, so one of them has to be picked as canonical, and this is the one the sitemap has always declared. 'home' resolves to the site root, since PageController 301s "/pages/home" there - a sitemap must only ever list urls that answer 200, never a redirect hop. The path itself is generated through the router (PageController's page_home/page_display routes) rather than hand-built, so it can never drift from the real route definitions; only the host comes from "site-url" - the router's own RequestContext host can't be trusted here since this runs from a cron command, outside any HTTP request
+// Builds a Page's canonical public URL - the single source of urls for every page-level HealthCheckProviderInterface implementation (PageSpeed, W3C, content quality) and for SitePageSitemapProvider (the sitemap), so they can't drift apart. The site root a site-wide check targets is ConfigBundle's SiteUrlResolver::siteRoot() instead, which spells it exactly as the home Page resolves here, so both land on a single row of the Health check dashboard. No trailing slash: both forms answer 200, so one of them has to be picked as canonical, and this is the one the sitemap has always declared. 'home' resolves to the site root, since PageController 301s "/pages/home" there - a sitemap must only ever list urls that answer 200, never a redirect hop. The path itself is generated through the router (PageController's page_home/page_display routes) rather than hand-built, so it can never drift from the real route definitions; only the host comes from "site-url" - the router's own RequestContext host can't be trusted here since this runs from a cron command, outside any HTTP request
 class PagePublicUrlResolver
 {
     public function __construct(
@@ -29,14 +29,6 @@ class PagePublicUrlResolver
         $siteUrl = $this->siteUrl();
 
         return null === $siteUrl ? null : $siteUrl . $this->resolvePath($page);
-    }
-
-    // The site root's own canonical url ("https://example.com/"), for a site-wide check having no Page to resolve from - a TLS certificate is issued for the host, not for a page (see SslCertificateHealthCheckProvider). Exactly what the home page resolves to, so both land on a single row of the Health check dashboard, which groups its rows by url: raw "site-url" would spell that same root without its trailing slash and show as a second, permanent row
-    public function resolveSiteRoot(): ?string
-    {
-        $siteUrl = $this->siteUrl();
-
-        return null === $siteUrl ? null : $siteUrl . $this->urlGenerator->generate('page_home', [], UrlGeneratorInterface::ABSOLUTE_PATH);
     }
 
     // The configured host without its trailing slash, null when unconfigured - every path appended to it already opens with a slash, and a "site-url" saved as "https://example.com/" would otherwise double it

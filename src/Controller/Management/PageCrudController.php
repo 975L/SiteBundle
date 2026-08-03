@@ -11,27 +11,28 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Contract\UserInterface;
+use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
+use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
-use c975L\SiteBundle\Controller\Management\Trait\BlockMoveRowAttrTrait;
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Entity\Redirect;
-use c975L\SiteBundle\Form\OgImageType;
 use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
 use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Repository\RedirectRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Form\BlockType;
+use c975L\UiBundle\Form\OgImageType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
+use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -72,7 +73,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -81,9 +81,6 @@ use function Symfony\Component\Translation\t;
 
 class PageCrudController extends AbstractCrudController
 {
-    use BlockMoveRowAttrTrait;
-    use UniqueSlugTrait;
-
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -98,7 +95,7 @@ class PageCrudController extends AbstractCrudController
         private readonly TableExporter $tableExporter,
         private readonly ContentExporter $contentExporter,
         private readonly PageExportProvider $pageExportProvider,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
     ) {
     }
 
@@ -145,7 +142,9 @@ class PageCrudController extends AbstractCrudController
         // Trashed pages are always unpublished, no need to show that column in the trash view
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
         $isPublishedField = BooleanField::new('isPublished')
-            ->setLabel(t('label.is_published', [], 'site'));
+            ->setLabel(t('label.is_published', [], 'site'))
+            // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly, a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
+            ->setHtmlAttribute('data-controller', 'publication-switch');
         if ($isTrash) {
             $isPublishedField->hideOnIndex();
         }
@@ -182,14 +181,15 @@ class PageCrudController extends AbstractCrudController
             // Content
             // Opts this textarea into UiBundle's rephrase button, off by default there for non-prose values
             TextareaField::new('summarySocialNetwork')
-                ->setLabel(t('label.summary_social_network', [], 'site'))
+                // In the 'config' domain: the health check names this very field back to the reader (see ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL), and one label read from two bundles is kept in one place
+                ->setLabel(t('label.summary_social_network', [], 'config'))
                 ->setHelp(t('label.summary_social_network_help', [], 'site'))
                 ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true'])
                 ->hideOnIndex(),
             $isPublishedField,
 
             // Sitemaps
-            // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value
+            // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway
             // Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
             BooleanField::new('isIndexable')
                 ->setLabel(t('label.is_indexable', [], 'site'))
@@ -236,7 +236,7 @@ class PageCrudController extends AbstractCrudController
                 ->allowDelete()
                 ->setFormTypeOption('by_reference', false)
                 ->setFormTypeOption('entry_options.context', 'page')
-                ->setFormTypeOption('row_attr', $this->blockMoveRowAttr(SiteBlockOwnerResolver::TYPE_PAGE, $entity instanceof Page ? $entity->getId() : null))
+                ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_PAGE, $entity instanceof Page ? $entity->getId() : null))
                 ->hideOnIndex(),
 
             // Dates
@@ -633,7 +633,7 @@ class PageCrudController extends AbstractCrudController
 
         $copy = (new Page())
             ->setTitle($source->getTitle() . ' (' . $suffix . ')')
-            ->setSlug($this->uniqueSlug(
+            ->setSlug(UniqueSlug::build(
                 $this->slugger,
                 $source->getSlug() . '-' . $suffix,
                 fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
@@ -641,8 +641,7 @@ class PageCrudController extends AbstractCrudController
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
-            // Carried over like the other SEO attributes - a copy of a deliberately noindex page (eg. "creer-un-compte") must not silently reappear in sitemap-site.xml and in Google's index
-            ->setIsIndexable($source->isIndexable())
+            // isIndexable is deliberately not carried over: the copy is created unpublished, and Page::unreferenceWhenUnpublished() would unreference it at the very next flush anyway. Referencing it is a deliberate call, made when it gets published - or taken over from the page it replaces, see publishAsReplacement()
             // The whole payload rather than option by option: the copy holds the same blocks, so every display option the source had answered stays true of it - and a new option needs nothing here
             ->setOptions($source->getOptions())
             ->setIsPublished(false)
@@ -696,11 +695,13 @@ class PageCrudController extends AbstractCrudController
         }
 
         $originalSlug = $original->getSlug();
+        // Read before the swap, like the slug: the first flush below unpublishes the original, and Page::unreferenceWhenUnpublished() drops its isIndexable to false right there - read after, it would always be false
+        $originalIsIndexable = $original->isIndexable();
 
-        $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug): void {
+        $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug, $originalIsIndexable): void {
             $original
                 ->setArchivedSlug($originalSlug)
-                ->setSlug($this->uniqueSlug(
+                ->setSlug(UniqueSlug::build(
                     $this->slugger,
                     $originalSlug . '-archived',
                     fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
@@ -713,6 +714,8 @@ class PageCrudController extends AbstractCrudController
             $copy
                 ->setSlug($originalSlug)
                 ->setIsPublished(true)
+                // Taken over along with the slug: the copy becomes the page that url stands for, so it keeps being referenced exactly as the original was. Set here and not in clonePage(), where Page::unreferenceWhenUnpublished() unreferences the copy at its very first flush, being created unpublished - this is the deliberate re-referencing that rule asks for, and without it an indexed url would silently turn noindex the day it's replaced
+                ->setIsIndexable($originalIsIndexable)
                 ->setReplaces(null)
                 ->setModification(new \DateTime());
             $entityManager->flush();

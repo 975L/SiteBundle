@@ -10,11 +10,11 @@
 
 namespace c975L\SiteBundle\Command;
 
-use c975L\SiteBundle\Controller\Management\Trait\UniqueSlugTrait;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -33,8 +33,6 @@ use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 )]
 class CollectionItemImportCommand extends Command
 {
-    use UniqueSlugTrait;
-
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly CollectionItemRepository $collectionItemRepository,
@@ -178,7 +176,7 @@ class CollectionItemImportCommand extends Command
             return null;
         }
 
-        $slug = $this->uniqueSlug(
+        $slug = UniqueSlug::build(
             $this->slugger,
             $title,
             static fn (string $candidate): bool => in_array($candidate, $state['slugs'], true)

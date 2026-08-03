@@ -11,7 +11,7 @@
 namespace c975L\SiteBundle\Tests\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
-use c975L\SiteBundle\Management\ContentQualityAnalyzer;
+use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\SiteBundle\Management\PageHealthCheckAdviceBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

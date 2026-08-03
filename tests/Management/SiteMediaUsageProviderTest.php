@@ -76,25 +76,13 @@ class SiteMediaUsageProviderTest extends TestCase
         return $media;
     }
 
-    // A site-wide graphic role (favicon, logo...) is reported as used, with a link to its own edit page
-    public function testGetUsagesReportsSiteGraphicRole(): void
+    // A site-wide graphic role (favicon, logo...) belongs to UiBundle's own SiteGraphicMediaUsageProvider, not to this one, which only knows about pages
+    public function testGetUsagesIgnoresSiteGraphicRole(): void
     {
         $media = $this->mediaWithId(1, Media::ROLE_FAVICON);
         $provider = $this->createProvider($this->createPageRepository([], []));
 
-        $usages = $provider->getUsages([$media]);
-
-        $this->assertSame('label.favicon', $usages[1][0]['label']);
-        $this->assertSame('/admin/edit', $usages[1][0]['url']);
-    }
-
-    // A media without any role is not reported as a site-wide graphic
-    public function testGetUsagesIgnoresMediaWithoutRole(): void
-    {
-        $media = $this->mediaWithId(2);
-        $provider = $this->createProvider($this->createPageRepository([], []));
-
-        $this->assertArrayNotHasKey(2, $provider->getUsages([$media]));
+        $this->assertArrayNotHasKey(1, $provider->getUsages([$media]));
     }
 
     // A media attached to a Block owned by a Page is reported as used within that page's block
