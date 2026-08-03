@@ -6,6 +6,7 @@
          cacheDirectory=".phpunit.cache"
          failOnDeprecation="true"
          failOnNotice="true"
+         failOnPhpunitNotice="true"
 >
     <testsuites>
         <testsuite name="c975LSiteBundle Test Suite">

@@ -6,6 +6,11 @@
                 "en": "A page holding too many blocks to be sent in one go is now refused with an explanation, instead of being saved with the blocks the browser couldn't send missing",
                 "fr": "Une page comptant trop de blocs pour être envoyée d'un seul tenant est désormais refusée avec une explication, au lieu d'être enregistrée sans les blocs que le navigateur n'a pas pu envoyer",
                 "es": "Una página con demasiados bloques para enviarse de una vez ahora se rechaza con una explicación, en lugar de guardarse sin los bloques que el navegador no pudo enviar"
+            },
+            {
+                "en": "Every published page is now checked each night, so a page that stopped answering is signalled rather than left broken until a visitor runs into it",
+                "fr": "Chaque page publiée est désormais contrôlée toutes les nuits, pour qu'une page qui ne répond plus soit signalée plutôt que laissée en panne jusqu'à ce qu'un visiteur tombe dessus",
+                "es": "Cada página publicada se comprueba ahora todas las noches, para que una página que dejó de responder se señale en lugar de quedar averiada hasta que un visitante dé con ella"
             }
         ]
     },

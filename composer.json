@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/core-bundle": "^1.0.1",
+        "c975l/core-bundle": "^1.1",
         "doctrine/orm": "^3.6",
         "easycorp/easyadmin-bundle": "^5.1",
         "endroid/qr-code": "^6",
@@ -61,7 +61,26 @@
         "sort-packages": true
     },
     "scripts": {
-        "test": "phpunit"
+        "cs": "phpcs -q",
+        "fixer": "php-cs-fixer check --diff",
+        "stan": "phpstan analyse --no-progress",
+        "stan-scaffold": "phpstan analyse -c phpstan-scaffold.dist.neon --no-progress",
+        "test": "phpunit",
+        "qa": [
+            "@cs",
+            "@fixer",
+            "@stan",
+            "@stan-scaffold",
+            "@test"
+        ]
+    },
+    "scripts-descriptions": {
+        "cs": "PSR-12 (phpcs)",
+        "fixer": "Standard Symfony (php-cs-fixer)",
+        "stan": "Analyse statique du bundle, level 5",
+        "stan-scaffold": "Analyse statique du seul scaffold, level 6, au niveau des applications qui le recopient",
+        "test": "Suite PHPUnit",
+        "qa": "Tous les contrôles de la CI, dans l'ordre - voir bin/ci.sh pour les rejouer sur des dépendances fraîches"
     },
     "support": {
         "email": "contact@975l.com",

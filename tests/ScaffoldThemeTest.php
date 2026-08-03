@@ -59,7 +59,11 @@ class ScaffoldThemeTest extends TestCase
     ];
 
     // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root
-    // would collapse the three variants into a single look (the scaffold's own header says as much)
+    // would collapse the three variants into a single look (the scaffold's own header says as much).
+    // Same for the card trio, set inside each ".card--accent-*" rule out of that hue's own token: a value
+    // in :root would head every unaccented card with it, and the text color and icon inversion that go
+    // with it only hold for the four light hues that carry dark text. What a design retunes is the twelve
+    // "--block-accent-*" the scaffold does offer, the hues these three merely point at
     private const PER_VARIANT = [
         '--section-background',
         '--section-text',
@@ -67,6 +71,9 @@ class ScaffoldThemeTest extends TestCase
         '--section-accent',
         '--section-border',
         '--section-overlay',
+        '--card-accent',
+        '--card-accent-color',
+        '--card-accent-invert',
     ];
 
     // UiBundle's own directory, located through its bundle class rather than through "vendor/c975l/ui-bundle": it ships inside c975l/core-bundle, one directory deeper than that guess ever looked - same reasoning as ConfigBundle's BundleLocator, which reads it off the kernel at runtime

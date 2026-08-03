@@ -1,4 +1,5 @@
-{% extends '@c975LSite/layout.html.twig' %}
+{# The app's own file first, not "@c975LSite/layout.html.twig" directly: it resolves here anyway (it extends ['@c975LSite/layout.html.twig', '@c975LUi/layout.html.twig']), but going through it is what lets a site add its own blocks around the layout and have them apply to its pages too, as they already do to the scaffolded error templates. The bundle's own layout stays as a fallback, for an app that hasn't run the scaffold #}
+{% extends ['layout.html.twig', '@c975LSite/layout.html.twig'] %}
 
 {# The collection item's own title, rather than the parent Page's generic one #}
 {% set title = detailTitle is defined and detailTitle ? detailTitle : page.title %}

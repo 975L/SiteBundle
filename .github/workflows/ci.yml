@@ -27,22 +27,21 @@ jobs:
             - name: Dépendances
               run: composer update --no-interaction --no-progress
 
+            # Les étapes ci-dessous appellent les scripts de composer.json plutôt que les commandes elles-mêmes : la liste des contrôles vit à un seul endroit, que `composer qa` et bin/ci.sh rejouent à l'identique en local. Elles restent séparées pour lire dans l'interface laquelle a échoué
             - name: PSR-12
-              run: phpcs -q
+              run: composer cs
 
-            # --diff pour lire directement dans les logs ce qui s'écarte du standard, plutôt que la seule liste des fichiers
             - name: Standard Symfony
-              run: php-cs-fixer check --diff
+              run: composer fixer
 
             - name: Analyse statique
-              run: phpstan analyse --no-progress
+              run: composer stan
 
-            # Seconde passe en level 6 sur le seul scaffold : il est recopié tel quel dans les applications, qui l'analysent à ce niveau-là
             - name: Analyse statique du scaffold
-              run: phpstan analyse -c phpstan-scaffold.dist.neon --no-progress
+              run: composer stan-scaffold
 
             - name: Tests
-              run: vendor/bin/phpunit --coverage-clover clover.xml
+              run: composer test -- --coverage-clover clover.xml
 
             # Sans le secret, l'envoi est sauté plutôt que de faire échouer la CI
             - name: Couverture vers Codacy

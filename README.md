@@ -135,6 +135,8 @@ After that, all controllers are loaded with hashed filenames (cache busting). Ad
 
 Twig uses the first template of the list that exists, so with this bundle installed your pages get its full layout — header, footer, navigation, SEO, theme. The file is yours from then on: replace it with your own markup, or keep extending the bundle's layout and override its blocks.
 
+Should you replace it, it becomes the parent of the database-driven pages too (`@c975LSite/pages/page.html.twig` extends `layout.html.twig`), so it has to hold up its end of that contract: define a `container` block for the page's blocks to render into, and read the `title` and `robots` variables the page sets. A replacement layout that defines neither renders the pages empty, without any error.
+
 ### Page-specific variables
 
 Declare these variables in each page template to populate meta tags and the page title:
@@ -407,6 +409,8 @@ A site left in maintenance (`site-maintenance`) answers 503 on every public url 
 Assets are read out of the home page's rendered HTML rather than declared anywhere: AssetMapper's filenames are hashed (`app-EiPntxm.css`), so this is what actually proves `asset-map:compile` and the stylesheet cache warmer both ran, and ran in the right order. Requests are all fired before any status is read, so checking a few dozen urls costs about a second.
 
 Deliberately **not** a `HealthCheckProviderInterface` implementation (see [Health check](#health-check) below): that one judges a live site's quality on a weekly schedule and persists rows for a dashboard, this one answers "is it broken, right now" and has to be able to fail a pipeline.
+
+The bundle also runs it every night, in a 5am-7am window, through `SiteMaintenanceTaskProvider` — see [Scheduler](#scheduler).
 
 ---
 
@@ -868,7 +872,7 @@ The legal pages and `contact` are seeded with a meta description of their own, e
 
 ## Scheduler
 
-This bundle declares no scheduled command of its own anymore: `c975l:config:messenger-cleanup` moved to ConfigBundle alongside the rest of the Messenger stack, joining `c975l:sitemaps:create`/`c975l:health-check:run`/`c975l:config:backup`/`c975l:config:backup:digest` there (see [ConfigBundle's Backup section](https://github.com/975L/ConfigBundle#backup) — every satellite bundle needs them whether or not it has SiteBundle installed). The schedule class itself is scaffolded by ConfigBundle and lives in your app, so each project controls its own timing.
+This bundle declares one scheduled command, `c975l:site:smoke-test`, nightly in a 5am-7am window through `SiteMaintenanceTaskProvider` (see [Smoke test](#smoke-test)). The rest moved to ConfigBundle alongside the whole Messenger stack: `c975l:config:messenger-cleanup` joined `c975l:sitemaps:create`/`c975l:health-check:run`/`c975l:config:backup`/`c975l:config:backup:digest` there (see [ConfigBundle's Backup section](https://github.com/975L/ConfigBundle#backup) — every satellite bundle needs them whether or not it has SiteBundle installed). The schedule class itself is scaffolded by ConfigBundle and lives in your app, so each project controls its own timing.
 
 ### 1. Create the schedule class
 
@@ -901,7 +905,7 @@ class MaintenanceSchedule implements ScheduleProviderInterface
 
 The `stateful()` call persists the last-run time via Symfony Cache so tasks are not re-run if the worker restarts.
 
-**This file lists no command at all**, and that's the point: each bundle declares the commands it needs run through ConfigBundle's [`MaintenanceTaskProviderInterface`](https://github.com/975L/ConfigBundle#contributing-maintenance-tasks-from-other-bundles) — ConfigBundle declares its backup/sitemaps/health-check/messenger-cleanup ones, ShopBundle its own, and this bundle none at present. Installing a bundle schedules its tasks, removing it stops them, and neither needs an edit here. Their exact minutes are drawn from this site's own identity ([`ScheduleSpreader`](https://github.com/975L/ConfigBundle#spreading-scheduled-commands-across-installs)), so sites sharing a server don't all dump their database at the same minute; `bin/console debug:scheduler` shows the times this one ended up with.
+**This file lists no command at all**, and that's the point: each bundle declares the commands it needs run through ConfigBundle's [`MaintenanceTaskProviderInterface`](https://github.com/975L/ConfigBundle#contributing-maintenance-tasks-from-other-bundles) — backups, sitemaps, health checks and the nightly smoke test all come from the bundles that own them. Installing a bundle schedules its tasks, removing it stops them, and neither needs an edit here. Their exact minutes are drawn from this site's own identity ([`ScheduleSpreader`](https://github.com/975L/ConfigBundle#spreading-scheduled-commands-across-installs)), so sites sharing a server don't all dump their database at the same minute; `bin/console debug:scheduler` shows the times this one ended up with.
 
 Two things stay yours. A command no bundle knows about is added after the call, spread (inject `ScheduleSpreader` alongside the builder) or on a fixed time with a plain `RecurringMessage::cron()`:
 

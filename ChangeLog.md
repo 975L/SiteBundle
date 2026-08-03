@@ -1,5 +1,22 @@
 # Changelog
 
+## v8.0.3
+
+Database pages render through the site's own layout
+
+- `pages/page.html.twig` extends `['layout.html.twig', '@c975LSite/layout.html.twig']`, the app's file first (03/08/2026) [BC-Break]
+- Added `PageLayoutInheritanceTest`, locking the order of that list and the `container` contract (03/08/2026)
+- Documented in the readme the contract a replacement `layout.html.twig` has to hold up (03/08/2026)
+- Added `SiteMaintenanceTaskProvider`, scheduling the smoke test nightly in a 5am-7am window (03/08/2026)
+- Added `SiteMaintenanceTaskProviderTest` (03/08/2026)
+- The readme's scheduler section no longer says this bundle schedules nothing (03/08/2026)
+- `c975l/core-bundle` required at `^1.1`, where `SubmissionIntegrity` lives (03/08/2026)
+- Added the `cs`, `fixer`, `stan`, `stan-scaffold` and `qa` Composer scripts, which the CI workflow now calls (03/08/2026)
+- Added `bin/ci.sh`, replaying the CI checks on dependencies freshly resolved from Packagist (03/08/2026)
+- `failOnPhpunitNotice` enabled in `phpunit.xml.dist` (03/08/2026)
+- `SiteCreateCommandTest` stubs `ScaffoldInstaller` instead of mocking it (03/08/2026)
+- `ScaffoldThemeTest` counts the `--card-accent` trio as per-variant, UiBundle setting it per hue (03/08/2026)
+
 ## v8.0.2
 
 The wizard delivers the scaffold it says it delivered

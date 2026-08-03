@@ -110,7 +110,7 @@ class SiteCreateCommandTest extends TestCase
         file_put_contents($this->projectDir . '/src/Entity/User.php', '<?php');
 
         $forced = null;
-        $installer = $this->createMock(ScaffoldInstaller::class);
+        $installer = $this->createStub(ScaffoldInstaller::class);
         $installer->method('install')->willReturnCallback(function (array $paths = [], bool $dryRun = false, bool $force = false) use (&$forced): array {
             $forced = $force;
 
