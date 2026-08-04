@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-04",
+        "description": [
+            {
+                "en": "The links at the bottom of the emails the site sends now read as one discreet centered row, in the same grey as the line below them, instead of being stacked one per line",
+                "fr": "Les liens en bas des e-mails envoyés par le site s'affichent désormais sur une seule ligne discrète et centrée, dans le même gris que la ligne qui les suit, au lieu d'être empilés l'un sous l'autre",
+                "es": "Los enlaces al pie de los correos que envía el sitio se muestran ahora en una sola línea discreta y centrada, en el mismo gris que la línea inferior, en lugar de apilarse uno por línea"
+            },
+            {
+                "en": "The title and social network summary of each page now also describe it to the AI assistants reading the site, so a page presents itself to them the way you wrote it",
+                "fr": "Le titre et le résumé réseaux sociaux de chaque page servent désormais aussi à la présenter aux assistants IA qui lisent le site, pour qu'une page se présente à eux comme vous l'avez écrite",
+                "es": "El título y el resumen para redes sociales de cada página sirven ahora también para presentarla a los asistentes de IA que leen el sitio, de modo que una página se presente ante ellos tal como usted la escribió"
+            }
+        ]
+    },
+    {
         "date": "2026-08-03",
         "description": [
             {

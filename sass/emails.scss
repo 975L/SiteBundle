@@ -14,3 +14,5 @@
 // nothing else declares them. UiBundle's own :root covers what its rules read, not what this one does
 @use '_variables.scss';
 @use '_footer.scss';
+// The email footer's own row of Menu links, which the band above deliberately doesn't style
+@use '_email-footer.scss';

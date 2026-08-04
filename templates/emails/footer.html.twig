@@ -1,4 +1,12 @@
 {# Blocks are managed independently from the site footer's, via the "email-footer" Menu location #}
-{% for block in menu_blocks('email-footer') %}
-    {{ render_block(block) }}
-{% endfor %}
+{% set blocks = menu_blocks('email-footer') %}
+{% if blocks is not empty %}
+    {# One centered inline list rather than the page footer's colored band: an email footer is a discreet row of links, styled like the "email-text-sent-by" line right below it (see sass/_email-footer.scss) #}
+    <div class="email-footer text-center">
+        <ul class="inline">
+            {% for block in blocks %}
+                <li>{{ render_block(block) }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

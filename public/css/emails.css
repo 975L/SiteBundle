@@ -178,3 +178,21 @@ footer a:hover .img-above,
 footer a:visited:hover .img-above {
   color: var(--footer-text-hover);
 }
+
+/* EMAIL FOOTER */
+.email-footer ul.inline {
+  margin: 0.5em auto;
+}
+
+.email-footer .menu-item {
+  display: inline;
+  margin: 0;
+}
+
+.email-footer a,
+.email-footer a:visited,
+.email-footer .menu-label {
+  color: var(--label-color);
+  font-size: 90%;
+  text-decoration: none;
+}

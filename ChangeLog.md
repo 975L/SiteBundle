@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.0.5
+
+The pages tell the site's llms.txt what they are
+
+- `SitePageSitemapProvider` carries each page's `title` and social network summary, the optional keys `SeoFilesWriter` builds `public/llms.txt` from (04/08/2026)
+- `SitePageSitemapProviderTest` covers the two keys (04/08/2026)
+- Restyled the email footer as one centered inline row of links, in `sass/_email-footer.scss` (04/08/2026)
+- Added `EmailFooterTest` (04/08/2026)
+- Added `scaffold/removed.json`, the withdrawn scaffold files `c975l:scaffold:install` deletes (04/08/2026)
+- Added `ScaffoldRemovedJsonTest` (04/08/2026)
+- Documented the withdrawn-files deletion in the readme's scaffold section (04/08/2026)
+- Raised `c975l/core-bundle` to `^1.2` (04/08/2026)
+
 ## v8.0.4
 
 Slider, audio and readmore labels follow their components to UiBundle

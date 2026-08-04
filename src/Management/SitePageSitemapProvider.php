@@ -53,6 +53,9 @@ class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
                 'changefreq' => $page->getChangeFrequency() ?? 'weekly',
                 // Page::$priority is passed as-is on its own 0-10 scale, SitemapWriter converts it to the 0.0-1.0 the protocol accepts. Default 4 for a page that never set one, the middle-low priority a plain content page deserves
                 'priority' => $page->getPriority() ?? 4,
+                // Ignored by the sitemap, this is what SeoFilesWriter lists the pages in llms.txt from (see SitemapProviderInterface). The social network summary doubles as the meta description of the page, so it is already the one sentence describing it - a page without one is still listed, under its title alone
+                'title' => $page->getTitle(),
+                'description' => $page->getSummarySocialNetwork(),
             ];
         }
 

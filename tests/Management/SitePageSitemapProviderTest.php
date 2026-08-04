@@ -74,7 +74,21 @@ class SitePageSitemapProviderTest extends TestCase
             'lastmod' => '2026-01-15',
             'changefreq' => 'daily',
             'priority' => 7,
+            'title' => 'About',
+            'description' => null,
         ], $urls[0]);
+    }
+
+    // Ignored by the sitemap, these two are what ConfigBundle's SeoFilesWriter lists the pages in llms.txt from - the social network summary doubling as the page's meta description
+    public function testGetUrlsCarriesTheTitleAndSummaryForLlmsTxt(): void
+    {
+        $page = (new Page())->setTitle('About')->setSlug('about')->setSummarySocialNetwork('Who we are');
+        $page->setModification(new \DateTime('2026-01-15'));
+
+        $urls = $this->createProvider([$page])->getUrls();
+
+        $this->assertSame('About', $urls[0]['title']);
+        $this->assertSame('Who we are', $urls[0]['description']);
     }
 
     // A page with no explicit priority/changeFrequency falls back to sensible sitemap defaults

@@ -1,0 +1,79 @@
+{
+    "src/Command/SitemapCreateCommand.php": [
+        "1a4744bb9f8b33f14b9628c40dcf3257d7f98680033d3efe19dc8d0fd44ee041",
+        "ad5c16d2bfc825a9500072a3a287d573c4f089cf35f9d98f439f9e4ab690bcf6",
+        "cc863a29397023dcb2a539b12b39d8bb889faaebbcd883f27080d3834c457d2e"
+    ],
+    "src/Form/RegistrationFormType.php": [
+        "434aff053e8c05edddf2066a68059a2ff27ca15a68b7e3cc614e9d0adf52e7c3",
+        "d03c6f903f6014fea6f81ff0d7598b0442b955fe2121671d934376a03f541ce7",
+        "e8a797cbd1ec0bebc28e3f7d6b1839f0d4213eada91bc0d031e97ba7422a8867"
+    ],
+    "src/Form/ResetPasswordRequestFormType.php": [
+        "6d18772391af2b97ba359949c0b2992e355dc4d511229e7e74659cb451366a14",
+        "9f3c604c2a90d2a646497c2fa213ddf6c235f105e8a04cd8ee18c05c7660ca7f"
+    ],
+    "src/Security/EmailVerifier.php": [
+        "47da689e3d0d30a280950d94a568a2beb152526715218641e988d1b8d37d27b4",
+        "b777580a54fc70dabf083370bb995e27310befee9f23db1faa0dd7845397c78b"
+    ],
+    "src/Validator/Constraints/DnsEmail.php": [
+        "d8682ad0b63836b58e0c8f64b95f67d3e940d6d6c776ad29a03f87e90ef61b24"
+    ],
+    "src/Validator/Constraints/DnsEmailValidator.php": [
+        "eaa861178ee64a76d2b064eafbdb98b60431e95aa6d52e4a8266d6001cd2ce21"
+    ],
+    "templates/base.html.twig": [
+        "c6e9dbaef27df357aa9a991912c8b046b8e7549bc973df61d25123ca388cf0eb"
+    ],
+    "templates/bundles/c975LSiteBundle/emails/footer.html.twig": [
+        "dbb4f91dbc839f1f6da07ad8477029409fb4331b9b7168f2e4f16f34976c57e4"
+    ],
+    "templates/registration/confirmation_email.html.twig": [
+        "3d710db5829491247b59be8f430b209deebcc3707be06e69d6b58ca4f8c26b7b"
+    ],
+    "templates/registration/register.html.twig": [
+        "24c7fbd2f56b9a4470b60004123e54ebdcd9920dd1467625413b712c2d137fcf",
+        "4dfa797b2917f6eb6920db20e7d1d5a33bde6701f370ebbbeceaeee9aa2a8945"
+    ],
+    "templates/reset_password/check_email.html.twig": [
+        "9d84fc3f313b93a3c79e128d78b9d63731e8c95bdb9d1ce9c781cc03a591c651"
+    ],
+    "templates/reset_password/email.html.twig": [
+        "e3f093ac6c16e031950f263e25078c501cb21a341be7fa32dd77eb646496208e"
+    ],
+    "templates/reset_password/request.html.twig": [
+        "1c73021ed1d581bf53c349382e7a124a1e827baeaeafa03baa0759389297e231",
+        "d4a9e8c3561f1c2a22f571f5075d8b00ba7433409644898e7f994c1cf7343f8d"
+    ],
+    "tests/Command/SitemapCreateCommandTest.php": [
+        "abe484f35d206553813ec62687a91c147bc5ce460f2c85b8c92a7713b965c22c",
+        "f49f64931dad573a9057837811452802952b8fa994371fa524d3012a66e1a476"
+    ],
+    "tests/Form/RegistrationFormTypeTest.php": [
+        "cdd7ee0cb3c8a01d6eb32dc71c6dc09944d55065c25f14b682df25656ed5d318",
+        "fb1a42ce144c033f9d75d26187bc252615f14e0d09c82fa108e77ca3c4251de0"
+    ],
+    "tests/Form/ResetPasswordRequestFormTypeTest.php": [
+        "091c563560b8f5e1c682f71111893b05ad58a7c60515c4aa6fba827e9726a0e8",
+        "4a204ac24231bb6c5ed90e1c250e8b2b0445d77f93af76fb7db3504c3054e2c3"
+    ],
+    "tests/Security/EmailVerifierTest.php": [
+        "020da42909d157cd63614cd8511f0f1a7f11ba2a5da8b973bb5503750f0e3b04"
+    ],
+    "tests/Validator/Constraints/DnsEmailValidatorTest.php": [
+        "4ce043ac2a207797a8c25b20f569bd9dcf67edd7a549064b4edf0d09d2dfc9fd"
+    ],
+    "translations/messages.en.xlf": [
+        "3c71565a677e95a9ae043d6605fef60ff88eda0ea0742778752afc58f94e48b0",
+        "747cbe9c3128f40e05dbb82b899002c782c593d34f9d4967877034500c113916"
+    ],
+    "translations/messages.es.xlf": [
+        "0d3810e72be93c1f44831bc050204acfaf41a19cf3288f75add8a1a91b673229",
+        "39ea434b957be5eb44c41b263d94b4ab0378bec409220a0355a2f8dd6f23ba07"
+    ],
+    "translations/messages.fr.xlf": [
+        "84680c3a52665bb5905ba2234f200c78ea1a95156fa3f23fdf321b1dd6cc30e2",
+        "f694d2550e0193bce7437f9b26ea484b36102de31e4ba539be4455aa3bacc919"
+    ]
+}

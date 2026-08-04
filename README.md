@@ -353,11 +353,13 @@ php bin/console c975l:sitemaps:create
 
 The command belongs to ConfigBundle (`SitemapWriter`), not to SiteBundle: it writes one `public/sitemap-<name>.xml` per bundle implementing `SitemapProviderInterface`, plus the `public/sitemap-index.xml` declaring them all. SiteBundle contributes `SitePageSitemapProvider`, which gives `sitemap-site.xml` from the database pages — non-indexable pages excluded, urls built by `PagePublicUrlResolver` so they're exactly the ones the health checks test. BookBundle, ShopBundle… each contribute their own the same way, with nothing to declare in the app.
 
+Each url also carries the page's `title` and its social network summary as optional `title`/`description` keys. The sitemap itself ignores them; ConfigBundle's `SeoFilesWriter` is what reads them, to build the `public/llms.txt` listing what every page of the site is about.
+
 Point Google Search Console at `sitemap-index.xml` only, never at the sub-sitemaps — installing or removing a bundle then changes what's crawled with nothing to update on Google's side.
 
 The same writer is also behind the "Create sitemaps" dashboard shortcut (ConfigBundle's `ConfigShortcutProvider`), for when publishing shouldn't wait for the next scheduler run.
 
-On a site scaffolded before this, `App\Command\SitemapCreateCommand` (`app:sitemaps:create`) is obsolete — running each bundle's sitemap command and writing the index is exactly what `c975l:sitemaps:create` does. Delete `src/Command/SitemapCreateCommand.php` (and its test), and point `MaintenanceSchedule` at `c975l:sitemaps:create`.
+On a site scaffolded before this, `App\Command\SitemapCreateCommand` (`app:sitemaps:create`) is obsolete — running each bundle's sitemap command and writing the index is exactly what `c975l:sitemaps:create` does. `php bin/console c975l:scaffold:install` deletes `src/Command/SitemapCreateCommand.php` and its test for you, both being declared in `scaffold/removed.json`; point `MaintenanceSchedule` at `c975l:sitemaps:create`.
 
 To contribute a sitemap from another bundle, see [Contributing a sitemap](https://github.com/975L/ConfigBundle#contributing-a-sitemap-from-other-bundles) in ConfigBundle's own README — it's a two-method interface, and the file/index writing is none of the contributing bundle's business.
 
@@ -661,7 +663,7 @@ Pre-built email templates are available at `@c975LSite/emails/`:
 | `layout.html.twig` | Base email layout |
 | `fullLayout.html.twig` | Full email layout |
 | `header.html.twig` | Email header — renders the `email-header` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site navbar |
-| `footer.html.twig` | Email footer — renders the `email-footer` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site footer |
+| `footer.html.twig` | Email footer — renders the `email-footer` Menu's blocks (see [Menus](#menus)), edited from the backoffice, independently from the site footer, as one centered inline row of grey, small, undecorated links matching the "sent by" line below it (`sass/_email-footer.scss`, not the page's colored footer band) |
 | `contact_notification.html.twig` | "contact" Form's notification email |
 | `emailTemplateLayout.html.twig` | Wraps an admin-authored `EmailTemplate`'s rendered body (see below) |
 
@@ -775,6 +777,8 @@ overwritten. `--force` takes the wizard's behavior back for those, each moved to
 `assets/` files are the one exception: once a target exists there, it's left alone for good (no
 backup, no overwrite, even if the bundle's own copy later changes) since it's meant to become the
 app's own editable file from that first copy onward — see [A site's own theme](#a-sites-own-theme).
+
+The same rule deletes what a bundle has *withdrawn*, from `c975l/core-bundle` v1.2 on: `scaffold/removed.json` lists every scaffold file this bundle stopped shipping, against the hashes of all the versions it ever delivered. A site's copy still matching one of them is deleted, anything else is the site's own work and is only reported as obsolete. That's how `src/Command/SitemapCreateCommand.php`, `src/Security/EmailVerifier.php` or the stale `templates/bundles/c975LSiteBundle/emails/footer.html.twig` override finally leave a site scaffolded before they were dropped — `--dry-run` lists them first, like everything else.
 
 Two options narrow that down, for the case the command was awkward at: propagating **one** upgraded
 scaffold file to a site (or to a dozen of them), without passing over every other file that site may
