@@ -166,8 +166,19 @@ class PageCrudController extends AbstractCrudController
             ->setLabel(t('label.is_published', [], 'site'))
             // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly, a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
             ->setHtmlAttribute('data-controller', 'publication-switch');
+
+        // Sitemaps
+        // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway
+        // Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
+        $isIndexableField = BooleanField::new('isIndexable')
+            ->setLabel(t('label.is_indexable', [], 'site'))
+            ->setHelp(t('label.is_indexable_help', [], 'site'))
+            ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields']);
+
+        // Trashed pages are unpublished, so they are never referenced either (see deleteEntity() and Page::unreferenceWhenUnpublished()) - the column holds "false" for every row of that view. Hidden rather than left there: with "isPublished" gone, the "publication-switch" controller has no cell to mount on, and the switch would stay clickable over a value the server sends straight back to false
         if ($isTrash) {
             $isPublishedField->hideOnIndex();
+            $isIndexableField->hideOnIndex();
         }
 
         return [
@@ -210,12 +221,7 @@ class PageCrudController extends AbstractCrudController
             $isPublishedField,
 
             // Sitemaps
-            // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway
-            // Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
-            BooleanField::new('isIndexable')
-                ->setLabel(t('label.is_indexable', [], 'site'))
-                ->setHelp(t('label.is_indexable_help', [], 'site'))
-                ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields']),
+            $isIndexableField,
             ChoiceField::new('changeFrequency')
                 ->setLabel(t('label.change_frequency', [], 'site'))
                 ->setHelp(t('label.change_frequency_help', [], 'site'))

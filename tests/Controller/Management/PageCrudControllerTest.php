@@ -366,6 +366,19 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($page->getModification());
     }
 
+    // A page in the trash must never stay referenced: the sitemap, llms.txt and the crawlers would keep pointing at a url that now answers 410. Carried by the unpublishing above, which Page::unreferenceWhenUnpublished() turns into an unreferencing at that very flush - played here as Doctrine would
+    public function testDeleteEntityUnreferencesTheTrashedPage(): void
+    {
+        $page = (new Page())->setTitle('Old Page')->setSlug('old-page')->setIsPublished(true)->setIsIndexable(true);
+
+        $manager = $this->createStub(EntityManagerInterface::class);
+
+        $this->createController()->deleteEntity($manager, $page);
+        $page->unreferenceWhenUnpublished();
+
+        $this->assertFalse($page->isIndexable());
+    }
+
     // --- duplicate -------------------------------------------------------------------------------------
 
     public function testDuplicateDeniesAccessBelowEditor(): void
@@ -1018,6 +1031,18 @@ class PageCrudControllerTest extends TestCase
 
         $this->assertNotNull($isIndexable);
         $this->assertTrue($isIndexable->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
+    }
+
+    // Both columns hold the same value for every row of the trash (see deleteEntity()), and "isIndexable" would stay clickable there with no "isPublished" cell left for the "publication-switch" controller to disable it from
+    public function testConfigureFieldsHidesPublicationColumnsInTheTrash(): void
+    {
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request(['trash' => 1]));
+
+        $fields = $this->createController(requestStack: $requestStack)->configureFields(Crud::PAGE_INDEX);
+
+        $this->assertFalse($this->findFieldByProperty($fields, 'isPublished')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
+        $this->assertFalse($this->findFieldByProperty($fields, 'isIndexable')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
     }
 
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void

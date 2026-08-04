@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.0.6
+
+The trash stops offering switches over values it holds fixed
+
+- `PageCrudController` hides the `isIndexable` column on the trash's index, next to `isPublished` (04/08/2026)
+- `PageCrudControllerTest` covers both hidden columns and the unreferencing of a trashed page (04/08/2026)
+- Documented in the readme that the trash's index carries neither publication column (04/08/2026)
+
 ## v8.0.5
 
 The pages tell the site's llms.txt what they are

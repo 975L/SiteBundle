@@ -11,6 +11,11 @@
                 "en": "The title and social network summary of each page now also describe it to the AI assistants reading the site, so a page presents itself to them the way you wrote it",
                 "fr": "Le titre et le résumé réseaux sociaux de chaque page servent désormais aussi à la présenter aux assistants IA qui lisent le site, pour qu'une page se présente à eux comme vous l'avez écrite",
                 "es": "El título y el resumen para redes sociales de cada página sirven ahora también para presentarla a los asistentes de IA que leen el sitio, de modo que una página se presente ante ellos tal como usted la escribió"
+            },
+            {
+                "en": "The trash no longer shows the indexing switch on its pages: a page waiting there is already out of the search engines, so clicking it changed nothing",
+                "fr": "La corbeille n'affiche plus l'interrupteur de référencement sur ses pages : une page qui y attend est déjà retirée des moteurs de recherche, cliquer dessus ne changeait donc rien",
+                "es": "La papelera ya no muestra el interruptor de indexación en sus páginas: una página que espera allí ya está fuera de los motores de búsqueda, por lo que hacer clic no cambiaba nada"
             }
         ]
     },
