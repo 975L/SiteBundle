@@ -105,7 +105,7 @@ php bin/console assets:install --symlink
 
 ### Register Stimulus controllers
 
-This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, matomo) and back-office ones in `controllers-admin.js` (title-confirm, collection-item-sort, sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
+This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, matomo) and back-office ones in `controllers-admin.js` (collection-item-sort, sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
 
 Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 

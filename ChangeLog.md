@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.1.1
+
+The title-change confirmation is left to UiBundle
+
+- Removed `assets/js/title-confirm.js`, the controller now shipped by UiBundle (05/08/2026)
+- Requires `c975l/core-bundle` ^1.2.5, which ships that controller (05/08/2026)
+- Added `AdminControllersRegistrationTest` (05/08/2026)
+- Documented the back-office controllers the bundle still ships in the readme (05/08/2026)
+
 ## v8.1.0
 
 The footer menu is laid out from its own edit screen

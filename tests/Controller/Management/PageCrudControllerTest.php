@@ -930,7 +930,7 @@ class PageCrudControllerTest extends TestCase
         return null;
     }
 
-    // The "title-confirm" Stimulus controller (assets/js/title-confirm.js) reuses EasyAdmin's confirmation modal, which isn't rendered on the "new" crud page (only edit/index/detail) - and there's no existing slug to preserve yet anyway, so the field must stay plain there
+    // The "title-confirm" Stimulus controller (UiBundle's assets/js/title-confirm.js) reuses EasyAdmin's confirmation modal, which isn't rendered on the "new" crud page (only edit/index/detail) - and there's no existing slug to preserve yet anyway, so the field must stay plain there
     public function testConfigureFieldsDoesNotAddTitleConfirmAttributesOnNewPage(): void
     {
         $fields = $this->createController()->configureFields(Crud::PAGE_NEW);
