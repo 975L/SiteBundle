@@ -30,7 +30,7 @@ class MenuExportProviderTest extends TestCase
     public function testExportAllSerializesEveryMenuFromTheRepository(): void
     {
         $block = (new Block())->setKind('menu_link')->setPosition(0)->setData(['label' => 'Home', 'url' => '/']);
-        $menu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR);
+        $menu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR)->setStyle(Menu::STYLE_INLINE);
         $menu->addBlock($block);
 
         $menuRepository = $this->createMock(MenuRepository::class);
@@ -39,6 +39,7 @@ class MenuExportProviderTest extends TestCase
         $data = (new MenuExportProvider($menuRepository, new BlockDataExporter(sys_get_temp_dir())))->exportAll();
 
         $this->assertSame(Menu::LOCATION_NAVBAR, $data['items'][0]['location']);
+        $this->assertSame(Menu::STYLE_INLINE, $data['items'][0]['style']);
         $this->assertSame('menu_link', $data['items'][0]['blocks'][0]['kind']);
         $this->assertSame(['label' => 'Home', 'url' => '/'], $data['items'][0]['blocks'][0]['data']);
         $this->assertSame([], $data['files']);

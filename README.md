@@ -295,6 +295,20 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 
 A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
 
+### Footer: display style
+
+The `footer` menu's edit screen carries one field of its own beyond its blocks — **Display style**, a `<select>` picking how its items are laid out (`Menu::$style`):
+
+| Choice | Rendered as |
+| --- | --- |
+| *Site theme's own choice* (default) | Whatever the site's `themes/site.css` left the `--footer-items-direction`/`--footer-items-justify` tokens at — a column, unless the design retuned them |
+| Inline | One centered row, wrapping (`.menu-items--inline`) |
+| Block | Stacked, one item below the other (`.menu-items--block`) |
+
+The two classes **retune those very tokens** on the `.menu-items` element rather than writing `flex-direction` themselves (`sass/_footer.scss`), so one class is enough for both the wrapper and its `.blocks` child, and it beats what the theme left on `:root` — a declaration on the element always wins over an inherited one. Leaving the select on its placeholder stores `null` and adds no class at all, which is what every menu saved before the field existed holds: **a site that already picked its layout in `themes/site.css` keeps rendering exactly as it did**, and only starts following the backoffice once an admin picks a style there. Anything but the two known values is stored as `null` (`Menu::setStyle()`) — the value ends up in a class name, and an unknown one would only ever name a rule no stylesheet carries.
+
+No other location offers it: a navbar lays its items out on its own (stacked below 768px, inlined above), and both email menus render as one inline row whatever the site does. The choice is cached like the menu's blocks are (`menu_style()`, same `menus_all` tag), so it costs no query per page — `MenuCacheInvalidationListener` now watches the `Menu` row itself, which no `Block` event would ever signal.
+
 `MenuExportProvider`/`MenuImportProvider` plug all four locations into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `location` on import, same "whole Block collection replaced" approach as `PageImportProvider`.
 
 ### Linking to a section of a page (anchors)
@@ -549,6 +563,8 @@ UiBundle's twelve `--block-accent-*` hues are the one exception to colors stayin
 A navbar painted with `--navbar-background: var(--primary)` has three tokens to inverse what would otherwise be invisible on it: `--navbar-site-name-color`/`--navbar-site-tagline-color` for the brand block, and `--navbar-btn-background`/`-background-hover`/`-color` for the single "primary" nav item's pill, whose defaults are UiBundle's `.btn-primary` colors.
 
 Navbar and footer both bleed full-viewport-width past `--body-max-width`, each through its own pair of tokens: `--navbar-width`/`--navbar-margin-x` and `--footer-width`/`--footer-margin-x`. A design that frames the page inside that max-width sets the pairs it needs to `auto`/`0` here, instead of overriding `.menu`/`footer` from `app.css`. `--footer-margin-top` goes with them: a design stacking colored flats sets it to `0` so the footer band follows the previous flat with no strip of page background between the two. Left alone it reads UiBundle's `--section-space` — the one step the section-level blocks are parted by — so the footer follows the page's own rhythm at every width instead of the fixed `3em` it used to carry. The mobile base doesn't move — 48px, which is both what `3em` gave and where the step starts — and from there the gap grows with the viewport up to the 84px the sections part by, where the fixed value stayed short. `FooterMarginTopTest` locks it in both compiled stylesheets and in the scaffolded `site.css`.
+
+`--footer-items-direction`/`--footer-items-justify` are the one pair an admin can take over: the footer menu's own **Display style** select (see [Footer: display style](#footer-display-style)) retunes both on the `.menu-items` element, which wins over whatever this file left on `:root`. A design still sets them here for the layout a site ships with — the select's default is precisely "whatever the theme decided".
 
 `--reading-max-width` is the measure body copy is laid out on — `.legal div`, `.text`, `.site-article` and the sliders sharing that column — well under `--body-max-width`, which frames the page and never carries a line of text. It defaults to `min(75ch, 90vw)`, in `ch` so the measure follows the body font instead of drifting as it changes; a design that kept the previous 800px sets `--reading-max-width: min(800px, 90vw)` here.
 

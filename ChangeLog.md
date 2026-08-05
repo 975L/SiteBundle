@@ -1,5 +1,22 @@
 # Changelog
 
+## v8.1.0
+
+The footer menu is laid out from its own edit screen
+
+- Added `Menu::$style`, the layout a menu's items are rendered with, `null` leaving it to the site's theme (05/08/2026) [Needs db update]
+- Added `Menu::STYLE_INLINE`/`STYLE_BLOCK`, `Menu::setStyle()` storing anything else as `null` (05/08/2026)
+- `MenuCrudController` offers a "Display style" select on the footer alone, its placeholder being the theme's own choice (05/08/2026)
+- Added `MenuExtension::getMenuStyle()` and the `menu_style()` Twig function, cached like `menu_blocks()` (05/08/2026)
+- `MenuCacheInvalidationListener` now also invalidates on the `Menu` row itself, which no `Block` event signals (05/08/2026)
+- `Footer.html.twig` now writes `.menu-items--inline`/`--block` for the picked style (05/08/2026)
+- Added the `footer .menu-items--inline`/`--block` rules, retuning `--footer-items-direction`/`--footer-items-justify` (05/08/2026)
+- A menu's export/import now carries `style`, an export predating it leaving the layout to the theme (05/08/2026)
+- Added the `label.menu_style`, `label.menu_style_help`, `label.menu_style_inline`, `label.menu_style_block` and `label.menu_style_theme` translations (05/08/2026)
+- Added `MenuTest` and `FooterItemsStyleTest` (05/08/2026)
+- Documented the display style in the readme's menus and themes sections (05/08/2026)
+- Documented the `style` column's migration in UPGRADE.md (05/08/2026)
+
 ## v8.0.7
 
 Pages tell the content-quality check whether they are indexable

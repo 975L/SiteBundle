@@ -126,6 +126,16 @@ footer .menu-items .blocks {
   gap: 0.5rem 1.5rem;
 }
 
+footer .menu-items--inline {
+  --footer-items-direction: row;
+  --footer-items-justify: center;
+}
+
+footer .menu-items--block {
+  --footer-items-direction: column;
+  --footer-items-justify: flex-start;
+}
+
 footer a,
 footer a:visited {
   color: var(--footer-text);

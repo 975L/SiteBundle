@@ -220,6 +220,40 @@ class MenuExtensionTest extends TestCase
         $this->assertSame($first, $second);
     }
 
+    // --- getMenuStyle ---------------------------------------------------------------------------------------
+
+    // The layout an admin picked on the menu edit screen, which Footer.html.twig turns into its own class
+    public function testGetMenuStyleReturnsTheStyleOfTheMatchingMenu(): void
+    {
+        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+        $extension = $this->createExtension($this->createRegistry([]), [], $this->createMenuRepository($menu));
+
+        $this->assertSame(Menu::STYLE_INLINE, $extension->getMenuStyle(Menu::LOCATION_FOOTER));
+    }
+
+    // Left on the theme's own choice, or no Menu row at all for that location: an empty string, which the template reads as "add no class and let the --footer-items-* tokens decide"
+    public function testGetMenuStyleReturnsAnEmptyStringWhenNoStyleIsPicked(): void
+    {
+        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER);
+        $extension = $this->createExtension($this->createRegistry([]), [], $this->createMenuRepository($menu));
+
+        $this->assertSame('', $extension->getMenuStyle(Menu::LOCATION_FOOTER));
+        $this->assertSame('', $this->createExtension($this->createRegistry([]), [], $this->createMenuRepository(null))->getMenuStyle(Menu::LOCATION_FOOTER));
+    }
+
+    // Cached across requests like the blocks are - a fresh instance sharing the pool must not query again
+    public function testGetMenuStyleSurvivesAcrossInstancesSharingTheSameCachePool(): void
+    {
+        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_BLOCK);
+
+        $menuRepository = $this->createMock(MenuRepository::class);
+        $menuRepository->expects($this->once())->method('findOneByLocation')->willReturn($menu);
+
+        $cache = $this->createCache();
+        $this->assertSame(Menu::STYLE_BLOCK, $this->createExtension($this->createRegistry([]), [], $menuRepository, $cache)->getMenuStyle(Menu::LOCATION_FOOTER));
+        $this->assertSame(Menu::STYLE_BLOCK, $this->createExtension($this->createRegistry([]), [], $menuRepository, $cache)->getMenuStyle(Menu::LOCATION_FOOTER));
+    }
+
     // getMenuBlocks() preloads every "menu_link" block's target Page in one findBy() call, so the per-link getMenuLinkUrl()/getMenuLinkLabel() calls that follow (as a template would make, one pair per link) resolve from memory instead of one find() call each
     public function testGetMenuBlocksPreloadsAllMenuLinkTargetPagesInOneBatchQuery(): void
     {

@@ -858,6 +858,26 @@
                 <source>label.menu_link_primary</source>
                 <target>Highlight as a button</target>
             </trans-unit>
+            <trans-unit id="Bb8KPHq">
+                <source>label.menu_style</source>
+                <target>Display style</target>
+            </trans-unit>
+            <trans-unit id="vMqQILz">
+                <source>label.menu_style_block</source>
+                <target>Block (one below the other)</target>
+            </trans-unit>
+            <trans-unit id="yF.KBLV">
+                <source>label.menu_style_help</source>
+                <target>How the footer's items are laid out. Left on the theme's own choice, the site's theme file decides</target>
+            </trans-unit>
+            <trans-unit id="yCP4n5f">
+                <source>label.menu_style_inline</source>
+                <target>Inline (side by side)</target>
+            </trans-unit>
+            <trans-unit id="Y_aqCAH">
+                <source>label.menu_style_theme</source>
+                <target>Site theme's own choice</target>
+            </trans-unit>
             <trans-unit id="zRjbN7z">
                 <source>label.menu_toggle</source>
                 <target>Open/Close the menu</target>

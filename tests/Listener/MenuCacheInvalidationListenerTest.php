@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Listener;
 
+use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Listener\MenuCacheInvalidationListener;
 use c975L\UiBundle\Entity\Block;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,6 +68,18 @@ class MenuCacheInvalidationListenerTest extends TestCase
 
         (new MenuCacheInvalidationListener($cache))
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+    }
+
+    // The Menu row carries a field of its own - its layout style, read by MenuExtension::getMenuStyle() - which no Block event would ever signal
+    public function testPostUpdateInvalidatesMenusAllTagForAnEditedMenu(): void
+    {
+        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
+
+        (new MenuCacheInvalidationListener($cache))
+            ->postUpdate(new PostUpdateEventArgs($menu, $this->createStub(EntityManagerInterface::class)));
     }
 
     public function testInvalidateIsSkippedForEntitiesThatAreNotBlocks(): void

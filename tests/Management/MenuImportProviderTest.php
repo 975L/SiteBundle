@@ -50,6 +50,7 @@ class MenuImportProviderTest extends TestCase
 
         $result = $provider->import([[
             'location' => Menu::LOCATION_FOOTER,
+            'style' => Menu::STYLE_INLINE,
             'blocks' => [
                 ['kind' => 'menu_link', 'position' => 0, 'data' => ['label' => 'Contact', 'url' => '/contact']],
             ],
@@ -65,8 +66,22 @@ class MenuImportProviderTest extends TestCase
         }
         $this->assertInstanceOf(Menu::class, $menu);
         $this->assertSame(Menu::LOCATION_FOOTER, $menu->getLocation());
+        $this->assertSame(Menu::STYLE_INLINE, $menu->getStyle());
         $this->assertCount(1, $menu->getBlocks());
         $this->assertSame('menu_link', $menu->getBlocks()->first()->getKind());
+    }
+
+    // An export predating the field carries no style at all, which puts the layout back where it was before it existed: the site's own theme
+    public function testImportClearsTheStyleWhenTheExportCarriesNone(): void
+    {
+        $existingMenu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+
+        $em = $this->createStub(EntityManagerInterface::class);
+        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+
+        $provider->import([['location' => Menu::LOCATION_FOOTER, 'blocks' => []]]);
+
+        $this->assertNull($existingMenu->getStyle());
     }
 
     public function testImportOverwritesAnExistingMenuAndReplacesItsBlocks(): void

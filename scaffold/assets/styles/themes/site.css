@@ -30,6 +30,8 @@
     /* --footer-background: var(--primary); */
     /* --footer-text: var(--white); */
     /* --footer-text-hover: var(--footer-text); */
+    /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides both
+       from the menu edit screen, its default being whatever these two are left at here */
     /* --footer-items-direction: column; */
     /* --footer-items-justify: flex-start; */
     /* Mixed out of the footer's own background rather than a flat grey, so the rule between the page

@@ -206,6 +206,41 @@ class MenuCrudControllerTest extends TestCase
         $this->assertTrue($location->getAsDto()->getFormTypeOptions()['disabled'] ?? null);
     }
 
+    // --- configureFields: style ---------------------------------------------------------------------------
+
+    // The one location whose items an admin lays out from the backoffice - a navbar has its own responsive rules and both email menus render as one inline row
+    public function testConfigureFieldsOffersTheStyleChoiceOnTheFooter(): void
+    {
+        $controller = $this->createController(
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation(Menu::LOCATION_FOOTER)))
+        );
+
+        $style = $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'style');
+
+        $this->assertNotNull($style);
+        $this->assertSame(
+            [Menu::STYLE_INLINE, Menu::STYLE_BLOCK],
+            array_keys($style->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES))
+        );
+        // Empty is the placeholder, not a choice: it has to keep meaning "the site's theme decides"
+        $this->assertFalse($style->getAsDto()->getFormTypeOptions()['required'] ?? true);
+        $this->assertSame('label.menu_style_theme', $style->getAsDto()->getFormTypeOptions()['placeholder'] ?? null);
+    }
+
+    public function testConfigureFieldsOffersNoStyleChoiceOnAnyOtherLocation(): void
+    {
+        foreach ([Menu::LOCATION_NAVBAR, Menu::LOCATION_EMAIL_HEADER, Menu::LOCATION_EMAIL_FOOTER] as $location) {
+            $controller = $this->createController(
+                adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation($location)))
+            );
+
+            $this->assertNull(
+                $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'style'),
+                sprintf('The "%s" menu offers a layout choice no stylesheet reads.', $location)
+            );
+        }
+    }
+
     // --- configureFields: blocks --------------------------------------------------------------------------
 
     // A menu is created empty by create(), then composed on the edit page - the block picker's choices depending on the location that action has just set

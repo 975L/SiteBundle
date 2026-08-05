@@ -39,6 +39,9 @@ class MenuExtension extends AbstractExtension
     // Keyed by pageId (string) - the "fragment => label" map of a target page's own anchors, see findSectionLabel()
     private array $pageAnchorsCache = [];
 
+    // Per-location memoization of the layout an admin picked, same reasoning as $menuBlocksCache above
+    private array $menuStyleCache = [];
+
     public function __construct(
         private readonly MenuRepository $menuRepository,
         private readonly PageRepository $pageRepository,
@@ -57,6 +60,7 @@ class MenuExtension extends AbstractExtension
     {
         return [
             new TwigFunction('menu_blocks', [$this, 'getMenuBlocks']),
+            new TwigFunction('menu_style', [$this, 'getMenuStyle']),
             new TwigFunction('menu_link_url', [$this, 'getMenuLinkUrl']),
             new TwigFunction('menu_link_label', [$this, 'getMenuLinkLabel']),
             new TwigFunction('menu_link_is_copyright', [$this, 'isMenuLinkCopyright']),
@@ -73,6 +77,17 @@ class MenuExtension extends AbstractExtension
         }
 
         return $this->menuBlocksCache[$location];
+    }
+
+    // The layout an admin picked for that menu's items in the back-office (see Menu::STYLE_*), empty string when it was left to the site's theme - only the footer offers the choice, see MenuCrudController. Cached like the blocks are (its own key rather than a second value under theirs, so nothing has to deal with a cache entry saved in the previous shape), invalidated by the same tag
+    public function getMenuStyle(string $location): string
+    {
+        return $this->menuStyleCache[$location] ??= $this->cache->get('menu_style_' . $location, function (ItemInterface $item) use ($location): string {
+            $item->expiresAfter(null);
+            $item->tag(['menus_all']);
+
+            return $this->menuRepository->findOneByLocation($location)?->getStyle() ?? '';
+        });
     }
 
     // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" Block is saved/removed). Safe for "menu_link", the only kind a navbar can hold (see BlockRegistry::MENU_NAVBAR_CONTEXT) and what every other location holds in practice: its template (MenuLink.html.twig) never reads block.media/block.user - the only relations a Block carries - so those stay untouched, harmless lazy references through the cache round-trip

@@ -143,13 +143,14 @@ class MenuCrudController extends AbstractCrudController
     {
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
         $isNavbar = $entity instanceof Menu && Menu::LOCATION_NAVBAR === $entity->getLocation();
+        $isFooter = $entity instanceof Menu && Menu::LOCATION_FOOTER === $entity->getLocation();
 
         $locationChoices = [];
         foreach (self::LOCATION_LABELS as $locationSlug => $labelKey) {
             $locationChoices[$locationSlug] = t($labelKey, [], 'site');
         }
 
-        return [
+        $fields = [
             IdField::new('id')->onlyOnIndex(),
 
             // Never editable: a row's location is set once by create() and fixed for good, only reassignable by deleting and recreating the row - which is also what keeps the DB-level unique constraint on Menu::$location out of reach
@@ -158,21 +159,38 @@ class MenuCrudController extends AbstractCrudController
                 ->setTranslatableChoices($locationChoices)
                 ->setFormTypeOption('disabled', true)
                 ->setRequired(true),
-
-            // row_attr markers read by ea-sortable.js
-            CollectionField::new('blocks')
-                ->setLabel(t('label.blocks', [], 'ui'))
-                // Same reasoning as PageCrudController: CollectionField's "col-md-8 col-xxl-7" default leaves a nested block editor working in 7/12 of the row
-                ->setColumns('col-12')
-                ->setEntryType(BlockType::class)
-                ->allowAdd()
-                ->allowDelete()
-                ->setFormTypeOption('by_reference', false)
-                // A navbar only offers "menu_link", a navigation bar being a plain list of links
-                ->setFormTypeOption('entry_options.context', $isNavbar ? BlockRegistry::MENU_NAVBAR_CONTEXT : BlockRegistry::MENU_CONTEXT)
-                ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
-                ->onlyWhenUpdating(),
         ];
+
+        // Only the footer offers it: a navbar lays its items out on its own (stacked below 768px, inlined above, see sass/_menu.scss) and both email menus render as one inline row whatever the site does
+        if ($isFooter) {
+            // Empty is the placeholder, not a choice: left alone, the layout stays the site theme's own call (the --footer-items-* tokens), which is what every menu saved before this field existed holds
+            $fields[] = ChoiceField::new('style')
+                ->setLabel(t('label.menu_style', [], 'site'))
+                ->setHelp(t('label.menu_style_help', [], 'site'))
+                ->setTranslatableChoices([
+                    Menu::STYLE_INLINE => t('label.menu_style_inline', [], 'site'),
+                    Menu::STYLE_BLOCK => t('label.menu_style_block', [], 'site'),
+                ])
+                ->setFormTypeOption('placeholder', $this->translator->trans('label.menu_style_theme', [], 'site'))
+                ->setRequired(false)
+                ->onlyWhenUpdating();
+        }
+
+        // row_attr markers read by ea-sortable.js
+        $fields[] = CollectionField::new('blocks')
+            ->setLabel(t('label.blocks', [], 'ui'))
+            // Same reasoning as PageCrudController: CollectionField's "col-md-8 col-xxl-7" default leaves a nested block editor working in 7/12 of the row
+            ->setColumns('col-12')
+            ->setEntryType(BlockType::class)
+            ->allowAdd()
+            ->allowDelete()
+            ->setFormTypeOption('by_reference', false)
+            // A navbar only offers "menu_link", a navigation bar being a plain list of links
+            ->setFormTypeOption('entry_options.context', $isNavbar ? BlockRegistry::MENU_NAVBAR_CONTEXT : BlockRegistry::MENU_CONTEXT)
+            ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
+            ->onlyWhenUpdating();
+
+        return $fields;
     }
 
     // Hands the index template the locations no row exists for yet, each rendered as its own "create" button (see menu_crud_index.html.twig) - the whole replacement for the removed "new" form

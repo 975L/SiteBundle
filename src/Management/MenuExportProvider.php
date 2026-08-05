@@ -41,6 +41,7 @@ class MenuExportProvider implements ExportProviderInterface
         foreach ($menus as $menu) {
             $items[] = [
                 'location' => $menu->getLocation(),
+                'style' => $menu->getStyle(),
                 'blocks' => $this->blockDataExporter->exportBlocks($menu->getBlocks(), $files),
             ];
         }

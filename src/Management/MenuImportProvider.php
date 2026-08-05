@@ -42,6 +42,8 @@ class MenuImportProvider implements ImportProviderInterface
             $menu = $this->menuRepository->findOneByLocation($item['location']);
             $isNew = null === $menu;
             $menu ??= (new Menu())->setLocation($item['location']);
+            // Absent from an export predating the field, which leaves the layout to the site's own theme - Menu::setStyle() ignoring anything but a known style
+            $menu->setStyle($item['style'] ?? null);
 
             foreach ($menu->getBlocks()->toArray() as $existingBlock) {
                 $menu->removeBlock($existingBlock);

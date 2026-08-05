@@ -858,6 +858,26 @@
                 <source>label.menu_link_primary</source>
                 <target>Mettre en avant comme un bouton</target>
             </trans-unit>
+            <trans-unit id="Bb8KPHq">
+                <source>label.menu_style</source>
+                <target>Style d'affichage</target>
+            </trans-unit>
+            <trans-unit id="vMqQILz">
+                <source>label.menu_style_block</source>
+                <target>En bloc (les uns sous les autres)</target>
+            </trans-unit>
+            <trans-unit id="yF.KBLV">
+                <source>label.menu_style_help</source>
+                <target>Disposition des éléments du pied de page. Laissé sur le choix du thème, c'est le fichier de thème du site qui décide</target>
+            </trans-unit>
+            <trans-unit id="yCP4n5f">
+                <source>label.menu_style_inline</source>
+                <target>En ligne (les uns à côté des autres)</target>
+            </trans-unit>
+            <trans-unit id="Y_aqCAH">
+                <source>label.menu_style_theme</source>
+                <target>Choix du thème du site</target>
+            </trans-unit>
             <trans-unit id="zRjbN7z">
                 <source>label.menu_toggle</source>
                 <target>Ouvrir/Fermer le menu</target>

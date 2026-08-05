@@ -1,11 +1,13 @@
 {# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
 {% set footerBlocks = menu_blocks('footer') %}
+{# The layout picked in the backoffice (see MenuCrudController), empty when left to the theme's own --footer-items-* tokens - whitelisted, it lands in a class name #}
+{% set footerStyle = menu_style('footer') in ['inline', 'block'] ? menu_style('footer') : null %}
 {# A "Copyright"-page menu_link already renders the computed copyright, so the span would duplicate it #}
 {% set hasCopyrightLink = footerBlocks|filter(
     block => (block.data.label ?? '') is empty and menu_link_is_copyright(block.data.target ?? '')
 )|length > 0 %}
 <footer>
-    <div class="menu-items">
+    <div class="menu-items{{ footerStyle ? ' menu-items--' ~ footerStyle : '' }}">
         <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
         {% if not hasCopyrightLink and copyright is defined and copyright is not empty %}
             <div class="menu-item">
