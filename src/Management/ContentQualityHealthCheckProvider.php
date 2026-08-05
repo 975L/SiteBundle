@@ -41,7 +41,8 @@ class ContentQualityHealthCheckProvider implements HealthCheckProviderInterface
                 return [];
             }
 
-            $pages[] = ['url' => $url, 'label' => $page->getTitle(), 'editUrl' => $this->pageEditUrlResolver->resolve($page), 'source' => $page];
+            // 'indexable' carries what the Page itself declares, and is what lets the analyzer report a page asking crawlers to drop a url the sitemap declares (see ContentQualityAnalyzer): every published page is checked here, including the ones deliberately kept out of search engines (the account ones), and those carry their noindex on purpose - reporting it would leave them red forever with nothing to fix
+            $pages[] = ['url' => $url, 'label' => $page->getTitle(), 'editUrl' => $this->pageEditUrlResolver->resolve($page), 'source' => $page, 'indexable' => $page->isIndexable()];
         }
 
         return $this->contentQualityAnalyzer->analyze($pages);

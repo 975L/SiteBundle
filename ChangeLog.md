@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.0.7
+
+Pages tell the content-quality check whether they are indexable
+
+- `ContentQualityHealthCheckProvider` carries each page's own `isIndexable`, the key turning the analyzer's `noindex` check on (05/08/2026)
+- `ContentQualityHealthCheckProviderTest` covers the flag travelling with each url (05/08/2026)
+- Documented the `noindex` check in the readme's content-quality sections (05/08/2026)
+
 ## v8.0.6
 
 The trash stops offering switches over values it holds fixed

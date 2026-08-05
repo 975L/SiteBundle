@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-05",
+        "description": [
+            {
+                "en": "A page you asked to be referenced but which tells search engines to ignore it is now reported on the dashboard: the page opens perfectly well, only the engines were dropping it, and nothing used to say so. The pages deliberately kept out of the results, such as the account ones, stay untouched",
+                "fr": "Une page que vous avez demandé à référencer mais qui demande aux moteurs de recherche de l'ignorer est désormais signalée sur le tableau de bord : la page s'ouvrait parfaitement, seuls les moteurs l'écartaient, et rien ne le disait. Les pages volontairement tenues hors des résultats, comme celles du compte, ne sont pas concernées",
+                "es": "Una página que usted pidió referenciar pero que indica a los motores de búsqueda que la ignoren se señala ahora en el panel: la página se abría perfectamente, solo los motores la descartaban, y nada lo indicaba. Las páginas mantenidas fuera de los resultados a propósito, como las de la cuenta, no se ven afectadas"
+            }
+        ]
+    },
+    {
         "date": "2026-08-04",
         "description": [
             {

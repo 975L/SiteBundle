@@ -92,11 +92,13 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         return $response;
     }
 
-    // Configures a ContentQualityClient stub/mock's request()/read() pair to behave like a synchronous analyze(), for tests that don't otherwise need to distinguish the two calls
+    // Configures a ContentQualityClient stub/mock's request()/read() pair to behave like a synchronous analyze(), for tests that don't otherwise need to distinguish the two calls. Each page declares as canonical the very url that was asked for - what a page served by the layout does (see CanonicalUrlExtension), and what keeps a clean page clean now that the analyzer reports a missing or foreign canonical; a test about the canonical itself overrides the key
     private function stubAnalyze(ContentQualityClient $client, array $analysis): void
     {
         $client->method('request')->willReturn($this->stubResponse());
-        $client->method('read')->willReturn($analysis);
+        $client->method('read')->willReturnCallback(
+            static fn (ResponseInterface $response, string $url): array => $analysis + ['canonical' => $url]
+        );
     }
 
     private function createTranslator(): TranslatorInterface
@@ -155,6 +157,27 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([], $client);
 
         $this->assertSame('content-quality', $provider->getKind());
+    }
+
+    // What the Page declares travels with its url: the analyzer only reports a page asking crawlers to drop a url its own site declares as indexable (see ContentQualityAnalyzer). Every published page is checked here, indexable or not, and the ones deliberately kept out of search engines carry their noindex on purpose
+    public function testRunChecksCarriesEachPagesOwnIndexableFlag(): void
+    {
+        $private = $this->createPage('compte');
+        $private->setIsIndexable(false);
+
+        $analyzer = $this->createMock(ContentQualityAnalyzer::class);
+        $analyzer->expects($this->once())->method('analyze')->with($this->callback(
+            static fn (array $entries): bool => true === $entries[0]['indexable'] && false === $entries[1]['indexable']
+        ))->willReturn([]);
+
+        $provider = new ContentQualityHealthCheckProvider(
+            $this->createPageRepository([$this->createPage('home'), $private]),
+            $this->createUrlResolver(),
+            $this->createPageEditUrlResolver(),
+            $analyzer,
+        );
+
+        $this->assertSame([], $provider->runChecks());
     }
 
     public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
@@ -285,7 +308,8 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     {
         $client = $this->createStub(ContentQualityClient::class);
         $client->method('request')->willReturn($this->stubRedirectedResponse(1, 'https://example.com/pages/accueil'));
-        $client->method('read')->willReturn(self::GOOD_ANALYSIS);
+        // The canonical is the url the hop landed on, so the redirect is the only thing left to report
+        $client->method('read')->willReturn(['canonical' => 'https://example.com/pages/accueil'] + self::GOOD_ANALYSIS);
 
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
