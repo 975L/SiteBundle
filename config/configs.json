@@ -149,7 +149,7 @@
         "restricted": false,
         "value": "true",
         "kind": "bool",
-        "group": "general",
+        "group": "credits",
         "severity": null,
         "description": "description.display_made_by"
     },
@@ -160,7 +160,7 @@
         "restricted": false,
         "value": "true",
         "kind": "bool",
-        "group": "general",
+        "group": "credits",
         "severity": null,
         "description": "description.display_hosted_by"
     },

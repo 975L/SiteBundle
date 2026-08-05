@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.1.1.1
+
+- Changed group's config (05/08/2026)
+
 ## v8.1.1
 
 The title-change confirmation is left to UiBundle
