@@ -26,6 +26,12 @@
        colored flat, where the default --primary/--text would be unreadable */
     /* --navbar-site-name-color: var(--primary); */
     /* --navbar-site-tagline-color: var(--text); */
+    /* The bar's height: the room above and below its line, and that line's floor (which is also the
+       burger's touch target). --navbar-height derives from the two - a fixed navbar gives that much
+       back to the page - so a taller or tighter bar is a matter of retuning either of the first two */
+    /* --navbar-padding-y: 8px; */
+    /* --navbar-content-height: 44px; */
+    /* --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y)); */
 
     /* --footer-background: var(--primary); */
     /* --footer-text: var(--white); */

@@ -87,6 +87,10 @@
     // Same pair as --footer-width/--footer-margin-x below, for the navbar: the bar bleeds full-viewport-width regardless of --body-max-width (see body's own max-width in _general.scss) - a template framing the page inside that max-width sets both to auto/0 so the navbar stays inside the frame with the rest of the page
     --navbar-width: 100vw;
     --navbar-margin-x: calc(50% - 50vw);
+    // The bar's height, mobile-first: one line (the brand, plus the burger until the desktop breakpoint) with the same breathing room above and below it. --navbar-content-height sizes the burger - 44px being the touch target it asks for, the 40px logo sitting centered inside it - and --navbar-height, which the header takes as its floor, is the two put together: the bar then measures that whether the burger is on screen or not, so it is also exactly what body.navbar-fixed gives back to the page when a fixed navbar leaves the flow (see _menu.scss)
+    --navbar-padding-y: 8px;
+    --navbar-content-height: 44px;
+    --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y));
     // Footer layout/look - defaults match today's colored-band footer; a template can flip these to a plain, minimal footer (transparent background, muted text, items in a row) instead
     --footer-background: var(--primary);
     --footer-text: var(--white);

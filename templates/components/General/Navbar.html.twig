@@ -5,6 +5,8 @@
 {% set showSiteName = config('site-navbar-show-name') %}
 {# Whitelisted: it lands in a custom property, which Twig's html_attr context doesn't escape #}
 {% set navbarPosition = config('site-navbar-position') in ['relative', 'sticky', 'fixed', 'static', 'absolute'] ? config('site-navbar-position') : null %}
+{# "static" and "relative" sit identically in the flow, but only the latter is a containing block for the mobile dropdown hanging off the bar #}
+{% set navbarPosition = navbarPosition == 'static' ? 'relative' : navbarPosition %}
 
 {% if menu_blocks('navbar') is not empty %}
     {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
@@ -43,7 +45,7 @@
         </div>
     </nav>
 {% else %}
-    <nav class="hidden-print">
+    <nav class="hidden-print nav-simple">
         {% if logo is not null %}
             <p class="text-center">
                 <a href="{{ path('page_home') }}" aria-label="{{ siteName|default('Logo') }}">

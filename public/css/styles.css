@@ -246,6 +246,9 @@ summary {
   --navbar-btn-color: var(--button-color);
   --navbar-width: 100vw;
   --navbar-margin-x: calc(50% - 50vw);
+  --navbar-padding-y: 8px;
+  --navbar-content-height: 44px;
+  --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y));
   --footer-background: var(--primary);
   --footer-text: var(--white);
   --footer-text-hover: var(--footer-text);
@@ -611,14 +614,15 @@ a:hover.pullDown {
 }
 
 body.navbar-fixed {
-  padding-top: 65px;
+  padding-top: var(--navbar-height);
 }
 
 .menu-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 15px;
+  min-height: var(--navbar-height);
+  padding: var(--navbar-padding-y) 15px;
 }
 
 .menu-brand {
@@ -648,6 +652,10 @@ body.navbar-fixed {
   margin-left: 0.5rem;
 }
 
+.menu-fixed .menu-site-tagline {
+  display: none;
+}
+
 .menu-site-tagline {
   font-size: 0.9rem;
   font-weight: normal;
@@ -663,16 +671,12 @@ body.navbar-fixed {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3em;
-  height: 3em;
+  width: var(--navbar-content-height);
+  height: var(--navbar-content-height);
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 10;
-  position: fixed;
-  right: 10px;
   background-color: transparent;
-  margin: 10px;
 }
 .menu-toggle:focus {
   outline: 2px solid var(--primary);
@@ -712,8 +716,8 @@ body.navbar-fixed {
   display: none;
   flex-direction: column;
   background-color: var(--primary);
-  position: fixed;
-  top: 65px;
+  position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
   width: 100%;
@@ -830,18 +834,17 @@ body.navbar-fixed {
     border-bottom: none;
   }
 }
-nav {
+.nav-simple {
   text-align: center;
-  height: 74px;
 }
 
-nav a,
-nav a:hover {
+.nav-simple a,
+.nav-simple a:hover {
   color: var(--primary);
   font-family: var(--font-family-title);
 }
 
-nav img {
+.nav-simple img {
   height: 65px;
   width: auto;
 }
@@ -1076,3 +1079,5 @@ footer a:visited:hover .img-above {
     content: none;
   }
 }
+
+/*# sourceMappingURL=styles.css.map */

@@ -1,5 +1,9 @@
 # UPGRADE
 
+## v8.1.2
+
+**The bare `nav` element is no longer styled.** `sass/_navbar.scss` held `nav { text-align: center; height: 74px }` plus a link and an image rule — meant for the centered-logo fallback a site with no navbar menu gets, but reaching the menu navbar too and holding it at 74px whatever its header asked for, which is what pinned its logo and burger against the top edge. Those four rules now hang off a `.nav-simple` class, which `Navbar.html.twig` puts on that fallback. **Nothing to run**, unless your app renders a `<nav>` of its own and was counting on those rules: add `nav-simple` to its class list, or restate what it needs in `app.css`. The same holds for the sibling c975L bundles rendering a bare `<nav>` — GalleryBundle's breadcrumb is one, and it gains from the removal, its own `.gallery-breadcrumb` rules already laying down what it needs.
+
 ## v8.0.0
 
 **Twelve more shared pieces left this bundle, and nothing they did depended on having pages.** A site running Config + Ui plus a shop, a catalogue or a gallery had no theme compiled, no favicon to upload, no cookie banner, no redirects and half the health checks missing. All of it moved to the bundle owning the domain; the slugs, route names, table names and Twig function names are unchanged, so **nothing to run**:

@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-07",
+        "description": [
+            {
+                "en": "The navigation bar no longer holds its logo and its menu button against the very top of the screen: the line now keeps the same room above and below it, and the bar itself is a little shorter on a phone. The menu that drops from the button follows the bar's real height, wherever the page has been scrolled to",
+                "fr": "La barre de navigation ne colle plus son logo et son bouton de menu tout en haut de l'écran : la ligne conserve désormais le même espace au-dessus et en dessous d'elle, et la barre elle-même est un peu moins haute sur un téléphone. Le menu qui se déroule sous le bouton suit la hauteur réelle de la barre, où que la page ait été défilée",
+                "es": "La barra de navegación ya no pega su logotipo y su botón de menú contra el borde superior de la pantalla: la línea conserva ahora el mismo espacio por encima y por debajo, y la propia barra es algo menos alta en un teléfono. El menú que se despliega bajo el botón sigue la altura real de la barra, esté donde esté el desplazamiento de la página"
+            },
+            {
+                "en": "A navigation bar set to stay on screen while the page scrolls no longer shows the site's tagline, so that it keeps to the height the page leaves it",
+                "fr": "Une barre de navigation réglée pour rester à l'écran pendant le défilement n'affiche plus l'accroche du site, afin de conserver la hauteur que la page lui laisse",
+                "es": "Una barra de navegación configurada para permanecer en pantalla durante el desplazamiento ya no muestra el lema del sitio, para mantener la altura que la página le deja"
+            }
+        ]
+    },
+    {
         "date": "2026-08-05",
         "description": [
             {

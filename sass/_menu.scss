@@ -28,14 +28,16 @@
 
 // Compensates the space freed by .menu-fixed taking the navbar out of the flow
 body.navbar-fixed {
-    padding-top: 65px;
+    padding-top: var(--navbar-height);
 }
 
 .menu-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 15px;
+    // The floor keeps the bar the same height once the burger leaves at the desktop breakpoint, and the padding is what holds the brand off the top edge - same value below it, so the line reads centered (see the tokens in _variables.scss)
+    min-height: var(--navbar-height);
+    padding: var(--navbar-padding-y) 15px;
 }
 
 .menu-brand {
@@ -67,6 +69,11 @@ body.navbar-fixed {
     margin-left: 0.5rem;
 }
 
+// A fixed navbar gives back --navbar-height to the page, which is the bar's floor - the tagline would push it past that and slip content under the bar
+.menu-fixed .menu-site-tagline {
+    display: none;
+}
+
 .menu-site-tagline {
     font-size: 0.9rem;
     font-weight: normal;
@@ -80,20 +87,18 @@ body.navbar-fixed {
     }
 }
 
+// Stays in the header's flow: .menu-header already sends it to the far end and centers it on the line, where a "fixed" button instead resolved its top from a static position the flex line put above the viewport
 .menu-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3em;
-    height: 3em;
+    // Squared on the line's own height, so it never makes the bar taller than --navbar-height claims
+    width: var(--navbar-content-height);
+    height: var(--navbar-content-height);
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 10;
-    position: fixed;
-    right: 10px;
     background-color: transparent;
-    margin: 10px;
 
     &:focus {
         outline: 2px solid var(--primary);
@@ -134,12 +139,13 @@ body.navbar-fixed {
 }
 
 // Navbar's collapsible mobile dropdown (scoped to .menu so it doesn't leak into footer's .menu-items)
+// Hangs off the navbar itself rather than off a hardcoded viewport offset, so it follows the bar's real height whatever the brand block holds (a tagline, a site name) and stays attached to it once the page is scrolled. It anchors on .menu, which --navbar-position leaves "relative" by default and turns "fixed"/"sticky"/"absolute" on demand - all of them positioned, "static" being rewritten to "relative" in Navbar.html.twig
 .menu .menu-items {
     display: none;
     flex-direction: column;
     background-color: var(--primary);
-    position: fixed;
-    top: 65px;
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
     width: 100%;

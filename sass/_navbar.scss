@@ -1,15 +1,15 @@
-nav {
+// The fallback navbar - the centered logo a site with no navbar menu gets (see Navbar.html.twig). Scoped to its own class rather than left on the bare "nav" element: the real navbar is a <nav> too, and a blanket height here held it at 74px whatever it had inside, which is what pinned its logo and burger against the top edge (_menu.scss sizes that one)
+.nav-simple {
     text-align: center;
-    height: 74px;
 }
 
-nav a,
-nav a:hover {
+.nav-simple a,
+.nav-simple a:hover {
     color: var(--primary);
     font-family: var(--font-family-title);
 }
 
-nav img {
+.nav-simple img {
     height: 65px;
     width: auto;
 }

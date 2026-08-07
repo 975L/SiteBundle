@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+The navbar keeps the same room above and below its line
+
+- `sass/_navbar.scss` styles the fallback navbar on its own `.nav-simple` class, the bare `nav` element no longer (07/08/2026) [BC-Break]
+- Added `--navbar-padding-y`, `--navbar-content-height` and `--navbar-height` to `sass/_variables.scss` and the scaffolded `themes/site.css` (07/08/2026)
+- `.menu-header` holds the bar to `--navbar-height` (07/08/2026)
+- `.menu-toggle` stays in the header's flow (07/08/2026)
+- The mobile dropdown hangs off the navbar (`absolute` / `top: 100%`) (07/08/2026)
+- `body.navbar-fixed` gives back `--navbar-height` (07/08/2026)
+- A navbar set to `static` is written out as `relative` (07/08/2026)
+- `.menu-fixed` hides the site tagline (07/08/2026)
+- Added `NavbarHeightTest` (07/08/2026)
+
 ## v8.1.1.1
 
 - Changed group's config (05/08/2026)
