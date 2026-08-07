@@ -1,6 +1,10 @@
 # Changelog
 
-## Unreleased
+## v8.1.2.1
+
+Added missing changelog release
+
+## v8.1.2
 
 The navbar keeps the same room above and below its line
 
