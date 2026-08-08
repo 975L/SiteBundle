@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.1.3
+
+A menu item points at a bundle's own row, not just at its screens
+
+- A `menu_link` target can be an entry standing for one row of a bundle's data, its url generated from the route and parameters that entry declares (08/08/2026)
+- `MenuExtension` labels a contributed target through `LinkableRouteRegistry::label()` (08/08/2026)
+- The target picker and `SiteCreateCommand` label it through `LinkableRouteRegistry::pickerLabel()` (08/08/2026)
+- An entry's `picker_label` names it in the target select, the rendered menu item keeping its bare `label` (08/08/2026)
+- The target picker numbers a choice whose label another one already took, instead of dropping it (08/08/2026)
+- `MenuExtension` no longer takes a `TranslatorInterface` (08/08/2026) [BC-Break]
+- The navbar site name keeps `--navbar-site-name-color` on hover and focus (08/08/2026)
+- Requires `c975l/core-bundle` v1.4 for the labelled linkable route entries (08/08/2026)
+- README documents contributing one target per row (08/08/2026)
+
 ## v8.1.2.1
 
 Added missing changelog release

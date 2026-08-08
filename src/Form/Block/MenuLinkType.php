@@ -78,12 +78,13 @@ class MenuLinkType extends AbstractType
         foreach ($pages as $page) {
             // Unpublished pages stay pickable (editors need to wire menu links while still drafting a page) but are flagged: MenuExtension::getMenuLinkUrl() already resolves them to an empty URL until the page is published, so the entry just stays inert rather than ever breaking
             $pageLabel = $page->getTitle() . ($page->isPublished() ? '' : ' (' . $this->translator->trans('label.draft', [], 'site') . ')');
-            $choices[$pageLabel] = 'page:' . $page->getId();
-            $choices += $this->anchorChoices($page, $pageLabel);
+            $this->addChoice($choices, $pageLabel, 'page:' . $page->getId());
+            $this->addAnchorChoices($choices, $page, $pageLabel);
         }
 
-        foreach ($this->linkableRouteRegistry->all() as $name => $route) {
-            $choices[$this->translator->trans($route['label'], [], $route['translation_domain'])] = 'route:' . $name;
+        // A contributed target is labelled by the registry itself - and by its picker label where it has one, an entry standing for one of a bundle's own rows saying what it is here ("Galerie - Paysages") among every page of the site, where the rendered menu item keeps that row's bare title
+        foreach (array_keys($this->linkableRouteRegistry->all()) as $name) {
+            $this->addChoice($choices, $this->linkableRouteRegistry->pickerLabel($name), 'route:' . $name);
         }
 
         ksort($choices, SORT_NATURAL | SORT_FLAG_CASE);
@@ -92,14 +93,22 @@ class MenuLinkType extends AbstractType
     }
 
     // One flat entry per in-page anchor the page's blocks declare, those of a container's nested slots included (see UiBundle's BlockAnchorCollector) - no cascading/JS select needed, they sit in the same list as the pages themselves
-    private function anchorChoices(Page $page, string $pageLabel): array
+    private function addAnchorChoices(array &$choices, Page $page, string $pageLabel): void
     {
-        $choices = [];
         foreach ($this->anchorCollector->collect($page->getBlocks()) as $fragment => $sectionLabel) {
-            $choices[$pageLabel . ' → ' . $sectionLabel] = 'page:' . $page->getId() . '#' . $fragment;
+            $this->addChoice($choices, $pageLabel . ' → ' . $sectionLabel, 'page:' . $page->getId() . '#' . $fragment);
+        }
+    }
+
+    // Choices are keyed by label - a second entry carrying the same one (two homonymous pages, a contributed route sharing a page's title...) would take the first's place and make it unpickable, so it gets numbered instead
+    private function addChoice(array &$choices, string $label, string $value): void
+    {
+        $key = $label;
+        for ($i = 2; isset($choices[$key]); ++$i) {
+            $key = $label . ' (' . $i . ')';
         }
 
-        return $choices;
+        $choices[$key] = $value;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -651,6 +651,10 @@ body.navbar-fixed {
   color: var(--navbar-site-name-color);
   margin-left: 0.5rem;
 }
+.menu-site-name:hover, .menu-site-name:focus, .menu-site-name:visited:hover {
+  color: var(--navbar-site-name-color);
+  text-decoration: none;
+}
 
 .menu-fixed .menu-site-tagline {
   display: none;

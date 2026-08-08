@@ -67,6 +67,14 @@ body.navbar-fixed {
     font-weight: bold;
     color: var(--navbar-site-name-color);
     margin-left: 0.5rem;
+
+    // _links.scss repaints every hovered link in --link-color and underlines it; the site name is a brand label, not a body link, so it keeps its own token. ":visited:hover" is repeated here because the generic rule carries it too, and would otherwise outweigh a single pseudo-class
+    &:hover,
+    &:focus,
+    &:visited:hover {
+        color: var(--navbar-site-name-color);
+        text-decoration: none;
+    }
 }
 
 // A fixed navbar gives back --navbar-height to the page, which is the bar's floor - the tagline would push it past that and slip content under the bar

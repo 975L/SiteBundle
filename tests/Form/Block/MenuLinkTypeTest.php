@@ -27,11 +27,16 @@ class MenuLinkTypeTest extends TypeTestCase
     private LinkableRouteRegistry $linkableRouteRegistry;
     private TranslatorInterface $translator;
 
+    /** @var array<string, string> Contributed target key => the label the picker shows it under, filled by withLinkableRoutes() */
+    private array $linkableRoutes = [];
+
     protected function setUp(): void
     {
         $this->pageRepository = $this->createStub(PageRepository::class);
+        // Read through a callback rather than a fixed value: the type is built once, by getTypes() below, where a test declaring its own targets runs afterwards
         $this->linkableRouteRegistry = $this->createStub(LinkableRouteRegistry::class);
-        $this->linkableRouteRegistry->method('all')->willReturn([]);
+        $this->linkableRouteRegistry->method('all')->willReturnCallback(fn (): array => $this->linkableRoutes);
+        $this->linkableRouteRegistry->method('pickerLabel')->willReturnCallback(fn (string $name): string => $this->linkableRoutes[$name] ?? '');
 
         $this->translator = $this->createStub(TranslatorInterface::class);
         $this->translator->method('trans')->willReturnCallback(static fn (string $id) => $id);
@@ -73,6 +78,37 @@ class MenuLinkTypeTest extends TypeTestCase
         $block->setData(array_filter(['anchor' => $anchor, 'title' => $title]));
 
         return $block;
+    }
+
+    // A contributed target sits in the same flat list as the pages, labelled by the registry - by its picker label where it has one, an entry standing for one of a bundle's own rows saying what it is here where the rendered menu item keeps its bare title
+    public function testContributedRouteChoicesUseTheirPickerLabel(): void
+    {
+        $this->withPages([]);
+        $this->linkableRoutes = ['gallery_index' => 'Galerie', 'gallery_category.12' => 'Galerie - Paysages'];
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertSame(
+            ['Galerie' => 'route:gallery_index', 'Galerie - Paysages' => 'route:gallery_category.12'],
+            $form->get('target')->getConfig()->getOption('choices')
+        );
+    }
+
+    // Choices are keyed by label: a contributed target sharing a page's title used to silently take its place and make the page unpickable - both stay, the second one numbered
+    public function testChoicesSharingALabelAreBothKept(): void
+    {
+        $this->withPages([
+            $this->withId((new Page())->setTitle('Galerie')->setIsPublished(true), 1),
+            $this->withId((new Page())->setTitle('Galerie')->setIsPublished(true), 2),
+        ]);
+        $this->linkableRoutes = ['gallery_index' => 'Galerie'];
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertSame(
+            ['Galerie' => 'page:1', 'Galerie (2)' => 'page:2', 'Galerie (3)' => 'route:gallery_index'],
+            $form->get('target')->getConfig()->getOption('choices')
+        );
     }
 
     // A published page's own title is used as-is for its "page:ID" choice

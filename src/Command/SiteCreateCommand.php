@@ -382,8 +382,8 @@ class SiteCreateCommand extends Command
         $position = $menu->getBlocks()->count();
 
         // Answered "no" by default, unlike the legal pages below: a route like the login form or the backoffice dashboard is a shortcut a site chooses to expose, where the legal pages belong in every footer
-        foreach ($this->linkableRouteRegistry->all() as $routeName => $meta) {
-            $label = $this->translator->trans($meta['label'], [], $meta['translation_domain']);
+        foreach (array_keys($this->linkableRouteRegistry->all()) as $routeName) {
+            $label = $this->linkableRouteRegistry->pickerLabel($routeName);
             $this->offerFooterLink($io, $menu, 'route:' . $routeName, $existingTargets, $position, sprintf('Ajouter "%s" au menu du footer ?', $label), false);
         }
 

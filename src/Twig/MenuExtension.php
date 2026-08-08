@@ -21,10 +21,10 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockAnchorCollector;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -47,7 +47,6 @@ class MenuExtension extends AbstractExtension
         private readonly PageRepository $pageRepository,
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly UrlGeneratorInterface $router,
-        private readonly TranslatorInterface $translator,
         private readonly TagAwareCacheInterface $cache,
         private readonly ConfigServiceInterface $configService,
         private readonly DefaultPagesImporter $defaultPagesImporter,
@@ -136,7 +135,17 @@ class MenuExtension extends AbstractExtension
     // Only a route a LinkableRouteProviderInterface still declares is generated - one dropped since the menu was saved yields an empty string rather than a routing exception on every page
     private function routeUrl(?string $route): string
     {
-        return null !== $route && $this->linkableRouteRegistry->has($route) ? $this->router->generate($route) : '';
+        $entry = null === $route ? null : $this->linkableRouteRegistry->get($route);
+        if (null === $entry) {
+            return '';
+        }
+
+        // Generated rather than stored: an entry standing for a database row (a gallery category...) carries the parameters it is reached by, read again at each render, so renaming that row's slug keeps the item pointing at it. Caught for the same reason as an entry dropped from the registry: an entry whose route was renamed, or whose parameters no longer fit its placeholders, drops the item rather than 500-ing every page through the navbar
+        try {
+            return $this->router->generate($entry['route'], $entry['params']);
+        } catch (RoutingExceptionInterface) {
+            return '';
+        }
     }
 
     public function getMenuLinkLabel(?string $target): string
@@ -174,9 +183,7 @@ class MenuExtension extends AbstractExtension
 
     private function routeLabel(?string $route): string
     {
-        $registered = null === $route ? null : $this->linkableRouteRegistry->get($route);
-
-        return null === $registered ? '' : $this->translator->trans($registered['label'], [], $registered['translation_domain']);
+        return null === $route ? '' : $this->linkableRouteRegistry->label($route);
     }
 
     // True when $target's own label already is (or would be) the live-computed copyright notice - lets Footer.html.twig skip its own fallback "copyright" span instead of showing it twice

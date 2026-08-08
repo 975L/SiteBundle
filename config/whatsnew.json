@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-08-08",
+        "description": [
+            {
+                "en": "A menu link can now point straight at one entry of another part of your site — a gallery's category, for instance — and not only at a whole page. The address is worked out afresh each time the menu is shown, so renaming that entry never leaves a broken link behind",
+                "fr": "Un lien de menu peut désormais pointer directement vers une entrée d'une autre partie de votre site — une catégorie de galerie, par exemple — et non plus seulement vers une page entière. L'adresse est recalculée à chaque affichage du menu, si bien que renommer cette entrée ne laisse jamais de lien cassé",
+                "es": "Un enlace de menú puede ahora apuntar directamente a una entrada de otra parte de su sitio — una categoría de galería, por ejemplo — y no solo a una página entera. La dirección se calcula de nuevo cada vez que se muestra el menú, de modo que renombrar esa entrada nunca deja un enlace roto"
+            },
+            {
+                "en": "The list of link targets shows two entries bearing the same name side by side, the second one numbered, instead of hiding one behind the other",
+                "fr": "La liste des cibles de lien affiche côte à côte deux entrées portant le même nom, la seconde numérotée, au lieu d'en cacher une derrière l'autre",
+                "es": "La lista de destinos de enlace muestra una al lado de la otra dos entradas con el mismo nombre, la segunda numerada, en lugar de ocultar una detrás de la otra"
+            },
+            {
+                "en": "The site's name in the navigation bar keeps its own color when the mouse passes over it",
+                "fr": "Le nom du site dans la barre de navigation conserve sa propre couleur au passage de la souris",
+                "es": "El nombre del sitio en la barra de navegación conserva su propio color al pasar el ratón por encima"
+            }
+        ]
+    },
+    {
         "date": "2026-08-07",
         "description": [
             {

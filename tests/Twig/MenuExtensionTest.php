@@ -24,9 +24,9 @@ use c975L\UiBundle\Service\BlockAnchorCollector;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MenuExtensionTest extends TestCase
 {
@@ -56,11 +56,19 @@ class MenuExtensionTest extends TestCase
         return $repository;
     }
 
+    // Hands back what the real registry does: entries normalized ('route'/'params'/'translation_domain' filled in) and label() reading them, the merging itself being covered by ConfigBundle's own test
     private function createRegistry(array $registeredRoutes): LinkableRouteRegistry
     {
+        $entries = [];
+        foreach ($registeredRoutes as $name => $entry) {
+            $entries[$name] = $entry + ['route' => $name, 'params' => [], 'translation_domain' => false];
+        }
+
         $registry = $this->createStub(LinkableRouteRegistry::class);
-        $registry->method('has')->willReturnCallback(static fn (string $name): bool => \in_array($name, array_keys($registeredRoutes), true));
-        $registry->method('get')->willReturnCallback(static fn (string $name): ?array => $registeredRoutes[$name] ?? null);
+        $registry->method('has')->willReturnCallback(static fn (string $name): bool => isset($entries[$name]));
+        $registry->method('get')->willReturnCallback(static fn (string $name): ?array => $entries[$name] ?? null);
+        // Answers each entry with its raw label, the same way the translator double below answers each key with the key itself
+        $registry->method('label')->willReturnCallback(static fn (string $name): string => $entries[$name]['label'] ?? '');
 
         return $registry;
     }
@@ -69,18 +77,10 @@ class MenuExtensionTest extends TestCase
     {
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(
-            static fn (string $name, array $params = []): string => '/' . $name . (isset($params['page']) ? '/' . $params['page'] : '')
+            static fn (string $name, array $params = []): string => '/' . $name . ([] === $params ? '' : '/' . implode('/', $params))
         );
 
         return $router;
-    }
-
-    private function createTranslator(): TranslatorInterface
-    {
-        $translator = $this->createStub(TranslatorInterface::class);
-        $translator->method('trans')->willReturnCallback(static fn (string $id): string => $id);
-
-        return $translator;
     }
 
     // "site-menu-link-copyright-auto" answers $copyrightAuto, every other slug null
@@ -121,13 +121,13 @@ class MenuExtensionTest extends TestCase
         ?ConfigServiceInterface $configService = null,
         ?DefaultPagesImporter $defaultPagesImporter = null,
         ?CopyrightExtension $copyrightExtension = null,
+        ?UrlGeneratorInterface $router = null,
     ): MenuExtension {
         return new MenuExtension(
             $menuRepository ?? $this->createMenuRepository(),
             $this->createPageRepository($pagesById),
             $registry,
-            $this->createRouter(),
-            $this->createTranslator(),
+            $router ?? $this->createRouter(),
             $cache ?? $this->createCache(),
             $configService ?? $this->createConfigService(),
             $defaultPagesImporter ?? $this->createDefaultPagesImporter(),
@@ -206,7 +206,6 @@ class MenuExtensionTest extends TestCase
             $this->createPageRepository(),
             $this->createRegistry([]),
             $this->createRouter(),
-            $this->createTranslator(),
             $this->createCache(),
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
@@ -278,7 +277,6 @@ class MenuExtensionTest extends TestCase
             $pageRepository,
             $this->createRegistry([]),
             $this->createRouter(),
-            $this->createTranslator(),
             $this->createCache(),
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
@@ -308,7 +306,6 @@ class MenuExtensionTest extends TestCase
             $pageRepository,
             $this->createRegistry([]),
             $this->createRouter(),
-            $this->createTranslator(),
             $this->createCache(),
             $this->createConfigService(),
             $this->createDefaultPagesImporter(),
@@ -349,12 +346,42 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('/some_bundle_route', $extension->getMenuLinkUrl('route:some_bundle_route'));
     }
 
+    // A target standing for one row of a bundle's own data (a gallery category) is keyed on that row, not on a route name: the entry names the route to generate and the parameters to fill it with
+    public function testGetMenuLinkUrlGeneratesTheDeclaredRouteAndParametersForARowTarget(): void
+    {
+        $registry = $this->createRegistry(['gallery_category.12' => [
+            'label' => 'Paysages',
+            'translation_domain' => false,
+            'route' => 'gallery_category',
+            'params' => ['category' => 'paysages'],
+        ]]);
+        $extension = $this->createExtension($registry);
+
+        $this->assertSame('/gallery_category/paysages', $extension->getMenuLinkUrl('route:gallery_category.12'));
+        $this->assertSame('Paysages', $extension->getMenuLinkLabel('route:gallery_category.12'));
+    }
+
     // A "route:NAME" target whose route disappeared from the registry (contributing bundle removed) no longer resolves
     public function testGetMenuLinkUrlReturnsEmptyStringForUnregisteredRouteTarget(): void
     {
         $extension = $this->createExtension($this->createRegistry([]));
 
         $this->assertSame('', $extension->getMenuLinkUrl('route:gone'));
+    }
+
+    // A still-registered entry whose route was renamed, or whose parameters no longer fit its placeholders, drops the item rather than 500-ing every page through the navbar
+    public function testGetMenuLinkUrlReturnsEmptyStringWhenTheRouterCannotGenerateTheEntry(): void
+    {
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willThrowException(new RouteNotFoundException());
+        $registry = $this->createRegistry(['gallery_category.12' => [
+            'label' => 'Paysages',
+            'route' => 'gallery_category_renamed',
+            'params' => ['category' => 'paysages'],
+        ]]);
+        $extension = $this->createExtension($registry, router: $router);
+
+        $this->assertSame('', $extension->getMenuLinkUrl('route:gallery_category.12'));
     }
 
     // A "page:ID#anchor-blockId" target (see MenuLinkType's anchor choices, UiBundle's BlockAnchorSlugger) resolves the page normally and appends the fragment as-is
