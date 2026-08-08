@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.1.4
+
+The fallback navbar carries the site name too
+
+- `Navbar.html.twig` reads `site-navbar-show-name` on the fallback navbar as well (08/08/2026)
+- Added `.nav-simple-name`, colored with `--navbar-site-name-color` (08/08/2026)
+- README documents the name stacked under the fallback logo (08/08/2026)
+- `NavbarHeightTest` covers both (08/08/2026)
+
 ## v8.1.3
 
 A menu item points at a bundle's own row, not just at its screens

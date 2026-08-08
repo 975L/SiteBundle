@@ -13,3 +13,16 @@
     height: 65px;
     width: auto;
 }
+
+// The site name on the fallback navbar. Same size and weight as the menu brand's .menu-site-name, stacked under the logo instead of beside it since this bar is a centered column
+.nav-simple-name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0.5rem 0 0;
+}
+
+// Its own token rather than the --primary the rules above hand every link here, so the name reads the same on both branches - the dark theme lightens that token
+.nav-simple-name a,
+.nav-simple-name a:hover {
+    color: var(--navbar-site-name-color);
+}

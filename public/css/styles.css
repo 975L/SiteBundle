@@ -853,6 +853,17 @@ body.navbar-fixed {
   width: auto;
 }
 
+.nav-simple-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0.5rem 0 0;
+}
+
+.nav-simple-name a,
+.nav-simple-name a:hover {
+  color: var(--navbar-site-name-color);
+}
+
 a,
 h1 a {
   text-decoration: none;

@@ -54,5 +54,12 @@
                 </a>
             </p>
         {% endif %}
+
+        {# site-navbar-show-name answers "show the name in the navbar", and this is the navbar a site with no menu blocks gets - the menu brand that usually carries the name is simply not on this branch #}
+        {% if showSiteName and siteName is not null %}
+            <p class="nav-simple-name">
+                <a href="{{ path('page_home') }}">{{ siteName }}</a>
+            </p>
+        {% endif %}
     </nav>
 {% endif %}

@@ -16,6 +16,11 @@
                 "en": "The site's name in the navigation bar keeps its own color when the mouse passes over it",
                 "fr": "Le nom du site dans la barre de navigation conserve sa propre couleur au passage de la souris",
                 "es": "El nombre del sitio en la barra de navegación conserva su propio color al pasar el ratón por encima"
+            },
+            {
+                "en": "A site with no navigation menu now shows its name under the logo, as soon as you asked for the name to be shown",
+                "fr": "Un site sans menu de navigation affiche désormais son nom sous le logo, dès lors que vous avez demandé à ce que le nom soit affiché",
+                "es": "Un sitio sin menú de navegación muestra ahora su nombre bajo el logotipo, siempre que haya pedido que se muestre el nombre"
             }
         ]
     },

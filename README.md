@@ -335,7 +335,7 @@ A `menu_link` also has an optional `primary` checkbox (`MenuLinkType`) that rend
 
 The navbar's CSS `position` is set via the `site-navbar-position` ConfigBundle key (`text`, one of `relative` (default), `sticky`, `fixed`, `static`, `absolute` — any other value is ignored), inlined as the `--navbar-position` custom property — `static` is written out as `relative`, the two being identical in the flow except that only the latter is a containing block for the dropdown hanging off the bar. `fixed` additionally adds `.menu-fixed` on the `<nav>` and a `navbar-fixed` class on `<body>` to compensate the space it frees from the normal flow; other values are left to the theme's own `--navbar-position` fallback.
 
-With no `navbar` Menu at all, the component falls back to the logo alone, centered, on a `<nav class="nav-simple">` — that class, and not the bare `nav` element, is what `sass/_navbar.scss` styles, so an app rendering a `<nav>` of its own is left untouched by it.
+With no `navbar` Menu at all, the component falls back to the logo, centered, with the site name stacked under it (`.nav-simple-name`, subject to the same `site-navbar-show-name` key), on a `<nav class="nav-simple">` — that class, and not the bare `nav` element, is what `sass/_navbar.scss` styles, so an app rendering a `<nav>` of its own is left untouched by it.
 
 `site-tagline` is authored as rich text in the backoffice (Trix wraps the value in its own `<div>`), so it's rendered with `|raw` — style `.menu-site-tagline` in your own SCSS if you need to adjust it. It is not shown on a `fixed` navbar, which has to stay on the height `<body>` gets back from it.
 

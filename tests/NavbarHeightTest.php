@@ -112,6 +112,33 @@ class NavbarHeightTest extends TestCase
         );
     }
 
+    // site-navbar-show-name used to be read on the menu branch only, so a site with no navbar blocks kept its name hidden whatever the config said
+    public function testTheFallbackNavbarShowsTheSiteNameToo(): void
+    {
+        $path = dirname(__DIR__) . '/templates/components/General/Navbar.html.twig';
+        $this->assertFileExists($path);
+
+        $template = (string) file_get_contents($path);
+        $fallback = substr($template, (int) strpos($template, '{% else %}'));
+
+        $this->assertStringContainsString(
+            '{% if showSiteName and siteName is not null %}',
+            $fallback,
+            'Navbar.html.twig drops site-navbar-show-name on the fallback navbar, where there is no menu brand to carry the name.'
+        );
+    }
+
+    // Without it the name falls back to the --primary the fallback navbar hands its links, which the dark theme does not lighten
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testTheFallbackSiteNameKeepsTheSiteNameToken(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/\.nav-simple-name a,\.nav-simple-name a:hover\{color:var\(--navbar-site-name-color\)\}/',
+            $this->stylesheet($file),
+            sprintf('"%s" no longer colors the fallback navbar\'s site name with its own token.', $file)
+        );
+    }
+
     // The scaffolded site.css restates every chrome token at its default value, these three included
     public function testScaffoldedThemeRestatesTheTokens(): void
     {
