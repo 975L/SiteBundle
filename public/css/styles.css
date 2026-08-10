@@ -594,6 +594,22 @@ a:hover.pullDown {
 }
 
 /* MENU */
+.menu.menu-position-relative {
+  --navbar-position: relative;
+}
+
+.menu.menu-position-sticky {
+  --navbar-position: sticky;
+}
+
+.menu.menu-position-fixed {
+  --navbar-position: fixed;
+}
+
+.menu.menu-position-absolute {
+  --navbar-position: absolute;
+}
+
 .menu {
   position: var(--navbar-position);
   top: 0;

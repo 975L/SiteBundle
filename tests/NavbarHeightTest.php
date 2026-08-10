@@ -112,6 +112,41 @@ class NavbarHeightTest extends TestCase
         );
     }
 
+    // A style="" attribute is dropped by a nonced style-src, which left the admin's own choice unapplied on any site carrying that CSP
+    public function testThePositionIsCarriedByAClassAndNotByAnInlineStyle(): void
+    {
+        $path = dirname(__DIR__) . '/templates/components/General/Navbar.html.twig';
+        $this->assertFileExists($path);
+
+        $template = (string) file_get_contents($path);
+
+        $this->assertStringContainsString(
+            "{{ navbarPosition ? ' menu-position-' ~ navbarPosition : '' }}",
+            $template,
+            'Navbar.html.twig no longer carries site-navbar-position as a class on the bar.'
+        );
+        $this->assertStringNotContainsString(
+            'style="--navbar-position',
+            $template,
+            'Navbar.html.twig writes --navbar-position inline again, which a nonced style-src drops.'
+        );
+    }
+
+    // "static" never reaches here, the template rewriting it to "relative"; doubled with .menu so the admin's choice keeps beating a site stylesheet setting the token on .menu itself
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testEveryPositionTheConfigOffersHasItsOwnRule(string $file): void
+    {
+        $css = $this->stylesheet($file);
+
+        foreach (['relative', 'sticky', 'fixed', 'absolute'] as $position) {
+            $this->assertMatchesRegularExpression(
+                sprintf('/\.menu\.menu-position-%s\{--navbar-position: ?%s\}/', $position, $position),
+                $css,
+                sprintf('"%s" no longer holds the navbar to the "%s" position the config offers.', $file, $position)
+            );
+        }
+    }
+
     // site-navbar-show-name used to be read on the menu branch only, so a site with no navbar blocks kept its name hidden whatever the config said
     public function testTheFallbackNavbarShowsTheSiteNameToo(): void
     {

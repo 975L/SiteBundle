@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.2.2
+
+Inline styles give way to classes, dropped by a nonced style-src
+
+- Locked sitemap fields carry `.ui-field-locked` instead of an inline style (10/08/2026)
+- Requires `c975l/core-bundle` v1.7.0 (10/08/2026)
+- The navbar's position is carried by a `.menu.menu-position-*` class instead of an inline custom property (10/08/2026)
+
 ## v8.2.1
 
 A form label has its own ink token

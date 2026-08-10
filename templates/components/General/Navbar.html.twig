@@ -12,7 +12,7 @@
 
 {% if menu_blocks('navbar') is not empty %}
     {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
-    <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}"{% if navbarPosition %} style="--navbar-position: {{ navbarPosition }};"{% endif %} data-controller="menu">
+    <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}{{ navbarPosition ? ' menu-position-' ~ navbarPosition : '' }}" data-controller="menu">
         <div class="menu-header">
             <div class="menu-brand">
                 {# Logo and site name both point at the home page: one single link around the pair, where two adjacent ones made a screen reader announce the same destination twice in a row #}

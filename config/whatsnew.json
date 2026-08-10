@@ -21,6 +21,16 @@
                 "en": "In the navigation bar, the logo and the site name form a single link to the home page, better announced by screen readers",
                 "fr": "Dans la barre de navigation, le logo et le nom du site ne forment plus qu'un seul lien vers la page d'accueil, mieux annoncé par les lecteurs d'écran",
                 "es": "En la barra de navegación, el logotipo y el nombre del sitio forman un único enlace a la página de inicio, mejor anunciado por los lectores de pantalla"
+            },
+            {
+                "en": "The position chosen for the navigation bar is now applied on every site, including those whose security settings are the strictest",
+                "fr": "La position choisie pour la barre de navigation s'applique désormais sur tous les sites, y compris ceux dont les réglages de sécurité sont les plus stricts",
+                "es": "La posición elegida para la barra de navegación se aplica ahora en todos los sitios, incluidos aquellos cuyos ajustes de seguridad son los más estrictos"
+            },
+            {
+                "en": "In a page's settings, the search-engine fields that no longer apply are again clearly greyed out and out of reach",
+                "fr": "Dans les paramètres d'une page, les champs destinés aux moteurs de recherche qui ne s'appliquent plus sont de nouveau clairement grisés et hors d'atteinte",
+                "es": "En los ajustes de una página, los campos destinados a los motores de búsqueda que ya no se aplican vuelven a aparecer claramente atenuados e inaccesibles"
             }
         ]
     },

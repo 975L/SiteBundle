@@ -1,4 +1,16 @@
 /* MENU */
+
+// One class per site-navbar-position value, instead of a style="--navbar-position: x" on the <nav>: a
+// style="" attribute never applies under a nonced style-src, and the value set is closed (see
+// Navbar.html.twig, which validates the config against that same list). "static" never reaches here:
+// the template rewrites it to "relative", the mobile dropdown needing a positioned .menu (see
+// NavbarHeightTest). Doubled with .menu so the admin's choice keeps beating any site stylesheet
+// setting --navbar-position on .menu, the way the inline style used to
+.menu.menu-position-relative { --navbar-position: relative; }
+.menu.menu-position-sticky { --navbar-position: sticky; }
+.menu.menu-position-fixed { --navbar-position: fixed; }
+.menu.menu-position-absolute { --navbar-position: absolute; }
+
 .menu {
     position: var(--navbar-position);
     top: 0;

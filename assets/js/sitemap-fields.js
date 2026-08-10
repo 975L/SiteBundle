@@ -59,8 +59,9 @@ export default class extends Controller {
         field.tabIndex = locked ? -1 : 0;
 
         // Blocked and dimmed on the whole row (label and help text included) rather than on the input alone: "readonly" is a no-op on a <select>, and clicking a switch's own <label> toggles it just as well as clicking the input
+        // Classe plutôt que style inline : le layout EasyAdmin pose un nonce sur style-src, ce qui rend
+        // inopérant tout style écrit depuis JS. .ui-field-locked vient d'UiBundle (management/_form-fields.scss)
         const group = field.closest('.form-group') ?? field;
-        group.style.pointerEvents = locked ? 'none' : '';
-        group.style.opacity = locked ? '0.5' : '';
+        group.classList.toggle('ui-field-locked', locked);
     }
 }
