@@ -291,6 +291,43 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('About', $extension->getMenuLinkLabel('page:42'));
     }
 
+    // A footer's links can sit one level down, inside a "menu_group" - one left out of the batch would fall back to an individual find() at render time, which is exactly what the batch exists to avoid
+    public function testGetMenuBlocksPreloadsTheTargetPagesOfTheLinksHeldInAGroup(): void
+    {
+        $page = (new Page())->setTitle('Contact')->setSlug('contact')->setIsPublished(true);
+        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 44);
+
+        $group = (new Block())->setKind('menu_group');
+        $group->addSlot((new Block())->setKind('menu_link')->setData(['target' => 'page:44']));
+
+        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER);
+        $menu->addBlock($group);
+
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => ['44']])
+            ->willReturn([$page]);
+        $pageRepository->expects($this->never())->method('find');
+
+        $extension = new MenuExtension(
+            $this->createMenuRepository($menu),
+            $pageRepository,
+            $this->createRegistry([]),
+            $this->createRouter(),
+            $this->createCache(),
+            $this->createConfigService(),
+            $this->createDefaultPagesImporter(),
+            $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
+        );
+
+        $extension->getMenuBlocks(Menu::LOCATION_FOOTER);
+
+        $this->assertSame('/page_display/contact', $extension->getMenuLinkUrl('page:44'));
+        $this->assertSame('Contact', $extension->getMenuLinkLabel('page:44'));
+    }
+
     // A target whose Page id yields no row (deleted since the menu_link was saved) must still be cached as null - otherwise it would fall back to one individual find() per resolution call instead of being resolved once for the whole request
     public function testGetMenuBlocksCachesAMissingPreloadedPageAsNull(): void
     {

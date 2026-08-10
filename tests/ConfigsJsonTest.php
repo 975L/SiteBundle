@@ -68,6 +68,40 @@ class ConfigsJsonTest extends TestCase
         }
     }
 
+    // A "choice" entry is only worth its kind if it says what it accepts, and if its own default is part of it - the select is built from that list alone (see ConfigBundle's ConfigCrudController::buildChoiceField)
+    public function testChoiceEntriesDeclareTheValuesTheyAccept(): void
+    {
+        foreach ($this->loadConfigs() as $config) {
+            if ('choice' !== $config['kind']) {
+                continue;
+            }
+
+            $slug = $config['slug'];
+            $this->assertArrayHasKey('choices', $config, sprintf('Config "%s" is a choice but declares no choices', $slug));
+            $this->assertNotSame([], $config['choices'], sprintf('Config "%s" declares an empty choices list', $slug));
+
+            if (null !== $config['value']) {
+                $this->assertContains($config['value'], $config['choices'], sprintf('Default value of "%s" is not one of its choices', $slug));
+            }
+        }
+    }
+
+    // The select the admin picks from and the list Navbar.html.twig lets through are the same list, written twice: a position offered but not whitelisted would be picked, then silently dropped by the template
+    public function testNavbarPositionChoicesMatchTheOnesTheTemplateAccepts(): void
+    {
+        $template = (string) file_get_contents(__DIR__ . '/../templates/components/General/Navbar.html.twig');
+        $this->assertSame(
+            1,
+            preg_match("/config\('site-navbar-position'\) in \[([^\]]+)\]/", $template, $matches),
+            'Navbar.html.twig no longer whitelists site-navbar-position the expected way',
+        );
+
+        $whitelisted = array_map(static fn (string $value): string => trim($value, " '"), explode(',', $matches[1]));
+        $declared = array_column($this->loadConfigs(), 'choices', 'slug')['site-navbar-position'];
+
+        $this->assertSame($whitelisted, $declared);
+    }
+
     // Both the label and the description of every entry are translated in each shipped locale
     public function testLabelsAndDescriptionsAreTranslatedInEveryLocale(): void
     {

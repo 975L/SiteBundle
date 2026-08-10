@@ -4,6 +4,14 @@
     color: var(--text);
 }
 
+// The size every text set in the body font is read at - a "text" block's paragraphs, a caption, an article, a
+// legal page, a form. Nothing declared it until now, so the site was read at whatever the browser defaults to,
+// and a design wanting a fuller body copy had nothing to turn. The headings below are in rem for that very
+// reason: they must not ride this value, and neither do UiBundle's own block titles and eyebrows, all in px
+body {
+    font-size: var(--font-size-body);
+}
+
 h1,
 h2,
 h3,
@@ -18,33 +26,33 @@ h6 {
 }
 
 h1 {
-    font-size: 2.5em;
+    font-size: calc(2.5rem * var(--font-size-title-scale, 1));
 }
 
 h2 {
-    font-size: 2em;
+    font-size: calc(2rem * var(--font-size-title-scale, 1));
 }
 
 h3 {
-    font-size: 1.3em;
+    font-size: calc(1.3rem * var(--font-size-title-scale, 1));
 }
 
 h4 {
-    font-size: 1.2em;
+    font-size: calc(1.2rem * var(--font-size-title-scale, 1));
 }
 
 h5 {
-    font-size: 1.1em;
+    font-size: calc(1.1rem * var(--font-size-title-scale, 1));
 }
 
 h6 {
-    font-size: 1.05em;
+    font-size: calc(1.05rem * var(--font-size-title-scale, 1));
 }
 
 .lead {
     font-family: var(--font-family-title);
     color: var(--black);
-    font-size: 1.25em;
+    font-size: calc(1.25rem * var(--font-size-title-scale, 1));
     font-weight: bold;
 }
 

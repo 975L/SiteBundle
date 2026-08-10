@@ -29,9 +29,10 @@ class MenuCacheInvalidationListener extends AbstractBlockCacheInvalidationListen
     }
 
     // The Menu row itself is watched too since it carries a field of its own: its layout style (see Menu::$style, read by MenuExtension::getMenuStyle()), which nothing on the Block side would ever signal
+    // "menu_group" joins "menu_link" because a footer's items can be laid out in such a group, whose own edits (its direction, its alignment) are a lifecycle event on nothing else - the kind is restricted to the "menu" context (see config/services.yaml), so no group living anywhere else ever reaches this
     protected function invalidate(object $entity): void
     {
-        if ($entity instanceof Menu || ($entity instanceof Block && 'menu_link' === $entity->getKind())) {
+        if ($entity instanceof Menu || ($entity instanceof Block && in_array($entity->getKind(), ['menu_link', 'menu_group'], true))) {
             $this->cache->invalidateTags(['menus_all']);
         }
     }

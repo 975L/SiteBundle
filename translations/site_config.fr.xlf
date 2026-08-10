@@ -2,14 +2,6 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="site_config.fr.xlf">
         <body>
-            <trans-unit id="ZwY3EOi">
-                <source>description.display_hosted_by</source>
-                <target>Afficher le crédit "Hébergé par" dans le pied de page</target>
-            </trans-unit>
-            <trans-unit id="Ngy_KLc">
-                <source>description.display_made_by</source>
-                <target>Afficher le crédit "Réalisé par" dans le pied de page</target>
-            </trans-unit>
             <trans-unit id="o3sVBy1">
                 <source>description.email_debug</source>
                 <target>Si activé, un ROLE_SUPER_ADMIN voit un aperçu au lieu de l'envoi réel</target>
@@ -42,14 +34,6 @@
                 <source>description.site_enable_matomo</source>
                 <target>Active Matomo, hors bandeau cookies - à réserver au mode exempté CNIL (IP anonymisée, pas de croisement, cookie ≤13 mois, DNT respecté)</target>
             </trans-unit>
-            <trans-unit id="QwEr1a7">
-                <source>description.site_hosted_by_logo</source>
-                <target>Chemin ou URL du logo de l'hébergeur</target>
-            </trans-unit>
-            <trans-unit id="aOobf9k">
-                <source>description.site_hosted_by_url</source>
-                <target>URL de l'hébergeur, ex. https://example.com</target>
-            </trans-unit>
             <trans-unit id="QbsOHOo">
                 <source>description.site_matomo_id</source>
                 <target>Identifiant du site Matomo (entier)</target>
@@ -77,14 +61,6 @@
             <trans-unit id="EuVrG.1">
                 <source>description.site_tagline</source>
                 <target>Slogan du site web</target>
-            </trans-unit>
-            <trans-unit id="xVF9T4p">
-                <source>label.display_hosted_by</source>
-                <target>Afficher le crédit « Hébergé par »</target>
-            </trans-unit>
-            <trans-unit id="oosom3.">
-                <source>label.display_made_by</source>
-                <target>Afficher le crédit « Réalisé par »</target>
             </trans-unit>
             <trans-unit id=".HY9J1w">
                 <source>label.email_debug</source>
@@ -117,14 +93,6 @@
             <trans-unit id="xZcUaF_">
                 <source>label.site_enable_matomo</source>
                 <target>Activer les statistiques Matomo</target>
-            </trans-unit>
-            <trans-unit id="TB6bEAb">
-                <source>label.site_hosted_by_logo</source>
-                <target>Logo de l'hébergeur</target>
-            </trans-unit>
-            <trans-unit id="3RIS25s">
-                <source>label.site_hosted_by_url</source>
-                <target>URL de l'hébergeur</target>
             </trans-unit>
             <trans-unit id="EDDAHIQ">
                 <source>label.site_matomo_id</source>

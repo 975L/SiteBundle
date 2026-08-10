@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Command;
 
+use c975L\ConfigBundle\Entity\Config;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\AdminUserCreator;
@@ -56,11 +57,11 @@ class SiteCreateCommandTest extends TestCase
         }
     }
 
-    private function createCommand(?EntityManagerInterface $em = null, ?AdminUserCreator $adminUserCreator = null, ?ScaffoldInstaller $scaffoldInstaller = null): SiteCreateCommand
+    private function createCommand(?EntityManagerInterface $em = null, ?AdminUserCreator $adminUserCreator = null, ?ScaffoldInstaller $scaffoldInstaller = null, ?ConfigRepository $configRepository = null): SiteCreateCommand
     {
         return new SiteCreateCommand(
             $scaffoldInstaller ?? $this->createStub(ScaffoldInstaller::class),
-            $this->createStub(ConfigRepository::class),
+            $configRepository ?? $this->createStub(ConfigRepository::class),
             $this->createStub(ConfigServiceInterface::class),
             $this->createStub(VaultEncryptor::class),
             $em ?? $this->createStub(EntityManagerInterface::class),
@@ -199,6 +200,85 @@ class SiteCreateCommandTest extends TestCase
 
         $this->assertStringNotContainsString('^/management', file_get_contents($path));
         $this->assertStringContainsString('⚠', $display);
+    }
+
+    // Config left over from an earlier run, encrypted with a key that no longer exists: the wizard names the slugs instead of letting step 4/7 die on a bare "Decryption failed" from inside the vault
+    public function testEnsureConfigDecryptableReportsTheValuesEncryptedWithAnotherKey(): void
+    {
+        $display = $this->callEnsureConfigDecryptable([
+            'site-name' => ['sensitive' => false, 'value' => 'Mystic Fable Studios'],
+            'recaptcha3-secret-key' => ['sensitive' => true, 'value' => 'C975L:stale', 'decryptable' => false],
+            'site-backup-db-password' => ['sensitive' => true, 'value' => 'C975L:stale', 'decryptable' => false],
+        ], $decryptable);
+
+        $this->assertFalse($decryptable);
+        $this->assertStringContainsString('recaptcha3-secret-key', $display);
+        $this->assertStringContainsString('site-backup-db-password', $display);
+    }
+
+    // Nothing encrypted with a foreign key: plain values, empty ones and values the current key reads are all left alone
+    public function testEnsureConfigDecryptablePassesOnReadableConfig(): void
+    {
+        $display = $this->callEnsureConfigDecryptable([
+            'site-name' => ['sensitive' => false, 'value' => 'Mystic Fable Studios'],
+            'recaptcha3-site-key' => ['sensitive' => true, 'value' => 'C975L:fresh', 'decryptable' => true],
+            'recaptcha3-secret-key' => ['sensitive' => true, 'value' => ''],
+        ], $decryptable);
+
+        $this->assertTrue($decryptable);
+        $this->assertSame('', trim($display));
+    }
+
+    /*
+     * A sensitive flag not yet synced by "c975l:config:load-all" would otherwise abort the whole wizard over a value
+     * ConfigService::loadAll() never decrypts, so the check mirrors its condition rather than testing isEncrypted() alone.
+     */
+    public function testEnsureConfigDecryptableIgnoresValuesLoadAllNeverDecrypts(): void
+    {
+        $display = $this->callEnsureConfigDecryptable([
+            'ui-ai-assistant-dashboard-endpoint' => ['sensitive' => false, 'value' => 'C975L:stale', 'decryptable' => false],
+        ], $decryptable);
+
+        $this->assertTrue($decryptable);
+        $this->assertSame('', trim($display));
+    }
+
+    // Private and only reached mid-command, so it is driven directly rather than through CommandTester. Each entry is [slug => ['sensitive' => bool, 'value' => string, 'decryptable' => bool]]
+    private function callEnsureConfigDecryptable(array $entries, ?bool &$decryptable): string
+    {
+        $configs = [];
+        $stale = [];
+        foreach ($entries as $slug => $entry) {
+            $config = $this->createStub(Config::class);
+            $config->method('getSlug')->willReturn($slug);
+            $config->method('getIsSensitive')->willReturn($entry['sensitive']);
+            $config->method('getValue')->willReturn($entry['value']);
+            $configs[] = $config;
+
+            if (false === ($entry['decryptable'] ?? true)) {
+                $stale[] = $entry['value'];
+            }
+        }
+
+        $configRepository = $this->createStub(ConfigRepository::class);
+        $configRepository->method('findAll')->willReturn($configs);
+
+        $vaultEncryptor = $this->createStub(VaultEncryptor::class);
+        $vaultEncryptor->method('isEncrypted')->willReturnCallback(static fn (string $value): bool => str_starts_with($value, 'C975L:'));
+        $vaultEncryptor->method('decrypt')->willReturnCallback(static function (string $value) use ($stale): string {
+            if (\in_array($value, $stale, true)) {
+                throw new \RuntimeException('Decryption failed. Check your C975L_VAULT_KEY.');
+            }
+
+            return 'plain';
+        });
+
+        $command = $this->createCommand(configRepository: $configRepository);
+        $output = new BufferedOutput();
+        $decryptable = (new \ReflectionMethod($command, 'ensureConfigDecryptable'))
+            ->invoke($command, new SymfonyStyle(new ArrayInput([]), $output), $vaultEncryptor);
+
+        return $output->fetch();
     }
 
     private function writeSecurityYaml(string $content): string

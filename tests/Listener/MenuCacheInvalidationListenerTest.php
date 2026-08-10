@@ -58,6 +58,30 @@ class MenuCacheInvalidationListenerTest extends TestCase
             ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
+    // A footer's items can be laid out in a "menu_group", added to the Menu the same cascade way a link is
+    public function testPostPersistInvalidatesMenusAllTagForANewMenuGroupBlock(): void
+    {
+        $block = (new Block())->setKind('menu_group');
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
+
+        (new MenuCacheInvalidationListener($cache))
+            ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+    }
+
+    // A group carries fields of its own - its direction, its alignment - whose edit is a lifecycle event on nothing else
+    public function testPostUpdateInvalidatesMenusAllTagForAnEditedMenuGroupBlock(): void
+    {
+        $block = (new Block())->setKind('menu_group');
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
+
+        (new MenuCacheInvalidationListener($cache))
+            ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+    }
+
     // A Block of any other kind never belongs to a Menu - nothing to invalidate here
     public function testInvalidateIsSkippedForBlocksOfAnotherKind(): void
     {

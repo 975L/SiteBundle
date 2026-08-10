@@ -14,15 +14,24 @@
     width: auto;
 }
 
+// The single link wrapping the logo and the name (see Navbar.html.twig). A column, this bar stacking the two rather than putting them on a line like the menu brand, and inline so the .nav-simple text-align above still centers it. _links.scss underlines every hovered link, which would now be drawn through the name when the logo is the part being hovered
+.nav-simple-brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    &:hover,
+    &:focus,
+    &:visited:hover {
+        text-decoration: none;
+    }
+}
+
 // The site name on the fallback navbar. Same size and weight as the menu brand's .menu-site-name, stacked under the logo instead of beside it since this bar is a centered column
+// Its own token rather than the --primary the rules above hand every link here, so the name reads the same on both branches - the dark theme lightens that token. Declared on the element itself: it is a <span> inside the link now, and would otherwise just inherit that --primary
 .nav-simple-name {
     font-size: 1.25rem;
     font-weight: bold;
     margin: 0.5rem 0 0;
-}
-
-// Its own token rather than the --primary the rules above hand every link here, so the name reads the same on both branches - the dark theme lightens that token
-.nav-simple-name a,
-.nav-simple-name a:hover {
     color: var(--navbar-site-name-color);
 }

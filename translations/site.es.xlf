@@ -46,6 +46,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Carrusel que destaca una selección de artículos</target>
             </trans-unit>
+            <trans-unit id="32ypfjD">
+                <source>block.menu_group</source>
+                <target>Grupo de menú</target>
+            </trans-unit>
+            <trans-unit id="AUyz4nM">
+                <source>block.menu_group_description</source>
+                <target>Agrupa varios elementos de un menú en una línea propia (p. ej. los enlaces sociales encima de los enlaces del pie)</target>
+            </trans-unit>
             <trans-unit id="PizX88K">
                 <source>block.menu_link</source>
                 <target>Enlace de menú</target>

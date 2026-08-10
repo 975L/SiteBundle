@@ -2,8 +2,9 @@
 {% set footerBlocks = menu_blocks('footer') %}
 {# The layout picked in the backoffice (see MenuCrudController), empty when left to the theme's own --footer-items-* tokens - whitelisted, it lands in a class name #}
 {% set footerStyle = menu_style('footer') in ['inline', 'block'] ? menu_style('footer') : null %}
-{# A "Copyright"-page menu_link already renders the computed copyright, so the span would duplicate it #}
-{% set hasCopyrightLink = footerBlocks|filter(
+{# A "Copyright"-page menu_link already renders the computed copyright, so the span would duplicate it. The links can be grouped in a "menu_group", one level down, hence the slots joining the top-level blocks here - a group can't hold another group ("menu_slot" is a slot context, and BlockRegistry::isAllowedInContext() excludes containers from those), so one level is the whole tree #}
+{% set footerItems = footerBlocks|reduce((items, block) => items|merge([block])|merge(block.slots|map(slot => slot)), []) %}
+{% set hasCopyrightLink = footerItems|filter(
     block => (block.data.label ?? '') is empty and menu_link_is_copyright(block.data.target ?? '')
 )|length > 0 %}
 <footer>
@@ -15,12 +16,15 @@
             </div>
         {% endif %}
     </div>
-    {% if config('display-made-by') or config('display-hosted-by') %}
+    {# What each credit shows is a choice, not a yes/no - the components read it themselves too, being usable on their own, this is only about the wrapper #}
+    {% set madeByMode = credits_mode('display-made-by') %}
+    {% set hostedByMode = credits_mode('display-hosted-by') %}
+    {% if madeByMode != 'none' or hostedByMode != 'none' %}
         <div class="made-by">
-            {% if config('display-made-by') %}
+            {% if madeByMode != 'none' %}
                 <twig:c975LSite:General:MadeBy />
             {% endif %}
-            {% if config('display-hosted-by') %}
+            {% if hostedByMode != 'none' %}
                 <twig:c975LSite:General:HostedBy />
             {% endif %}
         </div>

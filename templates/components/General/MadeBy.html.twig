@@ -1,13 +1,25 @@
 {# <twig:c975LSite:General:MadeBy/> #}
+{% set mode = credits_mode('display-made-by') %}
 {% set madeByUrl = config('site-made-by-url') %}
 {% set madeByLogo = config('site-made-by-logo') %}
-{% if madeByUrl and madeByLogo %}
+{% set madeByName = config('site-made-by-name') %}
+{# Each half of the mode still needs the config feeding it: a mode asking for a name nobody filled in would render the "Made by" label on its own #}
+{% set showLogo = mode in ['logo', 'logo-name'] and madeByLogo %}
+{% set showName = mode in ['name', 'logo-name'] and madeByName %}
+{% set label = 'label.made_by'|trans({}, 'site') ~ (showName ? ' ' ~ madeByName : '') %}
+{% if showLogo and madeByUrl %}
     <twig:c975LUi:Image:Link
-        label="{{ 'label.made_by'|trans({}, 'site') }}"
+        label="{{ label }}"
         src="{{ madeByLogo }}"
         url="{{ madeByUrl }}"
         height="50"
         target="_blank"
         above="true"
     />
+{% elseif showName %}
+    {# No logo to hang the label on, and Image:Link needs a src - a plain link says the same thing. Same rule as that component for the url: without one this must not render as an <a> at all, a href="" being a dead link that still looks clickable #}
+    {% set tag = madeByUrl ? 'a' : 'span' %}
+    <p class="text-center">
+        <{{ tag }}{% if madeByUrl %} href="{{ madeByUrl }}" target="_blank"{% endif %}>{{ label }}</{{ tag }}>
+    </p>
 {% endif %}

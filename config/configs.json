@@ -27,32 +27,11 @@
         "sensitive": false,
         "restricted": false,
         "value": null,
-        "kind": "text",
+        "kind": "choice",
+        "choices": ["relative", "sticky", "fixed", "static", "absolute"],
         "group": "general",
         "severity": null,
         "description": "description.site_navbar_position"
-    },
-    {
-        "label": "label.site_hosted_by_url",
-        "slug": "site-hosted-by-url",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "credits",
-        "severity": "info",
-        "description": "description.site_hosted_by_url"
-    },
-    {
-        "label": "label.site_hosted_by_logo",
-        "slug": "site-hosted-by-logo",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "credits",
-        "severity": "info",
-        "description": "description.site_hosted_by_logo"
     },
     {
         "label": "label.site_matomo_url",
@@ -141,28 +120,6 @@
         "group": "email",
         "severity": null,
         "description": "description.email_text_legal"
-    },
-    {
-        "label": "label.display_made_by",
-        "slug": "display-made-by",
-        "sensitive": false,
-        "restricted": false,
-        "value": "true",
-        "kind": "bool",
-        "group": "credits",
-        "severity": null,
-        "description": "description.display_made_by"
-    },
-    {
-        "label": "label.display_hosted_by",
-        "slug": "display-hosted-by",
-        "sensitive": false,
-        "restricted": false,
-        "value": "true",
-        "kind": "bool",
-        "group": "credits",
-        "severity": null,
-        "description": "description.display_hosted_by"
     },
     {
         "label": "label.site_menu_link_copyright_auto",

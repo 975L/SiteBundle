@@ -115,6 +115,11 @@
     --form-input-color: #555;
     --font-title-weight: normal;
     --font-body-weight: normal;
+    // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a
+    // visitor who raised their browser's own font size is still followed; 1rem is that default, i.e. the size
+    // the site was read at before this token existed. Headings and UiBundle's block titles/eyebrows are outside
+    // it on purpose - the first in rem, the second in px - so a design can open up its body copy alone
+    --font-size-body: 1rem;
     --label-color: #808080;
     // Follows theme-color-primary by default; apps that want a distinct link color can still override --link-color directly in their own _variables.css, same as any other variable here
     --link-color: var(--primary);

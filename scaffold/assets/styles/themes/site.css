@@ -3,6 +3,12 @@
 /* One file per bundle - this one is the site's chrome; everything else a design retunes is UiBundle's, in themes/ui.css */
 /* Colors and fonts are absent on purpose: admin-editable, compiled into bundles/build/site-theme.css */
 :root {
+    /* The size every text set in the body font is read at - a "text" block's paragraphs, a caption, an
+       article, a legal page, a form. In rem, not px, so a visitor who raised their browser's own font
+       size is still followed. Headings sit outside it (rem too) and so do UiBundle's block titles and
+       eyebrows (px), so opening up the body copy here leaves both exactly where the design put them */
+    /* --font-size-body: 1rem; */
+
     /* --navbar-background: var(--white); */
     /* --navbar-text: var(--black); */
     /* --navbar-active-color: var(--primary); */

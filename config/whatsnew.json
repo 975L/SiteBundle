@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-08-10",
+        "description": [
+            {
+                "en": "The items of a footer can now be stacked in several lines: put a \"Blocks group\" in the footer menu for each line - the social links in one, the links in another - and drag the existing blocks into them, nothing to re-create",
+                "fr": "Les éléments d'un pied de page peuvent désormais être répartis sur plusieurs lignes : placez un « Groupe de blocks » dans le menu du pied de page pour chaque ligne - les réseaux sociaux dans l'un, les liens dans l'autre - et faites-y glisser les blocks existants, rien à recréer",
+                "es": "Los elementos de un pie de página pueden ahora repartirse en varias líneas: coloque un «Grupo de blocks» en el menú del pie de página para cada línea - las redes sociales en uno, los enlaces en otro - y arrastre allí los blocks existentes, sin tener que recrear nada"
+            },
+            {
+                "en": "The position of the navigation bar is now picked from a list in the settings instead of being typed, so a value the site cannot use can no longer be entered",
+                "fr": "La position de la barre de navigation se choisit désormais dans une liste dans les paramètres, au lieu d'être saisie, si bien qu'une valeur inutilisable par le site ne peut plus être renseignée",
+                "es": "La posición de la barra de navegación se elige ahora en una lista dentro de los ajustes, en lugar de escribirse, de modo que ya no puede introducirse un valor que el sitio no pueda utilizar"
+            },
+            {
+                "en": "The credits in the footer now let you choose what is shown - nothing, the logo, the name or both - and a name can be filled in for the host as well as for the site's creator",
+                "fr": "Les crédits du pied de page permettent désormais de choisir ce qui s'affiche - rien, le logo, le nom ou les deux - et un nom peut être renseigné pour l'hébergeur comme pour le créateur du site",
+                "es": "Los créditos del pie de página permiten ahora elegir lo que se muestra - nada, el logotipo, el nombre o ambos - y puede indicarse un nombre tanto para el alojamiento como para el creador del sitio"
+            },
+            {
+                "en": "In the navigation bar, the logo and the site name form a single link to the home page, better announced by screen readers",
+                "fr": "Dans la barre de navigation, le logo et le nom du site ne forment plus qu'un seul lien vers la page d'accueil, mieux annoncé par les lecteurs d'écran",
+                "es": "En la barra de navegación, el logotipo y el nombre del sitio forman un único enlace a la página de inicio, mejor anunciado por los lectores de pantalla"
+            }
+        ]
+    },
+    {
         "date": "2026-08-08",
         "description": [
             {

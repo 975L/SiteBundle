@@ -111,6 +111,9 @@ class SiteCreateCommand extends Command
         $this->getApplication()?->find('c975l:config:load-all')->run(new ArrayInput([]), $output);
 
         $vaultEncryptor = $this->ensureVaultKey($io);
+        if (!$this->ensureConfigDecryptable($io, $vaultEncryptor)) {
+            return Command::FAILURE;
+        }
 
         $io->section('3/7 — Compte administrateur');
         [$email] = $this->createAdminUser($io);
@@ -156,6 +159,37 @@ class SiteCreateCommand extends Command
         $io->text('  ✓ C975L_VAULT_KEY générée et ajoutée à .env.local');
 
         return new VaultEncryptor($key);
+    }
+
+    // Stops on config left over from an earlier run of the wizard, encrypted with a C975L_VAULT_KEY that no longer exists (a fresh key was generated above, or the database was reused with another site's .env.local). Step 4/7 reads every config through ConfigService, which decrypts the whole sensitive set at once: a single unreadable value aborts the wizard on a bare "Decryption failed" thrown from inside the vault, with nothing pointing at the database. Mirrors ConfigService::loadAll()'s own condition, so it catches exactly what would make it fail
+    private function ensureConfigDecryptable(SymfonyStyle $io, VaultEncryptor $vaultEncryptor): bool
+    {
+        $unreadable = [];
+        foreach ($this->configRepository->findAll() as $config) {
+            $value = $config->getValue();
+            if (!$config->getIsSensitive() || null === $value || '' === $value || !$vaultEncryptor->isEncrypted($value)) {
+                continue;
+            }
+
+            try {
+                $vaultEncryptor->decrypt($value);
+            } catch (\RuntimeException) {
+                $unreadable[] = $config->getSlug();
+            }
+        }
+
+        if ([] === $unreadable) {
+            return true;
+        }
+
+        $io->error(sprintf(
+            "%d valeur(s) de configuration en base sont chiffrées avec une autre C975L_VAULT_KEY que celle en cours :\n%s\n\n"
+            . "La base contient de la configuration issue d'un run précédent, dont la clé a été perdue. Remets l'ancienne clé dans .env.local en remplaçant la ligne C975L_VAULT_KEY générée en fin de fichier (Dotenv retient la dernière affectation), ou vide ces valeurs (l'assistant les redemandera) avant de relancer.",
+            \count($unreadable),
+            implode(', ', $unreadable)
+        ));
+
+        return false;
     }
 
     // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is false, see README "Account activation") onto the "main" firewall. Edits the file as plain text rather than through the Yaml component, so existing comments/formatting survive.

@@ -9,6 +9,22 @@ hand or decorates it: drop the fifth constructor argument.
 
 This bundle now reads that `label()` method, so it needs the core-bundle release shipping it.
 
+**`site-navbar-position` is now a `choice` config.** It declares the five positions the navbar renders,
+which core-bundle `^1.6` stores in the new `choices` column on `site_config`: run
+`doctrine:migrations:diff` then `doctrine:migrations:migrate` after the update, and
+`c975l:config:load-all` to sync the list itself. An existing value off that list (never rendered
+anyway) stays selectable until it is fixed.
+
+**A footer credit is a choice of what it shows now, and `MadeBy`/`HostedBy` can show a name.**
+`display-made-by` and `display-hosted-by` are `none`, `logo`, `name` or `logo-name`, read through
+core-bundle's `credits_mode()`, and the two components render `site-made-by-name`/`site-hosted-by-name`
+when the mode asks for it. Four keys leave this bundle for core-bundle with them —
+`site-hosted-by-url`, `site-hosted-by-logo`, `display-made-by` and `display-hosted-by`, joining the
+`site-made-by-*` ones that moved in `v8.0.0`. Same slugs, same `credits` group, same `site_config` rows,
+so **nothing to run** beyond the `c975l:config:load-all` above. A site still holding `true`/`false` in
+those two rows keeps rendering what it rendered (`true` reads as the logo, `false` as nothing) until the
+value is re-picked — see core-bundle's UPGRADE.md for the SQL doing it in one go.
+
 ## v8.1.2
 
 **The bare `nav` element is no longer styled.** `sass/_navbar.scss` held `nav { text-align: center; height: 74px }` plus a link and an image rule — meant for the centered-logo fallback a site with no navbar menu gets, but reaching the menu navbar too and holding it at 74px whatever its header asked for, which is what pinned its logo and burger against the top edge. Those four rules now hang off a `.nav-simple` class, which `Navbar.html.twig` puts on that fallback. **Nothing to run**, unless your app renders a `<nav>` of its own and was counting on those rules: add `nav-simple` to its class list, or restate what it needs in `app.css`. The same holds for the sibling c975L bundles rendering a bare `<nav>` — GalleryBundle's breadcrumb is one, and it gains from the removal, its own `.gallery-breadcrumb` rules already laying down what it needs.

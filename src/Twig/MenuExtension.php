@@ -89,7 +89,7 @@ class MenuExtension extends AbstractExtension
         });
     }
 
-    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" Block is saved/removed). Safe for "menu_link", the only kind a navbar can hold (see BlockRegistry::MENU_NAVBAR_CONTEXT) and what every other location holds in practice: its template (MenuLink.html.twig) never reads block.media/block.user - the only relations a Block carries - so those stay untouched, harmless lazy references through the cache round-trip
+    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" or "menu_group" Block is saved/removed). The entities being cached whole, every relation a template may read has to be initialized before they go in, which is what MenuRepository::findOneByLocation() joins its slots and its medias for: a lazy collection cached uninitialized comes back detached and empty. Only "user" is left lazy, no menu template reading it
     private function loadMenuBlocks(string $location): array
     {
         return $this->cache->get('menu_' . $location, function (ItemInterface $item) use ($location): array {
@@ -243,6 +243,9 @@ class MenuExtension extends AbstractExtension
     {
         $ids = [];
         foreach ($blocks as $block) {
+            // A container's own slots hold links too (a footer's links grouped in a "menu_group"), and one left out here would fall back to an individual find() at render time, which is exactly what this batch exists to avoid - the ids being keys, the union keeps them deduped
+            $ids += $this->collectPageIds($block->getSlots());
+
             if ('menu_link' !== $block->getKind()) {
                 continue;
             }

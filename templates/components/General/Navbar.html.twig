@@ -3,6 +3,8 @@
 {% set siteName = config('site-name') %}
 {% set siteTagline = config('site-tagline') %}
 {% set showSiteName = config('site-navbar-show-name') %}
+{# Read by both branches below, hence set here: a "set" inside the first one never runs on the fallback bar #}
+{% set showBrandName = showSiteName and siteName is not null %}
 {# Whitelisted: it lands in a custom property, which Twig's html_attr context doesn't escape #}
 {% set navbarPosition = config('site-navbar-position') in ['relative', 'sticky', 'fixed', 'static', 'absolute'] ? config('site-navbar-position') : null %}
 {# "static" and "relative" sit identically in the flow, but only the latter is a containing block for the mobile dropdown hanging off the bar #}
@@ -13,17 +15,23 @@
     <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}"{% if navbarPosition %} style="--navbar-position: {{ navbarPosition }};"{% endif %} data-controller="menu">
         <div class="menu-header">
             <div class="menu-brand">
+                {# Logo and site name both point at the home page: one single link around the pair, where two adjacent ones made a screen reader announce the same destination twice in a row #}
                 <div class="menu-brand-top">
-                    {% if logo is not null %}
-                        <a href="{{ path('page_home') }}" class="menu-logo">
+                    {% if logo is not null or showBrandName %}
+                        <a href="{{ path('page_home') }}" class="menu-brand-link">
+                            {% if logo is not null %}
+                                <span class="menu-logo">
 {# eager: the navbar logo is above the fold on every page #}
 {# Intrinsic dimensions, the free-text width/height possibly holding an unusable "50%"; older rows have neither, hence the fallback #}
-                            <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ siteName|default('Logo') }}"{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
-                        </a>
-                    {% endif %}
+{# Decorative once the name is printed beside it, both being inside the same link: an alt there would have the link read its own name twice #}
+                                    <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
+                                </span>
+                            {% endif %}
 
-                    {% if showSiteName and siteName is not null %}
-                        <a href="{{ path('page_home') }}" class="menu-site-name">{{ siteName }}</a>
+                            {% if showBrandName %}
+                                <span class="menu-site-name">{{ siteName }}</span>
+                            {% endif %}
+                        </a>
                     {% endif %}
                 </div>
 
@@ -46,20 +54,20 @@
     </nav>
 {% else %}
     <nav class="hidden-print nav-simple">
-        {% if logo is not null %}
-            <p class="text-center">
-                <a href="{{ path('page_home') }}" aria-label="{{ siteName|default('Logo') }}">
-{# eager, never lazy: same reason as the menu logo above #}
-                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ siteName|default('Logo') }}" class="img" height="70" loading="eager" fetchpriority="high">
-                </a>
-            </p>
-        {% endif %}
-
+        {# One link around the logo and the name, as on the menu brand above: both point at the home page, and two adjacent links had a screen reader announce that destination twice #}
         {# site-navbar-show-name answers "show the name in the navbar", and this is the navbar a site with no menu blocks gets - the menu brand that usually carries the name is simply not on this branch #}
-        {% if showSiteName and siteName is not null %}
-            <p class="nav-simple-name">
-                <a href="{{ path('page_home') }}">{{ siteName }}</a>
-            </p>
+        {% if logo is not null or showBrandName %}
+            <a href="{{ path('page_home') }}" class="nav-simple-brand">
+                {% if logo is not null %}
+{# eager, never lazy: same reason as the menu logo above #}
+{# Decorative once the name is printed under it, both being inside the same link: an alt there would have the link read its own name twice #}
+                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}" class="img" height="70" loading="eager" fetchpriority="high">
+                {% endif %}
+
+                {% if showBrandName %}
+                    <span class="nav-simple-name">{{ siteName }}</span>
+                {% endif %}
+            </a>
         {% endif %}
     </nav>
 {% endif %}

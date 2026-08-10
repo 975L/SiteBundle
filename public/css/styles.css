@@ -267,6 +267,7 @@ summary {
   --form-input-color: #555;
   --font-title-weight: normal;
   --font-body-weight: normal;
+  --font-size-body: 1rem;
   --label-color: #808080;
   --link-color: var(--primary);
   --input-border-bottom-color: #bfbfbf;
@@ -403,6 +404,10 @@ main:has(+ footer) > :last-child {
   color: var(--text);
 }
 
+body {
+  font-size: var(--font-size-body);
+}
+
 h1,
 h2,
 h3,
@@ -417,33 +422,33 @@ h6 {
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: calc(2.5rem * var(--font-size-title-scale, 1));
 }
 
 h2 {
-  font-size: 2em;
+  font-size: calc(2rem * var(--font-size-title-scale, 1));
 }
 
 h3 {
-  font-size: 1.3em;
+  font-size: calc(1.3rem * var(--font-size-title-scale, 1));
 }
 
 h4 {
-  font-size: 1.2em;
+  font-size: calc(1.2rem * var(--font-size-title-scale, 1));
 }
 
 h5 {
-  font-size: 1.1em;
+  font-size: calc(1.1rem * var(--font-size-title-scale, 1));
 }
 
 h6 {
-  font-size: 1.05em;
+  font-size: calc(1.05rem * var(--font-size-title-scale, 1));
 }
 
 .lead {
   font-family: var(--font-family-title);
   color: var(--black);
-  font-size: 1.25em;
+  font-size: calc(1.25rem * var(--font-size-title-scale, 1));
   font-weight: bold;
 }
 
@@ -635,6 +640,14 @@ body.navbar-fixed {
   align-items: center;
 }
 
+.menu-brand-link {
+  display: flex;
+  align-items: center;
+}
+.menu-brand-link:hover, .menu-brand-link:focus, .menu-brand-link:visited:hover {
+  text-decoration: none;
+}
+
 .menu-logo {
   display: flex;
   align-items: center;
@@ -650,10 +663,6 @@ body.navbar-fixed {
   font-weight: bold;
   color: var(--navbar-site-name-color);
   margin-left: 0.5rem;
-}
-.menu-site-name:hover, .menu-site-name:focus, .menu-site-name:visited:hover {
-  color: var(--navbar-site-name-color);
-  text-decoration: none;
 }
 
 .menu-fixed .menu-site-tagline {
@@ -853,14 +862,19 @@ body.navbar-fixed {
   width: auto;
 }
 
+.nav-simple-brand {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nav-simple-brand:hover, .nav-simple-brand:focus, .nav-simple-brand:visited:hover {
+  text-decoration: none;
+}
+
 .nav-simple-name {
   font-size: 1.25rem;
   font-weight: bold;
   margin: 0.5rem 0 0;
-}
-
-.nav-simple-name a,
-.nav-simple-name a:hover {
   color: var(--navbar-site-name-color);
 }
 
@@ -984,6 +998,11 @@ footer .menu-items .blocks {
   justify-content: var(--footer-items-justify);
   flex-wrap: wrap;
   gap: 0.5rem 1.5rem;
+}
+
+footer .menu-items .blocks-group,
+footer .menu-items .blocks > :has(> .blocks-group) {
+  flex: 0 0 100%;
 }
 
 footer .menu-items--inline {

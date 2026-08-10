@@ -122,9 +122,16 @@ class NavbarHeightTest extends TestCase
         $fallback = substr($template, (int) strpos($template, '{% else %}'));
 
         $this->assertStringContainsString(
-            '{% if showSiteName and siteName is not null %}',
+            '{% if showBrandName %}',
             $fallback,
             'Navbar.html.twig drops site-navbar-show-name on the fallback navbar, where there is no menu brand to carry the name.'
+        );
+
+        // Both branches read it, so it has to be set above the one that only runs on the menu navbar
+        $this->assertStringContainsString(
+            '{% set showBrandName = showSiteName and siteName is not null %}',
+            substr($template, 0, (int) strpos($template, "{% if menu_blocks('navbar') is not empty %}")),
+            'Navbar.html.twig sets showBrandName inside a branch, leaving it undefined on the other one.'
         );
     }
 
@@ -133,7 +140,7 @@ class NavbarHeightTest extends TestCase
     public function testTheFallbackSiteNameKeepsTheSiteNameToken(string $file): void
     {
         $this->assertMatchesRegularExpression(
-            '/\.nav-simple-name a,\.nav-simple-name a:hover\{color:var\(--navbar-site-name-color\)\}/',
+            '/\.nav-simple-name\{[^}]*color:var\(--navbar-site-name-color\)\}/',
             $this->stylesheet($file),
             sprintf('"%s" no longer colors the fallback navbar\'s site name with its own token.', $file)
         );

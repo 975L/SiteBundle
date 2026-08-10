@@ -46,6 +46,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Diaporama mettant en avant une sélection d'articles</target>
             </trans-unit>
+            <trans-unit id="32ypfjD">
+                <source>block.menu_group</source>
+                <target>Groupe de menu</target>
+            </trans-unit>
+            <trans-unit id="AUyz4nM">
+                <source>block.menu_group_description</source>
+                <target>Regroupe plusieurs éléments d'un menu sur une ligne à eux (ex. les liens sociaux au-dessus des liens du footer)</target>
+            </trans-unit>
             <trans-unit id="PizX88K">
                 <source>block.menu_link</source>
                 <target>Lien de menu</target>

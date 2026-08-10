@@ -1,5 +1,49 @@
 # Changelog
 
+## v8.2.0
+
+A footer's items can be grouped on lines of their own
+
+- A footer menu's items can be grouped in a `menu_group`, each group taking a line of its own (10/08/2026)
+- `menu_group` reuses UiBundle's `block_group` form and template, restricted to the `menu` context (10/08/2026)
+- A `menu_link` declares the `menu_slot` context, so it can be picked and dragged into such a group (10/08/2026)
+- A `menu_link` is no longer offered in a container placed on a `Page`, nor a `menu_group` in a navbar (10/08/2026)
+- `BlockRegistry::isAllowedInContext()` reads the slot contexts off the registered containers (10/08/2026)
+- `MenuRepository::findOneByLocation()` joins the blocks' slots and the medias of both levels (10/08/2026)
+- `MenuExtension` preloads the target pages of the links held in a group, in the same batch (10/08/2026)
+- `MenuCacheInvalidationListener` watches `menu_group` too (10/08/2026)
+- The footer's copyright check looks into the groups too (10/08/2026)
+- A group carrying an animation keeps its own line, the rule reaching it through UiBundle's block wrapper (10/08/2026)
+- README documents the footer's grouping and the `menu_group` block (10/08/2026)
+- Added `FooterMenuGroupTest` (10/08/2026)
+- `MenuExtensionTest` and `MenuCacheInvalidationListenerTest` cover the grouped links (10/08/2026)
+- `site-navbar-position` is now a `choice` config listing `relative`, `sticky`, `fixed`, `static` and `absolute` (10/08/2026)
+- Requires `c975l/core-bundle` `^1.6` for the `choice` config kind (10/08/2026) [Needs db update]
+- `ConfigsJsonTest` checks the declared choices against `Navbar.html.twig`'s whitelist (10/08/2026)
+- `ConfigsJsonTest` requires every `choice` entry to declare its choices, default included (10/08/2026)
+- `SiteCreateCommand::ensureConfigDecryptable()` stops the wizard on sensitive config encrypted with another `C975L_VAULT_KEY` (10/08/2026)
+- The check mirrors `ConfigService::loadAll()`'s own condition (10/08/2026)
+- The error names the unreadable slugs and which `C975L_VAULT_KEY` line to replace (10/08/2026)
+- `SiteCreateCommandTest` covers the reported slugs and the values `loadAll()` skips (10/08/2026)
+- README documents the wizard's vault-key check (10/08/2026)
+- `MadeBy`/`HostedBy` follow their config's mode now - the logo, the name, both or nothing (10/08/2026)
+- Both components render `site-made-by-name`/`site-hosted-by-name`, as a link or as plain text without an url (10/08/2026)
+- `site-hosted-by-url`, `site-hosted-by-logo`, `display-made-by` and `display-hosted-by` are declared by ConfigBundle now (10/08/2026) [BC-Break]
+- The footer reads the two modes through `credits_mode()` (10/08/2026)
+- README documents the four credit modes (10/08/2026)
+- Added `CreditsModeTest` (10/08/2026)
+- Added `--font-size-body` to `sass/_variables.scss` and the scaffolded `themes/site.css` (10/08/2026)
+- `body` is sized off that token, nothing having declared its size until now (10/08/2026)
+- `h1`-`h6` and `.lead` are sized in `rem` off UiBundle's `--font-size-title-scale`, no longer in `em` (10/08/2026)
+- README documents the body font size token and what stays out of it (10/08/2026)
+- Added `BodyFontSizeTest` (10/08/2026)
+- The navbar logo and site name are wrapped in one link to the home page, on both bars (10/08/2026)
+- Added `.menu-brand-link` and `.nav-simple-brand`, neither underlined on hover (10/08/2026)
+- The logo's `alt` is emptied when the site name is printed beside it (10/08/2026)
+- `.menu-site-name` and `.nav-simple-name` are `<span>`s carrying their own color token (10/08/2026)
+- README documents the single brand link (10/08/2026)
+- Added `NavbarBrandLinkTest` (10/08/2026)
+
 ## v8.1.4
 
 The fallback navbar carries the site name too

@@ -46,6 +46,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Slideshow highlighting a selection of articles</target>
             </trans-unit>
+            <trans-unit id="32ypfjD">
+                <source>block.menu_group</source>
+                <target>Menu group</target>
+            </trans-unit>
+            <trans-unit id="AUyz4nM">
+                <source>block.menu_group_description</source>
+                <target>Groups several items of a menu on a line of their own (e.g. the social links above a footer's links)</target>
+            </trans-unit>
             <trans-unit id="PizX88K">
                 <source>block.menu_link</source>
                 <target>Menu link</target>

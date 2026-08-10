@@ -50,6 +50,18 @@ body.navbar-fixed {
     align-items: center;
 }
 
+// The single link wrapping the logo and the site name (see Navbar.html.twig). _links.scss repaints every hovered link in --link-color and underlines it; the brand is a label, not a body link, and the underline would otherwise be drawn through the name inside. ":visited:hover" is repeated here because the generic rule carries it too, and would otherwise outweigh a single pseudo-class
+.menu-brand-link {
+    display: flex;
+    align-items: center;
+
+    &:hover,
+    &:focus,
+    &:visited:hover {
+        text-decoration: none;
+    }
+}
+
 .menu-logo {
     display: flex;
     align-items: center;
@@ -65,16 +77,9 @@ body.navbar-fixed {
 .menu-site-name {
     font-size: 1.25rem;
     font-weight: bold;
+    // Its own token, declared on the element itself: it is a <span> inside .menu-brand-link now, so the --link-color the generic hover rule sets on that link would otherwise be inherited straight through it
     color: var(--navbar-site-name-color);
     margin-left: 0.5rem;
-
-    // _links.scss repaints every hovered link in --link-color and underlines it; the site name is a brand label, not a body link, so it keeps its own token. ":visited:hover" is repeated here because the generic rule carries it too, and would otherwise outweigh a single pseudo-class
-    &:hover,
-    &:focus,
-    &:visited:hover {
-        color: var(--navbar-site-name-color);
-        text-decoration: none;
-    }
 }
 
 // A fixed navbar gives back --navbar-height to the page, which is the bar's floor - the tagline would push it past that and slip content under the bar

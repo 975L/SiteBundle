@@ -249,9 +249,10 @@ On top of the generic block system provided by [c975L/UiBundle](https://github.c
 | --- | --- | --- |
 | `twig_content` | `label.category_twig` | Includes an existing Twig template by its path (`templatePath`, e.g. `pages/details/project.html.twig`) - a general-purpose "drop this template in here" block, not limited to the [collection item detail pages](#item-detail-pages) use case that motivated it. |
 | `articles_slider` | `label.category_navigation` | Picks another database page and renders its `article` blocks (that have at least one media) as a clickable slider, using the `<twig:c975LUi:Slider:Slider>` component from UiBundle. |
-| `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu`/`menu_navbar` contexts (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page` - and, `menu_navbar` being exclusive, it is the only kind a `navbar` offers at all. Not cacheable: its "active" state depends on the current request path. |
+| `menu_link` | `label.category_navigation` | A link to a published `Page` or a bundle-contributed route (see [Linking to a bundle's own route](#linking-to-a-bundles-own-route)); this is how `Menu` rows (navbar/footer/email-header/email-footer, see [Menus](#menus)) build their navigation, sortable alongside any other block. Restricted to the `menu`/`menu_navbar`/`menu_slot` contexts (UiBundle's `contexts` tag attribute, requires `c975l/ui-bundle` with context-aware `BlockRegistry::groupedByCategory()`), so it isn't offered when picking blocks for a `Page`, nor inside a container placed on one - and, `menu_navbar` being exclusive, it is the only kind a `navbar` offers at all. Not cacheable: its "active" state depends on the current request path. |
+| `menu_group` | `label.category_navigation` | A chromeless wrapper grouping several items of a menu on a line of their own, e.g. a footer's social links above its links (see [Footer: grouping items](#footer-grouping-items)). Reuses UiBundle's `block_group` form, template and `.blocks-group` markup, its own kind only so a menu's grouping stays out of a `Page`'s containers: it declares the `menu` context alone, which also keeps it out of a `navbar`. Its slots take the `menu_slot` context, where containers are excluded, so a group can never hold another group. |
 
-Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias. Like any `ui.block`, `menu_link` is `pickable: true` and has no context restriction, so it also shows up in a `Page`'s own block picker - harmless (it just renders a link) but not the intended use.
+Each block is registered as a `ui.block`-tagged service, with a dedicated form (`c975L\SiteBundle\Form\Block\*Type`) and template (`templates/blocks/*.html.twig`). The `articles_slider` block relies on the `site_page(id)` Twig function (`PageExtension`) to eager-load the target page along with its blocks and medias.
 
 ### Admin management
 
@@ -295,6 +296,8 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 
 A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
 
+Hovering a **footer** item as a `site-role-editor` user shows UiBundle's "Edit" button on it, the same one a `Page`'s blocks carry (see its README's `BlockEditUrlProviderInterface` section) — it opens the footer menu's edit screen with that very item's row already unfolded (`MenuBlockEditUrlProvider`). The `navbar` renders the same blocks but is deliberately left out: it is hovered on every single visit just to navigate, and a button popping over each of its links would be in the way rather than of help.
+
 ### Footer: display style
 
 The `footer` menu's edit screen carries one field of its own beyond its blocks — **Display style**, a `<select>` picking how its items are laid out (`Menu::$style`):
@@ -308,6 +311,14 @@ The `footer` menu's edit screen carries one field of its own beyond its blocks �
 The two classes **retune those very tokens** on the `.menu-items` element rather than writing `flex-direction` themselves (`sass/_footer.scss`), so one class is enough for both the wrapper and its `.blocks` child, and it beats what the theme left on `:root` — a declaration on the element always wins over an inherited one. Leaving the select on its placeholder stores `null` and adds no class at all, which is what every menu saved before the field existed holds: **a site that already picked its layout in `themes/site.css` keeps rendering exactly as it did**, and only starts following the backoffice once an admin picks a style there. Anything but the two known values is stored as `null` (`Menu::setStyle()`) — the value ends up in a class name, and an unknown one would only ever name a rule no stylesheet carries.
 
 No other location offers it: a navbar lays its items out on its own (stacked below 768px, inlined above), and both email menus render as one inline row whatever the site does. The choice is cached like the menu's blocks are (`menu_style()`, same `menus_all` tag), so it costs no query per page — `MenuCacheInvalidationListener` now watches the `Menu` row itself, which no `Block` event would ever signal.
+
+### Footer: grouping items
+
+A footer often needs more than one line: its social links on one, its legal links on the next. Any menu that takes the full picker (`footer` and both email locations, i.e. everything but the `navbar`) can therefore hold **`menu_group`** blocks — a chromeless wrapper around several other blocks, which takes a line of its own inside the footer's flex row (`footer .menu-items .blocks-group { flex: 0 0 100% }`, `sass/_footer.scss`). How the group itself lays its blocks out — row or column, and how they're justified — is picked on the group, UiBundle's `BlockGroupType` being reused as is.
+
+**`menu_group` is the only group a menu offers**, and UiBundle's own `block_group` — same form, same template — is not: a container is only offered in the `menu` context if it declared that context itself, and a `menu_link` only opts into `menu_group`'s slot context. A group taken from anywhere else would be picked happily, then refuse every link dropped into it. A footer composed before `menu_group` existed may still hold a `block_group`: it renders exactly as it did and keeps whatever it holds (social links, an image...), but a `menu_link` was never accepted in it and still isn't — group links in a `menu_group` instead.
+
+Items are moved in or out of a group by drag and drop, like any container's slots. A group can't hold another group, so the tree is always one level deep, which is what `Footer.html.twig` walks when it checks whether a "Copyright" link is already there. Editing a group (or a link) invalidates the cached menus through `MenuCacheInvalidationListener`, exactly as editing the `Menu` row does.
 
 `MenuExportProvider`/`MenuImportProvider` plug all four locations into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen — matched by `location` on import, same "whole Block collection replaced" approach as `PageImportProvider`.
 
@@ -333,7 +344,9 @@ A `menu_link` also has an optional `primary` checkbox (`MenuLinkType`) that rend
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).
 
-The navbar's CSS `position` is set via the `site-navbar-position` ConfigBundle key (`text`, one of `relative` (default), `sticky`, `fixed`, `static`, `absolute` — any other value is ignored), inlined as the `--navbar-position` custom property — `static` is written out as `relative`, the two being identical in the flow except that only the latter is a containing block for the dropdown hanging off the bar. `fixed` additionally adds `.menu-fixed` on the `<nav>` and a `navbar-fixed` class on `<body>` to compensate the space it frees from the normal flow; other values are left to the theme's own `--navbar-position` fallback.
+The logo and the name are wrapped in **one single link** to the home page (`.menu-brand-link` here, `.nav-simple-brand` on the fallback bar below), not two adjacent ones — a screen reader announced the same destination twice in a row. Both are `<span>`s inside it, so `.menu-logo`/`.menu-site-name`/`.nav-simple-name` stay the classes to style; the logo's `alt` is emptied when the name is printed beside it, the link already reading it.
+
+The navbar's CSS `position` is set via the `site-navbar-position` ConfigBundle key (`choice`, picked from `relative` (default), `sticky`, `fixed`, `static`, `absolute`), inlined as the `--navbar-position` custom property — `static` is written out as `relative`, the two being identical in the flow except that only the latter is a containing block for the dropdown hanging off the bar. `fixed` additionally adds `.menu-fixed` on the `<nav>` and a `navbar-fixed` class on `<body>` to compensate the space it frees from the normal flow; other values are left to the theme's own `--navbar-position` fallback.
 
 With no `navbar` Menu at all, the component falls back to the logo, centered, with the site name stacked under it (`.nav-simple-name`, subject to the same `site-navbar-show-name` key), on a `<nav class="nav-simple">` — that class, and not the bare `nav` element, is what `sass/_navbar.scss` styles, so an app rendering a `<nav>` of its own is left untouched by it.
 
@@ -572,6 +585,8 @@ The bar's own height comes from `--navbar-padding-y` (`8px`, the room kept above
 
 `--footer-items-direction`/`--footer-items-justify` are the one pair an admin can take over: the footer menu's own **Display style** select (see [Footer: display style](#footer-display-style)) retunes both on the `.menu-items` element, which wins over whatever this file left on `:root`. A design still sets them here for the layout a site ships with — the select's default is precisely "whatever the theme decided".
 
+`--font-size-body` is the size that copy is *read* at - a `text` block's paragraphs, a caption, an article, a legal page, a form, everything set in `--font-family-body` and left to inherit. Nothing declared it until now, so a site was read at whatever the browser defaults to (16px) and a design wanting a fuller body copy had nothing to turn. It defaults to `1rem`, i.e. exactly that, and is set in `rem` rather than `px` so a visitor who raised their browser's own font size is still followed. **Headings stay out of it**: `h1`-`h6` and `.lead` are sized in `rem`, laid out against the root rather than against the body copy, so raising this token opens up the paragraphs alone. They have a knob of their own instead, UiBundle's `--font-size-title-scale` (and `--font-size-eyebrow-scale` for the eyebrows), a factor applied to every title of the page at once — see [that bundle's readme](https://github.com/975L/UiBundle#colored-backgrounds) for why the titles move by a factor where the body copy moves by a size. UiBundle's own block titles, eyebrows and section texts are outside it too, being sized in `px` from `sass/_page-sections.scss` - a `feature_bar`'s items or a `cta_band`'s text follow their own scale, not this one. `BodyFontSizeTest` locks the token and the headings' unit in both compiled stylesheets and in the scaffolded `site.css`.
+
 `--reading-max-width` is the measure body copy is laid out on — `.legal div`, `.text`, `.site-article` and the sliders sharing that column — well under `--body-max-width`, which frames the page and never carries a line of text. It defaults to `min(75ch, 90vw)`, in `ch` so the measure follows the body font instead of drifting as it changes; a design that kept the previous 800px sets `--reading-max-width: min(800px, 90vw)` here.
 
 Rules that override a bundle's own classes belong in `app.css`, not in `theme.css` — the split is "values on one side, rules on the other", not "mine versus the bundle's".
@@ -600,14 +615,14 @@ The component renders nothing if either config value is missing. **Deliberately 
 
 ### HostedBy / MadeBy
 
-Set `site-hosted-by-url` + `site-hosted-by-logo` and/or `site-made-by-url` + `site-made-by-logo` in ConfigBundle, then include the components (typically in the footer):
+Set `site-hosted-by-url` + `site-hosted-by-logo` + `site-hosted-by-name` and/or their `site-made-by-*` counterparts in ConfigBundle, then include the components (typically in the footer):
 
 ```twig
 <twig:c975LSite:General:HostedBy/>
 <twig:c975LSite:General:MadeBy/>
 ```
 
-Each component renders nothing if either its URL or logo config value is missing.
+What each one shows is `display-hosted-by`/`display-made-by`, a choice between `none`, `logo`, `name` and `logo-name`, read through ConfigBundle's `credits_mode()` Twig function. A part the mode asks for but no config fills is skipped: `logo-name` with no name renders the logo alone, and a mode asking for a logo nobody set renders nothing. The logo also needs its URL (it goes through `<twig:c975LUi:Image:Link/>`), the name doesn't — without one it is plain text rather than a dead link.
 
 ### Preconnect
 
@@ -754,7 +769,12 @@ It walks through, in order:
    back-office uploads at runtime travels between environments through the content export/import,
    never through git, or the next deploy's working-tree reset would wipe it).
 2. **Default config** — runs `c975l:config:load-all` internally.
-3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet.
+3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet,
+   then stops if the database still holds sensitive config encrypted with another key (a reused
+   database, or an earlier run whose key was lost): the slugs are named right there, instead of the
+   config-values step dying on a bare "Decryption failed" thrown from inside the vault. Put the old
+   key back by replacing the `C975L_VAULT_KEY` line just written at the end of `.env.local` (Dotenv
+   keeps the last assignment), or empty those values, then re-run.
 4. **Admin account** — asks for an email and password (typed in clear text, not masked, so you can
    see what you're entering — it is never echoed back afterwards, including in the final summary),
    creates the user with `ROLE_ADMIN`, `isVerified = true`, `isEnabled = true`.

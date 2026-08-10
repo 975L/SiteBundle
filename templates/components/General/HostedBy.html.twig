@@ -1,13 +1,25 @@
 {# <twig:c975LSite:General:HostedBy/> #}
+{% set mode = credits_mode('display-hosted-by') %}
 {% set hostedByUrl = config('site-hosted-by-url') %}
 {% set hostedByLogo = config('site-hosted-by-logo') %}
-{% if hostedByUrl and hostedByLogo %}
+{% set hostedByName = config('site-hosted-by-name') %}
+{# Each half of the mode still needs the config feeding it: a mode asking for a name nobody filled in would render the "Hosted by" label on its own #}
+{% set showLogo = mode in ['logo', 'logo-name'] and hostedByLogo %}
+{% set showName = mode in ['name', 'logo-name'] and hostedByName %}
+{% set label = 'label.hosted_by'|trans({}, 'site') ~ (showName ? ' ' ~ hostedByName : '') %}
+{% if showLogo and hostedByUrl %}
     <twig:c975LUi:Image:Link
-        label="{{ 'label.hosted_by'|trans({}, 'site') }}"
+        label="{{ label }}"
         src="{{ hostedByLogo }}"
         url="{{ hostedByUrl }}"
         height="25"
         target="_blank"
         above="true"
     />
+{% elseif showName %}
+    {# No logo to hang the label on, and Image:Link needs a src - a plain link says the same thing. Same rule as that component for the url: without one this must not render as an <a> at all, a href="" being a dead link that still looks clickable #}
+    {% set tag = hostedByUrl ? 'a' : 'span' %}
+    <p class="text-center">
+        <{{ tag }}{% if hostedByUrl %} href="{{ hostedByUrl }}" target="_blank"{% endif %}>{{ label }}</{{ tag }}>
+    </p>
 {% endif %}
