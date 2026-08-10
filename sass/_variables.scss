@@ -113,6 +113,11 @@
     // Third, optional font role (badges/eyebrows/labels) - same admin-editable pattern as title/body
     --font-family-accent: var(--c975l-font-family-accent, monospace);
     --form-input-color: #555;
+    // Ink of a form label (UiBundle's sass/_forms.scss). Its own token, defaulting to the page's:
+    // --black flips to a near-white in dark mode, so a label follows the theme without being restated -
+    // but a design wanting its labels in another ink had to override --black itself, which also carries
+    // .lead and this file's own --navbar-text default
+    --form-label-color: var(--black);
     --font-title-weight: normal;
     --font-body-weight: normal;
     // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a

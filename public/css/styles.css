@@ -265,6 +265,7 @@ summary {
   --font-family-body: var(--c975l-font-family-body, sans-serif);
   --font-family-accent: var(--c975l-font-family-accent, monospace);
   --form-input-color: #555;
+  --form-label-color: var(--black);
   --font-title-weight: normal;
   --font-body-weight: normal;
   --font-size-body: 1rem;

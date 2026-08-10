@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.2.1
+
+A form label has its own ink token
+
+- Added `--form-label-color` to `sass/_variables.scss`, defaulting to `--black` (10/08/2026)
+- Requires a `c975l/core-bundle` offering the token in its scaffolded `ui.css` (10/08/2026)
+
 ## v8.2.0
 
 A footer's items can be grouped on lines of their own
