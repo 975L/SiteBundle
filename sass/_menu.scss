@@ -244,11 +244,11 @@ body.navbar-fixed {
     font-weight: bold;
 }
 
-// White text matches the mobile dropdown's colored (--primary) background - see desktop override below, where the navbar's own (light/translucent) background needs dark text instead
+// White stated, not read from --white which dark mode swaps with --black: the mobile dropdown keeps its --primary background in both modes - see the desktop override below, where the navbar's own light background needs dark text instead
 .menu-label {
     font-family: var(--font-family-title);
     font-size: 1rem;
-    color: var(--white);
+    color: #fff;
 }
 
 // Desktop styles

@@ -86,7 +86,8 @@
     --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y));
     // Footer layout/look - defaults match today's colored-band footer; a template can flip these to a plain, minimal footer (transparent background, muted text, items in a row) instead
     --footer-background: var(--primary);
-    --footer-text: var(--white);
+    // White stated, not read from --white: the band is --primary in both color modes (see sass/_theme-dark.scss, which leaves that color alone as a surface), where dark mode swaps --white with --black and left the whole footer written in near-black on it
+    --footer-text: #fff;
     --footer-text-hover: var(--footer-text);
     --footer-items-direction: column;
     --footer-items-justify: flex-start;

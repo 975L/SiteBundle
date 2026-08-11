@@ -16,6 +16,16 @@
                 "en": "The destination of a menu link is now picked from a plain list instead of a search field",
                 "fr": "La destination d'un lien de menu se choisit désormais dans une liste simple au lieu d'un champ de recherche",
                 "es": "El destino de un enlace de menú se elige ahora en una lista simple en lugar de un campo de búsqueda"
+            },
+            {
+                "en": "In dark mode, the footer's text and the mobile menu's labels stay white on their colored band, instead of turning almost black and becoming unreadable",
+                "fr": "En mode sombre, le texte du pied de page et les libellés du menu mobile restent blancs sur leur bandeau coloré, au lieu de devenir presque noirs et illisibles",
+                "es": "En modo oscuro, el texto del pie de página y las etiquetas del menú móvil se mantienen en blanco sobre su banda de color, en lugar de volverse casi negros e ilegibles"
+            },
+            {
+                "en": "Printing a page always gives black text on white paper now, even when the site is being read in dark mode - no more dark background eating the text and the printer's ink",
+                "fr": "L'impression d'une page donne désormais toujours du texte noir sur papier blanc, même lorsque le site est consulté en mode sombre - fini le fond sombre qui mangeait le texte et l'encre de l'imprimante",
+                "es": "La impresión de una página ofrece ahora siempre texto negro sobre papel blanco, incluso cuando el sitio se consulta en modo oscuro: se acabó el fondo oscuro que se comía el texto y la tinta de la impresora"
             }
         ]
     },

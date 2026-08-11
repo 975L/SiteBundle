@@ -38,7 +38,7 @@
     /* --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y)); */
 
     /* --footer-background: var(--primary); */
-    /* --footer-text: var(--white); */
+    /* --footer-text: #fff; */
     /* --footer-text-hover: var(--footer-text); */
     /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides both from the menu edit screen, its default being whatever these two are left at here */
     /* --footer-items-direction: column; */

@@ -59,6 +59,16 @@ class DarkThemeTextTokensTest extends TestCase
         }
     }
 
+    // The other side of that rule: ink on a ground staying --primary in both modes is a stated white, never var(--white), which dark mode swaps with --black and left the footer and the mobile dropdown's labels near-black on their own hue
+    #[DataProvider('stylesheetProvider')]
+    public function testInkOnAColoredBandIsAStatedWhite(string $file): void
+    {
+        $css = (string) preg_replace('/\s+/', '', $this->stylesheet($file));
+
+        $this->assertStringContainsString('--footer-text:#fff', $css, sprintf('"%s" has the footer band read a swappable token, which dark mode turns near-black on --primary.', $file));
+        $this->assertMatchesRegularExpression('/\.menu-label\{[^}]*color:#fff/', $css, sprintf('"%s" has the mobile dropdown\'s labels read a swappable token, which dark mode turns near-black on --primary.', $file));
+    }
+
     private function stylesheet(string $file): string
     {
         $path = \dirname(__DIR__) . '/public/css/' . $file;

@@ -248,7 +248,7 @@ summary {
   --navbar-content-height: 44px;
   --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y));
   --footer-background: var(--primary);
-  --footer-text: var(--white);
+  --footer-text: #fff;
   --footer-text-hover: var(--footer-text);
   --footer-items-direction: column;
   --footer-items-justify: flex-start;
@@ -820,7 +820,7 @@ body.navbar-fixed {
 .menu-label {
   font-family: var(--font-family-title);
   font-size: 1rem;
-  color: var(--white);
+  color: #fff;
 }
 
 @media screen and (min-width: 768px) {
@@ -1105,6 +1105,21 @@ footer a:visited:hover .img-above {
     width: 210mm;
     height: 297mm;
   }
+  html,
+  body,
+  *,
+  *::before,
+  *::after {
+    color: #000 !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  html,
+  body {
+    background-color: #fff !important;
+  }
   h1,
   h2,
   h3,
@@ -1130,7 +1145,6 @@ footer a:visited:hover .img-above {
   .container,
   .container-fluid {
     width: 100%;
-    background-color: var(--white);
   }
   a[href]::after {
     content: none;

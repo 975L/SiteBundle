@@ -558,6 +558,8 @@ Every change is compiled by **UiBundle's** `ThemeVariablesCssListener` (a Doctri
 
 `theme-mode: dark` (or `auto` following the visitor's OS preference via `prefers-color-scheme`) swaps in a dark palette (see `sass/_theme-dark.scss`); `theme-color-primary-dark-mode`/`-secondary-dark-mode` optionally override just the accent colors for dark mode, falling back to the light-mode ones otherwise.
 
+That palette swaps `--white` with `--black`, which is right for a surface that was white and turns dark, and wrong for ink laid on a ground staying colored in both modes: `--footer-text` and the mobile dropdown's `.menu-label` are a stated `#fff` rather than `var(--white)` for that reason — a design retuning the footer band's ink states its own value here the same way. `DarkThemeTextTokensTest` locks both. Printing is outside the modes altogether: the print sheet forces black ink on white paper with `!important`, pseudo-elements included, so a page read in dark mode doesn't print its own near-black ground.
+
 ### A site's own theme
 
 One site, one theme: there is no catalog to pick from, and nothing to switch between. `c975l:scaffold:install` copies editable theme files into `assets/styles/themes/`, and the app owns them from then on, never synced back from the bundle. Each holds tokens shipped commented out at their own default value: uncomment a line to take that value over; what stays commented keeps following the bundle, later changes to its default included, so the active lines are at a glance exactly what the design decides.

@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.2.4
+
+Ink stays readable in dark mode, on colored bands and in print
+
+- `--footer-text` is a stated `#fff` instead of `var(--white)` (11/08/2026)
+- The mobile dropdown's `.menu-label` does the same (11/08/2026)
+- The scaffold's `themes/site.css` ships `--footer-text` at its new default (11/08/2026)
+- The print sheet forces black ink on white paper, pseudo-elements included (11/08/2026)
+- A printed `.container` no longer reads `var(--white)` for its background (11/08/2026)
+- README documents the dark palette's `--white` swap and the print sheet (11/08/2026)
+- `DarkThemeTextTokensTest` covers the stated white (11/08/2026)
+- Added `PrintInkTest` (11/08/2026)
+
 ## v8.2.3
 
 A page can be laid on a ground of its own

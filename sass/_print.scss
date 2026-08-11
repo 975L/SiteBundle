@@ -15,6 +15,24 @@
         height: 297mm;
     }
 
+    // Black ink on white paper whatever the color mode the page was read in, stated with "!important" on the elements themselves as the dark theme restates the tokens at a higher specificity - pseudo-elements included, a hero's dark voile among them
+    html,
+    body,
+    *,
+    *::before,
+    *::after {
+        color: #000 !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    html,
+    body {
+        background-color: #fff !important;
+    }
+
     h1,
     h2,
     h3,
@@ -45,7 +63,6 @@
     .container,
     .container-fluid {
         width: 100%;
-        background-color: var(--white);
     }
 
     a[href]::after {
