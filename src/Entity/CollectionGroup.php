@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'site_collection_group')]
 #[UniqueEntity(fields: ['name'])]
 #[UniqueEntity(fields: ['slug'])]
-class CollectionGroup
+class CollectionGroup implements \Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

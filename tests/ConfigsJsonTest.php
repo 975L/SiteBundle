@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 // Guards config/configs.json, the list ConfigBundle seeds the backoffice from - an entry whose label/description has no translation shows up there as a raw "label.some_key" string
 class ConfigsJsonTest extends TestCase
 {
-    private const LOCALES = ['en', 'es', 'fr'];
+    private const array LOCALES = ['en', 'es', 'fr'];
 
     /**
      * @return array<int, array<string, mixed>>

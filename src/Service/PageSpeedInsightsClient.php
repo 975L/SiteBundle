@@ -19,8 +19,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 // Thin wrapper around Google's PageSpeed Insights v5 API (https://developers.google.com/speed/docs/insights/v5/get-started) - one HTTP call returns Lighthouse's 4 category scores plus the "errors-in-console" audit, avoiding a Node/Lighthouse-CLI dependency in a PHP-only stack. Used by SitePageHealthCheckProvider, only ever from the c975l:health-check:run command (never a request-time controller - a PSI call can take 10-30s)
 class PageSpeedInsightsClient
 {
-    private const ENDPOINT = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
-    private const CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo'];
+    private const string ENDPOINT = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
+    private const array CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo'];
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,

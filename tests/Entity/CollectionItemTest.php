@@ -18,7 +18,7 @@ class CollectionItemTest extends TestCase
 {
     private function collectionGroup(string $slug): CollectionGroup
     {
-        return (new CollectionGroup())->setName(ucfirst($slug))->setSlug($slug);
+        return new CollectionGroup()->setName(ucfirst($slug))->setSlug($slug);
     }
 
     public function testGetImageWidthIsAlways800(): void
@@ -30,7 +30,7 @@ class CollectionItemTest extends TestCase
 
     public function testGetVichMediaPathIncludesCollectionSlugAndUniqidWhenIdIsNotYetAssigned(): void
     {
-        $item = (new CollectionItem())->setCollectionGroup($this->collectionGroup('projects'));
+        $item = new CollectionItem()->setCollectionGroup($this->collectionGroup('projects'));
 
         $this->assertMatchesRegularExpression(
             '#^medias/site/collection-projects-[a-f0-9]+$#',
@@ -40,15 +40,15 @@ class CollectionItemTest extends TestCase
 
     public function testGetVichMediaPathUsesTheRealIdOnceAssigned(): void
     {
-        $item = (new CollectionItem())->setCollectionGroup($this->collectionGroup('projects'));
-        (new \ReflectionProperty(CollectionItem::class, 'id'))->setValue($item, 42);
+        $item = new CollectionItem()->setCollectionGroup($this->collectionGroup('projects'));
+        new \ReflectionProperty(CollectionItem::class, 'id')->setValue($item, 42);
 
         $this->assertSame('medias/site/collection-projects-42', $item->getVichMediaPath());
     }
 
     public function testToStringReturnsTheTitle(): void
     {
-        $item = (new CollectionItem())->setTitle('Papa Câlin');
+        $item = new CollectionItem()->setTitle('Papa Câlin');
 
         $this->assertSame('Papa Câlin', (string) $item);
     }
@@ -62,7 +62,7 @@ class CollectionItemTest extends TestCase
     {
         $collectionGroup = $this->collectionGroup('projects');
 
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($collectionGroup)
             ->setTitle('Papa Câlin')
             ->setSlug('papa-calin')

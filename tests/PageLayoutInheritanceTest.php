@@ -96,6 +96,6 @@ class PageLayoutInheritanceTest extends TestCase
             $templates[$name] = $content;
         }
 
-        return (new Environment(new ArrayLoader($templates)))->render('page');
+        return new Environment(new ArrayLoader($templates))->render('page');
     }
 }

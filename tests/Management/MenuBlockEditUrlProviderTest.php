@@ -60,7 +60,7 @@ class MenuBlockEditUrlProviderTest extends TestCase
     private function blockWithId(int $id): Block
     {
         $block = new Block();
-        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, $id);
+        new \ReflectionProperty(Block::class, 'id')->setValue($block, $id);
 
         return $block;
     }

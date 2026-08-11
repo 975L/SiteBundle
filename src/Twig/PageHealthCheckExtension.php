@@ -29,10 +29,11 @@ class PageHealthCheckExtension extends AbstractExtension
     ) {
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('page_health_check', [$this, 'getPanel']),
+            new TwigFunction('page_health_check', $this->getPanel(...)),
         ];
     }
 

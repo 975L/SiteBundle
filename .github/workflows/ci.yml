@@ -21,7 +21,7 @@ jobs:
               with:
                   php-version: '8.4'
                   coverage: pcov
-                  tools: phpcs, phpstan, php-cs-fixer
+                  tools: phpcs, phpstan, php-cs-fixer, rector
 
             # update rather than install: composer.lock is not versioned, and the bundles point at one another
             - name: Dépendances
@@ -39,6 +39,10 @@ jobs:
 
             - name: Analyse statique du scaffold
               run: composer stan-scaffold
+
+            # The scaffold is copied as is into the applications, where Rector runs over src/ on a Symfony migration: whatever is left to modernise here is rewritten there, and the rewritten file no longer matches the hash ScaffoldInstaller recorded - the site is then told forever it customized a file it never touched
+            - name: Modernisation
+              run: composer rector
 
             - name: Tests
               run: composer test -- --coverage-clover clover.xml

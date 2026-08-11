@@ -22,7 +22,7 @@ class CollectionItemSourceProviderTest extends TestCase
 {
     private function withId(CollectionGroup $collectionGroup, int $id): CollectionGroup
     {
-        (new \ReflectionProperty(CollectionGroup::class, 'id'))->setValue($collectionGroup, $id);
+        new \ReflectionProperty(CollectionGroup::class, 'id')->setValue($collectionGroup, $id);
 
         return $collectionGroup;
     }
@@ -37,8 +37,8 @@ class CollectionItemSourceProviderTest extends TestCase
 
     public function testGetSourcesExposesOneSourcePerCollectionGroup(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
-        $books = $this->withId((new CollectionGroup())->setName('Books')->setSlug('books'), 2);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
+        $books = $this->withId(new CollectionGroup()->setName('Books')->setSlug('books'), 2);
 
         $provider = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects, $books]),
@@ -54,16 +54,16 @@ class CollectionItemSourceProviderTest extends TestCase
 
     public function testCountDelegatesToCountByCollectionGroup(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
         $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
         $collectionItemRepository->method('countByCollectionGroup')->willReturn(12);
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
-        ))->getSources();
+        )->getSources();
 
         $this->assertSame(12, ($sources['site.collection.projects']['count'])());
     }
@@ -71,9 +71,9 @@ class CollectionItemSourceProviderTest extends TestCase
     // The resolved image URL comes from Vich's own asset helper (same as vich_uploader_asset() in Twig), not a raw filename - so it works whatever the mapping/storage resolves it to
     public function testItemsMapsEachItemToACollectionItemModel(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($projects)
             ->setTitle('Papa Câlin')
             ->setSlug('papa-calin')
@@ -86,11 +86,11 @@ class CollectionItemSourceProviderTest extends TestCase
         $uploaderHelper = $this->createStub(UploaderHelperInterface::class);
         $uploaderHelper->method('asset')->willReturn('/medias/site/collection-projects-42-abc.webp');
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $uploaderHelper,
-        ))->getSources();
+        )->getSources();
         $items = ($sources['site.collection.projects']['items'])(6);
 
         $this->assertCount(1, $items);
@@ -104,9 +104,9 @@ class CollectionItemSourceProviderTest extends TestCase
     // The "collection" block's title-link feature (see UiBundle's CollectionExtension) relies on this "detail" callable resolving the same slug items() exposed on the CollectionItem model
     public function testDetailResolvesAnItemScopedToItsOwnCollectionGroup(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($projects)
             ->setTitle('Papa Câlin')
             ->setSlug('papa-calin')
@@ -122,11 +122,11 @@ class CollectionItemSourceProviderTest extends TestCase
         $uploaderHelper = $this->createStub(UploaderHelperInterface::class);
         $uploaderHelper->method('asset')->willReturn('/medias/site/collection-projects-42-abc.webp');
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $uploaderHelper,
-        ))->getSources();
+        )->getSources();
         $detail = ($sources['site.collection.projects']['detail'])('papa-calin');
 
         $this->assertSame([
@@ -140,16 +140,16 @@ class CollectionItemSourceProviderTest extends TestCase
     // By convention, an unresolved slug falls through to null so the caller (PageController) can 404
     public function testDetailReturnsNullWhenSlugDoesNotResolve(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
         $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
         $collectionItemRepository->method('findOneByCollectionGroupAndSlug')->willReturn(null);
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
-        ))->getSources();
+        )->getSources();
 
         $this->assertNull(($sources['site.collection.projects']['detail'])('unknown-slug'));
     }
@@ -157,22 +157,22 @@ class CollectionItemSourceProviderTest extends TestCase
     // The unlimited list is fetched once and sliced in-memory for a given $limit, rather than passing it down to findByCollectionGroup() - lets a second call for the same collection (see below) reuse the same query
     public function testItemsSlicesToTheGivenLimitWithoutRequeryingFindByCollectionGroup(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
         $items = [
-            (new CollectionItem())->setCollectionGroup($projects)->setTitle('A'),
-            (new CollectionItem())->setCollectionGroup($projects)->setTitle('B'),
-            (new CollectionItem())->setCollectionGroup($projects)->setTitle('C'),
+            new CollectionItem()->setCollectionGroup($projects)->setTitle('A'),
+            new CollectionItem()->setCollectionGroup($projects)->setTitle('B'),
+            new CollectionItem()->setCollectionGroup($projects)->setTitle('C'),
         ];
 
         $collectionItemRepository = $this->createMock(CollectionItemRepository::class);
         $collectionItemRepository->expects($this->once())->method('findByCollectionGroup')->with($projects)->willReturn($items);
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
-        ))->getSources();
+        )->getSources();
         $items = ($sources['site.collection.projects']['items'])(2);
 
         $this->assertCount(2, $items);
@@ -183,17 +183,17 @@ class CollectionItemSourceProviderTest extends TestCase
     // Two "collection" blocks referencing the same collection (e.g. a teaser and a full listing) must not each trigger their own query - count()/items() are memoized per collection for the provider's lifetime
     public function testCountAndItemsAreMemoizedPerCollectionGroup(): void
     {
-        $projects = $this->withId((new CollectionGroup())->setName('Projects')->setSlug('projects'), 1);
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
 
         $collectionItemRepository = $this->createMock(CollectionItemRepository::class);
         $collectionItemRepository->expects($this->once())->method('countByCollectionGroup')->with($projects)->willReturn(3);
         $collectionItemRepository->expects($this->once())->method('findByCollectionGroup')->with($projects)->willReturn([]);
 
-        $sources = (new CollectionItemSourceProvider(
+        $sources = new CollectionItemSourceProvider(
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
-        ))->getSources();
+        )->getSources();
 
         ($sources['site.collection.projects']['count'])();
         ($sources['site.collection.projects']['count'])();

@@ -107,6 +107,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling entirely for the whole field. A whole page is one form - every block, every nested slot, every media in a single POST - so it is also the one that reaches PHP's max_input_vars first. Past that limit PHP drops the rest of the body silently, and the blocks that fell past the cut arrive as that same absent key: read as "the editor removed them", they are deleted for good. Nothing here can recover what PHP never parsed, so a short body is refused outright and said so, rather than half-saved. BlockType applies the same guard to a container's own slots.
+    #[\Override]
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -144,6 +145,7 @@ class PageCrudController extends AbstractCrudController
         return $formBuilder;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         // The "home" page's slug is fixed, it also serves as the site root (see redirect in PageController)
@@ -281,6 +283,7 @@ class PageCrudController extends AbstractCrudController
         ];
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $role = $this->configService->get('site-role-editor');
@@ -455,20 +458,16 @@ class PageCrudController extends AbstractCrudController
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'site'),
             ))
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, static function (Action $action): Action {
-                return $action
-                    ->setLabel(t('action.move_to_trash', [], 'site'))
-                    ->setIcon('fa fa-box-archive')
-                    ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
-                    ->displayIf(static fn (Page $page): bool => !$page->isDeleted());
-            })
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn (Action $action): Action => $action
+                ->setLabel(t('action.move_to_trash', [], 'site'))
+                ->setIcon('fa fa-box-archive')
+                ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
+                ->displayIf(static fn (Page $page): bool => !$page->isDeleted()))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
             ))
-            ->update(Crud::PAGE_DETAIL, Action::EDIT, static function (Action $action): Action {
-                return $action->displayIf(static fn (Page $page): bool => !$page->isDeleted());
-            })
+            ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn (Action $action): Action => $action->displayIf(static fn (Page $page): bool => !$page->isDeleted()))
             ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.view_on_site', [], 'site'),
@@ -508,6 +507,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Only lists non-deleted pages by default, or deleted ones when viewing the trash
+    #[\Override]
     public function createIndexQueryBuilder(
         SearchDto $searchDto,
         EntityDto $entityDto,
@@ -522,6 +522,7 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -534,6 +535,7 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -544,6 +546,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact
+    #[\Override]
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
         $page->setIsDeleted(true);
@@ -568,7 +571,7 @@ class PageCrudController extends AbstractCrudController
         // The page's own url would fall back to a plain 404 once the row is deleted - the 410 the trash served (see PageController::display()) only lasts as long as the page can still be restored. A "gone" Redirect keeps answering 410 for good, which search engines act on far faster. Skipped for "home", served at the site root that RedirectSubscriber leaves alone by design, and whenever a Redirect already covers that path: a target the admin set up deliberately says more than a dead end
         $fromPath = '/pages/' . $page->getSlug();
         if ('home' !== $page->getSlug() && null === $this->redirectRepository->findOneByFromPath($fromPath)) {
-            $entityManager->persist((new Redirect())->setFromPath($fromPath)->setGone(true));
+            $entityManager->persist(new Redirect()->setFromPath($fromPath)->setGone(true));
         }
 
         $entityManager->remove($page);
@@ -647,7 +650,7 @@ class PageCrudController extends AbstractCrudController
         $now = new \DateTime();
         $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
 
-        $copy = (new Page())
+        $copy = new Page()
             ->setTitle($source->getTitle() . ' (' . $suffix . ')')
             ->setSlug(UniqueSlug::build(
                 $this->slugger,
@@ -751,7 +754,7 @@ class PageCrudController extends AbstractCrudController
     // Clones a block (kind, data, animation, position) and its medias - used when duplicating a page
     private function cloneBlock(Block $source, ?UserInterface $user): Block
     {
-        $copy = (new Block())
+        $copy = new Block()
             ->setKind($source->getKind())
             ->setPosition($source->getPosition())
             ->setData($source->getData())
@@ -770,7 +773,7 @@ class PageCrudController extends AbstractCrudController
     // Clones a media row, including its physical file - reusing the existing file as the new Media's upload runs it back through Vich's normal pipeline (see UiMediaNamer/VichImageResizeListener), so the copy ends up with its own independent file rather than sharing the source's. Needs Vich's own ReplacingFile, not a plain File: UploadHandler::hasUploadedFile() only triggers the upload for an UploadedFile or a ReplacingFile, silently ignoring a plain File (leaving filename/size/mimeType null) - ReplacingFile exists precisely for "upload this already-on-disk file programmatically". removeReplacedFile defaults to false, so the source file is left untouched.
     private function cloneMedia(Media $source, ?UserInterface $user): Media
     {
-        $copy = (new Media())
+        $copy = new Media()
             ->setRole($source->getRole())
             ->setAlt($source->getAlt())
             ->setLabel($source->getLabel())
@@ -797,6 +800,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // New page - Builds a unique slug from a base string (slugified), appending -2, -3... on collision
+    #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
         $this->slugifyPage($page);
@@ -808,6 +812,7 @@ class PageCrudController extends AbstractCrudController
     }
 
     // Updated page - Resyncs the slug when the title changes, then creates a redirect from the old slug when it changes
+    #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
         $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($page);
@@ -869,7 +874,7 @@ class PageCrudController extends AbstractCrudController
         }
 
         $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
-            ?? (new Redirect())->setFromPath($fromPath);
+            ?? new Redirect()->setFromPath($fromPath);
 
         $redirect
             ->setToUrl($toUrl)
@@ -902,7 +907,7 @@ class PageCrudController extends AbstractCrudController
 
         $page = $context->getEntity()->getInstance();
 
-        $result = (new Builder())->build(
+        $result = new Builder()->build(
             data: $this->buildPageUrl($page),
             size: 250,
             margin: 10,

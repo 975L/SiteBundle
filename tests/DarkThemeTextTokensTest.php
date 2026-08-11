@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 class DarkThemeTextTokensTest extends TestCase
 {
     // Each reads --primary in light mode, and each paints text rather than a surface
-    private const TOKENS = ['--link-color', '--title-color', '--navbar-active-color', '--navbar-site-name-color'];
+    private const array TOKENS = ['--link-color', '--title-color', '--navbar-active-color', '--navbar-site-name-color'];
 
     /**
      * @return array<string, array{string}>

@@ -47,6 +47,7 @@ class MenuLinkTypeTest extends TypeTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getTypes(): array
     {
         return [new MenuLinkType($this->linkableRouteRegistry, $this->pageRepository, $this->translator, new BlockAnchorCollector())];
@@ -67,7 +68,7 @@ class MenuLinkTypeTest extends TypeTestCase
 
     private function withId(object $entity, int $id): object
     {
-        (new \ReflectionProperty($entity::class, 'id'))->setValue($entity, $id);
+        new \ReflectionProperty($entity::class, 'id')->setValue($entity, $id);
 
         return $entity;
     }
@@ -98,8 +99,8 @@ class MenuLinkTypeTest extends TypeTestCase
     public function testChoicesSharingALabelAreBothKept(): void
     {
         $this->withPages([
-            $this->withId((new Page())->setTitle('Galerie')->setIsPublished(true), 1),
-            $this->withId((new Page())->setTitle('Galerie')->setIsPublished(true), 2),
+            $this->withId(new Page()->setTitle('Galerie')->setIsPublished(true), 1),
+            $this->withId(new Page()->setTitle('Galerie')->setIsPublished(true), 2),
         ]);
         $this->linkableRoutes = ['gallery_index' => 'Galerie'];
 
@@ -114,7 +115,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // A published page's own title is used as-is for its "page:ID" choice
     public function testPublishedPageChoiceUsesItsOwnTitle(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
         $this->withPages([$page]);
 
         $form = $this->factory->create(MenuLinkType::class);
@@ -125,7 +126,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // Editors need to wire menu links while still drafting a page - it stays pickable, just flagged so it's not mistaken for a live link (MenuExtension::getMenuLinkUrl() resolves it to '' meanwhile)
     public function testUnpublishedPageChoiceIsFlaggedAsDraft(): void
     {
-        $page = $this->withId((new Page())->setTitle('Coming soon')->setIsPublished(false), 2);
+        $page = $this->withId(new Page()->setTitle('Coming soon')->setIsPublished(false), 2);
         $this->withPages([$page]);
 
         $form = $this->factory->create(MenuLinkType::class);
@@ -136,7 +137,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // A block carrying an "anchor" in its data (see UiBundle's BlockAnchorSlugger) adds a second, flat choice for that in-page section, alongside the page's own entry
     public function testPageWithAnchoredBlockAddsASectionChoice(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
         $page->addBlock($this->blockWithAnchor('services', 'Our services'));
         $this->withPages([$page]);
 
@@ -151,7 +152,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // Falls back to the raw anchor when the block has no title of its own (e.g. no TrixEditorType title)
     public function testAnchoredBlockWithoutTitleFallsBackToTheAnchorItself(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
         $page->addBlock($this->blockWithAnchor('contact'));
         $this->withPages([$page]);
 
@@ -166,7 +167,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // A TrixEditorType title may carry inline markup that must not leak into this plain-text select label
     public function testAnchoredBlockTitleIsStrippedOfMarkup(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
         $page->addBlock($this->blockWithAnchor('cta', '<strong>Call to action</strong>'));
         $this->withPages([$page]);
 
@@ -181,9 +182,9 @@ class MenuLinkTypeTest extends TypeTestCase
     // The sections of a page are often nested in a container ("flex_columns" and its slots), and a "text_section" carries its anchor as an auto-derived "slug" rendered as-is - both stayed invisible in this picker while it only walked top-level blocks reading "anchor"
     public function testAnchorsNestedInAContainerAreListed(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
-        $container = $this->withId((new Block())->setKind('flex_columns'), 58);
-        $section = $this->withId((new Block())->setKind('text_section'), 16);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
+        $container = $this->withId(new Block()->setKind('flex_columns'), 58);
+        $section = $this->withId(new Block()->setKind('text_section'), 16);
         $section->setData(['slug' => 'le-manifeste', 'title' => 'Le manifeste']);
         $container->addSlot($section);
         $page->addBlock($container);
@@ -200,7 +201,7 @@ class MenuLinkTypeTest extends TypeTestCase
     // A block whose "anchor" key is blank/missing contributes no extra choice
     public function testBlockWithoutAnchorAddsNoSectionChoice(): void
     {
-        $page = $this->withId((new Page())->setTitle('Home')->setIsPublished(true), 1);
+        $page = $this->withId(new Page()->setTitle('Home')->setIsPublished(true), 1);
         $page->addBlock($this->blockWithAnchor(''));
         $this->withPages([$page]);
 

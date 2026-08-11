@@ -31,7 +31,7 @@ class SiteEssentialActionProviderTest extends TestCase
                 }
 
                 $page = new Page();
-                (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 1);
+                new \ReflectionProperty(Page::class, 'id')->setValue($page, 1);
 
                 return $page;
             }

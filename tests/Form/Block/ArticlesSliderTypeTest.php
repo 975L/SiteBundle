@@ -22,7 +22,7 @@ class ArticlesSliderTypeTest extends TypeTestCase
 
     protected function setUp(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about');
+        $page = new Page()->setTitle('About')->setSlug('about');
         $this->pageRepository = $this->createStub(PageRepository::class);
         $this->pageRepository->method('findAllOrdered')->willReturn([$page]);
 
@@ -32,6 +32,7 @@ class ArticlesSliderTypeTest extends TypeTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getTypes(): array
     {
         return [new ArticlesSliderType($this->pageRepository)];

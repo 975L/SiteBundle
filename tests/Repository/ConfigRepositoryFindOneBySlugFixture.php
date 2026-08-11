@@ -22,6 +22,7 @@ class ConfigRepositoryFindOneBySlugFixture extends ConfigRepository
     {
     }
 
+    #[\Override]
     public function findOneBySlug(string $slug): ?Config
     {
         $this->requestedSlug = $slug;

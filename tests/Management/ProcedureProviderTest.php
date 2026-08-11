@@ -20,7 +20,7 @@ class ProcedureProviderTest extends TestCase
     {
         $rawEntries = json_decode(file_get_contents(\dirname(__DIR__, 2) . '/config/procedures.json'), true);
 
-        $entries = (new ProcedureProvider())->getProcedures();
+        $entries = new ProcedureProvider()->getProcedures();
 
         $this->assertCount(\count($rawEntries), $entries);
         $this->assertSame($rawEntries[0]['slug'], $entries[0]['slug']);

@@ -15,8 +15,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 // Scans a page's rendered HTML for resources fetched over plain http:// - exactly what a browser's own "mixed content" warning flags on an https:// page. A lightweight regex over the handful of resource-bearing attributes that matter, not a full DOM parse - no extra dependency needed for this. Never matches <a href>: a plain hyperlink isn't fetched by the browser, so it's never "mixed content"
 class MixedContentClient
 {
-    private const RESOURCE_TAG_PATTERN = '/<(?:img|script|iframe|source|audio|video)\b[^>]*\bsrc\s*=\s*["\'](http:\/\/[^"\']+)["\']/i';
-    private const STYLESHEET_PATTERN = '/<link\b[^>]*\brel\s*=\s*["\']stylesheet["\'][^>]*\bhref\s*=\s*["\'](http:\/\/[^"\']+)["\']/i';
+    private const string RESOURCE_TAG_PATTERN = '/<(?:img|script|iframe|source|audio|video)\b[^>]*\bsrc\s*=\s*["\'](http:\/\/[^"\']+)["\']/i';
+    private const string STYLESHEET_PATTERN = '/<link\b[^>]*\brel\s*=\s*["\']stylesheet["\'][^>]*\bhref\s*=\s*["\'](http:\/\/[^"\']+)["\']/i';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,

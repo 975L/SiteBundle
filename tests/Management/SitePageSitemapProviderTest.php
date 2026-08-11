@@ -63,7 +63,7 @@ class SitePageSitemapProviderTest extends TestCase
     // Each page is turned into an absolute URL, using its own priority/changeFrequency
     public function testGetUrlsBuildsAbsoluteUrlsFromPageAttributes(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about')->setPriority(7)->setChangeFrequency('daily');
+        $page = new Page()->setTitle('About')->setSlug('about')->setPriority(7)->setChangeFrequency('daily');
         $page->setModification(new \DateTime('2026-01-15'));
         $provider = $this->createProvider([$page], 'https://example.com');
 
@@ -82,7 +82,7 @@ class SitePageSitemapProviderTest extends TestCase
     // Ignored by the sitemap, these two are what ConfigBundle's SeoFilesWriter lists the pages in llms.txt from - the social network summary doubling as the page's meta description
     public function testGetUrlsCarriesTheTitleAndSummaryForLlmsTxt(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about')->setSummarySocialNetwork('Who we are');
+        $page = new Page()->setTitle('About')->setSlug('about')->setSummarySocialNetwork('Who we are');
         $page->setModification(new \DateTime('2026-01-15'));
 
         $urls = $this->createProvider([$page])->getUrls();
@@ -94,7 +94,7 @@ class SitePageSitemapProviderTest extends TestCase
     // A page with no explicit priority/changeFrequency falls back to sensible sitemap defaults
     public function testGetUrlsFallsBackToDefaultPriorityAndChangeFrequency(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home');
         $page->setModification(new \DateTime('2026-01-15'));
         $provider = $this->createProvider([$page]);
 
@@ -107,7 +107,7 @@ class SitePageSitemapProviderTest extends TestCase
     // A priority of 0 stays 0, not the default - an admin explicitly deprioritizing a page is not the same as never setting one
     public function testGetUrlsKeepsAnExplicitZeroPriority(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about')->setPriority(0);
+        $page = new Page()->setTitle('About')->setSlug('about')->setPriority(0);
         $page->setModification(new \DateTime('2026-01-15'));
 
         $this->assertSame(0, $this->createProvider([$page])->getUrls()[0]['priority']);
@@ -116,7 +116,7 @@ class SitePageSitemapProviderTest extends TestCase
     // The home page is declared at the site root, never as "/pages/home" - that form only 301s to the root, and a sitemap must not list redirects
     public function testGetUrlsDeclaresTheHomePageAtTheSiteRoot(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home');
         $page->setModification(new \DateTime('2026-01-15'));
         $provider = $this->createProvider([$page]);
 
@@ -126,9 +126,9 @@ class SitePageSitemapProviderTest extends TestCase
     // A page marked as non-indexable is left out entirely, the indexable ones around it aren't affected
     public function testGetUrlsSkipsNonIndexablePages(): void
     {
-        $indexable = (new Page())->setTitle('About')->setSlug('about');
+        $indexable = new Page()->setTitle('About')->setSlug('about');
         $indexable->setModification(new \DateTime('2026-01-15'));
-        $excluded = (new Page())->setTitle('Créer un compte')->setSlug('creer-un-compte')->setIsIndexable(false);
+        $excluded = new Page()->setTitle('Créer un compte')->setSlug('creer-un-compte')->setIsIndexable(false);
         $excluded->setModification(new \DateTime('2026-01-15'));
         $provider = $this->createProvider([$indexable, $excluded]);
 
@@ -141,7 +141,7 @@ class SitePageSitemapProviderTest extends TestCase
     // Pages are indexable unless explicitly opted out, so nothing is silently dropped from an existing sitemap
     public function testPagesAreIndexableByDefault(): void
     {
-        $this->assertTrue((new Page())->isIndexable());
+        $this->assertTrue(new Page()->isIndexable());
     }
 
     public function testGetUrlsReturnsEmptyArrayWhenNoPages(): void
@@ -152,7 +152,7 @@ class SitePageSitemapProviderTest extends TestCase
     // Without "site-url" configured, PagePublicUrlResolver can't build absolute urls, and a sitemap accepts nothing else
     public function testGetUrlsReturnsEmptyArrayWhenSiteUrlIsNotConfigured(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about');
+        $page = new Page()->setTitle('About')->setSlug('about');
         $page->setModification(new \DateTime('2026-01-15'));
 
         $this->assertSame([], $this->createProvider([$page], '')->getUrls());

@@ -18,7 +18,7 @@ class BlockFixtureProviderTest extends TestCase
     // "articles_slider" and "menu_link" are deliberately not covered - see the class comment. "legal_model" left with the models themselves: UiBundle ships its fixture now
     public function testGetFixturesCoversTwigContentOnly(): void
     {
-        $fixtures = (new BlockFixtureProvider())->getFixtures();
+        $fixtures = new BlockFixtureProvider()->getFixtures();
 
         $this->assertSame(['twig_content'], array_keys($fixtures));
         $this->assertSame([''], array_keys($fixtures['twig_content']));

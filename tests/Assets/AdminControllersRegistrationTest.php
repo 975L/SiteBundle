@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 // Guards assets/controllers-admin.js, the back-office Stimulus barrel - the repository has no browser to load it in, so a register line pointing at a file that isn't shipped only breaks in a consuming app, and it breaks the whole admin app at once
 class AdminControllersRegistrationTest extends TestCase
 {
-    private const ADMIN_BARREL = 'assets/controllers-admin.js';
+    private const string ADMIN_BARREL = 'assets/controllers-admin.js';
 
     // An import of a missing file aborts the module before startStimulusApp(), taking every other back-office controller down with it
     public function testEveryImportedControllerIsShipped(): void

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 class NavbarRuleScopeTest extends TestCase
 {
     // Each reads a --navbar-* token or draws the dropdown's own chrome, neither of which a footer wants
-    private const SCOPED = [
+    private const array SCOPED = [
         '.menu .menu-item',
         '.menu .menu-item.active',
         '.menu .menu-link:hover .menu-label',
@@ -26,13 +26,13 @@ class NavbarRuleScopeTest extends TestCase
     ];
 
     // Both repaint the pill's own label at the very weight the pill's rule carries, (0,3,0), so only source order keeps the pill's color on top
-    private const OUTWEIGHED_BY_ORDER = [
+    private const array OUTWEIGHED_BY_ORDER = [
         '.menu .menu-label',
         '.menu.is-scrolled .menu-label',
     ];
 
     // The bare form of each rule above that must not be left behind - ".menu-label" is out, the base rule sizing every label the site over deliberately carrying no scope
-    private const NEVER_BARE = [
+    private const array NEVER_BARE = [
         '.menu-item',
         '.menu-item.active',
         '.menu-link:hover .menu-label',

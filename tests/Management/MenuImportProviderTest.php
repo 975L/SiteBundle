@@ -74,7 +74,7 @@ class MenuImportProviderTest extends TestCase
     // An export predating the field carries no style at all, which puts the layout back where it was before it existed: the site's own theme
     public function testImportClearsTheStyleWhenTheExportCarriesNone(): void
     {
-        $existingMenu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+        $existingMenu = new Menu()->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
 
         $em = $this->createStub(EntityManagerInterface::class);
         $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
@@ -86,8 +86,8 @@ class MenuImportProviderTest extends TestCase
 
     public function testImportOverwritesAnExistingMenuAndReplacesItsBlocks(): void
     {
-        $existingBlock = (new Block())->setKind('menu_link')->setPosition(0)->setData(['label' => 'Old', 'url' => '/old']);
-        $existingMenu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR);
+        $existingBlock = new Block()->setKind('menu_link')->setPosition(0)->setData(['label' => 'Old', 'url' => '/old']);
+        $existingMenu = new Menu()->setLocation(Menu::LOCATION_NAVBAR);
         $existingMenu->addBlock($existingBlock);
 
         $em = $this->createStub(EntityManagerInterface::class);

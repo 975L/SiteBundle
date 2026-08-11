@@ -183,7 +183,7 @@ class CollectionItemImportCommand extends Command
         );
         $state['slugs'][] = $slug;
 
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($collectionGroup)
             ->setTitle($title)
             ->setSlug($slug)

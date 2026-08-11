@@ -18,13 +18,13 @@ class PageHealthCheckPanelTypeTest extends TestCase
 {
     public function testGetBlockPrefixMatchesTheFormThemeBlockName(): void
     {
-        $this->assertSame('c975l_page_health_check_panel', (new PageHealthCheckPanelType())->getBlockPrefix());
+        $this->assertSame('c975l_page_health_check_panel', new PageHealthCheckPanelType()->getBlockPrefix());
     }
 
     public function testConfigureOptionsMarksTheFieldUnmappedAndNotRequired(): void
     {
         $resolver = new OptionsResolver();
-        (new PageHealthCheckPanelType())->configureOptions($resolver);
+        new PageHealthCheckPanelType()->configureOptions($resolver);
 
         $options = $resolver->resolve();
 

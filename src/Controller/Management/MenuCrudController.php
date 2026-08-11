@@ -46,7 +46,7 @@ use function Symfony\Component\Translation\t;
 // Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
-    private const LOCATION_LABELS = [
+    private const array LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
         Menu::LOCATION_EMAIL_HEADER => 'label.email_header',
@@ -54,7 +54,7 @@ class MenuCrudController extends AbstractCrudController
     ];
 
     // Guards create(), the one action creating a Menu row (see the index template's own buttons)
-    private const CREATE_CSRF_TOKEN = 'site_menu_create';
+    private const string CREATE_CSRF_TOKEN = 'site_menu_create';
 
     public function __construct(
         private readonly ConfigServiceInterface $configService,
@@ -72,6 +72,7 @@ class MenuCrudController extends AbstractCrudController
     }
 
     // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling entirely for the field (see PageCrudController for the same trick)
+    #[\Override]
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -100,6 +101,7 @@ class MenuCrudController extends AbstractCrudController
         return $formBuilder;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -112,6 +114,7 @@ class MenuCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $role = $this->configService->get('site-role-editor');
@@ -139,6 +142,7 @@ class MenuCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
@@ -194,6 +198,7 @@ class MenuCrudController extends AbstractCrudController
     }
 
     // Hands the index template the locations no row exists for yet, each rendered as its own "create" button (see menu_crud_index.html.twig) - the whole replacement for the removed "new" form
+    #[\Override]
     public function index(AdminContext $context): KeyValueStore | Response
     {
         $responseParameters = parent::index($context);
@@ -222,7 +227,7 @@ class MenuCrudController extends AbstractCrudController
 
         $menu = $this->menuRepository->findOneByLocation($location);
         if (null === $menu) {
-            $menu = (new Menu())->setLocation($location);
+            $menu = new Menu()->setLocation($location);
             $entityManager->persist($menu);
             $entityManager->flush();
         }

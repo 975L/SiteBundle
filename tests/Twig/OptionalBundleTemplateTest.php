@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 class OptionalBundleTemplateTest extends TestCase
 {
     // Twig functions registered by SocialBundle alone, which composer.json only suggests
-    private const SUGGESTED_FUNCTIONS = [
+    private const array SUGGESTED_FUNCTIONS = [
         'social_link_block',
         'social_link_icon',
         'share_buttons',

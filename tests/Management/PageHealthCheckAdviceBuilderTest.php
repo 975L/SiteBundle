@@ -37,7 +37,7 @@ class PageHealthCheckAdviceBuilderTest extends TestCase
 
     private function createResult(string $kind, array $details, string $url = 'https://example.com/', ?string $editUrl = null): HealthCheckResult
     {
-        return (new HealthCheckResult())
+        return new HealthCheckResult()
             ->setKind($kind)
             ->setUrl($url)
             ->setEditUrl($editUrl)

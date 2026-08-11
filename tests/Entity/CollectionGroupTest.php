@@ -17,7 +17,7 @@ class CollectionGroupTest extends TestCase
 {
     public function testToStringReturnsTheName(): void
     {
-        $collectionGroup = (new CollectionGroup())->setName('Projects');
+        $collectionGroup = new CollectionGroup()->setName('Projects');
 
         $this->assertSame('Projects', (string) $collectionGroup);
     }
@@ -29,7 +29,7 @@ class CollectionGroupTest extends TestCase
 
     public function testSettersAreFluentAndGettersReflectTheirValue(): void
     {
-        $collectionGroup = (new CollectionGroup())
+        $collectionGroup = new CollectionGroup()
             ->setName('Projects')
             ->setSlug('projects');
 

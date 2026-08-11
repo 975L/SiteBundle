@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'site_page')]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity('slug')]
-class Page implements HasBlocksInterface
+class Page implements HasBlocksInterface, \Stringable
 {
     use HasBlocksTrait;
 

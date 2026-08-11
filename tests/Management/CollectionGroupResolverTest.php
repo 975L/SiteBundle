@@ -28,7 +28,7 @@ class CollectionGroupResolverTest extends TestCase
 
     public function testResolveReturnsTheExistingGroupMatchedBySlugAsNotNew(): void
     {
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
         $resolver = new CollectionGroupResolver($this->createRepository($projects), new AsciiSlugger());
 
         $usedSlugs = [];
@@ -55,7 +55,7 @@ class CollectionGroupResolverTest extends TestCase
     {
         $repository = $this->createStub(CollectionGroupRepository::class);
         $repository->method('findOneBySlug')->willReturnCallback(
-            static fn (string $slug): ?CollectionGroup => 'projects-2' === $slug ? (new CollectionGroup())->setName('Projects Legacy')->setSlug('projects-2') : null
+            static fn (string $slug): ?CollectionGroup => 'projects-2' === $slug ? new CollectionGroup()->setName('Projects Legacy')->setSlug('projects-2') : null
         );
         $resolver = new CollectionGroupResolver($repository, new AsciiSlugger());
 

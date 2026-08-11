@@ -40,6 +40,6 @@ class CollectionGroupResolver
         );
         $usedSlugs[$uniqueSlug] = true;
 
-        return [(new CollectionGroup())->setName($name)->setSlug($uniqueSlug), true];
+        return [new CollectionGroup()->setName($name)->setSlug($uniqueSlug), true];
     }
 }

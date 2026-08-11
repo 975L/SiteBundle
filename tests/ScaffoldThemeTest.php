@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class ScaffoldThemeTest extends TestCase
 {
     // Admin-editable from the backoffice, so listing them would hand the palette to this file's editor
-    private const ADMIN_EDITABLE = [
+    private const array ADMIN_EDITABLE = [
         '--primary',
         '--secondary',
         '--background',
@@ -29,7 +29,7 @@ class ScaffoldThemeTest extends TestCase
     ];
 
     // Written by JS on the element itself, never read off :root, so a value here would apply to nothing
-    private const RUNTIME_ONLY = [
+    private const array RUNTIME_ONLY = [
         '--image-compare-position',
         '--slider-freeflow-vw',
     ];
@@ -37,7 +37,7 @@ class ScaffoldThemeTest extends TestCase
     // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike.
     // Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all.
     // Same for "--slider-freeflow-item" and "--contact-details-gutter", declared on ".slider-freeflow" and ".contact-details" themselves, where the local declaration beats anything inherited from :root
-    private const NOT_THEMABLE = [
+    private const array NOT_THEMABLE = [
         '--c975l-color-background',
         '--c975l-color-primary',
         '--c975l-color-primary-dark-mode',
@@ -62,7 +62,7 @@ class ScaffoldThemeTest extends TestCase
     // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root would collapse the three variants into a single look (the scaffold's own header says as much).
     // Same for the card trio and for "--flip-card-accent", set inside each ".card--accent-*" and ".flip-card-accent-*" rule out of that hue's own token: a value in :root would head every unaccented card with it, and the text color and icon inversion that go with it only hold for the four light hues that carry dark text. What a design retunes is the twelve "--block-accent-*" the scaffold does offer, the hues these four merely point at.
     // Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included
-    private const PER_VARIANT = [
+    private const array PER_VARIANT = [
         '--section-background',
         '--section-text',
         '--section-text-soft',
@@ -80,7 +80,7 @@ class ScaffoldThemeTest extends TestCase
     // UiBundle's own directory, located through its bundle class rather than through "vendor/c975l/ui-bundle": it ships inside c975l/core-bundle, one directory deeper than that guess ever looked - same reasoning as ConfigBundle's BundleLocator, which reads it off the kernel at runtime
     public static function uiBundleDir(): string
     {
-        return dirname((string) (new \ReflectionClass(c975LUiBundle::class))->getFileName(), 2);
+        return dirname((string) new \ReflectionClass(c975LUiBundle::class)->getFileName(), 2);
     }
 
     // A. Every token the bundle declares is offered, so the file stays the single place to look

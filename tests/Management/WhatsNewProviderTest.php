@@ -20,7 +20,7 @@ class WhatsNewProviderTest extends TestCase
     {
         $rawEntries = json_decode(file_get_contents(\dirname(__DIR__, 2) . '/config/whatsnew.json'), true);
 
-        $entries = (new WhatsNewProvider())->getEntries();
+        $entries = new WhatsNewProvider()->getEntries();
 
         $this->assertCount(\count($rawEntries), $entries);
         $this->assertInstanceOf(\DateTimeImmutable::class, $entries[0]['date']);

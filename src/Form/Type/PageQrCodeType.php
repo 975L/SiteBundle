@@ -16,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 // Not bound to any real Page property - renders entirely through its own form theme block (c975l_page_qrcode_widget in page_crud_form_theme.html.twig), which reads the entity via the form's own data. Same "mapped: false" pattern as PageHealthCheckPanelType - keeps this inside the "Data" tab instead of appended below every tab regardless of which one is active
 class PageQrCodeType extends AbstractType
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'c975l_page_qrcode';

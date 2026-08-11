@@ -21,15 +21,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
 {
     // Kinds another bundle already writes advice for through its own HealthCheckAdviceProvider (here ConfigBundle's BackupHealthCheckAdviceProvider) - skipped silently rather than logged as unmapped, unknownKindAdvice() being there to catch a kind *nobody* advises on, not one this bundle simply has no business advising on
-    private const KINDS_ADVISED_ELSEWHERE = ['backup'];
+    private const array KINDS_ADVISED_ELSEWHERE = ['backup'];
 
     // Page property behind the meta description, as the form names it - what the "focusField" param carries so the advice line lands on that very textarea (see fieldFocusUrl(), and PageCrudController for the field itself)
-    private const DESCRIPTION_FIELD_NAME = 'summarySocialNetwork';
+    private const string DESCRIPTION_FIELD_NAME = 'summarySocialNetwork';
 
     // Same threshold PageSpeed/Lighthouse itself uses for its own green/orange split - a score in the orange band is still worth calling out, only red (<50) is truly urgent, but both get advice here since either falls short of "good"
-    private const PAGESPEED_GOOD_THRESHOLD = 90;
+    private const int PAGESPEED_GOOD_THRESHOLD = 90;
 
-    private const PAGESPEED_CATEGORY_LABELS = [
+    private const array PAGESPEED_CATEGORY_LABELS = [
         'performance' => 'label.health_check_gauge_performance',
         'accessibility' => 'label.health_check_gauge_accessibility',
         'best-practices' => 'label.health_check_gauge_best_practices',
@@ -159,7 +159,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     {
         return array_map(
             static fn (string $message): array => ['text' => $message, 'url' => null, 'label' => null],
-            array_values(array_filter(\is_array($messages) ? $messages : [], '\is_string')),
+            array_values(array_filter(\is_array($messages) ? $messages : [], \is_string(...))),
         );
     }
 
@@ -249,7 +249,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     // Listed by name rather than counted - "og:description, og:image" is the whole fix, there's nothing to expand into a collapsed list here
     private function socialTagsAdvice(array $details): array
     {
-        $tags = array_filter((array) ($details['missingSocialTags'] ?? []), '\is_string');
+        $tags = array_filter((array) ($details['missingSocialTags'] ?? []), \is_string(...));
 
         return $tags ? [$this->line('label.health_check_advice_social_tags', ['%tags%' => implode(', ', $tags)], null)] : [];
     }
@@ -289,7 +289,7 @@ class PageHealthCheckAdviceBuilder implements HealthCheckAdviceProviderInterface
     // Anything that isn't a list of detail arrays (an older result's plain count, a null) yields no items rather than a broken list
     private function itemList(mixed $details): array
     {
-        return \is_array($details) ? array_values(array_filter($details, '\is_array')) : [];
+        return \is_array($details) ? array_values(array_filter($details, \is_array(...))) : [];
     }
 
     // The block's own label as the link text, so the user knows where they'll land - a block-less image/link (one coming from the theme, the menu, a template) has no link at all, only its own text

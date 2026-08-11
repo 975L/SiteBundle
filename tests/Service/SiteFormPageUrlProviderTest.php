@@ -35,7 +35,7 @@ class SiteFormPageUrlProviderTest extends TestCase
     // The url of the page actually carrying the "form" block, so a form posts to its admin-editable slug rather than to the bare "ui_form_submit" route
     public function testReturnsTheUrlOfThePageCarryingTheForm(): void
     {
-        $page = (new Page())->setTitle('Contact')->setSlug('contact');
+        $page = new Page()->setTitle('Contact')->setSlug('contact');
 
         $this->assertSame('/page_display/contact', $this->createProvider($page)->getFormPageUrl('contact'));
     }

@@ -17,7 +17,7 @@ class ThemeStylesheetProviderTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (glob($this->projectDir . '/assets/styles/themes/*') ?: [] as $file) {
+        foreach ([...glob($this->projectDir . '/assets/styles/themes/*') ?: [], ...glob($this->projectDir . '/assets/styles/*.css') ?: []] as $file) {
             unlink($file);
         }
 
@@ -78,8 +78,43 @@ class ThemeStylesheetProviderTest extends TestCase
         $this->assertSame([], new ThemeStylesheetProvider($this->projectDir)->getStylesheets());
     }
 
+    // The site's own sheets are registered here too rather than imported from assets/app.js, which would put them in the import map, where AssetMapper addresses a CSS entry by a "data:application/javascript," URL the site's Content-Security-Policy blocks
+    public function testTheSiteOwnStylesheetsAreContributedAfterTheThemes(): void
+    {
+        $this->addTheme('ui.css');
+        $this->addStylesheet('app.css');
+
+        $stylesheets = new ThemeStylesheetProvider($this->projectDir)->getStylesheets();
+
+        $this->assertSame([
+            'assets/styles/themes/ui.css',
+            'assets/styles/app.css',
+        ], $stylesheets);
+    }
+
+    // app.css is where the design has the final word, so it has to be what the cascade reads last - a sheet sorting after it must not push it up
+    public function testTheAppStylesheetIsContributedLastWhateverTheAlphabetSays(): void
+    {
+        $this->addStylesheet('_block-showcase.css');
+        $this->addStylesheet('app.css');
+        $this->addStylesheet('typography.css');
+
+        $stylesheets = new ThemeStylesheetProvider($this->projectDir)->getStylesheets();
+
+        $this->assertSame([
+            'assets/styles/_block-showcase.css',
+            'assets/styles/typography.css',
+            'assets/styles/app.css',
+        ], $stylesheets);
+    }
+
     private function addTheme(string $name): void
     {
         file_put_contents($this->projectDir . '/assets/styles/themes/' . $name, ':root {}');
+    }
+
+    private function addStylesheet(string $name): void
+    {
+        file_put_contents($this->projectDir . '/assets/styles/' . $name, ':root {}');
     }
 }

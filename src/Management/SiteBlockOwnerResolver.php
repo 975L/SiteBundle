@@ -22,7 +22,7 @@ class SiteBlockOwnerResolver implements BlockOwnerResolverInterface
     public const TYPE_PAGE = 'page';
     public const TYPE_MENU = 'menu';
 
-    private const TYPES = [self::TYPE_PAGE, self::TYPE_MENU];
+    private const array TYPES = [self::TYPE_PAGE, self::TYPE_MENU];
 
     public function __construct(
         private readonly PageRepository $pageRepository,

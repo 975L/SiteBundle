@@ -53,7 +53,7 @@ class PageImportProvider implements ImportProviderInterface
     {
         $page = $this->pageRepository->findOneBy(['slug' => $item['slug']]);
         $isNew = null === $page;
-        $page ??= (new Page())->setCreation($now);
+        $page ??= new Page()->setCreation($now);
 
         $this->fillPage($page, $item, $now);
         $this->replaceBlocks($page, $item['blocks'] ?? [], $filesDir);

@@ -114,7 +114,7 @@ class SiteCreateCommandTest extends TestCase
 
         // The wizard goes on to prompt for the admin account, which is not what this locks - it stops on the unanswered prompt
         try {
-            (new CommandTester($this->createCommand(scaffoldInstaller: $installer)))->execute([]);
+            new CommandTester($this->createCommand(scaffoldInstaller: $installer))->execute([]);
         } catch (\Throwable) {
         }
 
@@ -266,7 +266,7 @@ class SiteCreateCommandTest extends TestCase
 
         $command = $this->createCommand(configRepository: $configRepository);
         $output = new BufferedOutput();
-        $decryptable = (new \ReflectionMethod($command, 'ensureConfigDecryptable'))
+        $decryptable = new \ReflectionMethod($command, 'ensureConfigDecryptable')
             ->invoke($command, new SymfonyStyle(new ArrayInput([]), $output), $vaultEncryptor);
 
         return $output->fetch();
@@ -288,7 +288,7 @@ class SiteCreateCommandTest extends TestCase
     {
         $command = $this->createCommand();
         $output = new BufferedOutput();
-        (new \ReflectionMethod($command, 'ensureManagementAccessControl'))
+        new \ReflectionMethod($command, 'ensureManagementAccessControl')
             ->invoke($command, new SymfonyStyle(new ArrayInput([]), $output));
 
         return $output->fetch();
@@ -306,7 +306,7 @@ class SiteCreateCommandTest extends TestCase
         $input->setStream($stream);
         $output = new BufferedOutput();
 
-        $result = (new \ReflectionMethod($command, 'createAdminUser'))->invoke($command, new SymfonyStyle($input, $output));
+        $result = new \ReflectionMethod($command, 'createAdminUser')->invoke($command, new SymfonyStyle($input, $output));
         $display = $output->fetch();
         fclose($stream);
 

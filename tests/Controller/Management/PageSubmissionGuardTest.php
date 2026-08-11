@@ -71,7 +71,7 @@ class PageSubmissionGuardTest extends TestCase
     // The PRE_SUBMIT closure of createEditFormBuilder(), read off the file itself
     private function preSubmitListener(): string
     {
-        $path = (string) (new \ReflectionClass(PageCrudController::class))->getFileName();
+        $path = (string) new \ReflectionClass(PageCrudController::class)->getFileName();
         $source = (string) file_get_contents($path);
 
         $start = strpos($source, 'public function createEditFormBuilder');

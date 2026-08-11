@@ -16,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 // Not bound to any real Page property - renders entirely through its own form theme block (c975l_page_health_check_panel_widget in page_health_check_panel_form_theme.html.twig), which computes everything itself from the entity via the page_health_check() Twig function. Same "mapped: false" pattern EasyAdmin's own FormField::addTab()/addPanel() use for their own non-property fields
 class PageHealthCheckPanelType extends AbstractType
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'c975l_page_health_check_panel';

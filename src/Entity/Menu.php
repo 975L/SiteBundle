@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MenuRepository::class)]
 #[ORM\Table(name: 'site_menu')]
-class Menu implements HasBlocksInterface
+class Menu implements HasBlocksInterface, \Stringable
 {
     use HasBlocksTrait;
 

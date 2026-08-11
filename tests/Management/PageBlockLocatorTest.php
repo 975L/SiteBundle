@@ -42,16 +42,16 @@ class PageBlockLocatorTest extends TestCase
 
     private function createBlock(int $id, string $kind, array $data = []): Block
     {
-        $block = (new Block())->setKind($kind)->setPosition(1)->setData($data);
-        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, $id);
+        $block = new Block()->setKind($kind)->setPosition(1)->setData($data);
+        new \ReflectionProperty(Block::class, 'id')->setValue($block, $id);
 
         return $block;
     }
 
     private function createPage(Block ...$blocks): Page
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 5);
+        $page = new Page()->setTitle('Home')->setSlug('home');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 5);
         foreach ($blocks as $block) {
             $page->addBlock($block);
         }
@@ -62,7 +62,7 @@ class PageBlockLocatorTest extends TestCase
     public function testLocateImageFindsTheBlockHoldingTheMedia(): void
     {
         $block = $this->createBlock(12, 'image');
-        $block->addMedia((new Media())->setFilename('beach-holiday.jpg'));
+        $block->addMedia(new Media()->setFilename('beach-holiday.jpg'));
 
         $located = $this->createLocator()->locateImage($this->createPage($this->createBlock(11, 'text'), $block), 'https://example.com/images/beach-holiday.jpg?1234');
 
@@ -74,7 +74,7 @@ class PageBlockLocatorTest extends TestCase
     public function testLocateImageMatchesAResizedVariantOfTheMedia(): void
     {
         $block = $this->createBlock(12, 'image');
-        $block->addMedia((new Media())->setFilename('beach-holiday.jpg'));
+        $block->addMedia(new Media()->setFilename('beach-holiday.jpg'));
 
         $located = $this->createLocator()->locateImage($this->createPage($block), '/media/cache/resolve/thumb/beach-holiday-800x600.jpg');
 
@@ -85,9 +85,9 @@ class PageBlockLocatorTest extends TestCase
     public function testLocateImageDoesNotMatchALongerFilenameSharingThePrefix(): void
     {
         $holder = $this->createBlock(12, 'image');
-        $holder->addMedia((new Media())->setFilename('photo-1.webp'));
+        $holder->addMedia(new Media()->setFilename('photo-1.webp'));
         $other = $this->createBlock(13, 'image');
-        $other->addMedia((new Media())->setFilename('photo-11.webp'));
+        $other->addMedia(new Media()->setFilename('photo-11.webp'));
 
         $located = $this->createLocator()->locateImage($this->createPage($holder, $other), '/uploads/photo-11.webp');
 

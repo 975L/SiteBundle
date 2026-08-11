@@ -21,7 +21,7 @@ class MenuProviderTest extends TestCase
     // The dashboard section this bundle contributes must carry the 'site' translation domain
     public function testGetMenuSectionReturnsLabelAndDomain(): void
     {
-        $section = (new MenuProvider())->getMenuSection();
+        $section = new MenuProvider()->getMenuSection();
 
         $this->assertSame('label.management', $section['label']);
         $this->assertSame('site', $section['translation_domain']);
@@ -30,7 +30,7 @@ class MenuProviderTest extends TestCase
     // Every CRUD entry this bundle contributes to the dashboard - all of them page-related, everything else having moved to the bundle owning it
     public function testGetMenusReturnsEveryContributedControllerEntry(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = new MenuProvider()->getMenus();
 
         $this->assertSame(PageCrudController::class, $menus['page']['controller']);
         $this->assertSame(MenuCrudController::class, $menus['menu']['controller']);
@@ -48,7 +48,7 @@ class MenuProviderTest extends TestCase
     // Day-to-day content items stay at the top level; setup-once/occasional-use screens are tucked into MenuBuilder's collapsed "Advanced" submenu (see MenuProviderInterface::getMenus())
     public function testAdvancedTierIsSetOnlyOnSetupOnceScreens(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = new MenuProvider()->getMenus();
 
         foreach (['page', 'collection'] as $essential) {
             $this->assertArrayNotHasKey('tier', $menus[$essential], $essential . ' should stay essential');
@@ -60,13 +60,13 @@ class MenuProviderTest extends TestCase
     // No non-CRUD screen of its own any more: the "Legal models" one moved to UiBundle along with the models
     public function testGetLinksContributesNothing(): void
     {
-        $this->assertSame([], (new MenuProvider())->getLinks());
+        $this->assertSame([], new MenuProvider()->getLinks());
     }
 
     // Every entry's 'description' reuses the exact same key as its own crud/index+crud/edit override template's explanatory text (see eg. page_crud_index.html.twig) - one text, not a separate onboarding-only string
     public function testGetMenusDescriptionReusesEachScreensOwnExplanatoryText(): void
     {
-        $menus = (new MenuProvider())->getMenus();
+        $menus = new MenuProvider()->getMenus();
 
         $this->assertSame('label.info_page', $menus['page']['description']);
         $this->assertSame('label.info_menu', $menus['menu']['description']);

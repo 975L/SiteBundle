@@ -27,11 +27,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SitePageHealthCheckProvider implements HealthCheckProviderInterface
 {
     // Lighthouse's own thresholds for its 0-100 category scores (see https://developer.chrome.com/docs/lighthouse/performance/performance-scoring)
-    private const SCORE_THRESHOLD_OK = 90;
-    private const SCORE_THRESHOLD_WARNING = 50;
+    private const int SCORE_THRESHOLD_OK = 90;
+    private const int SCORE_THRESHOLD_WARNING = 50;
 
     // Slug ConfigBundle stores the PSI API key under (see SiteBundle's config/configs.json) - kept as an optional key, so a missing one only lowers PSI's quota rather than disabling the check entirely
-    private const API_KEY_SLUG = 'healthcheck-pagespeed-api-key';
+    private const string API_KEY_SLUG = 'healthcheck-pagespeed-api-key';
 
     public function __construct(
         private readonly PageRepository $pageRepository,

@@ -16,12 +16,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class SmokeTestClient
 {
     // Any href/src pointing at a .css/.js file, cache-busting query string included. AssetMapper's filenames are hashed (app-EiPntxm.css) and so impossible to declare anywhere: reading them back out of the rendered HTML is the only way to check that asset-map:compile and StylesheetCacheWarmer both ran, and ran in the right order. A lightweight regex rather than a full DOM parse, same reasoning as MixedContentClient
-    private const ASSET_PATTERN = '/\b(?:href|src)\s*=\s*["\']([^"\']+\.(?:css|js)(?:\?[^"\']*)?)["\']/i';
+    private const string ASSET_PATTERN = '/\b(?:href|src)\s*=\s*["\']([^"\']+\.(?:css|js)(?:\?[^"\']*)?)["\']/i';
 
-    private const TIMEOUT = 30;
+    private const int TIMEOUT = 30;
 
     // A deployment purges var/cache/prod, so the very first request rebuilds it and can legitimately be slow - a plain timeout here would report a healthy site as broken
-    private const FIRST_BYTE_TIMEOUT = 60;
+    private const int FIRST_BYTE_TIMEOUT = 60;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,

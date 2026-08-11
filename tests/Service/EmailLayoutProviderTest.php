@@ -32,7 +32,7 @@ class EmailLayoutProviderTest extends TestCase
 
         $this->assertSame(
             '<html><body><p>Hello</p></body></html>',
-            (new EmailLayoutProvider($twig))->wrap('<p>Hello</p>')
+            new EmailLayoutProvider($twig)->wrap('<p>Hello</p>')
         );
     }
 }

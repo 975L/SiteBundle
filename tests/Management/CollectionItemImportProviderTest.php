@@ -63,7 +63,7 @@ class CollectionItemImportProviderTest extends TestCase
     public function testImportCreatesANewCollectionItemFromTheExtractedZipFile(): void
     {
         $filesDir = $this->createFilesDir('files/project-cover.jpg', 'fake-image-bytes');
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
 
         $persisted = [];
         $em = $this->createStub(EntityManagerInterface::class);
@@ -170,7 +170,7 @@ class CollectionItemImportProviderTest extends TestCase
     // Resolving by normalized slug rather than exact name means a name that only differs in casing/punctuation still matches the existing collection instead of creating a duplicate - see CollectionItemImportCommand's own equivalent test, both now share CollectionGroupResolver
     public function testImportMatchesAnExistingCollectionGroupBySlugRegardlessOfNameVariation(): void
     {
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
 
         $repository = $this->createStub(CollectionGroupRepository::class);
         $repository->method('findOneBySlug')->willReturnCallback(
@@ -255,8 +255,8 @@ class CollectionItemImportProviderTest extends TestCase
     public function testImportOverwritesAnExistingItemsFile(): void
     {
         $filesDir = $this->createFilesDir('files/project-cover.jpg', 'new-image-bytes');
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
-        $existing = (new CollectionItem())->setCollectionGroup($projects)->setTitle('My Project')->setSlug('my-project')->setPosition(0);
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
+        $existing = new CollectionItem()->setCollectionGroup($projects)->setTitle('My Project')->setSlug('my-project')->setPosition(0);
 
         $provider = new CollectionItemImportProvider(
             $this->createStub(EntityManagerInterface::class),
@@ -286,7 +286,7 @@ class CollectionItemImportProviderTest extends TestCase
 
     public function testImportCreatesAnItemWithNoFileWhenExportCarriedNone(): void
     {
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
 
         $persisted = [];
         $em = $this->createStub(EntityManagerInterface::class);

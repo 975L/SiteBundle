@@ -165,7 +165,7 @@ class SiteGuidedProjectProviderTest extends TestCase
     private function renderedActionNames(): array
     {
         $names = [];
-        foreach ((new \ReflectionClass(Action::class))->getConstants() as $constant => $value) {
+        foreach (new \ReflectionClass(Action::class)->getConstants() as $constant => $value) {
             if (\is_string($value) && !str_starts_with($constant, 'TYPE_')) {
                 $names[] = $value;
             }

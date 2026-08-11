@@ -114,7 +114,7 @@ class PageControllerTest extends TestCase
     // The home page is rendered when the 'home' slug resolves to a Page
     public function testHomeRendersPageWhenFound(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home');
         $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
 
         $response = $controller->home(new Request());
@@ -135,7 +135,7 @@ class PageControllerTest extends TestCase
     // A "collection" block rendered on the home page (route "/", no "{page}" route parameter unlike page_display's "/pages/{page}") must still be able to resolve its own items' detail links
     public function testHomeSetsPageRequestAttributeToHomeForCollectionBlockDetailLinks(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home');
         $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
 
         $request = new Request();
@@ -167,7 +167,7 @@ class PageControllerTest extends TestCase
     // Both forms used to answer 200 with the same content, leaving the crawler two urls for one page
     public function testDisplayRedirectsATrailingSlashToTheSlashlessUrl(): void
     {
-        $page = (new Page())->setTitle('Blocks')->setSlug('blocks')->setIsPublished(true);
+        $page = new Page()->setTitle('Blocks')->setSlug('blocks')->setIsPublished(true);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['blocks' => $page]),
             $this->createConfigService(),
@@ -183,7 +183,7 @@ class PageControllerTest extends TestCase
     // A deleted page yields a 410 Gone, not a plain 404 - lets clients/search engines know it's permanent
     public function testDisplayThrowsGoneWhenPageIsDeleted(): void
     {
-        $page = (new Page())->setTitle('Gone')->setSlug('gone')->setIsPublished(true)->setIsDeleted(true);
+        $page = new Page()->setTitle('Gone')->setSlug('gone')->setIsPublished(true)->setIsDeleted(true);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['gone' => $page]),
             $this->createConfigService(),
@@ -196,7 +196,7 @@ class PageControllerTest extends TestCase
     // An unpublished (draft) page is not publicly visible: 404, same as if it didn't exist
     public function testDisplayThrowsNotFoundWhenPageIsUnpublished(): void
     {
-        $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $page = new Page()->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['draft' => $page]),
             $this->createConfigService(),
@@ -216,7 +216,7 @@ class PageControllerTest extends TestCase
 
     public function testDisplayRendersPublishedNonDeletedPage(): void
     {
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['about' => $page]),
             $this->createConfigService(),
@@ -231,14 +231,14 @@ class PageControllerTest extends TestCase
     // No exact Page for "catalog/item-1", but "catalog" exists with a "collection" block (source + detailPage) - the item slug resolves against the source's own "detail" callable, then the SEPARATE detail Page's own blocks render normally, with no dedicated Page/Block per item
     public function testDisplayResolvesCollectionDetailFromASeparateDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'catalog-detail',
         ]));
 
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
-        $detailPage->addBlock((new Block())->setKind('twig_content')->setData(['templatePath' => 'demo/detail.html.twig']));
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage->addBlock(new Block()->setKind('twig_content')->setData(['templatePath' => 'demo/detail.html.twig']));
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturnCallback(
@@ -281,18 +281,18 @@ class PageControllerTest extends TestCase
     // A page can carry more than one "collection" block, each with its own source/detailPage - only the one whose source actually resolves the item slug must win, not just the last one on the page (the matching block is deliberately NOT last here, so a "last one wins" regression would 404)
     public function testDisplayResolvesTheCollectionBlockWhoseSourceMatchesWhenThePageHasSeveral(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.team',
             'detailPage' => 'team-detail',
         ]));
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.projects',
             'detailPage' => 'project-detail',
         ]));
 
-        $projectDetailPage = (new Page())->setTitle('Project detail')->setSlug('project-detail')->setIsPublished(true);
-        $teamDetailPage = (new Page())->setTitle('Team detail')->setSlug('team-detail')->setIsPublished(true);
+        $projectDetailPage = new Page()->setTitle('Project detail')->setSlug('project-detail')->setIsPublished(true);
+        $teamDetailPage = new Page()->setTitle('Team detail')->setSlug('team-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturnCallback(
@@ -335,13 +335,13 @@ class PageControllerTest extends TestCase
     // The item's data is exposed to the detail Page's own blocks via the "collectionItem" Twig global (CollectionItemContext), not passed as this render's own $context
     public function testDisplaySetsTheCollectionItemContextBeforeRenderingTheDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'catalog-detail',
         ]));
 
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
@@ -383,12 +383,12 @@ class PageControllerTest extends TestCase
     // The item slug's title (from the source's own "detail" data) is forwarded as "detailTitle", so that URL's <title> reflects the item, not the parent Page's own generic one
     public function testDisplayForwardsTheItemsOwnTitleAsDetailTitle(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
@@ -423,8 +423,8 @@ class PageControllerTest extends TestCase
     // No "detailPage" set on the "collection" block: nothing tells resolveCollectionDetail() which Page renders the detail view, so this falls through to a plain 404 - same as an unknown parent slug
     public function testDisplayThrowsNotFoundWhenTheCollectionBlockHasNoDetailPage(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData(['source' => 'app.collection.demo']));
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData(['source' => 'app.collection.demo']));
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
@@ -442,8 +442,8 @@ class PageControllerTest extends TestCase
     // "detailPage" is set but no Page exists with that slug (e.g. a typo, or it was deleted): falls through to a 404 rather than an error
     public function testDisplayThrowsNotFoundWhenTheDetailPageDoesNotExist(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'does-not-exist',
         ]));
@@ -464,12 +464,12 @@ class PageControllerTest extends TestCase
     // The source resolves no item for this slug: falls through to a 404
     public function testDisplayThrowsNotFoundWhenTheSourceResolvesNoItem(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(null);
@@ -499,7 +499,7 @@ class PageControllerTest extends TestCase
     // An editor can preview a draft (unpublished) page - display() would 404 it, preview() must not
     public function testPreviewRendersUnpublishedPageAsPrivateResponse(): void
     {
-        $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $page = new Page()->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['draft' => $page]),
             $this->createConfigService(),
@@ -514,7 +514,7 @@ class PageControllerTest extends TestCase
     // A deleted page still can't be previewed, even by an editor
     public function testPreviewThrowsNotFoundWhenPageIsDeleted(): void
     {
-        $page = (new Page())->setTitle('Gone')->setSlug('gone')->setIsPublished(true)->setIsDeleted(true);
+        $page = new Page()->setTitle('Gone')->setSlug('gone')->setIsPublished(true)->setIsDeleted(true);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['gone' => $page]),
             $this->createConfigService(),
@@ -535,12 +535,12 @@ class PageControllerTest extends TestCase
     // An editor can preview an unpublished parent Page's own collection detail views too, before publishing anything - same resolveCollectionDetail() fallback as display()
     public function testPreviewResolvesCollectionDetailForAnUnpublishedParentPage(): void
     {
-        $parent = (new Page())->setTitle('Catalog')->setSlug('catalog')->setIsPublished(false);
-        $parent->addBlock((new Block())->setKind('collection')->setData([
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(false);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
             'source' => 'app.collection.demo',
             'detailPage' => 'catalog-detail',
         ]));
-        $detailPage = (new Page())->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
 
         $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
         $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
@@ -578,7 +578,7 @@ class PageControllerTest extends TestCase
     // Regression guard on the removed theme preset catalog: ?preset is an ordinary, unknown query param now, neither read by the controller nor handed to the template - a site has one theme of its own (assets/styles/themes/theme.css), there is nothing left to preview against
     public function testPreviewPassesNoThemePresetToTheTemplate(): void
     {
-        $page = (new Page())->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $page = new Page()->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
         $controller = $this->createController(
             $this->createPageService(forDisplayBySlug: ['draft' => $page]),
             $this->createConfigService(),

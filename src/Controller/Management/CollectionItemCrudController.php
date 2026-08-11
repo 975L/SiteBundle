@@ -64,6 +64,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // Items only ever make sense scoped to one collection - without a resolvable ?collectionGroup=<id>, bounces back to CollectionCrudController's own list instead of showing an ambiguous/empty grid
+    #[\Override]
     public function index(AdminContext $context): KeyValueStore | Response
     {
         if (null === $this->currentCollectionGroup()) {
@@ -74,6 +75,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // Same guard as index() - reachable directly (e.g. a stale bookmark) without ever having browsed into a collection first
+    #[\Override]
     public function new(AdminContext $context): KeyValueStore | Response
     {
         if (null === $this->currentCollectionGroup()) {
@@ -91,6 +93,7 @@ class CollectionItemCrudController extends AbstractCrudController
             ->generateUrl());
     }
 
+    #[\Override]
     public function createIndexQueryBuilder(...$args): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder(...$args)
@@ -105,6 +108,7 @@ class CollectionItemCrudController extends AbstractCrudController
         return $qb;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -121,6 +125,7 @@ class CollectionItemCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $role = $this->configService->get('site-role-editor');
@@ -172,7 +177,7 @@ class CollectionItemCrudController extends AbstractCrudController
             throw $this->createAccessDeniedException();
         }
 
-        $ids = array_map('intval', (array) ($payload['ids'] ?? []));
+        $ids = array_map(intval(...), (array) ($payload['ids'] ?? []));
         $itemsById = $this->itemsScopedToCollection($ids, (int) ($payload['collectionGroup'] ?? 0));
 
         foreach (array_values($ids) as $position => $id) {
@@ -198,6 +203,7 @@ class CollectionItemCrudController extends AbstractCrudController
         return $itemsById;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -239,6 +245,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // New item - the collection it belongs to always comes from the browsed context, never from the form itself (see currentCollectionGroup()). Must happen here rather than in persistEntity(), since EasyAdmin validates the form against the entity built by createEntity() before persistEntity() ever runs.
+    #[\Override]
     public function createEntity(string $entityFqcn): CollectionItem
     {
         $collectionItem = new CollectionItem();
@@ -247,6 +254,7 @@ class CollectionItemCrudController extends AbstractCrudController
         return $collectionItem;
     }
 
+    #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
         $this->slugifyItem($collectionItem);
@@ -255,6 +263,7 @@ class CollectionItemCrudController extends AbstractCrudController
     }
 
     // Updated item - re-slugifies in case the slug was hand-edited into something colliding within its own collection
+    #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
         $this->slugifyItem($collectionItem);

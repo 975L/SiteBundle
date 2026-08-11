@@ -16,10 +16,10 @@ use PHPUnit\Framework\TestCase;
 class ReadingMeasureTest extends TestCase
 {
     // As it reads once normalized: the space following each comma is squeezed out along with the rest
-    private const MEASURE = 'max-width:var(--reading-max-width,min(75ch,90vw))';
+    private const string MEASURE = 'max-width:var(--reading-max-width,min(75ch,90vw))';
 
     // ".legal div" left with the legal models themselves: UiBundle now states the same measure for them
-    private const MEASURED_SELECTORS = ['.text', '.site-article'];
+    private const array MEASURED_SELECTORS = ['.text', '.site-article'];
 
     /**
      * @return array<string, array{string}>

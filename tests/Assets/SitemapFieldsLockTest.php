@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 // Guards assets/js/sitemap-fields.js, which dims and blocks the sitemap fields a page's state makes meaningless - the repository has no browser to run it in, and the back-office layout carries a nonce on style-src, under which anything the controller writes to a style attribute is silently dropped
 class SitemapFieldsLockTest extends TestCase
 {
-    private const CONTROLLER = 'assets/js/sitemap-fields.js';
+    private const string CONTROLLER = 'assets/js/sitemap-fields.js';
 
     // .ui-field-locked comes from UiBundle's management.css (sass/management/_form-fields.scss), hence the c975l/core-bundle floor in composer.json
     public function testTheLockedStateIsCarriedByTheSharedClass(): void

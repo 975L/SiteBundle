@@ -24,8 +24,8 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class ArticleBlockCacheInvalidationListener extends AbstractBlockCacheInvalidationListener
 {
     public function __construct(
-        private PageRepository $pageRepository,
-        private TagAwareCacheInterface $cache,
+        private readonly PageRepository $pageRepository,
+        private readonly TagAwareCacheInterface $cache,
     ) {
     }
 

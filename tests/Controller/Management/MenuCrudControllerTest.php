@@ -212,7 +212,7 @@ class MenuCrudControllerTest extends TestCase
     public function testConfigureFieldsOffersTheStyleChoiceOnTheFooter(): void
     {
         $controller = $this->createController(
-            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation(Menu::LOCATION_FOOTER)))
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation(Menu::LOCATION_FOOTER)))
         );
 
         $style = $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'style');
@@ -231,7 +231,7 @@ class MenuCrudControllerTest extends TestCase
     {
         foreach ([Menu::LOCATION_NAVBAR, Menu::LOCATION_EMAIL_HEADER, Menu::LOCATION_EMAIL_FOOTER] as $location) {
             $controller = $this->createController(
-                adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation($location)))
+                adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation($location)))
             );
 
             $this->assertNull(
@@ -256,7 +256,7 @@ class MenuCrudControllerTest extends TestCase
     public function testConfigureFieldsBlocksUseTheNavbarRestrictedContextForTheNavbar(): void
     {
         $controller = $this->createController(
-            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation(Menu::LOCATION_NAVBAR)))
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation(Menu::LOCATION_NAVBAR)))
         );
 
         $blocks = $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'blocks');
@@ -268,7 +268,7 @@ class MenuCrudControllerTest extends TestCase
     public function testConfigureFieldsBlocksUseTheFullMenuContextForOtherLocations(): void
     {
         $controller = $this->createController(
-            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext((new Menu())->setLocation(Menu::LOCATION_FOOTER)))
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation(Menu::LOCATION_FOOTER)))
         );
 
         $blocks = $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'blocks');
@@ -288,8 +288,8 @@ class MenuCrudControllerTest extends TestCase
     // Editing an already-saved menu - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see UiBundle's BlockMoveRowAttrBuilder)
     public function testConfigureFieldsBlocksFieldRowAttrCarriesBlockMoveDataOnEditPage(): void
     {
-        $menu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR);
-        (new \ReflectionProperty(Menu::class, 'id'))->setValue($menu, 7);
+        $menu = new Menu()->setLocation(Menu::LOCATION_NAVBAR);
+        new \ReflectionProperty(Menu::class, 'id')->setValue($menu, 7);
 
         $controller = $this->createController(
             adminContextProvider: $this->createAdminContextProvider($this->createAdminContext($menu)),
@@ -376,8 +376,8 @@ class MenuCrudControllerTest extends TestCase
     // Double submit, or a stale index left open in another tab: the location already has its row, which is opened as-is instead of hitting the DB-level unique constraint on Menu::$location
     public function testCreateOpensTheExistingMenuWhenTheLocationIsAlreadyTaken(): void
     {
-        $existing = (new Menu())->setLocation(Menu::LOCATION_NAVBAR);
-        (new \ReflectionProperty(Menu::class, 'id'))->setValue($existing, 7);
+        $existing = new Menu()->setLocation(Menu::LOCATION_NAVBAR);
+        new \ReflectionProperty(Menu::class, 'id')->setValue($existing, 7);
 
         $menuRepository = $this->createMenuRepositoryReturning([Menu::LOCATION_NAVBAR], $existing);
         $entityManager = $this->createMock(EntityManagerInterface::class);

@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class FooterMenuGroupTest extends TestCase
 {
     // The slot context of "menu_group" (see config/services.yaml), a menu's own rather than UiBundle's "flex_slot"
-    private const MENU_SLOT_CONTEXT = 'menu_slot';
+    private const string MENU_SLOT_CONTEXT = 'menu_slot';
 
     /**
      * @return array<string, array{string}>
@@ -116,8 +116,8 @@ class FooterMenuGroupTest extends TestCase
         $container = new ContainerBuilder();
         // The registry itself is UiBundle's own service, registered bare here: only the calls the pass adds from this bundle's tags are read back below
         $container->register(BlockRegistry::class, BlockRegistry::class);
-        (new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/config')))->load('services.yaml');
-        (new BlockRegistryPass())->process($container);
+        new YamlFileLoader($container, new FileLocator(dirname(__DIR__) . '/config'))->load('services.yaml');
+        new BlockRegistryPass()->process($container);
 
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnCallback(static fn (string $key) => $key);

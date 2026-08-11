@@ -17,7 +17,7 @@ class ImportmapProviderTest extends TestCase
 {
     public function testGetAdminImportmapEntriesReturnsControllersAdminEntrypoint(): void
     {
-        $entries = (new ImportmapProvider())->getAdminImportmapEntries();
+        $entries = new ImportmapProvider()->getAdminImportmapEntries();
 
         $this->assertSame([
             '@c975l/site-bundle/controllers-admin.js' => [
@@ -29,7 +29,7 @@ class ImportmapProviderTest extends TestCase
 
     public function testGetImportmapEntriesReturnsControllersEntrypoint(): void
     {
-        $entries = (new ImportmapProvider())->getImportmapEntries();
+        $entries = new ImportmapProvider()->getImportmapEntries();
 
         $this->assertSame([
             '@c975l/site-bundle/controllers.js' => [

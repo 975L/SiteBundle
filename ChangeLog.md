@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.3.0
+
+The codebase goes through a Rector modernisation pass
+
+- `rector.php` configures the modernisation pass over `src/`, `scaffold/` and `tests/` (11/08/2026)
+- `composer rector` runs in `composer qa` and in the CI workflow (11/08/2026)
+- The whole codebase goes through that pass (11/08/2026)
+- The scaffold's `ThemeStylesheetProvider` also contributes `assets/styles/*.css` (11/08/2026)
+- `app.css` is contributed last, whatever the alphabet says (11/08/2026)
+- README documents the site's own stylesheets going through that provider (11/08/2026)
+- `ThemeStylesheetProviderTest` covers both new behaviours (11/08/2026)
+
 ## v8.2.5
 
 A navbar button keeps its own ink on its filled background

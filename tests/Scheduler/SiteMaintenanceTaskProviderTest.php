@@ -21,7 +21,7 @@ class SiteMaintenanceTaskProviderTest extends TestCase
      */
     private function getTasks(): array
     {
-        return (new SiteMaintenanceTaskProvider())->getMaintenanceTasks();
+        return new SiteMaintenanceTaskProvider()->getMaintenanceTasks();
     }
 
     public function testEveryDeclaredTaskIsAMaintenanceTask(): void

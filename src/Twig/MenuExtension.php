@@ -55,14 +55,15 @@ class MenuExtension extends AbstractExtension
     ) {
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('menu_blocks', [$this, 'getMenuBlocks']),
-            new TwigFunction('menu_style', [$this, 'getMenuStyle']),
-            new TwigFunction('menu_link_url', [$this, 'getMenuLinkUrl']),
-            new TwigFunction('menu_link_label', [$this, 'getMenuLinkLabel']),
-            new TwigFunction('menu_link_is_copyright', [$this, 'isMenuLinkCopyright']),
+            new TwigFunction('menu_blocks', $this->getMenuBlocks(...)),
+            new TwigFunction('menu_style', $this->getMenuStyle(...)),
+            new TwigFunction('menu_link_url', $this->getMenuLinkUrl(...)),
+            new TwigFunction('menu_link_label', $this->getMenuLinkLabel(...)),
+            new TwigFunction('menu_link_is_copyright', $this->isMenuLinkCopyright(...)),
         ];
     }
 

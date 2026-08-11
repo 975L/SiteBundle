@@ -49,9 +49,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 )]
 class SiteCreateCommand extends Command
 {
-    private const QUESTIONS_FILE = __DIR__ . '/../../config/site-create-questions.json';
+    private const string QUESTIONS_FILE = __DIR__ . '/../../config/site-create-questions.json';
     // Committed to the site's own repo (not gitignored): the guard must survive git clone/deploy, not just protect the machine it was first run on.
-    private const LOCK_FILE = '.c975l-site-created';
+    private const string LOCK_FILE = '.c975l-site-created';
 
     public function __construct(
         private readonly ScaffoldInstaller $scaffoldInstaller,
@@ -408,7 +408,7 @@ class SiteCreateCommand extends Command
     // Offers every bundle-contributed route (see LinkableRouteRegistry, only present if the contributing bundle is installed) plus the legal pages just imported, in the fixed order expected in a footer (mentions légales, confidentialité, CGU, CGV, cookies, copyright), each as a "menu_link" Block (see MenuLinkType). Re-running the command never creates duplicate entries, since existing targets are skipped.
     private function buildFooterMenu(SymfonyStyle $io): void
     {
-        $menu = $this->menuRepository->findOneByLocation(Menu::LOCATION_FOOTER) ?? (new Menu())->setLocation(Menu::LOCATION_FOOTER);
+        $menu = $this->menuRepository->findOneByLocation(Menu::LOCATION_FOOTER) ?? new Menu()->setLocation(Menu::LOCATION_FOOTER);
         $existingTargets = array_map(
             static fn (Block $block): ?string => $block->getData()['target'] ?? null,
             $menu->getBlocks()->toArray()
@@ -443,7 +443,7 @@ class SiteCreateCommand extends Command
             return;
         }
 
-        $menu->addBlock((new Block())->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
+        $menu->addBlock(new Block()->setKind('menu_link')->setData(['target' => $target])->setPosition($position++));
     }
 
     // Writes the marker checked at the top of execute(): committed to the repo so the guard survives git clone/deploy, not just a re-run on the same machine.
@@ -451,7 +451,7 @@ class SiteCreateCommand extends Command
     {
         file_put_contents(
             $this->projectDir . '/' . self::LOCK_FILE,
-            sprintf("Site créé le %s via c975l:site:create.\nSupprime ce fichier pour autoriser une relance volontaire de la commande.\n", (new \DateTime())->format('Y-m-d H:i:s'))
+            sprintf("Site créé le %s via c975l:site:create.\nSupprime ce fichier pour autoriser une relance volontaire de la commande.\n", new \DateTime()->format('Y-m-d H:i:s'))
         );
     }
 

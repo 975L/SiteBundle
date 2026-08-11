@@ -16,11 +16,11 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 // Thin wrapper around the two free public W3C validators - the Nu HTML Checker (https://validator.w3.org/nu/) and the CSS Validator (https://jigsaw.w3.org/css-validator/) - both called with a plain "check this url" query, no API key. Used by W3cHtmlHealthCheckProvider/W3cCssHealthCheckProvider, only ever from the c975l:health-check:run command
 class W3cValidatorClient
 {
-    private const HTML_ENDPOINT = 'https://validator.w3.org/nu/';
-    private const CSS_ENDPOINT = 'https://jigsaw.w3.org/css-validator/validator';
+    private const string HTML_ENDPOINT = 'https://validator.w3.org/nu/';
+    private const string CSS_ENDPOINT = 'https://jigsaw.w3.org/css-validator/validator';
 
     // Warnings the CSS validator's own profile predates; returned in full, only counted apart so custom properties don't leave the row permanently orange
-    private const BENIGN_CSS_WARNING_PATTERNS = [
+    private const array BENIGN_CSS_WARNING_PATTERNS = [
         // "Due to their dynamic nature, CSS variables are currently not statically checked" - custom properties are a W3C Recommendation the validator cannot resolve statically, not a defect
         'not statically checked',
         // "-webkit-line-clamp is a vendor extension" - no standard equivalent that validates (the standard "line-clamp" is rejected as an error by this same profile)
@@ -114,13 +114,7 @@ class W3cValidatorClient
     // The validator's messages are always English (no Accept-Language is sent), so matching on their own wording is stable
     private function isBenignCssWarning(string $message): bool
     {
-        foreach (self::BENIGN_CSS_WARNING_PATTERNS as $pattern) {
-            if (str_contains($message, $pattern)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(self::BENIGN_CSS_WARNING_PATTERNS, fn ($pattern) => str_contains($message, $pattern));
     }
 
     // Convenience for a single-URL validation - returns the same shape as readCss(), or throws on a network/API error

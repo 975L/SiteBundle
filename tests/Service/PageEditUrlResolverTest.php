@@ -22,7 +22,7 @@ class PageEditUrlResolverTest extends TestCase
     private function createPage(int $id): Page
     {
         $page = new Page();
-        (new \ReflectionProperty($page, 'id'))->setValue($page, $id);
+        new \ReflectionProperty($page, 'id')->setValue($page, $id);
 
         return $page;
     }

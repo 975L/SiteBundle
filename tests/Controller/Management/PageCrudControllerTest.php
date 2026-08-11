@@ -192,7 +192,7 @@ class PageCrudControllerTest extends TestCase
 
     private function invokePrivate(PageCrudController $controller, string $method, array $args = []): mixed
     {
-        return (new \ReflectionMethod($controller, $method))->invoke($controller, ...$args);
+        return new \ReflectionMethod($controller, $method)->invoke($controller, ...$args);
     }
 
     private function createAdminContext(Page $page): AdminContext
@@ -222,7 +222,7 @@ class PageCrudControllerTest extends TestCase
     public function testPersistEntitySetsDatesSlugifiesAndDelegatesToParent(): void
     {
         $controller = $this->createController();
-        $page = (new Page())->setTitle('New Page')->setSlug('Néw Pägé!');
+        $page = new Page()->setTitle('New Page')->setSlug('Néw Pägé!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($page);
@@ -238,7 +238,7 @@ class PageCrudControllerTest extends TestCase
     public function testPersistEntityLeavesUserNullWhenNobodyIsLoggedIn(): void
     {
         $controller = $this->createController();
-        $page = (new Page())->setTitle('New Page')->setSlug('new-page');
+        $page = new Page()->setTitle('New Page')->setSlug('new-page');
 
         $controller->persistEntity($this->createStub(EntityManagerInterface::class), $page);
 
@@ -260,7 +260,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testUpdateEntitySetsModificationDateAndDelegatesToParent(): void
     {
-        $page = (new Page())->setTitle('Same Title')->setSlug('same-title');
+        $page = new Page()->setTitle('Same Title')->setSlug('same-title');
 
         $unitOfWork = $this->createStub(UnitOfWork::class);
         $unitOfWork->method('getOriginalEntityData')->willReturn(['slug' => 'same-title', 'title' => 'Same Title']);
@@ -278,7 +278,7 @@ class PageCrudControllerTest extends TestCase
     // Resyncs the slug from the new title, mirroring SlugField's own JS behavior server-side (see the "title-confirm" Stimulus controller referenced in configureFields)
     public function testUpdateEntityResyncsSlugWhenTitleChanges(): void
     {
-        $page = (new Page())->setTitle('Renamed Page')->setSlug('old-title');
+        $page = new Page()->setTitle('Renamed Page')->setSlug('old-title');
 
         $manager = $this->createManagerWithOriginalData(['slug' => 'old-title', 'title' => 'Old Title']);
 
@@ -290,7 +290,7 @@ class PageCrudControllerTest extends TestCase
     // The home page's slug is fixed regardless of title changes (see isHomePage in configureFields)
     public function testUpdateEntityDoesNotResyncSlugForHomePage(): void
     {
-        $page = (new Page())->setTitle('Renamed Home')->setSlug('home');
+        $page = new Page()->setTitle('Renamed Home')->setSlug('home');
 
         $manager = $this->createManagerWithOriginalData(['slug' => 'home', 'title' => 'Old Home Title']);
 
@@ -301,7 +301,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testUpdateEntityCreatesARedirectWhenSlugChanges(): void
     {
-        $page = (new Page())->setTitle('Same Title')->setSlug('new-slug');
+        $page = new Page()->setTitle('Same Title')->setSlug('new-slug');
 
         $manager = $this->createManagerWithOriginalData(['slug' => 'old-slug', 'title' => 'Same Title']);
         // parent::updateEntity() also persists the Page itself - capture every persisted entity rather than asserting a single call, since a Redirect is persisted in addition to it
@@ -324,7 +324,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testUpdateEntityDoesNotCreateARedirectWhenSlugIsUnchanged(): void
     {
-        $page = (new Page())->setTitle('Same Title')->setSlug('same-slug');
+        $page = new Page()->setTitle('Same Title')->setSlug('same-slug');
 
         $manager = $this->createManagerWithOriginalData(['slug' => 'same-slug', 'title' => 'Same Title']);
         $persisted = [];
@@ -341,7 +341,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testUpdateEntityLeavesUserNullWhenNobodyIsLoggedIn(): void
     {
-        $page = (new Page())->setTitle('Same Title')->setSlug('same-title');
+        $page = new Page()->setTitle('Same Title')->setSlug('same-title');
         $manager = $this->createManagerWithOriginalData(['slug' => 'same-title', 'title' => 'Same Title']);
 
         $this->createController()->updateEntity($manager, $page);
@@ -353,7 +353,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testDeleteEntityMovesPageToTrashWithoutRemovingIt(): void
     {
-        $page = (new Page())->setTitle('Old Page')->setSlug('old-page')->setIsPublished(true);
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsPublished(true);
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('remove');
@@ -369,7 +369,7 @@ class PageCrudControllerTest extends TestCase
     // A page in the trash must never stay referenced: the sitemap, llms.txt and the crawlers would keep pointing at a url that now answers 410. Carried by the unpublishing above, which Page::unreferenceWhenUnpublished() turns into an unreferencing at that very flush - played here as Doctrine would
     public function testDeleteEntityUnreferencesTheTrashedPage(): void
     {
-        $page = (new Page())->setTitle('Old Page')->setSlug('old-page')->setIsPublished(true)->setIsIndexable(true);
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsPublished(true)->setIsIndexable(true);
 
         $manager = $this->createStub(EntityManagerInterface::class);
 
@@ -395,7 +395,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testDuplicateClonesPageTitleSlugAndContent(): void
     {
-        $source = (new Page())
+        $source = new Page()
             ->setTitle('Original')
             ->setSlug('original')
             ->setSummarySocialNetwork('summary')
@@ -403,7 +403,7 @@ class PageCrudControllerTest extends TestCase
             ->setChangeFrequency('weekly')
             ->setIsPublished(true);
 
-        $block = (new Block())->setKind('article')->setPosition(0)->setData(['title' => 'Hello'])->setAnimation('fade');
+        $block = new Block()->setKind('article')->setPosition(0)->setData(['title' => 'Hello'])->setAnimation('fade');
         $source->addBlock($block);
 
         $pageRepository = $this->createStub(PageRepository::class);
@@ -426,7 +426,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testDuplicateNeverPublishesTheCopy(): void
     {
-        $source = (new Page())->setTitle('Original')->setSlug('original')->setIsPublished(true);
+        $source = new Page()->setTitle('Original')->setSlug('original')->setIsPublished(true);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturn(null);
@@ -451,9 +451,9 @@ class PageCrudControllerTest extends TestCase
 
     public function testDuplicateClonesEachBlockWithItsOwnMedias(): void
     {
-        $source = (new Page())->setTitle('Original')->setSlug('original');
-        $media = (new Media())->setAlt('alt text')->setLabel('caption');
-        $block = (new Block())->setKind('article')->setData(['title' => 'x']);
+        $source = new Page()->setTitle('Original')->setSlug('original');
+        $media = new Media()->setAlt('alt text')->setLabel('caption');
+        $block = new Block()->setKind('article')->setData(['title' => 'x']);
         $block->addMedia($media);
         $source->addBlock($block);
 
@@ -502,9 +502,9 @@ class PageCrudControllerTest extends TestCase
     // The original is looked up by id (not slug, since a concurrent draft's own publishAsReplacement() may have since changed it), its slug is archived first (own flush) so the unique constraint on slug is never violated, then the copy takes it over, gets published, and "replaces" is cleared
     public function testPublishAsReplacementSwapsSlugsPublishesCopyAndTrashesOriginal(): void
     {
-        $original = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($original, 7);
-        $copy = (new Page())->setTitle('Home (copy)')->setSlug('home-copy')->setReplaces(7);
+        $original = new Page()->setTitle('Home')->setSlug('home')->setIsPublished(true);
+        new \ReflectionProperty(Page::class, 'id')->setValue($original, 7);
+        $copy = new Page()->setTitle('Home (copy)')->setSlug('home-copy')->setReplaces(7);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('find')->willReturn($original);
@@ -538,9 +538,9 @@ class PageCrudControllerTest extends TestCase
     // The copy takes the original's referencing state over along with its slug, so an indexed url doesn't silently turn noindex the day the page behind it is replaced. The value has to be read before the swap: the first flush unpublishes the original and Page::unreferenceWhenUnpublished() drops its own isIndexable right there - the callback below plays that PreFlush rule on each flush, as Doctrine would
     public function testPublishAsReplacementCarriesOverIsIndexableFromTheOriginal(): void
     {
-        $original = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true)->setIsIndexable(true);
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($original, 7);
-        $copy = (new Page())->setTitle('Home (copy)')->setSlug('home-copy')->setReplaces(7)->setIsIndexable(false);
+        $original = new Page()->setTitle('Home')->setSlug('home')->setIsPublished(true)->setIsIndexable(true);
+        new \ReflectionProperty(Page::class, 'id')->setValue($original, 7);
+        $copy = new Page()->setTitle('Home (copy)')->setSlug('home-copy')->setReplaces(7)->setIsIndexable(false);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('find')->willReturn($original);
@@ -570,7 +570,7 @@ class PageCrudControllerTest extends TestCase
     // The original may already be gone (deleted/renamed since the copy was created) - aborts safely, flashes an error, never touches the copy
     public function testPublishAsReplacementFlashesErrorWhenOriginalNotFound(): void
     {
-        $copy = (new Page())->setTitle('Draft')->setSlug('draft')->setReplaces(999);
+        $copy = new Page()->setTitle('Draft')->setSlug('draft')->setReplaces(999);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('find')->willReturn(null);
@@ -593,8 +593,8 @@ class PageCrudControllerTest extends TestCase
     // A page can't replace itself - only reachable via a crafted/stale "?replaces=<own id>" URL (the dropdown's own displayIf() already hides this option) - without this guard, $original and $copy resolve to the same entity and the two-flush swap would leave it both published and deleted at once
     public function testPublishAsReplacementFlashesErrorWhenTargetIsItself(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home')->setIsPublished(true);
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 7);
+        $page = new Page()->setTitle('Home')->setSlug('home')->setIsPublished(true);
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 7);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('find')->willReturn($page);
@@ -619,9 +619,9 @@ class PageCrudControllerTest extends TestCase
     // Two drafts created (via duplicate()) from the same original before either is published: the first publish archives the original (non-null archivedSlug, mangled slug). The second draft's own publishAsReplacement() must not take over that mangled slug - it's treated the same as "original not found" instead of silently publishing under a garbage URL
     public function testPublishAsReplacementFlashesErrorWhenOriginalAlreadyArchivedByAnotherDraft(): void
     {
-        $original = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($original, 7);
-        $copy = (new Page())->setTitle('Home (copy 2)')->setSlug('home-copy-2')->setReplaces(7);
+        $original = new Page()->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home');
+        new \ReflectionProperty(Page::class, 'id')->setValue($original, 7);
+        $copy = new Page()->setTitle('Home (copy 2)')->setSlug('home-copy-2')->setReplaces(7);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('find')->willReturn($original);
@@ -649,7 +649,7 @@ class PageCrudControllerTest extends TestCase
     public function testSlugifyPageNormalizesAccentsSpacesAndCase(): void
     {
         $controller = $this->createController();
-        $page = (new Page())->setTitle('x')->setSlug('Héllo Wörld!');
+        $page = new Page()->setTitle('x')->setSlug('Héllo Wörld!');
 
         $this->invokePrivate($controller, 'slugifyPage', [$page]);
 
@@ -668,7 +668,7 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController();
         $controller->setContainer($this->createContainer(['router' => $router]));
 
-        $page = (new Page())->setTitle('x')->setSlug('draft-page')->setIsPublished(false);
+        $page = new Page()->setTitle('x')->setSlug('draft-page')->setIsPublished(false);
 
         $this->assertSame('page_preview:draft-page', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
@@ -681,7 +681,7 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController();
         $controller->setContainer($this->createContainer(['router' => $router]));
 
-        $page = (new Page())->setTitle('x')->setSlug('home')->setIsPublished(true);
+        $page = new Page()->setTitle('x')->setSlug('home')->setIsPublished(true);
 
         $this->assertSame('page_home', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
@@ -696,7 +696,7 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController();
         $controller->setContainer($this->createContainer(['router' => $router]));
 
-        $page = (new Page())->setTitle('x')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
 
         $this->assertSame('page_display:about', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
@@ -714,7 +714,7 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(configService: $configService);
         $controller->setContainer($this->createContainer(['router' => $router]));
 
-        $page = (new Page())->setTitle('x')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
 
         $this->assertSame('https://example.com/about', $this->invokePrivate($controller, 'buildPageUrl', [$page]));
     }
@@ -847,8 +847,8 @@ class PageCrudControllerTest extends TestCase
     // On the edit screen, with at least one other page to offer - covers the group actually being built and added, instead of skipped
     public function testConfigureActionsBuildsWithoutErrorWhenAnotherPageExists(): void
     {
-        $other = (new Page())->setTitle('Other')->setSlug('other');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($other, 99);
+        $other = new Page()->setTitle('Other')->setSlug('other');
+        new \ReflectionProperty(Page::class, 'id')->setValue($other, 99);
 
         $queryBuilder = $this->createStub(QueryBuilder::class);
         $queryBuilder->method('andWhere')->willReturnSelf();
@@ -876,8 +876,8 @@ class PageCrudControllerTest extends TestCase
     // ActionFactory only gives an ActionDto its default "action-<name>" class, so the group has to state its own - SiteGuidedProjectProvider's revision parcours highlights ".action-publishAsReplacement"
     public function testPublishAsReplacementGroupCarriesItsOwnCssClass(): void
     {
-        $other = (new Page())->setTitle('Other')->setSlug('other');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($other, 99);
+        $other = new Page()->setTitle('Other')->setSlug('other');
+        new \ReflectionProperty(Page::class, 'id')->setValue($other, 99);
 
         $queryBuilder = $this->createStub(QueryBuilder::class);
         $queryBuilder->method('andWhere')->willReturnSelf();
@@ -978,8 +978,8 @@ class PageCrudControllerTest extends TestCase
     // Editing an already-saved page - the "blocks" field's row_attr carries what UiBundle's ea-sortable.js/BlockMoveController needs to relocate a Block into/out of a container (see UiBundle's BlockMoveRowAttrBuilder)
     public function testConfigureFieldsBlocksFieldRowAttrCarriesBlockMoveDataOnEditPage(): void
     {
-        $page = (new Page())->setTitle('x')->setSlug('about');
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, 7);
+        $page = new Page()->setTitle('x')->setSlug('about');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 7);
 
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturn('/admin/ui/block/move');
@@ -1089,7 +1089,7 @@ class PageCrudControllerTest extends TestCase
     // The trash's own 410 (see PageController::display()) dies with the row - without this the url would drop back to a plain 404
     public function testDeletePermanentlyPersistsAGoneRedirectForThePageUrl(): void
     {
-        $page = (new Page())->setTitle('Old')->setSlug('old-page');
+        $page = new Page()->setTitle('Old')->setSlug('old-page');
 
         // A stub rather than a mock: what matters is the entity handed to persist(), captured here, not that the call happened
         $persisted = null;
@@ -1109,8 +1109,8 @@ class PageCrudControllerTest extends TestCase
     // A target the admin set up deliberately says more than a dead end, and fromPath is unique anyway
     public function testDeletePermanentlyLeavesAnExistingRedirectOnThatPathAlone(): void
     {
-        $page = (new Page())->setTitle('Old')->setSlug('old-page');
-        $existing = (new Redirect())->setFromPath('/pages/old-page')->setToUrl('/pages/bundles');
+        $page = new Page()->setTitle('Old')->setSlug('old-page');
+        $existing = new Redirect()->setFromPath('/pages/old-page')->setToUrl('/pages/bundles');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('persist');
@@ -1121,8 +1121,8 @@ class PageCrudControllerTest extends TestCase
     // The urls that redirected to this page led to content just as removed - they answer 410 too, rather than being deleted and dropping back to a 404
     public function testDeletePermanentlyTurnsRedirectsPointingAtThePageIntoGoneOnes(): void
     {
-        $page = (new Page())->setTitle('Old')->setSlug('old-page');
-        $alias = (new Redirect())->setFromPath('/pages/legacy-name')->setToUrl('/pages/old-page')->setPermanent(true);
+        $page = new Page()->setTitle('Old')->setSlug('old-page');
+        $alias = new Redirect()->setFromPath('/pages/legacy-name')->setToUrl('/pages/old-page')->setPermanent(true);
 
         $manager = $this->createStub(EntityManagerInterface::class);
 
@@ -1136,7 +1136,7 @@ class PageCrudControllerTest extends TestCase
     // "home" is served at the site root, which RedirectSubscriber skips by design - a "/pages/home" row would only ever shadow the 301 PageController already answers there
     public function testDeletePermanentlyCreatesNoGoneRedirectForTheHomePage(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('persist');
@@ -1173,7 +1173,7 @@ class PageCrudControllerTest extends TestCase
     // A page archived by publishAsReplacement() reclaims its real slug on restore if nothing else has taken it since, and archivedSlug is cleared
     public function testRestoreReclaimsArchivedSlugWhenFree(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);
+        $page = new Page()->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturn(null);
@@ -1194,7 +1194,7 @@ class PageCrudControllerTest extends TestCase
     // Someone else has taken the archived slug since - keeps the technical slug instead, still clears archivedSlug (no dangling reference to retry indefinitely)
     public function testRestoreKeepsTechnicalSlugWhenArchivedSlugIsTaken(): void
     {
-        $page = (new Page())->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);
+        $page = new Page()->setTitle('Home')->setSlug('home-archived')->setArchivedSlug('home')->setIsDeleted(true);
 
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturn(new Page());
@@ -1214,7 +1214,7 @@ class PageCrudControllerTest extends TestCase
     // A page trashed the regular way (never archived by a replacement swap) is untouched by this logic
     public function testRestoreLeavesSlugUntouchedWhenNeverArchived(): void
     {
-        $page = (new Page())->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
 
         $controller = $this->createController();
         $controller->setContainer($this->createContainer([
@@ -1334,8 +1334,8 @@ class PageCrudControllerTest extends TestCase
 
     public function testExportSelectionExportsSelectedPagesWithTheirBlocks(): void
     {
-        $block = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'hello']);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $block = new Block()->setKind('text')->setPosition(0)->setData(['content' => 'hello']);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->addBlock($block);
 
         $pageRepository = $this->createMock(PageRepository::class);
@@ -1392,14 +1392,14 @@ class PageCrudControllerTest extends TestCase
         $filename = 'uploads/photo.jpg';
         file_put_contents($projectDir . '/public/' . $filename, 'fake-image-bytes');
 
-        $media = (new Media())
+        $media = new Media()
             ->setFilename($filename)
             ->setRole('illustration')
             ->setAlt('A photo')
             ->setPosition(0);
-        $block = (new Block())->setKind('image')->setPosition(0)->setData([]);
+        $block = new Block()->setKind('image')->setPosition(0)->setData([]);
         $block->addMedia($media);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->addBlock($block);
 
         $pageRepository = $this->createStub(PageRepository::class);

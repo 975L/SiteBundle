@@ -18,13 +18,13 @@ class PageQrCodeTypeTest extends TestCase
 {
     public function testGetBlockPrefixMatchesTheFormThemeBlockName(): void
     {
-        $this->assertSame('c975l_page_qrcode', (new PageQrCodeType())->getBlockPrefix());
+        $this->assertSame('c975l_page_qrcode', new PageQrCodeType()->getBlockPrefix());
     }
 
     public function testConfigureOptionsMarksTheFieldUnmappedAndNotRequired(): void
     {
         $resolver = new OptionsResolver();
-        (new PageQrCodeType())->configureOptions($resolver);
+        new PageQrCodeType()->configureOptions($resolver);
 
         $options = $resolver->resolve();
 

@@ -40,6 +40,7 @@ class ManagementTargetsTest extends ManagementTargetsTestCase
     }
 
     // This bundle's own controllers on top of ConfigBundle's, whose screens its links point to as well
+    #[\Override]
     protected function controllerDirectories(): array
     {
         return [...parent::controllerDirectories(), __DIR__ . '/../../src/Controller', __DIR__ . '/../../src/Controller/Management'];

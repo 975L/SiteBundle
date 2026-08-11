@@ -56,7 +56,7 @@ class CollectionItemSourceProvider implements CollectionSourceProviderInterface
     private function itemsByCollectionGroup(CollectionGroup $collectionGroup, ?int $limit): array
     {
         $this->items[$collectionGroup->getId()] ??= array_map(
-            fn (CollectionItem $item): CollectionItemModel => $this->toCollectionItemModel($item),
+            $this->toCollectionItemModel(...),
             $this->collectionItemRepository->findByCollectionGroup($collectionGroup)
         );
 

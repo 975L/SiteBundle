@@ -71,7 +71,7 @@ class SiteMediaUsageProviderTest extends TestCase
     {
         $media = new Media();
         $media->setRole($role);
-        (new \ReflectionProperty(Media::class, 'id'))->setValue($media, $id);
+        new \ReflectionProperty(Media::class, 'id')->setValue($media, $id);
 
         return $media;
     }
@@ -89,7 +89,7 @@ class SiteMediaUsageProviderTest extends TestCase
     public function testGetUsagesReportsMediaAttachedToPageBlock(): void
     {
         $block = new Block();
-        (new \ReflectionProperty(Block::class, 'id'))->setValue($block, 10);
+        new \ReflectionProperty(Block::class, 'id')->setValue($block, 10);
 
         $media = $this->mediaWithId(3);
         $media->setBlock($block);

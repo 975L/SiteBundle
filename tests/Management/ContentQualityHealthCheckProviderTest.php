@@ -33,13 +33,13 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     use PagePublicUrlGeneratorTestTrait;
 
     // 42 characters, inside the recommended 10-65 window
-    private const GOOD_TITLE = 'Une page de test au titre bien dimensionné';
+    private const string GOOD_TITLE = 'Une page de test au titre bien dimensionné';
     // 84 characters, inside the recommended 50-160 window
-    private const GOOD_DESCRIPTION = 'Une description de test suffisamment longue pour passer le seuil minimal recommandé.';
-    private const GOOD_SOCIAL_TAGS = ['og:title' => 'T', 'og:description' => 'D', 'og:image' => '/media/og.png'];
+    private const string GOOD_DESCRIPTION = 'Une description de test suffisamment longue pour passer le seuil minimal recommandé.';
+    private const array GOOD_SOCIAL_TAGS = ['og:title' => 'T', 'og:description' => 'D', 'og:image' => '/media/og.png'];
 
     // Every analysis a test doesn't say otherwise about is a clean one - each test overrides only the key it is actually about (see the "+ self::GOOD_ANALYSIS" unions below), so adding a check here doesn't turn every other test's page orange
-    private const GOOD_ANALYSIS = ['title' => self::GOOD_TITLE, 'description' => self::GOOD_DESCRIPTION, 'hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'socialTags' => self::GOOD_SOCIAL_TAGS, 'internalLinks' => [], 'externalLinks' => [], 'linkTexts' => []];
+    private const array GOOD_ANALYSIS = ['title' => self::GOOD_TITLE, 'description' => self::GOOD_DESCRIPTION, 'hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'socialTags' => self::GOOD_SOCIAL_TAGS, 'internalLinks' => [], 'externalLinks' => [], 'linkTexts' => []];
 
     private function createPage(string $slug): Page
     {

@@ -29,7 +29,7 @@ class PageTest extends TestCase
 
     public function testSetOptionKeepsTheOnesAlreadyThere(): void
     {
-        $page = (new Page())->setOptions(['kept' => 'yes']);
+        $page = new Page()->setOptions(['kept' => 'yes']);
 
         $page->setOption('added', 'too');
 
@@ -39,12 +39,12 @@ class PageTest extends TestCase
     // Every page predating the option, and every one whose editor left it alone, keeps printing its title
     public function testTitleIsDisplayedByDefault(): void
     {
-        $this->assertTrue((new Page())->isTitleDisplayed());
+        $this->assertTrue(new Page()->isTitleDisplayed());
     }
 
     public function testTitleDisplayedIsStoredAsAnOption(): void
     {
-        $page = (new Page())->setIsTitleDisplayed(false);
+        $page = new Page()->setIsTitleDisplayed(false);
 
         $this->assertFalse($page->isTitleDisplayed());
         $this->assertSame(['titleDisplayed' => false], $page->getOptions());
@@ -65,7 +65,7 @@ class PageTest extends TestCase
     // An unpublished page must never stay referenced, whatever order its setters were called in - the edit form submits isPublished before isIndexable
     public function testUnpublishedPageIsNotIndexable(): void
     {
-        $page = (new Page())
+        $page = new Page()
             ->setIsPublished(false)
             ->setIsIndexable(true)
         ;
@@ -77,8 +77,8 @@ class PageTest extends TestCase
 
     public function testPublishedPageKeepsItsIndexableValue(): void
     {
-        $indexable = (new Page())->setIsPublished(true);
-        $notIndexable = (new Page())->setIsPublished(true)->setIsIndexable(false);
+        $indexable = new Page()->setIsPublished(true);
+        $notIndexable = new Page()->setIsPublished(true)->setIsIndexable(false);
 
         $indexable->unreferenceWhenUnpublished();
         $notIndexable->unreferenceWhenUnpublished();
@@ -90,7 +90,7 @@ class PageTest extends TestCase
     // The rule only holds if Doctrine actually runs it, and only PreFlush runs early enough for its write to be persisted (a PreUpdate callback's own writes come after the changeset is computed)
     public function testUnreferenceWhenUnpublishedIsAPreFlushCallback(): void
     {
-        $attributes = (new \ReflectionMethod(Page::class, 'unreferenceWhenUnpublished'))->getAttributes(PreFlush::class);
+        $attributes = new \ReflectionMethod(Page::class, 'unreferenceWhenUnpublished')->getAttributes(PreFlush::class);
 
         $this->assertCount(1, $attributes);
     }

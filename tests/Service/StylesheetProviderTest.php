@@ -22,13 +22,13 @@ class StylesheetProviderTest extends TestCase
             [
                 'bundles/c975lsite/css/styles.min.css',
             ],
-            (new StylesheetProvider())->getStylesheets()
+            new StylesheetProvider()->getStylesheets()
         );
     }
 
     // The list is fixed: there is no theme catalog to pick a second "shape" stylesheet from anymore, a site's own tokens living in its assets/styles/themes/*.css (loaded through the app's own asset pipeline, not contributed here)
     public function testGetStylesheetsReadsNoConfig(): void
     {
-        $this->assertCount(1, (new StylesheetProvider())->getStylesheets());
+        $this->assertCount(1, new StylesheetProvider()->getStylesheets());
     }
 }

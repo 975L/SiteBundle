@@ -18,12 +18,12 @@ class ScriptProviderTest extends TestCase
     // The bundle's own front-end controllers.js is contributed as a front script
     public function testGetScriptsReturnsBundleFrontController(): void
     {
-        $this->assertSame(['@c975l/site-bundle/controllers.js'], (new ScriptProvider())->getScripts());
+        $this->assertSame(['@c975l/site-bundle/controllers.js'], new ScriptProvider()->getScripts());
     }
 
     // The bundle's own controllers-admin.js is contributed as an admin-only script
     public function testGetAdminScriptsReturnsBundleAdminController(): void
     {
-        $this->assertSame(['@c975l/site-bundle/controllers-admin.js'], (new ScriptProvider())->getAdminScripts());
+        $this->assertSame(['@c975l/site-bundle/controllers-admin.js'], new ScriptProvider()->getAdminScripts());
     }
 }

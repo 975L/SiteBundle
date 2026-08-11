@@ -48,7 +48,7 @@ class DefaultPagesImporterTest extends TestCase
                     return null;
                 }
 
-                return (new Page())->setSlug($criteria['slug'])->setSummarySocialNetwork($existingSummary);
+                return new Page()->setSlug($criteria['slug'])->setSummarySocialNetwork($existingSummary);
             }
         );
 
@@ -66,7 +66,7 @@ class DefaultPagesImporterTest extends TestCase
                 }
 
                 // The "links" key is what tells FormSeeder this Form is up to date and needs no backfill - set directly, setLinks([]) removing it instead
-                return (new Form())->setName($criteria['name'])->setRestricted(true)->setAction($existingForms[$criteria['name']])->setActionConfig(['links' => []]);
+                return new Form()->setName($criteria['name'])->setRestricted(true)->setAction($existingForms[$criteria['name']])->setActionConfig(['links' => []]);
             }
         );
 
@@ -78,9 +78,7 @@ class DefaultPagesImporterTest extends TestCase
     {
         $repository = $this->createStub(EmailTemplateRepository::class);
         $repository->method('findOneBy')->willReturnCallback(
-            static function (array $criteria) use ($existingNames): ?EmailTemplate {
-                return \in_array($criteria['name'], $existingNames, true) ? new EmailTemplate() : null;
-            }
+            static fn (array $criteria): ?EmailTemplate => \in_array($criteria['name'], $existingNames, true) ? new EmailTemplate() : null
         );
 
         return $repository;
@@ -454,15 +452,15 @@ class DefaultPagesImporterTest extends TestCase
         $persisted = [];
         $repository = $this->createPageRepository(['creer-un-compte', 'mot-de-passe-oublie']);
 
-        $cgu = (new FormField())->setName('cgu')->setLabel('CGU custom')->setType(FormField::TYPE_CHECKBOX)->setRestricted(true);
-        $register = (new Form())->setName('register')->setRestricted(true)->setAction('register');
+        $cgu = new FormField()->setName('cgu')->setLabel('CGU custom')->setType(FormField::TYPE_CHECKBOX)->setRestricted(true);
+        $register = new Form()->setName('register')->setRestricted(true)->setAction('register');
         $register->addField($cgu);
 
         $formRepository = $this->createStub(FormRepository::class);
         $formRepository->method('findOneBy')->willReturnCallback(
             static fn (array $criteria): ?Form => match ($criteria['name']) {
                 'register' => $register,
-                'reset_password_request' => (new Form())->setRestricted(true)->setAction('reset_password_request'),
+                'reset_password_request' => new Form()->setRestricted(true)->setAction('reset_password_request'),
                 default => null,
             }
         );

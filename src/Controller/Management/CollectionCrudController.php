@@ -46,6 +46,7 @@ class CollectionCrudController extends AbstractCrudController
         return CollectionGroup::class;
     }
 
+    #[\Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -59,6 +60,7 @@ class CollectionCrudController extends AbstractCrudController
         ;
     }
 
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -76,6 +78,7 @@ class CollectionCrudController extends AbstractCrudController
         ];
     }
 
+    #[\Override]
     public function configureActions(Actions $actions): Actions
     {
         $role = $this->configService->get('site-role-editor');
@@ -117,6 +120,7 @@ class CollectionCrudController extends AbstractCrudController
     }
 
     // New collection
+    #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $collectionGroup): void
     {
         $this->slugifyGroup($collectionGroup);
@@ -125,6 +129,7 @@ class CollectionCrudController extends AbstractCrudController
     }
 
     // Renamed collection - re-slugifies in case the slug was hand-edited into something already taken
+    #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $collectionGroup): void
     {
         $this->slugifyGroup($collectionGroup);

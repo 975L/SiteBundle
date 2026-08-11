@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class DefaultPagesImporter implements FormBlockDependencyProviderInterface
 {
     // name => [type, label, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). No placeholder is ever seeded, a field showing its label alone until an admin types one in the back-office. "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
-    private const CONTACT_CORE_FIELDS = [
+    private const array CONTACT_CORE_FIELDS = [
         'fr' => [
             'name' => [FormField::TYPE_TEXT, 'Nom', null],
             'email' => [FormField::TYPE_EMAIL, 'Email', null],
@@ -48,7 +48,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
     ];
 
     // One EmailBlock tuple set per locale, unused positions left null; placeholders are resolved at send time
-    private const CONTACT_NOTIFICATION_BLOCKS = [
+    private const array CONTACT_NOTIFICATION_BLOCKS = [
         'fr' => [
             [EmailBlock::TYPE_HEADING, 'Nouveau message via {{ form_name }}', EmailBlock::LEVEL_H2, null, null, null],
             [EmailBlock::TYPE_FIELDS_TABLE, null, null, null, null, null],
@@ -168,7 +168,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
 
     private function buildPage(array $def, \DateTime $now, ?UserInterface $user): Page
     {
-        $page = (new Page())
+        $page = new Page()
             ->setTitle($def['title'])
             ->setSlug($def['slug'])
             ->setChangeFrequency($def['changeFrequency'])
@@ -186,7 +186,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
         }
 
         if (isset($def['model'])) {
-            $block = (new Block())
+            $block = new Block()
                 ->setKind('legal_model')
                 ->setPosition(1)
                 ->setData(['model' => $def['model'], 'latestUpdate' => $now->format('Y-m-d')]);
@@ -201,7 +201,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
                 $this->ensureFormAndEmailTemplateExist($formName);
             }
 
-            $block = (new Block())
+            $block = new Block()
                 ->setKind($kind)
                 ->setPosition(1)
                 ->setData($def['block']['data'] ?? []);

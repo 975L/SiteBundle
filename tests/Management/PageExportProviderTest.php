@@ -30,8 +30,8 @@ class PageExportProviderTest extends TestCase
 
     public function testExportAllSerializesEveryNonDeletedPageFromTheRepository(): void
     {
-        $block = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'hello']);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $block = new Block()->setKind('text')->setPosition(0)->setData(['content' => 'hello']);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->addBlock($block);
 
         $pageRepository = $this->createMock(PageRepository::class);
@@ -40,7 +40,7 @@ class PageExportProviderTest extends TestCase
             ->with(['isDeleted' => false])
             ->willReturn([$page]);
 
-        $data = (new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())))->exportAll();
+        $data = new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir()))->exportAll();
 
         $this->assertSame([[
             'title' => 'About',
@@ -71,12 +71,12 @@ class PageExportProviderTest extends TestCase
         $filename = 'uploads/og.jpg';
         file_put_contents($projectDir . '/public/' . $filename, 'fake-og-image-bytes');
 
-        $ogImage = (new Media())->setFilename($filename)->setPosition(0);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $ogImage = new Media()->setFilename($filename)->setPosition(0);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->setSummarySocialNetwork('Shared on social networks');
         $page->setOgImage($ogImage);
 
-        $data = (new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir)))->serialize([$page]);
+        $data = new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir))->serialize([$page]);
 
         $this->assertSame('Shared on social networks', $data['items'][0]['summarySocialNetwork']);
         $this->assertSame(basename($filename), $data['items'][0]['ogImage']['originalFilename']);
@@ -95,15 +95,15 @@ class PageExportProviderTest extends TestCase
         $filename = 'uploads/brochure.pdf';
         file_put_contents($projectDir . '/public/' . $filename, 'fake-pdf-bytes');
 
-        $media = (new Media())->setFilename($filename)->setPosition(0);
-        $slot = (new Block())->setKind('document_download')->setPosition(0)->setData(['label' => 'Brochure'])->setAnimation('fade-in');
+        $media = new Media()->setFilename($filename)->setPosition(0);
+        $slot = new Block()->setKind('document_download')->setPosition(0)->setData(['label' => 'Brochure'])->setAnimation('fade-in');
         $slot->addMedia($media);
-        $container = (new Block())->setKind('flex_columns')->setPosition(0)->setData([]);
+        $container = new Block()->setKind('flex_columns')->setPosition(0)->setData([]);
         $container->addSlot($slot);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->addBlock($container);
 
-        $data = (new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir)))->serialize([$page]);
+        $data = new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir))->serialize([$page]);
 
         $slots = $data['items'][0]['blocks'][0]['slots'];
         $this->assertCount(1, $slots);
@@ -128,13 +128,13 @@ class PageExportProviderTest extends TestCase
         $filename = 'uploads/photo.jpg';
         file_put_contents($projectDir . '/public/' . $filename, 'fake-image-bytes');
 
-        $media = (new Media())->setFilename($filename)->setRole('illustration')->setAlt('A photo')->setPosition(0);
-        $block = (new Block())->setKind('image')->setPosition(0)->setData([]);
+        $media = new Media()->setFilename($filename)->setRole('illustration')->setAlt('A photo')->setPosition(0);
+        $block = new Block()->setKind('image')->setPosition(0)->setData([]);
         $block->addMedia($media);
-        $page = (new Page())->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
         $page->addBlock($block);
 
-        $data = (new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir)))->serialize([$page]);
+        $data = new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter($projectDir))->serialize([$page]);
 
         $medias = $data['items'][0]['blocks'][0]['medias'];
         $this->assertCount(1, $medias);

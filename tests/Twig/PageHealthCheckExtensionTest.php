@@ -64,7 +64,7 @@ class PageHealthCheckExtensionTest extends TestCase
 
     public function testGetPanelFetchesResultsForThePageOwnUrlAndBuildsAdvice(): void
     {
-        $result = (new HealthCheckResult())
+        $result = new HealthCheckResult()
             ->setKind('content-quality')
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_WARNING)
@@ -86,13 +86,13 @@ class PageHealthCheckExtensionTest extends TestCase
     public function testGetPanelDropsTheSiteWideSecurityHeadersResult(): void
     {
         // Always stored under the homepage's own url (see SecurityHeadersHealthCheckProvider) - already shown in ConfigBundle's dashboard "Site" section, so it'd be redundant here
-        $securityHeaders = (new HealthCheckResult())
+        $securityHeaders = new HealthCheckResult()
             ->setKind('security-headers')
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_OK)
             ->setSummary('summary')
             ->setDetails(['missing' => [], 'headers' => []]);
-        $contentQuality = (new HealthCheckResult())
+        $contentQuality = new HealthCheckResult()
             ->setKind('content-quality')
             ->setUrl('https://example.com/')
             ->setStatus(HealthCheckResult::STATUS_OK)

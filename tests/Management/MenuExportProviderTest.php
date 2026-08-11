@@ -29,14 +29,14 @@ class MenuExportProviderTest extends TestCase
 
     public function testExportAllSerializesEveryMenuFromTheRepository(): void
     {
-        $block = (new Block())->setKind('menu_link')->setPosition(0)->setData(['label' => 'Home', 'url' => '/']);
-        $menu = (new Menu())->setLocation(Menu::LOCATION_NAVBAR)->setStyle(Menu::STYLE_INLINE);
+        $block = new Block()->setKind('menu_link')->setPosition(0)->setData(['label' => 'Home', 'url' => '/']);
+        $menu = new Menu()->setLocation(Menu::LOCATION_NAVBAR)->setStyle(Menu::STYLE_INLINE);
         $menu->addBlock($block);
 
         $menuRepository = $this->createMock(MenuRepository::class);
         $menuRepository->expects($this->once())->method('findAll')->willReturn([$menu]);
 
-        $data = (new MenuExportProvider($menuRepository, new BlockDataExporter(sys_get_temp_dir())))->exportAll();
+        $data = new MenuExportProvider($menuRepository, new BlockDataExporter(sys_get_temp_dir()))->exportAll();
 
         $this->assertSame(Menu::LOCATION_NAVBAR, $data['items'][0]['location']);
         $this->assertSame(Menu::STYLE_INLINE, $data['items'][0]['style']);

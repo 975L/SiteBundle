@@ -393,7 +393,7 @@ class SitePageHealthCheckProviderTest extends TestCase
 
     public function testRunChecksPassesTheApiKeyConfigEntityToTheUrlResolver(): void
     {
-        $config = (new Config())->setSlug('healthcheck-pagespeed-api-key');
+        $config = new Config()->setSlug('healthcheck-pagespeed-api-key');
         $configRepository = new ConfigRepositoryFindOneBySlugFixture($config);
 
         $resolvedConfig = null;

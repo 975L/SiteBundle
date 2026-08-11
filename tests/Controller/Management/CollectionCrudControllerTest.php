@@ -75,12 +75,12 @@ class CollectionCrudControllerTest extends TestCase
 
     private function invokePrivate(CollectionCrudController $controller, string $method, array $args = []): mixed
     {
-        return (new \ReflectionMethod($controller, $method))->invoke($controller, ...$args);
+        return new \ReflectionMethod($controller, $method)->invoke($controller, ...$args);
     }
 
     private function withId(CollectionGroup $collectionGroup, int $id): CollectionGroup
     {
-        (new \ReflectionProperty(CollectionGroup::class, 'id'))->setValue($collectionGroup, $id);
+        new \ReflectionProperty(CollectionGroup::class, 'id')->setValue($collectionGroup, $id);
 
         return $collectionGroup;
     }
@@ -129,7 +129,7 @@ class CollectionCrudControllerTest extends TestCase
     public function testPersistEntitySlugifiesAndDelegatesToParent(): void
     {
         $controller = $this->createController();
-        $collectionGroup = (new CollectionGroup())->setName('Néw Collection!')->setSlug('Néw Collection!');
+        $collectionGroup = new CollectionGroup()->setName('Néw Collection!')->setSlug('Néw Collection!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($collectionGroup);
@@ -143,7 +143,7 @@ class CollectionCrudControllerTest extends TestCase
     public function testUpdateEntitySlugifiesAndDelegatesToParent(): void
     {
         $controller = $this->createController();
-        $collectionGroup = (new CollectionGroup())->setName('Héllo Wörld!')->setSlug('Héllo Wörld!');
+        $collectionGroup = new CollectionGroup()->setName('Héllo Wörld!')->setSlug('Héllo Wörld!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($collectionGroup);
@@ -159,7 +159,7 @@ class CollectionCrudControllerTest extends TestCase
     public function testSlugifyGroupNormalizesAccentsSpacesAndCase(): void
     {
         $controller = $this->createController();
-        $collectionGroup = (new CollectionGroup())->setSlug('Héllo Wörld!');
+        $collectionGroup = new CollectionGroup()->setSlug('Héllo Wörld!');
 
         $this->invokePrivate($controller, 'slugifyGroup', [$collectionGroup]);
 
@@ -186,7 +186,7 @@ class CollectionCrudControllerTest extends TestCase
         ]);
 
         $controller = $this->createController($repository);
-        $collectionGroup = (new CollectionGroup())->setSlug('My Collection');
+        $collectionGroup = new CollectionGroup()->setSlug('My Collection');
 
         $this->invokePrivate($controller, 'slugifyGroup', [$collectionGroup]);
 
@@ -198,12 +198,12 @@ class CollectionCrudControllerTest extends TestCase
     {
         $repository = $this->createStub(CollectionGroupRepository::class);
         $repository->method('findOneBySlug')->willReturn($this->withId(
-            (new CollectionGroup())->setSlug('my-collection'),
+            new CollectionGroup()->setSlug('my-collection'),
             5
         ));
 
         $controller = $this->createController($repository);
-        $collectionGroup = $this->withId((new CollectionGroup())->setSlug('My Collection'), 5);
+        $collectionGroup = $this->withId(new CollectionGroup()->setSlug('My Collection'), 5);
 
         $this->invokePrivate($controller, 'slugifyGroup', [$collectionGroup]);
 

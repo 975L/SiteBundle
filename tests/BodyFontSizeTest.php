@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 // The size body copy is read at is a token, and it only means anything as long as the headings stay out of it: in "em" they would ride it, and a design opening up its paragraphs would drag every title along with them
 class BodyFontSizeTest extends TestCase
 {
-    private const HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    private const array HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
     /**
      * @return array<string, array{string}>

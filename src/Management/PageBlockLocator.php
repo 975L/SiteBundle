@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 class PageBlockLocator
 {
     // Below this, a needle is too generic to substring-match on and is only ever used as an exact match
-    private const MIN_LOOSE_NEEDLE_LENGTH = 4;
+    private const int MIN_LOOSE_NEEDLE_LENGTH = 4;
 
     // Each block's own data as a searchable string, keyed by object id (see haystack())
     private array $haystacks = [];

@@ -24,7 +24,7 @@ class PageServiceTest extends TestCase
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findAllOrdered')->willReturn($pages);
 
-        $this->assertSame($pages, (new PageService($repository))->findAll());
+        $this->assertSame($pages, new PageService($repository)->findAll());
     }
 
     // findOneBySlug() only resolves published, non-deleted pages
@@ -47,6 +47,6 @@ class PageServiceTest extends TestCase
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findOneBySlugForDisplay')->willReturn($page);
 
-        $this->assertSame($page, (new PageService($repository))->findForDisplay('any-slug'));
+        $this->assertSame($page, new PageService($repository)->findForDisplay('any-slug'));
     }
 }

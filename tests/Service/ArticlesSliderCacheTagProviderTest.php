@@ -18,16 +18,16 @@ class ArticlesSliderCacheTagProviderTest extends TestCase
 {
     public function testResolverReturnsPageTagForTheReferencedPage(): void
     {
-        $resolvers = (new ArticlesSliderCacheTagProvider())->getCacheTagResolvers();
-        $block = (new Block())->setKind('articles_slider')->setData(['pageId' => 5]);
+        $resolvers = new ArticlesSliderCacheTagProvider()->getCacheTagResolvers();
+        $block = new Block()->setKind('articles_slider')->setData(['pageId' => 5]);
 
         $this->assertSame(['page_5'], $resolvers['articles_slider']($block));
     }
 
     public function testResolverReturnsEmptyArrayWhenNoPageIdIsSet(): void
     {
-        $resolvers = (new ArticlesSliderCacheTagProvider())->getCacheTagResolvers();
-        $block = (new Block())->setKind('articles_slider')->setData([]);
+        $resolvers = new ArticlesSliderCacheTagProvider()->getCacheTagResolvers();
+        $block = new Block()->setKind('articles_slider')->setData([]);
 
         $this->assertSame([], $resolvers['articles_slider']($block));
     }

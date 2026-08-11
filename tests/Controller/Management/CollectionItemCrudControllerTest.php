@@ -98,12 +98,12 @@ class CollectionItemCrudControllerTest extends TestCase
 
     private function invokePrivate(CollectionItemCrudController $controller, string $method, array $args = []): mixed
     {
-        return (new \ReflectionMethod($controller, $method))->invoke($controller, ...$args);
+        return new \ReflectionMethod($controller, $method)->invoke($controller, ...$args);
     }
 
     private function withId(object $entity, int $id): object
     {
-        (new \ReflectionProperty($entity::class, 'id'))->setValue($entity, $id);
+        new \ReflectionProperty($entity::class, 'id')->setValue($entity, $id);
 
         return $entity;
     }
@@ -192,7 +192,7 @@ class CollectionItemCrudControllerTest extends TestCase
     {
         $collectionGroup = $this->withId(new CollectionGroup(), 5);
         $controller = $this->createController();
-        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('Néw Ïtem!');
+        $item = new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('Néw Ïtem!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($item);
@@ -208,7 +208,7 @@ class CollectionItemCrudControllerTest extends TestCase
     {
         $collectionGroup = new CollectionGroup();
         $controller = $this->createController();
-        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('Héllo Wörld!');
+        $item = new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('Héllo Wörld!');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->once())->method('persist')->with($item);
@@ -225,7 +225,7 @@ class CollectionItemCrudControllerTest extends TestCase
     public function testSlugifyItemNormalizesAccentsSpacesAndCase(): void
     {
         $controller = $this->createController();
-        $item = (new CollectionItem())->setCollectionGroup(new CollectionGroup())->setSlug('Héllo Wörld!');
+        $item = new CollectionItem()->setCollectionGroup(new CollectionGroup())->setSlug('Héllo Wörld!');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -254,7 +254,7 @@ class CollectionItemCrudControllerTest extends TestCase
         ]);
 
         $controller = $this->createController($repository);
-        $item = (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('My Item');
+        $item = new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('My Item');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -268,12 +268,12 @@ class CollectionItemCrudControllerTest extends TestCase
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findOneByCollectionGroupAndSlug')->willReturn($this->withId(
-            (new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('my-item'),
+            new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('my-item'),
             5
         ));
 
         $controller = $this->createController($repository);
-        $item = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup)->setSlug('My Item'), 5);
+        $item = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('My Item'), 5);
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -283,7 +283,7 @@ class CollectionItemCrudControllerTest extends TestCase
     public function testSlugifyItemNeverCollidesWhenTheItemHasNoCollectionGroupYet(): void
     {
         $controller = $this->createController();
-        $item = (new CollectionItem())->setSlug('My Item');
+        $item = new CollectionItem()->setSlug('My Item');
 
         $this->invokePrivate($controller, 'slugifyItem', [$item]);
 
@@ -300,9 +300,9 @@ class CollectionItemCrudControllerTest extends TestCase
     public function testReorderPersistsPositionsInTheSubmittedOrder(): void
     {
         $collectionGroup = $this->withId(new CollectionGroup(), 9);
-        $item1 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 1);
-        $item2 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 2);
-        $item3 = $this->withId((new CollectionItem())->setCollectionGroup($collectionGroup), 3);
+        $item1 = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup), 1);
+        $item2 = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup), 2);
+        $item3 = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup), 3);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findBy')->willReturn([$item1, $item2, $item3]);
@@ -361,7 +361,7 @@ class CollectionItemCrudControllerTest extends TestCase
         $this->expectException(AccessDeniedException::class);
 
         $otherCollectionGroup = $this->withId(new CollectionGroup(), 42);
-        $item = $this->withId((new CollectionItem())->setCollectionGroup($otherCollectionGroup), 1);
+        $item = $this->withId(new CollectionItem()->setCollectionGroup($otherCollectionGroup), 1);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findBy')->willReturn([$item]);

@@ -25,84 +25,84 @@ class MenuCacheInvalidationListenerTest extends TestCase
     // Adding a new menu item persists a brand new "menu_link" Block (cascade, see Menu::$blocks) - postPersist is the only event that fires for it
     public function testPostPersistInvalidatesMenusAllTagForANewMenuLinkBlock(): void
     {
-        $block = (new Block())->setKind('menu_link');
+        $block = new Block()->setKind('menu_link');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // Reordering or editing an existing menu item's target/label updates that Block's own position/data column
     public function testPostUpdateInvalidatesMenusAllTagForAnEditedMenuLinkBlock(): void
     {
-        $block = (new Block())->setKind('menu_link');
+        $block = new Block()->setKind('menu_link');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // Removing a menu item cascade-removes its Block entity (see BlockRemovalListener), not just the join row
     public function testPreRemoveInvalidatesMenusAllTagForARemovedMenuLinkBlock(): void
     {
-        $block = (new Block())->setKind('menu_link');
+        $block = new Block()->setKind('menu_link');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // A footer's items can be laid out in a "menu_group", added to the Menu the same cascade way a link is
     public function testPostPersistInvalidatesMenusAllTagForANewMenuGroupBlock(): void
     {
-        $block = (new Block())->setKind('menu_group');
+        $block = new Block()->setKind('menu_group');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // A group carries fields of its own - its direction, its alignment - whose edit is a lifecycle event on nothing else
     public function testPostUpdateInvalidatesMenusAllTagForAnEditedMenuGroupBlock(): void
     {
-        $block = (new Block())->setKind('menu_group');
+        $block = new Block()->setKind('menu_group');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // A Block of any other kind never belongs to a Menu - nothing to invalidate here
     public function testInvalidateIsSkippedForBlocksOfAnotherKind(): void
     {
-        $block = (new Block())->setKind('article');
+        $block = new Block()->setKind('article');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // The Menu row carries a field of its own - its layout style, read by MenuExtension::getMenuStyle() - which no Block event would ever signal
     public function testPostUpdateInvalidatesMenusAllTagForAnEditedMenu(): void
     {
-        $menu = (new Menu())->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+        $menu = new Menu()->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postUpdate(new PostUpdateEventArgs($menu, $this->createStub(EntityManagerInterface::class)));
     }
 
@@ -111,7 +111,7 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        (new MenuCacheInvalidationListener($cache))
+        new MenuCacheInvalidationListener($cache)
             ->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createStub(EntityManagerInterface::class)));
     }
 }

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class CreditsModeTest extends TestCase
 {
     // The four slugs that left this bundle for core-bundle with the modes (see UPGRADE.md), same group, same rows
-    private const MOVED_SLUGS = ['site-hosted-by-url', 'site-hosted-by-logo', 'display-made-by', 'display-hosted-by'];
+    private const array MOVED_SLUGS = ['site-hosted-by-url', 'site-hosted-by-logo', 'display-made-by', 'display-hosted-by'];
 
     /**
      * @return array<string, array{string, string, string}>

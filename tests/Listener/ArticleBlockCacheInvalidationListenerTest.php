@@ -25,9 +25,9 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
 {
     private function createBlock(string $kind, ?int $id): Block
     {
-        $block = (new Block())->setKind($kind);
+        $block = new Block()->setKind($kind);
         if (null !== $id) {
-            (new \ReflectionProperty(Block::class, 'id'))->setValue($block, $id);
+            new \ReflectionProperty(Block::class, 'id')->setValue($block, $id);
         }
 
         return $block;
@@ -36,7 +36,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
     private function createPage(int $id): Page
     {
         $page = new Page();
-        (new \ReflectionProperty(Page::class, 'id'))->setValue($page, $id);
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, $id);
 
         return $page;
     }
@@ -52,7 +52,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['page_3']);
 
-        (new ArticleBlockCacheInvalidationListener($pageRepository, $cache))
+        new ArticleBlockCacheInvalidationListener($pageRepository, $cache)
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
@@ -67,7 +67,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         $cache->expects($this->exactly(2))->method('invalidateTags')
             ->with($this->logicalOr(['page_5'], ['page_6']));
 
-        (new ArticleBlockCacheInvalidationListener($pageRepository, $cache))
+        new ArticleBlockCacheInvalidationListener($pageRepository, $cache)
             ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
@@ -81,7 +81,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['page_9']);
 
-        (new ArticleBlockCacheInvalidationListener($pageRepository, $cache))
+        new ArticleBlockCacheInvalidationListener($pageRepository, $cache)
             ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
@@ -95,7 +95,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        (new ArticleBlockCacheInvalidationListener($pageRepository, $cache))
+        new ArticleBlockCacheInvalidationListener($pageRepository, $cache)
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
@@ -107,7 +107,7 @@ class ArticleBlockCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        (new ArticleBlockCacheInvalidationListener($pageRepository, $cache))
+        new ArticleBlockCacheInvalidationListener($pageRepository, $cache)
             ->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createStub(EntityManagerInterface::class)));
     }
 }

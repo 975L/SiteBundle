@@ -80,7 +80,7 @@ class CollectionItemImportCommandTest extends TestCase
             $repository,
             new CollectionGroupResolver(
                 $collectionGroupRepository ?? $this->createCollectionGroupRepository(
-                    (new CollectionGroup())->setName('projects')->setSlug('projects')
+                    new CollectionGroup()->setName('projects')->setSlug('projects')
                 ),
                 new AsciiSlugger(),
             ),
@@ -176,7 +176,7 @@ class CollectionItemImportCommandTest extends TestCase
         $this->writeJson([['title' => 'Papa Câlin']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
-        $projects = (new CollectionGroup())->setName('Projects')->setSlug('projects');
+        $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
 
         $collectionGroupRepository = $this->createStub(CollectionGroupRepository::class);
         $collectionGroupRepository->method('findOneBySlug')->willReturnCallback(
@@ -248,8 +248,8 @@ class CollectionItemImportCommandTest extends TestCase
     {
         $this->writeJson([['title' => 'Papa Câlin']]);
 
-        $projects = (new CollectionGroup())->setName('projects')->setSlug('projects');
-        $existing = (new CollectionItem())->setCollectionGroup($projects)->setTitle('Papa Câlin');
+        $projects = new CollectionGroup()->setName('projects')->setSlug('projects');
+        $existing = new CollectionItem()->setCollectionGroup($projects)->setTitle('Papa Câlin');
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findByCollectionGroup')->willReturn([$existing]);

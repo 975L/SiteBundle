@@ -21,7 +21,7 @@ class CollectionItemExportProviderTest extends TestCase
 {
     private function collectionGroup(string $name): CollectionGroup
     {
-        return (new CollectionGroup())->setName($name)->setSlug(strtolower($name));
+        return new CollectionGroup()->setName($name)->setSlug(strtolower($name));
     }
 
     public function testGetKindMatchesCollectionItemImportProvider(): void
@@ -38,7 +38,7 @@ class CollectionItemExportProviderTest extends TestCase
         $filename = 'uploads/project-cover.jpg';
         file_put_contents($projectDir . '/public/' . $filename, 'fake-image-bytes');
 
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($this->collectionGroup('Projects'))
             ->setTitle('My Project')
             ->setSlug('my-project')
@@ -50,7 +50,7 @@ class CollectionItemExportProviderTest extends TestCase
         $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
         $collectionItemRepository->method('findBy')->willReturn([$item]);
 
-        $data = (new CollectionItemExportProvider($collectionItemRepository, $projectDir))->exportAll();
+        $data = new CollectionItemExportProvider($collectionItemRepository, $projectDir)->exportAll();
 
         $this->assertSame('Projects', $data['items'][0]['collectionGroup']);
         $this->assertSame('my-project', $data['items'][0]['slug']);
@@ -67,13 +67,13 @@ class CollectionItemExportProviderTest extends TestCase
 
     public function testSerializeExportsAnItemWithNoFileWithoutAFileEntry(): void
     {
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($this->collectionGroup('Projects'))
             ->setTitle('No Image')
             ->setSlug('no-image')
             ->setPosition(0);
 
-        $data = (new CollectionItemExportProvider($this->createStub(CollectionItemRepository::class), sys_get_temp_dir()))->serialize([$item]);
+        $data = new CollectionItemExportProvider($this->createStub(CollectionItemRepository::class), sys_get_temp_dir())->serialize([$item]);
 
         $this->assertSame('no-image', $data['items'][0]['slug']);
         $this->assertArrayNotHasKey('file', $data['items'][0]);
@@ -82,14 +82,14 @@ class CollectionItemExportProviderTest extends TestCase
 
     public function testSerializeExportsAnItemWithAnUnreadableFileWithoutAFileEntry(): void
     {
-        $item = (new CollectionItem())
+        $item = new CollectionItem()
             ->setCollectionGroup($this->collectionGroup('Projects'))
             ->setTitle('Ghost')
             ->setSlug('ghost')
             ->setPosition(0)
             ->setFilename('uploads/missing.jpg');
 
-        $data = (new CollectionItemExportProvider($this->createStub(CollectionItemRepository::class), sys_get_temp_dir()))->serialize([$item]);
+        $data = new CollectionItemExportProvider($this->createStub(CollectionItemRepository::class), sys_get_temp_dir())->serialize([$item]);
 
         $this->assertArrayNotHasKey('file', $data['items'][0]);
         $this->assertSame([], $data['files']);

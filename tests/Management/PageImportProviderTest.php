@@ -134,8 +134,8 @@ class PageImportProviderTest extends TestCase
 
     public function testImportOverwritesAnExistingPageAndReplacesItsBlocks(): void
     {
-        $existingBlock = (new Block())->setKind('text')->setPosition(0)->setData(['content' => 'old']);
-        $existingPage = (new Page())->setTitle('Old title')->setSlug('about')->setIsPublished(false);
+        $existingBlock = new Block()->setKind('text')->setPosition(0)->setData(['content' => 'old']);
+        $existingPage = new Page()->setTitle('Old title')->setSlug('about')->setIsPublished(false);
         $existingPage->addBlock($existingBlock);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -316,8 +316,8 @@ class PageImportProviderTest extends TestCase
 
     public function testImportRemovesTheExistingOgImageWhenTheExportCarriesNone(): void
     {
-        $existingOgImage = (new Media())->setFilename('uploads/old-og.jpg');
-        $existingPage = (new Page())->setTitle('About')->setSlug('about')->setOgImage($existingOgImage);
+        $existingOgImage = new Media()->setFilename('uploads/old-og.jpg');
+        $existingPage = new Page()->setTitle('About')->setSlug('about')->setOgImage($existingOgImage);
 
         $removed = [];
         $em = $this->createStub(EntityManagerInterface::class);

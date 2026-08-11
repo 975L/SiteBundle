@@ -27,9 +27,9 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 #[ORM\UniqueConstraint(name: 'UNIQ_COLLECTION_ITEM_GROUP_SLUG', columns: ['collection_group_id', 'slug'])]
 #[Vich\Uploadable]
 #[UniqueEntity(fields: ['collectionGroup', 'slug'])]
-class CollectionItem implements VichImageResizableInterface, VichMediaNamableInterface
+class CollectionItem implements VichImageResizableInterface, VichMediaNamableInterface, \Stringable
 {
-    private const IMAGE_WIDTH = 800;
+    private const int IMAGE_WIDTH = 800;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
