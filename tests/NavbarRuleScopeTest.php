@@ -25,6 +25,12 @@ class NavbarRuleScopeTest extends TestCase
         '.menu .menu-label',
     ];
 
+    // Both repaint the pill's own label at the very weight the pill's rule carries, (0,3,0), so only source order keeps the pill's color on top
+    private const OUTWEIGHED_BY_ORDER = [
+        '.menu .menu-label',
+        '.menu.is-scrolled .menu-label',
+    ];
+
     // The bare form of each rule above that must not be left behind - ".menu-label" is out, the base rule sizing every label the site over deliberately carrying no scope
     private const NEVER_BARE = [
         '.menu-item',
@@ -82,6 +88,26 @@ class NavbarRuleScopeTest extends TestCase
             $this->stylesheet($file),
             sprintf('"%s" scoped ".menu-item--primary" to the navbar, so a footer pill loses the spacing it had.', $file)
         );
+    }
+
+    // Tying equals, the last rule written wins: move the pill's label above either of the two and its --primary fill carries the navbar's text color again, unreadable wherever the two are close in lightness
+    #[DataProvider('stylesheetProvider')]
+    public function testThePillLabelIsPaintedLast(string $file): void
+    {
+        $css = $this->stylesheet($file);
+
+        $pill = strpos($css, '.menu .menu-item--primary .menu-label');
+        $this->assertNotFalse($pill, sprintf('"%s" no longer paints ".menu .menu-item--primary .menu-label", so the pill reads the navbar\'s text color.', $file));
+
+        foreach (self::OUTWEIGHED_BY_ORDER as $selector) {
+            $position = strrpos($css, $selector);
+            $this->assertNotFalse($position, sprintf('"%s" no longer carries "%s".', $file, $selector));
+            $this->assertGreaterThan(
+                $position,
+                $pill,
+                sprintf('"%s" now writes "%s" after the pill\'s own label, which takes --navbar-btn-color out of the cascade at every desktop width.', $file, $selector)
+            );
+        }
     }
 
     private function stylesheet(string $file): string

@@ -343,6 +343,8 @@ A `menu_link` targeting the site's own "Copyright" page (the one `DefaultPagesIm
 
 A `menu_link` also has an optional `primary` checkbox (`MenuLinkType`) that renders it as a filled, primary-color button (`.menu-item--primary`, see `sass/_menu.scss`) instead of a plain text link — meant for a single stand-out item (e.g. a "Contact" link in the navbar), not for every item in a `Menu`. A lighter emphasis sits beside it: the `strong` checkbox bolds the label alone (`.menu-item--strong`, the rule sitting on `.menu-label`, which is what carries the typography), so the item stands out without taking a button's room — in a footer, where a button would be out of place, or on an item a button would over-sell. The two are independent and stack: checked together, the button reads bolder.
 
+In the navbar, the button's label reads `--navbar-btn-color`, its rule restated after the two that paint every navbar label: the three tie at the same specificity, so only source order keeps the button's own ink on top of its filled background (`NavbarRuleScopeTest`).
+
 ### Navbar: logo, site name, tagline
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).

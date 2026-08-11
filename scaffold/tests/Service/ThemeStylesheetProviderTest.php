@@ -34,7 +34,7 @@ class ThemeStylesheetProviderTest extends TestCase
         $this->addTheme('site.css');
         $this->addTheme('ui.css');
 
-        $stylesheets = (new ThemeStylesheetProvider($this->projectDir))->getStylesheets();
+        $stylesheets = new ThemeStylesheetProvider($this->projectDir)->getStylesheets();
 
         $this->assertSame([
             'assets/styles/themes/site.css',
@@ -49,7 +49,7 @@ class ThemeStylesheetProviderTest extends TestCase
         $this->addTheme('shop.css');
         $this->addTheme('site.css');
 
-        $stylesheets = (new ThemeStylesheetProvider($this->projectDir))->getStylesheets();
+        $stylesheets = new ThemeStylesheetProvider($this->projectDir)->getStylesheets();
 
         $this->assertSame([
             'assets/styles/themes/shop.css',
@@ -65,7 +65,7 @@ class ThemeStylesheetProviderTest extends TestCase
         $this->addTheme('site.css.bak');
         $this->addTheme('README.md');
 
-        $stylesheets = (new ThemeStylesheetProvider($this->projectDir))->getStylesheets();
+        $stylesheets = new ThemeStylesheetProvider($this->projectDir)->getStylesheets();
 
         $this->assertSame(['assets/styles/themes/site.css'], $stylesheets);
     }
@@ -75,7 +75,7 @@ class ThemeStylesheetProviderTest extends TestCase
     {
         rmdir($this->projectDir . '/assets/styles/themes');
 
-        $this->assertSame([], (new ThemeStylesheetProvider($this->projectDir))->getStylesheets());
+        $this->assertSame([], new ThemeStylesheetProvider($this->projectDir)->getStylesheets());
     }
 
     private function addTheme(string $name): void

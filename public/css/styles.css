@@ -854,6 +854,10 @@ body.navbar-fixed {
   .menu.is-scrolled .menu-label {
     color: var(--navbar-text-scrolled);
   }
+  .menu .menu-item--primary .menu-label,
+  .menu.is-scrolled .menu-item--primary .menu-label {
+    color: var(--navbar-btn-color);
+  }
   .menu .menu-item {
     border-top: none;
     border-bottom: 3px solid transparent;

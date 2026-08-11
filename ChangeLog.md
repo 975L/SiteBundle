@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.2.5
+
+A navbar button keeps its own ink on its filled background
+
+- The `primary` menu link's label reads `--navbar-btn-color` again on desktop (11/08/2026)
+- README documents that its rule must stay after the navbar's label rules (11/08/2026)
+- `NavbarRuleScopeTest` locks that source order (11/08/2026)
+- The scaffold's `ThemeStylesheetProvider` types its `THEMES_DIR` constant (11/08/2026)
+- The scaffold's tests instantiate without wrapping parentheses (11/08/2026)
+
 ## v8.2.4
 
 Ink stays readable in dark mode, on colored bands and in print

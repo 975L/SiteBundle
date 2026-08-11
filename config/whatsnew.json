@@ -26,6 +26,11 @@
                 "en": "Printing a page always gives black text on white paper now, even when the site is being read in dark mode - no more dark background eating the text and the printer's ink",
                 "fr": "L'impression d'une page donne désormais toujours du texte noir sur papier blanc, même lorsque le site est consulté en mode sombre - fini le fond sombre qui mangeait le texte et l'encre de l'imprimante",
                 "es": "La impresión de una página ofrece ahora siempre texto negro sobre papel blanco, incluso cuando el sitio se consulta en modo oscuro: se acabó el fondo oscuro que se comía el texto y la tinta de la impresora"
+            },
+            {
+                "en": "A menu link shown as a button keeps its own text color in the navigation bar, instead of taking the bar's - which made it unreadable on its colored background on some sites",
+                "fr": "Un lien de menu affiché en bouton conserve sa propre couleur de texte dans la barre de navigation, au lieu de prendre celle de la barre - ce qui le rendait illisible sur son fond coloré sur certains sites",
+                "es": "Un enlace de menú mostrado como botón conserva su propio color de texto en la barra de navegación, en lugar de tomar el de la barra - lo que lo hacía ilegible sobre su fondo de color en algunos sitios"
             }
         ]
     },

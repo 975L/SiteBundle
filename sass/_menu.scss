@@ -291,6 +291,12 @@ body.navbar-fixed {
         color: var(--navbar-text-scrolled);
     }
 
+    // Restated after the two rules above: tying their specificity, they took --navbar-btn-color out of the cascade, leaving the pill's label in the navbar's text color on its own --primary fill
+    .menu .menu-item--primary .menu-label,
+    .menu.is-scrolled .menu-item--primary .menu-label {
+        color: var(--navbar-btn-color);
+    }
+
     // The active page's underline, in the navbar's own color - scoped like the rest, a footer holding a link to the page being read having taken it too
     .menu .menu-item {
         border-top: none;

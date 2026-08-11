@@ -63,13 +63,13 @@ class ContentAccessTest extends FunctionalTestCase
     public function testAllRedirectsPointToTheirTarget(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $temporaryRedirect = (new Redirect())
+        $temporaryRedirect = new Redirect()
             ->setFromPath('/temporary-redirect-test')
             ->setToUrl('/')
             ->setPermanent(false)
         ;
         $entityManager->persist($temporaryRedirect);
-        $goneRedirect = (new Redirect())
+        $goneRedirect = new Redirect()
             ->setFromPath('/temporary-gone-test')
             ->setGone(true)
         ;
@@ -111,7 +111,7 @@ class ContentAccessTest extends FunctionalTestCase
     public function testDeletedPagesReturn410(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $temporaryPage = (new Page())
+        $temporaryPage = new Page()
             ->setTitle('Temporary deleted page')
             ->setSlug('temporary-deleted-page-test')
             ->setCreation(new \DateTime())
@@ -145,7 +145,7 @@ class ContentAccessTest extends FunctionalTestCase
     public function testUnpublishedPagesReturn404(): void
     {
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        $temporaryPage = (new Page())
+        $temporaryPage = new Page()
             ->setTitle('Temporary draft page')
             ->setSlug('temporary-draft-page-test')
             ->setCreation(new \DateTime())
