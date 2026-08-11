@@ -5,7 +5,7 @@
     {% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
     {# "label" overrides the derived one; uncached, so the computed copyright's year stays fresh #}
     {% set resolvedLabel = label|default('') is not empty ? label : menu_link_label(target) %}
-    <div class="{{ ['menu-item', isActive ? 'active' : null, primary|default(false) ? 'menu-item--primary' : null]|filter(v => v is not null)|join(' ') }}">
+    <div class="{{ ['menu-item', isActive ? 'active' : null, primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null]|filter(v => v is not null)|join(' ') }}">
         <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
             <span class="menu-label">{{ resolvedLabel }}</span>
         </a>

@@ -266,6 +266,10 @@
                 <source>help.menu_link_primary</source>
                 <target>Bouton plein couleur primaire au lieu d'un simple lien - à réserver à un élément marquant (ex. "Contact")</target>
             </trans-unit>
+            <trans-unit id="Almlvtp">
+                <source>help.menu_link_strong</source>
+                <target>Libellé en gras, sans autre changement - mise en avant plus légère qu'un bouton, et cumulable avec lui</target>
+            </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
                 <target><![CDATA[J'accepte les <a href="%tosUrl%" target="_blank">Conditions générales de vente (CGV)</a>]]></target>
@@ -865,6 +869,10 @@
             <trans-unit id="OprTwDC">
                 <source>label.menu_link_primary</source>
                 <target>Mettre en avant comme un bouton</target>
+            </trans-unit>
+            <trans-unit id="6DTbRQd">
+                <source>label.menu_link_strong</source>
+                <target>Mettre le libellé en gras</target>
             </trans-unit>
             <trans-unit id="Bb8KPHq">
                 <source>label.menu_style</source>

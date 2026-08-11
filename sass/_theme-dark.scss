@@ -18,8 +18,7 @@
     --input-focus-border-color: rgb(96, 165, 250);
     --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
     --input-icon-filter: invert(1);
-    // Lightened off the danger red, which reads at 4.14:1 on the #121212 page - under the 4.5:1 WCAG AA
-    // asks of body text, and this message is set at 0.9rem
+    // Lightened off the danger red, which reads at 4.14:1 on the #121212 page - under the 4.5:1 WCAG AA asks of body text, and this message is set at 0.9rem
     --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
     // Each pale tint is mixed into the page background, keeping its hue as a real dark surface
     --alert-color: #e0e0e0;
@@ -31,11 +30,9 @@
     // Only takes effect if the admin filled theme-color-primary/-secondary-dark-mode; otherwise falls back to the same chain --primary/--secondary use in _variables.scss. Can't write "var(--primary)" as the fallback here - since this rule can itself win the cascade for --primary, that would be a self-reference (cyclic = invalid), not a fallback to the light value
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
-    // --primary itself is left alone, being a surface everywhere else (the primary button, a "primary" flat,
-    // the footer band) where the white --button-color needs it dark. Only the three roles where it paints
-    // text are lightened, a deep brand blue reading at 1.43:1 on the #121212 page - and an admin who fills
-    // theme-color-primary-dark-mode is followed here too, the mix taking whatever --primary resolved to
+    // --primary itself is left alone, being a surface everywhere else (the primary button, a "primary" flat, the footer band) where the white --button-color needs it dark. Only the three roles where it paints text are lightened, a deep brand blue reading at 1.43:1 on the #121212 page - and an admin who fills theme-color-primary-dark-mode is followed here too, the mix taking whatever --primary resolved to
     --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
+    --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
 }

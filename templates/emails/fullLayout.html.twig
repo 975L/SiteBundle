@@ -30,14 +30,7 @@
             {# Stylesheets #}
             {% block stylesheets %}
                 <style>
-                    {# UiBundle's shared email base first - it carries the :root defaults and everything the
-                       EmailTemplate blocks render against. This bundle's own file then brings the branded
-                       footer alone, and the admin's theme variables win last.
-                       "resolve_css_variables" then replaces every var() by the value it resolves to: the
-                       inliner below copies declarations into style="" verbatim, and Gmail, Outlook and most
-                       mobile clients resolve no custom property - every colored declaration was dropped
-                       there. It runs at render time, not at sass compile time, so the admin's own palette
-                       (theme_variables_css above) is part of what gets resolved #}
+                    {# UiBundle's shared email base first - it carries the :root defaults and everything the EmailTemplate blocks render against. This bundle's own file then brings the branded footer alone, and the admin's theme variables win last. "resolve_css_variables" then replaces every var() by the value it resolves to: the inliner below copies declarations into style="" verbatim, and Gmail, Outlook and most mobile clients resolve no custom property - every colored declaration was dropped there. It runs at render time, not at sass compile time, so the admin's own palette (theme_variables_css above) is part of what gets resolved #}
                     {% apply resolve_css_variables %}
                         {{ source('@c975LUiCss/emails.min.css') }}
                         {{ source('@c975LSiteCss/emails.min.css') }}

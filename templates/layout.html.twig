@@ -62,8 +62,10 @@
 {# The comma is not optional: the viewport content is a comma-separated list, so "width=device-width initial-scale=1.0" is one single unparseable token and the whole directive is dropped #}
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <meta name="format-detection" content="telephone=no">
-{# Turbo reads this to nonce the inline tags it re-executes, which the CSP would otherwise block #}
-                <meta name="csp-nonce" content="{{ csp_nonce('script') }}">
+{# Turbo reads this to nonce the inline tags it re-executes, which the CSP would otherwise block. It nonces its progress bar's own <style> with the very same value (see ProgressBar.createStylesheetElement), so the value here has to be one style-src carries as well as script-src - hence both being asked for, right here and in this order: NelmioSecurityBundle mints one nonce per response (ContentSecurityPolicyListener::doGetNonce caches it) and stamps it into whichever directive was asked, so two adjacent calls hand back the same string and put it in both. Ask for script alone and Turbo's stylesheet is rejected on every page whose style-src happened to be nonced by something else #}
+                {% set cspNonce = csp_nonce('script') %}
+                {% set cspNonce = csp_nonce('style') %}
+                <meta name="csp-nonce" content="{{ cspNonce }}">
 {# Base #}
                 <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
 {# Display for html #}
@@ -127,7 +129,7 @@
             {% endblock %}
 {# Stylesheets #}
             {% block stylesheets %}
-{# data-turbo-track="reload" : Turbo Drive ne re-evalue pas le <head> entre deux navigations, donc apres un deploiement le visiteur deja sur le site recoit le nouveau HTML avec les anciens assets. Marquees ainsi, ces balises sont comparees par Turbo a chaque navigation (par leur outerHTML) et un href different - le ?v=<mtime> change a chaque cache:warmup - declenche un rechargement complet de la page #}
+{# data-turbo-track="reload": Turbo Drive does not re-evaluate the <head> between two navigations, so after a deployment a visitor already on the site gets the new HTML with the old assets. Marked this way, these tags are compared by Turbo on every navigation (by their outerHTML) and a different href - the ?v=<mtime> changes on every cache:warmup - triggers a full page reload #}
                 {% for stylesheet in bundle_stylesheets() %}
                     <link rel="stylesheet" href="{{ stylesheet }}" data-turbo-track="reload">
                 {% endfor %}
@@ -148,8 +150,8 @@
             {% if display != 'pdf' %}
                 {% block javascripts %}
                     {% block importmap %}
-{# data-turbo-track="reload" ne s'applique qu'aux balises <script> rendues ici, pas aux <link rel="modulepreload">, ce qui suffit : le JSON inline du <script type="importmap"> liste toutes les URLs digestees du JS et sert donc d'empreinte complete. Le nonce, different a chaque requete, ne provoque pas de faux positif : Turbo le vide avant de comparer les signatures #}
-{# Symfony pose aussi cet attribut sur le <script> que le loader du polyfill es-module-shims injecte dans le <head>, ce qui ferait echouer la comparaison de signature a chaque navigation. Assume : le polyfill ne se declenche que si HTMLScriptElement.supports('importmap') est faux, donc sur un navigateur anterieur a 2023 #}
+{# data-turbo-track="reload" only applies to the <script> tags rendered here, not to the <link rel="modulepreload">, which is enough: the inline JSON of the <script type="importmap"> lists every digested JS URL and therefore stands as a complete fingerprint. The nonce, different on every request, causes no false positive: Turbo empties it before comparing the signatures #}
+{# Symfony also puts this attribute on the <script> the es-module-shims polyfill loader injects into the <head>, which would fail the signature comparison on every navigation. Accepted: the polyfill only fires when HTMLScriptElement.supports('importmap') is false, so on a browser older than 2023 #}
                         {{ importmap(['app']|merge(bundle_scripts()), {'nonce': csp_nonce('script'), 'data-turbo-track': 'reload'}) }}
                     {% endblock %}
                 {% endblock %}
@@ -158,7 +160,8 @@
         {% endblock %}
     </head>
 {# Body #}
-    <body id="top" class="{{ config('site-navbar-position') == 'fixed' ? 'navbar-fixed' : '' }}" data-controller="basic password">
+{# "bodyClass" is what a page adds to the body itself, where a class on the content would only cover the content: a screen laid on its own background (a photo gallery, a reader) paints the whole page with it, navbar and footer included #}
+    <body id="top" class="{{ config('site-navbar-position') == 'fixed' ? 'navbar-fixed ' : '' }}{% block bodyClass %}{% endblock %}" data-controller="basic password">
 {# jQuery #}
         {% block jquery %}
         {% endblock %}

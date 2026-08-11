@@ -15,8 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class BlockFixtureProviderTest extends TestCase
 {
-    // "articles_slider" and "menu_link" are deliberately not covered - see the class comment. "legal_model"
-    // left with the models themselves: UiBundle ships its fixture now
+    // "articles_slider" and "menu_link" are deliberately not covered - see the class comment. "legal_model" left with the models themselves: UiBundle ships its fixture now
     public function testGetFixturesCoversTwigContentOnly(): void
     {
         $fixtures = (new BlockFixtureProvider())->getFixtures();

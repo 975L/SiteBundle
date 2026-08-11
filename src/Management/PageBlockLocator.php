@@ -16,8 +16,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockFocusUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// Traces something in a page's rendered HTML back to the Block that produced it, best-effort: rendered markup
-// carries no block id for an anonymous visitor, so a miss returns null and the caller falls back to the page url
+// Traces something in a page's rendered HTML back to the Block that produced it, best-effort: rendered markup carries no block id for an anonymous visitor, so a miss returns null and the caller falls back to the page url
 class PageBlockLocator
 {
     // Below this, a needle is too generic to substring-match on and is only ever used as an exact match

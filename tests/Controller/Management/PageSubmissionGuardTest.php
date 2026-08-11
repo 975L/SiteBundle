@@ -13,15 +13,7 @@ namespace c975L\SiteBundle\Tests\Controller\Management;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use PHPUnit\Framework\TestCase;
 
-/*
- * A whole page is one form - every block, every nested slot, every media in a single POST - so it is the form
- * that reaches PHP's max_input_vars first. Past it PHP drops the rest of the body silently, and the blocks that
- * fell past the cut arrive as an absent key, which the normalization below reads as "the editor removed them"
- * and deletes for good. Nothing can recover what PHP never parsed, so the submission has to be refused whole.
- *
- * Read off the source: reaching the listener means building EasyAdmin's own form builder, and what matters here
- * is the order of three statements, not the framework around them.
- */
+// A whole page is one form - every block, every nested slot, every media in a single POST - so it is the form that reaches PHP's max_input_vars first. Past it PHP drops the rest of the body silently, and the blocks that fell past the cut arrive as an absent key, which the normalization below reads as "the editor removed them" and deletes for good. Nothing can recover what PHP never parsed, so the submission has to be refused whole. Read off the source: reaching the listener means building EasyAdmin's own form builder, and what matters here is the order of three statements, not the framework around them.
 class PageSubmissionGuardTest extends TestCase
 {
     public function testTheTruncationGuardComesBeforeAnythingIsRemoved(): void
@@ -64,10 +56,7 @@ class PageSubmissionGuardTest extends TestCase
         }
     }
 
-    /*
-     * The guard's own block, cut at the statement that follows it, rather than everything the listener still has
-     * to say: read to the end, a "return;" belonging to any later branch would answer for the guard's own
-     */
+    // The guard's own block, cut at the statement that follows it, rather than everything the listener still has to say: read to the end, a "return;" belonging to any later branch would answer for the guard's own
     private function truncationGuard(string $listener): string
     {
         $start = strpos($listener, 'SubmissionIntegrity::isTruncated');

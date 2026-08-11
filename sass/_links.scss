@@ -1,7 +1,8 @@
+// --link-color and not --primary: the token names itself the link's color and defaults to the brand, but only the hover rule below ever read it - so setting it moved a link on hover alone, and the lightened value a dark page gives it (see sass/_theme-dark.scss) never reached a link at rest, which went on being painted in the raw brand color a dark ground reads at barely more than 1:1. A no-op wherever --link-color is left at its default, which is var(--primary)
 a,
 h1 a {
     text-decoration: none;
-    color: var(--primary);
+    color: var(--link-color);
 }
 
 h1 a:active,
@@ -11,6 +12,6 @@ a:hover h1 a:hover {
 
 a:hover,
 a:visited:hover {
-    color: var(--link-color);
+    color: var(--link-hover-color);
     text-decoration: underline;
 }

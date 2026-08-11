@@ -14,13 +14,7 @@ use c975L\UiBundle\Testing\ComponentCenteringAnalyzer;
 use c975L\UiBundle\Testing\StylesheetCascade;
 use PHPUnit\Framework\TestCase;
 
-/**
- * The same analysis UiBundle runs over its own sheet, run here over the pair - which is where the collisions
- * actually are. This bundle's own page-wide "section { margin: 1em auto }" is what UiBundle's block reset was
- * written to cancel in the first place, and neither bundle can see that pair from inside itself.
- *
- * UiBundle's sheet loads after this one (see the order the pages print), so on equal specificity it wins.
- */
+// The same analysis UiBundle runs over its own sheet, run here over the pair - which is where the collisions actually are. This bundle's own page-wide "section { margin: 1em auto }" is what UiBundle's block reset was written to cancel in the first place, and neither bundle can see that pair from inside itself. UiBundle's sheet loads after this one (see the order the pages print), so on equal specificity it wins.
 class ComponentCenteringCascadeTest extends TestCase
 {
     // The two bundles' sheets in the order a page loads them, source order deciding between equal specificities

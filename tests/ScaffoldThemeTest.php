@@ -34,13 +34,9 @@ class ScaffoldThemeTest extends TestCase
         '--slider-freeflow-vw',
     ];
 
-    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into
-    // site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on
-    // the row and on each column's own span modifier - one value in :root would size every column alike.
-    // Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping
-    // every flip card alike including the "free" one that declares no class at all.
-    // Same for "--slider-freeflow-item" and "--contact-details-gutter", declared on ".slider-freeflow"
-    // and ".contact-details" themselves, where the local declaration beats anything inherited from :root
+    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike.
+    // Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all.
+    // Same for "--slider-freeflow-item" and "--contact-details-gutter", declared on ".slider-freeflow" and ".contact-details" themselves, where the local declaration beats anything inherited from :root
     private const NOT_THEMABLE = [
         '--c975l-color-background',
         '--c975l-color-primary',
@@ -51,8 +47,10 @@ class ScaffoldThemeTest extends TestCase
         '--c975l-font-family-accent',
         '--c975l-font-family-body',
         '--c975l-font-family-title',
+        '--bs-border-color',
         '--bs-primary',
         '--bs-secondary-bg',
+        '--bs-secondary-color',
         '--bs-tertiary-bg',
         '--contact-details-gutter',
         '--flex-columns-gap',
@@ -61,12 +59,9 @@ class ScaffoldThemeTest extends TestCase
         '--slider-freeflow-item',
     ];
 
-    // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root
-    // would collapse the three variants into a single look (the scaffold's own header says as much).
-    // Same for the card trio, set inside each ".card--accent-*" rule out of that hue's own token: a value
-    // in :root would head every unaccented card with it, and the text color and icon inversion that go
-    // with it only hold for the four light hues that carry dark text. What a design retunes is the twelve
-    // "--block-accent-*" the scaffold does offer, the hues these three merely point at
+    // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root would collapse the three variants into a single look (the scaffold's own header says as much).
+    // Same for the card trio and for "--flip-card-accent", set inside each ".card--accent-*" and ".flip-card-accent-*" rule out of that hue's own token: a value in :root would head every unaccented card with it, and the text color and icon inversion that go with it only hold for the four light hues that carry dark text. What a design retunes is the twelve "--block-accent-*" the scaffold does offer, the hues these four merely point at.
+    // Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included
     private const PER_VARIANT = [
         '--section-background',
         '--section-text',
@@ -77,6 +72,9 @@ class ScaffoldThemeTest extends TestCase
         '--card-accent',
         '--card-accent-color',
         '--card-accent-invert',
+        '--flip-card-accent',
+        '--block-radius',
+        '--block-shadow',
     ];
 
     // UiBundle's own directory, located through its bundle class rather than through "vendor/c975l/ui-bundle": it ships inside c975l/core-bundle, one directory deeper than that guess ever looked - same reasoning as ConfigBundle's BundleLocator, which reads it off the kernel at runtime
@@ -134,8 +132,7 @@ class ScaffoldThemeTest extends TestCase
         }
     }
 
-    // D. A token read with an inline fallback never reaches :root, so test A above is blind to it - and a
-    // whole batch of form and alert tokens did stay out of the scaffold for a release because of that
+    // D. A token read with an inline fallback never reaches :root, so test A above is blind to it - and a whole batch of form and alert tokens did stay out of the scaffold for a release because of that
     public function testScaffoldOffersEveryTokenReadWithAnInlineFallback(): void
     {
         $missing = array_diff(
@@ -174,8 +171,7 @@ class ScaffoldThemeTest extends TestCase
             );
 
             foreach ($files as $file) {
-                // Comments are stripped first: prose explaining a rule quotes "var(--x)" too, and an
-                // interpolated name written there ("var(--block-accent-#{$hue})") reads as a token nothing offers
+                // Comments are stripped first: prose explaining a rule quotes "var(--x)" too, and an interpolated name written there ("var(--block-accent-#{$hue})") reads as a token nothing offers
                 $code = (string) preg_replace(
                     ['#/\*.*?\*/#s', '#//[^\n]*#'],
                     '',
@@ -226,9 +222,7 @@ class ScaffoldThemeTest extends TestCase
     {
         $ui = self::uiBundleDir() . '/scaffold/assets/styles/themes/ui.css';
 
-        // Half of the catalogue lives there, and composer requires a UiBundle that ships it: a missing file
-        // is an installed vendor predating the split, an anomaly to report rather than a half-blind pass -
-        // skipping instead would leave every assertion below silent for as long as the vendor lags behind
+        // Half of the catalogue lives there, and composer requires a UiBundle that ships it: a missing file is an installed vendor predating the split, an anomaly to report rather than a half-blind pass - skipping instead would leave every assertion below silent for as long as the vendor lags behind
         $this->assertFileExists($ui, sprintf('"%s" is missing: the installed c975l/core-bundle predates the theme split, so the two halves of the catalogue cannot be checked together - run "composer update c975l/core-bundle".', $ui));
 
         return [dirname(__DIR__) . '/scaffold/assets/styles/themes/site.css', $ui];
@@ -253,8 +247,7 @@ class ScaffoldThemeTest extends TestCase
             // Whatever prose is left is only matched if it holds a declaration, already unwrapped above
             $declarations = $this->declarations((string) preg_replace('#/\*.*?\*/#s', '', $css));
 
-            // One token, one bundle: the same name offered twice would leave the second copy free to drift, the
-            // merge below keeping the first file's value and test B never reading the other one
+            // One token, one bundle: the same name offered twice would leave the second copy free to drift, the merge below keeping the first file's value and test B never reading the other one
             $duplicates = array_keys(array_intersect_key($declarations, $tokens));
             $this->assertSame([], $duplicates, sprintf(
                 '%s offers %s, which another theme file already carries: a token belongs to the one bundle that reads it, and the copy left behind would drift unchecked.',

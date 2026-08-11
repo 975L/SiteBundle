@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-# Rejoue la CI en local, mais sur des dépendances fraîches : le vendor de la machine de développement contient des liens symboliques vers les dépôts frères, qui exposent du code non encore tagué sur Packagist. Ce script travaille sur une copie propre, où `composer update` ne voit que les versions publiées - exactement ce que voit GitHub.
+# Replays the CI locally, but on fresh dependencies: the development machine's vendor holds symlinks to the sibling repositories, which expose code not yet tagged on Packagist. This script works on a clean copy, where `composer update` only sees the published versions - exactly what GitHub sees.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PHP_CI="8.4"
 
-# La version de PHP, elle, n'est pas reproductible ici : elle dépend de l'interpréteur installé
+# The PHP version itself is not reproducible here: it depends on the installed interpreter
 PHP_LOCAL="$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')"
 if [ "$PHP_LOCAL" != "$PHP_CI" ]; then
     echo "⚠  PHP $PHP_LOCAL en local, $PHP_CI en CI : les écarts liés à la version du langage ne seront pas détectés ici."
@@ -17,7 +17,7 @@ fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-# vendor/ et composer.lock sont exclus pour forcer une résolution neuve depuis Packagist ; les modifications non commitées, elles, sont conservées, puisque ce sont justement celles que l'on cherche à valider avant de pousser
+# vendor/ and composer.lock are excluded to force a fresh resolution from Packagist; uncommitted changes are kept, since they are exactly what has to be validated before pushing
 echo "→ Copie du dépôt vers $WORK"
 rsync -a \
     --exclude '.git/' \

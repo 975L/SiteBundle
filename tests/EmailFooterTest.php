@@ -52,6 +52,17 @@ class EmailFooterTest extends TestCase
         }
     }
 
+    // The "strong" checkbox of a menu_link is honoured by _menu.scss, which emails.scss doesn't compile - so the rule is restated here, or the box stays inert on a link sitting in the "email-footer" Menu
+    #[DataProvider('stylesheetProvider')]
+    public function testAStrongLinkIsBolded(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/\.email-footer \.menu-item--strong \.menu-label\s*\{[^}]*font-weight:\s*bold[;}]/',
+            $this->stylesheet($file),
+            sprintf('"%s" does not bold a "strong" menu link, whose checkbox then does nothing in an email footer.', $file)
+        );
+    }
+
     // The markup itself: a centered inline list, the shape the rules above are written against
     public function testTheTemplateRendersOneCenteredInlineList(): void
     {

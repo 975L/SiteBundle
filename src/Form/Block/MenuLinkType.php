@@ -22,7 +22,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// A single flat, alphabetically-sorted, filterable "target" select (pages and routes mixed, EasyAdmin's TomSelect widget via data-ea-widget) - decoded at render time by MenuExtension::getMenuLinkUrl()/ getMenuLinkLabel(), using the "page:ID" / "route:NAME" convention
+// A single flat, alphabetically-sorted "target" select (pages and routes mixed) - decoded at render time by MenuExtension::getMenuLinkUrl()/ getMenuLinkLabel(), using the "page:ID" / "route:NAME" convention
 class MenuLinkType extends AbstractType
 {
     public function __construct(
@@ -44,7 +44,6 @@ class MenuLinkType extends AbstractType
                 'placeholder' => 'label.choose_target',
                 'choices' => $targetChoices,
                 'choice_translation_domain' => false,
-                'attr' => ['data-ea-widget' => 'ea-autocomplete'],
             ])
             // Overrides the auto-derived label (page title, or the anchored block's own title/the live-computed copyright notice - see MenuExtension::getMenuLinkLabel()) - needed for an anchor target, whose full section title is rarely a good fit for a compact navbar item
             ->add('label', TextType::class, [
@@ -57,10 +56,16 @@ class MenuLinkType extends AbstractType
                 'label' => 'label.menu_link_primary',
                 'required' => false,
                 'help' => 'help.menu_link_primary',
+            ])
+            // Bolds the label alone (see _menu.scss's .menu-item--strong) - the lighter emphasis, for an item that has to stand out without taking a button's weight, and combinable with "primary" for a bolder button
+            ->add('strong', CheckboxType::class, [
+                'label' => 'label.menu_link_strong',
+                'required' => false,
+                'help' => 'help.menu_link_strong',
             ]);
     }
 
-    // Every "page:ID", "page:ID#anchor-blockId" and "route:NAME" a menu link can point at, as one flat filterable autocomplete list (see MenuExtension::getMenuLinkUrl() for how each is decoded back)
+    // Every "page:ID", "page:ID#anchor-blockId" and "route:NAME" a menu link can point at, as one flat list (see MenuExtension::getMenuLinkUrl() for how each is decoded back)
     private function targetChoices(): array
     {
         // Eager-joins blocks (and their nested slots, walked too - see BlockAnchorCollector) so building each page's anchor choices doesn't trigger one extra query per page/container (getBlocks()/getSlots() would otherwise lazy-load their collection on each access)

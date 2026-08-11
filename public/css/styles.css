@@ -6,9 +6,7 @@
  * with this source code in the file LICENSE.
  */
 /*! modern-normalize v3.0.1 | MIT License | https://github.com/sindresorhus/modern-normalize */
-/* Replaces normalize.css v8.0.1, frozen since 2018 and carrying eight fixes for IE 10 and Edge 18. The two
-   opinionated rules it adds are both already covered here: the universal border-box duplicates _general.scss,
-   and the system font stack on "html" is overridden by the universal font-family of _typography.scss */
+/* Replaces normalize.css v8.0.1, frozen since 2018 and carrying eight fixes for IE 10 and Edge 18. The two opinionated rules it adds are both already covered here: the universal border-box duplicates _general.scss, and the system font stack on "html" is overridden by the universal font-family of _typography.scss */
 /*
 Document
 ========
@@ -268,9 +266,11 @@ summary {
   --form-label-color: var(--black);
   --font-title-weight: normal;
   --font-body-weight: normal;
+  --title-color: var(--primary);
   --font-size-body: 1rem;
   --label-color: #808080;
   --link-color: var(--primary);
+  --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;
   --input-focus-border-color: rgb(24, 115, 200);
@@ -319,6 +319,7 @@ summary {
   --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
   --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
   --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
+  --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
   --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
   --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
 }
@@ -351,6 +352,7 @@ summary {
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
     --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
+    --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
   }
@@ -416,7 +418,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-family-title);
-  color: var(--primary);
+  color: var(--title-color);
   font-weight: var(--font-title-weight);
   text-align: center;
   margin: 0.5em auto 0.5em auto;
@@ -763,10 +765,10 @@ body.navbar-fixed {
   flex-direction: column;
 }
 
-.menu-item {
+.menu .menu-item {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
-.menu-item.active {
+.menu .menu-item.active {
   background-color: color-mix(in srgb, var(--primary) 10%, transparent);
 }
 
@@ -782,8 +784,8 @@ body.navbar-fixed {
   outline: none;
 }
 
-.menu-link:hover .menu-label,
-.menu-link:focus .menu-label {
+.menu .menu-link:hover .menu-label,
+.menu .menu-link:focus .menu-label {
   color: var(--navbar-active-color);
 }
 
@@ -809,6 +811,10 @@ body.navbar-fixed {
 .menu-item--primary .menu-link:hover .menu-label,
 .menu-item--primary .menu-link:focus .menu-label {
   color: var(--navbar-btn-color);
+}
+
+.menu-item--strong .menu-label {
+  font-weight: bold;
 }
 
 .menu-label {
@@ -842,17 +848,17 @@ body.navbar-fixed {
     display: flex;
     flex-direction: row;
   }
-  .menu-label {
+  .menu .menu-label {
     color: var(--navbar-text);
   }
   .menu.is-scrolled .menu-label {
     color: var(--navbar-text-scrolled);
   }
-  .menu-item {
+  .menu .menu-item {
     border-top: none;
     border-bottom: 3px solid transparent;
   }
-  .menu-item.active {
+  .menu .menu-item.active {
     background-color: transparent;
     border-bottom-color: var(--navbar-active-color);
   }
@@ -898,7 +904,7 @@ body.navbar-fixed {
 a,
 h1 a {
   text-decoration: none;
-  color: var(--primary);
+  color: var(--link-color);
 }
 
 h1 a:active,
@@ -908,7 +914,7 @@ a:hover h1 a:hover {
 
 a:hover,
 a:visited:hover {
-  color: var(--link-color);
+  color: var(--link-hover-color);
   text-decoration: underline;
 }
 

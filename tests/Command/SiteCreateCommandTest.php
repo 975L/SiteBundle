@@ -99,13 +99,7 @@ class SiteCreateCommandTest extends TestCase
         $this->assertStringContainsString('Ce site a déjà été créé', $tester->getDisplay());
     }
 
-    /*
-     * The wizard requires App\Entity\User to exist, so "make:user" has always just written a src/Entity/User.php
-     * and a src/Repository/UserRepository.php the scaffold ships its own version of. Left to its no-force default,
-     * "c975l:scaffold:install" keeps any file its manifest does not vouch for - both of those - and the wizard
-     * would go on to create the admin account against the bare skeleton User. A first install has nothing to
-     * preserve: everything is delivered, and what was there goes to existingFiles/.
-     */
+    // The wizard requires App\Entity\User to exist, so "make:user" has always just written a src/Entity/User.php and a src/Repository/UserRepository.php the scaffold ships its own version of. Left to its no-force default, "c975l:scaffold:install" keeps any file its manifest does not vouch for - both of those - and the wizard would go on to create the admin account against the bare skeleton User. A first install has nothing to preserve: everything is delivered, and what was there goes to existingFiles/.
     public function testExecuteInstallsTheScaffoldForcefully(): void
     {
         file_put_contents($this->projectDir . '/src/Entity/User.php', '<?php');
@@ -229,10 +223,7 @@ class SiteCreateCommandTest extends TestCase
         $this->assertSame('', trim($display));
     }
 
-    /*
-     * A sensitive flag not yet synced by "c975l:config:load-all" would otherwise abort the whole wizard over a value
-     * ConfigService::loadAll() never decrypts, so the check mirrors its condition rather than testing isEncrypted() alone.
-     */
+    // A sensitive flag not yet synced by "c975l:config:load-all" would otherwise abort the whole wizard over a value ConfigService::loadAll() never decrypts, so the check mirrors its condition rather than testing isEncrypted() alone.
     public function testEnsureConfigDecryptableIgnoresValuesLoadAllNeverDecrypts(): void
     {
         $display = $this->callEnsureConfigDecryptable([

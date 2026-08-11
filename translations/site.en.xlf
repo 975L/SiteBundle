@@ -266,6 +266,10 @@
                 <source>help.menu_link_primary</source>
                 <target>Renders as a filled primary-color button instead of a link - use sparingly (e.g. "Contact")</target>
             </trans-unit>
+            <trans-unit id="Almlvtp">
+                <source>help.menu_link_strong</source>
+                <target>Bolds the label, nothing else - a lighter emphasis than a button, and combinable with it</target>
+            </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
                 <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of sales (TOS)</a>]]></target>
@@ -865,6 +869,10 @@
             <trans-unit id="OprTwDC">
                 <source>label.menu_link_primary</source>
                 <target>Highlight as a button</target>
+            </trans-unit>
+            <trans-unit id="6DTbRQd">
+                <source>label.menu_link_strong</source>
+                <target>Bold the label</target>
             </trans-unit>
             <trans-unit id="Bb8KPHq">
                 <source>label.menu_style</source>

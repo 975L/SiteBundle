@@ -1,5 +1,40 @@
 # Changelog
 
+## v8.2.3
+
+A page can be laid on a ground of its own
+
+- The four `email-text-*` configs ship empty (11/08/2026)
+- README documents that an email carries the copy its own site wrote (11/08/2026)
+- The layout's `<body>` offers a `bodyClass` block (11/08/2026)
+- README lists `bodyClass` among the layout's blocks (11/08/2026)
+- Added `BodyClassBlockTest` (11/08/2026)
+- The layout asks for the style nonce beside the script one (11/08/2026)
+- Turbo's progress bar stylesheet is no longer rejected under a nonced `style-src` (11/08/2026)
+- README warns that a nonced `style-src` drops an app template's own `style=""` (11/08/2026)
+- Added `CspNonceMetaTest` (11/08/2026)
+- A `menu_link` carries a `strong` checkbox, bolding its label alone (11/08/2026)
+- Added `.menu-item--strong` to `sass/_menu.scss` (11/08/2026)
+- The email footer restates the rule, `_menu.scss` not being compiled there (11/08/2026)
+- README documents the `strong`/`primary` pair (11/08/2026)
+- `MenuLinkTypeTest` covers the `strong` field (11/08/2026)
+- Added `MenuLinkStrongTest` (11/08/2026)
+- `EmailFooterTest` covers a bolded link (11/08/2026)
+- Added `--title-color`, which `h1`-`h6` read instead of `--primary` (11/08/2026)
+- Added `--link-hover-color`, which a hovered link reads (11/08/2026)
+- A link at rest reads `--link-color` instead of `--primary` (11/08/2026) [BC-Break]
+- The dark palette lightens `--title-color`, as it does the three other tokens painting text (11/08/2026)
+- The scaffolded `themes/site.css` offers both tokens (11/08/2026)
+- README documents `--link-hover-color` and how to keep the previous link colors (11/08/2026)
+- Added `DarkThemeTextTokensTest` (11/08/2026)
+- Added `TextInkTokensTest` (11/08/2026)
+- The navbar's hovered label and active underline are scoped to `.menu` (11/08/2026)
+- A footer link no longer takes the navbar's colors on hover (11/08/2026)
+- Added `NavbarRuleScopeTest` (11/08/2026)
+- The `target` select drops `data-ea-widget`, listing its choices as a native select (11/08/2026)
+- README no longer calls the target list filterable (11/08/2026)
+- Comments left in French are written in English, and the prose ones collapsed to a line (11/08/2026)
+
 ## v8.2.2
 
 Inline styles give way to classes, dropped by a nonced style-src

@@ -106,17 +106,7 @@ class PageCrudController extends AbstractCrudController
         return Page::class;
     }
 
-    /*
-     * Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent
-     * an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove
-     * handling entirely for the whole field.
-     *
-     * A whole page is one form - every block, every nested slot, every media in a single POST - so it is also the
-     * one that reaches PHP's max_input_vars first. Past that limit PHP drops the rest of the body silently, and
-     * the blocks that fell past the cut arrive as that same absent key: read as "the editor removed them", they
-     * are deleted for good. Nothing here can recover what PHP never parsed, so a short body is refused outright
-     * and said so, rather than half-saved. BlockType applies the same guard to a container's own slots.
-     */
+    // Removing the very last block also leaves nothing submitted at all for "blocks" (an HTML form can't represent an empty array, only an absent key), which has to be normalized to [] below or Symfony skips add/remove handling entirely for the whole field. A whole page is one form - every block, every nested slot, every media in a single POST - so it is also the one that reaches PHP's max_input_vars first. Past that limit PHP drops the rest of the body silently, and the blocks that fell past the cut arrive as that same absent key: read as "the editor removed them", they are deleted for good. Nothing here can recover what PHP never parsed, so a short body is refused outright and said so, rather than half-saved. BlockType applies the same guard to a container's own slots.
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
@@ -252,8 +242,7 @@ class PageCrudController extends AbstractCrudController
                 ->setFormTypeOption('required', false)
                 ->hideOnIndex(),
 
-            // Blocks
-            // row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
+            // Blocks row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
             CollectionField::new('blocks')
                 ->setLabel(t('label.blocks', [], 'ui'))
                 // CollectionField's own default is "col-md-8 col-xxl-7" - every nesting level of blocks-in-blocks eats into that same width (EasyAdmin lays each entry out as a 20% label + the rest), so the block editor is given the full row instead of 7/12 of it

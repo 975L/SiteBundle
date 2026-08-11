@@ -12,8 +12,7 @@ namespace c975L\SiteBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-// The size body copy is read at is a token, and it only means anything as long as the headings stay out of it:
-// in "em" they would ride it, and a design opening up its paragraphs would drag every title along with them
+// The size body copy is read at is a token, and it only means anything as long as the headings stay out of it: in "em" they would ride it, and a design opening up its paragraphs would drag every title along with them
 class BodyFontSizeTest extends TestCase
 {
     private const HEADINGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
@@ -48,8 +47,7 @@ class BodyFontSizeTest extends TestCase
         );
     }
 
-    // In rem the headings are laid out against the root, which the token does not move - in em they would be
-    // laid out against the body copy, and every one of them would grow with it
+    // In rem the headings are laid out against the root, which the token does not move - in em they would be laid out against the body copy, and every one of them would grow with it
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
     public function testNoHeadingIsSizedInEm(string $file): void
     {

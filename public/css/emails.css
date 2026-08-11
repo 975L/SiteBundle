@@ -84,11 +84,14 @@
   --font-family-body: var(--c975l-font-family-body, sans-serif);
   --font-family-accent: var(--c975l-font-family-accent, monospace);
   --form-input-color: #555;
+  --form-label-color: var(--black);
   --font-title-weight: normal;
   --font-body-weight: normal;
+  --title-color: var(--primary);
   --font-size-body: 1rem;
   --label-color: #808080;
   --link-color: var(--primary);
+  --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;
   --input-focus-border-color: rgb(24, 115, 200);
@@ -214,6 +217,10 @@ footer a:visited:hover .img-above {
   color: var(--label-color);
   font-size: 90%;
   text-decoration: none;
+}
+
+.email-footer .menu-item--strong .menu-label {
+  font-weight: bold;
 }
 
 /*# sourceMappingURL=emails.css.map */

@@ -54,8 +54,7 @@ class MenuProvider implements MenuProviderInterface
         ];
     }
 
-    // None of its own: the "Legal models" screen this used to declare moved to UiBundle along with the models
-    // themselves, so a site running Ui without page management still reaches it
+    // None of its own: the "Legal models" screen this used to declare moved to UiBundle along with the models themselves, so a site running Ui without page management still reaches it
     public function getLinks(): array
     {
         return [];

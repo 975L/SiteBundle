@@ -230,4 +230,15 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertTrue($form->has('primary'));
         $this->assertFalse($form->get('primary')->getConfig()->getRequired());
     }
+
+    // The "strong" field (see MenuLink.html.twig / _menu.scss's .menu-item--strong) bolds the label - optional, always present, and independent from "primary"
+    public function testStrongFieldIsPresentAndOptional(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertTrue($form->has('strong'));
+        $this->assertFalse($form->get('strong')->getConfig()->getRequired());
+    }
 }

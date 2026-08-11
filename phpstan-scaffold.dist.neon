@@ -1,8 +1,8 @@
-# Le scaffold est recopié tel quel dans les applications (voir ScaffoldInstaller), qui elles sont analysées en level 6 : ce qui passe ici en level 5 avec le reste du bundle leur remonte en erreur au premier push. D'où cette seconde passe, dédiée au scaffold et calée sur le niveau des apps.
+# The scaffold is copied as is into the applications (see ScaffoldInstaller), which are analysed at level 6: what passes here at level 5 with the rest of the bundle comes back as an error on their first push. Hence this second pass, dedicated to the scaffold and set at the applications' own level.
 parameters:
     level: 6
 
-    # Les motifs ignorés plus bas sont partagés par tous les bundles c975L, ils ne s'appliquent donc pas tous à chacun
+    # The ignored patterns below are shared by every c975L bundle, so not all of them apply to each one
     reportUnmatchedIgnoredErrors: false
 
     paths:
@@ -10,9 +10,9 @@ parameters:
         - scaffold/tests
 
     excludePaths:
-        # Ils ont besoin d'un kernel applicatif et d'un browser-kit que le bundle n'installe pas, raison pour laquelle phpunit.xml.dist les saute aussi
+        # These need an application kernel and a browser-kit the bundle does not install, which is why phpunit.xml.dist skips them too
         - scaffold/tests/Controller/*
 
     ignoreErrors:
-        # Doctrine assigne l'identifiant par réflexion, ce que l'analyse statique ne voit pas. Les applications, elles, chargent phpstan-doctrine qui le sait
+        # Doctrine assigns the identifier by reflection, which static analysis cannot see - the applications load phpstan-doctrine, which knows about it
         - '#Property .*::\$id \(int\|null\) is never assigned int#'

@@ -44,8 +44,7 @@ class ReadingMeasureTest extends TestCase
         );
     }
 
-    // A breakpoint restating the measure is what left the text against both edges: at a viewport of
-    // exactly 800px the box took the full width and "margin: auto" had nothing left to split
+    // A breakpoint restating the measure is what left the text against both edges: at a viewport of exactly 800px the box took the full width and "margin: auto" had nothing left to split
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
     public function testNoBreakpointRestatesTheMeasureAsABareLength(string $file): void
     {

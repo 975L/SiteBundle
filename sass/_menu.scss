@@ -1,11 +1,6 @@
 /* MENU */
 
-// One class per site-navbar-position value, instead of a style="--navbar-position: x" on the <nav>: a
-// style="" attribute never applies under a nonced style-src, and the value set is closed (see
-// Navbar.html.twig, which validates the config against that same list). "static" never reaches here:
-// the template rewrites it to "relative", the mobile dropdown needing a positioned .menu (see
-// NavbarHeightTest). Doubled with .menu so the admin's choice keeps beating any site stylesheet
-// setting --navbar-position on .menu, the way the inline style used to
+// One class per site-navbar-position value, instead of a style="--navbar-position: x" on the <nav>: a style="" attribute never applies under a nonced style-src, and the value set is closed (see Navbar.html.twig, which validates the config against that same list). "static" never reaches here: the template rewrites it to "relative", the mobile dropdown needing a positioned .menu (see NavbarHeightTest). Doubled with .menu so the admin's choice keeps beating any site stylesheet setting --navbar-position on .menu, the way the inline style used to
 .menu.menu-position-relative { --navbar-position: relative; }
 .menu.menu-position-sticky { --navbar-position: sticky; }
 .menu.menu-position-fixed { --navbar-position: fixed; }
@@ -187,7 +182,8 @@ body.navbar-fixed {
     flex-direction: column;
 }
 
-.menu-item {
+// Scoped to ".menu", the class only the navbar's own <nav> carries (see templates/components/General/Navbar.html.twig): the footer builds its rows out of the very same "menu-item"/"menu-link"/"menu-label" blocks, so anything left unscoped here paints the footer too - with the navbar's own tokens, which the footer has its own pair of. The rule below is the mobile dropdown's separator and its active wash, neither of which a footer wants
+.menu .menu-item {
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 
     &.active {
@@ -209,9 +205,10 @@ body.navbar-fixed {
     }
 }
 
-// .menu-label sets its own color, so the hover has to target the label rather than the link
-.menu-link:hover .menu-label,
-.menu-link:focus .menu-label {
+// .menu-label sets its own color, so the hover has to target the label rather than the link.
+// Scoped to ".menu" like the item above: unscoped it weighs (0,3,0) against the (0,2,2) of the footer's own "footer a:hover .menu-label", so it beat that rule in the footer and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
+.menu .menu-link:hover .menu-label,
+.menu .menu-link:focus .menu-label {
     color: var(--navbar-active-color);
 }
 
@@ -240,6 +237,11 @@ body.navbar-fixed {
 .menu-item--primary .menu-link:hover .menu-label,
 .menu-item--primary .menu-link:focus .menu-label {
     color: var(--navbar-btn-color);
+}
+
+// The lighter emphasis: the label alone is bolded, so the item keeps its place in the row instead of taking a button's room. Set on the label rather than on the item, .menu-label being what carries the typography - and it stacks on a --primary item, whose button then reads bolder
+.menu-item--strong .menu-label {
+    font-weight: bold;
 }
 
 // White text matches the mobile dropdown's colored (--primary) background - see desktop override below, where the navbar's own (light/translucent) background needs dark text instead
@@ -281,7 +283,7 @@ body.navbar-fixed {
         flex-direction: row;
     }
 
-    .menu-label {
+    .menu .menu-label {
         color: var(--navbar-text);
     }
 
@@ -289,7 +291,8 @@ body.navbar-fixed {
         color: var(--navbar-text-scrolled);
     }
 
-    .menu-item {
+    // The active page's underline, in the navbar's own color - scoped like the rest, a footer holding a link to the page being read having taken it too
+    .menu .menu-item {
         border-top: none;
         border-bottom: 3px solid transparent;
 
@@ -299,7 +302,8 @@ body.navbar-fixed {
         }
     }
 
-    // The underline treatment above doesn't suit a filled pill button - and it reads better set apart from the plain links
+    // The underline treatment above doesn't suit a filled pill button - and it reads better set apart from the plain links.
+    // Left unscoped where the two rules above are not: its border reset is a no-op outside the navbar now that the underline is scoped, and its margin is what keeps a footer's own "primary" pill spaced exactly as it was
     .menu-item--primary {
         margin-left: 0.75rem;
         border-bottom: none;

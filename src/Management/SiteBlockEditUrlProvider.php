@@ -52,10 +52,7 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
         return $urls;
     }
 
-    // A legal_model block's row in the Page form only holds the model it points at: what an editor reaching it
-    // from the document itself means to change is its wording, which lives on its own customization screen -
-    // UiBundle answers where that is (see LegalModelEditUrl), and null for anything else, including a model it
-    // doesn't ship, which would 404 there and keeps the Page's form instead
+    // A legal_model block's row in the Page form only holds the model it points at: what an editor reaching it from the document itself means to change is its wording, which lives on its own customization screen - UiBundle answers where that is (see LegalModelEditUrl), and null for anything else, including a model it doesn't ship, which would 404 there and keeps the Page's form instead
     private function editUrl(Page $page, Block $block): string
     {
         return LegalModelEditUrl::build($this->urlGenerator, $this->catalog, $block)

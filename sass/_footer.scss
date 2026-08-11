@@ -19,13 +19,9 @@ footer .menu-items .blocks {
     gap: 0.5rem 1.5rem;
 }
 
-// A "menu_group" placed in the footer menu takes a line of its own inside the flex row above, so a footer can
-// stack its social links, then its links, then whatever else, instead of running all of its blocks on one line.
-// Only its width is set here: how the group lays its own blocks out is the group's business (see UiBundle's
-// sass/_blocks-group.scss), and a footer with no group at all goes on rendering exactly as it did.
-// The second selector is the flex item itself: UiBundle's Block.html.twig wraps a block in a div of its own as
-// soon as it carries an animation or an editor's edit-url, and it is that wrapper, not the group, which the row
-// then lays out - matched through ":has()" rather than by class, so a third wrapper would be covered too
+// A "menu_group" placed in the footer menu takes a line of its own inside the flex row above, so a footer can stack its social links, then its links, then whatever else, instead of running all of its blocks on one line.
+// Only its width is set here: how the group lays its own blocks out is the group's business (see UiBundle's sass/_blocks-group.scss), and a footer with no group at all goes on rendering exactly as it did.
+// The second selector is the flex item itself: UiBundle's Block.html.twig wraps a block in a div of its own as soon as it carries an animation or an editor's edit-url, and it is that wrapper, not the group, which the row then lays out - matched through ":has()" rather than by class, so a third wrapper would be covered too
 footer .menu-items .blocks-group,
 footer .menu-items .blocks > :has(> .blocks-group) {
     flex: 0 0 100%;

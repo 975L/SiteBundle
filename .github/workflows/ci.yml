@@ -9,25 +9,25 @@ jobs:
     quality:
         runs-on: ubuntu-latest
 
-        # Au niveau du job et non de l'étape : le contexte `env` d'une étape ne contient pas son propre bloc `env:`
+        # At job level rather than step level: a step's `env` context does not hold its own `env:` block
         env:
             CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
 
         steps:
             - uses: actions/checkout@v5
 
-            # pcov mesure la couverture, que la machine de développement n'a pas ; les outils qualité sont installés ici plutôt qu'en require-dev, pour ne pas alourdir le bundle de 17 paquets transitifs
+            # pcov measures the coverage, which the development machine does not have; the quality tools are installed here rather than in require-dev, so as not to weigh the bundle down with 17 transitive packages
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
               with:
                   php-version: '8.4'
                   coverage: pcov
                   tools: phpcs, phpstan, php-cs-fixer
 
-            # update et non install : le composer.lock n'est pas versionné, et les bundles pointent les uns vers les autres
+            # update rather than install: composer.lock is not versioned, and the bundles point at one another
             - name: Dépendances
               run: composer update --no-interaction --no-progress
 
-            # Les étapes ci-dessous appellent les scripts de composer.json plutôt que les commandes elles-mêmes : la liste des contrôles vit à un seul endroit, que `composer qa` et bin/ci.sh rejouent à l'identique en local. Elles restent séparées pour lire dans l'interface laquelle a échoué
+            # The steps below call composer.json's scripts rather than the commands themselves: the list of checks lives in one place, replayed identically by `composer qa` and bin/ci.sh locally. They stay separate so the interface shows which one failed
             - name: PSR-12
               run: composer cs
 
@@ -43,7 +43,7 @@ jobs:
             - name: Tests
               run: composer test -- --coverage-clover clover.xml
 
-            # Sans le secret, l'envoi est sauté plutôt que de faire échouer la CI
+            # Without the secret, the upload is skipped rather than failing the CI
             - name: Couverture vers Codacy
               if: env.CODACY_PROJECT_TOKEN != ''
               uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699 # v1.3.0

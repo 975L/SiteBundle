@@ -8,8 +8,7 @@ services:
         resource: '../src/'
         exclude: '../src/Entity/'
 
-    # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own
-    # interface - CollectionItemSourceProvider autowires against the interface for testability
+    # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own interface - CollectionItemSourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
 
     c975L\SiteBundle\Service\StylesheetProvider:
@@ -33,10 +32,7 @@ services:
               template: '@c975LSite/blocks/TwigContent.html.twig'
               category: 'label.category_twig'
               pickable: true
-              # Not cacheable: on a collection's detail Page, its output varies per request with
-              # "collectionItem" (see CollectionItemContext) - a persisted Block's id-keyed cache
-              # (BlockExtension::renderBlock()) has no way to see that, and would otherwise serve
-              # whichever item first got cached to every other item's URL
+              # Not cacheable: on a collection's detail Page, its output varies per request with "collectionItem" (see CollectionItemContext) - a persisted Block's id-keyed cache (BlockExtension::renderBlock()) has no way to see that, and would otherwise serve whichever item first got cached to every other item's URL
               cacheable: false
 
     site.block.articles_slider:
@@ -66,21 +62,11 @@ services:
               category: 'label.category_navigation'
               pickable: true
               cacheable: false
-              # "menu_navbar" is an exclusive context (see BlockRegistry::EXCLUSIVE_CONTEXTS): opting in
-              # here is what makes this the only kind a navbar ever offers, every other menu location
-              # ("menu") keeping the full picker. "menu_slot" is the slot context of the "menu_group" below:
-              # without it a link couldn't be picked - nor dragged, see BlockMoveController::validateTarget() -
-              # into a group. UiBundle's own "flex_slot" is deliberately left out, a link having no business
-              # being offered in a container placed on a Page
+              # "menu_navbar" is an exclusive context (see BlockRegistry::EXCLUSIVE_CONTEXTS): opting in here is what makes this the only kind a navbar ever offers, every other menu location ("menu") keeping the full picker. "menu_slot" is the slot context of the "menu_group" below: without it a link couldn't be picked - nor dragged, see BlockMoveController::validateTarget() - into a group. UiBundle's own "flex_slot" is deliberately left out, a link having no business being offered in a container placed on a Page
               contexts: 'menu,menu_navbar,menu_slot'
 
-    # The chromeless wrapper a menu's items are laid out in, e.g. a footer's social links on their own line
-    # above its links - UiBundle's "block_group" reused as is (same form, same template, same ".blocks-group"
-    # markup), the only difference being where it can be picked. Its own kind rather than "block_group" itself
-    # so a menu's grouping stays out of a Page's containers: "menu_link" opts into "menu_slot" alone, and this
-    # kind into "menu" alone, which also keeps it out of a navbar (links only, see the exclusive context above).
-    # "menu_slot" being a slot context, BlockRegistry::isAllowedInContext() excludes containers from it, so a
-    # group can't hold another group - the one-level tree Footer.html.twig walks
+    # The chromeless wrapper a menu's items are laid out in, e.g. a footer's social links on their own line above its links - UiBundle's "block_group" reused as is (same form, same template, same ".blocks-group" markup), the only difference being where it can be picked. Its own kind rather than "block_group" itself so a menu's grouping stays out of a Page's containers: "menu_link" opts into "menu_slot" alone, and this kind into "menu" alone, which also keeps it out of a navbar (links only, see the exclusive context above).
+    # "menu_slot" being a slot context, BlockRegistry::isAllowedInContext() excludes containers from it, so a group can't hold another group - the one-level tree Footer.html.twig walks
     site.block.menu_group:
         class: stdClass
         tags:

@@ -1,10 +1,7 @@
 /* EMAIL FOOTER */
 
-// Not the page's own footer (_footer.scss): that one is a full-width colored band laid out in flex,
-// neither of which survives a mail client - and its links are painted --footer-text (white by default),
-// i.e. invisible on the white background an email keeps (see UiBundle's emails/_base.scss).
-// Here the same Menu links read as one discreet centered row, matching the "email-text-sent-by" line
-// rendered right below them: grey, small and undecorated
+// Not the page's own footer (_footer.scss): that one is a full-width colored band laid out in flex, neither of which survives a mail client - and its links are painted --footer-text (white by default), i.e. invisible on the white background an email keeps (see UiBundle's emails/_base.scss).
+// Here the same Menu links read as one discreet centered row, matching the "email-text-sent-by" line rendered right below them: grey, small and undecorated
 .email-footer ul.inline {
     margin: 0.5em auto;
 }
@@ -15,12 +12,16 @@
     margin: 0;
 }
 
-// .menu-label is colored too: the "*" rule in emails/_typography.scss sets a specified color on it, which
-// beats whatever it would have inherited from the link around it, whatever their specificity
+// .menu-label is colored too: the "*" rule in emails/_typography.scss sets a specified color on it, which beats whatever it would have inherited from the link around it, whatever their specificity
 .email-footer a,
 .email-footer a:visited,
 .email-footer .menu-label {
     color: var(--label-color);
     font-size: 90%;
     text-decoration: none;
+}
+
+// The "strong" checkbox of a menu_link, whose rule lives in _menu.scss - a stylesheet emails.scss doesn't compile
+.email-footer .menu-item--strong .menu-label {
+    font-weight: bold;
 }

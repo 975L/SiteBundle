@@ -3,9 +3,7 @@
     color-scheme: light;
     // A token, the four backgrounds below flipping in dark mode; applied to descendants too
     --alert-color: #000;
-    // Darkened from #b64450, which read at 4.14:1 on the tint below - under WCAG AA. It only ever painted
-    // an alert's own bare text before, its nested content being caught by the theme's "*" rule; now that
-    // the descendants follow it too, the whole message rides on it
+    // Darkened from #b64450, which read at 4.14:1 on the tint below - under WCAG AA. It only ever painted an alert's own bare text before, its nested content being caught by the theme's "*" rule; now that the descendants follow it too, the whole message rides on it
     --alert-danger-color: #9c3a44;
     --alert-danger-background: #f2dede;
     --alert-info-background: #d9edf7;
@@ -18,16 +16,12 @@
     --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
     --button-background-danger: rgb(220, 53, 69);
     --button-background-danger-dark: rgb(220, 53, 69, 0.9);
-    // Deep blue rather than the electric one it replaces: it is the base a fresh site is born with, and
-    // every derived token below is mixed out of it, so it has to hold up as a text-adjacent color too
+    // Deep blue rather than the electric one it replaces: it is the base a fresh site is born with, and every derived token below is mixed out of it, so it has to hold up as a text-adjacent color too
     --button-background-primary: #0a2d6b;
     // Derived from --primary/--secondary (not from the -primary/-secondary base value above) so hover/light shades follow theme-color-primary/-secondary when an admin changes them
     --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, black);
     --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
-    // Azure, i.e. a lighter step of the primary's own hue - the orange it replaces read as a second brand
-    // color, where a secondary is meant to accent the first rather than compete with it. Deepened from the
-    // #12a7dc this hue starts at, which carried the white --button-secondary-color at 2.77:1, well under
-    // the 4.5:1 WCAG AA asks of a button's label
+    // Azure, i.e. a lighter step of the primary's own hue - the orange it replaces read as a second brand color, where a secondary is meant to accent the first rather than compete with it. Deepened from the #12a7dc this hue starts at, which carried the white --button-secondary-color at 2.77:1, well under the 4.5:1 WCAG AA asks of a button's label
     --button-background-secondary: #0a7ba3;
     --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black);
     --button-background-success: rgb(40, 167, 69);
@@ -41,8 +35,7 @@
     // Admin-editable via ThemeCrudController (site_config, group "theme"), compiled by ThemeVariablesCssListener into --c975l-* custom properties, loaded after this file - the var(..., fallback) indirection lets an admin override win the cascade without editing this file, while every other file keeps consuming --primary/--secondary/--font-family-* as before
     --primary: var(--c975l-color-primary, var(--button-background-primary));
     --secondary: var(--c975l-color-secondary, var(--button-background-secondary));
-    // Neither a pure white nor a pure black: the page is tinted a hair toward the primary and the copy is
-    // a very dark blue, so the two neutrals belong to the same family as the accents mixed into them
+    // Neither a pure white nor a pure black: the page is tinted a hair toward the primary and the copy is a very dark blue, so the two neutrals belong to the same family as the accents mixed into them
     --background: var(--c975l-color-background, #fbfcff);
     --text: var(--c975l-color-text, #04122c);
     // Derived surface/border tokens - not admin-editable, computed from the colors above so any block family (UiBundle's _page-sections.scss, future ones) gets a consistent, on-brand "tinted surface"/"muted border" vocabulary without each one re-deriving its own
@@ -113,21 +106,19 @@
     // Third, optional font role (badges/eyebrows/labels) - same admin-editable pattern as title/body
     --font-family-accent: var(--c975l-font-family-accent, monospace);
     --form-input-color: #555;
-    // Ink of a form label (UiBundle's sass/_forms.scss). Its own token, defaulting to the page's:
-    // --black flips to a near-white in dark mode, so a label follows the theme without being restated -
-    // but a design wanting its labels in another ink had to override --black itself, which also carries
-    // .lead and this file's own --navbar-text default
+    // Ink of a form label (UiBundle's sass/_forms.scss). Its own token, defaulting to the page's: --black flips to a near-white in dark mode, so a label follows the theme without being restated - but a design wanting its labels in another ink had to override --black itself, which also carries .lead and this file's own --navbar-text default
     --form-label-color: var(--black);
     --font-title-weight: normal;
     --font-body-weight: normal;
-    // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a
-    // visitor who raised their browser's own font size is still followed; 1rem is that default, i.e. the size
-    // the site was read at before this token existed. Headings and UiBundle's block titles/eyebrows are outside
-    // it on purpose - the first in rem, the second in px - so a design can open up its body copy alone
+    // Ink of every heading (see sass/_typography.scss). Its own token, defaulting to the color they were hardcoded to: --primary is a surface everywhere else - the primary button, a "primary" flat, the footer band - where the white --button-color needs it dark, so a page wanting its titles in another ink had nowhere to say so short of repainting the brand. Same pattern as UiBundle's own --card-accent / --flip-card-accent, and what a page laid on a ground of its own reaches for: a deep brand color reads at barely more than 1:1 on a near-black page (see GalleryBundle's dark style)
+    --title-color: var(--primary);
+    // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a visitor who raised their browser's own font size is still followed; 1rem is that default, i.e. the size the site was read at before this token existed. Headings and UiBundle's block titles/eyebrows are outside it on purpose - the first in rem, the second in px - so a design can open up its body copy alone
     --font-size-body: 1rem;
     --label-color: #808080;
     // Follows theme-color-primary by default; apps that want a distinct link color can still override --link-color directly in their own _variables.css, same as any other variable here
     --link-color: var(--primary);
+    // What a link turns on hover - its own color by default, the underline being what marks the state. Its own token because --link-color was carrying both jobs: a link at rest read --primary directly (see sass/_links.scss), so setting --link-color only ever moved the hover
+    --link-hover-color: var(--link-color);
     --input-border-bottom-color: #bfbfbf;
     --input-border-color: #4d4d4d;
     --input-focus-border-color: rgb(24, 115, 200);
@@ -135,23 +126,16 @@
     --input-shadow-color: #4d4d4d;
     // Transparent in light mode; dark mode gives it a wash, a field being otherwise invisible
     --input-background: transparent;
-    // Room kept above and below a field. A box-shadow takes no space in the layout, so the validation
-    // ring would otherwise be drawn over the label above it and the field below
+    // Room kept above and below a field. A box-shadow takes no space in the layout, so the validation ring would otherwise be drawn over the label above it and the field below
     --input-margin-block: 0.4em 1em;
-    // Distance from the bottom of a field's wrapper to its ✓/✗ glyph, anchored from the bottom because
-    // that edge is the one Symfony's field <div> and the password controller's .has-toggle share. Half
-    // the difference between the field's height and the glyph's, the field's own bottom margin collapsing
-    // through a wrapper carrying no padding or border
+    // Distance from the bottom of a field's wrapper to its ✓/✗ glyph, anchored from the bottom because that edge is the one Symfony's field <div> and the password controller's .has-toggle share. Half the difference between the field's height and the glyph's, the field's own bottom margin collapsing through a wrapper carrying no padding or border
     --input-glyph-offset: 9.5px;
     // Pointed at the button status colors rather than a bare green/red, so one palette covers the site
     --input-valid-border-color: var(--button-background-success);
     --input-valid-shadow-color: var(--button-background-success);
     --input-invalid-border-color: var(--button-background-danger);
     --input-invalid-shadow-color: var(--button-background-danger);
-    // Text of the message shown under an invalid field, kept apart from the border color above: the same
-    // red reads at 4.53:1 on a white page but only 4.14:1 on the dark one, under the 4.5:1 WCAG AA asks
-    // for body text. A border has no such floor (3:1 for a non-textual element), so only this one is
-    // lightened in dark mode
+    // Text of the message shown under an invalid field, kept apart from the border color above: the same red reads at 4.53:1 on a white page but only 4.14:1 on the dark one, under the 4.5:1 WCAG AA asks for body text. A border has no such floor (3:1 for a non-textual element), so only this one is lightened in dark mode
     --input-invalid-text-color: var(--button-background-danger);
     // The show/hide eye is served as an <img>, so no currentColor reaches it and dark mode inverts it
     --input-icon-filter: none;

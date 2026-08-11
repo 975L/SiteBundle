@@ -37,9 +37,7 @@ class MenuBlockEditUrlProvider implements BlockEditUrlProviderInterface
 
         $urls = [];
         foreach ($this->menuRepository->findByBlockIds($blockIds) as $menu) {
-            // The navbar renders the very same blocks (see Navbar.html.twig) and is deliberately left out: it is
-            // hovered on every single visit just to navigate, and a floating button popping over each of its links
-            // would be in the way rather than of help. The footer is the menu an editor actually reaches for
+            // The navbar renders the very same blocks (see Navbar.html.twig) and is deliberately left out: it is hovered on every single visit just to navigate, and a floating button popping over each of its links would be in the way rather than of help. The footer is the menu an editor actually reaches for
             if (Menu::LOCATION_FOOTER !== $menu->getLocation()) {
                 continue;
             }

@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-08-11",
+        "description": [
+            {
+                "en": "A menu link can now be shown in bold, beside the existing \"button\" highlight: a lighter way to make an item stand out, well suited to a footer where a button would be out of place - and both can be ticked together",
+                "fr": "Un lien de menu peut désormais s'afficher en gras, à côté de la mise en avant « bouton » existante : une façon plus légère de faire ressortir un élément, adaptée à un pied de page où un bouton serait déplacé - et les deux peuvent être cochés ensemble",
+                "es": "Un enlace de menú puede ahora mostrarse en negrita, junto al realce «botón» ya existente: una forma más ligera de destacar un elemento, adecuada para un pie de página donde un botón quedaría fuera de lugar - y ambos pueden marcarse a la vez"
+            },
+            {
+                "en": "A link in the footer keeps the footer's own colors when the mouse passes over it, instead of turning the color of the navigation bar - which left it unreadable on some sites",
+                "fr": "Un lien du pied de page conserve les couleurs du pied de page au passage de la souris, au lieu de prendre celle de la barre de navigation - ce qui le rendait illisible sur certains sites",
+                "es": "Un enlace del pie de página conserva los colores del propio pie al pasar el ratón por encima, en lugar de tomar el de la barra de navegación - lo que lo dejaba ilegible en algunos sitios"
+            },
+            {
+                "en": "The destination of a menu link is now picked from a plain list instead of a search field",
+                "fr": "La destination d'un lien de menu se choisit désormais dans une liste simple au lieu d'un champ de recherche",
+                "es": "El destino de un enlace de menú se elige ahora en una lista simple en lugar de un campo de búsqueda"
+            }
+        ]
+    },
+    {
         "date": "2026-08-10",
         "description": [
             {
