@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.3.1
+
+The fallback navbar keeps its room and its title font
+
+- `.nav-simple` takes the same `--navbar-padding-y` room as the menu header (12/08/2026)
+- `.nav-simple-name` is set in `--font-family-title` (12/08/2026)
+- `.nav-simple-name` keeps a bottom margin as well as a top one (12/08/2026)
+- README documents both on the fallback bar (12/08/2026)
+- `NavbarHeightTest` covers the room, the font and that margin (12/08/2026)
+
 ## v8.3.0
 
 The codebase goes through a Rector modernisation pass

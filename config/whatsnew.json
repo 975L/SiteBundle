@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-12",
+        "description": [
+            {
+                "en": "On a site with no navigation menu, the logo at the top of the page no longer sits flush against the very top edge, and now breathes like on the other sites",
+                "fr": "Sur un site sans menu de navigation, le logo en haut de page n'est plus collé tout en haut de l'écran et respire désormais comme sur les autres sites",
+                "es": "En un sitio sin menú de navegación, el logotipo de la parte superior de la página ya no queda pegado al borde superior y ahora respira como en los demás sitios"
+            },
+            {
+                "en": "On those same sites, the site name shown under the logo is written in the site's title font, like its other titles",
+                "fr": "Sur ces mêmes sites, le nom du site affiché sous le logo s'écrit dans la police des titres du site, comme ses autres titres",
+                "es": "En esos mismos sitios, el nombre del sitio mostrado bajo el logotipo se escribe con la tipografía de los títulos del sitio, como sus demás títulos"
+            }
+        ]
+    },
+    {
         "date": "2026-08-11",
         "description": [
             {

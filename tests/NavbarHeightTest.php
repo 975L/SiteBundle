@@ -33,9 +33,9 @@ class NavbarHeightTest extends TestCase
         $css = $this->stylesheet($file);
 
         $this->assertStringContainsString(
-            '.nav-simple{text-align:center}',
+            '.nav-simple{text-align:center;padding:var(--navbar-padding-y) 15px}',
             $css,
-            sprintf('"%s" no longer styles the fallback navbar (see Navbar.html.twig).', $file)
+            sprintf('"%s" no longer styles the fallback navbar (see Navbar.html.twig), or drops the room it keeps around its logo.', $file)
         );
         $this->assertDoesNotMatchRegularExpression(
             '/(^|[},])nav\{/',
@@ -178,6 +178,28 @@ class NavbarHeightTest extends TestCase
             '/\.nav-simple-name\{[^}]*color:var\(--navbar-site-name-color\)\}/',
             $this->stylesheet($file),
             sprintf('"%s" no longer colors the fallback navbar\'s site name with its own token.', $file)
+        );
+    }
+
+    // The title font is on the link wrapping it, but _typography.scss sets the body one on "*", which lands on the <span> itself and beats what it inherits
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testTheFallbackSiteNameIsSetInTheTitleFont(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/\.nav-simple-name\{[^}]*font-family:var\(--font-family-title\)/',
+            $this->stylesheet($file),
+            sprintf('"%s" lets the fallback navbar\'s site name fall back to the body font.', $file)
+        );
+    }
+
+    // Room under the name as well as over it, so it does not sit against whatever the page opens with
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testTheFallbackSiteNameKeepsRoomUnderIt(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/\.nav-simple-name\{[^}]*margin:0?\.5rem 0[;}]/',
+            $this->stylesheet($file),
+            sprintf('"%s" leaves the fallback navbar\'s site name against the page\'s first block.', $file)
         );
     }
 

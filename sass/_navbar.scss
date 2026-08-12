@@ -1,6 +1,8 @@
 // The fallback navbar - the centered logo a site with no navbar menu gets (see Navbar.html.twig). Scoped to its own class rather than left on the bare "nav" element: the real navbar is a <nav> too, and a blanket height here held it at 74px whatever it had inside, which is what pinned its logo and burger against the top edge (_menu.scss sizes that one)
+// Same room above and below as the menu bar's header (_menu.scss), from the same token: with none, the logo sat flush against the top of the viewport
 .nav-simple {
     text-align: center;
+    padding: var(--navbar-padding-y) 15px;
 }
 
 .nav-simple a,
@@ -29,9 +31,11 @@
 
 // The site name on the fallback navbar. Same size and weight as the menu brand's .menu-site-name, stacked under the logo instead of beside it since this bar is a centered column
 // Its own token rather than the --primary the rules above hand every link here, so the name reads the same on both branches - the dark theme lightens that token. Declared on the element itself: it is a <span> inside the link now, and would otherwise just inherit that --primary
+// Same for the title font, set on the link above: _typography.scss puts the body one on "*", which lands on this <span> and beats what it inherits. The bottom margin keeps it off the page's first block
 .nav-simple-name {
     font-size: 1.25rem;
     font-weight: bold;
-    margin: 0.5rem 0 0;
+    margin: 0.5rem 0;
+    font-family: var(--font-family-title);
     color: var(--navbar-site-name-color);
 }
