@@ -244,6 +244,8 @@ Database pages are rendered with the bundle's `@c975LSite/pages/page.html.twig` 
 
 `PageController::home()`/`display()` don't set an HTTP `Cache-Control: max-age` on the response (dropped in favor of UiBundle's per-block server-side cache, see its README's "Block render cache" section: infinite TTL, invalidated on save, shared by every visitor - rather than a per-browser cache with no way to invalidate it early after an edit).
 
+`PageController::preview()` opts out of that cache entirely (UiBundle's `BlockRenderContext::disableCache()`), on both sides: an editor's preview has to show what was just saved, and its own render is not the public one — a `collection` block there builds its items' links against the preview route, which no visitor should ever be served.
+
 ### Blocks defined by this bundle
 
 On top of the generic block system provided by [c975L/UiBundle](https://github.com/975L/UiBundle), SiteBundle registers the following blocks (see `config/services.yaml`):
@@ -531,6 +533,8 @@ Access to both is controlled by the `site-role-editor` key in ConfigBundle.
 
 `CollectionItemSourceProvider` (implements `c975l/ui-bundle`'s `CollectionSourceProviderInterface`) exposes every `CollectionGroup` as its own source, keyed `site.collection.{slug}` — creating a brand new collection via `CollectionCrudController` is enough to make it pickable in UiBundle's `collection` block, no code change needed.
 
+Each source also declares its own cache tag (`site_collection_<id>`, keyed on the id so renaming a collection doesn't orphan its entries), which `CollectionCacheInvalidationListener` invalidates whenever an item or the collection itself is saved, added or removed — without it, a `collection` block would keep serving UiBundle's cached render of the items as they were before the edit.
+
 `c975l:site:collection-item:import` (see [Commands](#commands)) migrates a legacy hand-maintained JSON array of items into `CollectionItem` rows for a given collection (`--group`, matched/created by name if it doesn't exist yet), for an app switching from a JSON-driven list to this CRUD + the `collection` block. `CollectionItemExportProvider`/`CollectionItemImportProvider` plug Collection items into ConfigBundle's **Export sync (everything)** dashboard shortcut and **Import content** screen, doing the same collection auto-creation on import.
 
 ### Item detail pages
@@ -700,6 +704,8 @@ document sits on, and at which public address.
 | `site_page_for_form_block(formName)` | The page carrying the `form` Block of that form, backing UiBundle's `form_url()` (see [Users](#users)) |
 | `menu_blocks(location)` | The ordered blocks of the `navbar`/`footer`/`email-header`/`email-footer` Menu (see [Menus](#menus)), alongside `menu_link_url()`, `menu_link_label()` and `menu_link_is_copyright()` |
 | `page_health_check(page)` | The page's own health check panel, rendered in the back-office (see [Health check](#health-check)) |
+
+All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension` and `PageHealthCheckExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
 
 Two of UiBundle's own are worth knowing here, both used by `layout.html.twig`: `theme_variables_css()`, returning the CSS compiled from the admin-editable theme configs (see [Themes](#themes)) for inlining where a `<link>` isn't possible (e.g. emails), and `font_preloads()`, returning the font files the current theme actually uses to emit as `<link rel="preload">` in the `<head>`.
 

@@ -52,6 +52,22 @@ class CollectionItemSourceProviderTest extends TestCase
         );
     }
 
+    // The tag UiBundle caches a "collection" block under, and CollectionCacheInvalidationListener invalidates - keyed on the id, so renaming a collection doesn't leave its entries unreachable under the old slug
+    public function testEachSourceDeclaresItsOwnCacheTagKeyedOnTheCollectionGroupId(): void
+    {
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
+        $books = $this->withId(new CollectionGroup()->setName('Books')->setSlug('books'), 2);
+
+        $sources = new CollectionItemSourceProvider(
+            $this->collectionGroupRepository([$projects, $books]),
+            $this->createStub(CollectionItemRepository::class),
+            $this->createStub(UploaderHelperInterface::class),
+        )->getSources();
+
+        $this->assertSame(['site_collection_1'], $sources['site.collection.projects']['cacheTags']);
+        $this->assertSame(['site_collection_2'], $sources['site.collection.books']['cacheTags']);
+    }
+
     public function testCountDelegatesToCountByCollectionGroup(): void
     {
         $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);

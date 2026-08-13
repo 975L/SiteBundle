@@ -21,6 +21,9 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface;
 // Exposes every CollectionGroup as its own source, keyed "site.collection.{slug}" - one entry per collection created via CollectionCrudController, so creating a brand new collection there is enough to make it pickable in the "collection" block, no code change needed.
 class CollectionItemSourceProvider implements CollectionSourceProviderInterface
 {
+    // Keyed on the id and not the slug: renaming a collection changes its slug, and every entry cached under the old one would then be unreachable rather than invalidated - see CollectionCacheInvalidationListener, which invalidates this very tag
+    public const string CACHE_TAG_PREFIX = 'site_collection_';
+
     // Per-collection memoization, keyed by id: several "collection" blocks on the same page can reference the same collection, each invoking 'count'/'items' independently - this keeps that to one query per collection per request instead of one per block
     private array $counts = [];
     private array $items = [];
@@ -41,6 +44,7 @@ class CollectionItemSourceProvider implements CollectionSourceProviderInterface
                 'count' => fn (): int => $this->countByCollectionGroup($collectionGroup),
                 'items' => fn (?int $limit): array => $this->itemsByCollectionGroup($collectionGroup, $limit),
                 'detail' => fn (string $slug): ?array => $this->detail($collectionGroup, $slug),
+                'cacheTags' => [self::CACHE_TAG_PREFIX . $collectionGroup->getId()],
             ];
         }
 

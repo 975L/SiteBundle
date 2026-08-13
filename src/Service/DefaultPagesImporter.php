@@ -69,9 +69,9 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
         private readonly FormSeeder $formSeeder,
         private readonly UserFormSeeder $userFormSeeder,
         private readonly Security $security,
-        #[Autowire('%kernel.default_locale%')]
+        #[Autowire(param: 'kernel.default_locale')]
         private readonly string $defaultLocale,
-        #[Autowire('%kernel.enabled_locales%')]
+        #[Autowire(param: 'kernel.enabled_locales')]
         private readonly array $enabledLocales,
     ) {
     }

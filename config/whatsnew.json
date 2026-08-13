@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-13",
+        "description": [
+            {
+                "en": "An item added, modified, reordered or deleted in a collection appears on the site straight away, without waiting for anything: the pages showing that collection no longer keep the previous version",
+                "fr": "Un élément ajouté, modifié, réordonné ou supprimé dans une collection apparaît immédiatement sur le site, sans rien attendre : les pages qui affichent cette collection ne conservent plus la version précédente",
+                "es": "Un elemento añadido, modificado, reordenado o eliminado en una colección aparece de inmediato en el sitio, sin esperar nada: las páginas que muestran esa colección ya no conservan la versión anterior"
+            },
+            {
+                "en": "The preview of a page always shows what you have just saved, and no longer what it looked like before",
+                "fr": "L'aperçu d'une page montre toujours ce que vous venez d'enregistrer, et non plus son état précédent",
+                "es": "La vista previa de una página muestra siempre lo que acaba de guardar, y ya no su estado anterior"
+            }
+        ]
+    },
+    {
         "date": "2026-08-12",
         "description": [
             {

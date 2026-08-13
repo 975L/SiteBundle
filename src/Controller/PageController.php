@@ -16,6 +16,7 @@ use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Twig\CollectionItemContext;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
+use c975L\UiBundle\Service\BlockRenderContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
@@ -36,6 +37,7 @@ class PageController extends AbstractController
         private readonly CollectionSourceRegistry $collectionSourceRegistry,
         private readonly Environment $twig,
         private readonly CollectionItemContext $collectionItemContext,
+        private readonly BlockRenderContext $blockRenderContext,
     ) {
     }
 
@@ -213,6 +215,9 @@ class PageController extends AbstractController
     public function preview($page, Request $request)
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        // Before anything is rendered: a preview has to show what was just saved, and its own html is not the public one - a "collection" block here builds its items' links against this very preview route (see BlockRenderContext)
+        $this->blockRenderContext->disableCache();
 
         $slug = rtrim($page, '/');
         $pageObject = $this->pageService->findForDisplay($slug);

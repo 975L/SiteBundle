@@ -66,8 +66,7 @@ class CollectionItemCrudControllerTest extends TestCase
     {
         $request = new Request(null !== $collectionGroupId ? ['collectionGroup' => $collectionGroupId] : []);
 
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $requestStack = new RequestStack([$request]);
 
         return $requestStack;
     }

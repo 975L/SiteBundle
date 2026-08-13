@@ -1,5 +1,25 @@
 # Changelog
 
+## v8.3.2
+
+An edited collection item shows up on the site right away
+
+- `CollectionItemSourceProvider` declares a cache tag per collection (13/08/2026)
+- `CollectionCacheInvalidationListener` invalidates it on any item or collection change (13/08/2026)
+- `PageController::preview()` renders outside the block cache (13/08/2026)
+- `MenuExtension`, `PageExtension` and `PageHealthCheckExtension` declare their functions with `#[AsTwigFunction]` (13/08/2026)
+- `composer.json` requires `symfony/twig-bundle` and `twig/twig` (13/08/2026)
+- `#[Autowire(param: ...)]` replaces the `%parameter%` string form (13/08/2026)
+- `rector.php` binds the Symfony and Doctrine rules with `withComposerBased()` (13/08/2026)
+- `composer rector` runs with `--clear-cache` (13/08/2026)
+- `scripts-descriptions` documents that flag (13/08/2026)
+- `bin/ci.sh` installs the quality tools in their latest version, and prints them (13/08/2026)
+- `bin/ci.sh` gives Rector a `TMPDIR` of its own (13/08/2026)
+- `MenuRepository` declares its `@extends ServiceEntityRepository<Menu>` docblock (13/08/2026)
+- The tests build their `RequestStack` from its constructor (13/08/2026)
+- README documents the collection cache tag, the preview's opt-out and the Twig attributes (13/08/2026)
+- `TwigFunctionRegistrationTest` locks the Twig function names declared by the three extensions (13/08/2026)
+
 ## v8.3.1
 
 The fallback navbar keeps its room and its title font

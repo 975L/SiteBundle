@@ -65,7 +65,7 @@ class SiteCreateCommand extends Command
         private readonly MenuRepository $menuRepository,
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly TranslatorInterface $translator,
-        #[Autowire('%kernel.project_dir%')]
+        #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
     ) {
         parent::__construct();

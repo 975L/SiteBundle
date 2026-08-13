@@ -15,11 +15,10 @@ use c975L\ConfigBundle\Management\HealthCheckAdviceBuilder;
 use c975L\ConfigBundle\Repository\HealthCheckResultRepository;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 // Backs the Page CRUD edit screen's "Health check" tab (see PageHealthCheckPanelType/its form theme block) - a Twig function rather than a controller-computed variable, since EasyAdmin's edit form context doesn't otherwise expose custom per-field data
-class PageHealthCheckExtension extends AbstractExtension
+class PageHealthCheckExtension
 {
     public function __construct(
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
@@ -29,15 +28,8 @@ class PageHealthCheckExtension extends AbstractExtension
     ) {
     }
 
-    #[\Override]
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('page_health_check', $this->getPanel(...)),
-        ];
-    }
-
     // ['results' => HealthCheckResult[], 'advice' => string[]] - empty results (and no advice) when "site-url" isn't configured yet, same as every HealthCheckProviderInterface implementation
+    #[AsTwigFunction('page_health_check')]
     public function getPanel(Page $page): array
     {
         $url = $this->pagePublicUrlResolver->resolve($page);

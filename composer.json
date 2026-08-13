@@ -30,9 +30,11 @@
         "symfony/form": "^8.0",
         "symfony/framework-bundle": "^8.0",
         "symfony/string": "^8.0",
+        "symfony/twig-bundle": "^8.0",
         "symfony/ux-twig-component": "^3.3",
         "twig/cssinliner-extra": "^3.26",
         "twig/intl-extra": "^3.26",
+        "twig/twig": "^3.26",
         "vich/uploader-bundle": "^2.9"
     },
     "require-dev": {
@@ -65,7 +67,7 @@
         "fixer": "php-cs-fixer check --diff",
         "stan": "phpstan analyse --no-progress",
         "stan-scaffold": "phpstan analyse -c phpstan-scaffold.dist.neon --no-progress",
-        "rector": "rector process --dry-run",
+        "rector": "rector process --dry-run --clear-cache",
         "test": "phpunit",
         "qa": [
             "@cs",
@@ -81,6 +83,7 @@
         "fixer": "Standard Symfony (php-cs-fixer)",
         "stan": "Analyse statique du bundle, level 5",
         "stan-scaffold": "Analyse statique du seul scaffold, level 6, au niveau des applications qui le recopient",
+        "rector": "Modernisation du code (rector), en dry-run - --clear-cache car le cache de Rector est indexé sur le contenu des fichiers et non sur rector.php, donc un changement de sets donnerait un faux vert",
         "test": "Suite PHPUnit",
         "qa": "Tous les contrôles de la CI, dans l'ordre - voir bin/ci.sh pour les rejouer sur des dépendances fraîches"
     },

@@ -17,6 +17,10 @@ fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
+# Rector caches in sys_get_temp_dir()/rector_cached_files, one directory shared by every repository on the machine: a second run answers "Rector is done!" where the first listed files to rewrite, and `--clear-cache` empties the cache of all the other repositories at once - it even fails outright when another Rector is writing there. A private TMPDIR gives this replay the cold cache the CI always starts from, and takes it away with $WORK
+export TMPDIR="$WORK/tmp"
+mkdir -p "$TMPDIR"
+
 # vendor/ and composer.lock are excluded to force a fresh resolution from Packagist; uncommitted changes are kept, since they are exactly what has to be validated before pushing
 echo "→ Copie du dépôt vers $WORK"
 rsync -a \
@@ -33,6 +37,25 @@ cd "$WORK"
 
 echo "→ composer update (Packagist, sans les liens symboliques du vendor local)"
 composer update --no-interaction --no-progress
+
+# The quality tools are not dependencies of the bundle: the CI installs them with setup-php, which always takes the latest release, while the development machine keeps whatever was installed the day it was installed. Replaying `composer qa` with the machine's own tools therefore proves nothing - a rule removed upstream since is still enforced here, and a rule added since is missed. They are installed fresh, one isolated project per tool so their own dependencies never have to agree with each other, and put ahead of everything else in the PATH
+# setup-php installs phars where this installs the same versions through Composer: same rules, different packaging
+echo "→ Outils qualité, en dernière version comme la CI"
+TOOLS="$WORK/.ci-tools"
+for Package in squizlabs/php_codesniffer phpstan/phpstan friendsofphp/php-cs-fixer rector/rector; do
+    Directory="$TOOLS/$(basename "$Package")"
+    mkdir -p "$Directory"
+    composer --working-dir="$Directory" require "$Package" --no-interaction --no-progress --quiet
+    PATH="$Directory/vendor/bin:$PATH"
+done
+export PATH
+
+# Stated rather than assumed: this is the very line that was missing when a tool's release broke the CI on an unchanged repository
+printf '   phpcs %s | phpstan %s | php-cs-fixer %s | rector %s\n' \
+    "$(phpcs --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)" \
+    "$(phpstan --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)" \
+    "$(php-cs-fixer --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)" \
+    "$(rector --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
 
 echo "→ Contrôles qualité"
 composer qa

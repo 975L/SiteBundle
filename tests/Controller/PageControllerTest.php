@@ -14,6 +14,7 @@ use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Twig\CollectionItemContext;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
+use c975L\UiBundle\Service\BlockRenderContext;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -53,6 +54,7 @@ class PageControllerTest extends TestCase
         bool $isGranted = true,
         ?CollectionSourceRegistry $collectionSourceRegistry = null,
         ?Environment $twig = null,
+        ?BlockRenderContext $blockRenderContext = null,
     ): PageController {
         if (null === $twig) {
             $twig = $this->createStub(Environment::class);
@@ -67,6 +69,7 @@ class PageControllerTest extends TestCase
             $collectionSourceRegistry ?? $this->createStub(CollectionSourceRegistry::class),
             $twig,
             new CollectionItemContext(),
+            $blockRenderContext ?? new BlockRenderContext(),
         );
 
         // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
@@ -368,6 +371,7 @@ class PageControllerTest extends TestCase
             $collectionSourceRegistry,
             $twig,
             $collectionItemContext,
+            new BlockRenderContext(),
         );
         $router = $this->createStub(UrlGeneratorInterface::class);
         $container = new Container();
@@ -522,6 +526,38 @@ class PageControllerTest extends TestCase
 
         $this->expectException(NotFoundHttpException::class);
         $controller->preview('gone', new Request());
+    }
+
+    // Nothing of a preview may be read from or written into UiBundle's block cache: it has to show what was just saved, and its "collection" blocks build their items' links against the preview route
+    public function testPreviewDisablesTheBlockRenderCache(): void
+    {
+        $page = new Page()->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $blockRenderContext = new BlockRenderContext();
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['draft' => $page]),
+            $this->createConfigService(),
+            blockRenderContext: $blockRenderContext,
+        );
+
+        $controller->preview('draft', new Request());
+
+        $this->assertTrue($blockRenderContext->isCacheDisabled());
+    }
+
+    // The public route is the one the cache exists for - only preview() opts out of it
+    public function testDisplayLeavesTheBlockRenderCacheEnabled(): void
+    {
+        $page = new Page()->setTitle('Live')->setSlug('live')->setIsPublished(true);
+        $blockRenderContext = new BlockRenderContext();
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['live' => $page]),
+            $this->createConfigService(),
+            blockRenderContext: $blockRenderContext,
+        );
+
+        $controller->display('live');
+
+        $this->assertFalse($blockRenderContext->isCacheDisabled());
     }
 
     public function testPreviewThrowsNotFoundWhenPageDoesNotExist(): void

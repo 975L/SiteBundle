@@ -38,7 +38,7 @@ class CollectionItemImportCommand extends Command
         private readonly CollectionItemRepository $collectionItemRepository,
         private readonly CollectionGroupResolver $collectionGroupResolver,
         private readonly SluggerInterface $slugger,
-        #[Autowire('%kernel.project_dir%')]
+        #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
     ) {
         parent::__construct();

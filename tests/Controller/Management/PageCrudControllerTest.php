@@ -99,8 +99,7 @@ class PageCrudControllerTest extends TestCase
         $request = new Request();
         $request->setSession($session);
 
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $requestStack = new RequestStack([$request]);
 
         return $requestStack;
     }
@@ -742,8 +741,7 @@ class PageCrudControllerTest extends TestCase
         $request = new Request();
         $request->attributes->set(EA::CRUD_ACTION, $pageName);
 
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
+        $requestStack = new RequestStack([$request]);
 
         return $requestStack;
     }
@@ -1036,8 +1034,7 @@ class PageCrudControllerTest extends TestCase
     // Both columns hold the same value for every row of the trash (see deleteEntity()), and "isIndexable" would stay clickable there with no "isPublished" cell left for the "publication-switch" controller to disable it from
     public function testConfigureFieldsHidesPublicationColumnsInTheTrash(): void
     {
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request(['trash' => 1]));
+        $requestStack = new RequestStack([new Request(['trash' => 1])]);
 
         $fields = $this->createController(requestStack: $requestStack)->configureFields(Crud::PAGE_INDEX);
 
@@ -1047,8 +1044,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void
     {
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
+        $requestStack = new RequestStack([new Request()]);
 
         $repository = $this->createStub(EntityRepositoryInterface::class);
         $queryBuilder = $this->createMock(QueryBuilder::class);

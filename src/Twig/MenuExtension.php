@@ -25,10 +25,9 @@ use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingExceptionIn
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
-class MenuExtension extends AbstractExtension
+class MenuExtension
 {
     // Keyed by pageId (string, as found in a "page:ID" target) - filled in bulk by preloadPages() so getMenuLinkUrl()/getMenuLinkLabel() resolve every link of a rendered menu from memory instead of one find() call per link
     private array $pageCache = [];
@@ -55,19 +54,8 @@ class MenuExtension extends AbstractExtension
     ) {
     }
 
-    #[\Override]
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction('menu_blocks', $this->getMenuBlocks(...)),
-            new TwigFunction('menu_style', $this->getMenuStyle(...)),
-            new TwigFunction('menu_link_url', $this->getMenuLinkUrl(...)),
-            new TwigFunction('menu_link_label', $this->getMenuLinkLabel(...)),
-            new TwigFunction('menu_link_is_copyright', $this->isMenuLinkCopyright(...)),
-        ];
-    }
-
     // @return Collection<int, Block>
+    #[AsTwigFunction('menu_blocks')]
     public function getMenuBlocks(string $location): Collection
     {
         if (!array_key_exists($location, $this->menuBlocksCache)) {
@@ -80,6 +68,7 @@ class MenuExtension extends AbstractExtension
     }
 
     // The layout an admin picked for that menu's items in the back-office (see Menu::STYLE_*), empty string when it was left to the site's theme - only the footer offers the choice, see MenuCrudController. Cached like the blocks are (its own key rather than a second value under theirs, so nothing has to deal with a cache entry saved in the previous shape), invalidated by the same tag
+    #[AsTwigFunction('menu_style')]
     public function getMenuStyle(string $location): string
     {
         return $this->menuStyleCache[$location] ??= $this->cache->get('menu_style_' . $location, function (ItemInterface $item) use ($location): string {
@@ -102,6 +91,7 @@ class MenuExtension extends AbstractExtension
     }
 
     // Resolves a "menu_link" block's raw target ("page:ID", "page:ID#anchor-blockId" or "route:NAME", see MenuLinkType) into an actual URL - empty string if it no longer resolves (page unpublished/deleted, route no longer registered by a LinkableRouteProviderInterface, or target never set on an incomplete block), so the template can skip rendering it
+    #[AsTwigFunction('menu_link_url')]
     public function getMenuLinkUrl(?string $target): string
     {
         if (null === $target || '' === $target) {
@@ -149,6 +139,7 @@ class MenuExtension extends AbstractExtension
         }
     }
 
+    #[AsTwigFunction('menu_link_label')]
     public function getMenuLinkLabel(?string $target): string
     {
         if (null === $target || '' === $target) {
@@ -188,6 +179,7 @@ class MenuExtension extends AbstractExtension
     }
 
     // True when $target's own label already is (or would be) the live-computed copyright notice - lets Footer.html.twig skip its own fallback "copyright" span instead of showing it twice
+    #[AsTwigFunction('menu_link_is_copyright')]
     public function isMenuLinkCopyright(?string $target): bool
     {
         if (null === $target || '' === $target) {
