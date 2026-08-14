@@ -24,7 +24,7 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
 - **Users & access** — [moved to ConfigBundle](#users)
 - **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
-- **Components** — [general components (Matomo, navbar, footer…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
+- **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
 - **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures)
 
 ## Features
@@ -36,7 +36,6 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Admin CRUD** for the site's navbar/footer menus and the email header/footer via EasyAdmin
 - **Sitemap generation** from database pages, collecting any other bundle's sitemap through `SitemapProviderInterface`, with a "Regenerate sitemap" dashboard shortcut
 - **Error page templates** for 401, 403, 404, 410, and 500
-- **Matomo analytics** integration
 - **Open Graph** image support
 - **Email templates** with CSS inlining
 - **Collections** of items (`CollectionGroup`/`CollectionItem`), exposed to UiBundle's `collection` block and given their own detail pages
@@ -107,7 +106,7 @@ php bin/console assets:install --symlink
 
 ### Register Stimulus controllers
 
-This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, matomo) and back-office ones in `controllers-admin.js` (collection-item-sort, sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
+This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic) and back-office ones in `controllers-admin.js` (collection-item-sort, sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
 
 Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
@@ -149,6 +148,8 @@ Declare these variables in each page template to populate meta tags and the page
 ```
 
 `summarySocialNetwork` feeds both `<meta name="description">` and `og:description`. A page that doesn't set it ships no meta description at all, which `ContentQualityHealthCheckProvider` reports.
+
+A page no entity answers for — a listing, a filtered listing, a tool page — can state its `title` and its `summarySocialNetwork` from the back office instead, through the `UrlMetadata` row [c975L/CoreBundle](https://github.com/975L/CoreBundle) holds for its url. The layout only reads that row for what the template left unsaid, so a template setting the variables above keeps them.
 
 ### Template blocks
 
@@ -426,7 +427,7 @@ languages does it through its own locale-prefixed routes for now.
 
 ### Open Graph image
 
-Resolved in this order: an `ogImage` variable set by the template/page takes priority, then a database `Page`'s own `ogImage` (settable from `PageCrudController`), then the site-wide default og-image managed via [Site graphics](#site-graphics), then the site's logo.
+Resolved in this order: an `ogImage` variable set by the template/page takes priority, then a database `Page`'s own `ogImage` (settable from `PageCrudController`), then the url's own `UrlMetadata` row, then the site-wide default og-image managed via [Site graphics](#site-graphics), then the site's logo.
 
 To override it manually for a file-based page:
 
@@ -518,7 +519,15 @@ What stays here is `Management\SiteMediaUsageProvider`, which tells the Media li
 
 `SiteEssentialActionProvider` (implements ConfigBundle's `EssentialActionProviderInterface`) contributes a homepage/navbar+footer menus/at-least-one-font entry to the dashboard's "Essential actions" checklist (see ConfigBundle's README, "Contributing essential actions from other bundles").
 
-`SiteGuidedProjectProvider` (implements ConfigBundle's `GuidedProjectProviderInterface`) contributes four replayable exercises to the dashboard's "Guided projects" panel — creating a page, putting it in a menu, building a collection, and reworking a page already online through duplicate + "publish as replacement". Only the opening step of each carries an `url`: from there the panel walks the screen the user has been sent to, highlighting the button or the field they are meant to use next (`.action-new`, `#Page_title`, `[data-block-collection]`…). A collection field is pointed at through its row marker rather than an id: EasyAdmin's `collection_widget` replaces `form_widget_compound` entirely, so no `id` is rendered on it and its label is a `<legend>` with no `for`. An action is pointed at through the `action-<name>` class EasyAdmin builds from the action's own name — `action-saveAndReturn` for the save button, not `action-save` — and an `ActionGroup` has to state that class itself through `setCssClass()`, `ActionFactory` only giving a default one to a plain action. All four are gated by `site-role-editor`, which every screen they walk is: an admin without it is never offered a parcours ending on an access-denied page. Nothing is derived from the site's own data, so a project is worth following on a site already full of pages, and worth replaying once done (see ConfigBundle's README, "Contributing guided projects from other bundles").
+`SiteAlertProvider` (implements ConfigBundle's `AlertProviderInterface`) raises a dashboard alert when **no published page carries the `france/legal-notice` or the `france/cookies` legal model**, and when a `home` page exists but is unpublished or deleted — the site then answers 404 on `/` while holding the page that should be there. The legal *models* themselves are UiBundle's (its "Legal models" screen writes the text), but only this bundle knows whether a `Page` carries one and whether it is published, which is why the alert lives here. A site with no `home` page **at all** raises nothing: answering `/` from a route of its own is a supported way to run (see `PageController::home()`), and nagging about it would be a false alert on every such site. Both are gated by `site-role-editor` — an admin who cannot edit a page can do nothing about either, and an alert nobody can act on is noise. Each links straight to what fixes it: the page creation form when no page carries the model at all, that very page's own form when it exists but is unpublished or trashed — legal page and home alike — where the publication switch is.
+
+`SiteGuidedProjectProvider` (implements ConfigBundle's `GuidedProjectProviderInterface`) contributes nine replayable exercises to the dashboard's "Guided projects" panel: building a collection, creating a page, filling in what a page needs to be found and shared, checking a page's health, reworking one already online through duplicate + "publish as replacement", moving a page to the trash and pulling it back out, exporting pages to another site, putting a page in the navigation bar, and laying out the footer.
+
+They are **ordered like the sidebar itself reads** — Collections, Pages, then the advanced "Menus" — so a project sits where the user finds the screen it walks, and two projects sharing a screen follow each other. `order` runs 50 → 74 in steps of **3**, not the 10 the neighbouring bundles use: ConfigBundle opens the sequence at 10, UiBundle picks it up at 90, and nine projects only fit between the two at that step. Two projects sharing an `order` would not fail — `GuidedProjectBuilder` sorts with `usort` — they would simply fall back on the order their providers happen to be registered in, which is exactly what `order` exists to decide.
+
+Only the opening step of each carries an `url`: from there the panel walks the screen the user has been sent to, highlighting the button or the field they are meant to use next (`.action-new`, `#Page_title`, `[data-block-collection]`…). A collection field is pointed at through its row marker rather than an id: EasyAdmin's `collection_widget` replaces `form_widget_compound` entirely, so no `id` is rendered on it and its label is a `<legend>` with no `for`. An action is pointed at through the `action-<name>` class EasyAdmin builds from the action's own name — `action-saveAndReturn` for the save button, not `action-save` — and an `ActionGroup` has to state that class itself through `setCssClass()`, `ActionFactory` only giving a default one to a plain action. The batch-export step points at `#form-batch-checkbox-all`, an id EasyAdmin's own index template renders rather than this bundle, and comes **before** the export button: the batch actions stay hidden until at least one row is checked.
+
+Each project is gated by the strictest role any of its own steps needs — `site-role-editor` for seven of them, `site-role-admin` for the trash and the export, whose `restore`/`deletePermanently`/`exportSelection` are restricted to it. An admin without the role is never offered a parcours ending on an access-denied page. The export project stops at the zip: re-uploading it is ConfigBundle's "Content import" screen, which is `ROLE_SUPER_ADMIN` and belongs to that bundle's own projects, so the last step names it instead of sending the user there — a step carrying a second `url` would leave the page the previous one points into. Nothing is derived from the site's own data, so a project is worth following on a site already full of pages, and worth replaying once done (see ConfigBundle's README, "Contributing guided projects from other bundles").
 
 ---
 
@@ -606,6 +615,10 @@ The bar's own height comes from `--navbar-padding-y` (`8px`, the room kept above
 
 `--reading-max-width` is the measure body copy is laid out on — `.legal div`, `.text`, `.site-article` and the sliders sharing that column — well under `--body-max-width`, which frames the page and never carries a line of text. It defaults to `min(75ch, 90vw)`, in `ch` so the measure follows the body font instead of drifting as it changes; a design that kept the previous 800px sets `--reading-max-width: min(800px, 90vw)` here.
 
+**A token is declared on `:root, [data-theme]`, never on `:root` alone** — the scaffolded `site.css` opens with that selector, and so do `sass/_variables.scss` here and `sass/_tokens.scss` in UiBundle. A `var()` written inside a custom property's value is substituted **on the element carrying the declaration**, not where the token is read: declared on `:root` only, every derived token (`--title-color`, `--surface-alt`, the `--footer-*` and `--navbar-*` pairs, UiBundle's `--section-bg-*`) is computed once against the root's palette and descends already resolved. A scope opened further down — a `<body>`, a section, a single card — then repaints `--background` and `--text` and gets everything else in the colors of the ambiance it sits in. With the second selector, any element carrying `data-theme` redeclares the whole chain against the palette in scope, so a site holding two universes (`<div data-theme="chaos">`) writes its own values under `[data-theme="chaos"]` in `app.css` and the derived tokens follow. Keeping only `:root` in your own theme file is what breaks it, the bundle's default being declared on the very element your rule reaches by inheritance alone. The admin's palette is unaffected: it is compiled into `--c975l-*` properties on `:root`, which the tokens read through `var()` — and a custom property inherits into every scope. `ThemeScopeTest` locks the selector in the compiled stylesheets and in the scaffolded `site.css`.
+
+Fixed dark mode stays on `:root[data-theme="dark"]`, i.e. the page as a whole: it has to outrank whatever a site left on `:root` in its own theme file, which loads last. A `data-theme` scope inside an auto-dark page therefore reads the light defaults again — which is what "opening an ambiance of its own" means, the scope stating its colors rather than inheriting the visitor's.
+
 Rules that override a bundle's own classes belong in `app.css`, not in `theme.css` — the split is "values on one side, rules on the other", not "mine versus the bundle's".
 
 Only this bundle's and UiBundle's tokens are listed, not those of every c975L bundle a site happens to install — `theme.css` ships with SiteBundle, which has no business enumerating what it doesn't own. Each bundle documents its own (e.g. SocialBundle's `--social-share-*`), and several of them are read per-variant, so declaring one in `:root` collapses every variant that bundle offers into a single look — SocialBundle's share button styles, picked from its dashboard, stop having any visible effect. A design that really needs one overrides it in `app.css`, where taking a bundle's own rules over already belongs.
@@ -618,13 +631,7 @@ All components below read their data from ConfigBundle. No props are needed — 
 
 ### Matomo
 
-Set `site-matomo-url` and `site-matomo-id` in ConfigBundle, then place the component wherever you want the tracking snippet (typically just before `</body>`):
-
-```twig
-<twig:c975LSite:General:Matomo/>
-```
-
-The component renders nothing if either config value is missing. **Deliberately not gated by CookieConsent below** — it's meant to run in CNIL-exempt mode (self-hosted, anonymized IP, no cross-site tracking, cookie ≤13 months, Do Not Track respected), see `description.site_enable_matomo`. If your Matomo instance isn't configured that way, gate it yourself before enabling `site-enable-matomo`.
+**Moved to `c975l/ui-bundle`**, as `<twig:c975LUi:Analytics:Matomo />` — the same move the cookie banner made, and for the same reason: UiBundle already writes the legal text naming the Matomo instance (its cookies model offers the opt-out link), so it read a key this bundle declared. The three keys `site-matomo-url`, `site-matomo-id` and `site-enable-matomo` are declared there now, next to `site-enable-cookie-consent` in the same `analytics` group — the backoffice screen doesn't move, and neither do the values already stored. The component carries its own `site-enable-matomo` guard, so this bundle's footer just renders it. See UiBundle's readme.
 
 ### CookieConsent
 
@@ -645,7 +652,7 @@ What each one shows is `display-hosted-by`/`display-made-by`, a choice between `
 
 Set `site-preconnect` in ConfigBundle to a JSON array of external origins to preconnect to, i.e. `["https://975l.com"]`. Useful when `HostedBy`/`MadeBy` logos are served from a third-party domain. Empty by default, so it has no effect unless configured.
 
-`site-matomo-url`'s own origin is preconnected automatically, without having to be repeated here — its script is fetched from a third-party host, so the DNS lookup and TLS handshake would otherwise only start once that JS runs.
+`site-matomo-url`'s own origin is preconnected automatically, without having to be repeated here — its script is fetched from a third-party host, so the DNS lookup and TLS handshake would otherwise only start once that JS runs. The key is UiBundle's since it owns the component, this layout only reads it.
 
 ---
 
@@ -1088,7 +1095,7 @@ $bots = file(
 {% block javascripts %}
     {{ parent() }}
     <twig:c975LUi:Cookie:Consent />
-    <twig:c975LSite:General:Matomo/>
+    <twig:c975LUi:Analytics:Matomo />
 {% endblock %}
 ```
 

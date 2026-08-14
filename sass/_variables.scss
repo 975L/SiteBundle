@@ -1,4 +1,7 @@
-:root {
+// "[data-theme]" alongside ":root" is what makes a second ambiance possible below the root: a var() written in a custom property's value is substituted on the element carrying the declaration, not where the token is read, so the tokens derived from the palette (--surface-alt, --border-color, --title-color, the --footer-* and --navbar-* pairs) would otherwise resolve once against the root's palette and descend already computed. Any element carrying data-theme now redeclares the whole chain against the palette in scope, so a single card can hold an ambiance of its own
+// Same contract as UiBundle's sass/_tokens.scss: a token is declared on ":root, [data-theme]", never on ":root" alone - the scaffolded scaffold/assets/styles/themes/site.css included, or a value a site set there would lose to this default inside such a scope, the default being declared on the very element the site's rule only reaches by inheritance
+// The admin's own palette is unaffected: it is compiled into --c975l-* properties on :root alone, and the tokens below read those through var(), which inherits into any scope
+:root, [data-theme] {
     // Which palette the browser's own UA-rendered parts belong to; undeclared, they all render light
     color-scheme: light;
     // A token, the four backgrounds below flipping in dark mode; applied to descendants too

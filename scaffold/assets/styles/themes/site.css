@@ -2,7 +2,8 @@
 /* Format in this bundle's readme ("Themes" > "A site's own theme"), defaults in sass/_variables.scss */
 /* One file per bundle - this one is the site's chrome; everything else a design retunes is UiBundle's, in themes/ui.css */
 /* Colors and fonts are absent on purpose: admin-editable, compiled into bundles/build/site-theme.css */
-:root {
+/* ":root, [data-theme]" and not ":root" alone: the bundle declares its defaults on both, so inside an element carrying data-theme a value set here only on the root would lose to the bundle's default declared on that very element */
+:root, [data-theme] {
     /* The size every text set in the body font is read at - a "text" block's paragraphs, a caption, an article, a legal page, a form. In rem, not px, so a visitor who raised their browser's own font size is still followed. Headings sit outside it (rem too) and so do UiBundle's block titles and eyebrows (px), so opening up the body copy here leaves both exactly where the design put them */
     /* --font-size-body: 1rem; */
 

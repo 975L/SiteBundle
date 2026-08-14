@@ -30,13 +30,13 @@ class DarkThemeTextTokensTest extends TestCase
         ];
     }
 
-    // :root[data-theme="dark"] and the @media (prefers-color-scheme: dark) branch, i.e. the two occurrences each token below is counted in
+    // [data-theme="dark"] and the @media (prefers-color-scheme: dark) branch, i.e. the two occurrences each token below is counted in. Not scoped to :root, a scope opening a dark ambience getting the same tokens (see ThemeScopeTest)
     #[DataProvider('stylesheetProvider')]
     public function testBothDarkBranchesAreCompiled(string $file): void
     {
         $css = $this->stylesheet($file);
 
-        $this->assertMatchesRegularExpression('/:root\[data-theme=["\']?dark["\']?\]/', $css, sprintf('"%s" no longer carries the fixed-dark branch.', $file));
+        $this->assertMatchesRegularExpression('/(?<!:root)\[data-theme=["\']?dark["\']?\]\s*\{/', $css, sprintf('"%s" no longer carries the fixed-dark branch.', $file));
         $this->assertStringContainsString('prefers-color-scheme: dark', $css, sprintf('"%s" no longer carries the OS-preference branch.', $file));
     }
 

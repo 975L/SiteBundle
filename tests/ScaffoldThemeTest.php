@@ -192,7 +192,7 @@ class ScaffoldThemeTest extends TestCase
     }
 
     /**
-     * Declarations of the compiled :root - the defaults actually served, rather than the sass that produced them.
+     * Declarations of the compiled token block - the defaults actually served, rather than the sass that produced them.
      *
      * @return array<string, string>
      */
@@ -202,8 +202,9 @@ class ScaffoldThemeTest extends TestCase
         $this->assertFileExists($path, 'styles.css is missing, the sass has not been compiled.');
 
         $css = (string) file_get_contents($path);
-        $start = strpos($css, ':root {');
-        $this->assertNotFalse($start, 'styles.css carries no :root block.');
+        // The selector is the contract itself, hence matched whole rather than on ":root" alone: a token declared on ":root" only is resolved once against the root's palette, so an element opening an ambiance of its own would read values computed for the one it sits in (see ThemeScopeTest)
+        $start = strpos($css, ':root, [data-theme] {');
+        $this->assertNotFalse($start, 'styles.css carries no ":root, [data-theme]" block.');
 
         $block = substr($css, $start, (int) strpos($css, "\n}", $start) - $start);
 

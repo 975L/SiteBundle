@@ -122,9 +122,21 @@
                 <source>description.guided_project_collection</source>
                 <target>Group repeating content (team, references, events) and show it in a page</target>
             </trans-unit>
+            <trans-unit id="CRY4jVY">
+                <source>description.guided_project_content_export</source>
+                <target>Take pages away as a zip, with their blocks and their images, to load them into another site or keep them off the server</target>
+            </trans-unit>
+            <trans-unit id="f6.RLP4">
+                <source>description.guided_project_footer</source>
+                <target>Lay out the footer of every page: its links, its social links, spread over the lines you want</target>
+            </trans-unit>
             <trans-unit id="zYKbnmM">
                 <source>description.guided_project_page_creation</source>
                 <target>Create a page, put content in it, publish it and see it online</target>
+            </trans-unit>
+            <trans-unit id="txsRbuU">
+                <source>description.guided_project_page_health</source>
+                <target>What a page's own screen offers to check it rather than to write it: its QR code, to open it as it stands on a phone, and its health check, which says what it is missing.</target>
             </trans-unit>
             <trans-unit id="lRbEz1o">
                 <source>description.guided_project_page_menu</source>
@@ -133,6 +145,14 @@
             <trans-unit id="wu5WCSH">
                 <source>description.guided_project_page_revision</source>
                 <target>Rework a published page on a copy, then put it online in one go, without ever showing a half-finished version</target>
+            </trans-unit>
+            <trans-unit id="2te_0ZO">
+                <source>description.guided_project_page_seo</source>
+                <target>What a search engine and a social network show of a page: its address, its summary, its image.</target>
+            </trans-unit>
+            <trans-unit id="HQvuvco">
+                <source>description.guided_project_trash</source>
+                <target>Take a page off the site without losing it, then either put it back or remove it for good</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -153,6 +173,50 @@
             <trans-unit id="n7v3zVC">
                 <source>description.guided_step_collection_open</source>
                 <target>A collection holds a list of alike items, instead of as many hand-built pages.</target>
+            </trans-unit>
+            <trans-unit id="2iD1cWu">
+                <source>description.guided_step_content_export_import</source>
+                <target>On the other site, the "Content import" screen of the settings takes that zip. Ids never have to match: the pages are rebuilt from what the archive holds.</target>
+            </trans-unit>
+            <trans-unit id="EY6vDYf">
+                <source>description.guided_step_content_export_open</source>
+                <target>The export starts from this list, whatever the pages are worth keeping.</target>
+            </trans-unit>
+            <trans-unit id="NNz0Te1">
+                <source>description.guided_step_content_export_run</source>
+                <target>A zip is downloaded, holding each page with its blocks and the images they use.</target>
+            </trans-unit>
+            <trans-unit id="W6.DZUN">
+                <source>description.guided_step_content_export_select</source>
+                <target>This box checks them all; you can also check them one by one. The export button only shows once one is checked.</target>
+            </trans-unit>
+            <trans-unit id="Crku_2z">
+                <source>description.guided_step_footer_check</source>
+                <target>Open the site in another tab: the footer carries your lines, in the order you gave them.</target>
+            </trans-unit>
+            <trans-unit id="se8H3oF">
+                <source>description.guided_step_footer_create</source>
+                <target>One button per location not created yet. If the footer is already in the list, move on to the next step.</target>
+            </trans-unit>
+            <trans-unit id="tnho7ce">
+                <source>description.guided_step_footer_edit</source>
+                <target>You are already there if you have just created it. Otherwise, that is the row whose location reads “Footer”.</target>
+            </trans-unit>
+            <trans-unit id="4q9NQZY">
+                <source>description.guided_step_footer_group</source>
+                <target>Add one “Menu group” per line, then drag the blocks already there into it: the social links on one line, the links on another, nothing to re-create.</target>
+            </trans-unit>
+            <trans-unit id=".D_f8F3">
+                <source>description.guided_step_footer_items</source>
+                <target>A footer is made of blocks, just like a page: its links, but also a text or an image if you want one there.</target>
+            </trans-unit>
+            <trans-unit id="TmVqMFG">
+                <source>description.guided_step_footer_open</source>
+                <target>One menu per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+            </trans-unit>
+            <trans-unit id="ikDcfg4">
+                <source>description.guided_step_footer_style</source>
+                <target>Side by side or one below the other. Left empty, the site's theme file decides.</target>
             </trans-unit>
             <trans-unit id="0u_15J4">
                 <source>description.guided_step_page_creation_blocks</source>
@@ -185,6 +249,30 @@
             <trans-unit id="ZGnJv64">
                 <source>description.guided_step_page_creation_view</source>
                 <target>The page is now public: this button opens it as your visitors see it.</target>
+            </trans-unit>
+            <trans-unit id="MRmz1hF">
+                <source>description.guided_step_page_health_edit</source>
+                <target>Neither shows on a page being created: both need a saved page.</target>
+            </trans-unit>
+            <trans-unit id="HfXsIEx">
+                <source>description.guided_step_page_health_open</source>
+                <target>Take a page already online: both are read off what is saved.</target>
+            </trans-unit>
+            <trans-unit id="fWFnc2N">
+                <source>description.guided_step_page_health_qrcode</source>
+                <target>It carries the page's public address. Scan it to see the page on a phone, or right-click to save the image for a poster or a flyer.</target>
+            </trans-unit>
+            <trans-unit id="irINoKJ">
+                <source>description.guided_step_page_health_run</source>
+                <target>An empty table means the check has never run over this page. It is launched from the "Health check" screen of the settings, which goes over the whole site at once.</target>
+            </trans-unit>
+            <trans-unit id="afZEoUx">
+                <source>description.guided_step_page_health_tab</source>
+                <target>Click it: the tab holds this page's own checks, and only shows on a saved page.</target>
+            </trans-unit>
+            <trans-unit id="Fk.cUv.">
+                <source>description.guided_step_page_health_table</source>
+                <target>One row per check - a missing summary, an image with no alternative text, invalid html - each carrying the advice that names the field to fill.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -233,6 +321,62 @@
             <trans-unit id="aYYJ_YC">
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Take all the time you need: your visitors keep seeing the original meanwhile.</target>
+            </trans-unit>
+            <trans-unit id="Z8kSvf2">
+                <source>description.guided_step_page_seo_check</source>
+                <target>The page is now in sitemap.xml, and pasting its address anywhere shows the title, the summary and the image you have just set.</target>
+            </trans-unit>
+            <trans-unit id="bfIpkLz">
+                <source>description.guided_step_page_seo_edit</source>
+                <target>These fields all sit in the "Data" tab, below the title.</target>
+            </trans-unit>
+            <trans-unit id="Ve53OEd">
+                <source>description.guided_step_page_seo_frequency</source>
+                <target>This one and the priority right below it are the two hints the sitemap carries, nothing more: a home page declares itself more often changed than a legal notice.</target>
+            </trans-unit>
+            <trans-unit id="bvwooY0">
+                <source>description.guided_step_page_seo_image</source>
+                <target>The image shown alongside the link when the page is shared. Left empty, the site's own share image serves.</target>
+            </trans-unit>
+            <trans-unit id="QlsKKaU">
+                <source>description.guided_step_page_seo_indexable</source>
+                <target>Unchecked, the page leaves sitemap.xml and the two settings below it freeze. Keep it checked unless the page has no business being found (account creation, forgotten password).</target>
+            </trans-unit>
+            <trans-unit id="4R0skS1">
+                <source>description.guided_step_page_seo_open</source>
+                <target>Take a page already online: none of these settings touch its content, only what is shown of it elsewhere.</target>
+            </trans-unit>
+            <trans-unit id="QSCJqVU">
+                <source>description.guided_step_page_seo_slug</source>
+                <target>The slug is what follows the domain name, and it follows the title on its own. Changing it on a page already online breaks every link pointing at it, so open the padlock only if you also declare a redirect in the settings.</target>
+            </trans-unit>
+            <trans-unit id="dS6xslk">
+                <source>description.guided_step_page_seo_summary</source>
+                <target>Two or three sentences: a search engine prints them below the title, a social network below the link preview. The health check asks for them too.</target>
+            </trans-unit>
+            <trans-unit id="TNnaa8j">
+                <source>description.guided_step_trash_back</source>
+                <target>A page in the trash is never on the site, never in a menu and never in the sitemap - the trash can be left as it is.</target>
+            </trans-unit>
+            <trans-unit id="gbOCxHj">
+                <source>description.guided_step_trash_delete</source>
+                <target>Nothing is erased: the page leaves the site and its menus, and waits in the trash.</target>
+            </trans-unit>
+            <trans-unit id="ARUi17r">
+                <source>description.guided_step_trash_delete_permanently</source>
+                <target>This one cannot be undone, and takes the page's blocks along - it asks you to confirm.</target>
+            </trans-unit>
+            <trans-unit id="mkzu0PB">
+                <source>description.guided_step_trash_open</source>
+                <target>Pick a page you can afford to take off the site for a moment.</target>
+            </trans-unit>
+            <trans-unit id="kytWD5h">
+                <source>description.guided_step_trash_open_trash</source>
+                <target>The same button switches back to the pages afterwards.</target>
+            </trans-unit>
+            <trans-unit id="YPAShtT">
+                <source>description.guided_step_trash_restore</source>
+                <target>It comes back unpublished, so you decide when it shows on the site again.</target>
             </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
@@ -374,6 +518,10 @@
                 <source>label.content_help</source>
                 <target>Paste the old .html.twig file's content here - interpreted as Twig (config(), path(), etc.).</target>
             </trans-unit>
+            <trans-unit id="oo0X1dA">
+                <source>label.cookies</source>
+                <target>Cookies</target>
+            </trans-unit>
             <trans-unit id="eyjXZ2b">
                 <source>label.copy_suffix</source>
                 <target>copy</target>
@@ -474,9 +622,21 @@
                 <source>label.guided_project_collection</source>
                 <target>Create a collection</target>
             </trans-unit>
+            <trans-unit id="36ObQ1j">
+                <source>label.guided_project_content_export</source>
+                <target>Export pages to another site</target>
+            </trans-unit>
+            <trans-unit id="XQDxvTJ">
+                <source>label.guided_project_footer</source>
+                <target>Build the footer</target>
+            </trans-unit>
             <trans-unit id="PEScSjB">
                 <source>label.guided_project_page_creation</source>
                 <target>Create a page</target>
+            </trans-unit>
+            <trans-unit id="bkXLh6u">
+                <source>label.guided_project_page_health</source>
+                <target>Check a published page</target>
             </trans-unit>
             <trans-unit id="Zbgfe3U">
                 <source>label.guided_project_page_menu</source>
@@ -485,6 +645,14 @@
             <trans-unit id="QQfWYAW">
                 <source>label.guided_project_page_revision</source>
                 <target>Rework a page already online</target>
+            </trans-unit>
+            <trans-unit id="GEsMVIP">
+                <source>label.guided_project_page_seo</source>
+                <target>Make a page findable and well shared</target>
+            </trans-unit>
+            <trans-unit id=".dL2TAJ">
+                <source>label.guided_project_trash</source>
+                <target>Delete a page and get it back</target>
             </trans-unit>
             <trans-unit id="0WfyPjZ">
                 <source>label.guided_step_collection_add_item</source>
@@ -513,6 +681,54 @@
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Save the collection</target>
+            </trans-unit>
+            <trans-unit id="lttrx4w">
+                <source>label.guided_step_content_export_import</source>
+                <target>Load it into the other site</target>
+            </trans-unit>
+            <trans-unit id="lhU1x.J">
+                <source>label.guided_step_content_export_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="lnVPSLh">
+                <source>label.guided_step_content_export_run</source>
+                <target>Export the selection</target>
+            </trans-unit>
+            <trans-unit id="6p0T_aK">
+                <source>label.guided_step_content_export_select</source>
+                <target>Check the pages to take</target>
+            </trans-unit>
+            <trans-unit id="DXo980X">
+                <source>label.guided_step_footer_check</source>
+                <target>Check on the site</target>
+            </trans-unit>
+            <trans-unit id="_7omRWh">
+                <source>label.guided_step_footer_create</source>
+                <target>Create the footer if it is missing</target>
+            </trans-unit>
+            <trans-unit id="9ltYkot">
+                <source>label.guided_step_footer_edit</source>
+                <target>Open the footer</target>
+            </trans-unit>
+            <trans-unit id="SzEM9BT">
+                <source>label.guided_step_footer_group</source>
+                <target>Spread them over several lines</target>
+            </trans-unit>
+            <trans-unit id="byiyTzs">
+                <source>label.guided_step_footer_items</source>
+                <target>Add the footer's items</target>
+            </trans-unit>
+            <trans-unit id="KUS4LAs">
+                <source>label.guided_step_footer_open</source>
+                <target>Open the menus</target>
+            </trans-unit>
+            <trans-unit id="BElmr7I">
+                <source>label.guided_step_footer_save</source>
+                <target>Save the footer</target>
+            </trans-unit>
+            <trans-unit id="m0CcfXV">
+                <source>label.guided_step_footer_style</source>
+                <target>Choose how the lines lay out</target>
             </trans-unit>
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
@@ -549,6 +765,30 @@
             <trans-unit id="BO9Oiu9">
                 <source>label.guided_step_page_creation_view</source>
                 <target>See the page online</target>
+            </trans-unit>
+            <trans-unit id="hHmF60u">
+                <source>label.guided_step_page_health_edit</source>
+                <target>Open the page to check</target>
+            </trans-unit>
+            <trans-unit id="61oqppv">
+                <source>label.guided_step_page_health_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="p.o3xjn">
+                <source>label.guided_step_page_health_qrcode</source>
+                <target>Get its QR code</target>
+            </trans-unit>
+            <trans-unit id="4.RIH.n">
+                <source>label.guided_step_page_health_run</source>
+                <target>Run the check if the table is empty</target>
+            </trans-unit>
+            <trans-unit id="MXY0lNy">
+                <source>label.guided_step_page_health_tab</source>
+                <target>Open the health check tab</target>
+            </trans-unit>
+            <trans-unit id="0xMBgoY">
+                <source>label.guided_step_page_health_table</source>
+                <target>Read the table</target>
             </trans-unit>
             <trans-unit id="of6P8Dq">
                 <source>label.guided_step_page_menu_add_link</source>
@@ -601,6 +841,66 @@
             <trans-unit id="is2PIcW">
                 <source>label.guided_step_page_revision_rework</source>
                 <target>Rework the copy</target>
+            </trans-unit>
+            <trans-unit id="B0RNOF3">
+                <source>label.guided_step_page_seo_check</source>
+                <target>Check the result</target>
+            </trans-unit>
+            <trans-unit id="kCjjMKT">
+                <source>label.guided_step_page_seo_edit</source>
+                <target>Open the page to edit</target>
+            </trans-unit>
+            <trans-unit id="rUJ_7hT">
+                <source>label.guided_step_page_seo_frequency</source>
+                <target>Say how often it changes</target>
+            </trans-unit>
+            <trans-unit id="qZ7UCGr">
+                <source>label.guided_step_page_seo_image</source>
+                <target>Choose its share image</target>
+            </trans-unit>
+            <trans-unit id="OkP1frN">
+                <source>label.guided_step_page_seo_indexable</source>
+                <target>Leave it in the sitemap</target>
+            </trans-unit>
+            <trans-unit id="9kozDtQ">
+                <source>label.guided_step_page_seo_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="22wJjCh">
+                <source>label.guided_step_page_seo_save</source>
+                <target>Save the page</target>
+            </trans-unit>
+            <trans-unit id="MXzizeA">
+                <source>label.guided_step_page_seo_slug</source>
+                <target>Check its address</target>
+            </trans-unit>
+            <trans-unit id="nFcZCYg">
+                <source>label.guided_step_page_seo_summary</source>
+                <target>Write its summary</target>
+            </trans-unit>
+            <trans-unit id="ngP0HHK">
+                <source>label.guided_step_trash_back</source>
+                <target>Back to the pages</target>
+            </trans-unit>
+            <trans-unit id="OC2Mqdb">
+                <source>label.guided_step_trash_delete</source>
+                <target>Move it to the trash</target>
+            </trans-unit>
+            <trans-unit id="cm77sWG">
+                <source>label.guided_step_trash_delete_permanently</source>
+                <target>Or remove it for good</target>
+            </trans-unit>
+            <trans-unit id="3UAH_zy">
+                <source>label.guided_step_trash_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="Voko3Ut">
+                <source>label.guided_step_trash_open_trash</source>
+                <target>Open the trash</target>
+            </trans-unit>
+            <trans-unit id="A4bO5YW">
+                <source>label.guided_step_trash_restore</source>
+                <target>Put the page back</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>
@@ -758,6 +1058,14 @@
                 <source>label.health_check_w3c_html_call_failed</source>
                 <target>W3C HTML validation failed: %message%</target>
             </trans-unit>
+            <trans-unit id=".S35vbK">
+                <source>label.home_page</source>
+                <target>Home page</target>
+            </trans-unit>
+            <trans-unit id="S3_JJk0">
+                <source>label.home_page_unpublished</source>
+                <target>The home page exists but isn't published, so / answers 404</target>
+            </trans-unit>
             <trans-unit id="rdukMJh">
                 <source>label.hosted_by</source>
                 <target>Hosted by</target>
@@ -821,6 +1129,14 @@
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Legal notice</target>
+            </trans-unit>
+            <trans-unit id="wT4QwCK">
+                <source>label.legal_page_missing</source>
+                <target>No published page carries this legal model</target>
+            </trans-unit>
+            <trans-unit id="hJQ49yK">
+                <source>label.legal_page_unpublished</source>
+                <target>The page carrying this legal model exists but isn't published</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>

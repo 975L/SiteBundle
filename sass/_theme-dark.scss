@@ -37,14 +37,15 @@
     --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
 }
 
-// theme-mode = "dark": the admin fixed the site to dark for every visitor
-:root[data-theme="dark"] {
+// theme-mode = "dark": the admin fixed the site to dark for every visitor. Not scoped to :root, the light palette being declared on ":root, [data-theme]" - any element opening a dark ambience (a UiBundle Card, a band) gets the dark tokens too
+[data-theme="dark"] {
     @include dark-tokens;
 }
 
-// theme-mode = "auto" (no data-theme attribute set): follows the visitor's OS preference
+// theme-mode = "auto" (no data-theme attribute set): follows the visitor's OS preference. A scope inside it keeps that preference unless it explicitly asks for light, or it would redeclare the light palette on an otherwise dark page
 @media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) {
+    :root:not([data-theme]),
+    [data-theme]:not([data-theme="light"]) {
         @include dark-tokens;
     }
 }

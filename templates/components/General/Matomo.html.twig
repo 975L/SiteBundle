@@ -1,6 +1,0 @@
-{# <twig:c975LSite:General:Matomo/> #}
-{% set matomoUrl = config('site-matomo-url') %}
-{% set matomoId = config('site-matomo-id') %}
-{% if matomoUrl and matomoId %}
-    <div data-controller="matomo" data-matomo-url="{{ matomoUrl }}" data-matomo-id="{{ matomoId }}"></div>
-{% endif %}

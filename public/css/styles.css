@@ -184,7 +184,7 @@ summary {
   display: list-item;
 }
 
-:root {
+:root, [data-theme] {
   color-scheme: light;
   --alert-color: #000;
   --alert-danger-color: #9c3a44;
@@ -292,7 +292,7 @@ summary {
 }
 
 /* DARK MODE */
-:root[data-theme=dark] {
+[data-theme=dark] {
   color-scheme: dark;
   --background: #121212;
   --text: #e0e0e0;
@@ -325,7 +325,8 @@ summary {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
+  :root:not([data-theme]),
+  [data-theme]:not([data-theme=light]) {
     color-scheme: dark;
     --background: #121212;
     --text: #e0e0e0;
@@ -1103,24 +1104,23 @@ footer a:visited:hover .img-above {
   margin: 0;
 }
 @media print {
-  * {
+  html {
     font-size: 95%;
   }
   html,
-  body {
-    width: 210mm;
-    height: 297mm;
-  }
-  html,
   body,
-  *,
-  *::before,
-  *::after {
+  *:not(.print-exact, .print-exact *),
+  *:not(.print-exact, .print-exact *)::before,
+  *:not(.print-exact, .print-exact *)::after {
     color: #000 !important;
     background-color: transparent !important;
     background-image: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+  }
+  .print-exact,
+  .print-exact * {
+    print-color-adjust: exact;
   }
   html,
   body {
@@ -1151,9 +1151,6 @@ footer a:visited:hover .img-above {
   .container,
   .container-fluid {
     width: 100%;
-  }
-  a[href]::after {
-    content: none;
   }
 }
 

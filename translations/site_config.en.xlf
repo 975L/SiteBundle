@@ -30,18 +30,6 @@
                 <source>description.healthcheck_pagespeed_api_key</source>
                 <target>Optional - raises Google's PageSpeed Insights rate limit for the c975l:health-check:run command. Get one at https://developers.google.com/speed/docs/insights/v5/get-started</target>
             </trans-unit>
-            <trans-unit id="imDzV_g">
-                <source>description.site_enable_matomo</source>
-                <target>Enables Matomo, deliberately outside the cookie banner - only for a CNIL-exempt setup (anonymized IP, no cross-site tracking, cookie ≤13 months, DNT respected)</target>
-            </trans-unit>
-            <trans-unit id="QbsOHOo">
-                <source>description.site_matomo_id</source>
-                <target>Matomo site ID (integer)</target>
-            </trans-unit>
-            <trans-unit id="X8T2_9z">
-                <source>description.site_matomo_url</source>
-                <target>URL of the Matomo instance i.e. https://matomo.example.com</target>
-            </trans-unit>
             <trans-unit id="oVvC_MZ">
                 <source>description.site_menu_link_copyright_auto</source>
                 <target>Show the computed copyright (© year) as the menu link label for the "Copyright" page, instead of its title</target>
@@ -89,18 +77,6 @@
             <trans-unit id="wkcUWqy">
                 <source>label.healthcheck_pagespeed_api_key</source>
                 <target>PageSpeed Insights API key</target>
-            </trans-unit>
-            <trans-unit id="xZcUaF_">
-                <source>label.site_enable_matomo</source>
-                <target>Enable Matomo Analytics</target>
-            </trans-unit>
-            <trans-unit id="EDDAHIQ">
-                <source>label.site_matomo_id</source>
-                <target>Matomo Site ID</target>
-            </trans-unit>
-            <trans-unit id="HoL37ro">
-                <source>label.site_matomo_url</source>
-                <target>Matomo URL</target>
             </trans-unit>
             <trans-unit id="vnrrGUG">
                 <source>label.site_menu_link_copyright_auto</source>

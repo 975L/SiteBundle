@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-08-14",
+        "description": [
+            {
+                "en": "The title and the description you typed for one of your listing pages now show on the page itself and when it is shared, and the picture you chose for it comes along",
+                "fr": "Le titre et la description que vous avez saisis pour une de vos pages de listes s'affichent désormais sur la page elle-même et lors de son partage, et l'image que vous avez choisie les accompagne",
+                "es": "El título y la descripción que introdujo para una de sus páginas de listado se muestran ahora en la propia página y al compartirla, y la imagen que eligió los acompaña"
+            },
+            {
+                "en": "Your dashboard now warns you if no published page carries your legal notice or your cookies policy, and if your home page exists but is not published - each warning taking you straight to the screen that fixes it",
+                "fr": "Votre tableau de bord vous prévient désormais si aucune page publiée ne porte vos mentions légales ou votre politique de cookies, et si votre page d'accueil existe sans être publiée - chaque alerte vous emmenant directement sur l'écran qui la règle",
+                "es": "Su panel le avisa ahora si ninguna página publicada lleva su aviso legal o su política de cookies, y si su página de inicio existe pero no está publicada - cada aviso le lleva directamente a la pantalla que lo resuelve"
+            },
+            {
+                "en": "Nine step-by-step walkthroughs now guide you through the back office, from writing a page and making it easy to find to restoring a deleted one or exporting your pages to another site",
+                "fr": "Neuf visites guidées vous accompagnent désormais pas à pas dans l'administration, de l'écriture d'une page et de sa mise en avant jusqu'à la restauration d'une page supprimée ou l'export de vos pages vers un autre site",
+                "es": "Nueve recorridos guiados le acompañan ahora paso a paso por la administración, desde escribir una página y hacerla fácil de encontrar hasta restaurar una eliminada o exportar sus páginas a otro sitio"
+            }
+        ]
+    },
+    {
         "date": "2026-08-13",
         "description": [
             {

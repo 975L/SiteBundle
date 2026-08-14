@@ -122,9 +122,21 @@
                 <source>description.guided_project_collection</source>
                 <target>Regrouper des contenus qui se répètent (équipe, réalisations, événements) et les afficher dans une page</target>
             </trans-unit>
+            <trans-unit id="CRY4jVY">
+                <source>description.guided_project_content_export</source>
+                <target>Emporter des pages dans un zip, avec leurs blocks et leurs images, pour les charger dans un autre site ou les garder hors du serveur</target>
+            </trans-unit>
+            <trans-unit id="f6.RLP4">
+                <source>description.guided_project_footer</source>
+                <target>Mettre en forme le pied de page de toutes les pages : ses liens, ses liens sociaux, répartis sur les lignes que vous voulez</target>
+            </trans-unit>
             <trans-unit id="zYKbnmM">
                 <source>description.guided_project_page_creation</source>
                 <target>Créer une page, y mettre du contenu, la publier et la voir en ligne</target>
+            </trans-unit>
+            <trans-unit id="txsRbuU">
+                <source>description.guided_project_page_health</source>
+                <target>Ce que l'écran d'une page offre pour la vérifier plutôt que pour l'écrire : son QR code, pour l'ouvrir telle quelle sur un téléphone, et son bilan de santé, qui dit ce qui lui manque.</target>
             </trans-unit>
             <trans-unit id="lRbEz1o">
                 <source>description.guided_project_page_menu</source>
@@ -133,6 +145,14 @@
             <trans-unit id="wu5WCSH">
                 <source>description.guided_project_page_revision</source>
                 <target>Retravailler une page publiée sur une copie, puis la mettre en ligne d'un coup, sans jamais montrer de version à moitié faite</target>
+            </trans-unit>
+            <trans-unit id="2te_0ZO">
+                <source>description.guided_project_page_seo</source>
+                <target>Ce qu'un moteur de recherche et un réseau social montrent d'une page : son adresse, son résumé, son image.</target>
+            </trans-unit>
+            <trans-unit id="HQvuvco">
+                <source>description.guided_project_trash</source>
+                <target>Retirer une page du site sans la perdre, puis la remettre en place ou l'effacer pour de bon</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -153,6 +173,50 @@
             <trans-unit id="n7v3zVC">
                 <source>description.guided_step_collection_open</source>
                 <target>Une collection tient une liste d'éléments qui se ressemblent, au lieu d'autant de pages construites à la main.</target>
+            </trans-unit>
+            <trans-unit id="2iD1cWu">
+                <source>description.guided_step_content_export_import</source>
+                <target>Sur l'autre site, l'écran « Import de contenu » des paramètres accepte ce zip. Les identifiants n'ont jamais à correspondre : les pages sont reconstruites à partir de ce que contient l'archive.</target>
+            </trans-unit>
+            <trans-unit id="EY6vDYf">
+                <source>description.guided_step_content_export_open</source>
+                <target>L'export part de cette liste, quelles que soient les pages qui méritent d'être gardées.</target>
+            </trans-unit>
+            <trans-unit id="NNz0Te1">
+                <source>description.guided_step_content_export_run</source>
+                <target>Un zip est téléchargé, contenant chaque page avec ses blocks et les images qu'ils utilisent.</target>
+            </trans-unit>
+            <trans-unit id="W6.DZUN">
+                <source>description.guided_step_content_export_select</source>
+                <target>Cette case les coche toutes ; vous pouvez aussi les cocher une par une. Le bouton d'export n'apparaît qu'une fois une case cochée.</target>
+            </trans-unit>
+            <trans-unit id="Crku_2z">
+                <source>description.guided_step_footer_check</source>
+                <target>Ouvrez le site dans un autre onglet : le pied de page porte vos lignes, dans l'ordre que vous leur avez donné.</target>
+            </trans-unit>
+            <trans-unit id="se8H3oF">
+                <source>description.guided_step_footer_create</source>
+                <target>Un bouton par emplacement pas encore créé. Si le pied de page est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="tnho7ce">
+                <source>description.guided_step_footer_edit</source>
+                <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « Pied de page ».</target>
+            </trans-unit>
+            <trans-unit id="4q9NQZY">
+                <source>description.guided_step_footer_group</source>
+                <target>Ajoutez un « Groupe de menu » par ligne, puis faites-y glisser les blocks déjà présents : les liens sociaux sur une ligne, les liens sur une autre, rien à recréer.</target>
+            </trans-unit>
+            <trans-unit id=".D_f8F3">
+                <source>description.guided_step_footer_items</source>
+                <target>Un pied de page est fait de blocks, comme une page : ses liens, mais aussi un texte ou une image si vous en voulez un là.</target>
+            </trans-unit>
+            <trans-unit id="TmVqMFG">
+                <source>description.guided_step_footer_open</source>
+                <target>Un menu par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+            </trans-unit>
+            <trans-unit id="ikDcfg4">
+                <source>description.guided_step_footer_style</source>
+                <target>Les uns à côté des autres ou les uns sous les autres. Laissé vide, c'est le fichier de thème du site qui décide.</target>
             </trans-unit>
             <trans-unit id="0u_15J4">
                 <source>description.guided_step_page_creation_blocks</source>
@@ -185,6 +249,30 @@
             <trans-unit id="ZGnJv64">
                 <source>description.guided_step_page_creation_view</source>
                 <target>La page est maintenant publique : ce bouton l'ouvre telle que la voient vos visiteurs.</target>
+            </trans-unit>
+            <trans-unit id="MRmz1hF">
+                <source>description.guided_step_page_health_edit</source>
+                <target>Aucun des deux n'apparaît sur une page en cours de création : ils ont besoin d'une page enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="HfXsIEx">
+                <source>description.guided_step_page_health_open</source>
+                <target>Prenez une page déjà en ligne : les deux se lisent sur ce qui est enregistré.</target>
+            </trans-unit>
+            <trans-unit id="fWFnc2N">
+                <source>description.guided_step_page_health_qrcode</source>
+                <target>Il porte l'adresse publique de la page. Scannez-le pour la voir sur un téléphone, ou faites un clic droit pour enregistrer l'image et la mettre sur une affiche ou un flyer.</target>
+            </trans-unit>
+            <trans-unit id="irINoKJ">
+                <source>description.guided_step_page_health_run</source>
+                <target>Un tableau vide veut dire que le bilan n'a jamais tourné sur cette page. Il se lance depuis l'écran « Bilan de santé » des paramètres, qui passe tout le site d'un coup.</target>
+            </trans-unit>
+            <trans-unit id="afZEoUx">
+                <source>description.guided_step_page_health_tab</source>
+                <target>Cliquez dessus : l'onglet porte les contrôles de cette page-là, et n'apparaît que sur une page enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="Fk.cUv.">
+                <source>description.guided_step_page_health_table</source>
+                <target>Une ligne par contrôle — un résumé manquant, une image sans texte alternatif, du html invalide — chacune avec le conseil qui nomme le champ à remplir.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -233,6 +321,62 @@
             <trans-unit id="aYYJ_YC">
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Prenez le temps qu'il faut : vos visiteurs continuent de voir l'originale pendant ce temps.</target>
+            </trans-unit>
+            <trans-unit id="Z8kSvf2">
+                <source>description.guided_step_page_seo_check</source>
+                <target>La page est maintenant dans sitemap.xml, et coller son adresse quelque part en montre le titre, le résumé et l'image que vous venez de régler.</target>
+            </trans-unit>
+            <trans-unit id="bfIpkLz">
+                <source>description.guided_step_page_seo_edit</source>
+                <target>Ces champs sont tous dans l'onglet « Données », sous le titre.</target>
+            </trans-unit>
+            <trans-unit id="Ve53OEd">
+                <source>description.guided_step_page_seo_frequency</source>
+                <target>Celui-ci et la priorité juste en dessous sont les deux indications que porte le sitemap, rien de plus : une page d'accueil se déclare plus souvent modifiée que des mentions légales.</target>
+            </trans-unit>
+            <trans-unit id="bvwooY0">
+                <source>description.guided_step_page_seo_image</source>
+                <target>L'image montrée à côté du lien quand la page est partagée. Laissée vide, c'est celle du site qui sert.</target>
+            </trans-unit>
+            <trans-unit id="QlsKKaU">
+                <source>description.guided_step_page_seo_indexable</source>
+                <target>Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Laissez-la cochée, sauf si la page n'a rien à faire dans les résultats (création de compte, mot de passe oublié).</target>
+            </trans-unit>
+            <trans-unit id="4R0skS1">
+                <source>description.guided_step_page_seo_open</source>
+                <target>Prenez une page déjà en ligne : aucun de ces réglages ne touche à son contenu, seulement à ce qu'on en montre ailleurs.</target>
+            </trans-unit>
+            <trans-unit id="QSCJqVU">
+                <source>description.guided_step_page_seo_slug</source>
+                <target>Le slug est ce qui suit le nom de domaine, et il suit le titre tout seul. Le changer sur une page déjà en ligne casse tous les liens qui pointaient dessus : n'ouvrez le cadenas que si vous déclarez aussi une redirection dans les paramètres.</target>
+            </trans-unit>
+            <trans-unit id="dS6xslk">
+                <source>description.guided_step_page_seo_summary</source>
+                <target>Deux ou trois phrases : un moteur de recherche les affiche sous le titre, un réseau social sous l'aperçu du lien. Le bilan de santé les réclame aussi.</target>
+            </trans-unit>
+            <trans-unit id="TNnaa8j">
+                <source>description.guided_step_trash_back</source>
+                <target>Une page à la corbeille n'est jamais sur le site, jamais dans un menu et jamais dans le sitemap - la corbeille peut rester telle quelle.</target>
+            </trans-unit>
+            <trans-unit id="gbOCxHj">
+                <source>description.guided_step_trash_delete</source>
+                <target>Rien n'est effacé : la page quitte le site et ses menus, et attend dans la corbeille.</target>
+            </trans-unit>
+            <trans-unit id="ARUi17r">
+                <source>description.guided_step_trash_delete_permanently</source>
+                <target>Celle-là ne se rattrape pas et emporte les blocks de la page - une confirmation vous est demandée.</target>
+            </trans-unit>
+            <trans-unit id="mkzu0PB">
+                <source>description.guided_step_trash_open</source>
+                <target>Choisissez une page que vous pouvez retirer du site un instant sans conséquence.</target>
+            </trans-unit>
+            <trans-unit id="kytWD5h">
+                <source>description.guided_step_trash_open_trash</source>
+                <target>Le même bouton ramène ensuite aux pages.</target>
+            </trans-unit>
+            <trans-unit id="YPAShtT">
+                <source>description.guided_step_trash_restore</source>
+                <target>Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site.</target>
             </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
@@ -374,6 +518,10 @@
                 <source>label.content_help</source>
                 <target>Collez ici le contenu Twig de l'ancien fichier .html.twig - interprété comme du Twig (config(), path(), etc.).</target>
             </trans-unit>
+            <trans-unit id="oo0X1dA">
+                <source>label.cookies</source>
+                <target>Cookies</target>
+            </trans-unit>
             <trans-unit id="eyjXZ2b">
                 <source>label.copy_suffix</source>
                 <target>copie</target>
@@ -474,9 +622,21 @@
                 <source>label.guided_project_collection</source>
                 <target>Créer une collection</target>
             </trans-unit>
+            <trans-unit id="36ObQ1j">
+                <source>label.guided_project_content_export</source>
+                <target>Exporter des pages vers un autre site</target>
+            </trans-unit>
+            <trans-unit id="XQDxvTJ">
+                <source>label.guided_project_footer</source>
+                <target>Composer le pied de page</target>
+            </trans-unit>
             <trans-unit id="PEScSjB">
                 <source>label.guided_project_page_creation</source>
                 <target>Créer une page</target>
+            </trans-unit>
+            <trans-unit id="bkXLh6u">
+                <source>label.guided_project_page_health</source>
+                <target>Contrôler une page publiée</target>
             </trans-unit>
             <trans-unit id="Zbgfe3U">
                 <source>label.guided_project_page_menu</source>
@@ -485,6 +645,14 @@
             <trans-unit id="QQfWYAW">
                 <source>label.guided_project_page_revision</source>
                 <target>Réviser une page déjà en ligne</target>
+            </trans-unit>
+            <trans-unit id="GEsMVIP">
+                <source>label.guided_project_page_seo</source>
+                <target>Rendre une page trouvable et bien partagée</target>
+            </trans-unit>
+            <trans-unit id=".dL2TAJ">
+                <source>label.guided_project_trash</source>
+                <target>Supprimer une page et la récupérer</target>
             </trans-unit>
             <trans-unit id="0WfyPjZ">
                 <source>label.guided_step_collection_add_item</source>
@@ -513,6 +681,54 @@
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Enregistrer la collection</target>
+            </trans-unit>
+            <trans-unit id="lttrx4w">
+                <source>label.guided_step_content_export_import</source>
+                <target>Le charger dans l'autre site</target>
+            </trans-unit>
+            <trans-unit id="lhU1x.J">
+                <source>label.guided_step_content_export_open</source>
+                <target>Ouvrir les pages</target>
+            </trans-unit>
+            <trans-unit id="lnVPSLh">
+                <source>label.guided_step_content_export_run</source>
+                <target>Exporter la sélection</target>
+            </trans-unit>
+            <trans-unit id="6p0T_aK">
+                <source>label.guided_step_content_export_select</source>
+                <target>Cocher les pages à emporter</target>
+            </trans-unit>
+            <trans-unit id="DXo980X">
+                <source>label.guided_step_footer_check</source>
+                <target>Vérifier sur le site</target>
+            </trans-unit>
+            <trans-unit id="_7omRWh">
+                <source>label.guided_step_footer_create</source>
+                <target>Créer le pied de page s'il manque</target>
+            </trans-unit>
+            <trans-unit id="9ltYkot">
+                <source>label.guided_step_footer_edit</source>
+                <target>Ouvrir le pied de page</target>
+            </trans-unit>
+            <trans-unit id="SzEM9BT">
+                <source>label.guided_step_footer_group</source>
+                <target>Les répartir sur plusieurs lignes</target>
+            </trans-unit>
+            <trans-unit id="byiyTzs">
+                <source>label.guided_step_footer_items</source>
+                <target>Ajouter les éléments du pied de page</target>
+            </trans-unit>
+            <trans-unit id="KUS4LAs">
+                <source>label.guided_step_footer_open</source>
+                <target>Ouvrir les menus</target>
+            </trans-unit>
+            <trans-unit id="BElmr7I">
+                <source>label.guided_step_footer_save</source>
+                <target>Enregistrer le pied de page</target>
+            </trans-unit>
+            <trans-unit id="m0CcfXV">
+                <source>label.guided_step_footer_style</source>
+                <target>Choisir la disposition des lignes</target>
             </trans-unit>
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
@@ -549,6 +765,30 @@
             <trans-unit id="BO9Oiu9">
                 <source>label.guided_step_page_creation_view</source>
                 <target>Voir la page en ligne</target>
+            </trans-unit>
+            <trans-unit id="hHmF60u">
+                <source>label.guided_step_page_health_edit</source>
+                <target>Ouvrir la page à contrôler</target>
+            </trans-unit>
+            <trans-unit id="61oqppv">
+                <source>label.guided_step_page_health_open</source>
+                <target>Ouvrir les pages</target>
+            </trans-unit>
+            <trans-unit id="p.o3xjn">
+                <source>label.guided_step_page_health_qrcode</source>
+                <target>Récupérer son QR code</target>
+            </trans-unit>
+            <trans-unit id="4.RIH.n">
+                <source>label.guided_step_page_health_run</source>
+                <target>Relancer le bilan s'il est vide</target>
+            </trans-unit>
+            <trans-unit id="MXY0lNy">
+                <source>label.guided_step_page_health_tab</source>
+                <target>Ouvrir l'onglet Bilan de santé</target>
+            </trans-unit>
+            <trans-unit id="0xMBgoY">
+                <source>label.guided_step_page_health_table</source>
+                <target>Lire le tableau</target>
             </trans-unit>
             <trans-unit id="of6P8Dq">
                 <source>label.guided_step_page_menu_add_link</source>
@@ -601,6 +841,66 @@
             <trans-unit id="is2PIcW">
                 <source>label.guided_step_page_revision_rework</source>
                 <target>Retravailler la copie</target>
+            </trans-unit>
+            <trans-unit id="B0RNOF3">
+                <source>label.guided_step_page_seo_check</source>
+                <target>Vérifier le résultat</target>
+            </trans-unit>
+            <trans-unit id="kCjjMKT">
+                <source>label.guided_step_page_seo_edit</source>
+                <target>Ouvrir la page à modifier</target>
+            </trans-unit>
+            <trans-unit id="rUJ_7hT">
+                <source>label.guided_step_page_seo_frequency</source>
+                <target>Dire à quel rythme elle change</target>
+            </trans-unit>
+            <trans-unit id="qZ7UCGr">
+                <source>label.guided_step_page_seo_image</source>
+                <target>Choisir son image de partage</target>
+            </trans-unit>
+            <trans-unit id="OkP1frN">
+                <source>label.guided_step_page_seo_indexable</source>
+                <target>La laisser dans le sitemap</target>
+            </trans-unit>
+            <trans-unit id="9kozDtQ">
+                <source>label.guided_step_page_seo_open</source>
+                <target>Ouvrir les pages</target>
+            </trans-unit>
+            <trans-unit id="22wJjCh">
+                <source>label.guided_step_page_seo_save</source>
+                <target>Enregistrer la page</target>
+            </trans-unit>
+            <trans-unit id="MXzizeA">
+                <source>label.guided_step_page_seo_slug</source>
+                <target>Vérifier son adresse</target>
+            </trans-unit>
+            <trans-unit id="nFcZCYg">
+                <source>label.guided_step_page_seo_summary</source>
+                <target>Écrire son résumé</target>
+            </trans-unit>
+            <trans-unit id="ngP0HHK">
+                <source>label.guided_step_trash_back</source>
+                <target>Revenir aux pages</target>
+            </trans-unit>
+            <trans-unit id="OC2Mqdb">
+                <source>label.guided_step_trash_delete</source>
+                <target>La mettre à la corbeille</target>
+            </trans-unit>
+            <trans-unit id="cm77sWG">
+                <source>label.guided_step_trash_delete_permanently</source>
+                <target>Ou la supprimer définitivement</target>
+            </trans-unit>
+            <trans-unit id="3UAH_zy">
+                <source>label.guided_step_trash_open</source>
+                <target>Ouvrir les pages</target>
+            </trans-unit>
+            <trans-unit id="Voko3Ut">
+                <source>label.guided_step_trash_open_trash</source>
+                <target>Ouvrir la corbeille</target>
+            </trans-unit>
+            <trans-unit id="A4bO5YW">
+                <source>label.guided_step_trash_restore</source>
+                <target>Remettre la page en place</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>
@@ -758,6 +1058,14 @@
                 <source>label.health_check_w3c_html_call_failed</source>
                 <target>Échec de la validation HTML W3C : %message%</target>
             </trans-unit>
+            <trans-unit id=".S35vbK">
+                <source>label.home_page</source>
+                <target>Page d'accueil</target>
+            </trans-unit>
+            <trans-unit id="S3_JJk0">
+                <source>label.home_page_unpublished</source>
+                <target>La page d'accueil existe mais n'est pas publiée, le site répond 404 sur /</target>
+            </trans-unit>
             <trans-unit id="rdukMJh">
                 <source>label.hosted_by</source>
                 <target>Hébergé par</target>
@@ -821,6 +1129,14 @@
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Mentions légales</target>
+            </trans-unit>
+            <trans-unit id="wT4QwCK">
+                <source>label.legal_page_missing</source>
+                <target>Aucune page publiée ne porte ce modèle légal</target>
+            </trans-unit>
+            <trans-unit id="hJQ49yK">
+                <source>label.legal_page_unpublished</source>
+                <target>La page portant ce modèle légal existe mais n'est pas publiée</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>

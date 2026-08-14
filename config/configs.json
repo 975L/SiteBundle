@@ -34,28 +34,6 @@
         "description": "description.site_navbar_position"
     },
     {
-        "label": "label.site_matomo_url",
-        "slug": "site-matomo-url",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "analytics",
-        "severity": "warning",
-        "description": "description.site_matomo_url"
-    },
-    {
-        "label": "label.site_matomo_id",
-        "slug": "site-matomo-id",
-        "sensitive": false,
-        "restricted": true,
-        "value": null,
-        "kind": "text",
-        "group": "analytics",
-        "severity": "warning",
-        "description": "description.site_matomo_id"
-    },
-    {
         "label": "label.site_preconnect",
         "slug": "site-preconnect",
         "sensitive": false,
@@ -131,17 +109,6 @@
         "group": "general",
         "severity": null,
         "description": "description.site_menu_link_copyright_auto"
-    },
-    {
-        "label": "label.site_enable_matomo",
-        "slug": "site-enable-matomo",
-        "sensitive": false,
-        "restricted": true,
-        "value": "true",
-        "kind": "bool",
-        "group": "analytics",
-        "severity": null,
-        "description": "description.site_enable_matomo"
     },
     {
         "label": "label.healthcheck_pagespeed_api_key",

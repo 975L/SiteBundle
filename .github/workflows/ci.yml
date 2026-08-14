@@ -28,6 +28,10 @@ jobs:
               run: composer update --no-interaction --no-progress
 
             # The steps below call composer.json's scripts rather than the commands themselves: the list of checks lives in one place, replayed identically by `composer qa` and bin/ci.sh locally. They stay separate so the interface shows which one failed
+            # First, being the cheapest check and the one bearing on the dependencies the previous step has just resolved
+            - name: Avis de sécurité des dépendances
+              run: composer audit-deps
+
             - name: PSR-12
               run: composer cs
 

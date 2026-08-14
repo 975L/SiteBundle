@@ -5,22 +5,18 @@
 }
 
 @media print {
-    * {
+    // A step down for paper, declared once on the root. Written on "*" it landed on every element instead, and a percentage font-size resolves against the parent - so it multiplied itself at each level of nesting, a label eight levels deep printing at 9px where a top-level heading printed at 14
+    html {
         font-size: 95%;
     }
 
-    html,
-    body {
-        width: 210mm;
-        height: 297mm;
-    }
-
     // Black ink on white paper whatever the color mode the page was read in, stated with "!important" on the elements themselves as the dark theme restates the tokens at a higher specificity - pseudo-elements included, a hero's dark voile among them
+    // ".print-exact" and everything under it is left out: it marks a design whose ground *is* what gets printed - a playing card, a certificate, a coupon, a badge - which this reset would send to the press as a blank sheet. Nothing carries the class unless a site writes it, so every page printed until now prints exactly as it did
     html,
     body,
-    *,
-    *::before,
-    *::after {
+    *:not(.print-exact, .print-exact *),
+    *:not(.print-exact, .print-exact *)::before,
+    *:not(.print-exact, .print-exact *)::after {
         color: #000 !important;
         background-color: transparent !important;
         background-image: none !important;
@@ -28,6 +24,14 @@
         text-shadow: none !important;
     }
 
+    // The ground a browser is told to keep: it drops backgrounds on paper of its own accord, and inside this subtree they are the very thing being printed
+    .print-exact,
+    .print-exact * {
+        print-color-adjust: exact;
+    }
+
+    // The paper, painted after the reset above as both rules land on "html" with the same specificity and "!important" - source order alone keeps it white
+    // No width nor height with it: "@page" already sizes the sheet, where a hardcoded 210×297 mm pinned the document to an A4 whatever format the site actually prints on - a card, a label, an A5 booklet
     html,
     body {
         background-color: #fff !important;
@@ -63,9 +67,5 @@
     .container,
     .container-fluid {
         width: 100%;
-    }
-
-    a[href]::after {
-        content: none;
     }
 }

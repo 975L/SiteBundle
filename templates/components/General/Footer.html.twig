@@ -30,8 +30,6 @@
         </div>
     {% endif %}
 </footer>
-{% if config('site-enable-matomo') %}
-    <twig:c975LSite:General:Matomo />
-{% endif %}
-{# Carries its own "site-enable-cookie-consent" guard, so nothing to check here #}
+{# Both carry their own "is it enabled" guard, so nothing to check here #}
+<twig:c975LUi:Analytics:Matomo />
 <twig:c975LUi:Cookie:Consent />

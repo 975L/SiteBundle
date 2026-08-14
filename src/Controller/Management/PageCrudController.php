@@ -268,8 +268,10 @@ class PageCrudController extends AbstractCrudController
                 ->onlyOnDetail(),
 
             // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new")
+            // Marker on the row: the widget itself is rendered by our own form theme block, which prints no id at all, and SiteGuidedProjectProvider's "site-page-health" parcours needs something to point at
             Field::new('qrcode', false)
                 ->setFormType(PageQrCodeType::class)
+                ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
                 ->onlyWhenUpdating(),
 
             // Health check

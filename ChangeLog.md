@@ -1,5 +1,48 @@
 # Changelog
 
+## v8.3.3
+
+Nine guided projects walk the back office's own screens
+
+- `layout.html.twig` falls back on the url's own `UrlMetadata` row for the title and the summary (13/08/2026)
+- It falls back on that row for the share image too, after a `Page`'s own (13/08/2026)
+- `composer.json` requires `c975l/core-bundle` `^1.11` (13/08/2026)
+- `_print.scss` declares `html, body` once (13/08/2026)
+- `.codacy/codacy.yaml` pins `eslint@9.39.5` (13/08/2026)
+- `PrintInkTest` locks the white paint's place after the reset (13/08/2026)
+- Added `UrlMetadataFallbackTest` (14/08/2026)
+- The README states the row's place in the title, the summary and the share image (14/08/2026)
+- `_variables.scss` declares its tokens on `:root, [data-theme]` (14/08/2026)
+- The scaffolded `themes/site.css` carries the same selector (14/08/2026)
+- Added `ThemeScopeTest` (14/08/2026)
+- `DarkThemeTextTokensTest` and `ScaffoldThemeTest` follow that selector (14/08/2026)
+- The README states the selector a token is declared on (14/08/2026)
+- Matomo moves to core-bundle: component, controller and the three `site-matomo-*` keys (14/08/2026)
+- `Footer.html.twig` renders `<twig:c975LUi:Analytics:Matomo />` (14/08/2026)
+- The layout still preconnects the Matomo origin, off core-bundle's key (14/08/2026)
+- The move is stated in `UPGRADE.md` (14/08/2026)
+- Added `ThirdPartySnippetsTest` (14/08/2026)
+- `SiteAlertProvider` raises an alert when no published page carries the legal-notice or the cookies model (14/08/2026)
+- It raises one when a `home` page exists but is unpublished or deleted, none when there is no such page (14/08/2026)
+- Added `SiteAlertProviderTest` (14/08/2026)
+- An unpublished legal page raises its own alert, linking to that page's form (14/08/2026)
+- `PageRepository::findHomePublicationStatus()` reads the home alert's three scalars (14/08/2026)
+- `_theme-dark.scss` applies its tokens to any `data-theme` scope, not only `:root` (14/08/2026)
+- Added the `site-page-seo` guided project, on what a page needs to be found and shared (14/08/2026)
+- Added the `site-page-health` one, on the QR code and the page's health check (14/08/2026)
+- Added the `site-trash` one, on deleting a page and pulling it back out (14/08/2026)
+- Added the `site-content-export` one, on exporting pages to another site (14/08/2026)
+- Added the `site-footer` one, on laying the footer's items out (14/08/2026)
+- The nine projects are ordered like the sidebar reads, from 50 to 74 in steps of 3 (14/08/2026)
+- The trash and the export ones are gated by `site-role-admin` (14/08/2026)
+- `PageCrudController` marks the QR code row with `data-page-qrcode` (14/08/2026)
+- The three locales carry the new projects' labels and descriptions (14/08/2026)
+- `SiteGuidedProjectProviderTest` covers the nine projects, their orders and their selectors (14/08/2026)
+- The README states the nine guided projects, their `order` and their roles (14/08/2026)
+- `.gitattributes` keeps the dev-only paths out of the Composer dist archive (14/08/2026)
+- `composer audit-deps` reports the vulnerable and abandoned packages (14/08/2026)
+- The CI runs it first, and `composer qa` opens with it (14/08/2026)
+
 ## v8.3.2
 
 An edited collection item shows up on the site right away

@@ -134,18 +134,46 @@ class PageRepository extends ServiceEntityRepository
     // Find published pages having a legal_model block matching one of the given model identifiers (e.g. 'france/cookies'), preserving the given order
     public function findByLegalModels(array $models): array
     {
-        $pages = $this->createQueryBuilder('p')
+        return $this->findByLegalModelsWithStatus($models, true);
+    }
+
+    // Same, whatever the page's status - what tells "no page carries this model at all" from "the page exists but was unpublished or trashed", the two calling for a different alert
+    public function findByLegalModelsAnyStatus(array $models): array
+    {
+        return $this->findByLegalModelsWithStatus($models, false);
+    }
+
+    // Only the three scalars the dashboard alert reads: hydrating the whole home page with its blocks and medias to look at two booleans is the cost of a full render
+    public function findHomePublicationStatus(string $slug): ?array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.id, p.isPublished, p.isDeleted')
+            ->andWhere('p.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    private function findByLegalModelsWithStatus(array $models, bool $publishedOnly): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
             ->select('p, b')
             ->innerJoin('p.blocks', 'b')
             ->andWhere('b.kind = :kind')
-            ->andWhere('p.isPublished = :published')
-            ->andWhere('p.isDeleted = :deleted')
             ->setParameter('kind', 'legal_model')
-            ->setParameter('published', true)
-            ->setParameter('deleted', false)
-            ->getQuery()
-            ->getResult()
         ;
+
+        if ($publishedOnly) {
+            $queryBuilder
+                ->andWhere('p.isPublished = :published')
+                ->andWhere('p.isDeleted = :deleted')
+                ->setParameter('published', true)
+                ->setParameter('deleted', false)
+            ;
+        }
+
+        $pages = $queryBuilder->getQuery()->getResult();
 
         $byModel = [];
         foreach ($pages as $page) {

@@ -122,9 +122,21 @@
                 <source>description.guided_project_collection</source>
                 <target>Agrupar contenidos que se repiten (equipo, trabajos, eventos) y mostrarlos en una página</target>
             </trans-unit>
+            <trans-unit id="CRY4jVY">
+                <source>description.guided_project_content_export</source>
+                <target>Llevarse páginas en un zip, con sus blocks y sus imágenes, para cargarlas en otro sitio o guardarlas fuera del servidor</target>
+            </trans-unit>
+            <trans-unit id="f6.RLP4">
+                <source>description.guided_project_footer</source>
+                <target>Dar forma al pie de página de todas las páginas: sus enlaces, sus enlaces sociales, repartidos en las líneas que quiera</target>
+            </trans-unit>
             <trans-unit id="zYKbnmM">
                 <source>description.guided_project_page_creation</source>
                 <target>Crear una página, añadirle contenido, publicarla y verla en línea</target>
+            </trans-unit>
+            <trans-unit id="txsRbuU">
+                <source>description.guided_project_page_health</source>
+                <target>Lo que la pantalla de una página ofrece para comprobarla en vez de para escribirla: su código QR, para abrirla tal cual en un teléfono, y su estado de salud, que dice lo que le falta.</target>
             </trans-unit>
             <trans-unit id="lRbEz1o">
                 <source>description.guided_project_page_menu</source>
@@ -133,6 +145,14 @@
             <trans-unit id="wu5WCSH">
                 <source>description.guided_project_page_revision</source>
                 <target>Retrabajar una página publicada sobre una copia y ponerla en línea de una vez, sin mostrar nunca una versión a medias</target>
+            </trans-unit>
+            <trans-unit id="2te_0ZO">
+                <source>description.guided_project_page_seo</source>
+                <target>Lo que un motor de búsqueda y una red social muestran de una página: su dirección, su resumen, su imagen.</target>
+            </trans-unit>
+            <trans-unit id="HQvuvco">
+                <source>description.guided_project_trash</source>
+                <target>Retirar una página del sitio sin perderla y luego reponerla o borrarla definitivamente</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -153,6 +173,50 @@
             <trans-unit id="n7v3zVC">
                 <source>description.guided_step_collection_open</source>
                 <target>Una colección contiene una lista de elementos parecidos, en lugar de otras tantas páginas construidas a mano.</target>
+            </trans-unit>
+            <trans-unit id="2iD1cWu">
+                <source>description.guided_step_content_export_import</source>
+                <target>En el otro sitio, la pantalla «Importación de contenido» de los ajustes acepta ese zip. Los identificadores nunca tienen que coincidir: las páginas se reconstruyen a partir de lo que contiene el archivo.</target>
+            </trans-unit>
+            <trans-unit id="EY6vDYf">
+                <source>description.guided_step_content_export_open</source>
+                <target>La exportación parte de esta lista, sean cuales sean las páginas que merezca guardar.</target>
+            </trans-unit>
+            <trans-unit id="NNz0Te1">
+                <source>description.guided_step_content_export_run</source>
+                <target>Se descarga un zip que contiene cada página con sus blocks y las imágenes que utilizan.</target>
+            </trans-unit>
+            <trans-unit id="W6.DZUN">
+                <source>description.guided_step_content_export_select</source>
+                <target>Esta casilla las marca todas; también puede marcarlas una a una. El botón de exportación solo aparece cuando hay una marcada.</target>
+            </trans-unit>
+            <trans-unit id="Crku_2z">
+                <source>description.guided_step_footer_check</source>
+                <target>Abra el sitio en otra pestaña: el pie de página lleva sus líneas, en el orden que les ha dado.</target>
+            </trans-unit>
+            <trans-unit id="se8H3oF">
+                <source>description.guided_step_footer_create</source>
+                <target>Un botón por cada ubicación aún no creada. Si el pie de página ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="tnho7ce">
+                <source>description.guided_step_footer_edit</source>
+                <target>Si acaba de crearlo, ya está ahí. Si no, es la fila cuya ubicación es «Pie de página».</target>
+            </trans-unit>
+            <trans-unit id="4q9NQZY">
+                <source>description.guided_step_footer_group</source>
+                <target>Añada un «Grupo de menú» por línea y arrastre allí los bloques ya presentes: los enlaces sociales en una línea, los enlaces en otra, sin tener que recrear nada.</target>
+            </trans-unit>
+            <trans-unit id=".D_f8F3">
+                <source>description.guided_step_footer_items</source>
+                <target>Un pie de página está hecho de bloques, como una página: sus enlaces, pero también un texto o una imagen si quiere alguno ahí.</target>
+            </trans-unit>
+            <trans-unit id="TmVqMFG">
+                <source>description.guided_step_footer_open</source>
+                <target>Un menú por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+            </trans-unit>
+            <trans-unit id="ikDcfg4">
+                <source>description.guided_step_footer_style</source>
+                <target>Uno al lado del otro o uno debajo del otro. Si se deja vacío, decide el archivo de tema del sitio.</target>
             </trans-unit>
             <trans-unit id="0u_15J4">
                 <source>description.guided_step_page_creation_blocks</source>
@@ -185,6 +249,30 @@
             <trans-unit id="ZGnJv64">
                 <source>description.guided_step_page_creation_view</source>
                 <target>La página ya es pública: este botón la abre tal como la ven sus visitantes.</target>
+            </trans-unit>
+            <trans-unit id="MRmz1hF">
+                <source>description.guided_step_page_health_edit</source>
+                <target>Ninguno de los dos aparece en una página en creación: necesitan una página guardada.</target>
+            </trans-unit>
+            <trans-unit id="HfXsIEx">
+                <source>description.guided_step_page_health_open</source>
+                <target>Tome una página ya publicada: ambos se leen sobre lo que está guardado.</target>
+            </trans-unit>
+            <trans-unit id="fWFnc2N">
+                <source>description.guided_step_page_health_qrcode</source>
+                <target>Lleva la dirección pública de la página. Escanéelo para verla en un teléfono, o haga clic derecho para guardar la imagen y ponerla en un cartel o un folleto.</target>
+            </trans-unit>
+            <trans-unit id="irINoKJ">
+                <source>description.guided_step_page_health_run</source>
+                <target>Una tabla vacía significa que el control nunca se ha ejecutado sobre esta página. Se lanza desde la pantalla «Estado de salud» de los ajustes, que repasa todo el sitio de una vez.</target>
+            </trans-unit>
+            <trans-unit id="afZEoUx">
+                <source>description.guided_step_page_health_tab</source>
+                <target>Haga clic en ella: la pestaña lleva los controles de esta página, y solo aparece en una página guardada.</target>
+            </trans-unit>
+            <trans-unit id="Fk.cUv.">
+                <source>description.guided_step_page_health_table</source>
+                <target>Una fila por control —un resumen que falta, una imagen sin texto alternativo, html inválido— cada una con el consejo que nombra el campo que hay que rellenar.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -233,6 +321,62 @@
             <trans-unit id="aYYJ_YC">
                 <source>description.guided_step_page_revision_rework</source>
                 <target>Tómese el tiempo que necesite: mientras tanto, sus visitantes siguen viendo el original.</target>
+            </trans-unit>
+            <trans-unit id="Z8kSvf2">
+                <source>description.guided_step_page_seo_check</source>
+                <target>La página ya está en sitemap.xml, y pegar su dirección en cualquier sitio muestra el título, el resumen y la imagen que acaba de ajustar.</target>
+            </trans-unit>
+            <trans-unit id="bfIpkLz">
+                <source>description.guided_step_page_seo_edit</source>
+                <target>Todos estos campos están en la pestaña «Datos», debajo del título.</target>
+            </trans-unit>
+            <trans-unit id="Ve53OEd">
+                <source>description.guided_step_page_seo_frequency</source>
+                <target>Esta y la prioridad justo debajo son las dos indicaciones que lleva el sitemap, nada más: una página de inicio se declara modificada más a menudo que un aviso legal.</target>
+            </trans-unit>
+            <trans-unit id="bvwooY0">
+                <source>description.guided_step_page_seo_image</source>
+                <target>La imagen mostrada junto al enlace cuando se comparte la página. Si se deja vacía, sirve la del sitio.</target>
+            </trans-unit>
+            <trans-unit id="QlsKKaU">
+                <source>description.guided_step_page_seo_indexable</source>
+                <target>Sin marcar, la página sale de sitemap.xml y los dos ajustes de debajo se bloquean. Déjela marcada, salvo que la página no tenga nada que hacer en los resultados (creación de cuenta, contraseña olvidada).</target>
+            </trans-unit>
+            <trans-unit id="4R0skS1">
+                <source>description.guided_step_page_seo_open</source>
+                <target>Tome una página ya publicada: ninguno de estos ajustes toca su contenido, solo lo que se muestra de ella en otros sitios.</target>
+            </trans-unit>
+            <trans-unit id="QSCJqVU">
+                <source>description.guided_step_page_seo_slug</source>
+                <target>El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Cambiarlo en una página ya publicada rompe todos los enlaces que apuntaban a ella: abra el candado solo si declara también una redirección en los ajustes.</target>
+            </trans-unit>
+            <trans-unit id="dS6xslk">
+                <source>description.guided_step_page_seo_summary</source>
+                <target>Dos o tres frases: un motor de búsqueda las muestra bajo el título, una red social bajo la vista previa del enlace. El estado de salud también las reclama.</target>
+            </trans-unit>
+            <trans-unit id="TNnaa8j">
+                <source>description.guided_step_trash_back</source>
+                <target>Una página en la papelera nunca está en el sitio, ni en un menú, ni en el sitemap: la papelera puede quedarse tal cual.</target>
+            </trans-unit>
+            <trans-unit id="gbOCxHj">
+                <source>description.guided_step_trash_delete</source>
+                <target>No se borra nada: la página abandona el sitio y sus menús, y espera en la papelera.</target>
+            </trans-unit>
+            <trans-unit id="ARUi17r">
+                <source>description.guided_step_trash_delete_permanently</source>
+                <target>Esta no tiene vuelta atrás y se lleva los blocks de la página: se le pide una confirmación.</target>
+            </trans-unit>
+            <trans-unit id="mkzu0PB">
+                <source>description.guided_step_trash_open</source>
+                <target>Elija una página que pueda retirar del sitio un momento sin consecuencias.</target>
+            </trans-unit>
+            <trans-unit id="kytWD5h">
+                <source>description.guided_step_trash_open_trash</source>
+                <target>El mismo botón devuelve después a las páginas.</target>
+            </trans-unit>
+            <trans-unit id="YPAShtT">
+                <source>description.guided_step_trash_restore</source>
+                <target>Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio.</target>
             </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
@@ -374,6 +518,10 @@
                 <source>label.content_help</source>
                 <target>Pegue aquí el contenido del antiguo archivo .html.twig - interpretado como Twig (config(), path(), etc.).</target>
             </trans-unit>
+            <trans-unit id="oo0X1dA">
+                <source>label.cookies</source>
+                <target>Cookies</target>
+            </trans-unit>
             <trans-unit id="eyjXZ2b">
                 <source>label.copy_suffix</source>
                 <target>copia</target>
@@ -474,9 +622,21 @@
                 <source>label.guided_project_collection</source>
                 <target>Crear una colección</target>
             </trans-unit>
+            <trans-unit id="36ObQ1j">
+                <source>label.guided_project_content_export</source>
+                <target>Exportar páginas a otro sitio</target>
+            </trans-unit>
+            <trans-unit id="XQDxvTJ">
+                <source>label.guided_project_footer</source>
+                <target>Componer el pie de página</target>
+            </trans-unit>
             <trans-unit id="PEScSjB">
                 <source>label.guided_project_page_creation</source>
                 <target>Crear una página</target>
+            </trans-unit>
+            <trans-unit id="bkXLh6u">
+                <source>label.guided_project_page_health</source>
+                <target>Controlar una página publicada</target>
             </trans-unit>
             <trans-unit id="Zbgfe3U">
                 <source>label.guided_project_page_menu</source>
@@ -485,6 +645,14 @@
             <trans-unit id="QQfWYAW">
                 <source>label.guided_project_page_revision</source>
                 <target>Revisar una página ya publicada</target>
+            </trans-unit>
+            <trans-unit id="GEsMVIP">
+                <source>label.guided_project_page_seo</source>
+                <target>Hacer que una página se encuentre y se comparta bien</target>
+            </trans-unit>
+            <trans-unit id=".dL2TAJ">
+                <source>label.guided_project_trash</source>
+                <target>Eliminar una página y recuperarla</target>
             </trans-unit>
             <trans-unit id="0WfyPjZ">
                 <source>label.guided_step_collection_add_item</source>
@@ -513,6 +681,54 @@
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Guardar la colección</target>
+            </trans-unit>
+            <trans-unit id="lttrx4w">
+                <source>label.guided_step_content_export_import</source>
+                <target>Cargarlo en el otro sitio</target>
+            </trans-unit>
+            <trans-unit id="lhU1x.J">
+                <source>label.guided_step_content_export_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="lnVPSLh">
+                <source>label.guided_step_content_export_run</source>
+                <target>Exportar la selección</target>
+            </trans-unit>
+            <trans-unit id="6p0T_aK">
+                <source>label.guided_step_content_export_select</source>
+                <target>Marcar las páginas que llevarse</target>
+            </trans-unit>
+            <trans-unit id="DXo980X">
+                <source>label.guided_step_footer_check</source>
+                <target>Comprobar en el sitio</target>
+            </trans-unit>
+            <trans-unit id="_7omRWh">
+                <source>label.guided_step_footer_create</source>
+                <target>Crear el pie de página si falta</target>
+            </trans-unit>
+            <trans-unit id="9ltYkot">
+                <source>label.guided_step_footer_edit</source>
+                <target>Abrir el pie de página</target>
+            </trans-unit>
+            <trans-unit id="SzEM9BT">
+                <source>label.guided_step_footer_group</source>
+                <target>Repartirlos en varias líneas</target>
+            </trans-unit>
+            <trans-unit id="byiyTzs">
+                <source>label.guided_step_footer_items</source>
+                <target>Añadir los elementos del pie de página</target>
+            </trans-unit>
+            <trans-unit id="KUS4LAs">
+                <source>label.guided_step_footer_open</source>
+                <target>Abrir los menús</target>
+            </trans-unit>
+            <trans-unit id="BElmr7I">
+                <source>label.guided_step_footer_save</source>
+                <target>Guardar el pie de página</target>
+            </trans-unit>
+            <trans-unit id="m0CcfXV">
+                <source>label.guided_step_footer_style</source>
+                <target>Elegir la disposición de las líneas</target>
             </trans-unit>
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
@@ -549,6 +765,30 @@
             <trans-unit id="BO9Oiu9">
                 <source>label.guided_step_page_creation_view</source>
                 <target>Ver la página en línea</target>
+            </trans-unit>
+            <trans-unit id="hHmF60u">
+                <source>label.guided_step_page_health_edit</source>
+                <target>Abrir la página a controlar</target>
+            </trans-unit>
+            <trans-unit id="61oqppv">
+                <source>label.guided_step_page_health_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="p.o3xjn">
+                <source>label.guided_step_page_health_qrcode</source>
+                <target>Obtener su código QR</target>
+            </trans-unit>
+            <trans-unit id="4.RIH.n">
+                <source>label.guided_step_page_health_run</source>
+                <target>Relanzar el control si la tabla está vacía</target>
+            </trans-unit>
+            <trans-unit id="MXY0lNy">
+                <source>label.guided_step_page_health_tab</source>
+                <target>Abrir la pestaña Estado de salud</target>
+            </trans-unit>
+            <trans-unit id="0xMBgoY">
+                <source>label.guided_step_page_health_table</source>
+                <target>Leer la tabla</target>
             </trans-unit>
             <trans-unit id="of6P8Dq">
                 <source>label.guided_step_page_menu_add_link</source>
@@ -601,6 +841,66 @@
             <trans-unit id="is2PIcW">
                 <source>label.guided_step_page_revision_rework</source>
                 <target>Retrabajar la copia</target>
+            </trans-unit>
+            <trans-unit id="B0RNOF3">
+                <source>label.guided_step_page_seo_check</source>
+                <target>Comprobar el resultado</target>
+            </trans-unit>
+            <trans-unit id="kCjjMKT">
+                <source>label.guided_step_page_seo_edit</source>
+                <target>Abrir la página a modificar</target>
+            </trans-unit>
+            <trans-unit id="rUJ_7hT">
+                <source>label.guided_step_page_seo_frequency</source>
+                <target>Indicar con qué frecuencia cambia</target>
+            </trans-unit>
+            <trans-unit id="qZ7UCGr">
+                <source>label.guided_step_page_seo_image</source>
+                <target>Elegir su imagen para compartir</target>
+            </trans-unit>
+            <trans-unit id="OkP1frN">
+                <source>label.guided_step_page_seo_indexable</source>
+                <target>Dejarla en el sitemap</target>
+            </trans-unit>
+            <trans-unit id="9kozDtQ">
+                <source>label.guided_step_page_seo_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="22wJjCh">
+                <source>label.guided_step_page_seo_save</source>
+                <target>Guardar la página</target>
+            </trans-unit>
+            <trans-unit id="MXzizeA">
+                <source>label.guided_step_page_seo_slug</source>
+                <target>Comprobar su dirección</target>
+            </trans-unit>
+            <trans-unit id="nFcZCYg">
+                <source>label.guided_step_page_seo_summary</source>
+                <target>Escribir su resumen</target>
+            </trans-unit>
+            <trans-unit id="ngP0HHK">
+                <source>label.guided_step_trash_back</source>
+                <target>Volver a las páginas</target>
+            </trans-unit>
+            <trans-unit id="OC2Mqdb">
+                <source>label.guided_step_trash_delete</source>
+                <target>Enviarla a la papelera</target>
+            </trans-unit>
+            <trans-unit id="cm77sWG">
+                <source>label.guided_step_trash_delete_permanently</source>
+                <target>O eliminarla definitivamente</target>
+            </trans-unit>
+            <trans-unit id="3UAH_zy">
+                <source>label.guided_step_trash_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="Voko3Ut">
+                <source>label.guided_step_trash_open_trash</source>
+                <target>Abrir la papelera</target>
+            </trans-unit>
+            <trans-unit id="A4bO5YW">
+                <source>label.guided_step_trash_restore</source>
+                <target>Reponer la página</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>
@@ -758,6 +1058,14 @@
                 <source>label.health_check_w3c_html_call_failed</source>
                 <target>Fallo en la validación HTML W3C: %message%</target>
             </trans-unit>
+            <trans-unit id=".S35vbK">
+                <source>label.home_page</source>
+                <target>Página de inicio</target>
+            </trans-unit>
+            <trans-unit id="S3_JJk0">
+                <source>label.home_page_unpublished</source>
+                <target>La página de inicio existe pero no está publicada, / responde 404</target>
+            </trans-unit>
             <trans-unit id="rdukMJh">
                 <source>label.hosted_by</source>
                 <target>Alojado por</target>
@@ -821,6 +1129,14 @@
             <trans-unit id="7BkQCei">
                 <source>label.legal_notice</source>
                 <target>Aviso Legal</target>
+            </trans-unit>
+            <trans-unit id="wT4QwCK">
+                <source>label.legal_page_missing</source>
+                <target>Ninguna página publicada lleva este modelo legal</target>
+            </trans-unit>
+            <trans-unit id="hJQ49yK">
+                <source>label.legal_page_unpublished</source>
+                <target>La página que lleva este modelo legal existe pero no está publicada</target>
             </trans-unit>
             <trans-unit id="QgJjQWe">
                 <source>label.location</source>

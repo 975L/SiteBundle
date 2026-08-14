@@ -5,7 +5,7 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-:root {
+:root, [data-theme] {
   color-scheme: light;
   --alert-color: #000;
   --alert-danger-color: #9c3a44;
@@ -69,7 +69,7 @@
   --navbar-content-height: 44px;
   --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y));
   --footer-background: var(--primary);
-  --footer-text: var(--white);
+  --footer-text: #fff;
   --footer-text-hover: var(--footer-text);
   --footer-items-direction: column;
   --footer-items-justify: flex-start;

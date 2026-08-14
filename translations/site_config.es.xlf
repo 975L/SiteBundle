@@ -30,18 +30,6 @@
                 <source>description.healthcheck_pagespeed_api_key</source>
                 <target>Opcional - aumenta el límite de peticiones de Google PageSpeed Insights para el comando c975l:health-check:run. Consíguela en https://developers.google.com/speed/docs/insights/v5/get-started</target>
             </trans-unit>
-            <trans-unit id="imDzV_g">
-                <source>description.site_enable_matomo</source>
-                <target>Activa Matomo, fuera del banner de cookies - solo para configuración exenta CNIL (IP anonimizada, sin cruce entre sitios, cookie ≤13 meses, DNT respetado)</target>
-            </trans-unit>
-            <trans-unit id="QbsOHOo">
-                <source>description.site_matomo_id</source>
-                <target>ID del sitio Matomo (entero)</target>
-            </trans-unit>
-            <trans-unit id="X8T2_9z">
-                <source>description.site_matomo_url</source>
-                <target>URL de la instancia de Matomo, ej. https://matomo.example.com</target>
-            </trans-unit>
             <trans-unit id="oVvC_MZ">
                 <source>description.site_menu_link_copyright_auto</source>
                 <target>Mostrar el copyright calculado (© año) como etiqueta del enlace a la página "Copyright", en vez de su título</target>
@@ -89,18 +77,6 @@
             <trans-unit id="wkcUWqy">
                 <source>label.healthcheck_pagespeed_api_key</source>
                 <target>Clave API de PageSpeed Insights</target>
-            </trans-unit>
-            <trans-unit id="xZcUaF_">
-                <source>label.site_enable_matomo</source>
-                <target>Activar estadísticas de Matomo</target>
-            </trans-unit>
-            <trans-unit id="EDDAHIQ">
-                <source>label.site_matomo_id</source>
-                <target>ID del sitio Matomo</target>
-            </trans-unit>
-            <trans-unit id="HoL37ro">
-                <source>label.site_matomo_url</source>
-                <target>URL de Matomo</target>
             </trans-unit>
             <trans-unit id="vnrrGUG">
                 <source>label.site_menu_link_copyright_auto</source>
