@@ -29,15 +29,22 @@
 {% endif %}
 
 {# ogImage: page-specific override, then the url's own row, then the site's default og-image, then the logo. The row comes after the Page and not before, unlike the title and the summary above: a Page's share image is resolved here rather than by the template rendering it, so putting the row first would take it away from it #}
+{# The media is kept alongside its url, and not only the url: the dimensions and the alternative text a share displays with the thumbnail are columns of the media library, which an url alone does not say. Null when the rendering template set the image itself - it is then the only one to know what it shows, and it says it under "ogImageAlt" #}
+{% set ogImageMedia = null %}
 {% if ogImage is not defined or ogImage == null %}
     {% if page is defined and page.ogImage is not null %}
-        {% set ogImage = absolute_url(asset('/' ~ page.ogImage.filename)) ~ (page.ogImage.updatedAt ? '?v=' ~ page.ogImage.updatedAt.timestamp : '') %}
+        {% set ogImageMedia = page.ogImage %}
     {% elseif urlMetadata is not null and urlMetadata.ogImage is not null %}
-        {% set ogImage = absolute_url(asset('/' ~ urlMetadata.ogImage.filename)) ~ (urlMetadata.ogImage.updatedAt ? '?v=' ~ urlMetadata.ogImage.updatedAt.timestamp : '') %}
+        {% set ogImageMedia = urlMetadata.ogImage %}
     {% elseif site_media('og-image') is not null %}
-        {% set ogImage = absolute_url(asset('/' ~ site_media('og-image').filename)) ~ (site_media('og-image').updatedAt ? '?v=' ~ site_media('og-image').updatedAt.timestamp : '') %}
-    {% elseif logo is defined %}
-        {% set ogImage = logo %}
+        {% set ogImageMedia = site_media('og-image') %}
+    {% elseif site_media('logo') is not null %}
+        {% set ogImageMedia = site_media('logo') %}
+    {% endif %}
+
+    {# The url written once for the four of them, where each branch used to repeat it #}
+    {% if ogImageMedia is not null %}
+        {% set ogImage = absolute_url(asset('/' ~ ogImageMedia.filename)) ~ (ogImageMedia.updatedAt ? '?v=' ~ ogImageMedia.updatedAt.timestamp : '') %}
     {% endif %}
 {% endif %}
 
@@ -114,6 +121,16 @@
 {# Image #}
                     {% if ogImage is defined %}
                         <meta property="og:image" content="{{ ogImage }}">
+{# Stated only where they are known - the media library holds them as columns: a network reading them keeps the thumbnail's room before it is loaded, and guessing them would be worse than saying nothing. The intrinsic pair and not the raw columns, which an admin may have typed as a css length ("50%", "auto"), where Open Graph only reads a bare pixel count #}
+                        {% if ogImageMedia is not null and ogImageMedia.intrinsicWidth and ogImageMedia.intrinsicHeight %}
+                            <meta property="og:image:width" content="{{ ogImageMedia.intrinsicWidth }}">
+                            <meta property="og:image:height" content="{{ ogImageMedia.intrinsicHeight }}">
+                        {% endif %}
+{# What the image shows, for whoever is read the share rather than shown it. The template that set the image itself is the only one that knows, hence the "ogImageAlt" it may set next to it - otherwise it is the media's own alternative text #}
+                        {% set ogImageAltText = ogImageAlt is defined and ogImageAlt is not empty ? ogImageAlt : (ogImageMedia is not null ? ogImageMedia.alt : null) %}
+                        {% if ogImageAltText %}
+                            <meta property="og:image:alt" content="{{ ogImageAltText }}">
+                        {% endif %}
                     {% endif %}
 {# Url #}
                     {% set canonicalUrl = canonical_url() %}

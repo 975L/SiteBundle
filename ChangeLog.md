@@ -1,5 +1,22 @@
 # Changelog
 
+## v8.3.4
+
+A shared page states its picture's room and what it shows
+
+- `layout.html.twig` keeps the `Media` row alongside the share image's url (14/08/2026)
+- It states `og:image:width` and `og:image:height` from that row's intrinsic dimensions (14/08/2026)
+- A css length typed as a dimension is left unstated (14/08/2026)
+- It states `og:image:alt`, off the row's alternative text or a template's `ogImageAlt` (14/08/2026)
+- The logo fallback reads `site_media('logo')` instead of a `logo` variable (14/08/2026)
+- The share image url is built once for the four branches (14/08/2026)
+- `PageCrudController::configureResponseParameters()` hands the edit screen a published page's `page_public_path` (14/08/2026)
+- `page_crud_edit.html.twig` renders core-bundle's sharing-debugger note (14/08/2026)
+- `composer.json` requires `c975l/core-bundle` `^1.11.4` (14/08/2026)
+- Added `ShareImageMetaTest` (14/08/2026)
+- `UrlMetadataFallbackTest` covers the logo fallback (14/08/2026)
+- The README states the dimensions, the alternative text and the re-scrape note (14/08/2026)
+
 ## v8.3.3
 
 Nine guided projects walk the back office's own screens

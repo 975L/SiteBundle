@@ -16,6 +16,16 @@
                 "en": "Nine step-by-step walkthroughs now guide you through the back office, from writing a page and making it easy to find to restoring a deleted one or exporting your pages to another site",
                 "fr": "Neuf visites guidées vous accompagnent désormais pas à pas dans l'administration, de l'écriture d'une page et de sa mise en avant jusqu'à la restauration d'une page supprimée ou l'export de vos pages vers un autre site",
                 "es": "Nueve recorridos guiados le acompañan ahora paso a paso por la administración, desde escribir una página y hacerla fácil de encontrar hasta restaurar una eliminada o exportar sus páginas a otro sitio"
+            },
+            {
+                "en": "When one of your pages is shared, the picture keeps its place before it is loaded and comes with the description you gave it in the media library, for anyone who has the share read out to them",
+                "fr": "Lorsqu'une de vos pages est partagée, l'image garde sa place avant même d'être chargée et s'accompagne de la description que vous lui avez donnée dans la médiathèque, pour qui se fait lire le partage",
+                "es": "Cuando se comparte una de sus páginas, la imagen conserva su sitio antes incluso de cargarse y va acompañada de la descripción que le dio en la mediateca, para quien escucha el contenido compartido"
+            },
+            {
+                "en": "The form of a published page now offers you the link that asks the social networks to look at it again, so a picture you changed after a share is picked up instead of the previous one",
+                "fr": "Le formulaire d'une page publiée vous propose désormais le lien qui demande aux réseaux sociaux de la relire, pour qu'une image modifiée après un partage soit reprise à la place de la précédente",
+                "es": "El formulario de una página publicada le ofrece ahora el enlace que pide a las redes sociales que la vuelvan a leer, para que una imagen modificada tras compartirla sustituya a la anterior"
             }
         ]
     },

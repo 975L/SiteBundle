@@ -3,5 +3,8 @@
 {% block main %}
     <p>{{ ('label.info_page'|trans({}, 'site')) }}</p>
 
+    {# The page carries its own share image among the fields below (see PageCrudController) - rendered for a published page alone, "page_public_path" being set for no other #}
+    {{ include('@c975LConfig/management/_sharing_debugger.html.twig', {url: page_public_path|default(null)}) }}
+
     {{ parent() }}
 {% endblock main %}

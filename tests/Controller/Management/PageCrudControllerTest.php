@@ -38,6 +38,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Context\CrudContext;
@@ -716,6 +717,61 @@ class PageCrudControllerTest extends TestCase
         $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
 
         $this->assertSame('https://example.com/about', $this->invokePrivate($controller, 'buildPageUrl', [$page]));
+    }
+
+    // --- configureResponseParameters ---------------------------------------------------------------------
+
+    private function createResponseParameters(string $pageName, ?Page $page = null): KeyValueStore
+    {
+        return KeyValueStore::new([
+            'pageName' => $pageName,
+            'entity' => null === $page ? null : new EntityDto(Page::class, new ClassMetadata(Page::class), null, $page),
+        ]);
+    }
+
+    private function createRouterStub(): UrlGeneratorInterface
+    {
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturnCallback(
+            static fn (string $route, array $params = []) => '/' . ($params['page'] ?? $route)
+        );
+
+        return $router;
+    }
+
+    public function testConfigureResponseParametersHandsTheEditScreenThePublicPathOfAPublishedPage(): void
+    {
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer(['router' => $this->createRouterStub()]));
+
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
+        $parameters = $controller->configureResponseParameters($this->createResponseParameters(Crud::PAGE_EDIT, $page));
+
+        $this->assertSame('/about', $parameters->get('page_public_path'));
+    }
+
+    // A preview url is reachable by an editor alone, so the note pointing a social network at it is not offered
+    public function testConfigureResponseParametersLeavesThePublicPathUnsetForAnUnpublishedPage(): void
+    {
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer(['router' => $this->createRouterStub()]));
+
+        $page = new Page()->setTitle('x')->setSlug('draft-page')->setIsPublished(false);
+        $parameters = $controller->configureResponseParameters($this->createResponseParameters(Crud::PAGE_EDIT, $page));
+
+        $this->assertNull($parameters->get('page_public_path'));
+    }
+
+    // A page being created has no url yet, and no screen but the edit one carries the note
+    public function testConfigureResponseParametersLeavesThePublicPathUnsetOutsideTheEditScreen(): void
+    {
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer(['router' => $this->createRouterStub()]));
+
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
+        $parameters = $controller->configureResponseParameters($this->createResponseParameters(Crud::PAGE_NEW, $page));
+
+        $this->assertNull($parameters->get('page_public_path'));
     }
 
     // --- fetchExportRows (private) -----------------------------------------------------------------------

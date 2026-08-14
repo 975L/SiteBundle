@@ -70,16 +70,32 @@ class UrlMetadataFallbackTest extends TestCase
         $this->assertStringStartsWith('/default.jpg', $rendered['ogImage']);
     }
 
+    // The logo is the last word, and it is read from the media library like the three before it rather than from a "logo" variable the layout used to expect
+    public function testTheSiteLogoIsTheLastResort(): void
+    {
+        $rendered = $this->render(null, [], siteLogo: 'logo.png');
+
+        $this->assertStringStartsWith('/logo.png', $rendered['ogImage']);
+    }
+
+    public function testTheSiteDefaultWinsOverTheLogo(): void
+    {
+        $rendered = $this->render(null, [], 'default.jpg', 'logo.png');
+
+        $this->assertStringStartsWith('/default.jpg', $rendered['ogImage']);
+    }
+
     public function testNoRowLeavesEverythingUnsaid(): void
     {
         $rendered = $this->render(null, []);
 
         $this->assertSame('', $rendered['title']);
         $this->assertSame('', $rendered['summary']);
+        $this->assertSame('', $rendered['ogImage']);
     }
 
     // The layout's own preamble, rendered on its own - the surrounding layout pulls in the whole application (assets, nonces, config), which this behaviour doesn't depend on
-    private function render(?object $urlMetadata, array $context, ?string $siteOgImage = null): array
+    private function render(?object $urlMetadata, array $context, ?string $siteOgImage = null, ?string $siteLogo = null): array
     {
         $layout = (string) file_get_contents(dirname(__DIR__) . '/templates/layout.html.twig');
 
@@ -93,7 +109,8 @@ class UrlMetadataFallbackTest extends TestCase
 
         $twig = new Environment(new ArrayLoader(['preamble' => $source]));
         $twig->addFunction(new TwigFunction('url_metadata', static fn (): ?object => $urlMetadata));
-        $twig->addFunction(new TwigFunction('site_media', static fn (string $role): ?object => 'og-image' === $role && null !== $siteOgImage ? self::media($siteOgImage) : null));
+        $siteMedia = ['og-image' => $siteOgImage, 'logo' => $siteLogo];
+        $twig->addFunction(new TwigFunction('site_media', static fn (string $role): ?object => null === ($siteMedia[$role] ?? null) ? null : self::media($siteMedia[$role])));
         $twig->addFunction(new TwigFunction('asset', static fn (string $path): string => $path));
         $twig->addFunction(new TwigFunction('absolute_url', static fn (string $path): string => $path));
 

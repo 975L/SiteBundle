@@ -429,11 +429,18 @@ languages does it through its own locale-prefixed routes for now.
 
 Resolved in this order: an `ogImage` variable set by the template/page takes priority, then a database `Page`'s own `ogImage` (settable from `PageCrudController`), then the url's own `UrlMetadata` row, then the site-wide default og-image managed via [Site graphics](#site-graphics), then the site's logo.
 
+Whichever of the last four answers, the layout keeps the `Media` row alongside the url it built, and states `og:image:width`/`og:image:height` from it — from `getIntrinsicWidth()`/`getIntrinsicHeight()`, so a media whose dimensions were typed as a css length (`50%`, `auto`) says nothing rather than something Open Graph cannot read — and `og:image:alt` from the media's own alternative text.
+
 To override it manually for a file-based page:
 
 ```twig
 {% set ogImage = absolute_url(asset('images/my-og-image.jpg')) %}
+{% set ogImageAlt = 'A knight riding through the mist' %}
 ```
+
+A template setting `ogImage` itself is the only one that knows what the image shows, hence `ogImageAlt` next to it; no dimensions are emitted in that case, the layout having no row to read them from.
+
+The page's own url is handed to the edit screen as `page_public_path` (published pages only), where CoreBundle's sharing-debugger note points at Facebook's re-scrape tool: a network caches the preview under the page's url, so an image chosen later is only picked up by asking for a refresh.
 
 ---
 

@@ -838,6 +838,21 @@ class PageCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $page);
     }
 
+    // The page's own url for the sharing-debugger note under the form (see page_crud_edit.html.twig), a published page alone carrying one a social network can read
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        if (Crud::PAGE_EDIT === $responseParameters->get('pageName')) {
+            $page = $responseParameters->get('entity')?->getInstance();
+
+            if ($page instanceof Page && $page->isPublished()) {
+                $responseParameters->set('page_public_path', $this->pagePath($page));
+            }
+        }
+
+        return $responseParameters;
+    }
+
     // Relative path of the page on the public site: preview link if unpublished, otherwise home or its slug
     private function pagePath(Page $page): string
     {
