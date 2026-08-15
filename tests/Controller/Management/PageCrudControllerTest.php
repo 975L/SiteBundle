@@ -482,6 +482,47 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('alt text', $copiedMedia->getAlt());
     }
 
+    // A container block (columns...) holds its content in child blocks, nested to any depth - the copy must carry the whole tree, not just the container
+    public function testDuplicateClonesNestedSlotsAndTheirContent(): void
+    {
+        $source = new Page()->setTitle('Original')->setSlug('original');
+        $inner = new Block()->setKind('article')->setData(['title' => 'inner']);
+        $column = new Block()->setKind('column')->setData(['width' => '6']);
+        $column->addSlot($inner);
+        $container = new Block()->setKind('columns');
+        $container->addSlot($column);
+        $source->addBlock($container);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturn(null);
+
+        $capturedCopy = null;
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$capturedCopy): void {
+            $capturedCopy = $entity;
+        });
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->duplicate($this->createAdminContext($source), $manager);
+
+        $copiedContainer = $capturedCopy->getBlocks()->first();
+        $copiedColumn = $copiedContainer->getSlots()->first();
+        $this->assertNotSame($column, $copiedColumn);
+        $this->assertSame('column', $copiedColumn->getKind());
+        $this->assertSame(['width' => '6'], $copiedColumn->getData());
+        $this->assertSame($copiedContainer, $copiedColumn->getParentBlock());
+
+        $copiedInner = $copiedColumn->getSlots()->first();
+        $this->assertNotSame($inner, $copiedInner);
+        $this->assertSame(['title' => 'inner'], $copiedInner->getData());
+        $this->assertSame($copiedColumn, $copiedInner->getParentBlock());
+    }
+
     // --- publishAsReplacement ------------------------------------------------------------------------
 
     public function testPublishAsReplacementDeniesAccessBelowEditor(): void

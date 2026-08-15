@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-15",
+        "description": [
+            {
+                "en": "Duplicating a page now brings along everything laid out in columns, and whatever is nested inside them, instead of leaving the copy with empty columns",
+                "fr": "La duplication d'une page reprend désormais tout ce qui est disposé en colonnes, ainsi que ce qui y est imbriqué, au lieu de laisser la copie avec des colonnes vides",
+                "es": "La duplicación de una página conserva ahora todo lo dispuesto en columnas, así como lo que hay anidado dentro, en lugar de dejar la copia con columnas vacías"
+            }
+        ]
+    },
+    {
         "date": "2026-08-14",
         "description": [
             {

@@ -753,7 +753,7 @@ class PageCrudController extends AbstractCrudController
         );
     }
 
-    // Clones a block (kind, data, animation, position) and its medias - used when duplicating a page
+    // Clones a block (kind, data, animation, position), its medias and its slots - used when duplicating a page
     private function cloneBlock(Block $source, ?UserInterface $user): Block
     {
         $copy = new Block()
@@ -767,6 +767,11 @@ class PageCrudController extends AbstractCrudController
 
         foreach ($source->getMedias() as $media) {
             $copy->addMedia($this->cloneMedia($media, $user));
+        }
+
+        // Recursive: a container block (columns...) holds its content in child blocks, themselves possibly containers
+        foreach ($source->getSlots() as $slot) {
+            $copy->addSlot($this->cloneBlock($slot, $user));
         }
 
         return $copy;

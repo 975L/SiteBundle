@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.3.5
+
+A duplicated page keeps its columns and everything inside them
+
+- `PageCrudController::cloneBlock()` clones a block's slots, down the whole tree (15/08/2026)
+- `PageCrudControllerTest` covers a nested container's copy (15/08/2026)
+- The README states what the "Duplicate" action carries over (15/08/2026)
+
 ## v8.3.4
 
 A shared page states its picture's room and what it shows

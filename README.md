@@ -272,7 +272,7 @@ Selected pages can also be exported as a zip (title/slug/blocks, any Block's Med
 
 Any non-deleted page's edit screen carries a "Publish as replacement" action group, listing every other page as a target — picking one swaps the current page in for it: the target's slug is archived and it's moved to the trash (recoverable via the usual "Restore" action, which reclaims the archived slug if still free, otherwise keeps the technical one).
 
-The usual way to prepare such a replacement is the "Duplicate" action: it builds an unpublished copy of a page, which is then reworked at leisure and swapped in once ready. A page's `replaces` field is only a fallback default for the action group's target, never a requirement.
+The usual way to prepare such a replacement is the "Duplicate" action: it builds an unpublished copy of a page — its whole block tree, a container's own columns and everything nested inside them included, each block's medias copied to their own files — which is then reworked at leisure and swapped in once ready. A page's `replaces` field is only a fallback default for the action group's target, never a requirement.
 
 There is deliberately **no page-template mechanism**: a page's block arrangement is composed in the admin, block by block, and never derived from a stored arrangement. A "template" here could only ever be a snapshot of example content copied once, with no relation kept afterwards — a maintenance cost with no matching benefit, since a page's structure is built once in a site's life. Use "Duplicate" for a page that should look like an existing one.
 
