@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.4.1
+
+A sticky navbar sticks, and an overlapping one is painted on top
+
+- `sticky` and `absolute` navbars set `--navbar-z-index` to 1000 (17/08/2026)
+- The `<header>` wrapping a sole sticky bar takes the `position: sticky` (17/08/2026)
+- `NavbarHeightTest` covers both rules and the header's single child (17/08/2026)
+- The README and the menus skill state what an overridden `header` block opts out of (17/08/2026)
+
 ## v8.4.0
 
 The bundle documents itself for the coding agents installing it

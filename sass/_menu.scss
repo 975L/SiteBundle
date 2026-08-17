@@ -6,6 +6,10 @@
 .menu.menu-position-fixed { --navbar-position: fixed; }
 .menu.menu-position-absolute { --navbar-position: absolute; }
 
+// A bar that overlaps the page has to be painted above it, and "auto" doesn't do that: sticky opens a stacking context whatever its z-index, so the mobile dropdown's own z-index: 1000 stays trapped inside the bar and any block painted after it - a hero, a card, a section with a z-index of its own - covers the open menu and swallows the taps meant for it. .menu-fixed already carried that 1000 for the fixed case, these two are the other positions taking the bar out of the page's own flow. Left alone for "relative", where the bar never overlaps anything and the dropdown competes with the page directly
+.menu.menu-position-sticky,
+.menu.menu-position-absolute { --navbar-z-index: 1000; }
+
 .menu {
     position: var(--navbar-position);
     top: 0;
@@ -19,6 +23,13 @@
     margin-left: var(--navbar-margin-x);
     margin-right: var(--navbar-margin-x);
     width: var(--navbar-width);
+}
+
+// A sticky box only ever travels inside its own containing block, and that block is the <header> layout.html.twig wraps the bar in - a box measuring exactly the bar itself, so it had nowhere to travel and scrolled away with the page, "sticky" ending up indistinguishable from "relative". The header takes the collage instead, its own containing block being <body>, and keeps the same 1000 as the bar so the page still passes underneath. The :only-child keeps this to the header this bundle's own layout writes: a header an app filled with more than the navigation would stick as a whole block, which is not what a sticky navbar asks for
+header:has(> .menu.menu-position-sticky:only-child) {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .menu-fixed {

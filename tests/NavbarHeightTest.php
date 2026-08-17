@@ -147,6 +147,41 @@ class NavbarHeightTest extends TestCase
         }
     }
 
+    // A position lifting the bar out of the flow makes it overlap the page, and "auto" leaves the mobile dropdown trapped in the stacking context sticky opens whatever its z-index
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testAPositionTakingTheBarOutOfTheFlowPaintsItAboveThePage(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/\.menu\.menu-position-sticky,\s*\.menu\.menu-position-absolute\{--navbar-z-index: ?1000\}/',
+            $this->stylesheet($file),
+            sprintf('"%s" lets a sticky or absolute navbar be painted under the page it overlaps.', $file)
+        );
+    }
+
+    // A sticky box travels inside its own containing block, and the bar's is the <header> layout.html.twig wraps it in - a box measuring exactly the bar, so it scrolled away with the page
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testAStickyNavbarSticksThroughTheHeaderWrappingIt(string $file): void
+    {
+        $this->assertMatchesRegularExpression(
+            '/header:has\(>\s*\.menu\.menu-position-sticky:only-child\)\{position:sticky;top:0;z-index:1000\}/',
+            $this->stylesheet($file),
+            sprintf('"%s" leaves a sticky navbar stuck inside a header it can never travel in.', $file)
+        );
+    }
+
+    // The rule above only holds if the bundle's own header holds the bar alone, ":only-child" being what keeps an app's fuller header out of it
+    public function testTheLayoutWrapsTheNavbarAloneInItsHeader(): void
+    {
+        $path = dirname(__DIR__) . '/templates/layout.html.twig';
+        $this->assertFileExists($path);
+
+        $this->assertMatchesRegularExpression(
+            '/<header>\s*(\{#[^#]*#\}\s*)*\{% if display != \'pdf\' %\}\s*\{% block navigation %\}/',
+            (string) file_get_contents($path),
+            'layout.html.twig puts something else beside the navbar in its <header>, which the sticky rule targets as an only child.'
+        );
+    }
+
     // site-navbar-show-name used to be read on the menu branch only, so a site with no navbar blocks kept its name hidden whatever the config said
     public function testTheFallbackNavbarShowsTheSiteNameToo(): void
     {

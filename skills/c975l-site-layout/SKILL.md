@@ -55,6 +55,9 @@ its url — the layout only reads that row for what the template left unsaid.
 {% block share %}{% endblock %}   {# disabled #}
 ```
 
+Overriding `header` with more than the navigation inside drops the sticky navbar the stylesheet
+arranges through that `<header>` (see `c975l-site-menus`).
+
 `<body>` is a flex column at least as tall as the viewport, `<main>` taking the free space, so the
 footer holds the bottom of a short page. A site-wide band contributed by another bundle renders
 outside `<main>`, pulled in by an include that keeps that bundle optional:

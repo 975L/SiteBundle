@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-17",
+        "description": [
+            {
+                "en": "A navigation bar you set to stay visible while scrolling now really stays at the top of the screen, and no longer slides away with the page",
+                "fr": "Une barre de navigation que vous avez réglée pour rester visible au défilement reste désormais vraiment en haut de l'écran, et ne s'en va plus avec la page",
+                "es": "Una barra de navegación que haya configurado para permanecer visible al desplazarse se queda ahora realmente en la parte superior de la pantalla, y ya no se va con la página"
+            },
+            {
+                "en": "The menu opened on a phone now shows above the content of the page instead of being hidden behind it",
+                "fr": "Le menu ouvert sur téléphone s'affiche désormais au-dessus du contenu de la page au lieu d'être caché derrière",
+                "es": "El menú abierto en el móvil se muestra ahora por encima del contenido de la página en lugar de quedar oculto detrás"
+            }
+        ]
+    },
+    {
         "date": "2026-08-15",
         "description": [
             {

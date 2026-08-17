@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -99,6 +99,12 @@ pass in. `site-navbar-show-name` (bool, default true) decides whether the name s
 `site-navbar-position` (`relative`, `sticky`, `fixed`, `static`, `absolute`) is carried by a
 `.menu.menu-position-*` class setting `--navbar-position`, **not by a `style=""` attribute a nonced
 `style-src` would drop**.
+
+`sticky` and `absolute` also raise `--navbar-z-index` to 1000, a bar overlapping the page having to be
+painted above it. `sticky` sticks through the `<header>` `layout.html.twig` wraps the bar in — the bar
+alone is its own containing block and has nowhere to travel — via
+`header:has(> .menu.menu-position-sticky:only-child)`. **An app overriding that `header` block with
+more than the navigation inside opts out of it** and has to arrange its own sticky header.
 
 Logo and name are wrapped in **one single link** to the home page, not two adjacent ones — a screen
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed

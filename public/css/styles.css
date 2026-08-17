@@ -613,6 +613,11 @@ a:hover.pullDown {
   --navbar-position: absolute;
 }
 
+.menu.menu-position-sticky,
+.menu.menu-position-absolute {
+  --navbar-z-index: 1000;
+}
+
 .menu {
   position: var(--navbar-position);
   top: 0;
@@ -625,6 +630,12 @@ a:hover.pullDown {
   margin-left: var(--navbar-margin-x);
   margin-right: var(--navbar-margin-x);
   width: var(--navbar-width);
+}
+
+header:has(> .menu.menu-position-sticky:only-child) {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .menu-fixed {
