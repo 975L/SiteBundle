@@ -1,9 +1,19 @@
 name: CI
 
+# main only, as the Symfony ecosystem does: dev carries the same commit, and both branches meant two twin jobs downloading the same dependencies at once
 on:
     push:
-        branches: [main, dev]
+        branches: [main]
     pull_request:
+
+# A run the next push has superseded is cancelled rather than left racing it
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+# Read-only rather than the repository's default write: the checkout is the only step reading the token, the coverage upload going through the Codacy secret
+permissions:
+    contents: read
 
 jobs:
     quality:
@@ -22,9 +32,19 @@ jobs:
                   php-version: '8.4'
                   coverage: pcov
                   tools: phpcs, phpstan, php-cs-fixer, rector
-              # Read by setup-php to set Composer's github-oauth: without it the archives are downloaded anonymously, and the runner's shared IP gets a 429 from codeload.github.com
-              env:
-                  COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # Composer knows where it keeps its archives; asking it beats hard-coding a runner-image path
+            - name: Répertoire de cache de Composer
+              id: composer-cache
+              run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+            # Archives are indexed on their own content, so caching them owes nothing to a composer.lock this bundle does not version, and codeload.github.com stops throttling the runner's IP
+            - name: Cache des dépendances
+              uses: actions/cache@v6
+              with:
+                  path: ${{ steps.composer-cache.outputs.dir }}
+                  key: composer-${{ runner.os }}-php84-${{ hashFiles('composer.json') }}
+                  restore-keys: composer-${{ runner.os }}-php84-
 
             # update rather than install: composer.lock is not versioned, and the bundles point at one another
             - name: Dépendances
