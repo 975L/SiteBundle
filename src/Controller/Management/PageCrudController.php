@@ -75,6 +75,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -83,6 +84,10 @@ use function Symfony\Component\Translation\t;
 
 class PageCrudController extends AbstractCrudController
 {
+    // The two actions of the trash are reached by a GET, so their token travels in the url the row buttons carry (see addPageActions()) - a confirmation modal only holds a click back, never a request forged elsewhere
+    public const RESTORE_CSRF_TOKEN = 'page_restore';
+    public const DELETE_PERMANENTLY_CSRF_TOKEN = 'page_delete_permanently';
+
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -98,6 +103,7 @@ class PageCrudController extends AbstractCrudController
         private readonly ContentExporter $contentExporter,
         private readonly PageExportProvider $pageExportProvider,
         private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
+        private readonly CsrfTokenManagerInterface $csrfTokenManager,
     ) {
     }
 
@@ -379,8 +385,9 @@ class PageCrudController extends AbstractCrudController
     private function addPageActions(Actions $actions): Actions
     {
         // Permanently removes the page, only shown once already in the trash askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to trash") instead of a native confirm() - keeps the UI consistent
+        // Built as a url rather than linked to the crud action, so the csrf token the action checks travels with it
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
-            ->linkToCrudAction('deletePermanently')
+            ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('deletePermanently', $page, self::DELETE_PERMANENTLY_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->askConfirmation(t('confirm.delete_permanently', [], 'site'))
             ->asDangerAction()
@@ -388,7 +395,7 @@ class PageCrudController extends AbstractCrudController
 
         // Restores a page out of the trash, only shown once already in the trash
         $restoreAction = Action::new('restore', t('action.restore', [], 'site'), 'fa fa-trash-restore')
-            ->linkToCrudAction('restore')
+            ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('restore', $page, self::RESTORE_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
@@ -557,11 +564,37 @@ class PageCrudController extends AbstractCrudController
         $entityManager->flush();
     }
 
+    // The url of a trash row button, its csrf token in the query string - the action is a GET, which an <img> on a third-party page would otherwise fire on a logged-in admin
+    private function trashActionUrl(string $action, Page $page, string $tokenId): string
+    {
+        return $this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction($action)
+            ->setEntityId($page->getId())
+            ->set('trash', 1)
+            ->set('token', $this->csrfTokenManager->getToken($tokenId)->getValue())
+            ->generateUrl();
+    }
+
+    // The trash listing both actions come back to, whether they ran or were refused
+    private function trashIndexUrl(): string
+    {
+        return $this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::INDEX)
+            ->set('trash', 1)
+            ->generateUrl();
+    }
+
     // Permanently removes the page and its blocks - only reachable once already in the trash
     #[AdminRoute('/{entityId}/delete-permanently')]
-    public function deletePermanently(AdminContext $context, EntityManagerInterface $entityManager): Response
+    public function deletePermanently(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
+
+        if (!$this->isCsrfTokenValid(self::DELETE_PERMANENTLY_CSRF_TOKEN, $request->query->getString('token'))) {
+            return $this->redirect($this->trashIndexUrl());
+        }
 
         $page = $context->getEntity()->getInstance();
 
@@ -581,20 +614,18 @@ class PageCrudController extends AbstractCrudController
 
         $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
 
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction(Action::INDEX)
-                ->set('trash', 1)
-                ->generateUrl()
-        );
+        return $this->redirect($this->trashIndexUrl());
     }
 
     // Restores a page out of the trash - keeps its content untouched. If it was archived by publishAsReplacement(), tries to reclaim its real slug (free unless something else has since taken it), otherwise keeps the technical one and warns the admin to rename it manually.
     #[AdminRoute('/{entityId}/restore')]
-    public function restore(AdminContext $context, EntityManagerInterface $entityManager): Response
+    public function restore(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
+
+        if (!$this->isCsrfTokenValid(self::RESTORE_CSRF_TOKEN, $request->query->getString('token'))) {
+            return $this->redirect($this->trashIndexUrl());
+        }
 
         $page = $context->getEntity()->getInstance();
 
@@ -614,13 +645,7 @@ class PageCrudController extends AbstractCrudController
 
         $this->addFlash('success', $this->translator->trans('flash.page_restored', [], 'site'));
 
-        return $this->redirect(
-            $this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction(Action::INDEX)
-                ->set('trash', 1)
-                ->generateUrl()
-        );
+        return $this->redirect($this->trashIndexUrl());
     }
 
     // Duplicates the page with all its content (blocks, medias, og-image) into a new page, unpublished and saved immediately - redirects straight to editing the copy

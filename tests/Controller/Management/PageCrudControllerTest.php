@@ -179,6 +179,7 @@ class PageCrudControllerTest extends TestCase
             $contentExporter ?? $this->createStub(ContentExporter::class),
             $pageExportProvider ?? new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
             $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
+            $this->createCsrfTokenManager(true),
         );
     }
 
@@ -1173,10 +1174,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(redirectRepository: $redirectRepository);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->deletePermanently($this->createAdminContext($page), $manager);
+        $controller->deletePermanently($this->createAdminContext($page), new Request(['token' => 'token']), $manager);
     }
 
     // The trash's own 410 (see PageController::display()) dies with the row - without this the url would drop back to a plain 404
@@ -1248,7 +1250,7 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
 
-        $controller->deletePermanently($this->createAdminContext(new Page()), $this->createStub(EntityManagerInterface::class));
+        $controller->deletePermanently($this->createAdminContext(new Page()), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
     }
 
     public function testRestoreDeniesAccessBelowAdmin(): void
@@ -1260,7 +1262,39 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
 
-        $controller->restore($this->createAdminContext(new Page()), $this->createStub(EntityManagerInterface::class));
+        $controller->restore($this->createAdminContext(new Page()), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
+    }
+
+    // The action is reached by a GET, so nothing but the token tells a click on the trash screen apart from a request an <img> fired on a logged-in admin
+    public function testDeletePermanentlyRemovesNothingWhenCsrfTokenIsInvalid(): void
+    {
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('remove');
+        $manager->expects($this->never())->method('flush');
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
+        ]));
+
+        $controller->deletePermanently($this->createAdminContext(new Page()->setTitle('Old')->setSlug('old-page')), new Request(), $manager);
+    }
+
+    // Same GET as deletePermanently(), and the same token standing between a click and a forged request
+    public function testRestoreLiftsNothingWhenCsrfTokenIsInvalid(): void
+    {
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
+        ]));
+
+        $controller->restore($this->createAdminContext($page), new Request(), $this->createStub(EntityManagerInterface::class));
+
+        $this->assertTrue($page->isDeleted());
     }
 
     // A page archived by publishAsReplacement() reclaims its real slug on restore if nothing else has taken it since, and archivedSlug is cleared
@@ -1274,10 +1308,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(pageRepository: $pageRepository);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->restore($this->createAdminContext($page), $this->createStub(EntityManagerInterface::class));
+        $controller->restore($this->createAdminContext($page), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
 
         $this->assertSame('home', $page->getSlug());
         $this->assertNull($page->getArchivedSlug());
@@ -1295,10 +1330,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(pageRepository: $pageRepository);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->restore($this->createAdminContext($page), $this->createStub(EntityManagerInterface::class));
+        $controller->restore($this->createAdminContext($page), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
 
         $this->assertSame('home-archived', $page->getSlug());
         $this->assertNull($page->getArchivedSlug());
@@ -1312,10 +1348,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController();
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->restore($this->createAdminContext($page), $this->createStub(EntityManagerInterface::class));
+        $controller->restore($this->createAdminContext($page), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
 
         $this->assertSame('old-page', $page->getSlug());
     }
@@ -1545,6 +1582,7 @@ class PageCrudControllerTest extends TestCase
     {
         $manager = $this->createStub(CsrfTokenManagerInterface::class);
         $manager->method('isTokenValid')->willReturn($valid);
+        $manager->method('getToken')->willReturnCallback(static fn (string $tokenId): CsrfToken => new CsrfToken($tokenId, 'token'));
 
         return $manager;
     }

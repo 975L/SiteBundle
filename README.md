@@ -25,7 +25,7 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Users & access** — [moved to ConfigBundle](#users)
 - **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
 - **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
-- **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures)
+- **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures) · [AI agent skills](#ai-agent-skills)
 
 ## Features
 
@@ -42,6 +42,7 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Twig extensions**: `site_page`, `site_legal_pages`, `menu_blocks`, `page_health_check`
 - **File lists**: `extensions.txt` and `bots.txt`
 - **Admin help procedures** contributed to the dashboard AI assistant, describing how to create pages, redirects, menus, etc.
+- **Four skills for coding agents**, shipped in the package and read straight from `vendor/` — see [AI agent skills](#ai-agent-skills)
 
 ---
 
@@ -1105,6 +1106,33 @@ $bots = file(
     <twig:c975LUi:Analytics:Matomo />
 {% endblock %}
 ```
+
+---
+
+## AI agent skills
+
+The package ships four skills of its own, written for the coding agent of the site installing this bundle rather than for someone modifying it. Point your agent at the directory:
+
+```text
+vendor/c975l/site-bundle/skills/
+```
+
+| Skill | Covers |
+| --- | --- |
+| `c975l-site-layout` | the layout and its Twig blocks, the theme tokens, the CSP nonce, the error pages, the branded email layouts |
+| `c975l-site-pages` | `Page`, file-based pages, the block kinds this bundle adds, publish as replacement, collections and their item detail pages |
+| `c975l-site-menus` | the four menu locations, `menu_link` targets and anchors, `menu_group`, the navbar and the footer's display style |
+| `c975l-site-seo` | sitemaps, canonical urls, the Open Graph image, the six health checks, the smoke test and the dev profile |
+
+They are split by subject rather than shipped as one file so that an agent loads the one it needs — a question about a menu doesn't pull in the health checks. Each holds what an agent gets wrong when left to its own habits: that a replacement layout still owes a `container` block, that a `style=""` attribute is dropped by the nonce, that a menu link stores an id rather than a slug, that a satellite exposes a route through `LinkableRouteProviderInterface` instead of depending on this bundle.
+
+Nothing is installed, nothing is copied into your project: the files sit in `vendor/` like any other part of the package and follow it at each `composer update`. A user of Claude Code wanting one to load by itself symlinks it into their own skills directory:
+
+```bash
+ln -s ../../vendor/c975l/site-bundle/skills/c975l-site-menus .claude/skills/c975l-site-menus
+```
+
+`Tests\SkillsTest` keeps them honest: every path, route, config slug, command, class member, Twig function, block kind and component they quote is checked against the sources — and, for a name belonging to another c975L package, against the installed vendor tree — so renaming any of them fails the build rather than leaving an agent confidently wrong.
 
 ---
 

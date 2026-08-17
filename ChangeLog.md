@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.4.0
+
+The bundle documents itself for the coding agents installing it
+
+- Four skills ship in the package, split by subject: layout, pages, menus and SEO (17/08/2026)
+- `SkillsTest` checks every path, route, config slug, command, class member, Twig function, block kind and component they quote (17/08/2026)
+- A name belonging to another c975L package is checked against the installed vendor tree (17/08/2026)
+- README documents where an agent reads the skills from (17/08/2026)
+- `PageCrudController::restore()` and `deletePermanently()` check a csrf token carried in their url (17/08/2026)
+
 ## v8.3.5
 
 A duplicated page keeps its columns and everything inside them
