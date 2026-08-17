@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.4.2
+
+The CI downloads its dependency archives authenticated
+
+- `setup-php` gets a `COMPOSER_TOKEN`, so Composer downloads through the workflow's token (17/08/2026)
+
 ## v8.4.1
 
 A sticky navbar sticks, and an overlapping one is painted on top
