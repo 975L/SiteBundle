@@ -1,16 +1,16 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, noindex, PagePublicUrlResolver, llms.txt."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, noindex, PagePublicUrlResolver, llms.txt."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
 
-> What makes a c975L site findable and what tells you it broke: sitemaps, canonical urls, share images, six page-level health checks, a deployment smoke test and a dev profile.
+> What makes a c975L site findable and what tells you it broke: sitemaps, canonical urls, share images, six health checks, a deployment smoke test and a dev profile.
 
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
+`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
 
 **Related skills:** `c975l-site-pages`, `c975l-site-layout` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
 
@@ -60,9 +60,10 @@ rather than the site logo.
 
 ## Health checks
 
-Six providers, all about a **published page**, all plain HttpClient calls with no Node or headless
-browser involved. The site-wide checks (TLS, security headers, robots.txt, redirect chains, declared
-urls) are ConfigBundle's.
+Six providers, five of them about a **published page** and fetched with plain HttpClient calls, no Node
+or headless browser involved. The sixth reads the disk instead, about a file a row declares. The
+site-wide checks (TLS, security headers, robots.txt, redirect chains, deployment, declared urls) are
+ConfigBundle's.
 
 | `getKind()` | Checks | API key |
 | --- | --- | --- |
@@ -71,7 +72,7 @@ urls) are ConfigBundle's.
 | `w3c-css` | stylesheets; warnings the validator's CSS3 profile predates are counted apart as *benign* | none |
 | `content-quality` | noindex contradictions, title and description length, `<h1>`, share tags, image `alt`, broken links | none |
 | `mixed-content` | `http://` assets on an `https://` page | none |
-| `deployment` | that `http://` really redirects, and that an unknown url answers a real 404 | none |
+| `files-site` | that the image every `CollectionItem` names is still under `public/` — read off the disk, not over http | none |
 
 What `content-quality` deliberately does **not** flag, and why it matters when reading a report:
 

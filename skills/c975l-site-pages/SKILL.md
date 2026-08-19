@@ -93,6 +93,9 @@ unlike `Page::$slug`.
 `site.collection.{slug}` — **creating a collection is enough to make it pickable, no code change**.
 Each source declares its own cache tag, invalidated when an item or the group is saved.
 
+The image an item names is health-checked on the server by `CollectionFilesHealthCheckProvider` (kind
+`files-site`, see `c975l-site-seo`) — a file gone from `public/` is an error row, not a silent hole.
+
 ### Item detail pages
 
 Each item gets a per-item url without a row of its own. Two editorial steps, once per collection:

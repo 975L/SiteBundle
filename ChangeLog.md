@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.4.4
+
+A collection item's image is looked for on the server
+
+- Added `CollectionFilesHealthCheckProvider`, kind `files-site` (19/08/2026)
+- A collection item whose image is gone from the server is reported as an error (19/08/2026)
+- A collection item's health check row is prefixed by its group (19/08/2026)
+- Added `CollectionItemRepository::findWithFilename()` (19/08/2026)
+- `c975l/core-bundle` is required from `^1.12.5` (19/08/2026)
+- Added `CollectionFilesHealthCheckProviderTest` (19/08/2026)
+- The README and the SEO skill document the `files-site` check (19/08/2026)
+- The README and the SEO skill drop the `deployment` row, moved to `c975l/core-bundle` (19/08/2026)
+- The pages skill points at the check from its collections section (19/08/2026)
+
 ## v8.4.3
 
 The CI stops downloading again what it downloaded an hour ago

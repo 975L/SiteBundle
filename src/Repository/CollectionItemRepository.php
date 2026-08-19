@@ -25,6 +25,18 @@ class CollectionItemRepository extends ServiceEntityRepository
         parent::__construct($registry, CollectionItem::class);
     }
 
+    // @return CollectionItem[] Rows naming a file, for the check that then looks for each one on disk (see CollectionFilesHealthCheckProvider). An empty string counts as naming none, an item being free to stand on its title and its url alone
+    public function findWithFilename(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->where('i.filename IS NOT NULL AND i.filename != :empty')
+            ->setParameter('empty', '')
+            ->orderBy('i.filename', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // @return CollectionItem[]
     public function findByCollectionGroup(CollectionGroup $collectionGroup, ?int $limit = null): array
     {

@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-19",
+        "description": [
+            {
+                "en": "The Health check page now reports, in red, a collection item whose image is no longer on the server — the record still names it, the screen still lists it, and only the page showing the collection had anything to say about it",
+                "fr": "La page Contrôle de santé signale désormais en rouge un élément de collection dont l'image n'est plus sur le serveur — la fiche la nomme toujours, l'écran la liste encore, et seule la page qui affiche la collection en disait quelque chose",
+                "es": "La página Control de salud señala ahora en rojo un elemento de colección cuya imagen ya no está en el servidor — la ficha sigue nombrándola, la pantalla sigue listándola, y solo la página que muestra la colección decía algo al respecto"
+            }
+        ]
+    },
+    {
         "date": "2026-08-17",
         "description": [
             {
