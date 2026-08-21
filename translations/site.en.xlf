@@ -418,6 +418,10 @@
                 <source>label.accept_tos</source>
                 <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of sales (TOS)</a>]]></target>
             </trans-unit>
+            <trans-unit id="2hxn.kN">
+                <source>label.accept_tou</source>
+                <target><![CDATA[I agree with <a href="%touUrl%" target="_blank">Terms of use (TOU)</a>]]></target>
+            </trans-unit>
             <trans-unit id="CEVgeJ7">
                 <source>label.address</source>
                 <target>Address</target>

@@ -37,7 +37,9 @@ class ScaffoldThemeTest extends TestCase
     // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike.
     // Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all.
     // Same for "--slider-freeflow-item" and "--contact-details-gutter", declared on ".slider-freeflow" and ".contact-details" themselves, where the local declaration beats anything inherited from :root
+    // Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
     private const array NOT_THEMABLE = [
+        '--bottom-bar-height',
         '--c975l-color-background',
         '--c975l-color-primary',
         '--c975l-color-primary-dark-mode',

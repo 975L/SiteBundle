@@ -100,14 +100,14 @@ class FooterMenuGroupTest extends TestCase
     }
 
     // The blocks are cached across requests, and a lazy collection cached uninitialized comes back empty - a group would then render no slot at all, and a block carrying a media would lose its image
-    public function testTheMenuQueryJoinsTheSlotsAndTheirMedias(): void
+    // The slots are preloaded rather than joined since a join only ever answered for the first level of them, a group nested in a group coming back empty just the same (see BlockRepository::preloadSlots)
+    public function testTheMenuQueryTakesTheMediasAndPreloadsTheSlots(): void
     {
         $repository = (string) file_get_contents(dirname(__DIR__) . '/src/Repository/MenuRepository.php');
 
-        $this->assertStringContainsString("->select('m, b, s, bm, sm')", $repository);
-        $this->assertStringContainsString("->leftJoin('b.slots', 's')", $repository);
+        $this->assertStringContainsString("->select('m, b, bm')", $repository);
         $this->assertStringContainsString("->leftJoin('b.medias', 'bm')", $repository);
-        $this->assertStringContainsString("->leftJoin('s.medias', 'sm')", $repository);
+        $this->assertStringContainsString('$this->blockRepository->preloadSlots($menu->getBlocks())', $repository);
     }
 
     // This bundle's real block declarations replayed onto a real registry, as the compiler pass does

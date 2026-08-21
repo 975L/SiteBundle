@@ -12,7 +12,8 @@ a.backTop {
     text-indent: -9999px;
     position: fixed;
     z-index: 999;
-    bottom: 25px;
+    // Stepping over whatever a bundle fixes to the bottom of the viewport - a basket bar, a cookie banner - which publishes its own height in the token, the corner staying at 25px when nothing does
+    bottom: calc(25px + var(--bottom-bar-height, 0px));
     border-radius: 30px;
     opacity: 0.6;
 }

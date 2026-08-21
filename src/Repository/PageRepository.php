@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Repository;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,8 +20,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PageRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly BlockRepository $blockRepository,
+    ) {
         parent::__construct($registry, Page::class);
     }
 
@@ -44,21 +47,21 @@ class PageRepository extends ServiceEntityRepository
     // Find one page by id, with its blocks and their medias eager-loaded (used by the articles_slider block)
     public function findOneByIdWithBlocks(int $id): ?Page
     {
-        return $this->createQueryBuilder('p')
+        return $this->withSlots($this->createQueryBuilder('p')
             ->select('p, b, m')
             ->leftJoin('p.blocks', 'b')
             ->leftJoin('b.medias', 'm')
             ->andWhere('p.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getOneOrNullResult())
         ;
     }
 
     // Find one page by slug (published only)
     public function findOneBySlug(string $slug): ?Page
     {
-        return $this->createQueryBuilder('p')
+        return $this->withSlots($this->createQueryBuilder('p')
             ->select('p, b, m')
             ->leftJoin('p.blocks', 'b')
             ->leftJoin('b.medias', 'm')
@@ -69,22 +72,32 @@ class PageRepository extends ServiceEntityRepository
             ->setParameter('deleted', false)
             ->setParameter('slug', $slug)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getOneOrNullResult())
         ;
     }
 
     // Find one page by slug regardless of status (for display: handles redirects and 410)
     public function findOneBySlugForDisplay(string $slug): ?Page
     {
-        return $this->createQueryBuilder('p')
+        return $this->withSlots($this->createQueryBuilder('p')
             ->select('p, b, m')
             ->leftJoin('p.blocks', 'b')
             ->leftJoin('b.medias', 'm')
             ->andWhere('p.slug = :slug')
             ->setParameter('slug', $slug)
             ->getQuery()
-            ->getOneOrNullResult()
+            ->getOneOrNullResult())
         ;
+    }
+
+    // The nested blocks of the page's containers, read level by level rather than left lazy - a page built of flex_columns or cards would otherwise cost a query per container and per slot, and one more per leaf, on every render (see BlockRepository::preloadSlots)
+    private function withSlots(?Page $page): ?Page
+    {
+        if (null !== $page) {
+            $this->blockRepository->preloadSlots($page->getBlocks());
+        }
+
+        return $page;
     }
 
     // Find the first published page carrying a "form" Block pointing at the given Form name (e.g. "register"/"reset_password_request", picked by name in the admin same as "contact") - used to link a generic/bare route's own cross-references (login form's "forgot password"/"create account") to the real, translated-slug Page instead. Block::$data is JSON, so matching on its "name" key is done in PHP after narrowing to "form"-kind blocks (few per site)

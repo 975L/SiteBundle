@@ -219,6 +219,21 @@ class MenuExtensionTest extends TestCase
         $this->assertSame($first, $second);
     }
 
+    // The blocks and the style are cached under two keys of their own, so a request finding both cold read the same menu twice - and that query joins the menu's blocks and their medias
+    public function testTheMenuIsReadOnceForItsBlocksAndItsStyleAlike(): void
+    {
+        $menu = new Menu()->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
+        $menu->addBlock(new Block());
+
+        $menuRepository = $this->createMock(MenuRepository::class);
+        $menuRepository->expects($this->once())->method('findOneByLocation')->with(Menu::LOCATION_FOOTER)->willReturn($menu);
+
+        $extension = $this->createExtension($this->createRegistry([]), [], $menuRepository);
+
+        $this->assertCount(1, $extension->getMenuBlocks(Menu::LOCATION_FOOTER));
+        $this->assertSame(Menu::STYLE_INLINE, $extension->getMenuStyle(Menu::LOCATION_FOOTER));
+    }
+
     // --- getMenuStyle ---------------------------------------------------------------------------------------
 
     // The layout an admin picked on the menu edit screen, which Footer.html.twig turns into its own class

@@ -18,6 +18,8 @@
     --input-focus-border-color: rgb(96, 165, 250);
     --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
     --input-icon-filter: invert(1);
+    // Same reason one step wider: an icon dropped on the page itself (the basket count, a list marker) keeps the black fill of its file while everything around it is lightened. Flattened then inverted, so a two-tone file turns into one white silhouette rather than its own negative
+    --icon-filter: brightness(0) invert(1);
     // Lightened off the danger red, which reads at 4.14:1 on the #121212 page - under the 4.5:1 WCAG AA asks of body text, and this message is set at 0.9rem
     --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
     // Each pale tint is mixed into the page background, keeping its hue as a real dark surface

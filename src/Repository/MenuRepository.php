@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Repository;
 
 use c975L\SiteBundle\Entity\Menu;
+use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,26 +20,32 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MenuRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly BlockRepository $blockRepository,
+    ) {
         parent::__construct($registry, Menu::class);
     }
 
     // Eager-joins blocks so MenuExtension::getMenuBlocks() doesn't trigger a second query for the lazy-loaded ManyToMany collection (see PageRepository's own findOneBySlugForDisplay(), same pattern) - ordering comes from Menu::$blocks' own #[ORM\OrderBy], applied automatically to the joined collection
-    // Their slots and their medias are joined for a second reason on top of that one: MenuExtension caches these very entities across requests, and a lazy collection left uninitialized comes back from that cache detached and empty - a container block (a "menu_group" holding a footer's links) would render nothing at all, and any kind carrying a media (a menu is not restricted to "menu_link", see MenuCrudController's own context) would lose its image on the render following its edit. Medias are taken at both levels, the slots' as well as the top-level blocks' - PageRepository joins its own the same way
+    // The whole tree of slots is then preloaded rather than joined here, for a second reason on top of that one: MenuExtension caches these very entities across requests, and a lazy collection left uninitialized comes back from that cache detached and empty - a container block (a "menu_group" holding a footer's links) would render nothing at all, and any kind carrying a media (a menu is not restricted to "menu_link", see MenuCrudController's own context) would lose its image on the render following its edit. A join only ever answered for the first level of it, see BlockRepository::preloadSlots()
     public function findOneByLocation(string $location): ?Menu
     {
-        return $this->createQueryBuilder('m')
-            ->select('m, b, s, bm, sm')
+        $menu = $this->createQueryBuilder('m')
+            ->select('m, b, bm')
             ->leftJoin('m.blocks', 'b')
-            ->leftJoin('b.slots', 's')
             ->leftJoin('b.medias', 'bm')
-            ->leftJoin('s.medias', 'sm')
             ->andWhere('m.location = :location')
             ->setParameter('location', $location)
             ->getQuery()
             ->getOneOrNullResult()
         ;
+
+        if (null !== $menu) {
+            $this->blockRepository->preloadSlots($menu->getBlocks());
+        }
+
+        return $menu;
     }
 
     // The menus owning any of the given Block rows - what MenuBlockEditUrlProvider points the front-end "Edit" hover button at, PageRepository::findByBlockIds() being its Page counterpart. Only the matched blocks are hydrated into each menu's collection, which is all the caller reads

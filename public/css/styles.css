@@ -309,6 +309,7 @@ summary {
   --input-focus-border-color: rgb(96, 165, 250);
   --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
   --input-icon-filter: invert(1);
+  --icon-filter: brightness(0) invert(1);
   --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
   --alert-color: #e0e0e0;
   --alert-danger-color: #f0a8b0;
@@ -343,6 +344,7 @@ summary {
     --input-focus-border-color: rgb(96, 165, 250);
     --input-focus-shadow-color: rgba(96, 165, 250, 0.45);
     --input-icon-filter: invert(1);
+    --icon-filter: brightness(0) invert(1);
     --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
     --alert-color: #e0e0e0;
     --alert-danger-color: #f0a8b0;
@@ -568,7 +570,7 @@ a.backTop {
   text-indent: -9999px;
   position: fixed;
   z-index: 999;
-  bottom: 25px;
+  bottom: calc(25px + var(--bottom-bar-height, 0px));
   border-radius: 30px;
   opacity: 0.6;
 }

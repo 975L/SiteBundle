@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, publish as replacement, duplicate page, trash, restore, max_input_vars, site_page."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, max_input_vars, site_page."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -92,6 +92,12 @@ unlike `Page::$slug`.
 `CollectionItemSourceProvider` exposes every group to UiBundle's `collection` block, keyed
 `site.collection.{slug}` — **creating a collection is enough to make it pickable, no code change**.
 Each source declares its own cache tag, invalidated when an item or the group is saved.
+
+The items index reorders by drag-and-drop through **UiBundle's `ea-index-sort.js`**, which SiteBundle no
+longer duplicates: `collection_item_crud_index.html.twig` opts in by declaring `data-reorder-url`,
+`data-reorder-group` and `data-reorder-token` on each row, and `CollectionItemCrudController::reorder()`
+answers `{positions: {id: position}}` — what it actually persisted, the submitted ids being re-checked
+against the submitted group rather than trusted.
 
 The image an item names is health-checked on the server by `CollectionFilesHealthCheckProvider` (kind
 `files-site`, see `c975l-site-seo`) — a file gone from `public/` is an error row, not a silent hole.

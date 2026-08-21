@@ -1,5 +1,28 @@
 # Changelog
 
+## v8.4.5
+
+A page and a menu read their nested blocks in one go
+
+- `PageRepository::findOneBySlug()`, `findOneBySlugForDisplay()` and `findOneByIdWithBlocks()` preload the slots of the page's blocks (19/08/2026)
+- `MenuRepository::findOneByLocation()` preloads them too, instead of joining the first level of them only (19/08/2026)
+- `MenuExtension` reads a location's Menu once for its blocks and its style alike, the two being cached under keys of their own (19/08/2026)
+- `FooterMenuGroupTest` and `MenuExtensionTest` cover both (19/08/2026)
+- Dark mode fills `--icon-filter`, whitening an icon laid on the page itself (20/08/2026)
+- Added `label.accept_tou`, the terms-of-use checkbox of the basket validation showing its key (20/08/2026)
+- The scroll buttons step over a bar fixed at the bottom of the viewport, reading `--bottom-bar-height` (20/08/2026)
+- `basic.js` leaves a link changing the query alone, instead of taking it for a same-page anchor and cancelling it (20/08/2026)
+- `basic.js` pushes the whole address, a relative one resolving against the `<base href>` and losing the path (20/08/2026)
+- Added `SmoothAnchorScrollTest` (20/08/2026)
+- Removed `collection-item-sort.js`, UiBundle's `ea-index-sort.js` reordering the collection items index (20/08/2026)
+- `reorder` reads a `group` key and answers the persisted positions (20/08/2026)
+- `c975l/core-bundle` is required from `^1.13` (21/08/2026)
+- The README and the layout skill state who sets `--bottom-bar-height` and who reads it (21/08/2026)
+- The pages skill states the index's reorder contract with `ea-index-sort.js` (21/08/2026)
+- Added `PageBlockPreloadTest`, `BottomBarOffsetTest` and `DarkIconFilterTest` (21/08/2026)
+- `AdminControllersRegistrationTest` covers the sort controller left to UiBundle and the index's reorder attributes (21/08/2026)
+- `PageCrudControllerTest` and `MenuCrudControllerTest` read UiBundle's renamed `data-ui-move-*` row attributes (21/08/2026)
+
 ## v8.4.4
 
 A collection item's image is looked for on the server

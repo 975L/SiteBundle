@@ -316,14 +316,14 @@ class CollectionItemCrudControllerTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
 
         $response = $controller->reorder(
-            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [3, 1, 2], '_token' => 'valid-token']),
+            $this->createReorderRequest(['group' => 9, 'ids' => [3, 1, 2], '_token' => 'valid-token']),
             $entityManager,
         );
 
         $this->assertSame(0, $item3->getPosition());
         $this->assertSame(1, $item1->getPosition());
         $this->assertSame(2, $item2->getPosition());
-        $this->assertSame(['success' => true], json_decode($response->getContent(), true));
+        $this->assertSame(['3' => 0, '1' => 1, '2' => 2], json_decode($response->getContent(), true)['positions']);
     }
 
     public function testReorderDeniesAccessWhenNotGranted(): void
@@ -349,13 +349,36 @@ class CollectionItemCrudControllerTest extends TestCase
         ]));
 
         $controller->reorder(
-            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [1], '_token' => 'invalid-token']),
+            $this->createReorderRequest(['group' => 9, 'ids' => [1], '_token' => 'invalid-token']),
             $this->createStub(EntityManagerInterface::class),
         );
     }
 
-    // An id whose item doesn't belong to the submitted collection never reaches setPosition() - a tampered payload could otherwise reorder another collection's items
-    public function testReorderDeniesAccessWhenAnItemDoesNotBelongToTheSubmittedCollectionGroup(): void
+    // A row deleted between the rendering of the index and the drop: its id comes back with the payload, but a position it never received would be written into its cell by ea-index-sort.js
+    public function testReorderAnswersOnlyThePositionsItPersisted(): void
+    {
+        $collectionGroup = $this->withId(new CollectionGroup(), 9);
+        $item = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup), 1);
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+        $repository->method('findBy')->willReturn([$item]);
+
+        $controller = $this->createController($repository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+        ]));
+
+        $response = $controller->reorder(
+            $this->createReorderRequest(['group' => 9, 'ids' => [1, 7], '_token' => 'valid-token']),
+            $this->createStub(EntityManagerInterface::class),
+        );
+
+        $this->assertSame(['1' => 0], json_decode($response->getContent(), true)['positions']);
+    }
+
+    // An id whose item doesn't belong to the submitted group never reaches setPosition() - a tampered payload could otherwise reorder another collection's items
+    public function testReorderDeniesAccessWhenAnItemDoesNotBelongToTheSubmittedGroup(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -372,7 +395,7 @@ class CollectionItemCrudControllerTest extends TestCase
         ]));
 
         $controller->reorder(
-            $this->createReorderRequest(['collectionGroup' => 9, 'ids' => [1], '_token' => 'valid-token']),
+            $this->createReorderRequest(['group' => 9, 'ids' => [1], '_token' => 'valid-token']),
             $this->createStub(EntityManagerInterface::class),
         );
     }

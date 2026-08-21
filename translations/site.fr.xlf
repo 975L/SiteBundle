@@ -418,6 +418,10 @@
                 <source>label.accept_tos</source>
                 <target><![CDATA[J'accepte les <a href="%tosUrl%" target="_blank">Conditions générales de vente (CGV)</a>]]></target>
             </trans-unit>
+            <trans-unit id="2hxn.kN">
+                <source>label.accept_tou</source>
+                <target><![CDATA[J'accepte les <a href="%touUrl%" target="_blank">Conditions générales d'utilisation (CGU)</a>]]></target>
+            </trans-unit>
             <trans-unit id="CEVgeJ7">
                 <source>label.address</source>
                 <target>Adresse</target>

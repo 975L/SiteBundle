@@ -1089,10 +1089,10 @@ class PageCrudControllerTest extends TestCase
         $fields = $controller->configureFields(Crud::PAGE_EDIT);
         $rowAttr = $this->findFieldByProperty($fields, 'blocks')->getAsDto()->getFormTypeOptions()['row_attr'] ?? [];
 
-        $this->assertSame('page', $rowAttr['data-block-owner-type']);
-        $this->assertSame(7, $rowAttr['data-block-owner-id']);
-        $this->assertSame('/admin/ui/block/move', $rowAttr['data-block-move-url']);
-        $this->assertSame('token123', $rowAttr['data-block-move-csrf-token']);
+        $this->assertSame('page', $rowAttr['data-ui-move-owner-type']);
+        $this->assertSame(7, $rowAttr['data-ui-move-owner-id']);
+        $this->assertSame('/admin/ui/block/move', $rowAttr['data-ui-move-url']);
+        $this->assertSame('token123', $rowAttr['data-ui-move-csrf-token']);
     }
 
     // The "Health check" tab and its panel field only make sense once the page exists and has been checked at least once (see PageHealthCheckExtension) - onlyWhenUpdating() keeps both off the "new" page entirely

@@ -6,9 +6,9 @@
     {{ parent() }}
 {% endblock main %}
 
-{# Marks each row for drag-and-drop reordering; the index is always filtered to one collection #}
+{# Opts each row into UiBundle's ea-index-sort.js; the index is always filtered to one collection, the group being carried all the same so a tampered payload is refused server-side #}
 {% block entity_row_attributes %}
-    data-collection="{{ entity.instance.collectionGroup.id }}"
+    data-reorder-group="{{ entity.instance.collectionGroup.id }}"
     data-reorder-url="{{ ea_url().setAction('reorder') }}"
     data-reorder-token="{{ csrf_token('collection_item_reorder') }}"
 {% endblock %}

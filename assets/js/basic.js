@@ -61,7 +61,8 @@ export default class extends Controller {
             }
 
             const url = new URL(link.href, window.location.href);
-            if (url.pathname !== window.location.pathname || url.hash === "") {
+            // The query is part of what tells the two apart: a link changing it asks for another listing - an order, a page, a filter - and only looks like an anchor because it ends on one, and an origin of its own is no anchor of this page either, same path or not
+            if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.search !== window.location.search || url.hash === "") {
                 return;
             }
 
@@ -71,7 +72,8 @@ export default class extends Controller {
             }
 
             event.preventDefault();
-            history.pushState(null, "", url.hash);
+            // The whole address rather than the hash alone: a relative url resolves against the <base href> every page carries, which would leave the address stripped of its own path
+            history.pushState(null, "", url.href);
             target.scrollIntoView({ behavior: "smooth", block: "start" });
         });
     }

@@ -120,7 +120,7 @@ class CollectionItemCrudController extends AbstractCrudController
             ->overrideTemplate('crud/index', '@c975LSite/management/collection_item_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/collection_item_crud_edit.html.twig')
             ->overrideTemplate('crud/new', '@c975LSite/management/collection_item_crud_new.html.twig')
-            // Drag-and-drop reorder (see collection-item-sort.js) only ever sees the rows on the current page - the index is always filtered to a single collection (see index()/createIndexQueryBuilder()), 100 is just a safety margin should one collection ever grow past that
+            // Drag-and-drop reorder (see UiBundle's ea-index-sort.js) only ever sees the rows on the current page - the index is always filtered to a single collection (see index()/createIndexQueryBuilder()), 100 is just a safety margin should one collection ever grow past that
             ->setPaginatorPageSize(100)
         ;
     }
@@ -166,7 +166,7 @@ class CollectionItemCrudController extends AbstractCrudController
         ;
     }
 
-    // Persists a new drag-and-drop order for one collection's items (see collection_item_crud_index.html.twig and assets/js/collection-item-sort.js). The index is already scoped to one collection, but the submitted ids are re-checked against $collectionGroupId here rather than trusted as-is.
+    // Persists a new drag-and-drop order for one collection's items (see collection_item_crud_index.html.twig and UiBundle's assets/js/ea-index-sort.js). The index is already scoped to one collection, but the submitted ids are re-checked against the submitted group here rather than trusted as-is.
     #[AdminRoute(path: '/reorder', options: ['methods' => ['POST']])]
     public function reorder(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -178,15 +178,20 @@ class CollectionItemCrudController extends AbstractCrudController
         }
 
         $ids = array_map(intval(...), (array) ($payload['ids'] ?? []));
-        $itemsById = $this->itemsScopedToCollection($ids, (int) ($payload['collectionGroup'] ?? 0));
+        $itemsById = $this->itemsScopedToCollection($ids, (int) ($payload['group'] ?? 0));
 
+        $positions = [];
         foreach (array_values($ids) as $position => $id) {
-            $itemsById[$id]?->setPosition($position);
+            if (isset($itemsById[$id])) {
+                $itemsById[$id]->setPosition($position);
+                $positions[$id] = $position;
+            }
         }
 
         $entityManager->flush();
 
-        return new JsonResponse(['success' => true]);
+        // What was persisted, so the index shows the new numbers without a reload
+        return new JsonResponse(['positions' => $positions]);
     }
 
     // The submitted items keyed by id - an id belonging to another collection is refused outright rather than silently reordered

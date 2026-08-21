@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-08-21",
+        "description": [
+            {
+                "en": "In dark mode, the small icons laid on the page now show in white instead of staying black on the dark background",
+                "fr": "En mode sombre, les petites icônes posées sur la page s'affichent désormais en blanc au lieu de rester noires sur le fond sombre",
+                "es": "En modo oscuro, los pequeños iconos colocados en la página se muestran ahora en blanco en lugar de quedarse negros sobre el fondo oscuro"
+            },
+            {
+                "en": "The scroll buttons in the corner of the screen now sit above a bar fixed at the bottom of the page, such as the basket bar, instead of hiding behind it",
+                "fr": "Les boutons de défilement dans le coin de l'écran se placent désormais au-dessus d'une barre fixée en bas de page, comme celle du panier, au lieu de se cacher derrière",
+                "es": "Los botones de desplazamiento en la esquina de la pantalla se sitúan ahora por encima de una barra fija en la parte inferior de la página, como la del carrito, en lugar de esconderse detrás"
+            },
+            {
+                "en": "A link that sorts or paginates a list now really reloads it, instead of merely scrolling the page back to the same spot",
+                "fr": "Un lien qui trie ou pagine une liste la recharge désormais vraiment, au lieu de se contenter de faire défiler la page jusqu'au même endroit",
+                "es": "Un enlace que ordena o pagina una lista la recarga ahora realmente, en lugar de limitarse a desplazar la página hasta el mismo sitio"
+            },
+            {
+                "en": "The terms-of-use checkbox on the basket validation now shows its wording instead of a technical label",
+                "fr": "La case d'acceptation des conditions générales d'utilisation, à la validation du panier, affiche désormais son texte au lieu d'un libellé technique",
+                "es": "La casilla de aceptación de las condiciones de uso, al validar el carrito, muestra ahora su texto en lugar de una etiqueta técnica"
+            }
+        ]
+    },
+    {
         "date": "2026-08-19",
         "description": [
             {

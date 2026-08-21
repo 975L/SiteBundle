@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Twig;
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Twig\CopyrightExtension;
+use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
@@ -40,6 +41,10 @@ class MenuExtension
 
     // Per-location memoization of the layout an admin picked, same reasoning as $menuBlocksCache above
     private array $menuStyleCache = [];
+
+    // Per-location memoization of the Menu row itself, keyed by location and holding the null of a location no menu was created for - the two cache entries above are read under keys of their own, so a request finding both cold (right after a menu was saved, or after a deploy) went through findOneByLocation() twice for the same footer, and that query joins the menu's blocks, their slots and everyone's medias
+    /** @var array<string, ?Menu> */
+    private array $menuCache = [];
 
     public function __construct(
         private readonly MenuRepository $menuRepository,
@@ -75,7 +80,7 @@ class MenuExtension
             $item->expiresAfter(null);
             $item->tag(['menus_all']);
 
-            return $this->menuRepository->findOneByLocation($location)?->getStyle() ?? '';
+            return $this->findMenu($location)?->getStyle() ?? '';
         });
     }
 
@@ -86,8 +91,18 @@ class MenuExtension
             $item->expiresAfter(null);
             $item->tag(['menus_all']);
 
-            return $this->menuRepository->findOneByLocation($location)?->getBlocks()->toArray() ?? [];
+            return $this->findMenu($location)?->getBlocks()->toArray() ?? [];
         });
+    }
+
+    // The menu of a location, read at most once per request whatever the two cache entries above ask for
+    private function findMenu(string $location): ?Menu
+    {
+        if (!array_key_exists($location, $this->menuCache)) {
+            $this->menuCache[$location] = $this->menuRepository->findOneByLocation($location);
+        }
+
+        return $this->menuCache[$location];
     }
 
     // Resolves a "menu_link" block's raw target ("page:ID", "page:ID#anchor-blockId" or "route:NAME", see MenuLinkType) into an actual URL - empty string if it no longer resolves (page unpublished/deleted, route no longer registered by a LinkableRouteProviderInterface, or target never set on an incomplete block), so the template can skip rendering it

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, --navbar-height, --reading-max-width, --title-color, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -112,7 +112,10 @@ further down cannot repaint it. `ThemeScopeTest` locks the selector.
 
 Stay out of the theme file: colors and fonts (the admin's), the per-variant section tokens UiBundle
 mixes inside its own `.section--bg-*` rules (declaring them in `:root` collapses the three variants),
-and the tokens JavaScript writes at runtime.
+and the tokens JavaScript writes at runtime. `--bottom-bar-height` stays out too, for a reason of its own: a
+bundle fixing a bar to the bottom of the viewport (ShopBundle's basket bar) declares it on `<body>` with that
+bar's height, and the scroll buttons step over it by reading it — a value in `:root` would raise them on every
+site, bar or not.
 
 `App\Service\ThemeStylesheetProvider`, also scaffolded, contributes the whole `themes/` directory to
 UiBundle's stylesheet registry, so the files are concatenated into the single `bundles/build/site.css`
