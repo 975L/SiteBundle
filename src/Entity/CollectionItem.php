@@ -181,6 +181,11 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
         return $this;
     }
 
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
     public function getFilename(): ?string
     {
         return $this->filename;

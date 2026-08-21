@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.4.6
+
+PHPStan reads its exceptions from one file instead of two
+
+- Removed `phpstan-baseline.neon` in favour of an ignore in `phpstan.dist.neon` (21/08/2026)
+- `layout.html.twig` writes a `<link rel="alternate" hreflang>` per entry of an `alternates` map (language code => absolute url) the rendering template hands it, next to the canonical (21/08/2026)
+- Added `CollectionItem::getUpdatedAt()` (21/08/2026)
+
 ## v8.4.5
 
 A page and a menu read their nested blocks in one go

@@ -1,7 +1,3 @@
-includes:
-    # Errors already there when PHPStan was introduced, to be emptied out over time
-    - phpstan-baseline.neon
-
 parameters:
     level: 5
 
@@ -26,3 +22,6 @@ parameters:
 
         # EasyAdmin declares its fluent setters on the concrete fields, not on FieldInterface
         - '#Call to an undefined method EasyCorp\\Bundle\\EasyAdminBundle\\Contracts\\Field\\FieldInterface::#'
+
+        # The only reader of a HasBlocksInterface entity's $blocks is UiBundle's HasBlocksTrait, analysed with its own package and not with this one
+        - '#Property .*::\$blocks is never read, only written#'

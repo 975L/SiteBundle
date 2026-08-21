@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Tests\Entity;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\File\File;
 
 class CollectionItemTest extends TestCase
 {
@@ -56,6 +57,25 @@ class CollectionItemTest extends TestCase
     public function testToStringReturnsEmptyStringWhenNoTitleIsSet(): void
     {
         $this->assertSame('', (string) new CollectionItem());
+    }
+
+    public function testGetUpdatedAtIsNullUntilAFileIsSet(): void
+    {
+        $this->assertNull(new CollectionItem()->getUpdatedAt());
+    }
+
+    public function testSetFileStampsUpdatedAtSoVichSeesTheEntityAsChanged(): void
+    {
+        $item = new CollectionItem()->setFile(new File(__FILE__));
+
+        $this->assertInstanceOf(\DateTimeImmutable::class, $item->getUpdatedAt());
+    }
+
+    public function testSetFileWithNullLeavesUpdatedAtUntouched(): void
+    {
+        $item = new CollectionItem()->setFile(null);
+
+        $this->assertNull($item->getUpdatedAt());
     }
 
     public function testSettersAreFluentAndGettersReflectTheirValue(): void

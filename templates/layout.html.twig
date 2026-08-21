@@ -138,6 +138,12 @@
                         <meta property="og:url" content="{{ canonicalUrl }}">
                         <link rel="canonical" href="{{ canonicalUrl }}">
                     {% endif %}
+{# The same page written in other languages, when the template rendering it says so: a language code for key, the absolute url of that version for value. A group is read as a whole and every page of it names all of them, itself included - a template handing over its siblings alone would declare a group no search engine keeps #}
+                    {% if alternates is defined and alternates is not empty %}
+                        {% for hreflang, alternateUrl in alternates %}
+                        <link rel="alternate" hreflang="{{ hreflang }}" href="{{ alternateUrl }}">
+                        {% endfor %}
+                    {% endif %}
 {# Favicon #}
                     {% if favicon is defined%}
                         <link rel="icon" type="image/x-icon" href="{{ favicon }}">
