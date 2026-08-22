@@ -29,6 +29,11 @@ main {
     flex: 1 0 auto;
 }
 
+// The page's own title sits in <main> and not in the .container below it, so nothing ever gave it a gutter - on a phone a long title ran into both edges of the screen. 15px is .container's own padding, so the title lines up with everything printed under it
+main > h1 {
+    padding-inline: 15px;
+}
+
 // Its bottom margin merged with the footer's top one before body became a flex container, where flex items no longer collapse margins - without this, every page gains the smaller of the two as extra space. Scoped to the footer directly following main: anything else slotted in between carries its own spacing, and the merge this cancels never happens there
 main:has(+ footer) > :last-child {
     margin-bottom: 0;

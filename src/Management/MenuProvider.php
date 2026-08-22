@@ -11,12 +11,18 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
+use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 
 class MenuProvider implements MenuProviderInterface
 {
+    public function __construct(
+        private readonly ConfigServiceInterface $configService,
+    ) {
+    }
+
     public function getMenuSection(): array
     {
         return [
@@ -34,6 +40,8 @@ class MenuProvider implements MenuProviderInterface
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-file',
                 // Same key as page_crud_index.html.twig/page_crud_edit.html.twig's own explanatory text - one text, reused, not a separate onboarding-only string (see MenuProviderInterface::getMenus())
+                // The bar PageCrudController sets on its own index - what a site publishes is the editor's, and this is the screen they live in
+                'role' => $this->configService->get('site-role-editor'),
                 'description' => 'label.info_page',
             ],
             'menu' => [
@@ -42,6 +50,8 @@ class MenuProvider implements MenuProviderInterface
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-bars',
                 'tier' => 'advanced',
+                // The bar MenuCrudController sets on its own index - where a published page is put is the same hand's work
+                'role' => $this->configService->get('site-role-editor'),
                 'description' => 'label.info_menu',
             ],
             'collection' => [
@@ -49,6 +59,8 @@ class MenuProvider implements MenuProviderInterface
                 'label' => 'label.collections',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-layer-group',
+                // The bar CollectionCrudController sets on its own index
+                'role' => $this->configService->get('site-role-editor'),
                 'description' => 'label.info_collections',
             ],
         ];

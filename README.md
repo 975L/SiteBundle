@@ -58,7 +58,7 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 
 Your `App\Entity\User` must implement `c975L\ConfigBundle\Contract\UserInterface`, `Page::$user` and `CollectionItem::$user` being typed against it. The scaffolded `User` already does; an older one adds the `implements` itself, with no migration and no configuration change.
 
-Optional: [nelmio/security-bundle](https://github.com/nelmio/NelmioSecurityBundle), if installed, has its CSP nonce generator decorated by `SessionNonceGenerator` — keeps the nonce stable for the whole session instead of per-request, so Turbo Drive/Frames/Streams re-executing `<script>` tags from a fetched page doesn't get them blocked by a mismatched nonce. A no-op if the bundle isn't installed.
+Optional: [nelmio/security-bundle](https://github.com/nelmio/NelmioSecurityBundle), if installed, has its CSP nonce generator decorated by `CookieNonceGenerator` — keeps the nonce stable across a visit, held in a signed cookie rather than per-request, so Turbo Drive/Frames/Streams re-executing `<script>` tags from a fetched page doesn't get them blocked by a mismatched nonce. A no-op if the bundle isn't installed.
 
 `layout.html.twig` asks for a `style` nonce as well as a `script` one (Turbo nonces its progress bar's own `<style>` with the same value), which makes `'unsafe-inline'` inert for `style-src` on every public page. Any `style=""` attribute left in one of your own templates is therefore dropped by the browser: move those declarations to a class. Styles written from JavaScript (`el.style.display = '…'`) are unaffected, the CSSOM not being subject to `style-src`.
 
@@ -168,7 +168,7 @@ The layout exposes the following Twig blocks for you to override or extend:
 | `navigation` | Main navigation |
 | `main` | Main content wrapper |
 | `title` | Page `<h1>` title — not printed for a database page whose *Display the page title* switch is unchecked (see [Pages](#pages)) |
-| `flashes` | Flash messages — only rendered for a visitor carrying the session cookie, or a request that started the session itself, reading `app.flashes` being enough to open one |
+| `flashes` | Flash messages — only rendered for a visitor carrying the session cookie, or a request that started the session itself, reading `app.flashes` being enough to open one. Only `success`, `info`, `warning` and `danger` carry a tint: `error` is printed as `danger`, `notice` as `info`, any other label as `info` |
 | `container` | Container div wrapping `content` |
 | `content` | Page-specific content |
 | `share` | Sharing widgets |
@@ -594,7 +594,7 @@ One site, one theme: there is no catalog to pick from, and nothing to switch bet
 | File | From | Holds |
 |---|---|---|
 | `themes/ui.css` | UiBundle | shapes, buttons, forms, alerts, surfaces, sections, hero, card accents — everything the block layer reads |
-| `themes/site.css` | SiteBundle | this site's chrome: navbar, footer, `--scroll-offset`, `--frame-background`, `--back-pull-*` |
+| `themes/site.css` | SiteBundle | this site's chrome: navbar, footer, `--scroll-offset`, `--frame-background` |
 | `themes/social.css`, `themes/shop.css`, … | the bundle that ships them | that bundle's own tokens |
 
 **A bundle ships its file the day it reads its first token, never before.** An empty one placed in a site now would stay empty forever: `assets` is the one scaffold directory never overwritten once the target exists (see ConfigBundle's `ScaffoldInstaller`), so the tokens that bundle grows later would never reach the sites already holding the placeholder. Waiting means the file lands complete on its first install — and a bundle with no file of its own is not an oversight, it simply reads nothing but what `ui.css` already lists.
@@ -607,7 +607,7 @@ The split follows *who reads a token*, not who declares it. Everything UiBundle 
 
 That file is for **shapes and layout** — radii, navbar/footer, section flats (see UiBundle's [colored backgrounds](https://github.com/975L/UiBundle#colored-backgrounds), whose `--section-bg-*` are declared here). Colors and fonts are not in it: they belong to the admin, edited from the backoffice as described above, and no design token should second-guess them. Two other families stay out as well: the per-variant section tokens UiBundle mixes out of each flat's own background inside its `.section--bg-*` rules (`--section-text`, `--section-accent`, `--section-border`, `--section-overlay`…), which declared in `:root` would collapse the three variants into one — retune `--section-bg-*` instead — and the tokens JS writes on the element at runtime (`--image-compare-position`, `--slider-freeflow-vw`).
 
-`--bottom-bar-height` stays out for a reason of its own: it isn't this bundle's to set. A bundle fixing a bar to the bottom of the viewport — ShopBundle's basket bar — declares it on `<body>` with that bar's height, and the scroll buttons step over it by reading it (`a.backTop`, `bottom: calc(25px + var(--bottom-bar-height, 0px))`), neither bundle knowing the other's classes. A value in `:root` would raise them on every site, bar or not.
+`--bottom-bar-height` stays out for a reason of its own: it isn't this bundle's to set. A bundle fixing a bar to the bottom of the viewport — ShopBundle's basket bar — declares it on `<body>` with that bar's height, and UiBundle's scroll buttons step over it by reading it (`a.backTop`, `bottom: calc(25px + var(--bottom-bar-height, 0px))`), neither bundle knowing the other's classes. A value in `:root` would raise them on every site, bar or not.
 
 UiBundle's twelve `--block-accent-*` hues are the one exception to colors staying out: a card's accent field stores a color's name, not a place in the site's palette (see UiBundle's [card accents](https://github.com/975L/UiBundle#card-accents)), so pointing one at `var(--primary)` here folds that hue into the design without a single stored value changing.
 

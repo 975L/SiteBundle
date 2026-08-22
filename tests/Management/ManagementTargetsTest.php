@@ -27,7 +27,7 @@ class ManagementTargetsTest extends ManagementTargetsTestCase
     protected function managementProviders(): iterable
     {
         return [
-            new MenuProvider(),
+            new MenuProvider($this->createConfigService()),
             new SiteShortcutProvider($this->createTranslator(), $this->createConfigService()),
             new SiteEssentialActionProvider(
                 $this->createStub(PageRepository::class),

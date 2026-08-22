@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, flashes, hasPreviousSession, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, flashes, FlashVariantTest, hasPreviousSession, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -62,6 +62,10 @@ every crawler hit, for flashes that cannot exist. **An override of that block in
 a `{% block flashes %}` filled with something else than flashes will not render for an anonymous
 visitor. `FlashesSessionGuardTest` locks it.
 
+Only `success`, `info`, `warning` and `danger` carry a tint. The block maps the labels other bundles
+emit onto them — `error` onto `danger`, `notice` onto `info` — and any other label onto `info`, an
+untinted `alert-*` printing black ink on the dark page's own background. `FlashVariantTest` locks it.
+
 Overriding `header` with more than the navigation inside drops the sticky navbar the stylesheet
 arranges through that `<header>` (see `c975l-site-menus`).
 
@@ -82,8 +86,8 @@ template path being the public contract.**
 The layout asks for a `style` nonce as well as a `script` one, which makes `'unsafe-inline'` inert for
 `style-src` on every public page: **a `style=""` attribute in one of your templates is dropped by the
 browser.** Move those declarations to a class. Styles written from JavaScript are unaffected, the CSSOM
-not being subject to `style-src`. If `nelmio/security-bundle` is installed, `SessionNonceGenerator`
-decorates its nonce generator to keep the nonce stable for the session, so Turbo re-executing a fetched
+not being subject to `style-src`. If `nelmio/security-bundle` is installed, `CookieNonceGenerator`
+decorates its nonce generator to keep the nonce stable across a visit, so Turbo re-executing a fetched
 page's `<script>` is not blocked.
 
 ## Theme
@@ -121,8 +125,8 @@ Stay out of the theme file: colors and fonts (the admin's), the per-variant sect
 mixes inside its own `.section--bg-*` rules (declaring them in `:root` collapses the three variants),
 and the tokens JavaScript writes at runtime. `--bottom-bar-height` stays out too, for a reason of its own: a
 bundle fixing a bar to the bottom of the viewport (ShopBundle's basket bar) declares it on `<body>` with that
-bar's height, and the scroll buttons step over it by reading it — a value in `:root` would raise them on every
-site, bar or not.
+bar's height, and UiBundle's scroll buttons step over it by reading it — a value in `:root` would raise them on
+every site, bar or not.
 
 `App\Service\ThemeStylesheetProvider`, also scaffolded, contributes the whole `themes/` directory to
 UiBundle's stylesheet registry, so the files are concatenated into the single `bundles/build/site.css`
@@ -172,8 +176,11 @@ Both read `site-hosted-by-*` / `site-made-by-*` from the config, and what they s
 `credits_mode()`. `site-preconnect` is a JSON array of external origins to preconnect to; the Matomo
 origin is added on its own.
 
-Matomo and the cookie banner **moved to UiBundle** — `<twig:c975LUi:Analytics:Matomo/>` and
-`<twig:c975LUi:Cookie:Consent/>`, each carrying its own enable guard.
+Matomo, the cookie banner and the scroll buttons **moved to UiBundle** —
+`<twig:c975LUi:Analytics:Matomo/>`, `<twig:c975LUi:Cookie:Consent/>` and
+`<twig:c975LUi:Scroll:Buttons/>`. The first two carry their own enable guard; the buttons point at the
+`id="top"` the layout sets on `<body>` and at the `<span id="bottom">` closing it, so a layout of your
+own keeps both anchors.
 
 ## Do not
 

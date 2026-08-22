@@ -22,21 +22,27 @@
     --icon-filter: brightness(0) invert(1);
     // Lightened off the danger red, which reads at 4.14:1 on the #121212 page - under the 4.5:1 WCAG AA asks of body text, and this message is set at 0.9rem
     --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
-    // Each pale tint is mixed into the page background, keeping its hue as a real dark surface
-    --alert-color: #e0e0e0;
-    --alert-danger-color: #f0a8b0;
-    --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
-    --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
-    --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
-    --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
+    // The alerts are deliberately absent from this palette: an alert warns, and a warning wearing the ambience of the page around it is no longer read as one - so the tints of _variables.scss stand in both modes
     // Only takes effect if the admin filled theme-color-primary/-secondary-dark-mode; otherwise falls back to the same chain --primary/--secondary use in _variables.scss. Can't write "var(--primary)" as the fallback here - since this rule can itself win the cascade for --primary, that would be a self-reference (cyclic = invalid), not a fallback to the light value
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
+    // The ink follows the surface just above: the two colours are read by the backoffice, which publishes what is legible on each (see UiBundle's ThemeVariablesCssListener), and a site that set no dark colour falls back on what its light palette was given. Without this, a pale blue picked for the dark mode carried the white label of the deep blue it replaced - 1.97:1, the first thing an accessibility audit reports
+    --button-color: var(--c975l-button-color-dark-mode, var(--c975l-button-color, #fff));
+    --button-link-color: var(--c975l-button-link-color-dark-mode, var(--c975l-button-link-color, #fff));
+    --button-icon-invert: var(--c975l-button-icon-invert-dark-mode, var(--c975l-button-icon-invert, 1));
+    // The last fallback is this bundle's own, not UiBundle's: its secondary is a light orange carrying black, where the azure below carries black at 4.38:1 - under the 4.5:1 WCAG AA asks of a button's label. The pair goes together, a black label beside a white icon being the same button written twice
+    --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
+    --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
     // --primary itself is left alone, being a surface everywhere else (the primary button, a "primary" flat, the footer band) where the white --button-color needs it dark. Only the three roles where it paints text are lightened, a deep brand blue reading at 1.43:1 on the #121212 page - and an admin who fills theme-color-primary-dark-mode is followed here too, the mix taking whatever --primary resolved to
     --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+
+    // The icon of an alert follows the tint it sits on rather than the page: the background having stayed light, the white silhouette --icon-filter draws on a dark page would be invisible on it
+    .alert {
+        --icon-filter: none;
+    }
 }
 
 // theme-mode = "dark": the admin fixed the site to dark for every visitor. Not scoped to :root, the light palette being declared on ":root, [data-theme]" - any element opening a dark ambience (a UiBundle Card, a band) gets the dark tokens too

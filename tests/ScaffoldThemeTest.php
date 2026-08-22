@@ -28,6 +28,12 @@ class ScaffoldThemeTest extends TestCase
         '--font-family-accent',
     ];
 
+    // Deliberately re-declared with this bundle's own default rather than UiBundle's, whose secondary is a light orange where this one is an azure carrying a white label: the scaffold cannot hold two values for one name, ui.css already offering it
+    private const array RE_DEFAULTED = [
+        '--button-secondary-color',
+        '--button-secondary-icon-invert',
+    ];
+
     // Written by JS on the element itself, never read off :root, so a value here would apply to nothing
     private const array RUNTIME_ONLY = [
         '--image-compare-position',
@@ -40,6 +46,16 @@ class ScaffoldThemeTest extends TestCase
     // Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
     private const array NOT_THEMABLE = [
         '--bottom-bar-height',
+        '--c975l-button-color',
+        '--c975l-button-color-dark-mode',
+        '--c975l-button-icon-invert',
+        '--c975l-button-icon-invert-dark-mode',
+        '--c975l-button-link-color',
+        '--c975l-button-link-color-dark-mode',
+        '--c975l-button-secondary-color',
+        '--c975l-button-secondary-color-dark-mode',
+        '--c975l-button-secondary-icon-invert',
+        '--c975l-button-secondary-icon-invert-dark-mode',
         '--c975l-color-background',
         '--c975l-color-primary',
         '--c975l-color-primary-dark-mode',
@@ -63,7 +79,8 @@ class ScaffoldThemeTest extends TestCase
 
     // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root would collapse the three variants into a single look (the scaffold's own header says as much).
     // Same for the card trio and for "--flip-card-accent", set inside each ".card--accent-*" and ".flip-card-accent-*" rule out of that hue's own token: a value in :root would head every unaccented card with it, and the text color and icon inversion that go with it only hold for the four light hues that carry dark text. What a design retunes is the twelve "--block-accent-*" the scaffold does offer, the hues these four merely point at.
-    // Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included
+    // Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included.
+    // Same for "--rating-icon-on", set inside each ".rating--*" rule out of that sign's own color - golden for a star, red for a heart - where a value in :root would paint the four glyphs alike. A site wanting its own accent on all of them sets "--rating-on", which the scaffold does offer and which wins over the four
     private const array PER_VARIANT = [
         '--section-background',
         '--section-text',
@@ -75,6 +92,7 @@ class ScaffoldThemeTest extends TestCase
         '--card-accent-color',
         '--card-accent-invert',
         '--flip-card-accent',
+        '--rating-icon-on',
         '--block-radius',
         '--block-shadow',
     ];
@@ -107,7 +125,7 @@ class ScaffoldThemeTest extends TestCase
         $compiled = $this->compiledRoot();
         $drifted = [];
         foreach ($this->scaffoldTokens() as $name => $value) {
-            if (isset($compiled[$name]) && $compiled[$name] !== $value) {
+            if (isset($compiled[$name]) && $compiled[$name] !== $value && !in_array($name, self::RE_DEFAULTED, true)) {
                 $drifted[] = sprintf('%s (bundle: "%s", scaffold: "%s")', $name, $compiled[$name], $value);
             }
         }

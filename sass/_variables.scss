@@ -12,8 +12,6 @@
     --alert-info-background: #d9edf7;
     --alert-success-background: #d0e9c6;
     --alert-warning-background: #f9dba7;
-    --back-pull-background-color: #bababa;
-    --back-pull-background-color-hover: #90ee90;
     --black: #000;
     --body-max-width: 1440px;
     --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -30,10 +28,9 @@
     --button-background-success: rgb(40, 167, 69);
     --button-background-success-dark: rgb(40, 167, 69, 0.9);
     --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
-    --button-color: #fff;
-    // White like the primary's label, the pair reading as one button family rather than two
-    --button-secondary-color: #fff;
-    --button-link-color: #fff;
+    // White like the primary's label, the pair reading as one button family rather than two - and read through the same --c975l-* chain the dark mode uses, so the ink the backoffice derives from an admin's own secondary reaches the light mode too. --button-color and --button-link-color are left to UiBundle, which declares that very chain with the same #fff behind it
+    --button-secondary-color: var(--c975l-button-secondary-color, #fff);
+    --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert, 1);
     --card-background: #fff;
     // Admin-editable via ThemeCrudController (site_config, group "theme"), compiled by ThemeVariablesCssListener into --c975l-* custom properties, loaded after this file - the var(..., fallback) indirection lets an admin override win the cascade without editing this file, while every other file keeps consuming --primary/--secondary/--font-family-* as before
     --primary: var(--c975l-color-primary, var(--button-background-primary));

@@ -53,8 +53,4 @@
     /* --footer-margin-top: var(--section-space, clamp(48px, 8vw, 84px)); */
     /* Toward the footer's own text color, not a black wash: a wash only ever darkens, so it disappears on a dark footer band - this contrasts in whichever direction the footer needs */
     /* --footer-link-hover-background: color-mix(in srgb, var(--footer-background) 88%, var(--footer-text)); */
-
-    /* "Pull to go back" strip, on touch devices. */
-    /* --back-pull-background-color: #bababa; */
-    /* --back-pull-background-color-hover: #90ee90; */
 }

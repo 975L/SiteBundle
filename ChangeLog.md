@@ -1,5 +1,31 @@
 # Changelog
 
+## v8.5.0
+
+The two buttons a long page is walked with move to UiBundle
+
+- The layout renders `Email:DebugPreview` above the flashes, an email held back by the debug mode being shown whatever sent it (22/08/2026)
+- The backTop/pullDown buttons and the smooth anchor scrolling move to UiBundle's `scrollButtons` controller (22/08/2026) [BC-Break]
+- `layout.html.twig` renders `<twig:c975LUi:Scroll:Buttons/>` in their place (22/08/2026)
+- `basic.js` loses its three scrolling methods, keeping `htmlBoilerPlate()`, `externalLinks()` and `nl2br()` (22/08/2026)
+- `sass/_addons.scss` loses the buttons' rules and the `.fade-in`/`.fade-out` classes (22/08/2026)
+- `sass/_variables.scss` loses the `--back-pull-*` tokens (22/08/2026)
+- Removed `public/images/up-arrow.png` and `down-arrow.png` (22/08/2026)
+- The scaffold's `themes/site.css` and the README drop the `--back-pull-*` tokens (22/08/2026)
+- `SmoothAnchorScrollTest` and `BottomBarOffsetTest` moved to UiBundle with what they guard (22/08/2026)
+- `c975l/core-bundle` required in `^1.14` (22/08/2026)
+- The dark ambience takes the button inks derived from its own palette, falling back on the light ones (22/08/2026)
+- `--button-secondary-color` and `--button-secondary-icon-invert` read the `--c975l-*` chain in both modes (22/08/2026)
+- The dark ambience no longer restates the alerts, the tints of `_variables.scss` standing in both modes (22/08/2026)
+- An alert's icon keeps its dark silhouette, the tint it sits on having stayed light (22/08/2026)
+- A flash label outside the four tinted variants falls back on a tinted one, an unknown one on `info` (22/08/2026)
+- The layout's `<h1>` takes `.container`'s own 15px gutter, no longer running into both edges on a phone (22/08/2026)
+- Each dashboard entry of `MenuProvider` names `site-role-editor`, the bar its own crud screen states (22/08/2026)
+- `MenuProvider` takes `ConfigServiceInterface` (22/08/2026) [BC-Break]
+- Added `FlashVariantTest` (22/08/2026)
+- `MenuProviderTest` covers the role each entry names (22/08/2026)
+- The README and the layout skill state the flash variants and the scroll buttons' move (22/08/2026)
+
 ## v8.4.7
 
 The layout no longer opens a session to read the flashes

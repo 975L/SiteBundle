@@ -192,8 +192,6 @@ summary {
   --alert-info-background: #d9edf7;
   --alert-success-background: #d0e9c6;
   --alert-warning-background: #f9dba7;
-  --back-pull-background-color: #bababa;
-  --back-pull-background-color-hover: #90ee90;
   --black: #000;
   --body-max-width: 1440px;
   --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -207,9 +205,8 @@ summary {
   --button-background-success: rgb(40, 167, 69);
   --button-background-success-dark: rgb(40, 167, 69, 0.9);
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
-  --button-color: #fff;
-  --button-secondary-color: #fff;
-  --button-link-color: #fff;
+  --button-secondary-color: var(--c975l-button-secondary-color, #fff);
+  --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert, 1);
   --card-background: #fff;
   --primary: var(--c975l-color-primary, var(--button-background-primary));
   --secondary: var(--c975l-color-secondary, var(--button-background-secondary));
@@ -311,18 +308,20 @@ summary {
   --input-icon-filter: invert(1);
   --icon-filter: brightness(0) invert(1);
   --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
-  --alert-color: #e0e0e0;
-  --alert-danger-color: #f0a8b0;
-  --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
-  --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
-  --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
-  --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
   --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
   --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
+  --button-color: var(--c975l-button-color-dark-mode, var(--c975l-button-color, #fff));
+  --button-link-color: var(--c975l-button-link-color-dark-mode, var(--c975l-button-link-color, #fff));
+  --button-icon-invert: var(--c975l-button-icon-invert-dark-mode, var(--c975l-button-icon-invert, 1));
+  --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
+  --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
   --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
   --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
   --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
   --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+}
+[data-theme=dark] .alert {
+  --icon-filter: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -346,18 +345,21 @@ summary {
     --input-icon-filter: invert(1);
     --icon-filter: brightness(0) invert(1);
     --input-invalid-text-color: color-mix(in srgb, var(--button-background-danger) 55%, #fff);
-    --alert-color: #e0e0e0;
-    --alert-danger-color: #f0a8b0;
-    --alert-danger-background: color-mix(in srgb, #f2dede 20%, var(--background));
-    --alert-info-background: color-mix(in srgb, #d9edf7 20%, var(--background));
-    --alert-success-background: color-mix(in srgb, #d0e9c6 20%, var(--background));
-    --alert-warning-background: color-mix(in srgb, #f9dba7 20%, var(--background));
     --primary: var(--c975l-color-primary-dark-mode, var(--c975l-color-primary, var(--button-background-primary)));
     --secondary: var(--c975l-color-secondary-dark-mode, var(--c975l-color-secondary, var(--button-background-secondary)));
+    --button-color: var(--c975l-button-color-dark-mode, var(--c975l-button-color, #fff));
+    --button-link-color: var(--c975l-button-link-color-dark-mode, var(--c975l-button-link-color, #fff));
+    --button-icon-invert: var(--c975l-button-icon-invert-dark-mode, var(--c975l-button-icon-invert, 1));
+    --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
+    --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
     --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
     --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+  }
+  :root:not([data-theme]) .alert,
+  [data-theme]:not([data-theme=light]) .alert {
+    --icon-filter: none;
   }
 }
 /* GENERAL */
@@ -386,6 +388,10 @@ body {
 
 main {
   flex: 1 0 auto;
+}
+
+main > h1 {
+  padding-inline: 15px;
 }
 
 main:has(+ footer) > :last-child {
@@ -560,42 +566,6 @@ section {
 .external {
   padding: 0 13px 0 0;
   background: url("/bundles/c975lsite/images/external.png") no-repeat scroll center right;
-}
-
-a.pullDown,
-a.backTop {
-  display: none;
-  width: 60px;
-  height: 60px;
-  text-indent: -9999px;
-  position: fixed;
-  z-index: 999;
-  bottom: calc(25px + var(--bottom-bar-height, 0px));
-  border-radius: 30px;
-  opacity: 0.6;
-}
-
-a.backTop {
-  right: 25px;
-  background: var(--back-pull-background-color) url("/bundles/c975lsite/images/up-arrow.png") no-repeat center 40%;
-}
-
-a.pullDown {
-  left: 25px;
-  background: var(--back-pull-background-color) url("/bundles/c975lsite/images/down-arrow.png") no-repeat center 40%;
-}
-
-a:hover.backTop,
-a:hover.pullDown {
-  background-color: var(--back-pull-background-color-hover);
-}
-
-.fade-in {
-  animation: fadeIn 1s forwards;
-}
-
-.fade-out {
-  animation: fadeOut 1s forwards;
 }
 
 /* MENU */

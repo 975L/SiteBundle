@@ -1,5 +1,35 @@
 [
     {
+        "date": "2026-08-22",
+        "description": [
+            {
+                "en": "In dark mode, the wording on the buttons now takes the colors chosen for that mode, instead of staying in the light mode's ink and becoming unreadable",
+                "fr": "En mode sombre, le texte des boutons prend désormais les couleurs choisies pour ce mode, au lieu de garder celles du mode clair et de devenir illisible",
+                "es": "En modo oscuro, el texto de los botones toma ahora los colores elegidos para ese modo, en lugar de conservar los del modo claro y volverse ilegible"
+            },
+            {
+                "en": "Alert messages keep their bright colors in dark mode, so a warning still stands out from the page around it",
+                "fr": "Les messages d'alerte gardent leurs couleurs vives en mode sombre, pour qu'un avertissement reste bien repérable sur la page",
+                "es": "Los mensajes de alerta conservan sus colores vivos en modo oscuro, para que un aviso siga destacando sobre la página"
+            },
+            {
+                "en": "Every message shown after an action now appears on a colored background, whichever part of the site sent it",
+                "fr": "Tout message affiché après une action apparaît désormais sur un fond coloré, quelle que soit la partie du site qui l'a émis",
+                "es": "Todo mensaje mostrado tras una acción aparece ahora sobre un fondo de color, sea cual sea la parte del sitio que lo haya emitido"
+            },
+            {
+                "en": "On a phone, a page title no longer touches both edges of the screen: it now lines up with the text below it",
+                "fr": "Sur un téléphone, le titre d'une page ne touche plus les deux bords de l'écran : il s'aligne désormais sur le texte qui le suit",
+                "es": "En un teléfono, el título de una página ya no toca ambos bordes de la pantalla: ahora se alinea con el texto que aparece debajo"
+            },
+            {
+                "en": "A user with the editor role now sees Pages, Menus and Collections in the dashboard menu, instead of having to know their addresses",
+                "fr": "Un utilisateur ayant le rôle éditeur voit désormais Pages, Menus et Collections dans le menu du tableau de bord, au lieu de devoir en connaître les adresses",
+                "es": "Un usuario con el rol de editor ve ahora Páginas, Menús y Colecciones en el menú del panel, en lugar de tener que conocer sus direcciones"
+            }
+        ]
+    },
+    {
         "date": "2026-08-21",
         "description": [
             {

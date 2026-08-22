@@ -13,8 +13,6 @@
   --alert-info-background: #d9edf7;
   --alert-success-background: #d0e9c6;
   --alert-warning-background: #f9dba7;
-  --back-pull-background-color: #bababa;
-  --back-pull-background-color-hover: #90ee90;
   --black: #000;
   --body-max-width: 1440px;
   --box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
@@ -28,9 +26,8 @@
   --button-background-success: rgb(40, 167, 69);
   --button-background-success-dark: rgb(40, 167, 69, 0.9);
   --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);
-  --button-color: #fff;
-  --button-secondary-color: #fff;
-  --button-link-color: #fff;
+  --button-secondary-color: var(--c975l-button-secondary-color, #fff);
+  --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert, 1);
   --card-background: #fff;
   --primary: var(--c975l-color-primary, var(--button-background-primary));
   --secondary: var(--c975l-color-secondary, var(--button-background-secondary));

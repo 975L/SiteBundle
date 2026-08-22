@@ -205,9 +205,8 @@
 {# Block body #}
         {% block body %}
             {% if display != 'pdf' %}
-{# backTop/pullDown bookmarks #}
-                <a href="{{ app.request.uri }}#top" class="backTop" aria-label="Top">Top</a>
-                <a href="{{ app.request.uri }}#bottom" class="pullDown" aria-label="Bottom"></a>
+{# The two buttons a long page is walked with, pointing at the body's own "top" and at the "bottom" closing it. UiBundle owns them, styles included, so a site running without this layout gets them too #}
+                <twig:c975LUi:Scroll:Buttons />
             {% endif %}
 {# Header #}
             {% block header %}
@@ -231,12 +230,19 @@
                             </h1>
                         {% endif %}
                     {% endblock %}
+{# What the email debug mode held back instead of sending, shown on whichever page follows the send - the component carries its own guard, and prints nothing for anyone else #}
+                    {% if display != 'pdf' %}
+                        <twig:c975LUi:Email:DebugPreview />
+                    {% endif %}
 {# Only a visitor carrying the session cookie, or a request that started the session itself, can hold a flash: reading app.flashes starts the session, and it carries no such guard of its own #}
                     {% if display != 'pdf' and (app.request.hasPreviousSession or (app.session and app.session.started)) %}
                         {% block flashes %}
                             {% for label, messages in app.flashes %}
+{# Only the four tinted variants carry a background: any other label would print black ink on the dark page's own background, so an alias is mapped onto its tint and anything else falls back on "info" #}
+                                {% set variant = { 'error': 'danger', 'notice': 'info' }[label]|default(label) %}
+                                {% set variant = variant in ['success', 'info', 'warning', 'danger'] ? variant : 'info' %}
                                 {% for message in messages %}
-                                    <div class="flash alert alert-{{ label }} text-center" role="alert">
+                                    <div class="flash alert alert-{{ variant }} text-center" role="alert">
                                         {{ message|raw|nl2br }}
                                     </div>
                                 {% endfor %}

@@ -13,12 +13,6 @@ export default class extends Controller {
         // Execute immediately for Turbo compatibility
         this.htmlBoilerPlate();
         this.externalLinks();
-        this.smoothAnchorScroll();
-        // Also listen for scroll events
-        window.addEventListener("scroll", () => {
-            this.backTopButton();
-            this.pullDownButton();
-        });
     }
 
     // h5bp - Avoids console errors
@@ -52,72 +46,8 @@ export default class extends Controller {
         });
     }
 
-    // Scrolled here rather than by Turbo, which treats a same-page "#anchor" as a full visit
-    smoothAnchorScroll() {
-        this.element.addEventListener("click", (event) => {
-            const link = event.target.closest('a[href*="#"]');
-            if (!link) {
-                return;
-            }
-
-            const url = new URL(link.href, window.location.href);
-            // The query is part of what tells the two apart: a link changing it asks for another listing - an order, a page, a filter - and only looks like an anchor because it ends on one, and an origin of its own is no anchor of this page either, same path or not
-            if (url.origin !== window.location.origin || url.pathname !== window.location.pathname || url.search !== window.location.search || url.hash === "") {
-                return;
-            }
-
-            const target = document.getElementById(url.hash.slice(1));
-            if (!target) {
-                return;
-            }
-
-            event.preventDefault();
-            // The whole address rather than the hash alone: a relative url resolves against the <base href> every page carries, which would leave the address stripped of its own path
-            history.pushState(null, "", url.href);
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-        });
-    }
-
     // Replaces carriage returns by <br>
     nl2br(str) {
         return str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, "$1<br>$2");
-    }
-
-    // Displays/Hides the backTop button
-    backTopButton() {
-        const amountScrolled = 300;
-        const backTop = document.querySelector("a.backTop");
-
-        if (backTop) {
-            // Displays the backTop button
-            if (window.scrollY > amountScrolled) {
-                backTop.style.display = "block";
-                backTop.classList.remove("fade-out");
-                backTop.classList.add("fade-in");
-            // Hides the backTop button
-            } else {
-                backTop.classList.remove("fade-in");
-                backTop.classList.add("fade-out");
-            }
-        }
-    }
-
-    // Displays/Hides the pullDown button
-    pullDownButton() {
-        const amountScrolled = 300;
-        const pullDown = document.querySelector("a.pullDown");
-
-        if (pullDown) {
-            // Displays the pullDown button
-            if (window.scrollY + window.innerHeight + amountScrolled < document.body.scrollHeight) {
-                pullDown.style.display = "block";
-                pullDown.classList.remove("fade-out");
-                pullDown.classList.add("fade-in");
-            // Hides the pullDown button
-            } else {
-                pullDown.classList.remove("fade-in");
-                pullDown.classList.add("fade-out");
-            }
-        }
     }
 }
