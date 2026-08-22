@@ -231,8 +231,8 @@
                             </h1>
                         {% endif %}
                     {% endblock %}
-{# Flashes #}
-                    {% if display != 'pdf' %}
+{# Only a visitor carrying the session cookie, or a request that started the session itself, can hold a flash: reading app.flashes starts the session, and it carries no such guard of its own #}
+                    {% if display != 'pdf' and (app.request.hasPreviousSession or (app.session and app.session.started)) %}
                         {% block flashes %}
                             {% for label, messages in app.flashes %}
                                 {% for message in messages %}

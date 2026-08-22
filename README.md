@@ -168,7 +168,7 @@ The layout exposes the following Twig blocks for you to override or extend:
 | `navigation` | Main navigation |
 | `main` | Main content wrapper |
 | `title` | Page `<h1>` title — not printed for a database page whose *Display the page title* switch is unchecked (see [Pages](#pages)) |
-| `flashes` | Flash messages |
+| `flashes` | Flash messages — only rendered for a visitor carrying the session cookie, or a request that started the session itself, reading `app.flashes` being enough to open one |
 | `container` | Container div wrapping `content` |
 | `content` | Page-specific content |
 | `share` | Sharing widgets |

@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.4.7
+
+The layout no longer opens a session to read the flashes
+
+- The flashes block is only read for a visitor carrying the session cookie, or a request that started the session itself (21/08/2026)
+- Added `FlashesSessionGuardTest` (22/08/2026)
+- The README and the layout skill state the flashes block's session guard (22/08/2026)
+
 ## v8.4.6
 
 PHPStan reads its exceptions from one file instead of two

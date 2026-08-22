@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, summarySocialNetwork, display mode, theme, themes/site.css, ScaffoldThemeTest, flashes, hasPreviousSession, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -54,6 +54,13 @@ its url — the layout only reads that row for what the template left unsaid.
 {% block share %}{{ parent() }}{# added content #}{% endblock %}
 {% block share %}{% endblock %}   {# disabled #}
 ```
+
+`flashes` is the one block the layout guards: it is only rendered for a visitor carrying the session
+cookie, or for a request that started the session itself. Reading `app.flashes` is enough to open a
+session — and a connection to its store — so an unguarded read costs one on every anonymous page and
+every crawler hit, for flashes that cannot exist. **An override of that block inherits the guard**, and
+a `{% block flashes %}` filled with something else than flashes will not render for an anonymous
+visitor. `FlashesSessionGuardTest` locks it.
 
 Overriding `header` with more than the navigation inside drops the sticky navbar the stylesheet
 arranges through that `<header>` (see `c975l-site-menus`).
@@ -175,6 +182,7 @@ Matomo and the cookie banner **moved to UiBundle** — `<twig:c975LUi:Analytics:
 - **Do not replace the scaffolded layout without defining `container` and reading `title`/`robots`** —
   the database pages render empty, silently.
 - **Do not write a `style=""` attribute** in a template. The nonce makes it inert.
+- **Do not read `app.flashes` outside the layout's guard.** The read opens a session for every visitor.
 - **Do not import a stylesheet from `assets/app.js`.** CSP blocks the whole entrypoint.
 - **Do not declare a theme token on `:root` alone.** Use `:root, [data-theme]`.
 - **Do not set colors or fonts in a theme file** — they belong to the admin, in the config screen.
