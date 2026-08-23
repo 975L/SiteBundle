@@ -19,7 +19,7 @@ use c975L\SiteBundle\Entity\Menu;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// This bundle's guided projects, continuing ConfigBundle's order sequence and picking up at 50, same as SiteEssentialActionProvider - and stopping at 80, UiBundle opening its own sequence at 90. Nine projects in that range means a step of 3, not the 10 the neighbouring bundles use: an order shared with another provider's leaves their sequence to the order the providers happen to be registered in (see GuidedProjectBuilder), which is exactly what "order" exists to decide. They are ordered like the sidebar itself reads (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks, and the projects sharing a screen follow each other in the order a page lives: created, made findable, checked, then reworked. Only the opening step of each project carries an url: from there the parcours walks the screen the user is on, each step highlighting the button or the field they are meant to use next - a button they click themselves, which brings the panel back on the very step that pointed at it (see guided-project.js resume())
+// This bundle's guided projects, running the 2000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They are ordered like the sidebar itself reads (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks, and the projects sharing a screen follow each other in the order a page lives: created, made findable, checked, then reworked. Only the opening step of each project carries an url: from there the parcours walks the screen the user is on, each step highlighting the button or the field they are meant to use next - a button they click themselves, which brings the panel back on the very step that pointed at it (see guided-project.js resume())
 class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
 {
     public function __construct(
@@ -51,7 +51,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_collection',
             'description' => 'description.guided_project_collection',
             'translation_domain' => 'site',
-            'order' => 50,
+            'order' => 2010,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -98,7 +98,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_page_creation',
             'description' => 'description.guided_project_page_creation',
             'translation_domain' => 'site',
-            'order' => 53,
+            'order' => 2020,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -157,7 +157,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_page_seo',
             'description' => 'description.guided_project_page_seo',
             'translation_domain' => 'site',
-            'order' => 56,
+            'order' => 2030,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -217,7 +217,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_page_health',
             'description' => 'description.guided_project_page_health',
             'translation_domain' => 'site',
-            'order' => 59,
+            'order' => 2040,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -265,7 +265,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_page_revision',
             'description' => 'description.guided_project_page_revision',
             'translation_domain' => 'site',
-            'order' => 62,
+            'order' => 2050,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -309,7 +309,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_trash',
             'description' => 'description.guided_project_trash',
             'translation_domain' => 'site',
-            'order' => 65,
+            'order' => 2060,
             // Deleting only moves a page to the trash, which an editor may do - emptying it or pulling a page back out is "site-role-admin" (see PageCrudController::restore()/deletePermanently()), so the whole parcours takes that role rather than ending on an access-denied page
             'role' => $this->configService->get('site-role-admin'),
             'steps' => [
@@ -355,7 +355,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_content_export',
             'description' => 'description.guided_project_content_export',
             'translation_domain' => 'site',
-            'order' => 68,
+            'order' => 2070,
             // Same role the "exportSelection" batch action is given, see PageCrudController::configureActions()
             'role' => $this->configService->get('site-role-admin'),
             'steps' => [
@@ -392,7 +392,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_page_menu',
             'description' => 'description.guided_project_page_menu',
             'translation_domain' => 'site',
-            'order' => 71,
+            'order' => 2080,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [
@@ -440,7 +440,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             'label' => 'label.guided_project_footer',
             'description' => 'description.guided_project_footer',
             'translation_domain' => 'site',
-            'order' => 74,
+            'order' => 2090,
             'role' => $this->configService->get('site-role-editor'),
             'steps' => [
                 [

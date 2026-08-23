@@ -63,17 +63,17 @@ class SiteGuidedProjectProviderTest extends TestCase
             ['site-collection', 'site-page-creation', 'site-page-seo', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-footer'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([50, 53, 56, 59, 62, 65, 68, 71, 74], array_column($projects, 'order'));
+        $this->assertSame([2010, 2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090], array_column($projects, 'order'));
     }
 
-    // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's range opens after ConfigBundle's and has to stop before UiBundle's 90
+    // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
     public function testEveryOrderStaysWithinThisBundlesReservedRange(): void
     {
         $orders = array_column($this->createProvider()->getGuidedProjects(), 'order', 'slug');
 
         foreach ($orders as $slug => $order) {
-            $this->assertGreaterThanOrEqual(50, $order, sprintf('Project "%s" reaches into ConfigBundle\'s range', $slug));
-            $this->assertLessThanOrEqual(80, $order, sprintf('Project "%s" reaches into UiBundle\'s range, whose own sequence opens at 90', $slug));
+            $this->assertGreaterThanOrEqual(2000, $order, sprintf('Project "%s" reaches below this bundle\'s own 2000 block', $slug));
+            $this->assertLessThanOrEqual(2999, $order, sprintf('Project "%s" reaches into UiBundle\'s own 3000 block', $slug));
         }
 
         $this->assertSameSize($orders, array_unique($orders), 'Two projects sharing an order leave their sequence to chance');

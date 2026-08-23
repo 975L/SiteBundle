@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.6.1
+
+The guided projects move onto the 2000 block reserved for this bundle
+
+- The nine guided projects run at 2010 to 2090, the 2000 block `GuidedProjectProviderInterface` reserves them (23/08/2026)
+- Their header reads the range from that docblock instead of restating it (23/08/2026)
+- `SiteGuidedProjectProviderTest` locks the new orders and the 2000-2999 bounds (23/08/2026)
+
 ## v8.6.0
 
 The layout extends core-bundle's instead of writing its own document
