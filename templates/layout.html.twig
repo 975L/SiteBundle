@@ -1,282 +1,41 @@
-{% if config('site-name') != null %}
-    {% set site = config('site-name') %}
-{% endif %}
-{% if config('site-author') != null %}
-    {% set author = config('site-author') %}
-{% endif %}
-{% if site_media('logo') is not null %}
-    {% set logo = absolute_url(asset('/' ~ site_media('logo').filename)) ~ (site_media('logo').updatedAt ? '?v=' ~ site_media('logo').updatedAt.timestamp : '') %}
-{% endif %}
-{% if site_media('favicon') is not null %}
-    {% set favicon = absolute_url(asset('/' ~ site_media('favicon').filename)) ~ (site_media('favicon').updatedAt ? '?v=' ~ site_media('favicon').updatedAt.timestamp : '') %}
-{% endif %}
-{% if site_media('apple-touch-icon') is not null %}
-    {% set appleTouchIcon = absolute_url(asset('/' ~ site_media('apple-touch-icon').filename)) ~ (site_media('apple-touch-icon').updatedAt ? '?v=' ~ site_media('apple-touch-icon').updatedAt.timestamp : '') %}
+{# The site foundation's page shell. UiBundle's layout is the single source for the <head> and the page skeleton; this one adds only what having Pages, menus and a navbar brings, so nothing is written twice and no tag can drift between the two #}
+{# The sets below run before the parent (Twig compiles a child's body ahead of the parent's yield) and translate this bundle's entities into the plain variables the parent reads - it knows nothing of Page, Menu or Navbar #}
+{% extends '@c975LUi/layout.html.twig' %}
+
+{# The Page's own share image opens the parent's cascade, ahead of the url's row, the site's default og-image and the logo. Resolved here rather than by the template rendering the Page, which would otherwise have to know the whole cascade #}
+{% if (ogImage is not defined or ogImage == null) and page is defined and page.ogImage is not null %}
+    {% set ogImageMedia = page.ogImage %}
 {% endif %}
 
-{# Copyright #}
-{% set copyright = site_copyright() %}
-
-{# What the url says of itself when no entity carries it - a listing, a filtered listing, a tool page (see ConfigBundle's UrlMetadata). A Page has already stated its own title and summary from its columns by the time this runs, the template rendering it being executed first, so filling only what is still unsaid leaves every Page untouched #}
-{% set urlMetadata = url_metadata() %}
-{% if urlMetadata is not null %}
-    {% if title is not defined or title == '' %}
-        {% set title = urlMetadata.title %}
-    {% endif %}
-    {% if summarySocialNetwork is not defined or summarySocialNetwork is empty %}
-        {% set summarySocialNetwork = urlMetadata.summarySocialNetwork %}
-    {% endif %}
+{# A Page says in a column whether its title is printed as the page heading; templates with no Page behind them keep printing theirs #}
+{% if page is defined %}
+    {% set headingDisplayed = page.isTitleDisplayed %}
 {% endif %}
 
-{# ogImage: page-specific override, then the url's own row, then the site's default og-image, then the logo. The row comes after the Page and not before, unlike the title and the summary above: a Page's share image is resolved here rather than by the template rendering it, so putting the row first would take it away from it #}
-{# The media is kept alongside its url, and not only the url: the dimensions and the alternative text a share displays with the thumbnail are columns of the media library, which an url alone does not say. Null when the rendering template set the image itself - it is then the only one to know what it shows, and it says it under "ogImageAlt" #}
-{% set ogImageMedia = null %}
-{% if ogImage is not defined or ogImage == null %}
-    {% if page is defined and page.ogImage is not null %}
-        {% set ogImageMedia = page.ogImage %}
-    {% elseif urlMetadata is not null and urlMetadata.ogImage is not null %}
-        {% set ogImageMedia = urlMetadata.ogImage %}
-    {% elseif site_media('og-image') is not null %}
-        {% set ogImageMedia = site_media('og-image') %}
-    {% elseif site_media('logo') is not null %}
-        {% set ogImageMedia = site_media('logo') %}
-    {% endif %}
-
-    {# The url written once for the four of them, where each branch used to repeat it #}
-    {% if ogImageMedia is not null %}
-        {% set ogImage = absolute_url(asset('/' ~ ogImageMedia.filename)) ~ (ogImageMedia.updatedAt ? '?v=' ~ ogImageMedia.updatedAt.timestamp : '') %}
-    {% endif %}
+{# A navbar taken out of the flow needs the body to make room for it, on every page of the site. Appended rather than assigned: a child layout's own set runs before this one, so assigning would silently drop whatever an app declared #}
+{% if config('site-navbar-position') == 'fixed' %}
+    {% set bodyClasses = bodyClasses|default('') ~ 'navbar-fixed ' %}
 {% endif %}
 
-{# pageTitle #}
-{% if title is defined and title != '' %}
-    {% set pageTitle = title %}
-{% endif %}
-{% if site is defined %}
-    {% if pageTitle is defined %}
-        {% set pageTitle = pageTitle ~ ' - ' ~ site %}
-    {% else %}
-        {% set pageTitle = site %}
-    {% endif %}
-{% endif %}
+{# This bundle's own Stimulus controller, added next to the ones the parent and any app layout declare #}
+{% set bodyControllers = (bodyControllers|default('') ~ ' basic')|trim %}
 
-{# Display #}
-{% if display is not defined %}
-    {% set display = 'html' %}
-{% endif %}
-
-{# Locale #}
-{% if locale is not defined %}
-    {% set locale = app.request.locale %}
-{% endif %}
-
-<!DOCTYPE html>
-{# "auto" leaves data-theme unset, so prefers-color-scheme takes over #}
-<html lang="{{ locale }}"{% if config('theme-mode') in ['light', 'dark'] %} data-theme="{{ config('theme-mode') }}"{% endif %}>
-{# Head #}
-    <head>
-        {% block head %}
-            {% block meta %}
-                <meta charset="utf-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-{# The comma is not optional: the viewport content is a comma-separated list, so "width=device-width initial-scale=1.0" is one single unparseable token and the whole directive is dropped #}
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <meta name="format-detection" content="telephone=no">
-{# Turbo reads this to nonce the inline tags it re-executes, which the CSP would otherwise block. It nonces its progress bar's own <style> with the very same value (see ProgressBar.createStylesheetElement), so the value here has to be one style-src carries as well as script-src - hence both being asked for, right here and in this order: NelmioSecurityBundle mints one nonce per response (ContentSecurityPolicyListener::doGetNonce caches it) and stamps it into whichever directive was asked, so two adjacent calls hand back the same string and put it in both. Ask for script alone and Turbo's stylesheet is rejected on every page whose style-src happened to be nonced by something else #}
-                {% set cspNonce = csp_nonce('script') %}
-                {% set cspNonce = csp_nonce('style') %}
-                <meta name="csp-nonce" content="{{ cspNonce }}">
-{# Base #}
-                <base href="{{ app.request.getSchemeAndHttpHost() ~ app.request.getBaseURL() ~ '/' }}">
-{# Display for html #}
-                {% if display != 'pdf' %}
-{# "noindex, follow" when a Page has been marked as non-indexable (see pages/page.html.twig and Page::isIndexable()), and on every error page: "status_code" is only ever set by Symfony's error renderer, and a 404/410/500 rendered with the site's own layout would otherwise inherit the "index, follow" default and invite search engines to index it. "follow" is kept in both cases so the links the page carries still pass on. Defaulted here rather than set in each Exception template, so no error template can forget it - not the six this bundle ships, not the six more its scaffold installs, not one an app adds later #}
-                    <meta name="robots" content="{{ robots|default(status_code is defined and status_code >= 400 ? 'noindex, follow' : 'index, follow') }}">
-{# Site #}
-                    {% if site is defined %}
-                        <meta property="og:site_name" content="{{ site }}">
-                    {% endif %}
-{# Author #}
-                    {% if author is defined %}
-                        <meta name="author" content="{{ author }}">
-                    {% endif %}
-{# Copyright #}
-                    {% if copyright is defined %}
-                        <meta name="copyright" content="{{ copyright }}">
-                    {% endif %}
-{# Description #}
-{# A Page carries it in its own column, a template rendered by an app or a satellite bundle states it itself - under this name and no other, UiBundle's layout having been aligned on it in 08/2026 #}
-                    {% if summarySocialNetwork is defined and summarySocialNetwork is not empty %}
-                        <meta name="description" content="{{ summarySocialNetwork|plain_text }}">
-                        <meta property="og:description" content="{{ summarySocialNetwork|plain_text|slice(0,150) }}">
-                    {% endif %}
-{# Title #}
-                    {% if pageTitle is defined %}
-                        <title>{{ pageTitle }}</title>
-                        <meta name="title" content="{{ pageTitle }}">
-                        <meta property="og:title" content="{{ pageTitle }}">
-                    {% endif %}
-{# Type #}
-                    <meta property="og:type" content="website">
-{# Image #}
-                    {% if ogImage is defined %}
-                        <meta property="og:image" content="{{ ogImage }}">
-{# Stated only where they are known - the media library holds them as columns: a network reading them keeps the thumbnail's room before it is loaded, and guessing them would be worse than saying nothing. The intrinsic pair and not the raw columns, which an admin may have typed as a css length ("50%", "auto"), where Open Graph only reads a bare pixel count #}
-                        {% if ogImageMedia is not null and ogImageMedia.intrinsicWidth and ogImageMedia.intrinsicHeight %}
-                            <meta property="og:image:width" content="{{ ogImageMedia.intrinsicWidth }}">
-                            <meta property="og:image:height" content="{{ ogImageMedia.intrinsicHeight }}">
-                        {% endif %}
-{# What the image shows, for whoever is read the share rather than shown it. The template that set the image itself is the only one that knows, hence the "ogImageAlt" it may set next to it - otherwise it is the media's own alternative text #}
-                        {% set ogImageAltText = ogImageAlt is defined and ogImageAlt is not empty ? ogImageAlt : (ogImageMedia is not null ? ogImageMedia.alt : null) %}
-                        {% if ogImageAltText %}
-                            <meta property="og:image:alt" content="{{ ogImageAltText }}">
-                        {% endif %}
-                    {% endif %}
-{# Url #}
-                    {% set canonicalUrl = canonical_url() %}
-                    {% if canonicalUrl %}
-                        <meta property="og:url" content="{{ canonicalUrl }}">
-                        <link rel="canonical" href="{{ canonicalUrl }}">
-                    {% endif %}
-{# The same page written in other languages, when the template rendering it says so: a language code for key, the absolute url of that version for value. A group is read as a whole and every page of it names all of them, itself included - a template handing over its siblings alone would declare a group no search engine keeps #}
-                    {% if alternates is defined and alternates is not empty %}
-                        {% for hreflang, alternateUrl in alternates %}
-                        <link rel="alternate" hreflang="{{ hreflang }}" href="{{ alternateUrl }}">
-                        {% endfor %}
-                    {% endif %}
-{# Favicon #}
-                    {% if favicon is defined%}
-                        <link rel="icon" type="image/x-icon" href="{{ favicon }}">
-                    {% endif %}
-{# Apple-touch-icon #}
-                    {% if appleTouchIcon is defined%}
-                        <link rel="apple-touch-icon" href="{{ appleTouchIcon }}">
-                        <link rel="apple-touch-icon-precomposed" href="{{ appleTouchIcon }}">
-                    {% endif %}
-{# End display for html #}
-                {% endif %}
-            {% endblock %}
-{# Before the stylesheets, the @font-face rules sitting inside them; crossorigin is required even same-origin #}
-            {% block fontPreload %}
-                {% if display != 'pdf' %}
-                    {% for font in font_preloads() %}
-                        <link rel="preload" href="{{ asset('/' ~ font.path) }}" as="font" type="{{ font.type }}" crossorigin>
-                    {% endfor %}
-                {% endif %}
-            {% endblock %}
-{# Stylesheets #}
-            {% block stylesheets %}
-{# data-turbo-track="reload": Turbo Drive does not re-evaluate the <head> between two navigations, so after a deployment a visitor already on the site gets the new HTML with the old assets. Marked this way, these tags are compared by Turbo on every navigation (by their outerHTML) and a different href - the ?v=<mtime> changes on every cache:warmup - triggers a full page reload #}
-                {% for stylesheet in bundle_stylesheets() %}
-                    <link rel="stylesheet" href="{{ stylesheet }}" data-turbo-track="reload">
-                {% endfor %}
-            {% endblock %}
-{# Preconnect #}
-            {% block preconnect %}
-{# Matomo's origin, added automatically; origin only, a preconnect must carry no path. The key is UiBundle's, which owns the component rendering the snippet - read here because this layout is the one writing the <head> when SiteBundle is installed, Ui's own doing the same for the shell it serves alone #}
-                {% set matomoOrigin = config('site-matomo-url') ? config('site-matomo-url')|split('/')|slice(0, 3)|join('/') : '' %}
-                {% set preconnectUrls = config('site-preconnect')|default([]) %}
-                {% if matomoOrigin and matomoOrigin != app.request.getSchemeAndHttpHost() and matomoOrigin not in preconnectUrls %}
-                    {% set preconnectUrls = preconnectUrls|merge([matomoOrigin]) %}
-                {% endif %}
-                {% for preconnectUrl in preconnectUrls %}
-                    <link rel="preconnect" href="{{ preconnectUrl }}">
-                {% endfor %}
-            {% endblock %}
-{# Javascript #}
-            {% if display != 'pdf' %}
-                {% block javascripts %}
-                    {% block importmap %}
-{# data-turbo-track="reload" only applies to the <script> tags rendered here, not to the <link rel="modulepreload">, which is enough: the inline JSON of the <script type="importmap"> lists every digested JS URL and therefore stands as a complete fingerprint. The nonce, different on every request, causes no false positive: Turbo empties it before comparing the signatures #}
-{# Symfony also puts this attribute on the <script> the es-module-shims polyfill loader injects into the <head>, which would fail the signature comparison on every navigation. Accepted: the polyfill only fires when HTMLScriptElement.supports('importmap') is false, so on a browser older than 2023 #}
-                        {{ importmap(['app']|merge(bundle_scripts()), {'nonce': csp_nonce('script'), 'data-turbo-track': 'reload'}) }}
-                    {% endblock %}
-                {% endblock %}
-{# End display for html #}
-            {% endif %}
+{% block header %}
+    <header>
+        {% block navigation %}
+            <twig:c975LSite:General:Navbar />
         {% endblock %}
-    </head>
-{# Body #}
-{# "bodyClass" is what a page adds to the body itself, where a class on the content would only cover the content: a screen laid on its own background (a photo gallery, a reader) paints the whole page with it, navbar and footer included #}
-    <body id="top" class="{{ config('site-navbar-position') == 'fixed' ? 'navbar-fixed ' : '' }}{% block bodyClass %}{% endblock %}" data-controller="basic password">
-{# jQuery #}
-        {% block jquery %}
-        {% endblock %}
-{# Block body #}
-        {% block body %}
-            {% if display != 'pdf' %}
-{# The two buttons a long page is walked with, pointing at the body's own "top" and at the "bottom" closing it. UiBundle owns them, styles included, so a site running without this layout gets them too #}
-                <twig:c975LUi:Scroll:Buttons />
-            {% endif %}
-{# Header #}
-            {% block header %}
-                <header>
-{# Navigation #}
-                    {% if display != 'pdf' %}
-                        {% block navigation %}
-                            <twig:c975LSite:General:Navbar />
-                        {% endblock %}
-                    {% endif %}
-                </header>
-            {% endblock %}
-{# Title #}
-            {% block main %}
-                <main>
-{# The switch is the Page's own; templates with no Page behind them keep printing their title #}
-                    {% block title %}
-                        {% if title is defined and title != '' and (page is not defined or page.isTitleDisplayed) %}
-                            <h1>
-                                {{ title }}
-                            </h1>
-                        {% endif %}
-                    {% endblock %}
-{# What the email debug mode held back instead of sending, shown on whichever page follows the send - the component carries its own guard, and prints nothing for anyone else #}
-                    {% if display != 'pdf' %}
-                        <twig:c975LUi:Email:DebugPreview />
-                    {% endif %}
-{# Only a visitor carrying the session cookie, or a request that started the session itself, can hold a flash: reading app.flashes starts the session, and it carries no such guard of its own #}
-                    {% if display != 'pdf' and (app.request.hasPreviousSession or (app.session and app.session.started)) %}
-                        {% block flashes %}
-                            {% for label, messages in app.flashes %}
-{# Only the four tinted variants carry a background: any other label would print black ink on the dark page's own background, so an alias is mapped onto its tint and anything else falls back on "info" #}
-                                {% set variant = { 'error': 'danger', 'notice': 'info' }[label]|default(label) %}
-                                {% set variant = variant in ['success', 'info', 'warning', 'danger'] ? variant : 'info' %}
-                                {% for message in messages %}
-                                    <div class="flash alert alert-{{ variant }} text-center" role="alert">
-                                        {{ message|raw|nl2br }}
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                        {% endblock %}
-                    {% endif %}
-{# Container #}
-                    {% block container %}
-{# Content #}
-                        <div class="container">
-                            {% block content %}
-                            {% endblock %}
-                        </div>
-                    {% endblock %}
-{# NavigationBottom #}
-                    {% if display != 'pdf' %}
-                        {% block share %}
-                            {% block navigationBottom %}
-                            {% endblock %}
-                        {% endblock %}
-                    {% endif %}
-                </main>
-            {% endblock %}
-{# Share #}
-            {# Outside main so the flex column leaves it against the footer. SocialBundle owns the band's markup and its config guard: including its fragment keeps that bundle optional, where calling share_buttons_default() here would fail at compile time on a site not installing it #}
-            {% if display != 'pdf' %}
-                {{ include('@c975LSocial/shareButtons/default.html.twig', ignore_missing: true) }}
-            {% endif %}
-{# Footer #}
-            {% block footer %}
-                {# No site name, matching what a "Copyright"-page menu_link shows instead #}
-                <twig:c975LSite:General:Footer copyright="{{ site_copyright(false) }}" />
-            {% endblock %}
-        {% endblock %}
-        <span id="bottom"></span>
-    </body>
-</html>
+    </header>
+{% endblock %}
+
+{# The parent leaves the content unwrapped; a site centers it on its grid #}
+{% block container %}
+    <div class="container">
+        {{ parent() }}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {# No site name, matching what a "Copyright"-page menu_link shows instead #}
+    <twig:c975LSite:General:Footer copyright="{{ site_copyright(false) }}" />
+{% endblock %}

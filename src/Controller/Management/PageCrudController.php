@@ -492,9 +492,12 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
-    // Everything a page CRUD can do sits behind the same "site-role-editor" role - only "exportSelection" is stricter (see configureActions())
+    // Everything a page CRUD can do sits behind the same "site-role-editor" role - only "exportSelection" (see configureActions()) and the two trash actions below are stricter
     private function applyActionPermissions(Actions $actions, string $role): Actions
     {
+        // Deleting a page only moves it to the trash, which an editor may do - pulling one back out or removing it for good is the bar restore()/deletePermanently() state themselves, and a button leading to their own 403 is a button not to draw
+        $adminRole = $this->configService->get('site-role-admin');
+
         return $actions
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::NEW, $role)
@@ -502,8 +505,8 @@ class PageCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, $role)
             ->setPermission(Action::DETAIL, $role)
             ->setPermission('trash', $role)
-            ->setPermission('restore', $role)
-            ->setPermission('deletePermanently', $role)
+            ->setPermission('restore', $adminRole)
+            ->setPermission('deletePermanently', $adminRole)
             ->setPermission('viewOnSite', $role)
             ->setPermission('preview', $role)
             ->setPermission('duplicate', $role)

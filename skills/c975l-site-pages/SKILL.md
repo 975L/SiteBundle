@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, max_input_vars, site_page."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -49,6 +49,10 @@ plus the sitemap fields (indexable, change frequency, priority).
   (`PageCrudController::RESTORE_CSRF_TOKEN`, `PageCrudController::DELETE_PERMANENTLY_CSRF_TOKEN`). An
   override re-declaring either one builds that url too — `linkToCrudAction()` on its own gets the
   action refused and sent back to the trash.
+- **`restore` and `deletePermanently` are `site-role-admin`**, where every other page action is
+  `site-role-editor`: deleting only moves a page to the trash, which an editor may do, but pulling one
+  back out or removing it for good is the bar those two methods state themselves — a button leading to
+  its own 403 is a button not to draw.
 
 `PageController::preview()` opts out of the block render cache entirely — an editor's preview must show
 what was just saved, and its render is not the public one.
@@ -69,6 +73,12 @@ the missing blocks read as "the editor removed them", so such a submission is re
 
 The last two belong to menus — see the `c975l-site-menus` skill. `articles_slider` uses the
 `site_page(id)` Twig function to eager-load the target page with its blocks and medias.
+
+Hovering a block as an editor raises UiBundle's Edit button, and `Management\SiteBlockEditUrlProvider`
+answers where it goes. Two kinds are edited somewhere other than the Page form carrying them: a
+`legal_model` on its wording screen (`LegalModelEditUrl`) and a `form` on the Form's own, where its
+fields are (`FormEditUrl`). Anything else — and either of those pointing at something that no longer
+exists, which would 404 — opens the Page form with that row unfolded (`BlockFocusUrl`).
 
 ## Publish as replacement
 

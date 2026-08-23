@@ -129,7 +129,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_creation_blocks',
                     'description' => 'description.guided_step_page_creation_blocks',
-                    'highlight' => '[data-block-collection]',
+                    'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_publish',
@@ -195,7 +195,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_seo_frequency',
                     'description' => 'description.guided_step_page_seo_frequency',
                     // The step names the priority right below it rather than taking a ninth step of its own: the two are read together, and are the only sitemap hints
-                    'highlight' => '#Page_changeFrequency',
+                    'highlight' => '#Page_changeFrequency + .ts-wrapper',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_save',
@@ -281,7 +281,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_revision_rework',
                     'description' => 'description.guided_step_page_revision_rework',
-                    'highlight' => '[data-block-collection]',
+                    'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_preview',
@@ -414,7 +414,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_menu_add_link',
                     'description' => 'description.guided_step_page_menu_add_link',
-                    'highlight' => '[data-block-collection]',
+                    'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_target',
@@ -462,7 +462,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_footer_items',
                     'description' => 'description.guided_step_footer_items',
-                    'highlight' => '[data-block-collection]',
+                    'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_footer_group',
@@ -472,7 +472,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_footer_style',
                     'description' => 'description.guided_step_footer_style',
                     // Offered on the footer alone, see MenuCrudController::configureFields()
-                    'highlight' => '#Menu_style',
+                    'highlight' => '#Menu_style + .ts-wrapper',
                 ],
                 [
                     'label' => 'label.guided_step_footer_save',

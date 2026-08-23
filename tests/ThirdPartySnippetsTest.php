@@ -12,30 +12,28 @@ namespace c975L\SiteBundle\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-// The cookie banner and the Matomo snippet both live in core-bundle, which owns their configs and writes the legal text naming the instance - this bundle only renders them, and each carries its own "is it enabled" guard
-// Re-adding a guard here is the silent failure to catch: it reads a key this bundle no longer declares, so a typo in it disables the snippet without a word rather than raising anything
+// The cookie banner and the Matomo snippet both live in core-bundle, which owns their configs, writes the legal text naming the instance and renders them from the layout this one extends
+// What is caught here is a copy coming back: rendered again from the footer a site is free to override, they would either double up or vanish with it, and a guard re-added beside them would read a key this bundle no longer declares
 class ThirdPartySnippetsTest extends TestCase
 {
-    public function testTheFooterRendersBothComponentsUnguarded(): void
+    // Rendered by the layout core-bundle owns, so a site overriding its footer keeps its tracking and its cookie banner
+    public function testTheFooterRendersNeitherComponent(): void
     {
         $footer = $this->read('templates/components/General/Footer.html.twig');
 
-        foreach (['<twig:c975LUi:Analytics:Matomo />', '<twig:c975LUi:Cookie:Consent />'] as $tag) {
-            $this->assertStringContainsString($tag, $footer);
-        }
-
-        foreach (['site-enable-matomo', 'site-enable-cookie-consent'] as $slug) {
-            $this->assertStringNotContainsString(\sprintf("config('%s')", $slug), $footer, 'the guard belongs to the component, not here');
+        foreach (['c975LUi:Analytics:Matomo', 'c975LUi:Cookie:Consent'] as $tag) {
+            $this->assertStringNotContainsString($tag, $footer, 'the layout renders it, a footer rendering it too doubles it on every page');
         }
     }
 
-    // The origin is preconnected from this layout because this is the one writing the <head> when SiteBundle is installed - core-bundle's own shell does the same for the site it serves alone
-    public function testTheLayoutStillPreconnectsTheMatomoOrigin(): void
+    // Neither the snippets nor their preconnect are written again here: the layout this one extends carries them for every site, whether or not it installs this bundle
+    public function testTheLayoutRepeatsNothingOfThem(): void
     {
         $layout = $this->read('templates/layout.html.twig');
 
-        $this->assertStringContainsString("config('site-matomo-url')|split('/')|slice(0, 3)|join('/')", $layout);
-        $this->assertStringContainsString('preconnectUrls|merge([matomoOrigin])', $layout);
+        foreach (['c975LUi:Analytics:Matomo', 'c975LUi:Cookie:Consent', 'site-matomo-url'] as $needle) {
+            $this->assertStringNotContainsString($needle, $layout, 'core-bundle\'s layout already writes it');
+        }
     }
 
     // Declared where it is read: the component and its three keys left with it, so a copy staying here would shadow core-bundle's own and drift from the label an admin reads

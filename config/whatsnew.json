@@ -1,5 +1,40 @@
 [
     {
+        "date": "2026-08-23",
+        "description": [
+            {
+                "en": "The credit line at the bottom of the site can now read \"Powered by\" instead of \"Made by\", for a site that runs the system without having been built by the company credited",
+                "fr": "La mention en bas du site peut désormais afficher « Propulsé par » au lieu de « Réalisé par », pour un site qui utilise le système sans avoir été réalisé par la société citée",
+                "es": "La mención al pie del sitio puede mostrar ahora «Impulsado por» en lugar de «Realizado por», para un sitio que usa el sistema sin haber sido creado por la empresa citada"
+            },
+            {
+                "en": "The pencil on a form shown in a page now opens that form itself, where its fields are, instead of the page line that merely names it",
+                "fr": "Le crayon sur un formulaire affiché dans une page ouvre désormais le formulaire lui-même, là où sont ses champs, au lieu de la ligne de la page qui se contente de le nommer",
+                "es": "El lápiz sobre un formulario mostrado en una página abre ahora el formulario en sí, donde están sus campos, en lugar de la línea de la página que solo lo nombra"
+            },
+            {
+                "en": "Restoring a page from the trash, or deleting it for good, is now reserved to administrators: an editor can still send a page to the trash, and nothing is lost by mistake",
+                "fr": "Restaurer une page depuis la corbeille, ou la supprimer définitivement, est désormais réservé aux administrateurs : un éditeur peut toujours mettre une page à la corbeille, et rien n'est perdu par erreur",
+                "es": "Restaurar una página desde la papelera, o borrarla definitivamente, queda ahora reservado a los administradores: un editor sigue pudiendo enviar una página a la papelera, y nada se pierde por error"
+            },
+            {
+                "en": "The guided tours again point at the right spot on a form: the blocks area of a page or a menu, and the two drop-down lists they walk, none of which they were highlighting any more",
+                "fr": "Les visites guidées désignent à nouveau le bon endroit sur un formulaire : la zone des blocs d'une page ou d'un menu, et les deux listes déroulantes qu'elles parcourent, qu'elles ne mettaient plus en évidence",
+                "es": "Las visitas guiadas vuelven a señalar el lugar correcto en un formulario: la zona de bloques de una página o un menú, y las dos listas desplegables que recorren, que ya no resaltaban"
+            },
+            {
+                "en": "The tour step about sharing now warns that a social network keeps the first preview it saw of an address, and points at the tool that asks it to read the page again",
+                "fr": "L'étape de visite sur le partage prévient désormais qu'un réseau social garde le premier aperçu qu'il a vu d'une adresse, et indique l'outil pour lui demander de relire la page",
+                "es": "El paso de la visita sobre compartir avisa ahora de que una red social conserva la primera vista previa que vio de una dirección, e indica la herramienta para pedirle que vuelva a leer la página"
+            },
+            {
+                "en": "The notification e-mail sent by the contact form now opens with the very sentence its subject line carries, the two no longer drifting apart",
+                "fr": "L'e-mail de notification envoyé par le formulaire de contact commence désormais par la phrase même que porte son objet, les deux ne divergeant plus",
+                "es": "El correo de notificación enviado por el formulario de contacto empieza ahora por la misma frase que lleva su asunto, sin que ambos se desincronicen"
+            }
+        ]
+    },
+    {
         "date": "2026-08-22",
         "description": [
             {

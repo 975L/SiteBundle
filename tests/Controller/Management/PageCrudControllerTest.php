@@ -874,6 +874,32 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'exportSelection'));
     }
 
+    // Deleting a page only moves it to the trash, which an editor may do - pulling one back out or removing it for good is what restore()/deletePermanently() deny below site-role-admin, and a button leading to their own 403 is a button not to draw
+    public function testConfigureActionsGivesTheTwoTrashActionsTheAdminBarTheirOwnMethodsState(): void
+    {
+        // One value per key: the stub answering the same thing everywhere would let an action ask for the wrong role unnoticed
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnCallback(static fn (string $key): string => match ($key) {
+            'site-role-editor' => 'ROLE_EDITOR',
+            'site-role-admin' => 'ROLE_ADMIN',
+            default => throw new \InvalidArgumentException(sprintf('Unexpected config key "%s"', $key)),
+        });
+
+        $permissions = $this->createController(configService: $configService)->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        )->getAsDto(Crud::PAGE_INDEX)->getActionPermissions();
+
+        $this->assertSame('ROLE_ADMIN', $permissions['restore']);
+        $this->assertSame('ROLE_ADMIN', $permissions['deletePermanently']);
+        $this->assertSame('ROLE_ADMIN', $permissions['exportSelection']);
+        $this->assertSame('ROLE_EDITOR', $permissions['trash'], 'Moving a page to the trash and going there is the editor\'s own');
+        $this->assertSame('ROLE_EDITOR', $permissions[Action::DELETE]);
+    }
+
     // Deleting a page only moves it to the trash (see deleteEntity()), so it must carry its own confirmation message: left at the default "true", EasyAdmin's ActionFactory would show its delete_modal.content, telling the admin the action cannot be undone
     public function testConfigureActionsGivesDeleteATrashConfirmationRatherThanEasyAdminsIrreversibleOne(): void
     {

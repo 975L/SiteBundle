@@ -74,6 +74,36 @@ class PageLayoutInheritanceTest extends TestCase
         );
     }
 
+    // Core-bundle's layout is the single source for the whole document; this one only adds what having Pages, menus and a navbar brings, so no tag can drift between the two shells
+    public function testTheBundlesLayoutExtendsCoreBundlesOwn(): void
+    {
+        $this->assertStringContainsString(
+            "{% extends '@c975LUi/layout.html.twig' %}",
+            $this->siteLayout(),
+            'The layout no longer extends core-bundle\'s, so it writes a document of its own again.'
+        );
+    }
+
+    // A child layout adds blocks and variables, never a document: the head tag in particular is written once, where the minimal shell a site without this bundle is served already writes it
+    public function testTheBundlesLayoutWritesNoDocumentOfItsOwn(): void
+    {
+        // Comments stripped first, this file's own naming the tags it must not write
+        $markup = (string) preg_replace('/\{#.*?#\}/s', '', $this->siteLayout());
+
+        foreach (['<!DOCTYPE', '<html', '<head>', '<body'] as $tag) {
+            $this->assertStringNotContainsString(
+                $tag,
+                $markup,
+                sprintf('The layout writes "%s" itself, which core-bundle\'s parent already does.', $tag)
+            );
+        }
+    }
+
+    private function siteLayout(): string
+    {
+        return (string) file_get_contents(dirname(__DIR__) . '/templates/layout.html.twig');
+    }
+
     public function testThePageOverridesTheContainerBlock(): void
     {
         $this->assertStringContainsString(

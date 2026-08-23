@@ -176,7 +176,7 @@ class NavbarHeightTest extends TestCase
         $this->assertFileExists($path);
 
         $this->assertMatchesRegularExpression(
-            '/<header>\s*(\{#[^#]*#\}\s*)*\{% if display != \'pdf\' %\}\s*\{% block navigation %\}/',
+            '/<header>\s*(\{#[^#]*#\}\s*)*\{% block navigation %\}/',
             (string) file_get_contents($path),
             'layout.html.twig puts something else beside the navbar in its <header>, which the sticky rule targets as an only child.'
         );

@@ -60,7 +60,7 @@ Your `App\Entity\User` must implement `c975L\ConfigBundle\Contract\UserInterface
 
 Optional: [nelmio/security-bundle](https://github.com/nelmio/NelmioSecurityBundle), if installed, has its CSP nonce generator decorated by `CookieNonceGenerator` — keeps the nonce stable across a visit, held in a signed cookie rather than per-request, so Turbo Drive/Frames/Streams re-executing `<script>` tags from a fetched page doesn't get them blocked by a mismatched nonce. A no-op if the bundle isn't installed.
 
-`layout.html.twig` asks for a `style` nonce as well as a `script` one (Turbo nonces its progress bar's own `<style>` with the same value), which makes `'unsafe-inline'` inert for `style-src` on every public page. Any `style=""` attribute left in one of your own templates is therefore dropped by the browser: move those declarations to a class. Styles written from JavaScript (`el.style.display = '…'`) are unaffected, the CSSOM not being subject to `style-src`.
+Core-bundle's `layout.html.twig`, the parent this bundle's own extends, asks for a `style` nonce as well as a `script` one (Turbo nonces its progress bar's own `<style>` with the same value), which makes `'unsafe-inline'` inert for `style-src` on every public page. Any `style=""` attribute left in one of your own templates is therefore dropped by the browser: move those declarations to a class. Styles written from JavaScript (`el.style.display = '…'`) are unaffected, the CSSOM not being subject to `style-src`.
 
 ---
 
@@ -139,6 +139,8 @@ Twig uses the first template of the list that exists, so with this bundle instal
 
 Should you replace it, it becomes the parent of the database-driven pages too (`@c975LSite/pages/page.html.twig` extends `layout.html.twig`), so it has to hold up its end of that contract: define a `container` block for the page's blocks to render into, and read the `title` and `robots` variables the page sets. A replacement layout that defines neither renders the pages empty, without any error.
 
+**This bundle's layout is a child of core-bundle's, not a copy of it.** `@c975LSite/layout.html.twig` extends `@c975LUi/layout.html.twig`, which is the single source for the whole `<head>`, the body skeleton and the share-image cascade — the minimal shell a site without this bundle is served already wrote all of it. What is added here is what having Pages, menus and a navbar brings: the `header`, `navigation`, `container` and `footer` blocks, and four variables handed over to the parent before it renders — `ogImageMedia` from the Page's own share image, `headingDisplayed` from `Page::isTitleDisplayed()`, `bodyClasses` for a fixed navbar and `bodyControllers` for this bundle's Stimulus controller. A child layout may set variables outside a block (Twig compiles its body ahead of the parent's yield) but never output, and **anything concerning the `<head>` belongs to core-bundle's layout**, where both shells read it.
+
 ### Page-specific variables
 
 Declare these variables in each page template to populate meta tags and the page title:
@@ -156,10 +158,14 @@ A page no entity answers for — a listing, a filtered listing, a tool page — 
 
 The layout exposes the following Twig blocks for you to override or extend:
 
+All of them are core-bundle's but `navigation`, this bundle only overriding four of them:
+
 | Block | Description |
 | --- | --- |
 | `head` | Entire `<head>` element |
 | `meta` | Meta tags (charset, viewport, robots, og:*, etc.) |
+| `title` | The `<title>` tag — **not** the page heading, which is `heading` below |
+| `fontPreload` | `<link rel="preload">` for the theme's font files |
 | `stylesheets` | CSS links |
 | `preconnect` | `<link rel="preconnect">` hints |
 | `body` | Entire `<body>` element |
@@ -167,7 +173,7 @@ The layout exposes the following Twig blocks for you to override or extend:
 | `header` | Site header |
 | `navigation` | Main navigation |
 | `main` | Main content wrapper |
-| `title` | Page `<h1>` title — not printed for a database page whose *Display the page title* switch is unchecked (see [Pages](#pages)) |
+| `heading` | Page `<h1>` title — not printed for a database page whose *Display the page title* switch is unchecked (see [Pages](#pages)) |
 | `flashes` | Flash messages — only rendered for a visitor carrying the session cookie, or a request that started the session itself, reading `app.flashes` being enough to open one. Only `success`, `info`, `warning` and `danger` carry a tint: `error` is printed as `danger`, `notice` as `info`, any other label as `info` |
 | `container` | Container div wrapping `content` |
 | `content` | Page-specific content |
@@ -175,6 +181,9 @@ The layout exposes the following Twig blocks for you to override or extend:
 | `navigationBottom` | Bottom navigation |
 | `footer` | Site footer |
 | `javascripts` | JavaScript includes |
+| `importmap` | The AssetMapper import map and its entrypoints |
+
+**A template suppressing its own heading overrides `heading`, never `title`** — the second empties the browser tab and every share along with it.
 
 **Override a block:**
 
@@ -194,18 +203,6 @@ The layout exposes the following Twig blocks for you to override or extend:
 `<body>` is a flex column at least as tall as the viewport, with `<main>` taking whatever space is left over: the footer is held against the bottom of the window on a page too short to fill it, instead of floating halfway up, and a page longer than the viewport is never compressed. SocialBundle's automatic share buttons (`social-enable-share-buttons`) render outside `<main>`, in their own `<aside class="page-share">` between it and the footer, so the flex column leaves them against the footer rather than in the middle of the free space — the `share` Twig block above stays inside `<main>`, for a page's own bottom navigation.
 
 That band is SocialBundle's own template, which the layout pulls in with `{{ include('@c975LSocial/shareButtons/default.html.twig', ignore_missing: true) }}` — the bundle is a suggestion, not a requirement, and a site without it renders nothing there. Calling its `share_buttons_default()` function directly would not work: Twig resolves a function call at compile time, so no runtime guard can keep the layout from failing on a missing extension, where an include is resolved at render time and `ignore_missing` swallows the unknown namespace. Any other c975L bundle contributing a site-wide band follows the same convention, its template path being the public contract.
-
-### Display mode
-
-Use the `display` variable to conditionally include templates (defaults to `html`):
-
-```twig
-{% if display == 'pdf' %}
-    {% include 'header-pdf.html.twig' %}
-{% else %}
-    {% include 'header.html.twig' %}
-{% endif %}
-```
 
 ---
 
@@ -535,7 +532,7 @@ What stays here is `Management\SiteMediaUsageProvider`, which tells the Media li
 
 They are **ordered like the sidebar itself reads** — Collections, Pages, then the advanced "Menus" — so a project sits where the user finds the screen it walks, and two projects sharing a screen follow each other. `order` runs 50 → 74 in steps of **3**, not the 10 the neighbouring bundles use: ConfigBundle opens the sequence at 10, UiBundle picks it up at 90, and nine projects only fit between the two at that step. Two projects sharing an `order` would not fail — `GuidedProjectBuilder` sorts with `usort` — they would simply fall back on the order their providers happen to be registered in, which is exactly what `order` exists to decide.
 
-Only the opening step of each carries an `url`: from there the panel walks the screen the user has been sent to, highlighting the button or the field they are meant to use next (`.action-new`, `#Page_title`, `[data-block-collection]`…). A collection field is pointed at through its row marker rather than an id: EasyAdmin's `collection_widget` replaces `form_widget_compound` entirely, so no `id` is rendered on it and its label is a `<legend>` with no `for`. An action is pointed at through the `action-<name>` class EasyAdmin builds from the action's own name — `action-saveAndReturn` for the save button, not `action-save` — and an `ActionGroup` has to state that class itself through `setCssClass()`, `ActionFactory` only giving a default one to a plain action. The batch-export step points at `#form-batch-checkbox-all`, an id EasyAdmin's own index template renders rather than this bundle, and comes **before** the export button: the batch actions stay hidden until at least one row is checked.
+Only the opening step of each carries an `url`: from there the panel walks the screen the user has been sent to, highlighting the button or the field they are meant to use next (`.action-new`, `#Page_title`, `[data-ui-sort-group="block"]`…). A collection field is pointed at through its row marker rather than an id: EasyAdmin's `collection_widget` replaces `form_widget_compound` entirely, so no `id` is rendered on it and its label is a `<legend>` with no `for`. A `ChoiceField` is pointed at through `#Entity_property + .ts-wrapper`, the widget TomSelect inserts: EasyAdmin gives a choice the autocomplete widget unless it asks for the native or the expanded one, and the original `<select>` is then left behind `.ts-hidden-accessible`, clipped to a pixel — an outline around it shows nothing. Both rules are locked by `SiteGuidedProjectProviderTest`, which reads each highlighted property's field class straight out of its controller. An action is pointed at through the `action-<name>` class EasyAdmin builds from the action's own name — `action-saveAndReturn` for the save button, not `action-save` — and an `ActionGroup` has to state that class itself through `setCssClass()`, `ActionFactory` only giving a default one to a plain action. The batch-export step points at `#form-batch-checkbox-all`, an id EasyAdmin's own index template renders rather than this bundle, and comes **before** the export button: the batch actions stay hidden until at least one row is checked.
 
 Each project is gated by the strictest role any of its own steps needs — `site-role-editor` for seven of them, `site-role-admin` for the trash and the export, whose `restore`/`deletePermanently`/`exportSelection` are restricted to it. An admin without the role is never offered a parcours ending on an access-denied page. The export project stops at the zip: re-uploading it is ConfigBundle's "Content import" screen, which is `ROLE_SUPER_ADMIN` and belongs to that bundle's own projects, so the last step names it instead of sending the user there — a step carrying a second `url` would leave the page the previous one points into. Nothing is derived from the site's own data, so a project is worth following on a site already full of pages, and worth replaying once done (see ConfigBundle's README, "Contributing guided projects from other bundles").
 
@@ -643,11 +640,11 @@ All components below read their data from ConfigBundle. No props are needed — 
 
 ### Matomo
 
-**Moved to `c975l/ui-bundle`**, as `<twig:c975LUi:Analytics:Matomo />` — the same move the cookie banner made, and for the same reason: UiBundle already writes the legal text naming the Matomo instance (its cookies model offers the opt-out link), so it read a key this bundle declared. The three keys `site-matomo-url`, `site-matomo-id` and `site-enable-matomo` are declared there now, next to `site-enable-cookie-consent` in the same `analytics` group — the backoffice screen doesn't move, and neither do the values already stored. The component carries its own `site-enable-matomo` guard, so this bundle's footer just renders it. See UiBundle's readme.
+**Moved to `c975l/ui-bundle`**, as `<twig:c975LUi:Analytics:Matomo />` — the same move the cookie banner made, and for the same reason: UiBundle already writes the legal text naming the Matomo instance (its cookies model offers the opt-out link), so it read a key this bundle declared. The three keys `site-matomo-url`, `site-matomo-id` and `site-enable-matomo` are declared there now, next to `site-enable-cookie-consent` in the same `analytics` group — the backoffice screen doesn't move, and neither do the values already stored. The component carries its own `site-enable-matomo` guard, and core-bundle's layout renders it, so a site overriding `footer` keeps its tracking. See UiBundle's readme.
 
 ### CookieConsent
 
-**Moved to `c975l/ui-bundle`**, as `<twig:c975LUi:Cookie:Consent />` — a GDPR banner is not something a site running a shop without page management may go without, and UiBundle already owned the other half of the contract (its `video_iframe` block waits on `window.CookieConsent`). The component carries its own `site-enable-cookie-consent` guard now, so this bundle's footer just renders it. `url-cookies-policy` is declared there too. See UiBundle's readme.
+**Moved to `c975l/ui-bundle`**, as `<twig:c975LUi:Cookie:Consent />` — a GDPR banner is not something a site running a shop without page management may go without, and UiBundle already owned the other half of the contract (its `video_iframe` block waits on `window.CookieConsent`). The component carries its own `site-enable-cookie-consent` guard now, and core-bundle's layout renders it, so a site overriding `footer` keeps its banner. `url-cookies-policy` is declared there too. See UiBundle's readme.
 
 ### HostedBy / MadeBy
 
@@ -659,6 +656,8 @@ Set `site-hosted-by-url` + `site-hosted-by-logo` + `site-hosted-by-name` and/or 
 ```
 
 What each one shows is `display-hosted-by`/`display-made-by`, a choice between `none`, `logo`, `name` and `logo-name`, read through ConfigBundle's `credits_mode()` Twig function. A part the mode asks for but no config fills is skipped: `logo-name` with no name renders the logo alone, and a mode asking for a logo nobody set renders nothing. The logo also needs its URL (it goes through `<twig:c975LUi:Image:Link/>`), the name doesn't — without one it is plain text rather than a dead link.
+
+`MadeBy` takes its label from ConfigBundle's `made_by_label()`, which reads `made-by-wording`: `made` renders "Réalisé par", `powered` renders "Propulsé par". A site built by the party it credits says the first, one only running its system says the second.
 
 ### Preconnect
 
@@ -726,7 +725,7 @@ document sits on, and at which public address.
 
 All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension` and `PageHealthCheckExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
 
-Two of UiBundle's own are worth knowing here, both used by `layout.html.twig`: `theme_variables_css()`, returning the CSS compiled from the admin-editable theme configs (see [Themes](#themes)) for inlining where a `<link>` isn't possible (e.g. emails), and `font_preloads()`, returning the font files the current theme actually uses to emit as `<link rel="preload">` in the `<head>`.
+Two of UiBundle's own are worth knowing here, both used by core-bundle's `layout.html.twig`: `theme_variables_css()`, returning the CSS compiled from the admin-editable theme configs (see [Themes](#themes)) for inlining where a `<link>` isn't possible (e.g. emails), and `font_preloads()`, returning the font files the current theme actually uses to emit as `<link rel="preload">` in the `<head>`.
 
 ---
 
@@ -1082,7 +1081,7 @@ $bots = file(
     {{ include('navbar.html.twig') }}
 {% endblock %}
 
-{% block title %}
+{% block heading %}
     {% if app.request.get('_route') is not null %}
         <h1>{{ title }}</h1>
     {% endif %}
@@ -1106,8 +1105,6 @@ $bots = file(
 
 {% block javascripts %}
     {{ parent() }}
-    <twig:c975LUi:Cookie:Consent />
-    <twig:c975LUi:Analytics:Matomo />
 {% endblock %}
 ```
 

@@ -324,7 +324,7 @@
             </trans-unit>
             <trans-unit id="Z8kSvf2">
                 <source>description.guided_step_page_seo_check</source>
-                <target>La page est maintenant dans sitemap.xml, et coller son adresse quelque part en montre le titre, le résumé et l'image que vous venez de régler.</target>
+                <target>La page est maintenant dans sitemap.xml, et coller son adresse quelque part en montre le titre, le résumé et l'image que vous venez de régler. Attention toutefois : un réseau social garde en mémoire le premier aperçu qu'il a vu de cette adresse - la note sous le formulaire donne le lien pour lui demander de relire la page.</target>
             </trans-unit>
             <trans-unit id="bfIpkLz">
                 <source>description.guided_step_page_seo_edit</source>
@@ -1297,6 +1297,10 @@
             <trans-unit id="E.qyEl.">
                 <source>label.position_help</source>
                 <target>Ordre d'affichage (1 = premier) ; incrémentez de 5 pour laisser de la marge.</target>
+            </trans-unit>
+            <trans-unit id="awbUqym">
+                <source>label.powered_by</source>
+                <target>Propulsé par</target>
             </trans-unit>
             <trans-unit id="ljaH9fz">
                 <source>label.preview_mode</source>

@@ -61,16 +61,6 @@ class OptionalBundleTemplateTest extends TestCase
         );
     }
 
-    // The share band is pulled from SocialBundle's own template, which renders nothing when the bundle is absent
-    public function testLayoutIncludesTheShareBandWithIgnoreMissing(): void
-    {
-        $this->assertMatchesRegularExpression(
-            '/include\(\s*\'@c975LSocial\/shareButtons\/default\.html\.twig\'\s*,\s*ignore_missing:\s*true\s*\)/',
-            (string) file_get_contents(dirname(__DIR__, 2) . '/templates/layout.html.twig'),
-            'layout.html.twig no longer includes SocialBundle\'s share band, or no longer does it with "ignore_missing".'
-        );
-    }
-
     // Requiring it back would make the rule above pointless, and silently re-tie every consuming site to it
     public function testSocialBundleIsSuggestedRatherThanRequired(): void
     {

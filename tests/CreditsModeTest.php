@@ -80,6 +80,28 @@ class CreditsModeTest extends TestCase
         $this->assertStringContainsString("{% if madeByMode != 'none' or hostedByMode != 'none' %}", $footer);
     }
 
+    // "Réalisé par" is false for a site that only runs the system rather than having been built by its maker, so the label comes from the wording config instead of being hardcoded
+    public function testTheMadeByLabelComesFromTheWordingConfig(): void
+    {
+        $this->assertStringContainsString(
+            "{% set label = made_by_label()|trans({}, 'site') ~",
+            $this->component('MadeBy'),
+            'MadeBy hardcodes its label again, so a site only running the system still reads "Made by".'
+        );
+    }
+
+    // Both wordings the config offers must be translated in every locale the bundle ships
+    public function testBothWordingLabelsAreTranslatedEverywhere(): void
+    {
+        foreach (['fr', 'en', 'es'] as $locale) {
+            $translations = (string) file_get_contents(\dirname(__DIR__) . '/translations/site.' . $locale . '.xlf');
+
+            foreach (['label.made_by', 'label.powered_by'] as $key) {
+                $this->assertStringContainsString('<source>' . $key . '</source>', $translations, sprintf('"%s" is missing from the %s translations.', $key, $locale));
+            }
+        }
+    }
+
     // Declaring them here too would hand core-bundle a second, competing definition of the very same site_config rows
     public function testTheMovedConfigsAreNoLongerDeclaredByThisBundle(): void
     {

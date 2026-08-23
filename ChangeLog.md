@@ -1,5 +1,40 @@
 # Changelog
 
+## v8.6.0
+
+The layout extends core-bundle's instead of writing its own document
+
+- `@c975LSite/layout.html.twig` extends `@c975LUi/layout.html.twig` rather than writing its own document (23/08/2026) [BC-Break]
+- The whole `<head>` is core-bundle's, this layout keeping `header`, `navigation`, `container` and `footer` (23/08/2026)
+- It hands `ogImageMedia`, `headingDisplayed`, `bodyClasses` and `bodyControllers` over to the parent (23/08/2026)
+- The layout appends to `bodyClasses` and `bodyControllers` rather than assigning them, an app layout keeping what it declared (23/08/2026)
+- `{% block title %}` is the `<title>` tag, the `<h1>` moving to `{% block heading %}` (23/08/2026) [BC-Break]
+- The `<base href>` is gone (23/08/2026) [BC-Break]
+- The `display` variable is gone, with the `pdf` branches it gated (23/08/2026) [BC-Break]
+- Matomo and the cookie banner are rendered by core-bundle's layout instead of the `Footer` component (23/08/2026)
+- Dropped the eight head, flash and share-image tests core-bundle's own lock now (23/08/2026)
+- `UPGRADE.md` walks an app through the three (23/08/2026)
+- Two cases locking the layout's parent and that it writes no document of its own (23/08/2026)
+- `restore` and `deletePermanently` ask for `site-role-admin` where the other page actions ask for `site-role-editor` (23/08/2026) [BC-Break]
+- `UPGRADE.md` covers that role change too (23/08/2026)
+- The contact notification reads its heading from `label.form_new_message`, the very key its subject line uses (23/08/2026)
+- `DefaultPagesImporter` declares its email template through `EmailTemplateProviderInterface` (23/08/2026)
+- It keeps implementing `FormBlockDependencyProviderInterface` alongside it, an imported `form` block seeding its Form again (23/08/2026)
+- The pencil over a form block opens the Form's own screen rather than the Page form's one line about it (23/08/2026)
+- Two cases added to `tests/Management/SiteBlockEditUrlProviderTest.php` (23/08/2026)
+- `MadeBy` takes its label from core-bundle's `made_by_label()` instead of hardcoding `label.made_by` (23/08/2026)
+- Added `label.powered_by` to the three `site` catalogues (23/08/2026)
+- Requires `c975l/core-bundle` `^1.15` for that function (23/08/2026)
+- The `c975l-site-layout` skill carries the wording and the new parent (23/08/2026)
+- The four guided steps pointing at a block collection highlight `[data-ui-sort-group="block"]`, the marker UiBundle emits since it renamed them (23/08/2026)
+- A case locking those four against the marker their controllers set, an id being rendered on no collection field (23/08/2026)
+- The two guided steps pointing at a choice field highlight `#Entity_property + .ts-wrapper`, TomSelect clipping the select behind it (23/08/2026)
+- A case reading each highlighted property's field class out of its controller, so a choice field can no longer be pointed at by its id (23/08/2026)
+- The SEO check step warns that a social network caches the first preview it saw of an address (23/08/2026)
+- The README carries the parent-child split, the block list and the `heading` rename (23/08/2026)
+- The `c975l-site-pages` skill carries the trash roles and where a block's pencil goes (23/08/2026)
+- Extended `CreditsModeTest`, `NavbarBodyClassTest`, `PageCrudControllerTest` and `tests/Service/DefaultPagesImporterTest.php` (23/08/2026)
+
 ## v8.5.0
 
 The two buttons a long page is walked with move to UiBundle

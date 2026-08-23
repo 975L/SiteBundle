@@ -2,6 +2,36 @@
 
 ## Unreleased
 
+**The layout is now a child of core-bundle's, not a copy of it.**
+`@c975LSite/layout.html.twig` extends `@c975LUi/layout.html.twig` and keeps only what having Pages,
+menus and a navbar brings: the `header`, `navigation`, `container` and `footer` blocks, plus four
+variables it hands over to the parent (`ogImageMedia` from the Page's own share image,
+`headingDisplayed` from `Page::isTitleDisplayed()`, `bodyClasses` for a fixed navbar,
+`bodyControllers` for its Stimulus controller). The whole `<head>` — share tags, canonical, robots,
+nonces, preconnect, fonts, stylesheets, importmap — is written once, in core-bundle, where the minimal
+shell already wrote its own copy. Three things change for an app:
+
+- **`{% block title %}` is the `<title>` tag, and the `<h1>` is `{% block heading %}`.** A template
+  suppressing its own heading with `{% block title %}{% endblock %}` now empties the browser tab and
+  every share instead: rename it to `heading`. Every other block keeps its name.
+- **The layout no longer writes a `<base href>`.** `path()` and `asset()` emit root-relative urls,
+  which ignored it; a bare `#anchor` no longer resolves against it, so a link that had to name the page
+  before its fragment can drop it. **A relative link typed by hand in a Page's HTML content resolves
+  differently on a nested path** — the only case to check.
+- **`display` is gone.** The variable was never set to anything but `'html'`; a template passing
+  `display: 'pdf'` no longer hides the navbar, the footer or the scripts.
+
+Matomo and the cookie banner are rendered by core-bundle's layout instead of this bundle's `Footer`
+component, so **a site overriding `{% block footer %}` keeps its tracking and its cookie banner**. A
+site that copied the footer template has the two `<twig:c975LUi:…/>` tags to remove from its copy, or
+they render twice.
+
+**Pulling a page out of the trash, or deleting it for good, is now `site-role-admin`.** `restore` and
+`deletePermanently` were `site-role-editor` like every other page action, while the two methods behind
+them already denied anyone below the admin role — the buttons led to their own 403. An editor still
+sends a page to the trash and still opens it; a site wanting them back has to raise its editors to
+`site-role-admin` or override `PageCrudController::configureActions()`.
+
 **Matomo left this bundle for core-bundle**, as `<twig:c975LUi:Analytics:Matomo />`. The component,
 its Stimulus controller and the three keys `site-matomo-url`, `site-matomo-id` and
 `site-enable-matomo` are UiBundle's now — it was already reading the first one to offer Matomo's

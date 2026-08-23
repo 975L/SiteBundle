@@ -6,7 +6,8 @@
 {# Each half of the mode still needs the config feeding it: a mode asking for a name nobody filled in would render the "Made by" label on its own #}
 {% set showLogo = mode in ['logo', 'logo-name'] and madeByLogo %}
 {% set showName = mode in ['name', 'logo-name'] and madeByName %}
-{% set label = 'label.made_by'|trans({}, 'site') ~ (showName ? ' ' ~ madeByName : '') %}
+{# "Powered by" instead of "Made by" when the site only runs the system rather than having been built by the credited party #}
+{% set label = made_by_label()|trans({}, 'site') ~ (showName ? ' ' ~ madeByName : '') %}
 {% if showLogo and madeByUrl %}
     <twig:c975LUi:Image:Link
         label="{{ label }}"

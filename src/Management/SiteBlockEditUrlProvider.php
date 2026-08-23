@@ -15,7 +15,9 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\BlockEditUrlProviderInterface;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Repository\FormRepository;
 use c975L\UiBundle\Service\BlockFocusUrl;
+use c975L\UiBundle\Service\FormEditUrl;
 use c975L\UiBundle\Service\LegalModelCatalog;
 use c975L\UiBundle\Service\LegalModelEditUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -29,6 +31,7 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LegalModelCatalog $catalog,
+        private readonly FormRepository $formRepository,
     ) {
     }
 
@@ -52,10 +55,11 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
         return $urls;
     }
 
-    // A legal_model block's row in the Page form only holds the model it points at: what an editor reaching it from the document itself means to change is its wording, which lives on its own customization screen - UiBundle answers where that is (see LegalModelEditUrl), and null for anything else, including a model it doesn't ship, which would 404 there and keeps the Page's form instead
+    // Two kinds are edited somewhere other than the Page form that carries them, and UiBundle answers where: a legal_model on its wording screen, a form on the Form's own, where its fields are. Anything else - and either of those pointing at something that no longer exists, which would 404 - keeps the Page's form
     private function editUrl(Page $page, Block $block): string
     {
-        return LegalModelEditUrl::build($this->urlGenerator, $this->catalog, $block)
+        return FormEditUrl::build($this->adminUrlGenerator, $this->formRepository, $block)
+            ?? LegalModelEditUrl::build($this->urlGenerator, $this->catalog, $block)
             ?? BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
     }
 }

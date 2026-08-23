@@ -15,15 +15,21 @@ use c975L\ConfigBundle\Service\UserFormSeeder;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
+use c975L\UiBundle\Contract\EmailTemplateProviderInterface;
+use c975L\UiBundle\Contract\FormBlockDependencyProviderInterface;
 use c975L\UiBundle\Entity\EmailTemplate;
 use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Entity\FormField;
 use c975L\UiBundle\Repository\EmailTemplateRepository;
 use c975L\UiBundle\Repository\FormRepository;
+use c975L\UiBundle\Service\EmailTemplateFactory;
 use c975L\UiBundle\Service\FormSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Translation\Loader\XliffFileLoader;
+use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultPagesImporterTest extends TestCase
 {
@@ -101,6 +107,7 @@ class DefaultPagesImporterTest extends TestCase
             $em,
             $formRepository ?? $this->createFormRepository(),
             $emailTemplateRepository ?? $this->createEmailTemplateRepository(),
+            new EmailTemplateFactory(),
             $defaultLocale,
         );
 
@@ -108,11 +115,24 @@ class DefaultPagesImporterTest extends TestCase
             $em,
             $pageRepository,
             $formSeeder,
-            new UserFormSeeder($formSeeder, $em),
+            new UserFormSeeder($formSeeder, $em, self::translator('config', __DIR__ . '/../../vendor/c975l/core-bundle/ConfigBundle/translations')),
             $security,
             $defaultLocale,
             $enabledLocales,
+            self::translator('ui', __DIR__ . '/../../vendor/c975l/core-bundle/UiBundle/translations'),
         );
+    }
+
+    // Real catalogues rather than a stub: the seeded wording is read from them, and a mistyped key would be seeded as the key itself
+    private static function translator(string $domain, string $dir): TranslatorInterface
+    {
+        $translator = new Translator('fr');
+        $translator->addLoader('xlf', new XliffFileLoader());
+        foreach (['fr', 'en', 'es'] as $locale) {
+            $translator->addResource('xlf', $dir . '/' . $domain . '.' . $locale . '.xlf', $locale, $domain);
+        }
+
+        return $translator;
     }
 
     // A brand-new fr install has no pages yet: every definition but the ShopBundle-gated one is created
@@ -569,6 +589,16 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertNull($this->findPersistedEmailTemplate($persisted, 'contact_notification'));
         $this->assertNull($this->findPersistedEmailTemplate($persisted, 'account_validation'));
         $this->assertNull($this->findPersistedEmailTemplate($persisted, 'password_reset'));
+    }
+
+    // Both contracts are what the container discovers this service through, and every other test here calls the methods directly - so only an instanceof check catches a "use" line overwritten instead of added, which is how the form-block one was once lost
+    public function testItImplementsBothDiscoveryContracts(): void
+    {
+        $persisted = [];
+        $importer = $this->createImporter($this->createPageRepository(), $this->createEntityManager($persisted));
+
+        $this->assertInstanceOf(EmailTemplateProviderInterface::class, $importer);
+        $this->assertInstanceOf(FormBlockDependencyProviderInterface::class, $importer);
     }
 
     // Lets an imported Page keep a working "contact" Form, only the Page and Blocks being exported

@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Management\SiteGuidedProjectProvider;
+use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\EasyAdminBundle;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -184,12 +185,12 @@ class SiteGuidedProjectProviderTest extends TestCase
             $highlights = array_column($project['steps'], 'highlight');
 
             if ('site-footer' === $project['slug']) {
-                $this->assertContains('#Menu_style', $highlights);
+                $this->assertContains('#Menu_style' . self::TOM_SELECT_SUFFIX, $highlights);
 
                 continue;
             }
 
-            $this->assertNotContains('#Menu_style', $highlights, sprintf('Project "%s" points at a field only the footer renders', $project['slug']));
+            $this->assertNotContains('#Menu_style' . self::TOM_SELECT_SUFFIX, $highlights, sprintf('Project "%s" points at a field only the footer renders', $project['slug']));
         }
     }
 
@@ -213,25 +214,73 @@ class SiteGuidedProjectProviderTest extends TestCase
         'CollectionGroup' => 'CollectionCrudController',
     ];
 
+    // The suffix a field wrapped by TomSelect has to carry, the original control being clipped to a pixel once the widget replaces it
+    private const string TOM_SELECT_SUFFIX = ' + .ts-wrapper';
+
     // EasyAdmin builds a form field's id off the entity and the property, so a renamed or removed property leaves the step pointing at nothing - and a form the user never sees fails silently, unlike a route
     public function testEveryFieldHighlightNamesAPropertyItsControllerStillDeclares(): void
     {
+        foreach ($this->fieldHighlights() as [$project, $index, $entity, $property, $highlight]) {
+            $this->assertArrayHasKey($entity, self::FIELD_CONTROLLERS, sprintf('Step %d of "%s" names an entity no controller of this map edits', $index, $project));
+
+            $this->assertArrayHasKey(
+                $property,
+                $this->declaredFields(self::FIELD_CONTROLLERS[$entity]),
+                sprintf('Step %d of "%s" highlights "%s", which %s no longer declares', $index, $project, $highlight, self::FIELD_CONTROLLERS[$entity])
+            );
+        }
+    }
+
+    // A ChoiceField takes EasyAdmin's autocomplete widget unless it asks for the native or the expanded one (see ChoiceConfigurator), and TomSelect then hides the original select behind ".ts-hidden-accessible" - clipped to a pixel, so a step pointing at its id outlines nothing the user can see. The wrapper TomSelect inserts right after it is what shows
+    public function testEveryChoiceFieldHighlightPointsAtTheWidgetAndNotAtTheClippedSelect(): void
+    {
+        foreach ($this->fieldHighlights() as [$project, $index, $entity, $property, $highlight]) {
+            $isChoice = 'ChoiceField' === $this->declaredFields(self::FIELD_CONTROLLERS[$entity])[$property];
+            $message = sprintf('Step %d of "%s" highlights "%s"', $index, $project, $highlight);
+
+            if ($isChoice) {
+                $this->assertStringEndsWith(self::TOM_SELECT_SUFFIX, $highlight, $message . ', a ChoiceField whose select TomSelect clips - point at the wrapper instead');
+
+                continue;
+            }
+
+            $this->assertStringEndsNotWith(self::TOM_SELECT_SUFFIX, $highlight, $message . ', which is no ChoiceField and therefore has no TomSelect wrapper next to it');
+        }
+    }
+
+    // The rule above is only worth its run while at least one field it governs is actually pointed at
+    public function testAChoiceFieldIsStillWalkedByAProject(): void
+    {
+        $choices = [];
+        foreach ($this->fieldHighlights() as [, , $entity, $property, $highlight]) {
+            if ('ChoiceField' === ($this->declaredFields(self::FIELD_CONTROLLERS[$entity] ?? '')[$property] ?? null)) {
+                $choices[] = $highlight;
+            }
+        }
+
+        $this->assertNotEmpty($choices, 'No step points at a ChoiceField any more, so the TomSelect rule above asserts nothing');
+    }
+
+    /**
+     * Every step pointing at a form field, as [project slug, step index, entity, property, selector] - the TomSelect suffix left on the selector and stripped off the property.
+     *
+     * @return list<array{0: string, 1: int, 2: string, 3: string, 4: string}>
+     */
+    private function fieldHighlights(): array
+    {
+        $highlights = [];
         foreach ($this->createProvider()->getGuidedProjects() as $project) {
             foreach ($project['steps'] as $index => $step) {
-                if (!preg_match('/^#(\w+)_(\w+)$/', $step['highlight'] ?? '', $matches)) {
+                $highlight = $step['highlight'] ?? '';
+                if (!preg_match('/^#(\w+)_(\w+)(?: \+ \.[\w-]+)?$/', $highlight, $matches)) {
                     continue;
                 }
 
-                [, $entity, $property] = $matches;
-                $this->assertArrayHasKey($entity, self::FIELD_CONTROLLERS, sprintf('Step %d of "%s" names an entity no controller of this map edits', $index, $project['slug']));
-
-                $this->assertContains(
-                    $property,
-                    $this->declaredProperties(self::FIELD_CONTROLLERS[$entity]),
-                    sprintf('Step %d of "%s" highlights "%s", which %s no longer declares', $index, $project['slug'], $step['highlight'], self::FIELD_CONTROLLERS[$entity])
-                );
+                $highlights[] = [$project['slug'], $index, $matches[1], $matches[2], $highlight];
             }
         }
+
+        return $highlights;
     }
 
     // The QR code widget is rendered by this bundle's own form theme block, which prints no id - the row's marker is the only thing the step can point at, and it lives in the controller
@@ -241,6 +290,18 @@ class SiteGuidedProjectProviderTest extends TestCase
 
         $this->assertStringContainsString("'data-page-qrcode'", $source, 'The marker is set nowhere in PageCrudController, so the QR code row no longer carries it');
         $this->assertStringContainsString('[data-page-qrcode]', $this->highlightsOf('site-page-health'));
+    }
+
+    // A collection field is pointed at through the row marker its controller sets, never through an id: EasyAdmin's collection_row merges its markers into row_attr and renders form_row, which writes no id at all - a "#Page_blocks" step would highlight nothing, silently
+    public function testTheBlockCollectionStepsPointAtTheMarkerTheControllersSet(): void
+    {
+        foreach (['PageCrudController', 'MenuCrudController'] as $controller) {
+            $this->assertStringContainsString('blockMoveRowAttrBuilder->build(', $this->controllerSource($controller), sprintf('%s no longer marks its blocks collection, so the row carries no selector to point at', $controller));
+        }
+
+        foreach (['site-page-creation', 'site-page-revision', 'site-page-menu', 'site-footer'] as $slug) {
+            $this->assertStringContainsString(sprintf('[data-ui-sort-group="%s"]', BlockMoveRowAttrBuilder::GROUP), $this->highlightsOf($slug));
+        }
     }
 
     // The health check step points at the last tab rather than at its id, EasyAdmin building that id off the translated label - so the tab has to stay the last one declared
@@ -266,15 +327,19 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     /**
-     * Every property a controller's configureFields() names, whatever the field class.
+     * Every property a controller's configureFields() names, mapped onto the field class declaring it.
      *
-     * @return string[]
+     * @return array<string, string>
      */
-    private function declaredProperties(string $controller): array
+    private function declaredFields(string $controller): array
     {
-        preg_match_all('/\w*Field::new\(\s*\'(\w+)\'/', $this->controllerSource($controller), $properties);
+        if ('' === $controller) {
+            return [];
+        }
 
-        return $properties[1];
+        preg_match_all('/(\w*Field)::new\(\s*\'(\w+)\'/', $this->controllerSource($controller), $fields, PREG_SET_ORDER);
+
+        return array_column($fields, 1, 2);
     }
 
     private function controllerSource(string $controller): string

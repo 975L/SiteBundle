@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ConfigBundle\Service\UserFormSeeder;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\UiBundle\Contract\EmailTemplateProviderInterface;
 use c975L\UiBundle\Contract\FormBlockDependencyProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\EmailBlock;
@@ -22,8 +23,9 @@ use c975L\UiBundle\Service\FormSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class DefaultPagesImporter implements FormBlockDependencyProviderInterface
+class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockDependencyProviderInterface
 {
     // name => [type, label, url], one set per locale - the generic "form" Block's FormSubmissionType renders FormField labels as literal text (translation_domain: false, an admin is expected to type real text, not a key) - so these have to be actual words, picked once for kernel.default_locale since Form::$name is unique site-wide (one "contact" Form, not one per locale). No placeholder is ever seeded, a field showing its label alone until an admin types one in the back-office. "url" is only ever set on REGISTER_CORE_FIELDS' "cgu" entry below, appended as a clickable link next to its label (see FormSubmissionType)
     private const array CONTACT_CORE_FIELDS = [
@@ -48,20 +50,40 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
     ];
 
     // One EmailBlock tuple set per locale, unused positions left null; placeholders are resolved at send time
-    private const array CONTACT_NOTIFICATION_BLOCKS = [
-        'fr' => [
-            [EmailBlock::TYPE_HEADING, 'Nouveau message via {{ form_name }}', EmailBlock::LEVEL_H2, null, null, null],
-            [EmailBlock::TYPE_FIELDS_TABLE, null, null, null, null, null],
-        ],
-        'en' => [
-            [EmailBlock::TYPE_HEADING, 'New message via {{ form_name }}', EmailBlock::LEVEL_H2, null, null, null],
-            [EmailBlock::TYPE_FIELDS_TABLE, null, null, null, null, null],
-        ],
-        'es' => [
-            [EmailBlock::TYPE_HEADING, 'Nuevo mensaje vía {{ form_name }}', EmailBlock::LEVEL_H2, null, null, null],
-            [EmailBlock::TYPE_FIELDS_TABLE, null, null, null, null, null],
-        ],
-    ];
+    // The languages this bundle ships a catalogue for. Listed rather than read from kernel.enabled_locales: the translator answers every locale by falling back on the default one, so iterating the site's languages would seed a Spanish row holding French sentences
+    private const array EMAIL_LOCALES = ['fr', 'en', 'es'];
+
+    /**
+     * The e-mail the contact form sends, as blocks an admin composes.
+     *
+     * Its heading is the very sentence SendEmailFormAction puts in the subject line, read from the same key: an
+     * admin opening their inbox saw a subject and an e-mail that had drifted apart the day one of the two was
+     * rewritten. The catalogue parameter becomes the "{{ form_name }}" the template substitutes, the two placeholder
+     * syntaxes having to meet somewhere.
+     *
+     * The fields the visitor filled in are a data block, which is why it cannot be deleted from the composed
+     * template: an alert saying a message arrived, without the message, is not the e-mail this is for.
+     *
+     * @return array<string, list<array{0: string, 1: ?string, 2: ?string, 3: ?string, 4: ?string, 5: ?string}>>
+     */
+    private function contactNotificationBlocks(): array
+    {
+        $blocks = [];
+        foreach (self::EMAIL_LOCALES as $locale) {
+            $blocks[$locale] = [
+                [EmailBlock::TYPE_HEADING, $this->translator->trans('label.form_new_message', ['%form%' => '{{ form_name }}'], 'ui', $locale), EmailBlock::LEVEL_H2, null, null, null],
+                [EmailBlock::TYPE_FIELDS_TABLE, null, null, null, null, null],
+            ];
+        }
+
+        return $blocks;
+    }
+
+    // Declared as well as seeded: the same definition is what c975l:ui:email-templates:ensure brings to a site built before it existed, and what the health check reports missing
+    public function getEmailTemplates(): array
+    {
+        return ['contact_notification' => $this->contactNotificationBlocks()];
+    }
 
     public function __construct(
         private readonly EntityManagerInterface $em,
@@ -73,6 +95,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
         private readonly string $defaultLocale,
         #[Autowire(param: 'kernel.enabled_locales')]
         private readonly array $enabledLocales,
+        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -246,7 +269,7 @@ class DefaultPagesImporter implements FormBlockDependencyProviderInterface
     private function ensureContactFormExists(): void
     {
         $this->formSeeder->ensureForm('contact', self::CONTACT_CORE_FIELDS, 'send_email', ['senderEmailField' => 'email', 'offerReceiveCopy' => true, 'template' => '@c975LSite/emails/contact_notification.html.twig']);
-        $this->formSeeder->ensureEmailTemplate('contact_notification', self::CONTACT_NOTIFICATION_BLOCKS);
+        $this->formSeeder->ensureEmailTemplate('contact_notification', $this->contactNotificationBlocks());
     }
 
     // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without ShopBundle) is skipped.
