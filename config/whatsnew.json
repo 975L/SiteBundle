@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-08-24",
+        "description": [
+            {
+                "en": "Emails sent by the site now say who they come from and link to the privacy policy, without anything more to fill in",
+                "fr": "Les emails envoyés par le site indiquent désormais qui les envoie et renvoient vers les règles de confidentialité, sans rien de plus à remplir",
+                "es": "Los correos enviados por el sitio indican ahora quién los envía y enlazan con las reglas de confidencialidad, sin nada más que rellenar"
+            },
+            {
+                "en": "The dashboard now warns when the privacy policy page is missing or unpublished, as it already did for the legal notice and the cookies page",
+                "fr": "Le tableau de bord signale désormais la page des règles de confidentialité manquante ou non publiée, comme il le faisait déjà pour les mentions légales et les cookies",
+                "es": "El panel avisa ahora cuando falta la página de reglas de confidencialidad o no está publicada, como ya hacía con el aviso legal y las cookies"
+            },
+            {
+                "en": "The free-text field for extra legal mentions in emails is gone: the site owner already entered in the settings is used instead",
+                "fr": "Le champ libre des mentions légales complémentaires des emails disparaît : le propriétaire du site déjà renseigné dans les réglages est utilisé à la place",
+                "es": "El campo libre de menciones legales adicionales de los correos desaparece: se usa el propietario del sitio ya indicado en los ajustes"
+            }
+        ]
+    },
+    {
         "date": "2026-08-23",
         "description": [
             {

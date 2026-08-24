@@ -28,7 +28,13 @@
         "restricted": false,
         "value": null,
         "kind": "choice",
-        "choices": ["relative", "sticky", "fixed", "static", "absolute"],
+        "choices": [
+            "relative",
+            "sticky",
+            "fixed",
+            "static",
+            "absolute"
+        ],
         "group": "general",
         "severity": null,
         "description": "description.site_navbar_position"
@@ -87,17 +93,6 @@
         "group": "email",
         "severity": null,
         "description": "description.email_text_sent_by"
-    },
-    {
-        "label": "label.email_text_legal",
-        "slug": "email-text-legal",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "html",
-        "group": "email",
-        "severity": null,
-        "description": "description.email_text_legal"
     },
     {
         "label": "label.site_menu_link_copyright_auto",

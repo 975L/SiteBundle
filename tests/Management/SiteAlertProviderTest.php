@@ -27,7 +27,7 @@ class SiteAlertProviderTest extends TestCase
     public function testASiteWithBothLegalPagesAndAPublishedHomeRaisesNothing(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => true, 'france/cookies' => true],
+            ['france/legal-notice' => true, 'france/privacy-policy' => true, 'france/cookies' => true],
             $this->createHomeStatus(isPublished: true),
         );
 
@@ -38,7 +38,7 @@ class SiteAlertProviderTest extends TestCase
     public function testEachMissingLegalPageRaisesItsOwnAlert(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => false, 'france/cookies' => true],
+            ['france/legal-notice' => false, 'france/privacy-policy' => true, 'france/cookies' => true],
             null,
         );
 
@@ -52,21 +52,21 @@ class SiteAlertProviderTest extends TestCase
         $this->assertSame('ROLE_EDITOR', $alerts[0]['role']);
     }
 
-    public function testBothMissingLegalPagesRaiseTwoAlerts(): void
+    public function testEveryMissingLegalPageRaisesItsOwnAlert(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => false, 'france/cookies' => false],
+            ['france/legal-notice' => false, 'france/privacy-policy' => false, 'france/cookies' => false],
             null,
         );
 
-        $this->assertSame(['label.legal_notice', 'label.cookies'], array_column($provider->getAlerts(), 'label'));
+        $this->assertSame(['label.legal_notice', 'label.privacy_policy', 'label.cookies'], array_column($provider->getAlerts(), 'label'));
     }
 
     // The one case worth a word: the page is there, the site answers 404 on "/" all the same
     public function testAnUnpublishedHomePageRaisesAnAlert(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => true, 'france/cookies' => true],
+            ['france/legal-notice' => true, 'france/privacy-policy' => true, 'france/cookies' => true],
             $this->createHomeStatus(isPublished: false),
         );
 
@@ -81,7 +81,7 @@ class SiteAlertProviderTest extends TestCase
     public function testADeletedHomePageRaisesTheSameAlert(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => true, 'france/cookies' => true],
+            ['france/legal-notice' => true, 'france/privacy-policy' => true, 'france/cookies' => true],
             $this->createHomeStatus(isPublished: true, isDeleted: true),
         );
 
@@ -99,7 +99,7 @@ class SiteAlertProviderTest extends TestCase
         $adminUrlGenerator->expects($this->once())->method('setEntityId')->with(7)->willReturnSelf();
 
         $provider = $this->createProvider(
-            ['france/legal-notice' => false, 'france/cookies' => true],
+            ['france/legal-notice' => false, 'france/privacy-policy' => true, 'france/cookies' => true],
             null,
             $adminUrlGenerator,
             ['france/legal-notice' => 7],
@@ -116,7 +116,7 @@ class SiteAlertProviderTest extends TestCase
     public function testNoHomePageAtAllRaisesNothing(): void
     {
         $provider = $this->createProvider(
-            ['france/legal-notice' => true, 'france/cookies' => true],
+            ['france/legal-notice' => true, 'france/privacy-policy' => true, 'france/cookies' => true],
             null,
         );
 
@@ -138,7 +138,7 @@ class SiteAlertProviderTest extends TestCase
         ;
 
         $provider = $this->createProvider(
-            ['france/legal-notice' => false, 'france/cookies' => true],
+            ['france/legal-notice' => false, 'france/privacy-policy' => true, 'france/cookies' => true],
             null,
             $adminUrlGenerator,
         );
@@ -157,7 +157,7 @@ class SiteAlertProviderTest extends TestCase
         $adminUrlGenerator->expects($this->once())->method('setEntityId')->with(12)->willReturnSelf();
 
         $provider = $this->createProvider(
-            ['france/legal-notice' => true, 'france/cookies' => true],
+            ['france/legal-notice' => true, 'france/privacy-policy' => true, 'france/cookies' => true],
             $this->createHomeStatus(isPublished: false, id: 12),
             $adminUrlGenerator,
         );

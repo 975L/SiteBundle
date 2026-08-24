@@ -14,10 +14,6 @@
                 <source>description.email_text_hello</source>
                 <target>Salutation en haut de l'email (HTML autorisé, non traduit). Vide = rien.</target>
             </trans-unit>
-            <trans-unit id="YRufMZi">
-                <source>description.email_text_legal</source>
-                <target>Texte libre en bas de l'email pour mentions légales (forme juridique, capital, SIRET...) (HTML autorisé, non traduit). Vide = rien.</target>
-            </trans-unit>
             <trans-unit id="gH2Y6PX">
                 <source>description.email_text_no_spam</source>
                 <target>Texte "anti-spam" en haut de l'email (HTML autorisé, non traduit). Vide = rien.</target>
@@ -61,10 +57,6 @@
             <trans-unit id="ZewvoKr">
                 <source>label.email_text_hello</source>
                 <target>Salutation de l'email</target>
-            </trans-unit>
-            <trans-unit id="gRiag_n">
-                <source>label.email_text_legal</source>
-                <target>Mentions légales complémentaires de l'email</target>
             </trans-unit>
             <trans-unit id="S7SABir">
                 <source>label.email_text_no_spam</source>

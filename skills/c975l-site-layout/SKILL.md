@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, HostedBy, MadeBy, Preconnect, theme_variables_css."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -177,9 +177,14 @@ and `footer.html.twig` (which render the `email-header` / `email-footer` menus),
 appended through `theme_variables_css()` so the admin's colors win the cascade.
 
 `fullLayout`'s own copy is not translations: it is rich text authored in the back office under the
-`email` group — `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`,
-`email-text-legal`. **All five ship empty**, each block rendering only when its value is not. The last
-two accept a `%site%` placeholder.
+`email` group — `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`.
+**All four ship empty**, each block rendering only when its value is not. The last two accept a
+`%site%` placeholder.
+
+What the footer owes the law is not that copy: the identification comes from `site-owner`, followed by
+a link to the page `url-privacy-policy` names, both skipped while their setting is empty, and both
+rendered *below* the `email-footer` menu an admin builds. `{% block emailUnsubscribe %}` is where a
+prospection email places its own way out (article L34-5 CPCE); a transactional one leaves it empty.
 
 `EmailLayoutProvider` implements UiBundle's `EmailLayoutProviderInterface`, so any `EmailTemplate` sent
 anywhere in the ecosystem comes out in this bundle's branded layout — and in UiBundle's plain fallback

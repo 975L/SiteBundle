@@ -14,10 +14,6 @@
                 <source>description.email_text_hello</source>
                 <target>Greeting at the top of the email (HTML allowed, not translated). Empty = nothing.</target>
             </trans-unit>
-            <trans-unit id="YRufMZi">
-                <source>description.email_text_legal</source>
-                <target>Free text at the bottom of the email for legal mentions (legal form, share capital, reg. number...) (HTML allowed, not translated). Empty = nothing.</target>
-            </trans-unit>
             <trans-unit id="gH2Y6PX">
                 <source>description.email_text_no_spam</source>
                 <target>"No spam" notice at the top of the email (HTML allowed, not translated). Empty = nothing.</target>
@@ -61,10 +57,6 @@
             <trans-unit id="ZewvoKr">
                 <source>label.email_text_hello</source>
                 <target>Email Greeting</target>
-            </trans-unit>
-            <trans-unit id="gRiag_n">
-                <source>label.email_text_legal</source>
-                <target>Email Extra Legal Mentions</target>
             </trans-unit>
             <trans-unit id="S7SABir">
                 <source>label.email_text_no_spam</source>

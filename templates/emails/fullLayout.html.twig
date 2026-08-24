@@ -85,16 +85,24 @@
                 {% if config('email-text-closing') %}
                     {{ config('email-text-closing')|replace({'%site%': site|default('')})|raw }}
                 {% endif %}
-                {# User's footer #}
+                {# User's footer - the "email-footer" Menu, which adds to what follows and never stands in for it #}
                 {% include '@c975LSite/emails/footer.html.twig' %}
+                {# Where a prospection e-mail places its way out (article L34-5 CPCE); a transactional one owes none #}
+                {% block emailUnsubscribe %}{% endblock %}
                 {# Email sent by #}
                 {% if config('email-text-sent-by') %}
                     {{ config('email-text-sent-by')|replace({'%site%': site|default('')})|raw }}
                 {% endif %}
-                {# Additional legal mentions (legal form, share capital, registration number...) #}
-                {% if config('email-text-legal') %}
+                {# Who sends this e-mail, owed by every commercial document (LCEN art. 6-III, C. com. art. R123-237) #}
+                {% if config('site-owner') %}
                     <p class="text text-muted text-center small">
-                        {{ config('email-text-legal')|raw }}
+                        {{ config('site-owner')|raw }}
+                    </p>
+                {% endif %}
+                {# Link to what is done with the recipient's data, which article 13 asks to be reachable #}
+                {% if config('url-privacy-policy') %}
+                    <p class="text text-muted text-center small">
+                        <a href="{{ config('url-privacy-policy') }}">{{ 'label.privacy_policy'|trans({}, 'site') }}</a>
                     </p>
                 {% endif %}
                 {# Copyright #}

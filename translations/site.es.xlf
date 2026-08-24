@@ -1434,10 +1434,6 @@
                 <source>text.err500</source>
                 <target>Hemos detectado un error interno :-( Les pedimos que disculparnos.</target>
             </trans-unit>
-            <trans-unit id="fqCFO6G">
-                <source>text.gdpr</source>
-                <target>Acepto que este sitio web almacena los datos enviados para que pueda responder a mi solicitud</target>
-            </trans-unit>
             <trans-unit id="npvFfuM">
                 <source>text.no_articles</source>
                 <target>No hay artículos disponibles.</target>

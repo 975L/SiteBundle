@@ -23,9 +23,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // The legal models themselves are core-bundle's (its "Legal models" screen writes the text), but only this bundle knows whether a Page carries one and whether that Page is published, so the alert belongs here
 class SiteAlertProvider implements AlertProviderInterface
 {
-    // The two a French site cannot go online without. Keyed by the identifier a "legal_model" block stores, which is what DefaultPagesImporter seeds and what the model catalog names
+    // The three a French site cannot go online without, privacy policy included since server logs alone process personal data. Keyed by the identifier a "legal_model" block stores, which DefaultPagesImporter seeds
     private const array LEGAL_MODELS = [
         'france/legal-notice' => 'label.legal_notice',
+        'france/privacy-policy' => 'label.privacy_policy',
         'france/cookies' => 'label.cookies',
     ];
 

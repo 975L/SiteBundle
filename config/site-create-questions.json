@@ -6,6 +6,8 @@
     "site-role-admin",
     "site-role-editor",
     "user-roles-available",
+    "site-has-accounts",
+    "url-privacy-policy",
     "email-from",
     "email-from-name"
 ]

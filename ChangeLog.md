@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.7.0
+
+The e-mail footer carries what the law asks by default
+
+- The e-mail footer prints the identification read from `site-owner` (24/08/2026)
+- It prints under it a link to the page `url-privacy-policy` names, skipped while that setting is empty (24/08/2026)
+- `fullLayout.html.twig` gains an empty `emailUnsubscribe` block where a prospection e-mail places its way out (24/08/2026)
+- The `email-footer` Menu built in the back-office is rendered above those blocks instead of standing in for them (24/08/2026)
+- Dropped the `email-text-legal` setting, said by `site-owner` already (24/08/2026) [BC-Break] [Needs db update]
+- `SiteAlertProvider` also asks for a published page carrying the `france/privacy-policy` model (24/08/2026)
+- `c975l:site:create` asks for `site-has-accounts` and `url-privacy-policy` (24/08/2026)
+- Dropped `text.gdpr` from the three `site` catalogs (24/08/2026)
+- `EmailFooterTest` locks the identification, the privacy link, the unsubscribe hook and their order (24/08/2026)
+
 ## v8.6.1
 
 The guided projects move onto the 2000 block reserved for this bundle
