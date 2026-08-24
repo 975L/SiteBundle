@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.7.1
+
+Requires the core-bundle release declaring the privacy settings
+
+- Requires `c975l/core-bundle` `^1.16`, which declares `url-privacy-policy` and `site-has-accounts` (24/08/2026)
+
 ## v8.7.0
 
 The e-mail footer carries what the law asks by default
