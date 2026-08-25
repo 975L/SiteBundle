@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.7.3
+
+Fixes the page share image and the redirect left by a renamed draft
+
+- Fixed `PageCrudController` breaking the edit screen of a page whose share image had been uploaded (25/08/2026)
+- The share image is drawn by CoreBundle's `OgImageField`, on the write screens alone (25/08/2026)
+- `PageCrudController` only creates a redirect from the old slug when the page was already published before the save (25/08/2026)
+- Requires `c975l/core-bundle` `^1.17.2`, which declares `OgImageField` (25/08/2026)
+
 ## v8.7.2
 
 The tooling is CoreBundle's

@@ -302,9 +302,9 @@ class PageCrudControllerTest extends TestCase
 
     public function testUpdateEntityCreatesARedirectWhenSlugChanges(): void
     {
-        $page = new Page()->setTitle('Same Title')->setSlug('new-slug');
+        $page = new Page()->setTitle('Same Title')->setSlug('new-slug')->setIsPublished(true);
 
-        $manager = $this->createManagerWithOriginalData(['slug' => 'old-slug', 'title' => 'Same Title']);
+        $manager = $this->createManagerWithOriginalData(['slug' => 'old-slug', 'title' => 'Same Title', 'isPublished' => true]);
         // parent::updateEntity() also persists the Page itself - capture every persisted entity rather than asserting a single call, since a Redirect is persisted in addition to it
         $persisted = [];
         $manager->method('persist')->willReturnCallback(function (object $entity) use (&$persisted): void {
@@ -321,6 +321,41 @@ class PageCrudControllerTest extends TestCase
         $this->assertCount(1, $redirects);
         $this->assertSame('/pages/old-slug', $redirects[0]->getFromPath());
         $this->assertSame('/pages/new-slug', $redirects[0]->getToUrl());
+    }
+
+    // An unpublished page, typically a fresh duplicate, leaves no url behind to redirect from
+    public function testUpdateEntityDoesNotCreateARedirectWhenPageWasNotPublished(): void
+    {
+        $page = new Page()->setTitle('Renamed Page')->setSlug('old-page-copy');
+
+        $manager = $this->createManagerWithOriginalData(['slug' => 'old-page-copy', 'title' => 'Old Page (copy)', 'isPublished' => false]);
+        $persisted = [];
+        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $this->createController()->updateEntity($manager, $page);
+
+        $this->assertSame('renamed-page', $page->getSlug());
+        $this->assertCount(1, $persisted);
+        $this->assertInstanceOf(Page::class, $persisted[0]);
+    }
+
+    // Renamed and published in one save: the state before the save is what counts
+    public function testUpdateEntityDoesNotCreateARedirectWhenPageIsRenamedAndPublishedAtOnce(): void
+    {
+        $page = new Page()->setTitle('Renamed Page')->setSlug('old-page-copy')->setIsPublished(true);
+
+        $manager = $this->createManagerWithOriginalData(['slug' => 'old-page-copy', 'title' => 'Old Page (copy)', 'isPublished' => false]);
+        $persisted = [];
+        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $this->createController()->updateEntity($manager, $page);
+
+        $this->assertCount(1, $persisted);
+        $this->assertInstanceOf(Page::class, $persisted[0]);
     }
 
     public function testUpdateEntityDoesNotCreateARedirectWhenSlugIsUnchanged(): void

@@ -28,8 +28,8 @@ use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Field\OgImageField;
 use c975L\UiBundle\Form\BlockType;
-use c975L\UiBundle\Form\OgImageType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
@@ -242,13 +242,10 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
 
             // SEO
-            // TextField, not Field: an association would be rebuilt as an AssociationField, force-injecting options OgImageType doesn't declare
-            TextField::new('ogImage')
+            // OgImageField carries the upload widget and the write-screens-only rule with it
+            OgImageField::new('ogImage')
                 ->setLabel(t('label.og_image', [], 'site'))
-                ->setHelp(t('label.og_image_help', [], 'site'))
-                ->setFormType(OgImageType::class)
-                ->setFormTypeOption('required', false)
-                ->hideOnIndex(),
+                ->setHelp(t('label.og_image_help', [], 'site')),
 
             // Blocks row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
             CollectionField::new('blocks')
@@ -846,13 +843,15 @@ class PageCrudController extends AbstractCrudController
         parent::persistEntity($entityManager, $page);
     }
 
-    // Updated page - Resyncs the slug when the title changes, then creates a redirect from the old slug when it changes
+    // Updated page - Resyncs the slug when the title changes, then creates a redirect from the old slug when it changes on an already published page
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
         $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($page);
         $originalSlug = $originalData['slug'] ?? null;
         $originalTitle = $originalData['title'] ?? null;
+        // The state before the save, not what the page becomes in it
+        $originalIsPublished = (bool) ($originalData['isPublished'] ?? false);
 
         // The home page's slug is fixed (see isHomePage in configureFields), its title can change without affecting it
         if ('home' !== $originalSlug && null !== $originalTitle && $originalTitle !== $page->getTitle()) {
@@ -861,7 +860,8 @@ class PageCrudController extends AbstractCrudController
 
         $this->slugifyPage($page);
 
-        if (null !== $originalSlug && $originalSlug !== $page->getSlug()) {
+        // An unpublished page was never served under its old slug, so renaming it leaves no url to redirect from
+        if (null !== $originalSlug && $originalIsPublished && $originalSlug !== $page->getSlug()) {
             $this->redirectSlugChange($entityManager, $originalSlug, $page->getSlug());
         }
 

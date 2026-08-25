@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-25",
+        "description": [
+            {
+                "en": "Duplicating a page then renaming the copy no longer creates a redirect to delete by hand: only a page already published leaves one behind when its address changes",
+                "fr": "Dupliquer une page puis renommer la copie ne crée plus de redirection à supprimer à la main : seule une page déjà publiée en laisse une quand son adresse change",
+                "es": "Duplicar una página y renombrar la copia ya no crea una redirección que haya que borrar a mano: solo una página ya publicada deja una cuando cambia su dirección"
+            }
+        ]
+    },
+    {
         "date": "2026-08-24",
         "description": [
             {
