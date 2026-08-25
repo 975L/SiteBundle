@@ -1,6 +1,6 @@
 {
     "ignoreFiles": [
-        "public/**",
+        "**/public/**",
         "vendor/**",
         "**/*.min.css"
     ],

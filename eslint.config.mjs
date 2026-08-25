@@ -2,7 +2,7 @@
 // Only correctness rules are enabled, formatting is left to the developer
 export default [
     {
-        ignores: ["public/**", "vendor/**", "**/*.min.js"],
+        ignores: ["**/public/**", "vendor/**", "**/*.min.js"],
     },
     {
         files: ["**/*.js", "**/*.mjs"],
@@ -12,6 +12,7 @@ export default [
 
             // Browser globals used across the c975L bundles, plus the third-party ones loaded by AssetMapper
             globals: {
+                cancelAnimationFrame: "readonly",
                 clearInterval: "readonly",
                 clearTimeout: "readonly",
                 confetti: "readonly",
@@ -20,10 +21,12 @@ export default [
                 CustomEvent: "readonly",
                 DataTransfer: "readonly",
                 document: "readonly",
+                DOMParser: "readonly",
                 Event: "readonly",
                 fetch: "readonly",
                 File: "readonly",
                 FileReader: "readonly",
+                FormData: "readonly",
                 history: "readonly",
                 Image: "readonly",
                 IntersectionObserver: "readonly",
@@ -31,6 +34,7 @@ export default [
                 navigator: "readonly",
                 Node: "readonly",
                 requestAnimationFrame: "readonly",
+                ResizeObserver: "readonly",
                 screen: "readonly",
                 setInterval: "readonly",
                 setTimeout: "readonly",
@@ -38,6 +42,7 @@ export default [
                 URL: "readonly",
                 URLSearchParams: "readonly",
                 window: "readonly",
+                XMLHttpRequest: "readonly",
             },
         },
         rules: {

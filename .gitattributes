@@ -6,6 +6,7 @@
 /.gitattributes export-ignore
 /.github export-ignore
 /.gitignore export-ignore
+/.markdownlint.json export-ignore
 /.php-cs-fixer.dist.php export-ignore
 /.stylelintrc.json export-ignore
 /.vscode export-ignore

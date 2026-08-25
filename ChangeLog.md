@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.7.2
+
+The tooling is CoreBundle's
+
+- `eslint.config.mjs` aligned on CoreBundle's, five globals more (25/08/2026)
+- `.codacy.yaml` and `.stylelintrc.json` aligned on CoreBundle's (25/08/2026)
+- `**/public/**` ignored rather than `public/**` by eslint, Codacy and stylelint (25/08/2026)
+- Codacy also excludes `**/tests/**` and `**/*.tpl.php` (25/08/2026)
+- Added `.markdownlint.json`, export-ignored from the dist archive (25/08/2026)
+- Rector caches in `.rector.cache`, inside the repository (25/08/2026)
+- `composer rector` drops `--clear-cache` (25/08/2026)
+- `bin/ci.sh` aligned on CoreBundle's, leaving `.rector.cache` out of the copy (25/08/2026)
+
 ## v8.7.1
 
 Requires the core-bundle release declaring the privacy settings

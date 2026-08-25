@@ -17,7 +17,7 @@ fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-# Rector caches in sys_get_temp_dir()/rector_cached_files, one directory shared by every repository on the machine: a second run answers "Rector is done!" where the first listed files to rewrite, and `--clear-cache` empties the cache of all the other repositories at once - it even fails outright when another Rector is writing there. A private TMPDIR gives this replay the cold cache the CI always starts from, and takes it away with $WORK
+# rector.php caches in .rector.cache, inside the repository rather than in the sys_get_temp_dir() directory shared by every repository on the machine. That cache is left out of the copy below, so this replay starts from the cold cache the CI always has: without it a second run answers "Rector is done!" where the first listed files to rewrite. A private TMPDIR still isolates whatever else writes there, and goes away with $WORK
 export TMPDIR="$WORK/tmp"
 mkdir -p "$TMPDIR"
 
@@ -30,6 +30,7 @@ rsync -a \
     --exclude '.phpunit.cache/' \
     --exclude '.php-cs-fixer.cache' \
     --exclude '.phpunit.result.cache' \
+    --exclude '.rector.cache/' \
     --exclude 'coverage/' \
     "$ROOT/" "$WORK/"
 

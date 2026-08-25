@@ -2,6 +2,7 @@
 .php-cs-fixer.cache
 .phpunit.result.cache
 .phpunit.cache
+.rector.cache
 coverage
 composer.lock
 vendor

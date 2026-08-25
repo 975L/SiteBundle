@@ -1,8 +1,10 @@
 ---
 exclude_paths:
-  - "public/**"
+  - "**/public/**"
+  - "**/tests/**"
   - "vendor/**"
   - "**/*.min.js"
   - "**/*.min.css"
   - "**/*.map"
+  - "**/*.tpl.php"
   - ".phpunit.cache/**"

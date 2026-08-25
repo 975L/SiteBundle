@@ -23,6 +23,8 @@ return RectorConfig::configure()
         __DIR__ . '/scaffold',
     ])
     ->withPhpSets()
+    // The cache lives in the repository rather than in sys_get_temp_dir(), one directory shared by every repository on the machine: a run here no longer competes with, nor empties, the cache of the other repositories. bin/ci.sh keeps its cold cache by leaving this directory out of the copy
+    ->withCache(cacheDirectory: __DIR__ . '/.rector.cache')
     ->withComposerBased(symfony: true, doctrine: true)
     ->withSets([
         DoctrineSetList::ANNOTATIONS_TO_ATTRIBUTES,
