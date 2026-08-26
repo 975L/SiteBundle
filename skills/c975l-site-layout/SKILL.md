@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -176,6 +176,11 @@ and `footer.html.twig` (which render the `email-header` / `email-footer` menus),
 `emailTemplateLayout.html.twig`. CSS is inlined by `twig/cssinliner-extra`, the compiled theme being
 appended through `theme_variables_css()` so the admin's colors win the cascade.
 
+`fullLayout` wraps the whole document in `absolute_urls(config('site-url'))` (core-bundle's filter,
+`^1.17.5`), so every root-relative `src` and `href` an email holds names the host it hangs from — a
+mailbox has nothing to resolve `/medias/…` against. It is the one place to do it, since every other
+email template extends this one; an unset `site-url` leaves the paths untouched.
+
 `fullLayout`'s own copy is not translations: it is rich text authored in the back office under the
 `email` group — `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`.
 **All four ship empty**, each block rendering only when its value is not. The last two accept a
@@ -229,3 +234,4 @@ of your own keeps both anchors.
   here drifts from it without a word.
 - **Do not override `title` to hide a page heading** — it is the `<title>` tag. Override `heading`.
 - **Do not hardcode the email copy.** The five `email-text-*` keys are the site's own.
+- **Do not make an email's paths absolute template by template.** `fullLayout` already does it for all.

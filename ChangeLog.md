@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.7.4
+
+Emails name the host their pictures and links hang from
+
+- `fullLayout.html.twig` pipes the rendered email through `absolute_urls(config('site-url'))` (26/08/2026)
+- Requires `c975l/core-bundle` `^1.17.5`, which declares the `absolute_urls` filter (26/08/2026)
+- The README, the layout skill and the menus skill state that an email's paths are made absolute (26/08/2026)
+- The content-quality tests hand the analyzer its external-link check schedule (26/08/2026)
+
 ## v8.7.3
 
 Fixes the page share image and the redirect left by a renamed draft

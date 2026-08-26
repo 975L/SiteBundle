@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-08-26",
+        "description": [
+            {
+                "en": "Images and links in the emails the site sends now work once the message is opened in a mailbox, instead of coming out broken",
+                "fr": "Les images et les liens des emails envoyés par le site fonctionnent désormais une fois le message ouvert dans une boîte mail, au lieu d'arriver cassés",
+                "es": "Las imágenes y los enlaces de los correos que envía el sitio ahora funcionan al abrir el mensaje en el buzón, en lugar de llegar rotos"
+            }
+        ]
+    },
+    {
         "date": "2026-08-25",
         "description": [
             {

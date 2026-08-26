@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\ContentOffenceLocatorRegistry;
 use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
+use c975L\ConfigBundle\Management\ExternalLinkCheckSchedule;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\ContentQualityClient;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
@@ -147,8 +148,18 @@ class ContentQualityHealthCheckProviderTest extends TestCase
                 $urlStatusChecker ?? $this->createUrlStatusChecker(),
                 new ContentOffenceLocatorRegistry([new PageContentOffenceLocator($pageBlockLocator ?? $this->createPageBlockLocator())]),
                 $translator ?? $this->createTranslator(),
+                $this->createExternalLinkCheckSchedule(),
             ),
         );
+    }
+
+    // The external link pass is due, which is what a run over pages never checked before does - what every test here describes
+    private function createExternalLinkCheckSchedule(): ExternalLinkCheckSchedule
+    {
+        $schedule = $this->createStub(ExternalLinkCheckSchedule::class);
+        $schedule->method('decide')->willReturn(['due' => true, 'checkedAt' => '2026-08-26T10:00:00+02:00', 'broken' => []]);
+
+        return $schedule;
     }
 
     public function testGetKindReturnsContentQuality(): void

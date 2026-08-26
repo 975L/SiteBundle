@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -38,8 +38,9 @@ The navbar and the footer are rendered by the layout already — nothing to add 
 
 The email locations render inside `@c975LSite/emails/header.html.twig` and `footer.html.twig`,
 independently, so a client keeps different content for emails than for the site. A `menu_link` resolves
-to a **relative** url, which is fine in a bar and not usable as such in an email — the email menus are
-meant for content needing none (social icons, legal blurbs).
+to a **relative** url, which `emails/fullLayout.html.twig` rewrites against `site-url` on its way out,
+so an email menu links to the live site — as long as that setting is filled, since an empty one leaves
+the paths relative and the links dead.
 
 ## menu_link
 
@@ -138,7 +139,7 @@ on every visit just to navigate.
 - **Do not offer `block_group` in a menu.** Use `menu_group`.
 - **Do not put anything but links in a navbar** — the context forbids it, and the picker will not
   offer it.
-- **Do not use a `menu_link` in an email menu** expecting an absolute url.
+- **Do not use a `menu_link` in an email menu while `site-url` is empty.** Nothing makes it absolute then.
 - **Do not write `flex-direction` for the footer layout.** Retune the two `--footer-items-*` tokens.
 - **Do not set the navbar position with a `style` attribute.** The nonce drops it.
 - **Do not build a second navigation table.** A menu is a block collection like a page's.

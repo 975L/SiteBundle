@@ -7,7 +7,8 @@
 {# Copyright #}
 {% set copyright = site_copyright() %}
 
-{% apply inline_css %}
+{# Every root-relative path this layout wraps is made absolute: an email is read outside the site, where "/medias/…" resolves against nothing #}
+{% apply inline_css|absolute_urls(config('site-url')) %}
 <!DOCTYPE html>
     {# Head #}
     <head>
