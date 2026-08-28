@@ -90,9 +90,7 @@ class MenuCrudController extends AbstractCrudController
                     $data['blocks'] ?? [],
                     static fn (Block $block) => $menu->removeBlock($block)
                 );
-                if (!isset($data['blocks'])) {
-                    $data['blocks'] = [];
-                }
+                $data['blocks'] ??= [];
             }
 
             $event->setData($data);

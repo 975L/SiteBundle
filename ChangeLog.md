@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.7.6
+
+MenuCrudController uses null-coalescing assignment
+
+- `MenuCrudController` normalizes an absent `blocks` key with `??=` (28/08/2026)
+
 ## v8.7.5
 
 Logo modified
