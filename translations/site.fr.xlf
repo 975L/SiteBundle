@@ -1346,6 +1346,78 @@
                 <source>label.save</source>
                 <target>Enregistrer</target>
             </trans-unit>
+            <trans-unit id="dbWhw.4">
+                <source>label.site_sample_collection_name</source>
+                <target>Nos réalisations</target>
+            </trans-unit>
+            <trans-unit id="sd_HyXd">
+                <source>label.site_sample_page_history_body</source>
+                <target>Nous sommes six aujourd'hui, et cette idée n'a pas bougé. Ce qui sort d'ici est fait pour durer plus longtemps que nous.</target>
+            </trans-unit>
+            <trans-unit id="wE8uhw6">
+                <source>label.site_sample_page_history_lead</source>
+                <target>L'atelier a ouvert en 2014 dans une ancienne menuiserie, avec deux établis et l'idée qu'un meuble bien fait se répare plutôt qu'il ne se remplace.</target>
+            </trans-unit>
+            <trans-unit id="OLHmE2r">
+                <source>label.site_sample_page_history_title</source>
+                <target>Notre histoire</target>
+            </trans-unit>
+            <trans-unit id="aj1p_tV">
+                <source>label.site_sample_page_home_badge</source>
+                <target>Démonstration</target>
+            </trans-unit>
+            <trans-unit id="kG5icwM">
+                <source>label.site_sample_page_home_body</source>
+                <target>Rien de ce que vous ferez ne sera conservé : la démonstration est remise à zéro toutes les heures, et repart de ce même contenu.</target>
+            </trans-unit>
+            <trans-unit id="u7.79CD">
+                <source>label.site_sample_page_home_lead</source>
+                <target>Vous êtes sur une démonstration. Tout ce que vous voyez ici est modifiable, y compris cette page : ouvrez le back-office et essayez.</target>
+            </trans-unit>
+            <trans-unit id="5_Rfe.A">
+                <source>label.site_sample_page_home_subtitle</source>
+                <target>Un site complet, monté avec les bundles c975L, dont vous avez les clés du back-office.</target>
+            </trans-unit>
+            <trans-unit id="kAKeEqY">
+                <source>label.site_sample_page_home_title</source>
+                <target>Bienvenue</target>
+            </trans-unit>
+            <trans-unit id="ZBYST9H">
+                <source>label.site_sample_page_services_body</source>
+                <target>Chaque projet commence par une conversation : ce que vous vendez, à qui, et ce que le site doit faire pour vous. Le reste en découle.</target>
+            </trans-unit>
+            <trans-unit id="FMlEreK">
+                <source>label.site_sample_page_services_lead</source>
+                <target>Nous accompagnons les artisans et les petites structures qui veulent un site clair, rapide, et qu'elles peuvent tenir elles-mêmes.</target>
+            </trans-unit>
+            <trans-unit id="JRJ3j9d">
+                <source>label.site_sample_page_services_title</source>
+                <target>Nos services</target>
+            </trans-unit>
+            <trans-unit id="xHxyvd5">
+                <source>label.site_sample_project_renovation_description</source>
+                <target>Une devanture rendue à son état d'origine, menuiseries comprises, sans rien perdre du confort actuel.</target>
+            </trans-unit>
+            <trans-unit id="BaMXBvj">
+                <source>label.site_sample_project_renovation_title</source>
+                <target>Rénovation de façade</target>
+            </trans-unit>
+            <trans-unit id="OxYUFPX">
+                <source>label.site_sample_project_signage_description</source>
+                <target>Des enseignes et des panneaux dessinés pour le lieu, fabriqués à l'atelier et posés par nos soins.</target>
+            </trans-unit>
+            <trans-unit id="23q.uFR">
+                <source>label.site_sample_project_signage_title</source>
+                <target>Signalétique sur mesure</target>
+            </trans-unit>
+            <trans-unit id="psbA8_H">
+                <source>label.site_sample_project_workshop_description</source>
+                <target>Un espace de travail repensé de fond en comble, du plan d'implantation au dernier plan de travail.</target>
+            </trans-unit>
+            <trans-unit id="f0J4zqJ">
+                <source>label.site_sample_project_workshop_title</source>
+                <target>Réaménagement d'atelier</target>
+            </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>
                 <target>Slug</target>

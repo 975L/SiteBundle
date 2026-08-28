@@ -1346,6 +1346,78 @@
                 <source>label.save</source>
                 <target>Guardar</target>
             </trans-unit>
+            <trans-unit id="dbWhw.4">
+                <source>label.site_sample_collection_name</source>
+                <target>Nuestros trabajos</target>
+            </trans-unit>
+            <trans-unit id="sd_HyXd">
+                <source>label.site_sample_page_history_body</source>
+                <target>Hoy somos seis, y esa idea no ha cambiado. Lo que sale de aquí está hecho para durar más que nosotros.</target>
+            </trans-unit>
+            <trans-unit id="wE8uhw6">
+                <source>label.site_sample_page_history_lead</source>
+                <target>El taller abrió en 2014 en una antigua carpintería, con dos bancos y la idea de que un mueble bien hecho se repara en vez de sustituirse.</target>
+            </trans-unit>
+            <trans-unit id="OLHmE2r">
+                <source>label.site_sample_page_history_title</source>
+                <target>Nuestra historia</target>
+            </trans-unit>
+            <trans-unit id="aj1p_tV">
+                <source>label.site_sample_page_home_badge</source>
+                <target>Demostración</target>
+            </trans-unit>
+            <trans-unit id="kG5icwM">
+                <source>label.site_sample_page_home_body</source>
+                <target>Nada se conserva: la demostración se reinicia cada hora y vuelve a partir de este mismo contenido.</target>
+            </trans-unit>
+            <trans-unit id="u7.79CD">
+                <source>label.site_sample_page_home_lead</source>
+                <target>Esto es una demostración. Todo lo que ve puede modificarse, incluida esta página: abra el back-office y pruébelo.</target>
+            </trans-unit>
+            <trans-unit id="5_Rfe.A">
+                <source>label.site_sample_page_home_subtitle</source>
+                <target>Un sitio completo, construido con los bundles c975L, cuyo back-office está a su disposición.</target>
+            </trans-unit>
+            <trans-unit id="kAKeEqY">
+                <source>label.site_sample_page_home_title</source>
+                <target>Bienvenido</target>
+            </trans-unit>
+            <trans-unit id="ZBYST9H">
+                <source>label.site_sample_page_services_body</source>
+                <target>Cada proyecto empieza con una conversación: qué vende, a quién y qué debe hacer el sitio por usted. Lo demás se deduce de ahí.</target>
+            </trans-unit>
+            <trans-unit id="FMlEreK">
+                <source>label.site_sample_page_services_lead</source>
+                <target>Acompañamos a artesanos y equipos pequeños que quieren un sitio claro, rápido y que puedan mantener ellos mismos.</target>
+            </trans-unit>
+            <trans-unit id="JRJ3j9d">
+                <source>label.site_sample_page_services_title</source>
+                <target>Nuestros servicios</target>
+            </trans-unit>
+            <trans-unit id="xHxyvd5">
+                <source>label.site_sample_project_renovation_description</source>
+                <target>Un escaparate devuelto a su estado original, carpintería incluida, sin perder nada de la comodidad actual.</target>
+            </trans-unit>
+            <trans-unit id="BaMXBvj">
+                <source>label.site_sample_project_renovation_title</source>
+                <target>Restauración de fachada</target>
+            </trans-unit>
+            <trans-unit id="OxYUFPX">
+                <source>label.site_sample_project_signage_description</source>
+                <target>Rótulos y paneles dibujados para el lugar, fabricados en el taller y colocados por nosotros.</target>
+            </trans-unit>
+            <trans-unit id="23q.uFR">
+                <source>label.site_sample_project_signage_title</source>
+                <target>Rotulación a medida</target>
+            </trans-unit>
+            <trans-unit id="psbA8_H">
+                <source>label.site_sample_project_workshop_description</source>
+                <target>Un espacio de trabajo repensado de arriba abajo, del plano de distribución a la última encimera.</target>
+            </trans-unit>
+            <trans-unit id="f0J4zqJ">
+                <source>label.site_sample_project_workshop_title</source>
+                <target>Reforma de taller</target>
+            </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>
                 <target>Slug</target>

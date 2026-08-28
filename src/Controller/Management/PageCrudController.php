@@ -454,7 +454,8 @@ class PageCrudController extends AbstractCrudController
     private function tuneIndexActions(Actions $actions): Actions
     {
         return $actions
-            ->reorder(Crud::PAGE_INDEX, [Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
+            // "exportSelection" leads the list although the rest of it is about row actions, and "batchDelete" is deliberately not named: reorder() turns EasyAdmin's own priority ordering off for the whole page, and without it the batch bar falls back to the order actions were added in - which puts delete first, the dashboard declaring it before any bundle's own. Naming the export alone is enough to put it ahead, and naming delete would throw on a screen that disables it
+            ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_EDIT, ['viewOnSite', 'preview', 'duplicate'])
             ->reorder(Crud::PAGE_DETAIL, ['viewOnSite', 'preview', 'duplicate'])
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(

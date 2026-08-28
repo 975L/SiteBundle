@@ -909,6 +909,25 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'exportSelection'));
     }
 
+    // tuneIndexActions()'s own reorder() turns EasyAdmin's automatic ordering off for the whole page, and the batch bar then falls back to the order actions were added in - which puts the dashboard's "batchDelete" ahead of the export, delete reading first
+    public function testConfigureActionsPutsTheExportAheadOfDeleteInTheBatchBar(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::BATCH_DELETE)
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        );
+
+        $names = array_keys($actions->getAsDto(Crud::PAGE_INDEX)->getActions()->all());
+
+        $this->assertContains('exportSelection', $names);
+        $this->assertContains(Action::BATCH_DELETE, $names);
+        $this->assertLessThan(array_search(Action::BATCH_DELETE, $names, true), array_search('exportSelection', $names, true));
+    }
+
     // Deleting a page only moves it to the trash, which an editor may do - pulling one back out or removing it for good is what restore()/deletePermanently() deny below site-role-admin, and a button leading to their own 403 is a button not to draw
     public function testConfigureActionsGivesTheTwoTrashActionsTheAdminBarTheirOwnMethodsState(): void
     {

@@ -1346,6 +1346,78 @@
                 <source>label.save</source>
                 <target>Save</target>
             </trans-unit>
+            <trans-unit id="dbWhw.4">
+                <source>label.site_sample_collection_name</source>
+                <target>Our work</target>
+            </trans-unit>
+            <trans-unit id="sd_HyXd">
+                <source>label.site_sample_page_history_body</source>
+                <target>There are six of us now, and that idea has not moved. What leaves this place is built to outlast us.</target>
+            </trans-unit>
+            <trans-unit id="wE8uhw6">
+                <source>label.site_sample_page_history_lead</source>
+                <target>The workshop opened in 2014 in an old joinery, with two benches and the idea that a well-made piece of furniture is repaired rather than replaced.</target>
+            </trans-unit>
+            <trans-unit id="OLHmE2r">
+                <source>label.site_sample_page_history_title</source>
+                <target>Our story</target>
+            </trans-unit>
+            <trans-unit id="aj1p_tV">
+                <source>label.site_sample_page_home_badge</source>
+                <target>Demonstration</target>
+            </trans-unit>
+            <trans-unit id="kG5icwM">
+                <source>label.site_sample_page_home_body</source>
+                <target>None of it is kept: the demonstration is reset every hour, and starts again from this very content.</target>
+            </trans-unit>
+            <trans-unit id="u7.79CD">
+                <source>label.site_sample_page_home_lead</source>
+                <target>This is a demonstration. Everything you see can be changed, this page included: open the back office and try it.</target>
+            </trans-unit>
+            <trans-unit id="5_Rfe.A">
+                <source>label.site_sample_page_home_subtitle</source>
+                <target>A whole site, built with the c975L bundles, whose back office is yours to open.</target>
+            </trans-unit>
+            <trans-unit id="kAKeEqY">
+                <source>label.site_sample_page_home_title</source>
+                <target>Welcome</target>
+            </trans-unit>
+            <trans-unit id="ZBYST9H">
+                <source>label.site_sample_page_services_body</source>
+                <target>Every project starts with a conversation: what you sell, who to, and what the site has to do for you. The rest follows from that.</target>
+            </trans-unit>
+            <trans-unit id="FMlEreK">
+                <source>label.site_sample_page_services_lead</source>
+                <target>We work with craftspeople and small teams who want a site that is clear, quick, and theirs to keep up.</target>
+            </trans-unit>
+            <trans-unit id="JRJ3j9d">
+                <source>label.site_sample_page_services_title</source>
+                <target>Our services</target>
+            </trans-unit>
+            <trans-unit id="xHxyvd5">
+                <source>label.site_sample_project_renovation_description</source>
+                <target>A frontage brought back to what it was, joinery included, without giving up any of the comfort it has now.</target>
+            </trans-unit>
+            <trans-unit id="BaMXBvj">
+                <source>label.site_sample_project_renovation_title</source>
+                <target>Shopfront restoration</target>
+            </trans-unit>
+            <trans-unit id="OxYUFPX">
+                <source>label.site_sample_project_signage_description</source>
+                <target>Signs and boards drawn for the place, made in the workshop and put up by us.</target>
+            </trans-unit>
+            <trans-unit id="23q.uFR">
+                <source>label.site_sample_project_signage_title</source>
+                <target>Made-to-measure signage</target>
+            </trans-unit>
+            <trans-unit id="psbA8_H">
+                <source>label.site_sample_project_workshop_description</source>
+                <target>A working space rethought from the ground up, from the floor plan to the last worktop.</target>
+            </trans-unit>
+            <trans-unit id="f0J4zqJ">
+                <source>label.site_sample_project_workshop_title</source>
+                <target>Workshop rebuild</target>
+            </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>
                 <target>Slug</target>

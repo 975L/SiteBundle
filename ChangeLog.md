@@ -1,5 +1,23 @@
 # Changelog
 
+## v8.8.0
+
+A demo site is handed pages to browse and a collection to fill
+
+- New `SiteDemoFixtureProvider` (`c975L\UiBundle\Contract\DemoFixtureProviderInterface`): three published pages carrying their blocks, and a collection of three items with their pictures (28/08/2026)
+- The collection is read by a `collection` block on "nos-services" (28/08/2026)
+- One page is slugged "home", which `PageController::home()` serves "/" from (28/08/2026)
+- Menus are deliberately left out of the dataset (28/08/2026)
+- The demo pages carry written-down creation dates (28/08/2026)
+- The demo pages are left out of the index (28/08/2026)
+- The pictures are handed over as a temporary copy of what `PlaceholderMediaProviderInterface` declares (28/08/2026)
+- The home page says what a demo is through two `alert` blocks, editable like the rest (28/08/2026)
+- Added the `label.site_sample_*` keys to the three locales (28/08/2026)
+- Requires `c975l/core-bundle` `^1.18` for `DemoFixtureProviderInterface` (28/08/2026)
+- "Export selection" now leads the index's batch bar, delete reading last (28/08/2026)
+- Added `--calculator-gutter` and `--bs-font-monospace` to `ScaffoldThemeTest`'s known tokens (28/08/2026)
+- Added `tests/Service/SiteDemoFixtureProviderTest.php` (28/08/2026)
+
 ## v8.7.6
 
 MenuCrudController uses null-coalescing assignment

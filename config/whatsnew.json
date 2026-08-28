@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-08-28",
+        "description": [
+            {
+                "en": "A demonstration site now opens on ready-made pages and a gallery of projects, all of it editable from the back office",
+                "fr": "Un site de démonstration s'ouvre désormais sur des pages toutes faites et une galerie de réalisations, le tout modifiable depuis le back-office",
+                "es": "Un sitio de demostración se abre ahora con páginas ya preparadas y una galería de proyectos, todo ello modificable desde el back office"
+            },
+            {
+                "en": "On the pages list, \"Export selection\" now comes before \"Delete\", so the delete button is no longer the first one under your cursor",
+                "fr": "Dans la liste des pages, « Exporter la sélection » précède désormais « Supprimer », le bouton de suppression n'étant plus le premier sous le curseur",
+                "es": "En la lista de páginas, «Exportar la selección» va ahora antes que «Eliminar», por lo que el botón de eliminar ya no es el primero bajo el cursor"
+            }
+        ]
+    },
+    {
         "date": "2026-08-26",
         "description": [
             {

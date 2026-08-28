@@ -568,6 +568,27 @@ Nothing is persisted per item — see `PageController::resolveCollectionDetail()
 
 ---
 
+## Demo dataset
+
+`Service\SiteDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands a demo site three published
+pages carrying their blocks, and a collection of three items with their pictures, read by a `collection` block on
+`nos-services` — so a demo has something to browse, edit and put back. Loading it is that site's own business: this bundle ships no command that writes to a database.
+
+**Menus are deliberately left out.** A site holds one menu per location — one navbar, one footer — so a dataset
+adding its own would either collide with the site's or replace what it navigates by. A demo site's navigation is
+its own content.
+
+The pages carry written-down creation dates, so a demo reloaded between two takes of the same recorded sequence
+reads the same dates back, and they are left out of the index: a made-up page has no business in a search engine
+where the site's own do. Their blocks ride the ORM cascade, so a page taken back by a reload leaves with them —
+where a `CollectionItem` owns its side of the relation and is therefore handed over on its own.
+
+The pictures come from what the site declares through UiBundle's `PlaceholderMediaProviderInterface`, **as a
+temporary copy**: an upload moves the file it is handed. A site declaring none still gets its collection, its cards
+simply showing no picture.
+
+---
+
 ## Themes
 
 The site's colors, fonts and light/dark mode are admin-editable config keys (`group: theme`), **declared by `c975l/ui-bundle`** since the tokens they compile to are the ones its own CSS reads: `theme-color-primary`, `theme-color-secondary`, `theme-color-primary-dark-mode`, `theme-color-secondary-dark-mode`, `theme-color-background`, `theme-color-text`, `theme-font-family-title`, `theme-font-family-body`, `theme-font-family-accent`, `theme-mode` (`auto`/`light`/`dark`). Edited from the config screen's own `theme` group.

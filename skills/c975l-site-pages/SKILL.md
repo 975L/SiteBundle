@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -141,8 +141,19 @@ php bin/console c975l:site:create                       # one-shot wizard bootst
 `page_health_check(page)`. All declared with `#[AsTwigFunction]` on the method backing them — a site
 overriding one decorates the service and carries the attribute over.
 
+## Demo dataset
+
+`SiteDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands a demo site three published pages with
+their blocks and a collection of three items, read by a `collection` block on `nos-services` - loading it is that
+site's own business, this bundle shipping no command that writes to a database. Menus are left out on purpose: a site holds one navbar and one footer of its
+own, and a dataset adding its own would fight the navigation the demo is browsed by. The pages carry written-down
+creation dates and are left out of the index; their blocks ride the cascade, while each `CollectionItem` is handed
+over on its own, nothing cascading off a `CollectionGroup`.
+
 ## Do not
 
+- **Do not add a menu to the demo dataset** — a site's navigation is its own content, and a reload
+  would put back what it thinks belongs there.
 - **Do not create a file-based page for content that must be crawled** — it is absent from the sitemap
   by construction.
 - **Do not write a redirect mechanism.** ConfigBundle's `Redirect` rows answer before the router, for
