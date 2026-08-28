@@ -1,5 +1,9 @@
 # Changelog
 
+## v8.7.5
+
+Logo modified
+
 ## v8.7.4
 
 Emails name the host their pictures and links hang from
