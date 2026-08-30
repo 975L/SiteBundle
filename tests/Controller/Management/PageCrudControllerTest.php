@@ -518,6 +518,32 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('alt text', $copiedMedia->getAlt());
     }
 
+    // A block hidden on the original stays hidden on the copy: duplicating a page is meant to hand back the same page, not to republish what the editor had put aside
+    public function testDuplicateKeepsABlockHidden(): void
+    {
+        $source = new Page()->setTitle('Original')->setSlug('original');
+        $source->addBlock(new Block()->setKind('article')->setHidden(true));
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturn(null);
+
+        $capturedCopy = null;
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('persist')->willReturnCallback(function (object $entity) use (&$capturedCopy): void {
+            $capturedCopy = $entity;
+        });
+
+        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->duplicate($this->createAdminContext($source), $manager);
+
+        $this->assertTrue($capturedCopy->getBlocks()->first()->isHidden());
+    }
+
     // A container block (columns...) holds its content in child blocks, nested to any depth - the copy must carry the whole tree, not just the container
     public function testDuplicateClonesNestedSlotsAndTheirContent(): void
     {
@@ -1569,6 +1595,7 @@ class PageCrudControllerTest extends TestCase
                 'position' => 0,
                 'data' => ['content' => 'hello'],
                 'animation' => null,
+                'hidden' => false,
                 'medias' => [],
                 'slots' => [],
             ]],

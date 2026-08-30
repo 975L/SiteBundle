@@ -537,6 +537,9 @@ class PageCrudController extends AbstractCrudController
     {
         return $crud
             ->showEntityActionsInlined()
+            // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Page", "Créer Page"
+            ->setEntityLabelInSingular(t('label.page', [], 'site'))
+            ->setEntityLabelInPlural(t('label.pages', [], 'site'))
             ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
@@ -779,14 +782,15 @@ class PageCrudController extends AbstractCrudController
         );
     }
 
-    // Clones a block (kind, data, animation, position), its medias and its slots - used when duplicating a page
+    // Clones a block (kind, data, animation, position, hidden), its medias and its slots - used when duplicating a page
     private function cloneBlock(Block $source, ?UserInterface $user): Block
     {
         $copy = new Block()
             ->setKind($source->getKind())
             ->setPosition($source->getPosition())
             ->setData($source->getData())
-            ->setAnimation($source->getAnimation());
+            ->setAnimation($source->getAnimation())
+            ->setHidden($source->isHidden());
         if (null !== $user) {
             $copy->setUser($user);
         }

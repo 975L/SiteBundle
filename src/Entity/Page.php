@@ -55,7 +55,9 @@ class Page implements HasBlocksInterface, \Stringable
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $modification = null;
 
+    // "SET NULL" and not the default: this only records who wrote the page, and deleting that user must not be blocked by it
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?UserInterface $user = null;
 
     // Whether the page is meant to be referenced by search engines. True by default - opting a page out is the exception, meant for pages with no SEO value (e.g. "creer-un-compte", "mot-de-passe-oublie", created by DefaultPagesImporter). Drives both its presence in sitemap-site.xml (see SitePageSitemapProvider::getUrls()) and its "robots" meta tag (see layout.html.twig): excluding a page from the sitemap alone wouldn't prevent indexing, since the sitemap is only a crawl hint

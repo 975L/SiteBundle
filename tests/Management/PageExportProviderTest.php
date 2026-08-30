@@ -57,6 +57,7 @@ class PageExportProviderTest extends TestCase
                 'position' => 0,
                 'data' => ['content' => 'hello'],
                 'animation' => null,
+                'hidden' => false,
                 'medias' => [],
                 'slots' => [],
             ]],

@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.8.1
+
+A page outlives whoever wrote it
+
+- `PageCrudController` names the Pages screen with `label.page`/`label.pages` instead of the class name (30/08/2026)
+- `Page::$user` is joined `ON DELETE SET NULL`, so deleting a user no longer is blocked by the pages they wrote (30/08/2026) [Needs db update]
+- Duplicating a page keeps its hidden blocks hidden (30/08/2026)
+
 ## v8.8.0
 
 A demo site is handed pages to browse and a collection to fill
