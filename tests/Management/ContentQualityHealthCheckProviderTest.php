@@ -64,7 +64,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
+        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales());
     }
 
     // null stands for a url the HEAD never got an answer from (timeout, DNS, refused connection), which the analyzer tells apart from a real status

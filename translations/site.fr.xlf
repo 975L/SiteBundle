@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="site.en.xlf">
         <body>
+            <trans-unit id="wPEuKmL">
+                <source>action.cancel</source>
+                <target>Annuler</target>
+            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Supprimer définitivement</target>
@@ -29,6 +33,14 @@
             <trans-unit id="KrzhzB_">
                 <source>action.restore</source>
                 <target>Restaurer</target>
+            </trans-unit>
+            <trans-unit id="80bO76v">
+                <source>action.save</source>
+                <target>Enregistrer</target>
+            </trans-unit>
+            <trans-unit id="VOwL1H0">
+                <source>action.translate</source>
+                <target>Traduire</target>
             </trans-unit>
             <trans-unit id="8w7xgsI">
                 <source>action.trash</source>
@@ -385,6 +397,10 @@
             <trans-unit id="YPAShtT">
                 <source>description.guided_step_trash_restore</source>
                 <target>Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site.</target>
+            </trans-unit>
+            <trans-unit id="Cmewuhh">
+                <source>description.menu_translation</source>
+                <target>Un menu porte sa structure une fois : ses éléments et leur ordre s'éditent dans la langue d'écriture. Seuls les libellés saisis à la main se redisent ici — un élément qui prend le titre de la page qu'il vise se traduit avec cette page.</target>
             </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
@@ -1234,6 +1250,10 @@
                 <source>label.menu_toggle</source>
                 <target>Ouvrir/Fermer le menu</target>
             </trans-unit>
+            <trans-unit id="InkGFaU">
+                <source>label.menu_translation</source>
+                <target>Traduction du menu</target>
+            </trans-unit>
             <trans-unit id="9W45ElS">
                 <source>label.menus</source>
                 <target>Menus</target>
@@ -1285,6 +1305,26 @@
             <trans-unit id="GKczZ58">
                 <source>label.page_deleted</source>
                 <target>Page supprimée</target>
+            </trans-unit>
+            <trans-unit id="lpx4e3r">
+                <source>label.page_translation_complete</source>
+                <target>Traduite dans toutes les langues déclarées.</target>
+            </trans-unit>
+            <trans-unit id="qSqgPB2">
+                <source>label.page_translation_help</source>
+                <target>Les mêmes champs, dans la langue choisie. Le texte d'origine entre crochets marque ce qui reste à traduire : laissé tel quel, il n'est pas enregistré. La composition de la page se fait dans la langue d'origine.</target>
+            </trans-unit>
+            <trans-unit id="Nh8Y4Zo">
+                <source>label.page_translation_missing</source>
+                <target>Textes non traduits — %missing%</target>
+            </trans-unit>
+            <trans-unit id="UAU9exb">
+                <source>label.page_translation_nothing</source>
+                <target>Rien à traduire ici.</target>
+            </trans-unit>
+            <trans-unit id="BKKpXIw">
+                <source>label.page_translation_saved</source>
+                <target>Traduction enregistrée.</target>
             </trans-unit>
             <trans-unit id="dfCuHTM">
                 <source>label.pages</source>
@@ -1445,6 +1485,10 @@
             <trans-unit id="71_aLjk">
                 <source>label.start_animation</source>
                 <target>Démarrer l'animation</target>
+            </trans-unit>
+            <trans-unit id="sIJNQm6">
+                <source>label.summary_social_network</source>
+                <target>Résumé réseaux sociaux</target>
             </trans-unit>
             <trans-unit id="qGVcC.N">
                 <source>label.summary_social_network_help</source>

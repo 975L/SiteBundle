@@ -10,7 +10,9 @@ namespace c975L\SiteBundle\Tests\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\PageController;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageServiceInterface;
+use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use c975L\SiteBundle\Twig\CollectionItemContext;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
@@ -19,15 +21,28 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Translation\LocaleSwitcher;
 use Twig\Environment;
 
 class PageControllerTest extends TestCase
 {
+    use PagePublicUrlGeneratorTestTrait;
+
+    // The real resolver against the real routes, so what the controller hands the template is the group a visitor would be given
+    private function createPagePublicUrlResolver(array $enabledLocales = [], string $defaultLocale = 'fr', string $siteUrl = 'https://exemple.com'): PagePublicUrlResolver
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturn($siteUrl);
+
+        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales($enabledLocales, $defaultLocale));
+    }
+
     private function createPageService(?Page $bySlug = null, array $forDisplayBySlug = []): PageServiceInterface
     {
         $service = $this->createStub(PageServiceInterface::class);
@@ -55,6 +70,8 @@ class PageControllerTest extends TestCase
         ?CollectionSourceRegistry $collectionSourceRegistry = null,
         ?Environment $twig = null,
         ?BlockRenderContext $blockRenderContext = null,
+        array $enabledLocales = [],
+        string $defaultLocale = 'fr',
     ): PageController {
         if (null === $twig) {
             $twig = $this->createStub(Environment::class);
@@ -70,6 +87,10 @@ class PageControllerTest extends TestCase
             $twig,
             new CollectionItemContext(),
             $blockRenderContext ?? new BlockRenderContext(),
+            new RequestStack(),
+            new LocaleSwitcher($defaultLocale, []),
+            $this->createSiteLocales($enabledLocales, $defaultLocale),
+            $this->createPagePublicUrlResolver($enabledLocales, $defaultLocale),
         );
 
         // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
@@ -152,7 +173,7 @@ class PageControllerTest extends TestCase
     {
         $controller = $this->createController($this->createPageService(), $this->createConfigService());
 
-        $response = $controller->display('home');
+        $response = $controller->display('home', new Request());
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame(301, $response->getStatusCode());
@@ -164,7 +185,7 @@ class PageControllerTest extends TestCase
     {
         $controller = $this->createController($this->createPageService(), $this->createConfigService());
 
-        $this->assertSame(301, $controller->display('home/')->getStatusCode());
+        $this->assertSame(301, $controller->display('home/', new Request())->getStatusCode());
     }
 
     // Both forms used to answer 200 with the same content, leaving the crawler two urls for one page
@@ -176,7 +197,7 @@ class PageControllerTest extends TestCase
             $this->createConfigService(),
         );
 
-        $response = $controller->display('blocks/');
+        $response = $controller->display('blocks/', new Request());
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame(301, $response->getStatusCode());
@@ -193,7 +214,7 @@ class PageControllerTest extends TestCase
         );
 
         $this->expectException(GoneHttpException::class);
-        $controller->display('gone');
+        $controller->display('gone', new Request());
     }
 
     // An unpublished (draft) page is not publicly visible: 404, same as if it didn't exist
@@ -206,7 +227,7 @@ class PageControllerTest extends TestCase
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('draft');
+        $controller->display('draft', new Request());
     }
 
     public function testDisplayThrowsNotFoundWhenPageDoesNotExist(): void
@@ -214,7 +235,7 @@ class PageControllerTest extends TestCase
         $controller = $this->createController($this->createPageService(), $this->createConfigService());
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('unknown');
+        $controller->display('unknown', new Request());
     }
 
     public function testDisplayRendersPublishedNonDeletedPage(): void
@@ -225,7 +246,7 @@ class PageControllerTest extends TestCase
             $this->createConfigService(),
         );
 
-        $response = $controller->display('about');
+        $response = $controller->display('about', new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('@c975LSite/pages/page.html.twig:About', $response->getContent());
@@ -275,7 +296,7 @@ class PageControllerTest extends TestCase
             twig: $twig,
         );
 
-        $response = $controller->display('catalog/item-1');
+        $response = $controller->display('catalog/item-1', new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:1', $capturedPageParameters['detailHtml']);
@@ -329,7 +350,7 @@ class PageControllerTest extends TestCase
             twig: $twig,
         );
 
-        $response = $controller->display('catalog/member-1');
+        $response = $controller->display('catalog/member-1', new Request());
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('Member One', $capturedPageParameters['detailTitle']);
@@ -372,6 +393,10 @@ class PageControllerTest extends TestCase
             $twig,
             $collectionItemContext,
             new BlockRenderContext(),
+            new RequestStack(),
+            new LocaleSwitcher('fr', []),
+            $this->createSiteLocales(),
+            $this->createPagePublicUrlResolver(),
         );
         $router = $this->createStub(UrlGeneratorInterface::class);
         $container = new Container();
@@ -379,7 +404,7 @@ class PageControllerTest extends TestCase
         $container->set('router', $router);
         $controller->setContainer($container);
 
-        $controller->display('catalog/item-1');
+        $controller->display('catalog/item-1', new Request());
 
         $this->assertSame(['title' => 'Item One'], $capturedItem);
     }
@@ -419,7 +444,7 @@ class PageControllerTest extends TestCase
             twig: $twig,
         );
 
-        $controller->display('catalog/item-1');
+        $controller->display('catalog/item-1', new Request());
 
         $this->assertSame('Item One', $capturedPageParameters['detailTitle']);
     }
@@ -440,7 +465,7 @@ class PageControllerTest extends TestCase
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('catalog/item-1');
+        $controller->display('catalog/item-1', new Request());
     }
 
     // "detailPage" is set but no Page exists with that slug (e.g. a typo, or it was deleted): falls through to a 404 rather than an error
@@ -462,7 +487,7 @@ class PageControllerTest extends TestCase
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('catalog/item-1');
+        $controller->display('catalog/item-1', new Request());
     }
 
     // The source resolves no item for this slug: falls through to a 404
@@ -488,7 +513,7 @@ class PageControllerTest extends TestCase
         );
 
         $this->expectException(NotFoundHttpException::class);
-        $controller->display('catalog/unknown');
+        $controller->display('catalog/unknown', new Request());
     }
 
     // Preview is gated behind the configurable "site-role-editor" role - a visitor without it is denied
@@ -555,7 +580,7 @@ class PageControllerTest extends TestCase
             blockRenderContext: $blockRenderContext,
         );
 
-        $controller->display('live');
+        $controller->display('live', new Request());
 
         $this->assertFalse($blockRenderContext->isCacheDisabled());
     }
@@ -640,5 +665,221 @@ class PageControllerTest extends TestCase
         $controller->preview('draft', new Request(['preset' => 'anything']));
 
         $this->assertArrayNotHasKey('previewPreset', $capturedParameters);
+    }
+
+    // The bare urls are what the sitemap and the hreflang groups declare as the writing language's versions: a visitor asking for a language the site was translated into is sent to that language's url rather than served another language here
+    public function testAVisitorAskingForATranslatedLanguageIsSentToItsOwnUrl(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/');
+        $request->headers->set('Accept-Language', 'en');
+        $request->setLocale('en');
+
+        $response = $controller->home($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/page_home_localized', $response->getTargetUrl());
+        // The redirect varies by language just as the page does: a cached 302 would send everyone into one visitor's language
+        $this->assertSame(['Accept-Language'], $response->getVary());
+    }
+
+    // A crawler announcing no language at all is left on the url it asked for, answered in the writing language
+    public function testAVisitorAskingForNothingIsServedTheWritingLanguage(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        // Request::create() announces a language of its own, so the header is taken back off: this is a client announcing none
+        $request = Request::create('/');
+        $request->headers->remove('Accept-Language');
+        $request->setLocale('en');
+
+        $response = $controller->home($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('fr', $request->getLocale());
+    }
+
+    // What a bare url answers depends on the language the browser asks for, which a shared cache has to be told
+    public function testABareUrlSaysItsAnswerDependsOnTheLanguageAsked(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/');
+        $request->setLocale('fr');
+
+        $this->assertSame(['Accept-Language'], $controller->home($request)->getVary());
+    }
+
+    // A site declaring a single language answers exactly as it always has: no redirect, and nothing said about any language
+    public function testASingleLanguageSiteAnswersAsBefore(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+        );
+
+        $request = Request::create('/');
+        $request->headers->set('Accept-Language', 'en');
+        $request->setLocale('en');
+
+        $response = $controller->home($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame([], $response->getVary());
+    }
+
+    // The browser announces a regional variant, the site declares the language: LocaleListener reads "en-GB" as "en" through getPreferredLanguage(), and the controller has to read it the same way or the visitor is served the writing language on a site translated for them
+    public function testARegionalVariantIsRecognisedAsItsLanguage(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/');
+        $request->headers->set('Accept-Language', 'en-GB');
+        $request->setLocale('en');
+
+        $response = $controller->home($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/page_home_localized', $response->getTargetUrl());
+    }
+
+    // The redirect carries the query string along: a campaign's attribution would otherwise be lost on the way to the visitor's own language
+    public function testTheLanguageRedirectKeepsTheQueryString(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['contact' => new Page()->setSlug('contact')->setTitle('Contact')->setIsPublished(true)]),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        // A router spelling out every parameter it is given, the shared stub only naming the page
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturnCallback(
+            static fn (string $name, array $parameters = []): string => '/' . $name . '?' . http_build_query($parameters)
+        );
+        $container = new Container();
+        $container->set('twig', $this->createStub(Environment::class));
+        $container->set('router', $router);
+        $controller->setContainer($container);
+
+        $request = Request::create('/pages/contact?utm_source=newsletter&_locale=es');
+        $request->headers->set('Accept-Language', 'en');
+        $request->setLocale('en');
+
+        $response = $controller->display('contact', $request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('utm_source=newsletter', $response->getTargetUrl());
+        // The page and the language stay what the controller decided, a query string of the same name never overwriting them
+        $this->assertStringContainsString('page=contact', $response->getTargetUrl());
+        $this->assertStringContainsString('_locale=en', $response->getTargetUrl());
+        $this->assertStringNotContainsString('_locale=es', $response->getTargetUrl());
+    }
+
+    // A site may declare its languages without naming the one it is written in: "Vary" has to be told from the same list the redirect is, or a shared cache hands one visitor's language to everyone
+    public function testABareUrlVariesWhenTheDefaultLanguageIsNotDeclared(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['en'],
+        );
+
+        $request = Request::create('/');
+        $request->setLocale('fr');
+
+        $this->assertSame(['Accept-Language'], $controller->home($request)->getVary());
+    }
+
+    // A collection item is served by its parent Page: its "hreflang" group names its own url in each language, never the parent's
+    public function testACollectionDetailViewDeclaresItsOwnLanguages(): void
+    {
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
+            'source' => 'app.collection.demo',
+            'detailPage' => 'catalog-detail',
+        ]));
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+
+        $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
+
+        $capturedPageParameters = null;
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(
+            function (string $view, array $parameters = []) use (&$capturedPageParameters): string {
+                if ('@c975LSite/pages/page.html.twig' === $view) {
+                    $capturedPageParameters = $parameters;
+                }
+
+                return $view;
+            }
+        );
+
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: [
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
+            ]),
+            $this->createConfigService(),
+            collectionSourceRegistry: $collectionSourceRegistry,
+            twig: $twig,
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/pages/catalog/item-1');
+        $request->attributes->set('_locale', 'en');
+
+        $controller->display('catalog/item-1', $request);
+
+        $this->assertSame([
+            'fr' => 'https://exemple.com/pages/catalog/item-1',
+            'en' => 'https://exemple.com/en/pages/catalog/item-1',
+        ], $capturedPageParameters['detailAlternates']);
+    }
+
+    // An ordinary page hands over no group of its own: the template reads it from page_alternates() as it always has
+    public function testAPageThatIsNotACollectionDetailHandsOverNoAlternates(): void
+    {
+        $capturedPageParameters = null;
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(
+            function (string $view, array $parameters = []) use (&$capturedPageParameters): string {
+                $capturedPageParameters = $parameters;
+
+                return $view;
+            }
+        );
+
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['contact' => new Page()->setSlug('contact')->setTitle('Contact')->setIsPublished(true)]),
+            $this->createConfigService(),
+            twig: $twig,
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/pages/contact');
+        $request->attributes->set('_locale', 'en');
+
+        $controller->display('contact', $request);
+
+        $this->assertSame([], $capturedPageParameters['detailAlternates']);
     }
 }

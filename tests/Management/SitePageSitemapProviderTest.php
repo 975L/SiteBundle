@@ -40,10 +40,10 @@ class SitePageSitemapProviderTest extends TestCase
     }
 
     // A real PagePublicUrlResolver over a real UrlGenerator, so the urls asserted below are the ones the routes actually produce
-    private function createProvider(array $pages = [], string $urlRoot = 'https://example.com'): SitePageSitemapProvider
+    private function createProvider(array $pages = [], string $urlRoot = 'https://example.com', array $enabledLocales = [], string $defaultLocale = 'fr'): SitePageSitemapProvider
     {
         return new SitePageSitemapProvider(
-            new PagePublicUrlResolver($this->createConfigService($urlRoot), $this->createUrlGenerator()),
+            new PagePublicUrlResolver($this->createConfigService($urlRoot), $this->createUrlGenerator(), $this->createSiteLocales($enabledLocales, $defaultLocale)),
             $this->createPageService($pages)
         );
     }
@@ -76,6 +76,8 @@ class SitePageSitemapProviderTest extends TestCase
             'priority' => 7,
             'title' => 'About',
             'description' => null,
+            // A site declaring a single language declares no language group, and its sitemap is the one it has always been
+            'alternates' => [],
         ], $urls[0]);
     }
 
@@ -156,5 +158,37 @@ class SitePageSitemapProviderTest extends TestCase
         $page->setModification(new \DateTime('2026-01-15'));
 
         $this->assertSame([], $this->createProvider([$page], '')->getUrls());
+    }
+
+    // A translated page is declared once per language: a language's url is only crawled if the sitemap names it, and the group alone leaves the other languages undeclared
+    public function testATranslatedPageIsDeclaredOncePerLanguage(): void
+    {
+        $page = new Page()->setTitle('About')->setSlug('about');
+        $page->setModification(new \DateTime('2026-01-15'));
+        $provider = $this->createProvider([$page], 'https://example.com', ['fr', 'en'], 'fr');
+
+        $urls = $provider->getUrls();
+
+        $this->assertCount(2, $urls);
+        // The writing language comes first, so the entry a single-language site has always had stays the first one
+        $this->assertSame('https://example.com/pages/about', $urls[0]['loc']);
+        $this->assertSame('https://example.com/en/pages/about', $urls[1]['loc']);
+        // Each entry carries the whole group, which is what a hreflang set asks for
+        $expected = ['fr' => 'https://example.com/pages/about', 'en' => 'https://example.com/en/pages/about'];
+        $this->assertSame($expected, $urls[0]['alternates']);
+        $this->assertSame($expected, $urls[1]['alternates']);
+    }
+
+    // A site declaring a single language keeps the sitemap it has always had: one entry per page, no group
+    public function testASingleLanguageSiteDeclaresOneEntryPerPage(): void
+    {
+        $page = new Page()->setTitle('About')->setSlug('about');
+        $page->setModification(new \DateTime('2026-01-15'));
+
+        $urls = $this->createProvider([$page])->getUrls();
+
+        $this->assertCount(1, $urls);
+        $this->assertSame('https://example.com/pages/about', $urls[0]['loc']);
+        $this->assertSame([], $urls[0]['alternates']);
     }
 }

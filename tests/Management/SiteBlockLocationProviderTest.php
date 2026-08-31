@@ -33,7 +33,7 @@ class SiteBlockLocationProviderTest extends TestCase
 
         return new SiteBlockLocationProvider(
             $repository,
-            new PagePublicUrlResolver($configService, $this->createUrlGenerator()),
+            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales()),
         );
     }
 

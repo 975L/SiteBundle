@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -61,6 +61,18 @@ sections included. The target is stored as `page:<id>#<fragment>` and resolved i
 
 A band rendered by the layout rather than by a page's own blocks is **not** in that list. To make one
 linkable, drop its block kind into the page and give it an anchor there.
+
+### In another language
+
+A menu's items are read on every page of the site, so a site translated everywhere but in its navbar is
+still half in the language it was written in. The **Translate** action of the Menus index
+(`management_menu_translate`, `TranslationController::menu()`) writes a menu's own labels — the
+`menu_link` `label` field, declared `translatable` in `config/services.yaml` — once for the whole site,
+not per page. An item **deriving** its label from the page it points at carries no text of its own: it
+is translated with that page, and `menu_link_label()` reads the page's translated title. `menu_link_url()`
+likewise generates the localised routes while a page is read in another language, so the first click
+does not send the visitor back into the writing language. Both actions show only where the site
+declares more than one language.
 
 ### Exposing another bundle's route
 
@@ -143,3 +155,6 @@ on every visit just to navigate.
 - **Do not write `flex-direction` for the footer layout.** Retune the two `--footer-items-*` tokens.
 - **Do not set the navbar position with a `style` attribute.** The nonce drops it.
 - **Do not build a second navigation table.** A menu is a block collection like a page's.
+- **Do not create a menu per language.** One menu, translated once through its Translate screen.
+- **Do not read `page.title` for a derived menu label.** It is the writing language's, whatever
+  language the page is being read in.

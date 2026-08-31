@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, page_title, page_summary, translatable, ContentTranslator."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -10,7 +10,7 @@ description: "Use this skill when working with pages or collections in a Symfony
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Twig/PageExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
+`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
 
@@ -56,6 +56,27 @@ plus the sitemap fields (indexable, change frequency, priority).
 
 `PageController::preview()` opts out of the block render cache entirely — an editor's preview must show
 what was just saved, and its render is not the public one.
+
+**A page is one page in every language** — one structure, one set of blocks, one row. There is no
+locale column and no second row: the translations sit beside the page (`PageTranslator`, over
+UiBundle's `ContentTranslator`), so moving, adding or removing a block moves it in every language at
+once. The languages a site offers are declared in `config/packages/translation.yaml`
+(`framework.enabled_locales`, read through `SiteLocales`), never in a config entry: Symfony itself
+reads that list.
+
+A page is translated **on its own edit screen**, opened on another language: the same fields in the
+same places, filled with what that language says — or the source text between brackets where it says
+nothing yet, which is both the thing to translate and the mark of what is left to do. A field handed
+back still holding its brackets is stored as nothing. The language selector sits at the top of the
+screen and writes `?contenu=<locale>` (`PageCrudController::CONTENT_LOCALE_PARAM`), which the
+**Translate** action of the index links to; `configureFields()` then yields the page's own two texts
+and its blocks alone, unmapped and through `BlockType`'s `translation_locale`, so nothing written
+there can reach the text the site was written in. The kind, the animation, the medias, the "+" and the
+bin are all left off: a page is composed once, in the language it was written in.
+
+A **menu** keeps a screen of its own (`management_menu_translate`, `TranslationController::menu()`) —
+it is a list of labels with no page to show them in. See `c975l-site-seo` for the urls and the
+`hreflang` groups.
 
 **A whole page is one form**, every block and every media in a single POST, so it is what reaches PHP's
 `max_input_vars` (1000 by default) first. Past that limit PHP drops the rest of the body silently and
@@ -145,8 +166,12 @@ php bin/console c975l:site:create                       # one-shot wizard bootst
 ## Twig functions
 
 `site_page(id)`, `site_legal_pages(models)`, `site_page_for_form_block(formName)`,
-`page_health_check(page)`. All declared with `#[AsTwigFunction]` on the method backing them — a site
-overriding one decorates the service and carries the attribute over.
+`page_health_check(page)`, `page_title(page)`, `page_summary(page)`, `page_alternates(page)`. All
+declared with `#[AsTwigFunction]` on the method backing them — a site overriding one decorates the
+service and carries the attribute over.
+
+**Read a page's title through `page_title(page)`, not `page.title`**, wherever a visitor sees it: the
+raw column is the writing language's, whatever language the page is being read in.
 
 ## Demo dataset
 
@@ -176,3 +201,7 @@ over on its own, nothing cascading off a `CollectionGroup`.
 - **Do not add a block kind without drawing its silhouette** — the picker then shows it as a bare
   frame, which is what the picker exists to avoid.
 - **Do not cache a preview render.**
+- **Do not add a locale column to `Page`, nor duplicate a page per language.** The translations live
+  beside the row; the structure is edited once.
+- **Do not replace an entity's title in memory to translate it** — Doctrine writes it back on the next
+  flush. Read it through `page_title()` / `PageTranslator`.

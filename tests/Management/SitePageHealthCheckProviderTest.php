@@ -112,7 +112,7 @@ class SitePageHealthCheckProviderTest extends TestCase
         return new SitePageHealthCheckProvider(
             $pageRepository,
             $pageSpeedInsightsClient,
-            new PagePublicUrlResolver($configService, $this->createUrlGenerator()),
+            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales()),
             $pageEditUrlResolver ?? $this->createPageEditUrlResolver(),
             $urlStatusChecker ?? $this->createUrlStatusChecker(),
             $configService,

@@ -2,8 +2,11 @@
 {% extends ['layout.html.twig', '@c975LSite/layout.html.twig'] %}
 
 {# The collection item's own title, rather than the parent Page's generic one #}
-{% set title = detailTitle is defined and detailTitle ? detailTitle : page.title %}
-{% set summarySocialNetwork = page.summarySocialNetwork %}
+{% set title = detailTitle is defined and detailTitle ? detailTitle : page_title(page) %}
+{% set summarySocialNetwork = page_summary(page) %}
+
+{# The other languages of this same page, read by the layout's "hreflang" links; empty on a site declaring a single language. A collection item has no Page of its own, so its group is built from its own url by the controller rather than from the parent Page shown here #}
+{% set alternates = detailHtml is defined and detailHtml ? detailAlternates|default([]) : page_alternates(page) %}
 
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
 {% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}

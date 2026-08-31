@@ -18,12 +18,15 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Twig\MenuExtension;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockAnchorCollector;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -122,18 +125,64 @@ class MenuExtensionTest extends TestCase
         ?DefaultPagesImporter $defaultPagesImporter = null,
         ?CopyrightExtension $copyrightExtension = null,
         ?UrlGeneratorInterface $router = null,
+        ?RequestStack $requestStack = null,
+        ?PageTranslator $pageTranslator = null,
     ): MenuExtension {
+        // What the test hands over wins, the rest falls back to defaultCollaborators()
+        $collaborators = array_filter([
+            'menuRepository' => $menuRepository,
+            'cache' => $cache,
+            'configService' => $configService,
+            'defaultPagesImporter' => $defaultPagesImporter,
+            'copyrightExtension' => $copyrightExtension,
+            'router' => $router,
+            'requestStack' => $requestStack,
+            'pageTranslator' => $pageTranslator,
+        ]) + $this->defaultCollaborators();
+
         return new MenuExtension(
-            $menuRepository ?? $this->createMenuRepository(),
+            $collaborators['menuRepository'],
             $this->createPageRepository($pagesById),
             $registry,
-            $router ?? $this->createRouter(),
-            $cache ?? $this->createCache(),
-            $configService ?? $this->createConfigService(),
-            $defaultPagesImporter ?? $this->createDefaultPagesImporter(),
-            $copyrightExtension ?? $this->createCopyrightExtension(),
+            $collaborators['router'],
+            $collaborators['cache'],
+            $collaborators['configService'],
+            $collaborators['defaultPagesImporter'],
+            $collaborators['copyrightExtension'],
             new BlockAnchorCollector(),
+            $collaborators['requestStack'],
+            $collaborators['pageTranslator'],
         );
+    }
+
+    /**
+     * One stub per collaborator a test says nothing about.
+     *
+     * @return array<string, object>
+     */
+    private function defaultCollaborators(): array
+    {
+        return [
+            'menuRepository' => $this->createMenuRepository(),
+            'cache' => $this->createCache(),
+            'configService' => $this->createConfigService(),
+            'defaultPagesImporter' => $this->createDefaultPagesImporter(),
+            'copyrightExtension' => $this->createCopyrightExtension(),
+            'router' => $this->createRouter(),
+            'requestStack' => new RequestStack(),
+            'pageTranslator' => $this->createPageTranslator(),
+        ];
+    }
+
+    // The title a menu item derives from the page it points at, read in the language the page is being read in - untranslated, which is the page's own title
+    private function createPageTranslator(?string $translated = null): PageTranslator
+    {
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('getTitle')->willReturnCallback(
+            static fn (Page $page): string => $translated ?? (string) $page->getTitle()
+        );
+
+        return $pageTranslator;
     }
 
     // The email-footer location has no dedicated navigation entity, only Blocks attached to its Menu row
@@ -211,6 +260,8 @@ class MenuExtensionTest extends TestCase
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
         );
 
         $first = $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -297,6 +348,8 @@ class MenuExtensionTest extends TestCase
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -335,6 +388,8 @@ class MenuExtensionTest extends TestCase
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_FOOTER);
@@ -363,6 +418,8 @@ class MenuExtensionTest extends TestCase
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -624,5 +681,46 @@ class MenuExtensionTest extends TestCase
         $extension = $this->createExtension($this->createRegistry(['some_bundle_route' => ['label' => 'label.contact', 'translation_domain' => 'some_bundle']]));
 
         $this->assertFalse($extension->isMenuLinkCopyright('route:some_bundle_route'));
+    }
+
+    // A page read in another language shows a menu written in that language's urls: generating the writing language's ones would send the visitor back into it at the first click
+    public function testGetMenuLinkUrlKeepsTheLanguageThePageIsReadIn(): void
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setIsPublished(true);
+
+        $request = new Request();
+        $request->attributes->set('_locale', 'en');
+        $requestStack = new RequestStack([$request]);
+
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page], requestStack: $requestStack);
+
+        $this->assertSame('/page_display_localized/en/ateliers', $extension->getMenuLinkUrl('page:42'));
+    }
+
+    // The writing language keeps the bare urls, the ones the sitemap declares: nothing changes for a site reading in it
+    public function testGetMenuLinkUrlKeepsTheBareUrlInTheWritingLanguage(): void
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setIsPublished(true);
+
+        $request = new Request();
+        $request->attributes->set('_locale', 'fr');
+        $requestStack = new RequestStack([$request]);
+
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $page], requestStack: $requestStack);
+
+        $this->assertSame('/page_display/ateliers', $extension->getMenuLinkUrl('page:42'));
+    }
+
+    // An item deriving its label from the page it points at reads that page's title in the language being read, not the raw column
+    public function testGetMenuLinkLabelReadsTheTranslatedPageTitle(): void
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setIsPublished(true);
+        $extension = $this->createExtension(
+            $this->createRegistry([]),
+            ['42' => $page],
+            pageTranslator: $this->createPageTranslator('Our workshops'),
+        );
+
+        $this->assertSame('Our workshops', $extension->getMenuLinkLabel('page:42'));
     }
 }

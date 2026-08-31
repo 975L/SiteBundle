@@ -31,7 +31,7 @@ class PageHealthCheckExtensionTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return new PagePublicUrlResolver($configService, $this->createUrlGenerator());
+        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales());
     }
 
     private function createAdviceBuilder(): HealthCheckAdviceBuilder

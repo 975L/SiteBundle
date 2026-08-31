@@ -59,6 +59,7 @@ services:
               description: "block.menu_link_description"
               translation_domain: 'site'
               form: c975L\SiteBundle\Form\Block\MenuLinkType
+              translatable: 'label'
               template: '@c975LSite/blocks/MenuLink.html.twig'
               category: 'label.category_navigation'
               pickable: true

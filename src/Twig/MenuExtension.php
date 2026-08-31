@@ -18,10 +18,13 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockAnchorCollector;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -56,6 +59,10 @@ class MenuExtension
         private readonly DefaultPagesImporter $defaultPagesImporter,
         private readonly CopyrightExtension $copyrightExtension,
         private readonly BlockAnchorCollector $anchorCollector,
+        private readonly RequestStack $requestStack,
+        private readonly PageTranslator $pageTranslator,
+        #[Autowire(param: 'kernel.default_locale')]
+        private readonly string $defaultLocale = 'fr',
     ) {
     }
 
@@ -131,9 +138,14 @@ class MenuExtension
         }
 
         // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
+        // Read in another language, the whole menu is written in that language's urls: generating the writing language's ones would send the visitor back into it at the first click (PageController answers "/" and "/pages/{page}" in the writing language alone). The route attribute rather than getLocale(), which PageController switches back for the duration of the render
+        $locale = $this->requestStack->getCurrentRequest()?->attributes->get('_locale');
+        $localized = \is_string($locale) && '' !== $locale && $locale !== $this->defaultLocale;
+        $parameters = $localized ? ['_locale' => $locale] : [];
+
         $path = 'home' === $page->getSlug()
-            ? $this->router->generate('page_home')
-            : $this->router->generate('page_display', ['page' => $page->getSlug()]);
+            ? $this->router->generate($localized ? 'page_home_localized' : 'page_home', $parameters)
+            : $this->router->generate($localized ? 'page_display_localized' : 'page_display', $parameters + ['page' => $page->getSlug()]);
 
         return $path . (null !== $parsed['fragment'] ? '#' . $parsed['fragment'] : '');
     }
@@ -185,7 +197,8 @@ class MenuExtension
         // A "#anchor-blockId" fragment (see MenuLinkType) labels a specific section, not the page itself - falls back to the page's own title if the block was since removed/moved
         $sectionLabel = null !== $parsed['fragment'] ? $this->findSectionLabel($page, $parsed['fragment']) : null;
 
-        return $sectionLabel ?? (string) $page->getTitle();
+        // Through PageTranslator rather than the raw column: an item taking its label from the page it points at reads that page's title in the language being read, the same as the page's own <h1> does
+        return $sectionLabel ?? $this->pageTranslator->getTitle($page);
     }
 
     private function routeLabel(?string $route): string

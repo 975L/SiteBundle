@@ -39,7 +39,8 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Open Graph** image support
 - **Email templates** with CSS inlining
 - **Collections** of items (`CollectionGroup`/`CollectionItem`), exposed to UiBundle's `collection` block and given their own detail pages
-- **Twig extensions**: `site_page`, `site_legal_pages`, `menu_blocks`, `page_health_check`
+- **Several languages**: locale-prefixed routes, a "Translate" screen per page and per menu, `hreflang` groups in the head and in the sitemap, and a health check row per subject (see [Languages](#languages))
+- **Twig extensions**: `site_page`, `site_legal_pages`, `menu_blocks`, `page_health_check`, `page_title`, `page_summary`, `page_alternates`
 - **File lists**: `extensions.txt` and `bots.txt`
 - **Admin help procedures** contributed to the dashboard AI assistant, describing how to create pages, redirects, menus, etc.
 - **Four skills for coding agents**, shipped in the package and read straight from `vendor/` — see [AI agent skills](#ai-agent-skills)
@@ -386,6 +387,41 @@ Accounts moved to [c975L/ConfigBundle](https://github.com/975L/ConfigBundle), wh
 
 ---
 
+## Languages
+
+A site declaring a single language — which is every site until it says otherwise — is untouched by everything below: the urls, the sitemap, the head and the back-office are exactly what they have always been.
+
+One declaration, in the file Symfony already reads, and nothing to fill in anywhere else. The urls of this bundle are built from `kernel.enabled_locales` at container build time, the localised routes' own pattern being a container parameter (`c975l_site.locales_pattern`); the back-office screens and the health check read the same list through ConfigBundle's `SiteLocales`. The writing language is `default_locale`:
+
+```yaml
+# config/packages/translation.yaml
+framework:
+    default_locale: 'fr'
+    enabled_locales: ['fr', 'en', 'es']
+```
+
+Two things to know when adding this to a site already serving several languages. `enabled_locales` **restricts**: Symfony compiles only the catalogues it names, so list every language the site already serves, not just the ones it is about to be translated into. And it has nothing to do with the interface translations (`messages.fr.xlf` and the like), which keep working through Symfony's translator whether or not this list exists.
+
+### Urls
+
+The writing language keeps its bare urls byte for byte (`/`, `/pages/{slug}`) — the ones the sitemap has always declared — and every other language answers under its own prefix (`/en/`, `/en/pages/{slug}`), through the `page_home_localized`/`page_display_localized` routes. The `c975l_site.locales_pattern` container parameter is what those routes accept between their slashes: the declared languages minus the writing one, so the same page is never answered under two urls, and a pattern matching nothing while there is only one language.
+
+A visitor asking a bare url for a language the site has been translated into is redirected to that language's url; anyone else — a crawler announcing nothing included — is served the writing language on the url they asked for. Those bare urls carry `Vary: Accept-Language`, redirect included, so a shared cache doesn't hand the first visitor's answer to everyone after them.
+
+### Translating
+
+A page is one page in every language: one structure, one set of blocks, one row. Its structure is edited in the writing language, and only its texts are said again — through the **Translate** action of the Pages index, which reopens **the very same edit screen** in the chosen language (url parameter `contenu`, `PageCrudController::CONTENT_LOCALE_PARAM`). The page's own two texts and its blocks' texts are typed there in that language, in the same fields and the same places; a field left empty keeps the original text, so a half-translated page is never broken. A language screen offers neither "+" nor bin: it never prunes the page's blocks.
+
+Menus go through the very same screen (`management_menu_translate`, the **Translate** action of the Menus index): a menu item's own label is translated there, while an item taking its label from the page it points at is translated with that page. A menu is site-wide, so it is translated once rather than per page.
+
+What is translatable is declared by the block kind itself, through the `translatable` key of its registry entry (see UiBundle's `BlockRegistry`); the translations themselves are UiBundle's `Translation` rows, read back by `ContentTranslator`.
+
+### Head and sitemap
+
+Every page emits an `hreflang` group naming itself in each declared language, built by `PagePublicUrlResolver::resolveAlternates()` and read by the layout through the `page_alternates()` Twig function. A collection item's detail view has no Page of its own, so its group is built from its own url instead (`::resolveAlternatesForSlug()`), never from the parent page's. The same group is carried into `sitemap-site.xml`, where a translated page is declared once per language, each entry carrying the whole group.
+
+---
+
 ## SEO
 
 ### Sitemap generation
@@ -427,9 +463,10 @@ by Symfony's error renderer) — a 404 rendered with the site's own layout used 
 default and offer itself to the index. `follow` is kept, so the links the page carries still pass on. It is
 defaulted in the layout rather than set in each error template, so none of them can forget it.
 
-`hreflang` tags are no longer emitted: the previous implementation was built on `app.request.uri` and, with no
-`languagesAlt` defined, declared every page its own alternate — query string included. A site serving several
-languages does it through its own locale-prefixed routes for now.
+`hreflang` tags are built out of the declared languages, not out of `app.request.uri` — which, with no
+`languagesAlt` defined, used to declare every page its own alternate, query string included. Each page names
+itself in each language the site declares, in its head and in the sitemap alike, and a site declaring a single
+language emits nothing at all. See [Languages](#languages).
 
 ### Open Graph image
 
@@ -482,7 +519,7 @@ Note the difference with the health check and the smoke test above: both fetch t
 
 ## Health check
 
-SiteBundle contributes six `HealthCheckProviderInterface` implementations, five of them about a **published page** (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and the site-wide checks — TLS certificate, security headers, robots.txt/sitemap, redirect chains, deployment, declared urls — which live there now, none of them needing a Page). No Node/Lighthouse-CLI/JS tooling, only plain Symfony HttpClient calls:
+SiteBundle contributes seven `HealthCheckProviderInterface` implementations, five of them about a **published page** (see `c975l/config-bundle`'s own README for the dashboard page, the `c975l:health-check:run` command, history/export/trend chart, and the site-wide checks — TLS certificate, security headers, robots.txt/sitemap, redirect chains, deployment, declared urls — which live there now, none of them needing a Page). No Node/Lighthouse-CLI/JS tooling, only plain Symfony HttpClient calls:
 
 | Provider | `getKind()` | Checks | API key |
 | --- | --- | --- | --- |
@@ -492,6 +529,7 @@ SiteBundle contributes six `HealthCheckProviderInterface` implementations, five 
 | `ContentQualityHealthCheckProvider` | `content-quality` | A `noindex` on a page checked as *indexable*, missing/too short/too long `<title>` (10-65 characters) and meta description (50-160), missing `<h1>`, missing share tags (`og:title`, `og:description`, `og:image` - read from either the `property` or the `name` attribute), images without `alt`, broken links - internal (`<a href>` pointing at this site's own host) **and** external, each unique link checked once per run regardless of how many pages link to it, and an external one only ever a warning - parses the page's own rendered HTML (`DOMDocument`/`DOMXPath`, no dependency) rather than reverse-engineering it from block data, so it works regardless of theme/block kinds used. Same not-deployed guard as `W3cHtmlHealthCheckProvider`. See [what counts as an offence](#what-content-quality-actually-flags) - a decorative image and an unreachable server are deliberately *not* flagged | None |
 | `MixedContentHealthCheckProvider` | `mixed-content` | `http://` images/scripts/stylesheets loaded from an `https://` page, per published page - skipped entirely if `site-url` isn't `https://` | None |
 | `CollectionFilesHealthCheckProvider` | `files-site` | That every file a `CollectionItem` names is still under `public/` — the one check here about a stored file rather than a published page. Everything it does is UiBundle's `AbstractDeclaredFilesHealthCheckProvider`, this only names the rows to look at; an item whose image is gone renders a hole no error anywhere reports | None |
+| `TranslationHealthCheckProvider` | `translations` | What is published in one language and not in the others: one row per published page, plus one per menu since a navbar's labels are read on every page of the site. A text nobody translated keeps the one it was written in, so a half-translated site says nothing on its own — this is what says so, each row linking to its own Translate screen. Returns nothing at all on a site declaring a single language (see [Languages](#languages)) | None |
 
 ### Checking other bundles' urls
 
@@ -749,8 +787,11 @@ document sits on, and at which public address.
 | `site_page_for_form_block(formName)` | The page carrying the `form` Block of that form, backing UiBundle's `form_url()` (see [Users](#users)) |
 | `menu_blocks(location)` | The ordered blocks of the `navbar`/`footer`/`email-header`/`email-footer` Menu (see [Menus](#menus)), alongside `menu_link_url()`, `menu_link_label()` and `menu_link_is_copyright()` |
 | `page_health_check(page)` | The page's own health check panel, rendered in the back-office (see [Health check](#health-check)) |
+| `page_title(page)` | The page's title in the language being served (see [Languages](#languages)) |
+| `page_summary(page)` | The page's social network summary in the language being served |
+| `page_alternates(page)` | The page's url in each declared language, keyed by `hreflang` — read by the layout's `<link rel="alternate">` tags |
 
-All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension` and `PageHealthCheckExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
+All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension`, `PageHealthCheckExtension` and `PageTranslationExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
 
 Two of UiBundle's own are worth knowing here, both used by core-bundle's `layout.html.twig`: `theme_variables_css()`, returning the CSS compiled from the admin-editable theme configs (see [Themes](#themes)) for inlining where a `<link>` isn't possible (e.g. emails), and `font_preloads()`, returning the font files the current theme actually uses to emit as `<link rel="preload">` in the `<head>`.
 
@@ -1154,7 +1195,7 @@ vendor/c975l/site-bundle/skills/
 | `c975l-site-layout` | the layout and its Twig blocks, the theme tokens, the CSP nonce, the error pages, the branded email layouts |
 | `c975l-site-pages` | `Page`, file-based pages, the block kinds this bundle adds, publish as replacement, collections and their item detail pages |
 | `c975l-site-menus` | the four menu locations, `menu_link` targets and anchors, `menu_group`, the navbar and the footer's display style |
-| `c975l-site-seo` | sitemaps, canonical urls, the Open Graph image, the six health checks, the smoke test and the dev profile |
+| `c975l-site-seo` | sitemaps, canonical urls, `hreflang` groups and the localised urls, the Open Graph image, the seven health checks, the smoke test and the dev profile |
 
 They are split by subject rather than shipped as one file so that an agent loads the one it needs — a question about a menu doesn't pull in the health checks. Each holds what an agent gets wrong when left to its own habits: that a replacement layout still owes a `container` block, that a `style=""` attribute is dropped by the nonce, that a menu link stores an id rather than a slug, that a satellite exposes a route through `LinkableRouteProviderInterface` instead of depending on this bundle.
 

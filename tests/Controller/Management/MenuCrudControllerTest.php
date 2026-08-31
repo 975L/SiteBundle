@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -124,6 +125,7 @@ class MenuCrudControllerTest extends TestCase
             $adminContextProvider ?? $this->createAdminContextProvider(),
             $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
             $this->createAdminUrlGenerator(),
+            $this->createStub(PageTranslator::class),
         );
     }
 

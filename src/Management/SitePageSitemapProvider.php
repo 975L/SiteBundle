@@ -47,16 +47,23 @@ class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
                 continue;
             }
 
-            $urls[] = [
-                'loc' => $url,
-                'lastmod' => date('Y-m-d', $page->getModification()->getTimestamp()),
-                'changefreq' => $page->getChangeFrequency() ?? 'weekly',
-                // Page::$priority is passed as-is on its own 0-10 scale, SitemapWriter converts it to the 0.0-1.0 the protocol accepts. Default 4 for a page that never set one, the middle-low priority a plain content page deserves
-                'priority' => $page->getPriority() ?? 4,
-                // Ignored by the sitemap, this is what SeoFilesWriter lists the pages in llms.txt from (see SitemapProviderInterface). The social network summary doubles as the meta description of the page, so it is already the one sentence describing it - a page without one is still listed, under its title alone
-                'title' => $page->getTitle(),
-                'description' => $page->getSummarySocialNetwork(),
-            ];
+            // The same content in the other declared languages - empty on a single-language site, whose sitemap is then the one it has always been (see SitemapWriter::normalizeUrls())
+            $alternates = $this->pagePublicUrlResolver->resolveAlternates($page);
+
+            // A translated page is declared once per language, each entry carrying the whole group: a language's url is only ever crawled if the sitemap names it, and the group alone leaves the other languages undeclared. The writing language comes first (see SiteLocales::all()), so the entry a single-language site has always had stays byte for byte the first one
+            foreach ([] === $alternates ? [$url] : array_values($alternates) as $loc) {
+                $urls[] = [
+                    'loc' => $loc,
+                    'lastmod' => date('Y-m-d', $page->getModification()->getTimestamp()),
+                    'changefreq' => $page->getChangeFrequency() ?? 'weekly',
+                    // Page::$priority is passed as-is on its own 0-10 scale, SitemapWriter converts it to the 0.0-1.0 the protocol accepts. Default 4 for a page that never set one, the middle-low priority a plain content page deserves
+                    'priority' => $page->getPriority() ?? 4,
+                    // Ignored by the sitemap, this is what SeoFilesWriter lists the pages in llms.txt from (see SitemapProviderInterface). The social network summary doubles as the meta description of the page, so it is already the one sentence describing it - a page without one is still listed, under its title alone
+                    'title' => $page->getTitle(),
+                    'description' => $page->getSummarySocialNetwork(),
+                    'alternates' => $alternates,
+                ];
+            }
         }
 
         return $urls;

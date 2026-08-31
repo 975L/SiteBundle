@@ -1,16 +1,16 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, noindex, PagePublicUrlResolver, llms.txt."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_site.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, llms.txt."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
 
-> What makes a c975L site findable and what tells you it broke: sitemaps, canonical urls, share images, six health checks, a deployment smoke test and a dev profile.
+> What makes a c975L site findable and what tells you it broke: sitemaps, canonical urls, share images, the urls and `hreflang` groups of a site speaking several languages, seven health checks, a deployment smoke test and a dev profile.
 
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
+`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
 
 **Related skills:** `c975l-site-pages`, `c975l-site-layout` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
 
@@ -31,6 +31,10 @@ bundle then changes what is crawled with nothing to update on Google's side.
 Each url also carries the page's title and summary as optional `title` / `description` keys, which the
 sitemap ignores — ConfigBundle's `SeoFilesWriter` reads them to build `public/llms.txt`.
 
+Each url carries an `alternates` key too (`PagePublicUrlResolver::resolveAlternates()`): the same page in
+every declared language, keyed by `hreflang`. It is empty on a site declaring a single language, whose
+sitemap is then exactly the one it has always been.
+
 To contribute a sitemap from another bundle, implement `SitemapProviderInterface`; the file and index
 writing is none of the contributing bundle's business.
 
@@ -43,7 +47,30 @@ query string is dropped, and the path is the slashless form the sitemap declares
 all outside an http request or before `site-url` is set, rather than a tag pointing at the wrong host.
 
 `/pages/{slug}/` answers `301` to `/pages/{slug}` on top of that — a canonical link alone is only a
-hint. `hreflang` is not emitted; a multilingual site uses locale-prefixed routes.
+hint. The redirect stays in the language being read: `/en/pages/{slug}/` lands on `/en/pages/{slug}`,
+not back in the writing language.
+
+## Several languages
+
+Untouched on a site declaring one language — which is every c975L site until it says otherwise: no
+prefix, no `hreflang`, no `Vary`, and a sitemap byte for byte the one it was.
+
+**The writing language keeps the bare urls**, `/` and `/pages/{slug}` — the ones the sitemap and every
+`hreflang` group declare. Every other declared language answers under its own prefix through
+`page_home_localized` / `page_display_localized`, whose `_locale` accepts the
+`%c975l_site.locales_pattern%` container parameter: the declared languages **minus** the writing one,
+built in `c975LSiteBundle::loadExtension()` from `kernel.enabled_locales`. Accepting `/fr/pages/x`
+beside `/pages/x` would answer one page under two urls; a site declaring one language gets a pattern
+matching nothing, so the routes exist without ever answering.
+
+A bare url asked for in a language the site was translated into **redirects** to that language's url;
+anyone else — a crawler announcing nothing included — is served the writing language on the url they
+asked for. Those bare urls therefore carry `Vary: Accept-Language`, the redirect as much as the page,
+or a shared cache hands the first visitor's answer to everyone after them.
+
+`page_alternates(page)` is what the layout writes its `<link rel="alternate" hreflang>` tags from, the
+page naming itself in every declared language, itself included. `page_title(page)` and
+`page_summary(page)` read the page's own two texts in the language being served.
 
 ## Open Graph image
 
@@ -60,10 +87,10 @@ rather than the site logo.
 
 ## Health checks
 
-Six providers, five of them about a **published page** and fetched with plain HttpClient calls, no Node
-or headless browser involved. The sixth reads the disk instead, about a file a row declares. The
-site-wide checks (TLS, security headers, robots.txt, redirect chains, deployment, declared urls) are
-ConfigBundle's.
+Seven providers, five of them about a **published page** and fetched with plain HttpClient calls, no
+Node or headless browser involved. The other two read the database instead — a file a row declares, and
+what is written in each language. The site-wide checks (TLS, security headers, robots.txt, redirect
+chains, deployment, declared urls) are ConfigBundle's.
 
 | `getKind()` | Checks | API key |
 | --- | --- | --- |
@@ -73,6 +100,7 @@ ConfigBundle's.
 | `content-quality` | noindex contradictions, title and description length, `<h1>`, share tags, image `alt`, broken links | none |
 | `mixed-content` | `http://` assets on an `https://` page | none |
 | `files-site` | that the image every `CollectionItem` names is still under `public/` — read off the disk, not over http | none |
+| `translations` | what is published in one language and not in the others — one row per published page, plus one per menu, each linking to its own Translate screen; returns nothing at all on a site declaring one language | none |
 
 What `content-quality` deliberately does **not** flag, and why it matters when reading a report:
 
@@ -141,5 +169,9 @@ worked on.
 - **Do not implement a health check that runs from a controller.**
 - **Do not write a per-bundle content-quality check.** Declare the urls for the sitemap and
   ConfigBundle checks them.
+- **Do not declare a localised url in the sitemap as a url of its own.** It belongs in the page's
+  `alternates`; the writing language's bare url is the entry.
+- **Do not serve a bare url in a language other than the writing one.** Redirect to that language's
+  own url, and say `Vary: Accept-Language` on the answer.
 - **Do not add a page-level check to the smoke test** — it must stay fast enough to run on every
   deployment.

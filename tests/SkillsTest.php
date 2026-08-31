@@ -141,34 +141,49 @@ class SkillsTest extends TestCase
     {
         static $haystack = null;
 
-        if (null === $haystack) {
-            // The package root is this bundle's own directory, unless it ships several of them (core-bundle), where the vendor tree and the sibling bundles both sit one level up
-            $package = is_file($this->root() . '/composer.json') ? $this->root() : \dirname($this->root());
-            $directories = array_filter(array_merge(
-                [$package . '/vendor/c975l'],
-                glob($package . '/*/src') ?: [],
-                glob($package . '/*/templates') ?: [],
-                glob($package . '/*/config') ?: [],
-                glob($package . '/*/tests') ?: [],
-                [$this->root() . '/src', $this->root() . '/templates', $this->root() . '/config', $this->root() . '/tests'],
-            ), is_dir(...));
+        $haystack ??= $this->ecosystemSources();
 
-            if ([] === $directories) {
-                return true;
-            }
+        // Nothing readable from here, so nothing to contradict: an empty haystack lets every name through
+        return '' === $haystack || str_contains($haystack, $name);
+    }
 
-            $haystack = '';
-            foreach (array_unique($directories) as $directory) {
-                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
-                foreach ($files as $file) {
-                    if (\in_array($file->getExtension(), ['php', 'yaml', 'json', 'twig'], true)) {
-                        $haystack .= file_get_contents($file->getPathname());
-                    }
+    // Every php, yaml, json and twig file the ecosystem makes visible from this checkout, concatenated once
+    private function ecosystemSources(): string
+    {
+        // The package root is this bundle's own directory, unless it ships several of them (core-bundle), where the vendor tree and the sibling bundles both sit one level up
+        $package = is_file($this->root() . '/composer.json') ? $this->root() : \dirname($this->root());
+        $directories = array_filter(array_merge(
+            [$package . '/vendor/c975l'],
+            $this->siblingDirectories($package),
+            [$this->root() . '/src', $this->root() . '/templates', $this->root() . '/config', $this->root() . '/tests'],
+        ), is_dir(...));
+
+        $sources = '';
+        foreach (array_unique($directories) as $directory) {
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+            foreach ($files as $file) {
+                if (\in_array($file->getExtension(), ['php', 'yaml', 'json', 'twig'], true)) {
+                    $sources .= file_get_contents($file->getPathname());
                 }
             }
         }
 
-        return str_contains($haystack, $name);
+        return $sources;
+    }
+
+    /**
+     * The source trees of the packages sitting next to this one, a core-bundle shipping several of them included.
+     *
+     * @return list<string>
+     */
+    private function siblingDirectories(string $package): array
+    {
+        $directories = [];
+        foreach (['src', 'templates', 'config', 'tests'] as $directory) {
+            $directories = array_merge($directories, glob($package . '/*/' . $directory) ?: []);
+        }
+
+        return $directories;
     }
 
     // The frontmatter is what makes a SKILL.md loadable by an agent, and the name what another package's skill refers it by, so it carries the vendor prefix and matches its own directory
@@ -286,8 +301,19 @@ class SkillsTest extends TestCase
                 }
 
                 $source = (string) file_get_contents($file);
-                $needle = str_ends_with($member, '()') ? 'function ' . substr($member, 0, -2) . '(' : 'const ' . $member;
-                $this->assertStringContainsString($needle, $source, sprintf('%s quotes "%s", which %s does not hold', $directory, $token, basename($file)));
+
+                if (str_ends_with($member, '()')) {
+                    $this->assertStringContainsString('function ' . substr($member, 0, -2) . '(', $source, sprintf('%s quotes "%s", which %s does not hold', $directory, $token, basename($file)));
+
+                    continue;
+                }
+
+                // A constant may carry a type ("const string OWNER"), which the ecosystem writes wherever it can
+                $this->assertMatchesRegularExpression(
+                    sprintf('/const\s+(?:[A-Za-z_\\\\|?]+\s+)?%s\b/', preg_quote($member, '/')),
+                    $source,
+                    sprintf('%s quotes "%s", which %s does not hold', $directory, $token, basename($file)),
+                );
             }
         }
     }

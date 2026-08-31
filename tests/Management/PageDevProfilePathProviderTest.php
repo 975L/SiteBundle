@@ -39,7 +39,7 @@ class PageDevProfilePathProviderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return new PageDevProfilePathProvider($repository, new PagePublicUrlResolver($configService, $this->createUrlGenerator()));
+        return new PageDevProfilePathProvider($repository, new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales()));
     }
 
     public function testGetPathsReturnsOneLocalPathPerPublishedPage(): void

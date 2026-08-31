@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -24,6 +25,16 @@ trait PagePublicUrlGeneratorTestTrait
         $routes->add('page_home', new Route('/'));
         $routes->add('page_display', new Route('/pages/{page}', [], ['page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)']));
 
+        // The same pages in another language, as PageController declares them: the writing language keeps the two routes above, byte for byte
+        $routes->add('page_home_localized', new Route('/{_locale}/'));
+        $routes->add('page_display_localized', new Route('/{_locale}/pages/{page}', [], ['page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)']));
+
         return new UrlGenerator($routes, new RequestContext());
+    }
+
+    // The real SiteLocales rather than a double: it is the one place saying which languages a site speaks, and a test replacing it would stop testing the list a site actually declares
+    private function createSiteLocales(array $enabledLocales = [], string $defaultLocale = 'fr'): SiteLocales
+    {
+        return new SiteLocales($enabledLocales, $defaultLocale);
     }
 }

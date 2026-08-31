@@ -21,6 +21,21 @@
                 "en": "The guided projects now walk you through putting a collection's items in order, and through exporting the page list in the format you need",
                 "fr": "Les projets guidés vous accompagnent maintenant pour mettre les éléments d'une collection dans l'ordre, et pour exporter la liste des pages dans le format voulu",
                 "es": "Los proyectos guiados le acompañan ahora para ordenar los elementos de una colección y para exportar la lista de páginas en el formato que necesite"
+            },
+            {
+                "en": "Your pages and your menus can now be said again in another language: a Translate button opens one field per text, with the original beside it, and a field left empty simply keeps the original",
+                "fr": "Vos pages et vos menus peuvent désormais être redits dans une autre langue : un bouton Traduire ouvre un champ par texte, l'original à côté, et un champ laissé vide garde simplement l'original",
+                "es": "Sus páginas y sus menús pueden ahora decirse de nuevo en otro idioma: un botón Traducir abre un campo por texto, con el original al lado, y un campo dejado vacío conserva simplemente el original"
+            },
+            {
+                "en": "A visitor whose language your site has been translated into now lands straight on that language's own address, and search engines are told which page is which language's version",
+                "fr": "Un visiteur dont la langue existe sur votre site arrive maintenant directement sur l'adresse de cette langue, et les moteurs de recherche savent quelle page est la version de quelle langue",
+                "es": "Un visitante cuyo idioma existe en su sitio llega ahora directamente a la dirección de ese idioma, y los buscadores saben qué página es la versión de qué idioma"
+            },
+            {
+                "en": "The health check now shows, page by page and menu by menu, how many texts are still waiting to be translated",
+                "fr": "Le contrôle de santé indique désormais, page par page et menu par menu, combien de textes attendent encore d'être traduits",
+                "es": "El control de salud indica ahora, página por página y menú por menú, cuántos textos siguen esperando ser traducidos"
             }
         ]
     },

@@ -1,10 +1,29 @@
 {% extends '@EasyAdmin/crud/edit.html.twig' %}
 
 {% block main %}
-    <p>{{ ('label.info_page'|trans({}, 'site')) }}</p>
+    {# The language the page is being written in. Nothing at all on a site declaring a single one, which is every c975L site until it says otherwise #}
+    {% if page_content_locales|default([]) is not empty %}
+        <ul class="nav nav-pills mb-3">
+            {# Each language named in its own, the way the back office's own language menu names them #}
+            <li class="nav-item">
+                <a class="nav-link{{ page_content_locale is null ? ' active' : '' }}" href="{{ page_content_urls[''] }}">{{ page_default_locale|locale_name(page_default_locale) }}</a>
+            </li>
+            {% for locale in page_content_locales %}
+                <li class="nav-item">
+                    <a class="nav-link{{ locale == page_content_locale ? ' active' : '' }}" href="{{ page_content_urls[locale] }}">{{ locale|locale_name(locale) }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-    {# The page carries its own share image among the fields below (see PageCrudController) - rendered for a published page alone, "page_public_path" being set for no other #}
-    {{ include('@c975LConfig/management/_sharing_debugger.html.twig', {url: page_public_path|default(null)}) }}
+    {% if page_content_locale is defined and page_content_locale is not null %}
+        <p class="text-muted">{{ 'label.page_translation_help'|trans({}, 'site') }}</p>
+    {% else %}
+        <p>{{ ('label.info_page'|trans({}, 'site')) }}</p>
+
+        {# The page carries its own share image among the fields below (see PageCrudController) - rendered for a published page alone, "page_public_path" being set for no other #}
+        {{ include('@c975LConfig/management/_sharing_debugger.html.twig', {url: page_public_path|default(null)}) }}
+    {% endif %}
 
     {{ parent() }}
 {% endblock main %}

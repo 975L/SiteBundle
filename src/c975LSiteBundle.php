@@ -20,6 +20,15 @@ class c975LSiteBundle extends AbstractBundle
     public function loadExtension(array $config, ContainerConfigurator $containerConfigurator, ContainerBuilder $containerBuilder): void
     {
         $containerConfigurator->import('../config/services.yaml');
+
+        // What a localised url accepts between its slashes: "en|es" on a site declaring these beside the one it is written in. The writing language is left out on purpose - it keeps its bare urls ("/", "/pages/{page}"), which are the ones the sitemap and the hreflang groups declare (see PagePublicUrlResolver::resolvePath()); accepting "/fr/pages/x" too would answer the same page under a second url. Nothing left - a site declaring a single language, which is every site until it says otherwise - gives a pattern matching nothing, so the localised routes exist without ever answering
+        $locales = $containerBuilder->hasParameter('kernel.enabled_locales') ? (array) $containerBuilder->getParameter('kernel.enabled_locales') : [];
+        $defaultLocale = $containerBuilder->hasParameter('kernel.default_locale') ? (string) $containerBuilder->getParameter('kernel.default_locale') : '';
+        $locales = array_values(array_filter(array_map(strval(...), $locales), static fn (string $locale) => $locale !== $defaultLocale));
+        $containerBuilder->setParameter(
+            'c975l_site.locales_pattern',
+            [] === $locales ? '(?!)' : implode('|', $locales),
+        );
     }
 
     public function prependExtension(ContainerConfigurator $container, ContainerBuilder $builder): void

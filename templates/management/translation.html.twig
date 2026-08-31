@@ -1,0 +1,45 @@
+{# The "Translate" screen of a menu: one field per label, the original underneath as a landmark. A page has its own - its very edit screen, opened on another language (see PageCrudController::translationFields) #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block main %}
+    <h1>{{ subject.heading|trans({}, 'site') }} — {{ subject.title }}</h1>
+    <p class="text-muted">{{ subject.description|trans({}, 'site') }}</p>
+
+    {% if locales|length > 1 %}
+        <ul class="nav nav-pills mb-3">
+            {% for code, name in locales %}
+                <li class="nav-item">
+                    <a class="nav-link{{ code == locale ? ' active' : '' }}" href="{{ path(subject.route, {id: subject.id, locale: code}) }}">{{ name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token(subject.route ~ '_' ~ subject.id) }}">
+
+        {# A menu whose items all take their label from the page they point at has nothing of its own to say again #}
+        {% if rows is empty %}
+            <p>{{ 'label.page_translation_nothing'|trans({}, 'site') }}</p>
+        {% endif %}
+
+        {% for row in rows %}
+            <div class="mb-4">
+                <label class="form-label" for="{{ row.name }}">{{ row.label }}</label>
+                {% if row.rich %}
+                    <textarea class="form-control" id="{{ row.name }}" name="values[{{ row.name }}]" rows="6">{{ written[row.name] }}</textarea>
+                {% else %}
+                    <textarea class="form-control" id="{{ row.name }}" name="values[{{ row.name }}]" rows="2">{{ written[row.name] }}</textarea>
+                {% endif %}
+                {# The original text, beside the field and never inside it: a prefilled field would be saved as is, and the page would look translated without being so #}
+                {% set reference = row.reference|striptags %}
+                <div class="form-text">{{ reference|slice(0, 300) }}{{ reference|length > 300 ? '…' }}</div>
+            </div>
+        {% endfor %}
+
+        {% if rows is not empty %}
+            <button type="submit" class="btn btn-primary">{{ 'action.save'|trans({}, 'site') }}</button>
+        {% endif %}
+        <a class="btn btn-secondary" href="{{ ea_url().setController(subject.backController).setAction('index') }}">{{ 'action.cancel'|trans({}, 'site') }}</a>
+    </form>
+{% endblock %}

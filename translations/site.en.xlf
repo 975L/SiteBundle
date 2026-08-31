@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="en" datatype="plaintext" original="site.en.xlf">
         <body>
+            <trans-unit id="wPEuKmL">
+                <source>action.cancel</source>
+                <target>Cancel</target>
+            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Delete permanently</target>
@@ -29,6 +33,14 @@
             <trans-unit id="KrzhzB_">
                 <source>action.restore</source>
                 <target>Restore</target>
+            </trans-unit>
+            <trans-unit id="80bO76v">
+                <source>action.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="VOwL1H0">
+                <source>action.translate</source>
+                <target>Translate</target>
             </trans-unit>
             <trans-unit id="8w7xgsI">
                 <source>action.trash</source>
@@ -385,6 +397,10 @@
             <trans-unit id="YPAShtT">
                 <source>description.guided_step_trash_restore</source>
                 <target>It comes back unpublished, so you decide when it shows on the site again.</target>
+            </trans-unit>
+            <trans-unit id="Cmewuhh">
+                <source>description.menu_translation</source>
+                <target>A menu carries its structure once: its items and their order are edited in the language it was written in. Only the labels an editor set by hand are said again here - an item taking its label from the page it points at is translated with that page.</target>
             </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
@@ -1234,6 +1250,10 @@
                 <source>label.menu_toggle</source>
                 <target>Open/Close the menu</target>
             </trans-unit>
+            <trans-unit id="InkGFaU">
+                <source>label.menu_translation</source>
+                <target>Menu translation</target>
+            </trans-unit>
             <trans-unit id="9W45ElS">
                 <source>label.menus</source>
                 <target>Menus</target>
@@ -1285,6 +1305,26 @@
             <trans-unit id="GKczZ58">
                 <source>label.page_deleted</source>
                 <target>Page deleted</target>
+            </trans-unit>
+            <trans-unit id="lpx4e3r">
+                <source>label.page_translation_complete</source>
+                <target>Translated in every declared language.</target>
+            </trans-unit>
+            <trans-unit id="qSqgPB2">
+                <source>label.page_translation_help</source>
+                <target>The same fields, in the language you picked. The source text between brackets marks what is left to translate: left as it is, it is not stored. The page itself is composed in the language it was written in.</target>
+            </trans-unit>
+            <trans-unit id="Nh8Y4Zo">
+                <source>label.page_translation_missing</source>
+                <target>Untranslated texts — %missing%</target>
+            </trans-unit>
+            <trans-unit id="UAU9exb">
+                <source>label.page_translation_nothing</source>
+                <target>Nothing to translate here.</target>
+            </trans-unit>
+            <trans-unit id="BKKpXIw">
+                <source>label.page_translation_saved</source>
+                <target>Translation saved.</target>
             </trans-unit>
             <trans-unit id="dfCuHTM">
                 <source>label.pages</source>
@@ -1445,6 +1485,10 @@
             <trans-unit id="71_aLjk">
                 <source>label.start_animation</source>
                 <target>Start animation</target>
+            </trans-unit>
+            <trans-unit id="sIJNQm6">
+                <source>label.summary_social_network</source>
+                <target>Social networks summary</target>
             </trans-unit>
             <trans-unit id="qGVcC.N">
                 <source>label.summary_social_network_help</source>

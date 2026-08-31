@@ -1,5 +1,45 @@
 # Changelog
 
+## v8.10.0
+
+A page and a menu are said again in another language
+
+- A page is translated on its own edit screen, opened on another language: the same fields in the same places (31/08/2026)
+- A field says what that language already holds, or the source text between brackets where it says nothing yet (31/08/2026)
+- A language selector sits at the top of the edit screen, naming each language in its own (31/08/2026)
+- New Translate action on the Pages index, opening the first declared language (31/08/2026)
+- `PageCrudController::configureFields()` yields the page's own two texts and its blocks alone, unmapped and through `BlockType`'s `translation_locale` (31/08/2026)
+- The page's two texts are staged rather than stored, written on the flush that saves the page (31/08/2026)
+- A language screen offers neither "+" nor bin, and never prunes the page's blocks (31/08/2026)
+- New `PageTranslator`, over UiBundle's `ContentTranslator` (31/08/2026)
+- New `TranslationController`, writing a menu's own labels, and the Translate action of the Menus index (31/08/2026)
+- The `menu_link` block declares its `label` translatable (31/08/2026)
+- New `TranslationHealthCheckProvider`, kind `translations`: one row per published page, plus one per menu (31/08/2026)
+- New `PageTranslationPurgeListener`: a page takes its translations with it (31/08/2026)
+- New `PageTranslationExtension`: `page_title()`, `page_summary()` and `page_alternates()` (31/08/2026)
+- `page.html.twig` reads its title and its summary in the language being served (31/08/2026)
+- New `page_home_localized` and `page_display_localized` routes, prefixed by the language being read (31/08/2026)
+- New `c975l_site.locales_pattern` parameter, leaving out the writing language, whose bare urls stay the only ones (31/08/2026)
+- `PageController` answers the bare urls in the writing language (31/08/2026)
+- A visitor asking a bare url in a translated language is redirected to that language's url, query string along (31/08/2026)
+- A regional `Accept-Language` (`en-GB`) is recognised as its language, through `getPreferredLanguage()` (31/08/2026)
+- The bare urls carry `Vary: Accept-Language` (31/08/2026)
+- `MenuExtension` generates the localised routes when a page is read in another language (31/08/2026)
+- `MenuExtension` reads a derived menu label through `PageTranslator` (31/08/2026)
+- New `PagePublicUrlResolver::resolveAlternates()`, naming a page in every declared language (31/08/2026)
+- New `PagePublicUrlResolver::resolveAlternatesForSlug()` for a collection item's detail view (31/08/2026)
+- `PagePublicUrlResolver` and `PageController` read their languages from `SiteLocales` (31/08/2026)
+- The page carries an `hreflang` group in its head, and the sitemap an `alternates` key per url (31/08/2026)
+- The sitemap declares a translated page once per language, each entry carrying the whole group (31/08/2026)
+- `c975l/core-bundle` requires `^1.20` (31/08/2026)
+- Added the `action.translate`, `label.menu_translation`, `description.menu_translation`, `label.page_translation_help`, `label.page_translation_nothing`, `label.page_translation_saved`, `label.page_translation_missing` and `label.page_translation_complete` keys to the three locales (31/08/2026)
+- `SkillsTest` now recognises a typed class constant (31/08/2026)
+- Added `tests/LocalesPatternTest.php`, `tests/Service/PageTranslatorTest.php`, `tests/Twig/PageTranslationExtensionTest.php`, `tests/Listener/PageTranslationPurgeListenerTest.php`, `tests/Controller/Management/TranslationControllerTest.php` and `tests/Management/TranslationHealthCheckProviderTest.php` (31/08/2026)
+- `PageCrudControllerTest` covers the language screen, its fields, the brackets and the blocks it never removes (31/08/2026)
+- `PageControllerTest`, `MenuExtensionTest`, `PagePublicUrlResolverTest` and `SitePageSitemapProviderTest` cover the localised urls, the redirect and the groups (31/08/2026)
+- Added `PageTranslationExtension` to `TwigFunctionRegistrationTest` (31/08/2026)
+- The README gains a Languages section, and the four skills the urls, the Translate screens and the new check (31/08/2026)
+
 ## v8.9.0
 
 `twig_content` only includes the site's own templates
@@ -27,6 +67,8 @@
 - New `phpmd.xml.dist`, and the `phpDoc.parseError` ignore its markers call for in both PHPStan configs (31/08/2026)
 - `.codacy.yaml` excludes the repository root's own `public/`, `tests/` and `vendor/` (31/08/2026)
 - `basic.js`'s console shim no longer shadows `window.console` (31/08/2026)
+- `PageController::renderPage()` and `SkillsTest::ecosystemSources()` split out, under PHP Mess Detector's NPath threshold (31/08/2026)
+- `MenuExtensionTest::createExtension()` resolves its collaborators through a defaults array (31/08/2026)
 
 ## v8.8.1
 

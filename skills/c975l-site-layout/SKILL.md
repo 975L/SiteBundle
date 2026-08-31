@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -59,6 +59,12 @@ belongs to core-bundle's layout**, where both shells read it.
 `summarySocialNetwork` feeds both `<meta name="description">` and `og:description`. A page setting
 neither can state them from the back office instead, through the `UrlMetadata` row CoreBundle holds for
 its url — the layout only reads that row for what the template left unsaid.
+
+An `alternates` variable — `hreflang => absolute url` — is what the layout writes its
+`<link rel="alternate" hreflang>` tags from, and nothing is emitted when it is empty. A template
+rendering a database page sets it from `page_alternates(page)`, and reads the two texts above through
+`page_title(page)` / `page_summary(page)` so they come out in the language being served (see
+`c975l-site-pages` and `c975l-site-seo`).
 
 
 ## Twig blocks of the layout

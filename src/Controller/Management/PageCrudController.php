@@ -19,6 +19,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
 use c975L\SiteBundle\Form\Type\PageQrCodeType;
@@ -26,6 +27,7 @@ use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Field\OgImageField;
@@ -48,6 +50,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -88,6 +91,9 @@ class PageCrudController extends AbstractCrudController
     public const RESTORE_CSRF_TOKEN = 'page_restore';
     public const DELETE_PERMANENTLY_CSRF_TOKEN = 'page_delete_permanently';
 
+    // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
+    public const string CONTENT_LOCALE_PARAM = 'contenu';
+
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -104,6 +110,8 @@ class PageCrudController extends AbstractCrudController
         private readonly PageExportProvider $pageExportProvider,
         private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
+        private readonly PageTranslator $pageTranslator,
+        private readonly SiteLocales $siteLocales,
     ) {
     }
 
@@ -117,38 +125,108 @@ class PageCrudController extends AbstractCrudController
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $contentLocale = $this->contentLocale();
 
-        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
-            $data = $event->getData();
-            if (!is_array($data)) {
-                return;
-            }
+        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->guardSubmittedBlocks($event, $contentLocale));
 
-            // Read once and passed on, so the limit the check ran against is the one the message names
-            $limit = (int) ini_get('max_input_vars');
-            if (SubmissionIntegrity::isTruncated($this->requestStack->getCurrentRequest()?->request->all() ?? [], $limit)) {
-                // Added in PRE_SUBMIT, before validation, so it survives to the rendered form; the whole submission is invalid from here and nothing is written
-                $event->getForm()->addError(new FormError($this->translator->trans('text.page_submission_truncated', ['%limit%' => $limit], 'site')));
+        // The page's own two texts, handed over the way a block's are: written on the flush that saves the page, never before it, so a refused submission writes nothing (see ContentTranslator::stage)
+        if (null !== $contentLocale) {
+            $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($contentLocale): void {
+                $page = $event->getData();
+                if (!$page instanceof Page) {
+                    return;
+                }
 
-                return;
-            }
+                $values = [];
+                foreach (PageTranslator::FIELDS as $field) {
+                    if ($event->getForm()->has($field)) {
+                        $values[$field] = $event->getForm()->get($field)->getData();
+                    }
+                }
 
-            $page = $event->getForm()->getData();
-            if ($page instanceof Page) {
-                CollectionReconciler::pruneRemoved(
-                    $page->getBlocks(),
-                    $data['blocks'] ?? [],
-                    static fn (Block $block) => $page->removeBlock($block)
-                );
-            }
-
-            if (!isset($data['blocks'])) {
-                $data['blocks'] = [];
-                $event->setData($data);
-            }
-        });
+                $this->pageTranslator->stage($page, $contentLocale, $values);
+            });
+        }
 
         return $formBuilder;
+    }
+
+    // What the note above createEditFormBuilder() guards against, in the one place a test can reach it
+    private function guardSubmittedBlocks(FormEvent $event, ?string $contentLocale): void
+    {
+        $data = $event->getData();
+        if (!is_array($data)) {
+            return;
+        }
+
+        // Read once and passed on, so the limit the check ran against is the one the message names
+        $limit = (int) ini_get('max_input_vars');
+        if (SubmissionIntegrity::isTruncated($this->requestStack->getCurrentRequest()?->request->all() ?? [], $limit)) {
+            // Added in PRE_SUBMIT, before validation, so it survives to the rendered form; the whole submission is invalid from here and nothing is written
+            $event->getForm()->addError(new FormError($this->translator->trans('text.page_submission_truncated', ['%limit%' => $limit], 'site')));
+
+            return;
+        }
+
+        // A language screen offers neither "+" nor bin (see configureFields), so nothing can have been removed there - and reading an absent key as a removal is exactly what would delete a page's blocks on a submission carrying only translations
+        $page = $event->getForm()->getData();
+        if (null === $contentLocale && $page instanceof Page) {
+            CollectionReconciler::pruneRemoved(
+                $page->getBlocks(),
+                $data['blocks'] ?? [],
+                static fn (Block $block) => $page->removeBlock($block)
+            );
+        }
+
+        if (!isset($data['blocks'])) {
+            $data['blocks'] = [];
+            $event->setData($data);
+        }
+    }
+
+    /**
+     * The very same page, offered in the language being written: its own two texts, then its blocks through the form
+     * they are always edited with (see BlockType's "translation_locale").
+     *
+     * Unmapped, all of them: what is written here belongs to the translation table, and mapped back it would
+     * overwrite the text the site itself was written in.
+     *
+     * @return iterable<FieldInterface>
+     */
+    private function translationFields(Page $page, string $locale): iterable
+    {
+        $values = $this->pageTranslator->promptValues($page, $locale);
+
+        yield TextField::new('title')
+            ->setLabel(t('label.title', [], 'site'))
+            ->setRequired(false)
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('data', $values['title']);
+
+        yield TextareaField::new('summarySocialNetwork')
+            ->setLabel(t('label.summary_social_network', [], 'site'))
+            ->setRequired(false)
+            ->setFormTypeOption('mapped', false)
+            ->setFormTypeOption('data', $values['summarySocialNetwork'])
+            // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
+            ->setFormTypeOption('attr', ['data-ai-rephrase' => true]);
+
+        // Neither allowAdd() nor allowDelete(), unlike the collection above: a page is composed once, and a block taken away from a language screen would be taken away from every language at once
+        yield CollectionField::new('blocks')
+            ->setLabel(t('label.blocks', [], 'ui'))
+            ->setColumns('col-12')
+            ->setEntryType(BlockType::class)
+            ->setFormTypeOption('by_reference', false)
+            ->setFormTypeOption('entry_options.context', 'page')
+            ->setFormTypeOption('entry_options.translation_locale', $locale);
+    }
+
+    // The language a page is being written in, when it is not the one the site was written in: read from the url the language selector links to (see page_crud_edit.html.twig), and only ever one the site declares
+    private function contentLocale(): ?string
+    {
+        $asked = (string) $this->requestStack->getCurrentRequest()?->query->get(self::CONTENT_LOCALE_PARAM);
+
+        return \in_array($asked, $this->pageTranslator->getTranslatableLocales(), true) ? $asked : null;
     }
 
     #[\Override]
@@ -157,6 +235,12 @@ class PageCrudController extends AbstractCrudController
         // The "home" page's slug is fixed, it also serves as the site root (see redirect in PageController)
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
         $isHomePage = $entity instanceof Page && 'home' === $entity->getSlug();
+
+        // A language screen shows what a language can change and nothing else: the page is composed, published and given its image once, in the language it was written in
+        $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
+        if (null !== $contentLocale && $entity instanceof Page) {
+            return $this->translationFields($entity, $contentLocale);
+        }
 
         // Trashed pages are always unpublished, no need to show that column in the trash view
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
@@ -410,6 +494,17 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => !$page->isPublished() && !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
+        // The very same edit screen, opened on another language: the fields are the page's own, filled in that language (see translationFields). Shown only where the site declares more than one - on a single-language site there is nothing to open
+        $translateAction = Action::new('translate', t('action.translate', [], 'site'), 'fa fa-language')
+            ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($page->getId())
+                ->set(self::CONTENT_LOCALE_PARAM, $this->pageTranslator->getTranslatableLocales()[0] ?? null)
+                ->generateUrl())
+            ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted())
+            ->addCssClass('btn btn-secondary');
+
         // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved immediately (see duplicate()), not deferred to a form submit like block duplication is
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'site'), 'fa fa-copy')
             ->linkToCrudAction('duplicate')
@@ -438,6 +533,7 @@ class PageCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $viewOnSiteAction)
             ->add(Crud::PAGE_INDEX, $previewAction)
             ->add(Crud::PAGE_INDEX, $duplicateAction)
+            ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_INDEX, $exportGroup)
             ->add(Crud::PAGE_DETAIL, $restoreAction)
             ->add(Crud::PAGE_DETAIL, $deletePermanentlyAction)
@@ -888,9 +984,34 @@ class PageCrudController extends AbstractCrudController
             if ($page instanceof Page && $page->isPublished()) {
                 $responseParameters->set('page_public_path', $this->pagePath($page));
             }
+
+            if ($page instanceof Page) {
+                $this->addContentLocaleParameters($responseParameters, $page);
+            }
         }
 
         return $responseParameters;
+    }
+
+    // What the language selector at the top of the edit screen needs: the languages offered, the one being written, and where each of them opens the very same page
+    private function addContentLocaleParameters(KeyValueStore $responseParameters, Page $page): void
+    {
+        $locales = $this->pageTranslator->getTranslatableLocales();
+
+        $urls = [];
+        foreach ([null, ...$locales] as $locale) {
+            $urls[$locale ?? ''] = $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction(Action::EDIT)
+                ->setEntityId($page->getId())
+                ->set(self::CONTENT_LOCALE_PARAM, $locale)
+                ->generateUrl();
+        }
+
+        $responseParameters->set('page_content_locales', $locales);
+        $responseParameters->set('page_content_locale', $this->contentLocale());
+        $responseParameters->set('page_default_locale', $this->siteLocales->getDefaultLocale());
+        $responseParameters->set('page_content_urls', $urls);
     }
 
     // Relative path of the page on the public site: preview link if unpublished, otherwise home or its slug

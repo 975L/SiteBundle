@@ -16,12 +16,14 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
 use c975L\ConfigBundle\Service\Export\ExportFormat;
 use c975L\ConfigBundle\Service\Export\TableExporter;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
 use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Management\BlockDataExporter;
@@ -55,6 +57,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -161,6 +165,8 @@ class PageCrudControllerTest extends TestCase
             $services['pageExportProvider'],
             $services['blockMoveRowAttrBuilder'],
             $services['csrfTokenManager'],
+            $services['pageTranslator'],
+            $services['siteLocales'],
         );
     }
 
@@ -188,6 +194,10 @@ class PageCrudControllerTest extends TestCase
             'pageExportProvider' => new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
             'blockMoveRowAttrBuilder' => $this->createBlockMoveRowAttrBuilder(),
             'csrfTokenManager' => $this->createCsrfTokenManager(true),
+            // A site declaring a single language, which is what every one of these tests describes: the "Translate" action never shows
+            'pageTranslator' => $services['pageTranslator'] ?? $this->createStub(PageTranslator::class),
+            // The site declares a single language in every test but the ones about the language selector
+            'siteLocales' => $services['siteLocales'] ?? new SiteLocales([], 'fr'),
         ];
     }
 
@@ -1209,6 +1219,131 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame(7, $rowAttr['data-ui-move-owner-id']);
         $this->assertSame('/admin/ui/block/move', $rowAttr['data-ui-move-url']);
         $this->assertSame('token123', $rowAttr['data-ui-move-csrf-token']);
+    }
+
+    // The anti-data-loss guard of the whole design: a language screen offers neither "+" nor bin, so an absent "blocks" key there is a submission that carried only translations - read as a removal, it would delete the page's blocks for good
+    public function testALanguageScreenNeverReadsAMissingBlocksKeyAsARemoval(): void
+    {
+        $page = $this->pageWithOneBlock();
+
+        $this->invokeSubmissionGuard($page, 'es');
+
+        $this->assertCount(1, $page->getBlocks(), 'The block was removed by a submission that never offered to remove it.');
+    }
+
+    // The no-regression contract: on the ordinary screen, where the bin exists, a block left out of the submission is a block the editor removed
+    public function testAnOrdinaryScreenStillReadsAMissingBlockAsARemoval(): void
+    {
+        $page = $this->pageWithOneBlock();
+
+        $this->invokeSubmissionGuard($page, null);
+
+        $this->assertCount(0, $page->getBlocks());
+    }
+
+    private function pageWithOneBlock(): Page
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 12);
+
+        $block = new Block();
+        $block->setKind('text_section');
+        new \ReflectionProperty(Block::class, 'id')->setValue($block, 34);
+        $page->addBlock($block);
+
+        return $page;
+    }
+
+    // Fires the PRE_SUBMIT guard with a submission carrying no "blocks" key at all, the way a truncated body or a translation-only screen does
+    private function invokeSubmissionGuard(Page $page, ?string $contentLocale): void
+    {
+        $requestStack = new RequestStack([new Request()]);
+
+        $controller = $this->createController(['requestStack' => $requestStack]);
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('getData')->willReturn($page);
+
+        new \ReflectionMethod(PageCrudController::class, 'guardSubmittedBlocks')
+            ->invoke($controller, new FormEvent($form, ['title' => 'Nos ateliers']), $contentLocale);
+    }
+
+    // A language screen shows what a language can change and nothing else: the page is composed, published and given its image once, in the language it was written in
+    public function testConfigureFieldsOnALanguageScreenOffersTheTextsAndTheBlocksAlone(): void
+    {
+        $fields = iterator_to_array($this->translationScreenFields());
+
+        $this->assertSame(
+            ['title', 'summarySocialNetwork', 'blocks'],
+            array_map(static fn ($field) => $field->getAsDto()->getProperty(), $fields),
+        );
+    }
+
+    // Unmapped, all of them: what is written on a language screen belongs to the translation table, and mapped back it would overwrite the text the site itself was written in
+    public function testConfigureFieldsOnALanguageScreenMapsNothingBackOntoThePage(): void
+    {
+        foreach ($this->translationScreenFields() as $field) {
+            $options = $field->getAsDto()->getFormTypeOptions();
+
+            if ('blocks' !== $field->getAsDto()->getProperty()) {
+                $this->assertFalse($options['mapped'], 'A mapped field would overwrite the page in its own language.');
+            }
+        }
+    }
+
+    // The source text between brackets is both the thing to translate and the mark of a field nobody has written yet
+    public function testConfigureFieldsOnALanguageScreenOffersTheSourceTextBetweenBrackets(): void
+    {
+        $fields = iterator_to_array($this->translationScreenFields());
+
+        $this->assertSame('[Nos ateliers]', $fields[0]->getAsDto()->getFormTypeOptions()['data']);
+    }
+
+    // The language travels down into every block's own form, where the very same rule applies one level lower
+    public function testConfigureFieldsOnALanguageScreenHandsTheLanguageToEveryBlock(): void
+    {
+        $blocks = $this->findFieldByProperty($this->translationScreenFields(), 'blocks');
+        $options = $blocks->getAsDto()->getFormTypeOptions();
+
+        $this->assertSame('es', $options['entry_options']['translation_locale']);
+        $this->assertArrayNotHasKey('allow_add', $options, 'A page is composed once, in the language it was written in.');
+        $this->assertArrayNotHasKey('allow_delete', $options, 'A block removed from a language screen would be removed from every language at once.');
+    }
+
+    // A query parameter is written by whoever wants: a language the site does not declare leaves the ordinary edit screen alone
+    public function testALanguageTheSiteDoesNotDeclareLeavesTheOrdinaryScreen(): void
+    {
+        $fields = iterator_to_array($this->translationScreenFields('de'));
+
+        $this->assertContains('slug', array_map(static fn ($field) => $field->getAsDto()->getProperty(), $fields));
+    }
+
+    /**
+     * The fields the edit screen yields when it is opened on a language.
+     *
+     * @return iterable<mixed>
+     */
+    private function translationScreenFields(string $asked = 'es'): iterable
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 12);
+
+        $request = new Request([PageCrudController::CONTENT_LOCALE_PARAM => $asked]);
+        $requestStack = new RequestStack([$request]);
+
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('getTranslatableLocales')->willReturn(['es']);
+        $pageTranslator->method('promptValues')->willReturn(['title' => '[Nos ateliers]', 'summarySocialNetwork' => null]);
+
+        $controller = $this->createController([
+            'adminContextProvider' => $this->createAdminContextProvider($this->createAdminContext($page)),
+            'requestStack' => $requestStack,
+            'pageTranslator' => $pageTranslator,
+            'siteLocales' => new SiteLocales(['fr', 'es'], 'fr'),
+        ]);
+        $controller->setContainer($this->createContainer([]));
+
+        return $controller->configureFields(Crud::PAGE_EDIT);
     }
 
     // The "Health check" tab and its panel field only make sense once the page exists and has been checked at least once (see PageHealthCheckExtension) - onlyWhenUpdating() keeps both off the "new" page entirely

@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
@@ -46,7 +47,8 @@ use function Symfony\Component\Translation\t;
 // Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
-    private const array LOCATION_LABELS = [
+    // Public so the screen that translates a menu can name it the same way the index does (see TranslationController::menu())
+    public const array LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_FOOTER => 'label.footer',
         Menu::LOCATION_EMAIL_HEADER => 'label.email_header',
@@ -63,6 +65,7 @@ class MenuCrudController extends AbstractCrudController
         private readonly AdminContextProvider $adminContextProvider,
         private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly PageTranslator $pageTranslator,
     ) {
     }
 
@@ -122,7 +125,14 @@ class MenuCrudController extends AbstractCrudController
             ->linkToCrudAction(Action::INDEX)
             ->addCssClass('btn btn-secondary');
 
+        // The screen that writes a menu's own labels in another language, showing only where the site declares more than one: an item taking its label from the page it points at is translated with that page, not here (see TranslationController)
+        $translateAction = Action::new('translate', $this->translator->trans('action.translate', [], 'site'), 'fa fa-language')
+            ->linkToUrl(fn (Menu $menu) => $this->generateUrl('management_menu_translate', ['id' => $menu->getId()]))
+            ->displayIf(fn (Menu $menu): bool => $this->pageTranslator->isActive())
+            ->addCssClass('btn btn-secondary');
+
         return $actions
+            ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
