@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -66,13 +66,19 @@ the missing blocks read as "the editor removed them", so such a submission is re
 
 | Kind | Category | What it does |
 | --- | --- | --- |
-| `twig_content` | twig | includes an existing Twig template by its path (`templatePath`) — a general-purpose "drop this template in here" |
+| `twig_content` | twig | includes an existing Twig template by its path (`templatePath`) — a general-purpose "drop this template in here". **Only the app's own templates, under `templates/`**: an installed bundle's templates are refused by the form and again at render time (`TwigContentTemplateChecker`, Twig function `site_twig_content_allowed()`), the path being typed in the back office |
 | `articles_slider` | navigation | picks another page and renders its `article` blocks that carry a media as a slider |
 | `menu_link` | navigation | a link to a page or a contributed route; restricted to the menu contexts |
 | `menu_group` | navigation | a chromeless wrapper grouping several items on a line of a menu |
 
 The last two belong to menus — see the `c975l-site-menus` skill. `articles_slider` uses the
 `site_page(id)` Twig function to eager-load the target page with its blocks and medias.
+
+Every kind also carries a **silhouette**, a CSS-drawn miniature of its layout shown by the visual block
+picker (`sass/block-thumbs.scss` → `public/css/block-thumbs.min.css`, contributed to the back office by
+`StylesheetProvider::getManagementStylesheets()` under the `ui.management_stylesheet` tag). A kind
+without one shows the bare default frame; `StylesheetProviderTest` reads the pickable kinds off
+`config/services.yaml` and fails on any that is undrawn.
 
 Hovering a block as an editor raises UiBundle's Edit button, and `Management\SiteBlockEditUrlProvider`
 answers where it goes. Two kinds are edited somewhere other than the Page form carrying them: a
@@ -124,7 +130,8 @@ Each item gets a per-item url without a row of its own. Two editorial steps, onc
 From then on `/pages/{page}/{itemSlug}` calls the source's `detail($itemSlug)`; a non-null result
 renders the detail page's blocks with a `collectionItem` Twig global exposing it for that one render
 (`CollectionItemContext`). A `twig_content` block reads it as
-`{% include templatePath with collectionItem.get() %}`. A null result falls through to a 404. **Nothing
+`{% include templatePath with collectionItem.get() %}`, its `templatePath` being one of the app's own
+templates. A null result falls through to a 404. **Nothing
 is persisted per item.**
 
 ## Commands
@@ -166,4 +173,6 @@ over on its own, nothing cascading off a `CollectionGroup`.
 - **Do not add a free-text collection field on an item.** The group is picked by the screen it is
   opened from.
 - **Do not create a `Page` per collection item.** One detail page serves the whole collection.
+- **Do not add a block kind without drawing its silhouette** — the picker then shows it as a bare
+  frame, which is what the picker exists to avoid.
 - **Do not cache a preview render.**

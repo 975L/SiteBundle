@@ -1,5 +1,33 @@
 # Changelog
 
+## v8.9.0
+
+`twig_content` only includes the site's own templates
+
+- **`twig_content` no longer includes an arbitrary path**: only the site's own templates, under `templates/`, are accepted (30/08/2026) [Breaking change]
+- New `TwigContentTemplateChecker`, and the `site_twig_content_allowed()` Twig function guarding `TwigContent.html.twig` (30/08/2026)
+- `TwigContentType` refuses the path on the screen that writes it (30/08/2026)
+- `@c975LSite/examples/` stays accepted, the only bundle path allowed (30/08/2026)
+- Added the `label.template_path`, `label.template_path_help` and `label.template_path_refused` keys to the three locales (30/08/2026)
+- Added `tests/Service/TwigContentTemplateCheckerTest.php` (30/08/2026)
+- A refused path is logged and shown to the signed-in admin, instead of the section vanishing silently (31/08/2026)
+- `TwigContentExtension` declares its function with `#[AsTwigFunction]`, like the bundle's other extensions (31/08/2026)
+- Added `tests/Form/Block/TwigContentTypeTest.php` (31/08/2026)
+- New `sass/block-thumbs.scss`: one silhouette per block kind for the visual picker (31/08/2026)
+- `StylesheetProvider` implements `BundleStylesheetManagementProviderInterface` and contributes that sheet under `ui.management_stylesheet` (31/08/2026)
+- The README shows the bundle's blocks as one image (31/08/2026)
+- New guided step on ordering a collection's items (31/08/2026)
+- New guided step on exporting the pages as SQL, CSV or JSON (31/08/2026)
+- Added the `label.guided_step_collection_order` and `label.guided_step_content_export_formats` keys to the three locales (31/08/2026)
+- Reworded `description.guided_step_page_creation_reopen` (31/08/2026)
+- `exportSql()` and `exportJson()` align on `site-role-admin`, as `exportCsv()` and `exportSelection()` already do (31/08/2026)
+- The `export` and `publishAsReplacement` action groups carry their class through `addCssClass()`, which EasyAdmin does not overwrite (31/08/2026)
+- `c975l/social-bundle` leaves `suggest`, taken over by CoreBundle's own (31/08/2026)
+- `OptionalBundleTemplateTest` only attests to the absence of the `require` (31/08/2026)
+- New `phpmd.xml.dist`, and the `phpDoc.parseError` ignore its markers call for in both PHPStan configs (31/08/2026)
+- `.codacy.yaml` excludes the repository root's own `public/`, `tests/` and `vendor/` (31/08/2026)
+- `basic.js`'s console shim no longer shadows `window.console` (31/08/2026)
+
 ## v8.8.1
 
 A page outlives whoever wrote it

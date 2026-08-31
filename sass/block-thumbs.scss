@@ -1,0 +1,99 @@
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+/* The silhouettes of this bundle's block kinds, shown wherever a kind has to be recognised at a glance: the visual picker an editor chooses a block from (UiBundle's assets/js/block-picker.js) and the public block showcase of a site. Drawn here rather than in UiBundle for the same reason as the kinds' templates and fixtures: a block belongs to the bundle shipping it. The frame, the five parts and the default silhouette come from UiBundle's sass/_block-thumbs.scss - what follows only says how this bundle's kinds arrange them. */
+
+/* A template pulled in by its path: a frame holding something this block doesn't itself describe */
+.ui-block-thumb--twig_content {
+    justify-content: center;
+
+    .ui-block-thumb__media {
+        display: block;
+        border: 1px dashed currentcolor;
+        border-radius: 2px;
+        background: none;
+        opacity: .5;
+    }
+
+    .ui-block-thumb__title {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 45%;
+        opacity: .55;
+        transform: translate(-50%, -50%);
+    }
+
+    .ui-block-thumb__line {
+        display: none;
+    }
+}
+
+/* A selection of articles, run as a slideshow: three teasers and the slide markers under them */
+.ui-block-thumb--articles_slider {
+    .ui-block-thumb__media {
+        display: block;
+        background-image: linear-gradient(to right, currentcolor 0 76%, transparent 76%);
+        background-size: 26% 100%;
+        background-color: transparent;
+    }
+
+    .ui-block-thumb__title {
+        display: none;
+    }
+
+    .ui-block-thumb__line {
+        align-self: center;
+        width: 40%;
+        height: .1875rem;
+        background-image: linear-gradient(to right, currentcolor 0 50%, transparent 50%);
+        background-size: .375rem 100%;
+        background-color: transparent;
+    }
+
+    .ui-block-thumb__line + .ui-block-thumb__line {
+        display: none;
+    }
+}
+
+/* One entry of a menu: a single label, led by its icon */
+.ui-block-thumb--menu_link {
+    justify-content: center;
+
+    .ui-block-thumb__title {
+        align-self: center;
+        width: 55%;
+        height: .375rem;
+    }
+
+    .ui-block-thumb__line {
+        display: none;
+    }
+}
+
+/* Several menu entries brought onto a line of their own */
+.ui-block-thumb--menu_group {
+    justify-content: center;
+
+    .ui-block-thumb__title {
+        display: none;
+    }
+
+    .ui-block-thumb__line {
+        height: .375rem;
+        border-radius: 3px;
+        background-image: linear-gradient(to right, currentcolor 0 70%, transparent 70%);
+        background-size: 34% 100%;
+        background-color: transparent;
+    }
+
+    .ui-block-thumb__line + .ui-block-thumb__line {
+        display: none;
+    }
+}

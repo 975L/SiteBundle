@@ -304,6 +304,15 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
     }
 
+    // The item rows carry no id of their own: the reorder marker its index template writes is the only thing the step can point at, and it lives in a template rather than in a constant
+    public function testTheCollectionOrderStepPointsAtTheMarkerTheIndexTemplateWrites(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/collection_item_crud_index.html.twig');
+
+        $this->assertStringContainsString('data-reorder-group=', $template, 'The index no longer marks its rows, so there is no selector left to point at');
+        $this->assertStringContainsString('[data-reorder-group]', $this->highlightsOf('site-collection'));
+    }
+
     // The health check step points at the last tab rather than at its id, EasyAdmin building that id off the translated label - so the tab has to stay the last one declared
     public function testTheHealthCheckTabIsStillTheLastTabDeclared(): void
     {
@@ -394,7 +403,7 @@ class SiteGuidedProjectProviderTest extends TestCase
 
             $source = (string) file_get_contents($controller->getPathname());
             preg_match_all('/Action::new\(\s*\'(\w+)\'/', $source, $custom);
-            preg_match_all('/setCssClass\(\s*\'action-(\w+)\'/', $source, $groups);
+            preg_match_all('/addCssClass\(\s*\'action-(\w+)\'/', $source, $groups);
             $names = [...$names, ...$custom[1], ...$groups[1]];
         }
 

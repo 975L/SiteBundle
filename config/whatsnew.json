@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-08-31",
+        "description": [
+            {
+                "en": "A section that pulls in one of your own templates now refuses any other address: a wrong one is flagged as you save the page, and explained on the page itself instead of leaving a silent hole",
+                "fr": "Une section qui reprend un de vos propres modèles n'accepte plus une autre adresse : une adresse erronée est signalée à l'enregistrement de la page, et expliquée sur la page au lieu d'y laisser un trou silencieux",
+                "es": "Una sección que incorpora una de sus propias plantillas ya no acepta otra dirección: una dirección errónea se señala al guardar la página y se explica en la propia página, en lugar de dejar un hueco silencioso"
+            },
+            {
+                "en": "When adding a section to a page, each kind now shows a small drawing of its layout, so you can tell them apart before choosing one",
+                "fr": "Lors de l'ajout d'une section à une page, chaque type montre désormais un petit dessin de sa mise en page, pour les distinguer avant de choisir",
+                "es": "Al añadir una sección a una página, cada tipo muestra ahora un pequeño dibujo de su composición, para distinguirlos antes de elegir"
+            },
+            {
+                "en": "Exporting the page list as SQL or JSON is now open to the same administrators as the CSV export",
+                "fr": "L'export de la liste des pages en SQL ou JSON est désormais ouvert aux mêmes administrateurs que l'export CSV",
+                "es": "La exportación de la lista de páginas en SQL o JSON está ahora abierta a los mismos administradores que la exportación CSV"
+            },
+            {
+                "en": "The guided projects now walk you through putting a collection's items in order, and through exporting the page list in the format you need",
+                "fr": "Les projets guidés vous accompagnent maintenant pour mettre les éléments d'une collection dans l'ordre, et pour exporter la liste des pages dans le format voulu",
+                "es": "Los proyectos guiados le acompañan ahora para ordenar los elementos de una colección y para exportar la lista de páginas en el formato que necesite"
+            }
+        ]
+    },
+    {
         "date": "2026-08-28",
         "description": [
             {

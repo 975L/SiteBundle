@@ -83,6 +83,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '.action-new',
                 ],
                 [
+                    // The row marker collection_item_crud_index.html.twig opts each item into, read by UiBundle's ea-index-sort.js - an index row carries no id of its own to point at
+                    'label' => 'label.guided_step_collection_order',
+                    'description' => 'description.guided_step_collection_order',
+                    'highlight' => '[data-reorder-group]',
+                ],
+                [
                     'label' => 'label.guided_step_collection_display',
                     'description' => 'description.guided_step_collection_display',
                 ],
@@ -379,6 +385,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     // The zip is re-uploaded from ConfigBundle's own import screen, a stricter one this parcours does not walk into (see its README) - the step names it rather than sending the user there
                     'label' => 'label.guided_step_content_export_import',
                     'description' => 'description.guided_step_content_export_import',
+                ],
+                [
+                    // The other export, a global one this time: the pages as a table, in the format the reader needs. An ActionGroup carries no default class, so PageCrudController states this one itself
+                    'label' => 'label.guided_step_content_export_formats',
+                    'description' => 'description.guided_step_content_export_formats',
+                    'highlight' => '.action-export',
                 ],
             ],
         ];

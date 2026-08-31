@@ -65,6 +65,8 @@ class ScaffoldThemeTest extends TestCase
         '--c975l-font-family-accent',
         '--c975l-font-family-body',
         '--c975l-font-family-title',
+        '--bs-body-bg',
+        '--bs-body-color',
         '--bs-border-color',
         '--bs-font-monospace',
         '--bs-primary',

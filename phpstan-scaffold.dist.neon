@@ -16,3 +16,6 @@ parameters:
     ignoreErrors:
         # Doctrine assigns the identifier by reflection, which static analysis cannot see - the applications load phpstan-doctrine, which knows about it
         - '#Property .*::\$id \(int\|null\) is never assigned int#'
+
+        # PHP Mess Detector's own marker, which PHPStan reads as a typed tag and cannot parse - see the phpmd.xml.dist beside this file
+        - identifier: phpDoc.parseError

@@ -10,9 +10,10 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\UiBundle\Contract\BundleStylesheetManagementProviderInterface;
 use c975L\UiBundle\Contract\BundleStylesheetProviderInterface;
 
-class StylesheetProvider implements BundleStylesheetProviderInterface
+class StylesheetProvider implements BundleStylesheetProviderInterface, BundleStylesheetManagementProviderInterface
 {
     public function getStylesheets(): array
     {
@@ -21,5 +22,13 @@ class StylesheetProvider implements BundleStylesheetProviderInterface
         ];
         // The compiled theme variables (bundles/build/site-theme.css) are contributed by UiBundle's own ThemeVariablesStylesheetProvider, alongside the listener that writes them - loaded after every bundle's sheet, this one included, so the admin's values win the cascade
         // Nothing else: a site's own design tokens live in its assets/styles/themes/*.css, one file per installed c975L bundle, copied once by the scaffold and owned by the app from then on (see readme "Themes"). They are contributed by the app's own App\Service\ThemeStylesheetProvider, also scaffolded - not from here, which would have this bundle name files belonging to the site and to bundles it knows nothing about
+    }
+
+    // The silhouettes of this bundle's block kinds (see sass/block-thumbs.scss), for the visual picker of the back-office. A site showing them on a public page - a block showcase - contributes the same file through its own stylesheet provider, rather than every site carrying it on every page for the one that has such a page.
+    public function getManagementStylesheets(): array
+    {
+        return [
+            'bundles/c975lsite/css/block-thumbs.min.css',
+        ];
     }
 }

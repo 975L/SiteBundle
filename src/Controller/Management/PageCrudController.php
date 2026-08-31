@@ -357,8 +357,8 @@ class PageCrudController extends AbstractCrudController
             static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
             ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
                 ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
-                // ActionFactory only gives an ActionDto its default "action-<name>" class, never an ActionGroupDto, whose cssClass would stay empty - stated here so SiteGuidedProjectProvider's ".action-publishAsReplacement" step has something to highlight
-                ->setCssClass('action-publishAsReplacement')
+                // ActionFactory overwrites an ActionGroupDto's cssClass with "btn" - the class goes through addCssClass(), which the factory leaves alone and action_group.html.twig renders separately, so SiteGuidedProjectProvider's ".action-publishAsReplacement" step has something to highlight
+                ->addCssClass('action-publishAsReplacement')
                 ->asWarningActionGroup()
         ));
     }
@@ -417,8 +417,10 @@ class PageCrudController extends AbstractCrudController
             ->askConfirmation(t('confirm.duplicate', [], 'site'))
             ->addCssClass('btn btn-secondary');
 
+        // ActionFactory overwrites an ActionGroupDto's cssClass with "btn" - the class goes through addCssClass(), which the factory leaves alone and action_group.html.twig renders separately, so SiteGuidedProjectProvider's ".action-export" step has something to highlight
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
             ->createAsGlobalActionGroup()
+            ->addCssClass('action-export')
             ->addAction(Action::new('exportSql', 'SQL')->linkToCrudAction('exportSql'))
             ->addAction(Action::new('exportCsv', 'CSV')->linkToCrudAction('exportCsv'))
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
@@ -974,7 +976,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportSql(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         return $this->tableExporter->export(ExportFormat::Sql, 'site_page', $this->fetchExportRows());
     }
@@ -990,7 +992,7 @@ class PageCrudController extends AbstractCrudController
     #[AdminRoute]
     public function exportJson(AdminContext $context): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        $this->denyAccessUnlessGranted($this->configService->get('site-role-admin'));
 
         return $this->tableExporter->export(ExportFormat::Json, 'site_page', $this->fetchExportRows());
     }

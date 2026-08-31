@@ -1,4 +1,9 @@
 {# The current collection item's data is passed along when there is one; the guard covers a block saved before the field existed #}
-{% if templatePath is defined and templatePath %}
+{# Included only once the path is one this site wrote for itself (see TwigContentTemplateChecker): the path is typed in the back office, and every installed bundle's templates are otherwise within reach #}
+{% if templatePath is defined and templatePath and site_twig_content_allowed(templatePath) %}
     {% include templatePath with (collectionItem is defined ? (collectionItem.get() ?: {}) : {}) %}
+
+{# A refused path renders nothing at all for a visitor; the admin who can fix it is told why the section is missing, rather than being left with the refusal only in var/log/ #}
+{% elseif templatePath is defined and templatePath and is_granted(config('site-role-admin')) %}
+    <div class="alert alert-warning">{{ 'label.template_path_refused'|trans({}, 'site') }}</div>
 {% endif %}

@@ -42,7 +42,6 @@
         "phpunit/phpunit": "^13.2"
     },
     "suggest": {
-        "c975l/social-bundle": "Adds the share buttons band to layout.html.twig, and the social links block",
         "nelmio/security-bundle": "Enables layout.html.twig's CSP nonce on Turbo-executed scripts - the Turbo-safe nonce generator behind it now ships with ConfigBundle"
     },
     "minimum-stability": "dev",

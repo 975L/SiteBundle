@@ -174,6 +174,14 @@
                 <source>description.guided_step_collection_open</source>
                 <target>Una colección contiene una lista de elementos parecidos, en lugar de otras tantas páginas construidas a mano.</target>
             </trans-unit>
+            <trans-unit id="sESmPiI">
+                <source>description.guided_step_collection_order</source>
+                <target>Tome una fila por su asa para moverla: la página los mostrará en ese orden.</target>
+            </trans-unit>
+            <trans-unit id="aUJzndC">
+                <source>description.guided_step_content_export_formats</source>
+                <target>SQL, CSV o JSON, esta vez para todas las páginas a la vez: para leerlas en una hoja de cálculo o guardar una copia, no para reponerlas en otro sitio.</target>
+            </trans-unit>
             <trans-unit id="2iD1cWu">
                 <source>description.guided_step_content_export_import</source>
                 <target>En el otro sitio, la pantalla «Importación de contenido» de los ajustes acepta ese zip. Los identificadores nunca tienen que coincidir: las páginas se reconstruyen a partir de lo que contiene el archivo.</target>
@@ -236,7 +244,7 @@
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
-                <target>El contenido se añade en la pantalla de edición, una vez creada la página.</target>
+                <target>Los blocks solo se arrastran una vez que la página existe: guárdela y vuelva a abrirla para llenarla.</target>
             </trans-unit>
             <trans-unit id="Fu7HfYi">
                 <source>description.guided_step_page_creation_save</source>
@@ -682,9 +690,17 @@
                 <source>label.guided_step_collection_open</source>
                 <target>Abrir las colecciones</target>
             </trans-unit>
+            <trans-unit id="GxZdscJ">
+                <source>label.guided_step_collection_order</source>
+                <target>Ordenar los elementos</target>
+            </trans-unit>
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Guardar la colección</target>
+            </trans-unit>
+            <trans-unit id="yjf91vT">
+                <source>label.guided_step_content_export_formats</source>
+                <target>Exportar la lista en otro formato</target>
             </trans-unit>
             <trans-unit id="lttrx4w">
                 <source>label.guided_step_content_export_import</source>
@@ -1441,6 +1457,18 @@
             <trans-unit id="viFs8Ed">
                 <source>label.tab_health_check</source>
                 <target>Estado de salud</target>
+            </trans-unit>
+            <trans-unit id="1l.Hgl6">
+                <source>label.template_path</source>
+                <target>Ruta de la plantilla</target>
+            </trans-unit>
+            <trans-unit id="8mjuX51">
+                <source>label.template_path_help</source>
+                <target>Una plantilla de este sitio, en templates/ (por ejemplo blocks/mi-bloque.html.twig). Las plantillas de los bundles instalados quedan fuera de alcance.</target>
+            </trans-unit>
+            <trans-unit id="iVJnxvs">
+                <source>label.template_path_refused</source>
+                <target>Esta plantilla no se encuentra en templates/, o pertenece a un bundle: solo se pueden incluir las plantillas de este sitio.</target>
             </trans-unit>
             <trans-unit id="ua7HEiS">
                 <source>label.terms_of_sales</source>

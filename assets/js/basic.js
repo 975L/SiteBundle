@@ -18,14 +18,15 @@ export default class extends Controller {
     // h5bp - Avoids console errors
     htmlBoilerPlate() {
         if (!(window.console && console.log)) {
-            (function () {
+            (() => {
                 const noop = () => {};
                 const methods = [
                     "assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group",
                     "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd",
                     "markTimeline", "table", "time", "timeEnd", "timeStamp", "trace", "warn"
                 ];
-                const console = window.console = {};
+                window.console = {};
+                const console = window.console;
                 methods.forEach((method) => {
                     console[method] = noop;
                 });

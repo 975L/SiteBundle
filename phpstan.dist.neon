@@ -25,3 +25,6 @@ parameters:
 
         # The only reader of a HasBlocksInterface entity's $blocks is UiBundle's HasBlocksTrait, analysed with its own package and not with this one
         - '#Property .*::\$blocks is never read, only written#'
+
+        # PHP Mess Detector's own marker, which PHPStan reads as a typed tag and cannot parse - see the phpmd.xml.dist beside this file
+        - identifier: phpDoc.parseError

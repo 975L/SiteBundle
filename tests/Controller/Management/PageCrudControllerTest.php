@@ -68,7 +68,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -141,46 +140,55 @@ class PageCrudControllerTest extends TestCase
         return new AdminContextProvider($requestStack);
     }
 
-    private function createController(
-        ?Security $security = null,
-        ?ConfigServiceInterface $configService = null,
-        ?AdminUrlGenerator $adminUrlGenerator = null,
-        ?TranslatorInterface $translator = null,
-        ?RedirectRepository $redirectRepository = null,
-        ?PageRepository $pageRepository = null,
-        ?AdminContextProvider $adminContextProvider = null,
-        ?RequestStack $requestStack = null,
-        ?SluggerInterface $slugger = null,
-        ?Connection $connection = null,
-        ?TableExporter $tableExporter = null,
-        ?ContentExporter $contentExporter = null,
-        ?PageExportProvider $pageExportProvider = null,
-        ?BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder = null,
-    ): PageCrudController {
-        $translatorStub = $translator ?? $this->createStub(TranslatorInterface::class);
-        if (null === $translator) {
-            $translatorStub->method('trans')->willReturnArgument(0);
-        }
-
-        $pageRepository ??= $this->createStub(PageRepository::class);
+    // A test passes only the collaborators it asserts on, keyed by constructor parameter name; the rest are stubbed
+    private function createController(array $services = []): PageCrudController
+    {
+        $services += $this->createControllerServices($services);
 
         return new PageCrudController(
-            $security ?? $this->createStub(Security::class),
-            $configService ?? $this->createConfigService(),
-            $adminUrlGenerator ?? $this->createAdminUrlGenerator(),
-            $translatorStub,
-            $redirectRepository ?? $this->createStub(RedirectRepository::class),
-            $pageRepository,
-            $adminContextProvider ?? $this->createAdminContextProvider(),
-            $requestStack ?? new RequestStack(),
-            $slugger ?? new AsciiSlugger(),
-            $connection ?? $this->createStub(Connection::class),
-            $tableExporter ?? $this->createStub(TableExporter::class),
-            $contentExporter ?? $this->createStub(ContentExporter::class),
-            $pageExportProvider ?? new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
-            $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
-            $this->createCsrfTokenManager(true),
+            $services['security'],
+            $services['configService'],
+            $services['adminUrlGenerator'],
+            $services['translator'],
+            $services['redirectRepository'],
+            $services['pageRepository'],
+            $services['adminContextProvider'],
+            $services['requestStack'],
+            $services['slugger'],
+            $services['connection'],
+            $services['tableExporter'],
+            $services['contentExporter'],
+            $services['pageExportProvider'],
+            $services['blockMoveRowAttrBuilder'],
+            $services['csrfTokenManager'],
         );
+    }
+
+    // Default collaborators; the page repository is read from the overrides first, so an overridden one also backs the export provider
+    private function createControllerServices(array $services): array
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+
+        $pageRepository = $services['pageRepository'] ?? $this->createStub(PageRepository::class);
+
+        return [
+            'security' => $this->createStub(Security::class),
+            'configService' => $this->createConfigService(),
+            'adminUrlGenerator' => $this->createAdminUrlGenerator(),
+            'translator' => $translator,
+            'redirectRepository' => $this->createStub(RedirectRepository::class),
+            'pageRepository' => $pageRepository,
+            'adminContextProvider' => $this->createAdminContextProvider(),
+            'requestStack' => new RequestStack(),
+            'slugger' => new AsciiSlugger(),
+            'connection' => $this->createStub(Connection::class),
+            'tableExporter' => $this->createStub(TableExporter::class),
+            'contentExporter' => $this->createStub(ContentExporter::class),
+            'pageExportProvider' => new PageExportProvider($pageRepository, new BlockDataExporter(sys_get_temp_dir())),
+            'blockMoveRowAttrBuilder' => $this->createBlockMoveRowAttrBuilder(),
+            'csrfTokenManager' => $this->createCsrfTokenManager(true),
+        ];
     }
 
     private function createConfigService(): ConfigServiceInterface
@@ -315,7 +323,7 @@ class PageCrudControllerTest extends TestCase
         $redirectRepository->method('findOneByFromPath')->willReturn(null);
         $redirectRepository->method('findByToUrl')->willReturn([]);
 
-        $this->createController(redirectRepository: $redirectRepository)->updateEntity($manager, $page);
+        $this->createController(['redirectRepository' => $redirectRepository])->updateEntity($manager, $page);
 
         $redirects = array_values(array_filter($persisted, static fn (object $e): bool => $e instanceof Redirect));
         $this->assertCount(1, $redirects);
@@ -449,7 +457,7 @@ class PageCrudControllerTest extends TestCase
         $manager->expects($this->once())->method('persist')->with($this->isInstanceOf(Page::class));
         $manager->expects($this->once())->method('flush');
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -473,7 +481,7 @@ class PageCrudControllerTest extends TestCase
             $capturedCopy = $entity;
         });
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -502,7 +510,7 @@ class PageCrudControllerTest extends TestCase
             $capturedCopy = $entity;
         });
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -533,7 +541,7 @@ class PageCrudControllerTest extends TestCase
             $capturedCopy = $entity;
         });
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -564,7 +572,7 @@ class PageCrudControllerTest extends TestCase
             $capturedCopy = $entity;
         });
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -621,7 +629,7 @@ class PageCrudControllerTest extends TestCase
             static fn (callable $func) => $func()
         );
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -658,7 +666,7 @@ class PageCrudControllerTest extends TestCase
             static fn (callable $func) => $func()
         );
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -681,7 +689,7 @@ class PageCrudControllerTest extends TestCase
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('flush');
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -705,7 +713,7 @@ class PageCrudControllerTest extends TestCase
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('flush');
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -732,7 +740,7 @@ class PageCrudControllerTest extends TestCase
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->never())->method('flush');
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -814,7 +822,7 @@ class PageCrudControllerTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn('https://example.com/');
 
-        $controller = $this->createController(configService: $configService);
+        $controller = $this->createController(['configService' => $configService]);
         $controller->setContainer($this->createContainer(['router' => $router]));
 
         $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
@@ -887,7 +895,7 @@ class PageCrudControllerTest extends TestCase
             ->with($this->stringContains('FROM `site_page`'))
             ->willReturn([['slug' => 'about']]);
 
-        $controller = $this->createController(connection: $connection);
+        $controller = $this->createController(['connection' => $connection]);
 
         $this->assertSame([['slug' => 'about']], $this->invokePrivate($controller, 'fetchExportRows'));
     }
@@ -965,7 +973,7 @@ class PageCrudControllerTest extends TestCase
             default => throw new \InvalidArgumentException(sprintf('Unexpected config key "%s"', $key)),
         });
 
-        $permissions = $this->createController(configService: $configService)->configureActions(
+        $permissions = $this->createController(['configService' => $configService])->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
@@ -1006,10 +1014,10 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createMock(PageRepository::class);
         $pageRepository->expects($this->never())->method('createQueryBuilder');
 
-        $actions = $this->createController(
-            pageRepository: $pageRepository,
-            requestStack: $this->createRequestStackOnPage(Crud::PAGE_INDEX)
-        )->configureActions(
+        $actions = $this->createController([
+            'pageRepository' => $pageRepository,
+            'requestStack' => $this->createRequestStackOnPage(Crud::PAGE_INDEX),
+        ])->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
@@ -1032,10 +1040,10 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
 
-        $actions = $this->createController(
-            pageRepository: $pageRepository,
-            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
-        )->configureActions(
+        $actions = $this->createController([
+            'pageRepository' => $pageRepository,
+            'requestStack' => $this->createRequestStackOnPage(Crud::PAGE_EDIT),
+        ])->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
@@ -1061,10 +1069,10 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
 
-        $actions = $this->createController(
-            pageRepository: $pageRepository,
-            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
-        )->configureActions(
+        $actions = $this->createController([
+            'pageRepository' => $pageRepository,
+            'requestStack' => $this->createRequestStackOnPage(Crud::PAGE_EDIT),
+        ])->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
@@ -1090,10 +1098,10 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
 
-        $actions = $this->createController(
-            pageRepository: $pageRepository,
-            requestStack: $this->createRequestStackOnPage(Crud::PAGE_EDIT)
-        )->configureActions(
+        $actions = $this->createController([
+            'pageRepository' => $pageRepository,
+            'requestStack' => $this->createRequestStackOnPage(Crud::PAGE_EDIT),
+        ])->configureActions(
             Actions::new()
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
@@ -1104,7 +1112,9 @@ class PageCrudControllerTest extends TestCase
         $group = $actions->getAsDto(Crud::PAGE_EDIT)->getActions()['publishAsReplacement'] ?? null;
 
         $this->assertNotNull($group, 'The publishAsReplacement group is no longer added to the edit screen.');
-        $this->assertSame('action-publishAsReplacement', $group->getCssClass());
+
+        // Read on the added class, not on cssClass, which ActionFactory overwrites with "btn" before the group is rendered
+        $this->assertSame('action-publishAsReplacement', $group->getAddedCssClass());
     }
 
     public function testConfigureFiltersBuildsWithoutError(): void
@@ -1186,10 +1196,10 @@ class PageCrudControllerTest extends TestCase
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturn('/admin/ui/block/move');
 
-        $controller = $this->createController(
-            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext($page)),
-            blockMoveRowAttrBuilder: $this->createBlockMoveRowAttrBuilder(),
-        );
+        $controller = $this->createController([
+            'adminContextProvider' => $this->createAdminContextProvider($this->createAdminContext($page)),
+            'blockMoveRowAttrBuilder' => $this->createBlockMoveRowAttrBuilder(),
+        ]);
         $controller->setContainer($this->createContainer(['router' => $router]));
 
         $fields = $controller->configureFields(Crud::PAGE_EDIT);
@@ -1240,7 +1250,7 @@ class PageCrudControllerTest extends TestCase
     {
         $requestStack = new RequestStack([new Request(['trash' => 1])]);
 
-        $fields = $this->createController(requestStack: $requestStack)->configureFields(Crud::PAGE_INDEX);
+        $fields = $this->createController(['requestStack' => $requestStack])->configureFields(Crud::PAGE_INDEX);
 
         $this->assertFalse($this->findFieldByProperty($fields, 'isPublished')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
         $this->assertFalse($this->findFieldByProperty($fields, 'isIndexable')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
@@ -1256,7 +1266,7 @@ class PageCrudControllerTest extends TestCase
         $queryBuilder->expects($this->once())->method('setParameter')->with('isDeleted', false)->willReturnSelf();
         $repository->method('createQueryBuilder')->willReturn($queryBuilder);
 
-        $controller = $this->createController(requestStack: $requestStack);
+        $controller = $this->createController(['requestStack' => $requestStack]);
         $controller->setContainer($this->createContainer([
             EntityRepositoryInterface::class => $repository,
         ]));
@@ -1277,7 +1287,7 @@ class PageCrudControllerTest extends TestCase
         $redirectRepository->method('findByToUrl')->willReturn($pointingAtIt);
         $redirectRepository->method('findOneByFromPath')->willReturn($existing);
 
-        $controller = $this->createController(redirectRepository: $redirectRepository);
+        $controller = $this->createController(['redirectRepository' => $redirectRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
@@ -1411,7 +1421,7 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturn(null);
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
@@ -1433,7 +1443,7 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findOneBy')->willReturn(new Page());
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
@@ -1475,7 +1485,7 @@ class PageCrudControllerTest extends TestCase
         $controller->qrcode($this->createAdminContext(new Page()));
     }
 
-    public function testExportSqlDeniesAccessBelowSuperAdmin(): void
+    public function testExportSqlDeniesAccessBelowSiteRoleAdmin(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -1487,7 +1497,7 @@ class PageCrudControllerTest extends TestCase
         $controller->exportSql($this->createAdminContext(new Page()));
     }
 
-    public function testExportJsonDeniesAccessBelowSuperAdmin(): void
+    public function testExportJsonDeniesAccessBelowSiteRoleAdmin(): void
     {
         $this->expectException(AccessDeniedException::class);
 
@@ -1496,6 +1506,28 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
 
+        $controller->exportJson($this->createAdminContext(new Page()));
+    }
+
+    // Both exports used to hardcode ROLE_SUPER_ADMIN, where the rest of the screen reads site-role-admin - ROLE_EDITOR here, from createConfigService()
+    public function testTheSqlAndJsonExportsAskForTheConfiguredRole(): void
+    {
+        $checker = $this->createMock(AuthorizationCheckerInterface::class);
+        $checker->expects($this->exactly(2))
+            ->method('isGranted')
+            ->with('ROLE_EDITOR')
+            ->willReturn(true);
+
+        $connection = $this->createStub(Connection::class);
+        $connection->method('fetchAllAssociative')->willReturn([]);
+
+        $controller = $this->createController(['connection' => $connection]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $checker,
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+
+        $controller->exportSql($this->createAdminContext(new Page()));
         $controller->exportJson($this->createAdminContext(new Page()));
     }
 
@@ -1510,7 +1542,7 @@ class PageCrudControllerTest extends TestCase
             ->with(ExportFormat::Csv, 'site_page', [['slug' => 'about']])
             ->willReturn(new Response());
 
-        $controller = $this->createController(connection: $connection, tableExporter: $tableExporter);
+        $controller = $this->createController(['connection' => $connection, 'tableExporter' => $tableExporter]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'request_stack' => $this->createRequestStackWithSession(),
@@ -1554,7 +1586,7 @@ class PageCrudControllerTest extends TestCase
         $pageRepository = $this->createMock(PageRepository::class);
         $pageRepository->expects($this->never())->method('findBy');
 
-        $controller = $this->createController(pageRepository: $pageRepository);
+        $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
@@ -1608,7 +1640,7 @@ class PageCrudControllerTest extends TestCase
             ->with('site_page', $expectedItems, [])
             ->willReturn($expectedResponse);
 
-        $controller = $this->createController(pageRepository: $pageRepository, contentExporter: $contentExporter);
+        $controller = $this->createController(['pageRepository' => $pageRepository, 'contentExporter' => $contentExporter]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
@@ -1664,11 +1696,11 @@ class PageCrudControllerTest extends TestCase
             }))
             ->willReturn(new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_')));
 
-        $controller = $this->createController(
-            pageRepository: $pageRepository,
-            contentExporter: $contentExporter,
-            pageExportProvider: new PageExportProvider($pageRepository, new BlockDataExporter($projectDir)),
-        );
+        $controller = $this->createController([
+            'pageRepository' => $pageRepository,
+            'contentExporter' => $contentExporter,
+            'pageExportProvider' => new PageExportProvider($pageRepository, new BlockDataExporter($projectDir)),
+        ]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
             'security.csrf.token_manager' => $this->createCsrfTokenManager(true),

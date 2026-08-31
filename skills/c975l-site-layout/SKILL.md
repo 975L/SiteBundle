@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -155,6 +155,12 @@ UiBundle's stylesheet registry, so the files are concatenated into the single `b
 rather than costing one request each. **Never import a stylesheet from `assets/app.js`**: AssetMapper
 addresses a CSS entry by a `data:application/javascript,` URL, which the site's own CSP blocks, taking
 the whole entrypoint down with it.
+
+Two registries, not one: `ui.stylesheet` builds the sheet the public pages link, `ui.management_stylesheet`
+the one the back office links. This bundle's `StylesheetProvider` feeds both — its `styles.min.css` to the
+first, and `block-thumbs.min.css`, the silhouettes of its block kinds shown by the visual block picker, to
+the second. A sheet only the admin screens need belongs in the second alone, rather than on every page of
+every site.
 
 ## Error templates
 

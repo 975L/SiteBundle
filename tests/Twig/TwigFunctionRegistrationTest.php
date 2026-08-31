@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Tests\Twig;
 use c975L\SiteBundle\Twig\MenuExtension;
 use c975L\SiteBundle\Twig\PageExtension;
 use c975L\SiteBundle\Twig\PageHealthCheckExtension;
+use c975L\SiteBundle\Twig\TwigContentExtension;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Twig\Attribute\AsTwigFunction;
@@ -40,6 +41,9 @@ class TwigFunctionRegistrationTest extends TestCase
             ]],
             'PageHealthCheckExtension' => [PageHealthCheckExtension::class, [
                 'page_health_check' => 'getPanel',
+            ]],
+            'TwigContentExtension' => [TwigContentExtension::class, [
+                'site_twig_content_allowed' => 'isAllowed',
             ]],
         ];
     }
