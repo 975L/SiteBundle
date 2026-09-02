@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.10.2
+
+The one-off that carried the old texts across is gone
+
+- `c975l:site:content:adopt-config-texts` and its test removed (02/09/2026)
+- The Readme and the two skills no longer name it (02/09/2026)
+
 ## v8.10.1
 
 A check says what is true now, an e-mail speaks the reader's language

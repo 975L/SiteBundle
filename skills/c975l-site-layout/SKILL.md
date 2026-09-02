@@ -198,8 +198,7 @@ email template extends this one; an unset `site-url` leaves the paths untouched.
 `c975l:ui:email-templates:ensure`, **one row per declared language**, read through
 `email_template_body('layout_hello', {}, locale)`. Each is an `html` block, so a line break or a bold
 word survives the send. The last two take a `{{ site }}` placeholder. They were the `email-text-*`
-config entries until 02/09/2026; `c975l:site:content:adopt-config-texts` moves what a site wrote into
-the row of its own language.
+config entries until 02/09/2026.
 
 What the footer owes the law is not that copy: the identification comes from `site-owner`, followed by
 a link to the page `url-privacy-policy` names, both skipped while their setting is empty, and both

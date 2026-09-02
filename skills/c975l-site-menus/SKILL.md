@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, adopt-config-texts, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -130,9 +130,8 @@ app rendering its own `<nav>` is untouched.
 The tagline is the blocks of the `navbar-brand` `Menu` (`Menu::LOCATION_NAVBAR_BRAND`), the fifth
 location, rendered by `Blocks` inside a `.menu-site-tagline` wrapper — so it is written and translated
 like any other block, where the `site-tagline` config entry said one language to everyone.
-`c975l:site:content:adopt-config-texts` moves an existing one across as that menu's first block, and
-leaves the entry in place when the menu already carries blocks. `sass/_menu.scss` neutralizes the
-section gutter, the measure and the `text_hook` lead-in there. It is hidden on a fixed navbar.
+`sass/_menu.scss` neutralizes the section gutter, the measure and the `text_hook` lead-in there. It is
+hidden on a fixed navbar.
 
 ## Copyright
 
