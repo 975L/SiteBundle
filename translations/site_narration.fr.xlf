@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="site_narration.fr.xlf">
+        <body>
+            <trans-unit id="2xeaP1w">
+                <source>narration.collections</source>
+                <target>« Collections » tient les listes d'éléments qui se ressemblent, équipe, réalisations, événements, à afficher ensuite dans n'importe quelle page par un block de collection.</target>
+            </trans-unit>
+            <trans-unit id="hAyw9ep">
+                <source>narration.guided_step_collection_add_item</source>
+                <target>Ajoutez un élément. Titre, texte, image, lien : remplissez ce dont vous avez besoin et laissez le reste vide.</target>
+            </trans-unit>
+            <trans-unit id="jRzg9Ja">
+                <source>narration.guided_step_collection_display</source>
+                <target>Il ne reste qu'à l'afficher : retournez sur une page, ajoutez-y un block de collection et choisissez celle que vous venez de créer.</target>
+            </trans-unit>
+            <trans-unit id="okcRN..">
+                <source>narration.guided_step_collection_items</source>
+                <target>Ouvrez maintenant ses éléments. La collection n'est qu'un contenant : ce sont ses éléments qui portent le contenu.</target>
+            </trans-unit>
+            <trans-unit id="b3fiYV6">
+                <source>narration.guided_step_collection_name</source>
+                <target>Nommez-la dans le premier champ. Ce nom est celui que vous retrouverez dans les blocks : « Équipe », « Réalisations ».</target>
+            </trans-unit>
+            <trans-unit id="qwDY2Z1">
+                <source>narration.guided_step_collection_new</source>
+                <target>Créez une collection avec le bouton en haut de la liste.</target>
+            </trans-unit>
+            <trans-unit id="t0QPwrS">
+                <source>narration.guided_step_collection_open</source>
+                <target>Le panneau vous emmène sur les collections. Une collection tient une liste d'éléments qui se ressemblent, au lieu d'autant de pages construites à la main.</target>
+            </trans-unit>
+            <trans-unit id="q8cnSWX">
+                <source>narration.guided_step_collection_order</source>
+                <target>Rangez les éléments dans l'ordre : prenez une ligne par sa poignée pour la déplacer. C'est cet ordre que la page affichera.</target>
+            </trans-unit>
+            <trans-unit id="9b0NAQR">
+                <source>narration.guided_step_collection_save</source>
+                <target>Enregistrez la collection avec le bouton en bas du formulaire.</target>
+            </trans-unit>
+            <trans-unit id="3q0a6F9">
+                <source>narration.guided_step_content_export_formats</source>
+                <target>Le bouton d'export classique, lui, sort la liste en SQL, CSV ou JSON, pour toutes les pages d'un coup : de quoi les lire dans un tableur ou en garder une copie, mais pas de quoi les remettre dans un autre site.</target>
+            </trans-unit>
+            <trans-unit id="TGsJ0d0">
+                <source>narration.guided_step_content_export_import</source>
+                <target>Sur l'autre site, l'écran « Import de contenu » des paramètres accepte ce zip. Les identifiants n'ont jamais à correspondre : les pages sont reconstruites à partir de ce que contient l'archive.</target>
+            </trans-unit>
+            <trans-unit id="WW1Bw8w">
+                <source>narration.guided_step_content_export_open</source>
+                <target>Le panneau vous emmène sur les pages : c'est de cette liste que part l'export.</target>
+            </trans-unit>
+            <trans-unit id="6t9OxmB">
+                <source>narration.guided_step_content_export_run</source>
+                <target>Exportez la sélection : un zip est téléchargé, contenant chaque page avec ses blocks et les images qu'ils utilisent.</target>
+            </trans-unit>
+            <trans-unit id="TM1GBIj">
+                <source>narration.guided_step_content_export_select</source>
+                <target>Cochez les pages à emporter. Cette case les coche toutes, mais vous pouvez aussi les prendre une par une. Le bouton d'export n'apparaît qu'une fois une case cochée.</target>
+            </trans-unit>
+            <trans-unit id=".N9y61w">
+                <source>narration.guided_step_footer_check</source>
+                <target>Vérifiez sur le site : ouvrez-le dans un autre onglet, le pied de page porte vos lignes, dans l'ordre que vous leur avez donné.</target>
+            </trans-unit>
+            <trans-unit id="u3aASpY">
+                <source>narration.guided_step_footer_create</source>
+                <target>Créez le pied de page s'il manque : un bouton vous est proposé par emplacement pas encore créé. S'il est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="hZUYIYH">
+                <source>narration.guided_step_footer_edit</source>
+                <target>Ouvrez le pied de page. Si vous venez de le créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>
+            </trans-unit>
+            <trans-unit id="iQpFzkY">
+                <source>narration.guided_step_footer_group</source>
+                <target>Répartissez-les sur plusieurs lignes : ajoutez un groupe de menu par ligne, puis faites-y glisser les blocks déjà présents. Les liens sociaux sur une ligne, les liens sur une autre, rien à recréer.</target>
+            </trans-unit>
+            <trans-unit id="4RsudW2">
+                <source>narration.guided_step_footer_items</source>
+                <target>Ajoutez-y ses éléments. Un pied de page est fait de blocks, comme une page : ses liens, mais aussi un texte ou une image si vous en voulez un là.</target>
+            </trans-unit>
+            <trans-unit id="TNKIW6q">
+                <source>narration.guided_step_footer_open</source>
+                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+            </trans-unit>
+            <trans-unit id="4G7DYra">
+                <source>narration.guided_step_footer_save</source>
+                <target>Enregistrez le pied de page.</target>
+            </trans-unit>
+            <trans-unit id="9BaGnGr">
+                <source>narration.guided_step_footer_style</source>
+                <target>Choisissez la disposition des lignes : les unes à côté des autres, ou les unes sous les autres. Laissé vide, c'est le fichier de thème du site qui décide.</target>
+            </trans-unit>
+            <trans-unit id="m4WQRgw">
+                <source>narration.guided_step_menu_translation_action</source>
+                <target>Sur la ligne du menu, cliquez sur « Traduire ».</target>
+            </trans-unit>
+            <trans-unit id="zNcHvAq">
+                <source>narration.guided_step_menu_translation_locale</source>
+                <target>Choisissez la langue dans la barre d'onglets, en haut.</target>
+            </trans-unit>
+            <trans-unit id="GTNgHkX">
+                <source>narration.guided_step_menu_translation_open</source>
+                <target>Ouvrez le menu « Menus », dans la colonne de gauche.</target>
+            </trans-unit>
+            <trans-unit id="DjRxDLr">
+                <source>narration.guided_step_menu_translation_save</source>
+                <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="Q0IzWoG">
+                <source>narration.guided_step_menu_translation_write</source>
+                <target>Écrivez les libellés. Le texte d'origine est rappelé sous chaque champ, jamais dedans : un champ prérempli serait enregistré tel quel et le menu semblerait traduit sans l'être.</target>
+            </trans-unit>
+            <trans-unit id="mTJ2iSx">
+                <source>narration.guided_step_page_creation_blocks</source>
+                <target>Ajoutez un block. Le contenu d'une page est fait de blocks : texte, image, galerie, formulaire. Ajoutez-en un et remplissez-le.</target>
+            </trans-unit>
+            <trans-unit id="hE.O12b">
+                <source>narration.guided_step_page_creation_new</source>
+                <target>Cliquez sur le bouton en haut de la liste : il ouvre le formulaire de création.</target>
+            </trans-unit>
+            <trans-unit id="YMiaHyz">
+                <source>narration.guided_step_page_creation_open</source>
+                <target>Nous allons créer une page. Dans la colonne de gauche, le panneau vous emmène sur la liste des pages : toutes celles du site sont ici, publiées ou non.</target>
+            </trans-unit>
+            <trans-unit id="5db92y2">
+                <source>narration.guided_step_page_creation_publish</source>
+                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation.</target>
+            </trans-unit>
+            <trans-unit id="QLpcgUd">
+                <source>narration.guided_step_page_creation_reopen</source>
+                <target>Rouvrez la page avec le crayon, au bout de sa ligne : le glisser-déposer des blocks demande une page déjà enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="53s_MZT">
+                <source>narration.guided_step_page_creation_save</source>
+                <target>Enregistrez la page. Vous revenez à la liste : la page existe, encore vide et non publiée.</target>
+            </trans-unit>
+            <trans-unit id="AlDx_Bq">
+                <source>narration.guided_step_page_creation_save_again</source>
+                <target>Enregistrez à nouveau.</target>
+            </trans-unit>
+            <trans-unit id="O3sDFei">
+                <source>narration.guided_step_page_creation_title</source>
+                <target>Donnez un titre à la page. Son adresse se remplit toute seule à partir du titre, et elle reste modifiable.</target>
+            </trans-unit>
+            <trans-unit id="Kox8Hj3">
+                <source>narration.guided_step_page_creation_view</source>
+                <target>La page est maintenant publique. Ce bouton l'ouvre telle que la voient vos visiteurs.</target>
+            </trans-unit>
+            <trans-unit id="OAyUGgS">
+                <source>narration.guided_step_page_health_edit</source>
+                <target>Ouvrez la page à contrôler. Ni le QR code ni le bilan n'apparaissent sur une page en cours de création : tous deux ont besoin d'une page enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="qM5LOeW">
+                <source>narration.guided_step_page_health_open</source>
+                <target>Le panneau vous emmène sur les pages. Prenez-en une déjà en ligne : le QR code comme le bilan se lisent sur ce qui est enregistré.</target>
+            </trans-unit>
+            <trans-unit id="qT5y9.3">
+                <source>narration.guided_step_page_health_qrcode</source>
+                <target>Voici son QR code, qui porte l'adresse publique de la page. Scannez-le pour la voir sur un téléphone, ou faites un clic droit pour enregistrer l'image et la mettre sur une affiche ou un flyer.</target>
+            </trans-unit>
+            <trans-unit id="8OWR.Gd">
+                <source>narration.guided_step_page_health_run</source>
+                <target>Si le tableau est vide, c'est que le bilan n'a jamais tourné sur cette page. Il se lance depuis l'écran « Bilan de santé » des paramètres, qui passe tout le site d'un coup.</target>
+            </trans-unit>
+            <trans-unit id="ETCpHUr">
+                <source>narration.guided_step_page_health_tab</source>
+                <target>Ouvrez le dernier onglet, celui du bilan de santé. Il porte les contrôles de cette page-là, et n'apparaît que sur une page enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="7yPbZ56">
+                <source>narration.guided_step_page_health_table</source>
+                <target>Lisez le tableau : une ligne par contrôle, un résumé manquant, une image sans texte alternatif, du html invalide, chacune avec le conseil qui nomme le champ à remplir.</target>
+            </trans-unit>
+            <trans-unit id="sP9WgJw">
+                <source>narration.guided_step_page_menu_add_link</source>
+                <target>Ajoutez un lien de menu. Un menu est fait de blocks, comme une page : ajoutez-en un de type « lien de menu ».</target>
+            </trans-unit>
+            <trans-unit id="ZI5leP5">
+                <source>narration.guided_step_page_menu_brand</source>
+                <target>Revenez sur les menus : une cinquième location porte ce que le site dit sous son propre nom, sa baseline. Créez-la si elle n'existe pas encore.</target>
+            </trans-unit>
+            <trans-unit id="e_Rrc63">
+                <source>narration.guided_step_page_menu_brand_write</source>
+                <target>Écrivez-la comme un block, donc traduite comme le reste du site — là où la baseline était un réglage qui parlait une seule langue à tout le monde.</target>
+            </trans-unit>
+            <trans-unit id="H2MmCdF">
+                <source>narration.guided_step_page_menu_check</source>
+                <target>Vérifiez sur le site : ouvrez-le dans un autre onglet, le lien est dans la barre de navigation, à la place que vous lui avez donnée.</target>
+            </trans-unit>
+            <trans-unit id="WPhSp6Z">
+                <source>narration.guided_step_page_menu_create</source>
+                <target>Créez le menu s'il manque : un bouton vous est proposé par emplacement pas encore créé. Si la barre de navigation est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="ah4TpfP">
+                <source>narration.guided_step_page_menu_edit</source>
+                <target>Ouvrez la barre de navigation. Si vous venez de la créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>
+            </trans-unit>
+            <trans-unit id="5l8xWTL">
+                <source>narration.guided_step_page_menu_open</source>
+                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+            </trans-unit>
+            <trans-unit id="kQXsnf2">
+                <source>narration.guided_step_page_menu_save</source>
+                <target>Enregistrez le menu.</target>
+            </trans-unit>
+            <trans-unit id="xkmDMIh">
+                <source>narration.guided_step_page_menu_target</source>
+                <target>Choisissez la page visée. Le lien peut viser une page du site, une de ses ancres, ou une adresse extérieure.</target>
+            </trans-unit>
+            <trans-unit id="C_XxP3U">
+                <source>narration.guided_step_page_revision_done</source>
+                <target>C'est en ligne. L'originale reste récupérable depuis la corbeille tant que vous ne la supprimez pas définitivement.</target>
+            </trans-unit>
+            <trans-unit id="XqtY3R5">
+                <source>narration.guided_step_page_revision_duplicate</source>
+                <target>Dupliquez-la avec le bouton de duplication. La copie reprend tout le contenu de l'originale mais n'est pas publiée, et elle s'ouvre directement.</target>
+            </trans-unit>
+            <trans-unit id="Gl.yDMG">
+                <source>narration.guided_step_page_revision_open</source>
+                <target>Le panneau vous emmène sur la liste des pages. Repérez celle, déjà en ligne, que vous voulez retravailler.</target>
+            </trans-unit>
+            <trans-unit id="3ZdQdf5">
+                <source>narration.guided_step_page_revision_preview</source>
+                <target>Prévisualisez-la. Une page non publiée reste visible de vous seul, à cette adresse de prévisualisation.</target>
+            </trans-unit>
+            <trans-unit id="eMCosO4">
+                <source>narration.guided_step_page_revision_replace</source>
+                <target>Publiez-la à la place de l'originale : la copie prend son adresse et passe en ligne, tandis que l'originale part à la corbeille.</target>
+            </trans-unit>
+            <trans-unit id="0ao3tKG">
+                <source>narration.guided_step_page_revision_rework</source>
+                <target>Retravaillez la copie autant qu'il faut : vos visiteurs continuent de voir l'originale pendant ce temps.</target>
+            </trans-unit>
+            <trans-unit id="LrcEh8a">
+                <source>narration.guided_step_page_seo_check</source>
+                <target>Vérifiez le résultat : la page est maintenant dans sitemap.xml, et coller son adresse quelque part en montre le titre, le résumé et l'image que vous venez de régler. Attention toutefois, un réseau social garde en mémoire le premier aperçu qu'il a vu de cette adresse ; la note sous le formulaire donne le lien pour lui demander de relire la page.</target>
+            </trans-unit>
+            <trans-unit id="4c9JKMa">
+                <source>narration.guided_step_page_seo_edit</source>
+                <target>Ouvrez la page à modifier. Les champs qui nous intéressent sont tous dans l'onglet « Données », sous le titre.</target>
+            </trans-unit>
+            <trans-unit id="5QGMRLR">
+                <source>narration.guided_step_page_seo_frequency</source>
+                <target>Dites à quel rythme elle change. Celui-ci et la priorité juste en dessous sont les deux seules indications que porte le sitemap : une page d'accueil se déclare plus souvent modifiée que des mentions légales.</target>
+            </trans-unit>
+            <trans-unit id="xwZbWkc">
+                <source>narration.guided_step_page_seo_image</source>
+                <target>Choisissez son image de partage, celle qui est montrée à côté du lien quand la page est partagée. Laissée vide, c'est celle du site qui sert.</target>
+            </trans-unit>
+            <trans-unit id="lW6LlUQ">
+                <source>narration.guided_step_page_seo_indexable</source>
+                <target>Laissez-la dans le sitemap. Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Ne la décochez que si la page n'a rien à faire dans les résultats de recherche, comme une création de compte ou un mot de passe oublié.</target>
+            </trans-unit>
+            <trans-unit id="9cZbDkQ">
+                <source>narration.guided_step_page_seo_open</source>
+                <target>Le panneau vous emmène sur les pages. Prenez-en une déjà en ligne : aucun des réglages qui suivent ne touche à son contenu, seulement à ce qu'on en montre ailleurs.</target>
+            </trans-unit>
+            <trans-unit id="8G5ogTs">
+                <source>narration.guided_step_page_seo_save</source>
+                <target>Enregistrez la page.</target>
+            </trans-unit>
+            <trans-unit id="uMDaXYg">
+                <source>narration.guided_step_page_seo_slug</source>
+                <target>Vérifiez son adresse. Le slug est ce qui suit le nom de domaine, et il suit le titre tout seul. Le changer sur une page déjà en ligne casse tous les liens qui pointaient dessus : n'ouvrez le cadenas que si vous déclarez aussi une redirection.</target>
+            </trans-unit>
+            <trans-unit id="ly5qz_Z">
+                <source>narration.guided_step_page_seo_summary</source>
+                <target>Écrivez son résumé, deux ou trois phrases : un moteur de recherche les affiche sous le titre, un réseau social sous l'aperçu du lien. Le bilan de santé les réclame aussi.</target>
+            </trans-unit>
+            <trans-unit id="PFbLTTf">
+                <source>narration.guided_step_page_translation_action</source>
+                <target>Sur la ligne de la page, cliquez sur « Traduire ». Le bouton n'est là que si le site déclare plus d'une langue.</target>
+            </trans-unit>
+            <trans-unit id="xftaUFh">
+                <source>narration.guided_step_page_translation_blocks</source>
+                <target>Descendez sur les blocks : ce sont ceux de la page d'origine, à redire dans la nouvelle langue. La composition ne bouge pas, seuls les mots changent.</target>
+            </trans-unit>
+            <trans-unit id="lhBwYfz">
+                <source>narration.guided_step_page_translation_check</source>
+                <target>Allez voir la page sur le site : elle s'ouvre à son adresse préfixée par la langue.</target>
+            </trans-unit>
+            <trans-unit id="lf7jI8O">
+                <source>narration.guided_step_page_translation_locale</source>
+                <target>En haut de l'écran, une barre d'onglets : un par langue du site. C'est le même écran d'édition, ouvert sur celle que vous choisissez.</target>
+            </trans-unit>
+            <trans-unit id="iydPVi0">
+                <source>narration.guided_step_page_translation_open</source>
+                <target>Ouvrez le menu « Pages », dans la colonne de gauche : c'est de cette liste que part chaque traduction.</target>
+            </trans-unit>
+            <trans-unit id="4Ql9BNG">
+                <source>narration.guided_step_page_translation_save</source>
+                <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="BGcVABm">
+                <source>narration.guided_step_page_translation_title</source>
+                <target>Écrivez le titre dans la nouvelle langue. Le texte d'origine vous est montré entre crochets : le laisser tel quel, c'est ne rien avoir écrit.</target>
+            </trans-unit>
+            <trans-unit id="2oarkh_">
+                <source>narration.guided_step_trash_back</source>
+                <target>Revenez aux pages. Une page à la corbeille n'est jamais sur le site, jamais dans un menu et jamais dans le sitemap : la corbeille peut rester telle quelle.</target>
+            </trans-unit>
+            <trans-unit id="VJVr58Y">
+                <source>narration.guided_step_trash_delete</source>
+                <target>Mettez-la à la corbeille. Rien n'est effacé : la page quitte le site et ses menus, et attend là.</target>
+            </trans-unit>
+            <trans-unit id="jUNOiXm">
+                <source>narration.guided_step_trash_delete_permanently</source>
+                <target>Vous pouvez aussi la supprimer définitivement. Celle-là ne se rattrape pas et emporte les blocks de la page : une confirmation vous est demandée.</target>
+            </trans-unit>
+            <trans-unit id="fAhjLKA">
+                <source>narration.guided_step_trash_open</source>
+                <target>Le panneau vous emmène sur les pages. Choisissez-en une que vous pouvez retirer du site un instant sans conséquence.</target>
+            </trans-unit>
+            <trans-unit id="sqYcsDS">
+                <source>narration.guided_step_trash_open_trash</source>
+                <target>Ouvrez la corbeille avec ce bouton. Le même vous ramènera ensuite aux pages.</target>
+            </trans-unit>
+            <trans-unit id="p02AJTl">
+                <source>narration.guided_step_trash_restore</source>
+                <target>Remettez la page en place. Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site.</target>
+            </trans-unit>
+            <trans-unit id="SVUFTiL">
+                <source>narration.menus</source>
+                <target>« Menus » tient un menu par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails. Chaque emplacement n'existe qu'une fois.</target>
+            </trans-unit>
+            <trans-unit id="HfyKzW.">
+                <source>narration.pages</source>
+                <target>« Pages » liste toutes les pages du site, publiées ou non. C'est de là qu'on les crée, qu'on les duplique, qu'on les publie et qu'on les met à la corbeille.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

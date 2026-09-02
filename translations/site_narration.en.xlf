@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="en" datatype="plaintext" original="site_narration.en.xlf">
+        <body>
+            <trans-unit id="2xeaP1w">
+                <source>narration.collections</source>
+                <target>"Collections" holds the lists of alike items, team, references, events, to be shown afterwards in any page through a collection block.</target>
+            </trans-unit>
+            <trans-unit id="hAyw9ep">
+                <source>narration.guided_step_collection_add_item</source>
+                <target>Add an item. Title, text, image, link: fill in what you need and leave the rest empty.</target>
+            </trans-unit>
+            <trans-unit id="jRzg9Ja">
+                <source>narration.guided_step_collection_display</source>
+                <target>All that is left is to show it: go back to a page, add a collection block to it and pick the one you have just created.</target>
+            </trans-unit>
+            <trans-unit id="okcRN..">
+                <source>narration.guided_step_collection_items</source>
+                <target>Now open its items. The collection is only a container: its items are what carry the content.</target>
+            </trans-unit>
+            <trans-unit id="b3fiYV6">
+                <source>narration.guided_step_collection_name</source>
+                <target>Name it in the first field. This name is the one you will find again in the blocks: "Team", "References".</target>
+            </trans-unit>
+            <trans-unit id="qwDY2Z1">
+                <source>narration.guided_step_collection_new</source>
+                <target>Create a collection with the button above the list.</target>
+            </trans-unit>
+            <trans-unit id="t0QPwrS">
+                <source>narration.guided_step_collection_open</source>
+                <target>The panel takes you to the collections. A collection holds a list of alike items, instead of as many hand-built pages.</target>
+            </trans-unit>
+            <trans-unit id="q8cnSWX">
+                <source>narration.guided_step_collection_order</source>
+                <target>Put the items in order: drag a row by its handle to move it. This is the order the page will show them in.</target>
+            </trans-unit>
+            <trans-unit id="9b0NAQR">
+                <source>narration.guided_step_collection_save</source>
+                <target>Save the collection with the button at the bottom of the form.</target>
+            </trans-unit>
+            <trans-unit id="3q0a6F9">
+                <source>narration.guided_step_content_export_formats</source>
+                <target>The plain export button, for its part, writes the list out in SQL, CSV or JSON, for every page at once: enough to read them in a spreadsheet or keep a copy, not enough to put them back into another site.</target>
+            </trans-unit>
+            <trans-unit id="TGsJ0d0">
+                <source>narration.guided_step_content_export_import</source>
+                <target>On the other site, the "Content import" screen of the settings takes that zip. Ids never have to match: the pages are rebuilt from what the archive holds.</target>
+            </trans-unit>
+            <trans-unit id="WW1Bw8w">
+                <source>narration.guided_step_content_export_open</source>
+                <target>The panel takes you to the pages: the export starts from this list.</target>
+            </trans-unit>
+            <trans-unit id="6t9OxmB">
+                <source>narration.guided_step_content_export_run</source>
+                <target>Export the selection: a zip is downloaded, holding each page with its blocks and the images they use.</target>
+            </trans-unit>
+            <trans-unit id="TM1GBIj">
+                <source>narration.guided_step_content_export_select</source>
+                <target>Check the pages to take. This box checks them all, but you can also take them one by one. The export button only shows once a box is checked.</target>
+            </trans-unit>
+            <trans-unit id=".N9y61w">
+                <source>narration.guided_step_footer_check</source>
+                <target>Check on the site: open it in another tab, the footer carries your lines, in the order you gave them.</target>
+            </trans-unit>
+            <trans-unit id="u3aASpY">
+                <source>narration.guided_step_footer_create</source>
+                <target>Create the footer if it is missing: one button is offered per location not created yet. If it is already in the list, move on to the next step.</target>
+            </trans-unit>
+            <trans-unit id="hZUYIYH">
+                <source>narration.guided_step_footer_edit</source>
+                <target>Open the footer. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>
+            </trans-unit>
+            <trans-unit id="iQpFzkY">
+                <source>narration.guided_step_footer_group</source>
+                <target>Spread them over several lines: add one menu group per line, then drag the blocks already there into it. The social links on one line, the links on another, nothing to re-create.</target>
+            </trans-unit>
+            <trans-unit id="4RsudW2">
+                <source>narration.guided_step_footer_items</source>
+                <target>Add its items. A footer is made of blocks, just like a page: its links, but also a text or an image if you want one there.</target>
+            </trans-unit>
+            <trans-unit id="TNKIW6q">
+                <source>narration.guided_step_footer_open</source>
+                <target>The panel takes you to the menus. There is one per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+            </trans-unit>
+            <trans-unit id="4G7DYra">
+                <source>narration.guided_step_footer_save</source>
+                <target>Save the footer.</target>
+            </trans-unit>
+            <trans-unit id="9BaGnGr">
+                <source>narration.guided_step_footer_style</source>
+                <target>Choose how the lines lay out: side by side, or one below the other. Left empty, the site's theme file decides.</target>
+            </trans-unit>
+            <trans-unit id="m4WQRgw">
+                <source>narration.guided_step_menu_translation_action</source>
+                <target>On the menu's row, click "Translate".</target>
+            </trans-unit>
+            <trans-unit id="zNcHvAq">
+                <source>narration.guided_step_menu_translation_locale</source>
+                <target>Pick the language in the bar of tabs at the top.</target>
+            </trans-unit>
+            <trans-unit id="GTNgHkX">
+                <source>narration.guided_step_menu_translation_open</source>
+                <target>Open the "Menus" entry in the left-hand column.</target>
+            </trans-unit>
+            <trans-unit id="DjRxDLr">
+                <source>narration.guided_step_menu_translation_save</source>
+                <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="Q0IzWoG">
+                <source>narration.guided_step_menu_translation_write</source>
+                <target>Write the labels. The source text is recalled under each field, never inside it: a prefilled field would be saved as is and the menu would look translated without being so.</target>
+            </trans-unit>
+            <trans-unit id="mTJ2iSx">
+                <source>narration.guided_step_page_creation_blocks</source>
+                <target>Add a block. A page's content is made of blocks: text, image, gallery, form. Add one and fill it in.</target>
+            </trans-unit>
+            <trans-unit id="hE.O12b">
+                <source>narration.guided_step_page_creation_new</source>
+                <target>Click the button above the list: it opens the creation form.</target>
+            </trans-unit>
+            <trans-unit id="YMiaHyz">
+                <source>narration.guided_step_page_creation_open</source>
+                <target>We are going to create a page. In the left-hand column, the panel takes you to the pages list: every page of the site is here, published or not.</target>
+            </trans-unit>
+            <trans-unit id="5db92y2">
+                <source>narration.guided_step_page_creation_publish</source>
+                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview.</target>
+            </trans-unit>
+            <trans-unit id="QLpcgUd">
+                <source>narration.guided_step_page_creation_reopen</source>
+                <target>Reopen the page with the pencil, at the end of its row: dragging blocks into place needs a page already saved.</target>
+            </trans-unit>
+            <trans-unit id="53s_MZT">
+                <source>narration.guided_step_page_creation_save</source>
+                <target>Save the page. You are taken back to the list: the page exists, still empty and unpublished.</target>
+            </trans-unit>
+            <trans-unit id="AlDx_Bq">
+                <source>narration.guided_step_page_creation_save_again</source>
+                <target>Save again.</target>
+            </trans-unit>
+            <trans-unit id="O3sDFei">
+                <source>narration.guided_step_page_creation_title</source>
+                <target>Give the page a title. Its address fills itself in from the title, and stays editable.</target>
+            </trans-unit>
+            <trans-unit id="Kox8Hj3">
+                <source>narration.guided_step_page_creation_view</source>
+                <target>The page is now public. This button opens it as your visitors see it.</target>
+            </trans-unit>
+            <trans-unit id="OAyUGgS">
+                <source>narration.guided_step_page_health_edit</source>
+                <target>Open the page to check. Neither the QR code nor the check shows on a page being created: both need a saved page.</target>
+            </trans-unit>
+            <trans-unit id="qM5LOeW">
+                <source>narration.guided_step_page_health_open</source>
+                <target>The panel takes you to the pages. Take one already online: the QR code as well as the check are read off what is saved.</target>
+            </trans-unit>
+            <trans-unit id="qT5y9.3">
+                <source>narration.guided_step_page_health_qrcode</source>
+                <target>Here is its QR code, carrying the page's public address. Scan it to see the page on a phone, or right-click to save the image for a poster or a flyer.</target>
+            </trans-unit>
+            <trans-unit id="8OWR.Gd">
+                <source>narration.guided_step_page_health_run</source>
+                <target>If the table is empty, the check has never run over this page. It is launched from the "Health check" screen of the settings, which goes over the whole site at once.</target>
+            </trans-unit>
+            <trans-unit id="ETCpHUr">
+                <source>narration.guided_step_page_health_tab</source>
+                <target>Open the last tab, the health check one. It holds this page's own checks, and only shows on a saved page.</target>
+            </trans-unit>
+            <trans-unit id="7yPbZ56">
+                <source>narration.guided_step_page_health_table</source>
+                <target>Read the table: one row per check, a missing summary, an image with no alternative text, invalid html, each carrying the advice that names the field to fill.</target>
+            </trans-unit>
+            <trans-unit id="sP9WgJw">
+                <source>narration.guided_step_page_menu_add_link</source>
+                <target>Add a menu link. A menu is made of blocks, just like a page: add one of the menu link kind.</target>
+            </trans-unit>
+            <trans-unit id="ZI5leP5">
+                <source>narration.guided_step_page_menu_brand</source>
+                <target>Come back to the menus: a fifth location carries what the site says under its own name, its baseline. Create it if it does not exist yet.</target>
+            </trans-unit>
+            <trans-unit id="e_Rrc63">
+                <source>narration.guided_step_page_menu_brand_write</source>
+                <target>Write it as a block, so translated like the rest of the site, where the baseline used to be a setting speaking one language to everyone.</target>
+            </trans-unit>
+            <trans-unit id="H2MmCdF">
+                <source>narration.guided_step_page_menu_check</source>
+                <target>Check on the site: open it in another tab, the link sits in the navigation bar, at the position you gave it.</target>
+            </trans-unit>
+            <trans-unit id="WPhSp6Z">
+                <source>narration.guided_step_page_menu_create</source>
+                <target>Create the menu if it is missing: one button is offered per location not created yet. If the navigation bar is already in the list, move on to the next step.</target>
+            </trans-unit>
+            <trans-unit id="ah4TpfP">
+                <source>narration.guided_step_page_menu_edit</source>
+                <target>Open the navigation bar. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>
+            </trans-unit>
+            <trans-unit id="5l8xWTL">
+                <source>narration.guided_step_page_menu_open</source>
+                <target>The panel takes you to the menus. There is one per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+            </trans-unit>
+            <trans-unit id="kQXsnf2">
+                <source>narration.guided_step_page_menu_save</source>
+                <target>Save the menu.</target>
+            </trans-unit>
+            <trans-unit id="xkmDMIh">
+                <source>narration.guided_step_page_menu_target</source>
+                <target>Pick the target page. The link can target a page of the site, one of its anchors, or an outside address.</target>
+            </trans-unit>
+            <trans-unit id="C_XxP3U">
+                <source>narration.guided_step_page_revision_done</source>
+                <target>It is online. The original stays recoverable from the trash as long as you do not delete it permanently.</target>
+            </trans-unit>
+            <trans-unit id="XqtY3R5">
+                <source>narration.guided_step_page_revision_duplicate</source>
+                <target>Duplicate it with the duplicate button. The copy takes over all the original's content but is not published, and it opens straight away.</target>
+            </trans-unit>
+            <trans-unit id="Gl.yDMG">
+                <source>narration.guided_step_page_revision_open</source>
+                <target>The panel takes you to the pages list. Spot the one, already online, you want to rework.</target>
+            </trans-unit>
+            <trans-unit id="3ZdQdf5">
+                <source>narration.guided_step_page_revision_preview</source>
+                <target>Preview it. An unpublished page stays visible to you alone, at this preview address.</target>
+            </trans-unit>
+            <trans-unit id="eMCosO4">
+                <source>narration.guided_step_page_revision_replace</source>
+                <target>Publish it in place of the original: the copy takes over its address and goes online, while the original is moved to the trash.</target>
+            </trans-unit>
+            <trans-unit id="0ao3tKG">
+                <source>narration.guided_step_page_revision_rework</source>
+                <target>Rework the copy as much as you need: your visitors keep seeing the original meanwhile.</target>
+            </trans-unit>
+            <trans-unit id="LrcEh8a">
+                <source>narration.guided_step_page_seo_check</source>
+                <target>Check the result: the page is now in sitemap.xml, and pasting its address anywhere shows the title, the summary and the image you have just set. Careful though, a social network caches the first preview it saw of that address; the note under the form links to the tool asking it to read the page again.</target>
+            </trans-unit>
+            <trans-unit id="4c9JKMa">
+                <source>narration.guided_step_page_seo_edit</source>
+                <target>Open the page to edit. The fields we are after all sit in the "Data" tab, below the title.</target>
+            </trans-unit>
+            <trans-unit id="5QGMRLR">
+                <source>narration.guided_step_page_seo_frequency</source>
+                <target>Say how often it changes. This one and the priority right below are the only two hints the sitemap carries: a home page declares itself more often changed than a legal notice.</target>
+            </trans-unit>
+            <trans-unit id="xwZbWkc">
+                <source>narration.guided_step_page_seo_image</source>
+                <target>Choose its share image, the one shown alongside the link when the page is shared. Left empty, the site's own serves.</target>
+            </trans-unit>
+            <trans-unit id="lW6LlUQ">
+                <source>narration.guided_step_page_seo_indexable</source>
+                <target>Leave it in the sitemap. Unchecked, the page leaves sitemap.xml and the two settings below freeze. Only uncheck it if the page has no business in search results, like an account creation or a forgotten password.</target>
+            </trans-unit>
+            <trans-unit id="9cZbDkQ">
+                <source>narration.guided_step_page_seo_open</source>
+                <target>The panel takes you to the pages. Take one already online: none of the settings that follow touch its content, only what is shown of it elsewhere.</target>
+            </trans-unit>
+            <trans-unit id="8G5ogTs">
+                <source>narration.guided_step_page_seo_save</source>
+                <target>Save the page.</target>
+            </trans-unit>
+            <trans-unit id="uMDaXYg">
+                <source>narration.guided_step_page_seo_slug</source>
+                <target>Check its address. The slug is what follows the domain name, and it follows the title on its own. Changing it on a page already online breaks every link pointing at it: open the padlock only if you also declare a redirect.</target>
+            </trans-unit>
+            <trans-unit id="ly5qz_Z">
+                <source>narration.guided_step_page_seo_summary</source>
+                <target>Write its summary, two or three sentences: a search engine prints them below the title, a social network below the link preview. The health check asks for them too.</target>
+            </trans-unit>
+            <trans-unit id="PFbLTTf">
+                <source>narration.guided_step_page_translation_action</source>
+                <target>On the page's row, click "Translate". The button is only there if the site declares more than one language.</target>
+            </trans-unit>
+            <trans-unit id="xftaUFh">
+                <source>narration.guided_step_page_translation_blocks</source>
+                <target>Move down to the blocks: they are the original page's, to be said again in the new language. The composition does not move, only the words change.</target>
+            </trans-unit>
+            <trans-unit id="lhBwYfz">
+                <source>narration.guided_step_page_translation_check</source>
+                <target>Go and see the page on the site: it opens at its address prefixed by the language.</target>
+            </trans-unit>
+            <trans-unit id="lf7jI8O">
+                <source>narration.guided_step_page_translation_locale</source>
+                <target>At the top of the screen, a bar of tabs, one per language of the site. It is the same edit screen, opened on the one you pick.</target>
+            </trans-unit>
+            <trans-unit id="iydPVi0">
+                <source>narration.guided_step_page_translation_open</source>
+                <target>Open the "Pages" menu in the left-hand column: every translation starts from this list.</target>
+            </trans-unit>
+            <trans-unit id="4Ql9BNG">
+                <source>narration.guided_step_page_translation_save</source>
+                <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="BGcVABm">
+                <source>narration.guided_step_page_translation_title</source>
+                <target>Write the title in the new language. The source text is shown to you between brackets: leaving it as is counts as having written nothing.</target>
+            </trans-unit>
+            <trans-unit id="2oarkh_">
+                <source>narration.guided_step_trash_back</source>
+                <target>Go back to the pages. A page in the trash is never on the site, never in a menu and never in the sitemap: the trash can be left as it is.</target>
+            </trans-unit>
+            <trans-unit id="VJVr58Y">
+                <source>narration.guided_step_trash_delete</source>
+                <target>Move it to the trash. Nothing is erased: the page leaves the site and its menus, and waits there.</target>
+            </trans-unit>
+            <trans-unit id="jUNOiXm">
+                <source>narration.guided_step_trash_delete_permanently</source>
+                <target>You can also remove it for good. That one cannot be undone and takes the page's blocks along: you are asked to confirm.</target>
+            </trans-unit>
+            <trans-unit id="fAhjLKA">
+                <source>narration.guided_step_trash_open</source>
+                <target>The panel takes you to the pages. Pick one you can take off the site for a moment without consequence.</target>
+            </trans-unit>
+            <trans-unit id="sqYcsDS">
+                <source>narration.guided_step_trash_open_trash</source>
+                <target>Open the trash with this button. The same one will bring you back to the pages afterwards.</target>
+            </trans-unit>
+            <trans-unit id="p02AJTl">
+                <source>narration.guided_step_trash_restore</source>
+                <target>Put the page back. It comes back unpublished: you decide when it shows on the site again.</target>
+            </trans-unit>
+            <trans-unit id="SVUFTiL">
+                <source>narration.menus</source>
+                <target>"Menus" holds one menu per location: navigation bar, footer, e-mail header and e-mail footer. Each location exists only once.</target>
+            </trans-unit>
+            <trans-unit id="HfyKzW.">
+                <source>narration.pages</source>
+                <target>"Pages" lists every page of the site, published or not. This is where they are created, duplicated, published and moved to the trash.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

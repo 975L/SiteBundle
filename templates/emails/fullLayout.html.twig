@@ -47,10 +47,9 @@
             {# Header #}
             {% block header %}
                 {# No Spam info #}
+                {# The four sentences wrapping every e-mail are EmailTemplate rows, one per language, so the recipient reads them in theirs - they were config entries, which a site says in one language to everyone (see SiteBundle's EmailLayoutTemplateProvider) #}
                 {% block noSpam %}
-                    {% if config('email-text-no-spam') %}
-                        {{ config('email-text-no-spam')|raw }}
-                    {% endif %}
+                    {{ email_template_body('layout_no_spam', {}, locale|default(null)) }}
                 {% endblock %}
                 {# Logo #}
                 {% block logo %}
@@ -71,9 +70,7 @@
                 {% block content %}
                     {# Hello #}
                     {% block hello %}
-                        {% if config('email-text-hello') %}
-                            {{ config('email-text-hello')|raw }}
-                        {% endif %}
+                        {{ email_template_body('layout_hello', {}, locale|default(null)) }}
                     {% endblock %}
                     {% block email_content %}
                     {% endblock %}
@@ -83,17 +80,13 @@
             {% block footer %}
                 <hr />
                 {# Thanks confidence & regards #}
-                {% if config('email-text-closing') %}
-                    {{ config('email-text-closing')|replace({'%site%': site|default('')})|raw }}
-                {% endif %}
+                {{ email_template_body('layout_closing', {'site': site|default('')}, locale|default(null)) }}
                 {# User's footer - the "email-footer" Menu, which adds to what follows and never stands in for it #}
                 {% include '@c975LSite/emails/footer.html.twig' %}
                 {# Where a prospection e-mail places its way out (article L34-5 CPCE); a transactional one owes none #}
                 {% block emailUnsubscribe %}{% endblock %}
                 {# Email sent by #}
-                {% if config('email-text-sent-by') %}
-                    {{ config('email-text-sent-by')|replace({'%site%': site|default('')})|raw }}
-                {% endif %}
+                {{ email_template_body('layout_sent_by', {'site': site|default('')}, locale|default(null)) }}
                 {# Who sends this e-mail, owed by every commercial document (LCEN art. 6-III, C. com. art. R123-237) #}
                 {% if config('site-owner') %}
                     <p class="text text-muted text-center small">

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, adopt-config-texts, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -107,8 +107,8 @@ No other location offers it. The choice is cached with the menu's blocks (`menu_
 
 ## Navbar
 
-`Navbar` reads `site_media('logo')`, `config('site-name')` and `config('site-tagline')` — nothing to
-pass in. `site-navbar-show-name` (bool, default true) decides whether the name shows there;
+`Navbar` reads `site_media('logo')`, `config('site-name')` and `menu_blocks('navbar-brand')` — nothing
+to pass in. `site-navbar-show-name` (bool, default true) decides whether the name shows there;
 `site-navbar-position` (`relative`, `sticky`, `fixed`, `static`, `absolute`) is carried by a
 `.menu.menu-position-*` class setting `--navbar-position`, **not by a `style=""` attribute a nonced
 `style-src` would drop**.
@@ -125,8 +125,14 @@ beside it.
 
 With no navbar menu at all, the component falls back to the logo centered with the name under it, on a
 `<nav class="nav-simple">` — that class, not the bare element, is what the stylesheet targets, so an
-app rendering its own `<nav>` is untouched. `site-tagline` is rich text, rendered with `|raw`, and is
-hidden on a fixed navbar.
+app rendering its own `<nav>` is untouched.
+
+The tagline is the blocks of the `navbar-brand` `Menu` (`Menu::LOCATION_NAVBAR_BRAND`), the fifth
+location, rendered by `Blocks` inside a `.menu-site-tagline` wrapper — so it is written and translated
+like any other block, where the `site-tagline` config entry said one language to everyone.
+`c975l:site:content:adopt-config-texts` moves an existing one across as that menu's first block, and
+leaves the entry in place when the menu already carries blocks. `sass/_menu.scss` neutralizes the
+section gutter, the measure and the `text_hook` lead-in there. It is hidden on a fixed navbar.
 
 ## Copyright
 

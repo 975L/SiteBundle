@@ -27,12 +27,28 @@ class EmailLayoutProviderTest extends TestCase
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
             ->method('render')
-            ->with('@c975LSite/emails/emailTemplateLayout.html.twig', ['bodyHtml' => '<p>Hello</p>'])
+            ->with('@c975LSite/emails/emailTemplateLayout.html.twig', ['bodyHtml' => '<p>Hello</p>', 'locale' => null])
             ->willReturn('<html><body><p>Hello</p></body></html>');
 
         $this->assertSame(
             '<html><body><p>Hello</p></body></html>',
             new EmailLayoutProvider($twig)->wrap('<p>Hello</p>')
         );
+    }
+
+    // The layout's own four sentences are read in the language the body was resolved in, not in whichever one comes first
+    public function testWrapHandsTheLocaleToTheLayout(): void
+    {
+        if (!interface_exists(\c975L\UiBundle\Contract\EmailLayoutProviderInterface::class)) {
+            $this->markTestSkipped('c975l/ui-bundle has no EmailLayoutProviderInterface yet');
+        }
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with('@c975LSite/emails/emailTemplateLayout.html.twig', ['bodyHtml' => '<p>Hello</p>', 'locale' => 'en'])
+            ->willReturn('wrapped');
+
+        $this->assertSame('wrapped', new EmailLayoutProvider($twig)->wrap('<p>Hello</p>', 'en'));
     }
 }

@@ -110,17 +110,19 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $user = $user instanceof UserInterface ? $user : null;
         $definitions = $this->getDefinitions();
 
-        // Always imports the default locale, plus any locale declared in framework.enabled_locales; the default locale comes first so the homepage keeps a deterministic title
-        foreach (array_unique([$this->defaultLocale, ...$this->enabledLocales]) as $locale) {
-            foreach ($definitions[$locale] ?? [] as $def) {
-                $counters = $this->importDefinition($def, $now, $user, $onPage);
-                foreach ($counters as $counter) {
-                    ++$counts[$counter];
-                }
+        // One set only, in the language the site is written in: a page is one page in every language - one row, one
+        // set of blocks - and its other languages live beside it in the translation table (see PageTranslator). One
+        // set per declared locale used to be imported, which gave a bilingual site two rows for one legal notice
+        // ("mentions-legales" and "legal-notice", both pointing at the same model) and, on the one slug the French
+        // and English sets happen to share, two rows for "contact" - a duplicate key that took the whole command down
+        foreach ($definitions[$this->definitionLocale($definitions)] as $def) {
+            $counters = $this->importDefinition($def, $now, $user, $onPage);
+            foreach ($counters as $counter) {
+                ++$counts[$counter];
+            }
 
-                if (\in_array('summarised', $counters, true)) {
-                    $summarised[] = $def['slug'];
-                }
+            if (\in_array('summarised', $counters, true)) {
+                $summarised[] = $def['slug'];
             }
         }
 
@@ -129,6 +131,26 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         }
 
         return ['created' => $counts['created'], 'skipped' => $counts['skipped'], 'summarised' => $summarised];
+    }
+
+    /**
+     * The language the default pages are written in: the site's own, or the first one it declares this bundle ships
+     * a set for.
+     *
+     * A site whose default language has no set here (say German) would otherwise be given no page at all, where it
+     * used to get whichever declared locale came with one.
+     *
+     * @param array<string, list<array>> $definitions
+     */
+    private function definitionLocale(array $definitions): string
+    {
+        foreach ([$this->defaultLocale, ...$this->enabledLocales] as $locale) {
+            if (isset($definitions[$locale])) {
+                return $locale;
+            }
+        }
+
+        return array_key_first($definitions);
     }
 
     // Fills in the meta/og description of a page that already existed, and says whether it did. Only ever writes into an empty field: a description an admin typed - or deliberately emptied back to nothing else than whitespace - is never overwritten, however many times the command is re-run. Pages are matched on their slug alone by the caller, so one renamed in the back-office simply matches no definition and is left alone
@@ -278,7 +300,8 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $order = ['france/legal-notice', 'france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright'];
 
         $slugsByModel = [];
-        foreach ($this->getDefinitions()[$this->defaultLocale] ?? [] as $def) {
+        $definitions = $this->getDefinitions();
+        foreach ($definitions[$this->definitionLocale($definitions)] as $def) {
             if (isset($def['model']) && (!isset($def['requiresClass']) || class_exists($def['requiresClass']))) {
                 $slugsByModel[$def['model']] = $def['slug'];
             }
@@ -298,282 +321,300 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
     private function getDefinitions(): array
     {
         return [
-            'fr' => [
-                [
-                    'title' => 'Accueil',
-                    'slug' => 'home',
-                    'changeFrequency' => 'daily',
-                    'priority' => 10,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Mentions légales',
-                    'slug' => 'mentions-legales',
-                    'summary' => 'Mentions légales du site : éditeur, directeur de la publication, hébergeur et coordonnées de contact, conformément à la réglementation en vigueur.',
-                    'model' => 'france/legal-notice',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Règles de confidentialité',
-                    'slug' => 'regles-de-confidentialite',
-                    'summary' => 'Comment vos données personnelles sont collectées, utilisées et conservées, et comment exercer vos droits d\'accès, de rectification et de suppression.',
-                    'model' => 'france/privacy-policy',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Conditions générales d\'utilisation',
-                    'slug' => 'conditions-generales-d-utilisation',
-                    'summary' => 'Les conditions générales d\'utilisation du site : accès au service, droits et obligations de chacun, propriété intellectuelle et responsabilités.',
-                    'model' => 'france/terms-of-use',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Conditions générales de vente',
-                    'slug' => 'conditions-generales-de-vente',
-                    'summary' => 'Les conditions générales de vente : commande, prix, paiement, livraison, droit de rétractation et garanties applicables aux achats sur ce site.',
-                    'model' => 'france/terms-of-sales',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => false,
-                    'requiresClass' => 'c975L\\ShopBundle\\c975LShopBundle',
-                ],
-                [
-                    'title' => 'Utilisation des cookies',
-                    'slug' => 'cookies',
-                    'summary' => 'Quels cookies ce site dépose, à quoi ils servent, combien de temps ils sont conservés, et comment accepter, refuser ou modifier votre choix.',
-                    'model' => 'france/cookies',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Copyright',
-                    'slug' => 'copyright',
-                    'summary' => 'Les conditions de réutilisation des contenus de ce site : textes, images et documents, droits d\'auteur et démarche pour demander une autorisation.',
-                    'model' => 'france/copyright',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Créer un compte',
-                    'slug' => 'creer-un-compte',
-                    'summary' => 'Créez votre compte en quelques instants pour accéder à votre espace personnel et suivre vos demandes.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-                ],
-                [
-                    'title' => 'Mot de passe oublié',
-                    'slug' => 'mot-de-passe-oublie',
-                    'summary' => 'Mot de passe oublié ? Indiquez votre adresse email pour recevoir un lien de réinitialisation et retrouver l\'accès à votre compte.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-                ],
-                [
-                    'title' => 'Contact',
-                    'slug' => 'contact',
-                    'summary' => 'Un formulaire pour nous écrire : question, demande d\'information ou de devis. Nous vous répondons dans les meilleurs délais.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
-                ],
+            'fr' => $this->frenchPages(),
+            'en' => $this->englishPages(),
+            'es' => $this->spanishPages(),
+        ];
+    }
+
+    // The pages a French site opens with, in the order getDefinitions() returns them
+    private function frenchPages(): array
+    {
+        return [
+            [
+                'title' => 'Accueil',
+                'slug' => 'home',
+                'changeFrequency' => 'daily',
+                'priority' => 10,
+                'isPublished' => true,
             ],
-            'en' => [
-                [
-                    'title' => 'Home',
-                    'slug' => 'home',
-                    'changeFrequency' => 'daily',
-                    'priority' => 10,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Legal notice',
-                    'slug' => 'legal-notice',
-                    'summary' => 'Legal notice for this website: publisher, publication director, hosting provider and contact details, as required by applicable regulations.',
-                    'model' => 'france/legal-notice',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Privacy policy',
-                    'slug' => 'privacy-policy',
-                    'summary' => 'How your personal data is collected, used and stored on this website, and how to exercise your rights of access, correction and deletion.',
-                    'model' => 'france/privacy-policy',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Terms of use',
-                    'slug' => 'terms-of-use',
-                    'summary' => 'The terms of use of this website: access to the service, rights and obligations of each party, intellectual property and liability.',
-                    'model' => 'france/terms-of-use',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Terms of sales',
-                    'slug' => 'terms-of-sales',
-                    'summary' => 'The terms of sale: ordering, prices, payment, delivery, right of withdrawal and warranties applying to purchases made on this website.',
-                    'model' => 'france/terms-of-sales',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => false,
-                ],
-                [
-                    'title' => 'Cookies usage',
-                    'slug' => 'cookies-usage',
-                    'summary' => 'Which cookies this website sets, what they are used for, how long they are kept, and how to accept, refuse or change your choice.',
-                    'model' => 'france/cookies',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Copyright',
-                    'slug' => 'copyright-notice',
-                    'summary' => 'The conditions for reusing the contents of this website: texts, images and documents, copyright and how to request permission.',
-                    'model' => 'france/copyright',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Register',
-                    'slug' => 'register',
-                    'summary' => 'Create your account in a few moments to access your personal area and keep track of your requests.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-                ],
-                [
-                    'title' => 'Forgot password',
-                    'slug' => 'forgot-password',
-                    'summary' => 'Forgot your password? Enter your email address to receive a reset link and get back into your account.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-                ],
-                [
-                    'title' => 'Contact',
-                    'slug' => 'contact',
-                    'summary' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
-                ],
+            [
+                'title' => 'Mentions légales',
+                'slug' => 'mentions-legales',
+                'summary' => 'Mentions légales du site : éditeur, directeur de la publication, hébergeur et coordonnées de contact, conformément à la réglementation en vigueur.',
+                'model' => 'france/legal-notice',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
             ],
-            'es' => [
-                [
-                    'title' => 'Inicio',
-                    'slug' => 'home',
-                    'changeFrequency' => 'daily',
-                    'priority' => 10,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Aviso legal',
-                    'slug' => 'aviso-legal',
-                    'summary' => 'Aviso legal del sitio: editor, director de publicación, proveedor de alojamiento y datos de contacto, conforme a la normativa vigente.',
-                    'model' => 'france/legal-notice',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Política de privacidad',
-                    'slug' => 'politica-de-privacidad',
-                    'summary' => 'Cómo se recogen, utilizan y conservan sus datos personales en este sitio, y cómo ejercer sus derechos de acceso, rectificación y supresión.',
-                    'model' => 'france/privacy-policy',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Condiciones de uso',
-                    'slug' => 'condiciones-de-uso',
-                    'summary' => 'Las condiciones de uso del sitio: acceso al servicio, derechos y obligaciones de cada parte, propiedad intelectual y responsabilidades.',
-                    'model' => 'france/terms-of-use',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Condiciones de venta',
-                    'slug' => 'condiciones-de-venta',
-                    'summary' => 'Las condiciones de venta: pedido, precios, pago, entrega, derecho de desistimiento y garantías aplicables a las compras en este sitio.',
-                    'model' => 'france/terms-of-sales',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => false,
-                ],
-                [
-                    'title' => 'Uso de cookies',
-                    'slug' => 'uso-de-cookies',
-                    'summary' => 'Qué cookies deposita este sitio, para qué sirven, cuánto tiempo se conservan y cómo aceptar, rechazar o modificar su elección.',
-                    'model' => 'france/cookies',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Copyright',
-                    'slug' => 'aviso-de-copyright',
-                    'summary' => 'Las condiciones de reutilización de los contenidos de este sitio: textos, imágenes y documentos, derechos de autor y cómo pedir autorización.',
-                    'model' => 'france/copyright',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                ],
-                [
-                    'title' => 'Crear una cuenta',
-                    'slug' => 'crear-una-cuenta',
-                    'summary' => 'Cree su cuenta en unos instantes para acceder a su espacio personal y hacer seguimiento de sus solicitudes.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-                ],
-                [
-                    'title' => 'Contraseña olvidada',
-                    'slug' => 'contrasena-olvidada',
-                    'summary' => '¿Ha olvidado su contraseña? Indique su correo electrónico para recibir un enlace de restablecimiento y recuperar el acceso.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'isIndexable' => false,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-                ],
-                [
-                    'title' => 'Contacto',
-                    'slug' => 'contacto',
-                    'summary' => 'Un formulario para escribirnos: una pregunta, una solicitud de información o de presupuesto. Le respondemos lo antes posible.',
-                    'changeFrequency' => 'yearly',
-                    'priority' => 1,
-                    'isPublished' => true,
-                    'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
-                ],
+            [
+                'title' => 'Règles de confidentialité',
+                'slug' => 'regles-de-confidentialite',
+                'summary' => 'Comment vos données personnelles sont collectées, utilisées et conservées, et comment exercer vos droits d\'accès, de rectification et de suppression.',
+                'model' => 'france/privacy-policy',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Conditions générales d\'utilisation',
+                'slug' => 'conditions-generales-d-utilisation',
+                'summary' => 'Les conditions générales d\'utilisation du site : accès au service, droits et obligations de chacun, propriété intellectuelle et responsabilités.',
+                'model' => 'france/terms-of-use',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Conditions générales de vente',
+                'slug' => 'conditions-generales-de-vente',
+                'summary' => 'Les conditions générales de vente : commande, prix, paiement, livraison, droit de rétractation et garanties applicables aux achats sur ce site.',
+                'model' => 'france/terms-of-sales',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => false,
+                'requiresClass' => 'c975L\\ShopBundle\\c975LShopBundle',
+            ],
+            [
+                'title' => 'Utilisation des cookies',
+                'slug' => 'cookies',
+                'summary' => 'Quels cookies ce site dépose, à quoi ils servent, combien de temps ils sont conservés, et comment accepter, refuser ou modifier votre choix.',
+                'model' => 'france/cookies',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Copyright',
+                'slug' => 'copyright',
+                'summary' => 'Les conditions de réutilisation des contenus de ce site : textes, images et documents, droits d\'auteur et démarche pour demander une autorisation.',
+                'model' => 'france/copyright',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Créer un compte',
+                'slug' => 'creer-un-compte',
+                'summary' => 'Créez votre compte en quelques instants pour accéder à votre espace personnel et suivre vos demandes.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Mot de passe oublié',
+                'slug' => 'mot-de-passe-oublie',
+                'summary' => 'Mot de passe oublié ? Indiquez votre adresse email pour recevoir un lien de réinitialisation et retrouver l\'accès à votre compte.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contact',
+                'slug' => 'contact',
+                'summary' => 'Un formulaire pour nous écrire : question, demande d\'information ou de devis. Nous vous répondons dans les meilleurs délais.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+            ],
+        ];
+    }
+
+    // Same pages, said in English
+    private function englishPages(): array
+    {
+        return [
+            [
+                'title' => 'Home',
+                'slug' => 'home',
+                'changeFrequency' => 'daily',
+                'priority' => 10,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Legal notice',
+                'slug' => 'legal-notice',
+                'summary' => 'Legal notice for this website: publisher, publication director, hosting provider and contact details, as required by applicable regulations.',
+                'model' => 'france/legal-notice',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Privacy policy',
+                'slug' => 'privacy-policy',
+                'summary' => 'How your personal data is collected, used and stored on this website, and how to exercise your rights of access, correction and deletion.',
+                'model' => 'france/privacy-policy',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Terms of use',
+                'slug' => 'terms-of-use',
+                'summary' => 'The terms of use of this website: access to the service, rights and obligations of each party, intellectual property and liability.',
+                'model' => 'france/terms-of-use',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Terms of sales',
+                'slug' => 'terms-of-sales',
+                'summary' => 'The terms of sale: ordering, prices, payment, delivery, right of withdrawal and warranties applying to purchases made on this website.',
+                'model' => 'france/terms-of-sales',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => false,
+            ],
+            [
+                'title' => 'Cookies usage',
+                'slug' => 'cookies-usage',
+                'summary' => 'Which cookies this website sets, what they are used for, how long they are kept, and how to accept, refuse or change your choice.',
+                'model' => 'france/cookies',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Copyright',
+                'slug' => 'copyright-notice',
+                'summary' => 'The conditions for reusing the contents of this website: texts, images and documents, copyright and how to request permission.',
+                'model' => 'france/copyright',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Register',
+                'slug' => 'register',
+                'summary' => 'Create your account in a few moments to access your personal area and keep track of your requests.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Forgot password',
+                'slug' => 'forgot-password',
+                'summary' => 'Forgot your password? Enter your email address to receive a reset link and get back into your account.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contact',
+                'slug' => 'contact',
+                'summary' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+            ],
+        ];
+    }
+
+    // Same pages, said in Spanish
+    private function spanishPages(): array
+    {
+        return [
+            [
+                'title' => 'Inicio',
+                'slug' => 'home',
+                'changeFrequency' => 'daily',
+                'priority' => 10,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Aviso legal',
+                'slug' => 'aviso-legal',
+                'summary' => 'Aviso legal del sitio: editor, director de publicación, proveedor de alojamiento y datos de contacto, conforme a la normativa vigente.',
+                'model' => 'france/legal-notice',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Política de privacidad',
+                'slug' => 'politica-de-privacidad',
+                'summary' => 'Cómo se recogen, utilizan y conservan sus datos personales en este sitio, y cómo ejercer sus derechos de acceso, rectificación y supresión.',
+                'model' => 'france/privacy-policy',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Condiciones de uso',
+                'slug' => 'condiciones-de-uso',
+                'summary' => 'Las condiciones de uso del sitio: acceso al servicio, derechos y obligaciones de cada parte, propiedad intelectual y responsabilidades.',
+                'model' => 'france/terms-of-use',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Condiciones de venta',
+                'slug' => 'condiciones-de-venta',
+                'summary' => 'Las condiciones de venta: pedido, precios, pago, entrega, derecho de desistimiento y garantías aplicables a las compras en este sitio.',
+                'model' => 'france/terms-of-sales',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => false,
+            ],
+            [
+                'title' => 'Uso de cookies',
+                'slug' => 'uso-de-cookies',
+                'summary' => 'Qué cookies deposita este sitio, para qué sirven, cuánto tiempo se conservan y cómo aceptar, rechazar o modificar su elección.',
+                'model' => 'france/cookies',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Copyright',
+                'slug' => 'aviso-de-copyright',
+                'summary' => 'Las condiciones de reutilización de los contenidos de este sitio: textos, imágenes y documentos, derechos de autor y cómo pedir autorización.',
+                'model' => 'france/copyright',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+            ],
+            [
+                'title' => 'Crear una cuenta',
+                'slug' => 'crear-una-cuenta',
+                'summary' => 'Cree su cuenta en unos instantes para acceder a su espacio personal y hacer seguimiento de sus solicitudes.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Contraseña olvidada',
+                'slug' => 'contrasena-olvidada',
+                'summary' => '¿Ha olvidado su contraseña? Indique su correo electrónico para recibir un enlace de restablecimiento y recuperar el acceso.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contacto',
+                'slug' => 'contacto',
+                'summary' => 'Un formulario para escribirnos: una pregunta, una solicitud de información o de presupuesto. Le respondemos lo antes posible.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
             ],
         ];
     }

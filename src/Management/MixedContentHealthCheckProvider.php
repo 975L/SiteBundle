@@ -11,7 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
-use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
+use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Repository\PageRepository;
@@ -21,7 +21,7 @@ use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Flags http:// resources (images, scripts, stylesheets...) loaded from an https:// page - browsers block or warn on these ("mixed content"). Only meaningful once the site itself is served over https, skipped entirely otherwise (see runChecks())
-class MixedContentHealthCheckProvider implements HealthCheckProviderInterface
+class MixedContentHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     public function __construct(
         private readonly PageRepository $pageRepository,
@@ -41,15 +41,17 @@ class MixedContentHealthCheckProvider implements HealthCheckProviderInterface
 
     public function runChecks(): array
     {
+        // Same reason as the throw below: a site url that is not https is a configuration this check cannot run against, not a site whose stored rows have all become stale
         if (!str_starts_with((string) $this->configService->get('site-url'), 'https://')) {
-            return [];
+            throw new \RuntimeException('Site url is not https: mixed content cannot be checked.');
         }
 
         $results = [];
         foreach ($this->pageRepository->findAllOrdered() as $page) {
             $url = $this->pagePublicUrlResolver->resolve($page);
+            // Thrown rather than returned empty: this kind is exhaustive, so an empty run tells HealthCheckRunner every stored row is stale and clears them. A page whose url cannot be resolved means the site url is not configured, which says nothing about the pages already checked - the runner catches this and leaves the kind untouched
             if (null === $url) {
-                return [];
+                throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
             }
 
             $results[] = $this->checkPage($url, $page->getTitle(), $this->pageEditUrlResolver->resolve($page));

@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
-// One-off migration helper: imports a legacy JSON array of items (e.g. 975l.com's hand-maintained projects.json) into CollectionItem rows, so an app that used to hand-roll its own JSON-driven list can switch to the "collection" block + this CRUD instead. Expected JSON shape: a plain array of objects, each with "title" (required), and optionally "description", "url", "image" (a path to an existing image file, resolved against --images-dir).
+// One-off migration helper: imports a legacy JSON array of items (e.g. an app's own hand-maintained projects.json) into CollectionItem rows, so an app that used to hand-roll its own JSON-driven list can switch to the "collection" block + this CRUD instead. Expected JSON shape: a plain array of objects, each with "title" (required), and optionally "description", "url", "image" (a path to an existing image file, resolved against --images-dir).
 #[AsCommand(
     name: 'c975l:site:collection-item:import',
     description: 'Import a legacy JSON array of items into CollectionItem rows for a given group'

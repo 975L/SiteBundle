@@ -85,6 +85,16 @@ class CollectionItemCrudController extends AbstractCrudController
         return parent::new($context);
     }
 
+    // An admin url of this very screen, carrying the collection everything here is scoped by
+    private function scopedUrl(string $action): string
+    {
+        return $this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction($action)
+            ->set('collectionGroup', $this->currentCollectionGroup()?->getId())
+            ->generateUrl();
+    }
+
     private function redirectToCollectionsList(): Response
     {
         return $this->redirect($this->adminUrlGenerator
@@ -139,15 +149,22 @@ class CollectionItemCrudController extends AbstractCrudController
             ->createAsGlobalAction()
         ;
 
-        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
+        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions, save for
+        // the collection it has to carry (see $scoped below)
         $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
-            ->linkToCrudAction(Action::INDEX)
+            ->linkToUrl(fn (): string => $this->scopedUrl(Action::INDEX))
             ->addCssClass('btn btn-secondary');
 
         return $actions
             ->add(Crud::PAGE_INDEX, $backToCollectionsAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
+            // The one thing EasyAdmin cannot know: this screen is scoped by a "?collectionGroup=" of its own, which
+            // its own url generator does not carry over - so "Nouveau" led to a new() with no collection to attach
+            // to, and the guard above bounced the admin back to the list of collections they had just left
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->linkToUrl(
+                fn (): string => $this->scopedUrl(Action::NEW),
+            ))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),

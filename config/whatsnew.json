@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-02",
+        "description": [
+            {
+                "en": "The four sentences wrapping every email you send are now written on the Email templates screen, one version per language, instead of being one setting saying the same language to everyone",
+                "fr": "Les quatre phrases qui entourent chacun de vos e-mails s'écrivent maintenant sur l'écran Modèles d'e-mails, une version par langue, au lieu d'un réglage qui disait la même langue à tout le monde",
+                "es": "Las cuatro frases que envuelven cada uno de sus correos se escriben ahora en la pantalla Plantillas de correo, una versión por idioma, en lugar de un ajuste que decía el mismo idioma a todos"
+            },
+            {
+                "en": "The line under your site's name is now written in Menus like any other content, so it can be said in each of your languages",
+                "fr": "La ligne sous le nom de votre site s'écrit désormais dans les Menus comme n'importe quel contenu, et peut donc être dite dans chacune de vos langues",
+                "es": "La línea bajo el nombre de su sitio se escribe ahora en los Menús como cualquier otro contenido, por lo que puede decirse en cada uno de sus idiomas"
+            },
+            {
+                "en": "Two guided projects now walk you through saying a page, then a menu, in another language",
+                "fr": "Deux projets guidés vous accompagnent maintenant pour redire une page, puis un menu, dans une autre langue",
+                "es": "Dos proyectos guiados le acompañan ahora para decir una página, y luego un menú, en otro idioma"
+            }
+        ]
+    },
+    {
         "date": "2026-08-31",
         "description": [
             {

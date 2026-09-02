@@ -12,7 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckErrorRow;
-use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
+use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
@@ -22,7 +22,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Shared by W3cHtmlHealthCheckProvider/W3cCssHealthCheckProvider - HTML and CSS validation used to be a single "w3c" row/kind combining both, hard to scan at a glance (eg. "51 CSS warnings" buried in one long summary alongside HTML's own counts); each is now its own kind/row, this holds everything but which W3cValidatorClient method to call and which translations to use
-abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckProviderInterface
+abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     public function __construct(
         protected readonly PageRepository $pageRepository,
@@ -50,8 +50,9 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckPr
         $pending = [];
         foreach ($this->pageRepository->findAllOrdered() as $index => $page) {
             $url = $this->pagePublicUrlResolver->resolve($page);
+            // Thrown rather than returned empty: this kind is exhaustive, so an empty run tells HealthCheckRunner every stored row is stale and clears them. A page whose url cannot be resolved means the site url is not configured, which says nothing about the pages already checked - the runner catches this and leaves the kind untouched
             if (null === $url) {
-                return [];
+                throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
             }
 
             $editUrl = $this->pageEditUrlResolver->resolve($page);

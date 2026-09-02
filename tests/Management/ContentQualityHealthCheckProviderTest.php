@@ -191,12 +191,15 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame([], $provider->runChecks());
     }
 
-    public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
+    // Throws rather than returning empty: the kind is exhaustive, so an empty run would tell HealthCheckRunner to clear every stored row of it
+    public function testRunChecksThrowsWithoutASiteUrl(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
         $provider = $this->createProvider([$this->createPage('home')], $client, null);
 
-        $this->assertSame([], $provider->runChecks());
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
     }
 
     public function testRunChecksStatusIsOkWhenEverythingIsFine(): void
@@ -486,16 +489,28 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame('https://example.com/pages/flaky/', $result['details']['brokenLinks'][0]['url']);
     }
 
-    // A conclusive HEAD is never retried
-    public function testRunChecksDoesNotRetryAConclusiveLink(): void
+    // A HEAD answering >= 400 is retried too, an url routed client-side answering 404 to a HEAD it serves in 200 - the GET's verdict is the one kept
+    public function testRunChecksRetriesALinkTheHeadCalledBroken(): void
     {
         $client = $this->createMock(ContentQualityClient::class);
         $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/missing/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
         $client->method('requestLinkCheck')->willReturn($this->stubResponse());
-        $client->expects($this->never())->method('requestLinkCheckFallback');
-        $client->method('readLinkCheck')->willReturn(ContentQualityClient::LINK_BROKEN);
+        $client->expects($this->once())->method('requestLinkCheckFallback')->with('https://example.com/pages/missing/')->willReturn($this->stubResponse());
+        $client->method('readLinkCheck')->willReturnOnConsecutiveCalls(ContentQualityClient::LINK_BROKEN, ContentQualityClient::LINK_BROKEN);
 
         $this->assertSame(HealthCheckResult::STATUS_ERROR, $this->createProvider([$this->createPage('home')], $client)->runChecks()[0]['status']);
+    }
+
+    // A link the HEAD settled as reachable is never retried
+    public function testRunChecksDoesNotRetryALinkTheHeadSettled(): void
+    {
+        $client = $this->createMock(ContentQualityClient::class);
+        $this->stubAnalyze($client, ['hasDescription' => true, 'h1Count' => 1, 'imagesWithoutAlt' => [], 'internalLinks' => ['https://example.com/pages/reachable/'], 'linkTexts' => []] + self::GOOD_ANALYSIS);
+        $client->method('requestLinkCheck')->willReturn($this->stubResponse());
+        $client->expects($this->never())->method('requestLinkCheckFallback');
+        $client->method('readLinkCheck')->willReturn(ContentQualityClient::LINK_OK);
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $this->createProvider([$this->createPage('home')], $client)->runChecks()[0]['status']);
     }
 
     // Requests are fired in bounded batches, not all at once - a site-wide burst would queue past the HttpClient's own per-host cap while each queued request's timeout is already running
@@ -574,7 +589,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     public function testRunChecksAcceptsAShortButExplicitTitle(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
-        $this->stubAnalyze($client, ['title' => 'Nos tarifs - Editions Lolant'] + self::GOOD_ANALYSIS);
+        $this->stubAnalyze($client, ['title' => 'Nos tarifs - Editions Exemple'] + self::GOOD_ANALYSIS);
 
         $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
 

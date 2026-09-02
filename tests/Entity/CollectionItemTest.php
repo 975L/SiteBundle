@@ -49,9 +49,9 @@ class CollectionItemTest extends TestCase
 
     public function testToStringReturnsTheTitle(): void
     {
-        $item = new CollectionItem()->setTitle('Papa Câlin');
+        $item = new CollectionItem()->setTitle('Projet Alpha');
 
-        $this->assertSame('Papa Câlin', (string) $item);
+        $this->assertSame('Projet Alpha', (string) $item);
     }
 
     public function testToStringReturnsEmptyStringWhenNoTitleIsSet(): void
@@ -84,17 +84,17 @@ class CollectionItemTest extends TestCase
 
         $item = new CollectionItem()
             ->setCollectionGroup($collectionGroup)
-            ->setTitle('Papa Câlin')
-            ->setSlug('papa-calin')
+            ->setTitle('Projet Alpha')
+            ->setSlug('projet-alpha')
             ->setDescription('Des histoires inventées')
-            ->setUrl('https://papa-calin.com')
+            ->setUrl('https://projet-alpha.example')
             ->setPosition(3);
 
         $this->assertSame($collectionGroup, $item->getCollectionGroup());
-        $this->assertSame('Papa Câlin', $item->getTitle());
-        $this->assertSame('papa-calin', $item->getSlug());
+        $this->assertSame('Projet Alpha', $item->getTitle());
+        $this->assertSame('projet-alpha', $item->getSlug());
         $this->assertSame('Des histoires inventées', $item->getDescription());
-        $this->assertSame('https://papa-calin.com', $item->getUrl());
+        $this->assertSame('https://projet-alpha.example', $item->getUrl());
         $this->assertSame(3, $item->getPosition());
     }
 }

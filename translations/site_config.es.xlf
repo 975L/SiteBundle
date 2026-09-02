@@ -6,22 +6,6 @@
                 <source>description.email_debug</source>
                 <target>Si activado, ROLE_SUPER_ADMIN ve una vista previa en vez de un envío real</target>
             </trans-unit>
-            <trans-unit id="iDg56gE">
-                <source>description.email_text_closing</source>
-                <target>Agradecimiento/firma al final del correo. %site% inserta el nombre del sitio (HTML permitido, no traducido). Vacío = nada.</target>
-            </trans-unit>
-            <trans-unit id="3PPdNBL">
-                <source>description.email_text_hello</source>
-                <target>Saludo en la parte superior del correo (HTML permitido, no traducido). Vacío = nada.</target>
-            </trans-unit>
-            <trans-unit id="gH2Y6PX">
-                <source>description.email_text_no_spam</source>
-                <target>Aviso "anti-spam" en la parte superior del correo (HTML permitido, no traducido). Vacío = nada.</target>
-            </trans-unit>
-            <trans-unit id="nP1tx85">
-                <source>description.email_text_sent_by</source>
-                <target>Mención "Enviado por..." al final del correo. %site% inserta el nombre del sitio (HTML permitido, no traducido).</target>
-            </trans-unit>
             <trans-unit id="ysqN9bN">
                 <source>description.healthcheck_pagespeed_api_key</source>
                 <target>Opcional - aumenta el límite de peticiones de Google PageSpeed Insights para el comando c975l:health-check:run. Consíguela en https://developers.google.com/speed/docs/insights/v5/get-started</target>
@@ -42,29 +26,9 @@
                 <source>description.site_preconnect</source>
                 <target>Orígenes a preconectar (array JSON), ej. ["https://example.com"] - útil si logos de créditos/Matomo están en otro dominio</target>
             </trans-unit>
-            <trans-unit id="EuVrG.1">
-                <source>description.site_tagline</source>
-                <target>Eslogan del sitio web</target>
-            </trans-unit>
             <trans-unit id=".HY9J1w">
                 <source>label.email_debug</source>
                 <target>Modo debug de emails</target>
-            </trans-unit>
-            <trans-unit id="0yPWZIz">
-                <source>label.email_text_closing</source>
-                <target>Texto de agradecimiento y firma del correo</target>
-            </trans-unit>
-            <trans-unit id="ZewvoKr">
-                <source>label.email_text_hello</source>
-                <target>Saludo del correo</target>
-            </trans-unit>
-            <trans-unit id="S7SABir">
-                <source>label.email_text_no_spam</source>
-                <target>Texto anti-spam del correo</target>
-            </trans-unit>
-            <trans-unit id="cPmYzbj">
-                <source>label.email_text_sent_by</source>
-                <target>Mención "Enviado por" del correo</target>
             </trans-unit>
             <trans-unit id="wkcUWqy">
                 <source>label.healthcheck_pagespeed_api_key</source>
@@ -85,10 +49,6 @@
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>
                 <target>URLs de preconexión</target>
-            </trans-unit>
-            <trans-unit id="tN9lVY3">
-                <source>label.site_tagline</source>
-                <target>Eslogan del sitio</target>
             </trans-unit>
         </body>
     </file>

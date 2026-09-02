@@ -118,7 +118,7 @@ class CollectionItemImportCommandTest extends TestCase
     public function testExecuteCreatesAndFlushesNewItems(): void
     {
         $this->writeJson([
-            ['title' => 'Papa Câlin', 'description' => 'Des histoires', 'url' => 'https://papa-calin.com'],
+            ['title' => 'Projet Alpha', 'description' => 'Des histoires', 'url' => 'https://projet-alpha.example'],
         ]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
@@ -139,13 +139,13 @@ class CollectionItemImportCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $statusCode);
         $this->assertStringContainsString('1 items created and flushed. 0 skipped.', $tester->getDisplay());
-        $this->assertSame('papa-calin', $persisted->getSlug());
+        $this->assertSame('projet-alpha', $persisted->getSlug());
     }
 
     // The target collection doesn't exist yet - created on the fly by name (--group), persisted alongside the items in the single final flush
     public function testExecuteCreatesTheCollectionWhenItDoesNotExistYet(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin']]);
+        $this->writeJson([['title' => 'Projet Alpha']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
 
@@ -173,7 +173,7 @@ class CollectionItemImportCommandTest extends TestCase
     // Resolving by normalized slug rather than exact name means re-running with different casing/whitespace (e.g. "Projects" then "projects ") still hits the same collection instead of creating a duplicate one with a colliding slug
     public function testExecuteMatchesAnExistingCollectionRegardlessOfNameCasingOrWhitespace(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin']]);
+        $this->writeJson([['title' => 'Projet Alpha']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $projects = new CollectionGroup()->setName('Projects')->setSlug('projects');
@@ -203,7 +203,7 @@ class CollectionItemImportCommandTest extends TestCase
     // --dry-run never creates the collection either - findByCollectionGroup()/countByCollectionGroup() would fail to bind an id-less entity, so they must be skipped entirely, not just the persist/flush calls
     public function testDryRunNeverCreatesTheMissingCollectionEither(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin']]);
+        $this->writeJson([['title' => 'Projet Alpha']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
 
@@ -222,8 +222,8 @@ class CollectionItemImportCommandTest extends TestCase
     public function testExecuteDeduplicatesSlugsWithinTheSameRun(): void
     {
         $this->writeJson([
-            ['title' => 'Papa Câlin'],
-            ['title' => 'Papa Calin'],
+            ['title' => 'Projet Alpha'],
+            ['title' => 'Projet Alpha'],
         ]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
@@ -240,16 +240,16 @@ class CollectionItemImportCommandTest extends TestCase
         $tester = $this->createTester($em, $repository);
         $tester->execute(['--group' => 'projects', '--json-file' => 'items.json']);
 
-        $this->assertSame(['papa-calin', 'papa-calin-2'], $persistedSlugs);
+        $this->assertSame(['projet-alpha', 'projet-alpha-2'], $persistedSlugs);
     }
 
     // A title already present in the collection (per findByCollectionGroup) is skipped, so re-running the command on the same JSON is idempotent
     public function testExecuteSkipsAlreadyImportedTitles(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin']]);
+        $this->writeJson([['title' => 'Projet Alpha']]);
 
         $projects = new CollectionGroup()->setName('projects')->setSlug('projects');
-        $existing = new CollectionItem()->setCollectionGroup($projects)->setTitle('Papa Câlin');
+        $existing = new CollectionItem()->setCollectionGroup($projects)->setTitle('Projet Alpha');
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findByCollectionGroup')->willReturn([$existing]);
@@ -285,7 +285,7 @@ class CollectionItemImportCommandTest extends TestCase
     // --dry-run never touches persist()/flush(), only reports what would happen
     public function testDryRunDoesNotPersistOrFlush(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin']]);
+        $this->writeJson([['title' => 'Projet Alpha']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findByCollectionGroup')->willReturn([]);
@@ -304,7 +304,7 @@ class CollectionItemImportCommandTest extends TestCase
 
     public function testExecuteWarnsWhenReferencedImageFileIsMissing(): void
     {
-        $this->writeJson([['title' => 'Papa Câlin', 'image' => 'missing.webp']]);
+        $this->writeJson([['title' => 'Projet Alpha', 'image' => 'missing.webp']]);
 
         $repository = $this->createStub(CollectionItemRepository::class);
         $repository->method('findByCollectionGroup')->willReturn([]);

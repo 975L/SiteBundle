@@ -3,7 +3,7 @@
 {% block main %}
     {# The language the page is being written in. Nothing at all on a site declaring a single one, which is every c975L site until it says otherwise #}
     {% if page_content_locales|default([]) is not empty %}
-        <ul class="nav nav-pills mb-3">
+        <ul class="nav nav-pills mb-3" data-site-content-locales>
             {# Each language named in its own, the way the back office's own language menu names them #}
             <li class="nav-item">
                 <a class="nav-link{{ page_content_locale is null ? ' active' : '' }}" href="{{ page_content_urls[''] }}">{{ page_default_locale|locale_name(page_default_locale) }}</a>

@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/core-bundle": "^1.20",
+        "c975l/core-bundle": "^1.21.1",
         "doctrine/orm": "^3.6",
         "easycorp/easyadmin-bundle": "^5.1",
         "endroid/qr-code": "^6",
@@ -38,6 +38,7 @@
         "vich/uploader-bundle": "^2.9"
     },
     "require-dev": {
+        "chrome-php/chrome": "^1.16",
         "nelmio/security-bundle": "^3.9",
         "phpunit/phpunit": "^13.2"
     },

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, EmailLayoutProvider, EmailLayoutTemplateProvider, layout_no_spam, layout_hello, layout_closing, layout_sent_by, email_template_body, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -193,10 +193,13 @@ appended through `theme_variables_css()` so the admin's colors win the cascade.
 mailbox has nothing to resolve `/medias/…` against. It is the one place to do it, since every other
 email template extends this one; an unset `site-url` leaves the paths untouched.
 
-`fullLayout`'s own copy is not translations: it is rich text authored in the back office under the
-`email` group — `email-text-no-spam`, `email-text-hello`, `email-text-closing`, `email-text-sent-by`.
-**All four ship empty**, each block rendering only when its value is not. The last two accept a
-`%site%` placeholder.
+`fullLayout`'s own copy is four `EmailTemplate` rows — `layout_no_spam`, `layout_hello`,
+`layout_closing`, `layout_sent_by` — declared by `EmailLayoutTemplateProvider` and seeded by
+`c975l:ui:email-templates:ensure`, **one row per declared language**, read through
+`email_template_body('layout_hello', {}, locale)`. Each is an `html` block, so a line break or a bold
+word survives the send. The last two take a `{{ site }}` placeholder. They were the `email-text-*`
+config entries until 02/09/2026; `c975l:site:content:adopt-config-texts` moves what a site wrote into
+the row of its own language.
 
 What the footer owes the law is not that copy: the identification comes from `site-owner`, followed by
 a link to the page `url-privacy-policy` names, both skipped while their setting is empty, and both
@@ -205,7 +208,9 @@ prospection email places its own way out (article L34-5 CPCE); a transactional o
 
 `EmailLayoutProvider` implements UiBundle's `EmailLayoutProviderInterface`, so any `EmailTemplate` sent
 anywhere in the ecosystem comes out in this bundle's branded layout — and in UiBundle's plain fallback
-on a site not installing it. **Do not write an email layout in a satellite bundle**; send with
+on a site not installing it. `wrap(string $bodyHtml, ?string $locale = null)` receives the language the
+body was resolved in and hands it to the template, which passes it to each `email_template_body()` call:
+without it the four sentences followed whichever row the database returned first. **Do not write an email layout in a satellite bundle**; send with
 `wrapLayout: true` and this provider answers.
 
 ## Footer components
@@ -245,5 +250,5 @@ of your own keeps both anchors.
 - **Do not write a `<head>` tag in this bundle's layout.** Core-bundle's is the only one, and a copy
   here drifts from it without a word.
 - **Do not override `title` to hide a page heading** — it is the `<title>` tag. Override `heading`.
-- **Do not hardcode the email copy.** The five `email-text-*` keys are the site's own.
+- **Do not hardcode the email copy.** The four `layout_*` templates are the site's own, one row per language.
 - **Do not make an email's paths absolute template by template.** `fullLayout` already does it for all.

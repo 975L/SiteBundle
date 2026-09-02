@@ -52,7 +52,7 @@ class TranslationHealthCheckProviderTest extends TestCase
      * @param array<string, array<string, string|null>> $pageValues  locale => field => value
      * @param array<string, array<string, string|null>> $blockValues locale => field => value
      */
-    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = []): TranslationHealthCheckProvider
+    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = [], ?string $siteUrl = 'https://exemple.com'): TranslationHealthCheckProvider
     {
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findAllOrdered')->willReturn([$this->createPage()]);
@@ -73,7 +73,7 @@ class TranslationHealthCheckProviderTest extends TestCase
         );
 
         $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturn('https://exemple.com');
+        $configService->method('get')->willReturn($siteUrl);
 
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -96,6 +96,16 @@ class TranslationHealthCheckProviderTest extends TestCase
     }
 
     // A site declaring a single language has nothing to report: the dashboard shows no such row at all
+    // Throws rather than skipping every page: the kind is exhaustive, so the empty list that would leave would tell HealthCheckRunner to clear every stored row of it
+    public function testRunChecksThrowsWithoutASiteUrl(): void
+    {
+        $provider = $this->createProvider(['en'], siteUrl: null);
+
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
+    }
+
     public function testASiteWithOneLanguageReportsNothing(): void
     {
         $this->assertSame([], $this->createProvider([])->runChecks());

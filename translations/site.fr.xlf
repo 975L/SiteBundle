@@ -142,6 +142,10 @@
                 <source>description.guided_project_footer</source>
                 <target>Mettre en forme le pied de page de toutes les pages : ses liens, ses liens sociaux, répartis sur les lignes que vous voulez</target>
             </trans-unit>
+            <trans-unit id="AfNoLl.">
+                <source>description.guided_project_menu_translation</source>
+                <target>Un menu dit ses propres libellés dans chaque langue depuis un écran à lui ; un item qui prend son libellé de la page visée se traduit avec cette page.</target>
+            </trans-unit>
             <trans-unit id="zYKbnmM">
                 <source>description.guided_project_page_creation</source>
                 <target>Créer une page, y mettre du contenu, la publier et la voir en ligne</target>
@@ -161,6 +165,10 @@
             <trans-unit id="2te_0ZO">
                 <source>description.guided_project_page_seo</source>
                 <target>Ce qu'un moteur de recherche et un réseau social montrent d'une page : son adresse, son résumé, son image.</target>
+            </trans-unit>
+            <trans-unit id="xUoJWyS">
+                <source>description.guided_project_page_translation</source>
+                <target>Une page écrite et référencée se dit ensuite dans chacune des langues du site, sur son propre écran d'édition ouvert sur l'une d'elles.</target>
             </trans-unit>
             <trans-unit id="HQvuvco">
                 <source>description.guided_project_trash</source>
@@ -238,6 +246,22 @@
                 <source>description.guided_step_footer_style</source>
                 <target>Les uns à côté des autres ou les uns sous les autres. Laissé vide, c'est le fichier de thème du site qui décide.</target>
             </trans-unit>
+            <trans-unit id="bX5tvhC">
+                <source>description.guided_step_menu_translation_action</source>
+                <target>Le bouton n'apparaît que si le site déclare plus d'une langue.</target>
+            </trans-unit>
+            <trans-unit id="0CVNo.U">
+                <source>description.guided_step_menu_translation_locale</source>
+                <target>Un onglet par langue déclarée par le site.</target>
+            </trans-unit>
+            <trans-unit id="hL7Z7x1">
+                <source>description.guided_step_menu_translation_open</source>
+                <target>La liste des menus du site.</target>
+            </trans-unit>
+            <trans-unit id="1opWYNb">
+                <source>description.guided_step_menu_translation_write</source>
+                <target>Le texte d'origine est affiché sous chaque champ, jamais dedans : un champ prérempli serait enregistré tel quel et le menu semblerait traduit sans l'être.</target>
+            </trans-unit>
             <trans-unit id="0u_15J4">
                 <source>description.guided_step_page_creation_blocks</source>
                 <target>Le contenu d'une page est fait de blocks : texte, image, galerie, formulaire… Ajoutez-en un et remplissez-le.</target>
@@ -297,6 +321,14 @@
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
                 <target>Un menu est fait de blocks, comme une page : ajoutez-en un de type « Lien de menu ».</target>
+            </trans-unit>
+            <trans-unit id="i0tTiPz">
+                <source>description.guided_step_page_menu_brand</source>
+                <target>De retour sur les menus : la cinquième location porte ce que le site dit sous son propre nom. Rien n'est surligné si elle existe déjà.</target>
+            </trans-unit>
+            <trans-unit id="7bcgCUX">
+                <source>description.guided_step_page_menu_brand_write</source>
+                <target>Un block comme un autre, donc écrit et traduit comme le reste du site — là où la baseline était un réglage qui parlait une seule langue à tout le monde.</target>
             </trans-unit>
             <trans-unit id="vYT2I9L">
                 <source>description.guided_step_page_menu_check</source>
@@ -373,6 +405,30 @@
             <trans-unit id="dS6xslk">
                 <source>description.guided_step_page_seo_summary</source>
                 <target>Deux ou trois phrases : un moteur de recherche les affiche sous le titre, un réseau social sous l'aperçu du lien. Le bilan de santé les réclame aussi.</target>
+            </trans-unit>
+            <trans-unit id="2i_xxw5">
+                <source>description.guided_step_page_translation_action</source>
+                <target>Le bouton n'apparaît que si le site déclare plus d'une langue : sinon, il n'y a rien à ouvrir.</target>
+            </trans-unit>
+            <trans-unit id="HNEB.MS">
+                <source>description.guided_step_page_translation_blocks</source>
+                <target>Les mêmes blocks que la page d'origine, à dire dans la nouvelle langue : la composition ne change pas, seuls les mots changent.</target>
+            </trans-unit>
+            <trans-unit id="wvdruZT">
+                <source>description.guided_step_page_translation_check</source>
+                <target>La page traduite s'ouvre sur l'adresse préfixée par la langue.</target>
+            </trans-unit>
+            <trans-unit id="d7wYwPo">
+                <source>description.guided_step_page_translation_locale</source>
+                <target>La barre en haut de l'écran : chaque langue du site y a son onglet, et l'écran d'édition s'ouvre dessus.</target>
+            </trans-unit>
+            <trans-unit id="WWYrbp2">
+                <source>description.guided_step_page_translation_open</source>
+                <target>La liste des pages, d'où part chaque traduction.</target>
+            </trans-unit>
+            <trans-unit id="ouWxTAi">
+                <source>description.guided_step_page_translation_title</source>
+                <target>Le texte d'origine est affiché entre crochets : un champ qui le garde tel quel compte pour rien d'écrit.</target>
             </trans-unit>
             <trans-unit id="TNnaa8j">
                 <source>description.guided_step_trash_back</source>
@@ -658,6 +714,10 @@
                 <source>label.guided_project_footer</source>
                 <target>Composer le pied de page</target>
             </trans-unit>
+            <trans-unit id="tXcN894">
+                <source>label.guided_project_menu_translation</source>
+                <target>Dire un menu dans une autre langue</target>
+            </trans-unit>
             <trans-unit id="PEScSjB">
                 <source>label.guided_project_page_creation</source>
                 <target>Créer une page</target>
@@ -677,6 +737,10 @@
             <trans-unit id="GEsMVIP">
                 <source>label.guided_project_page_seo</source>
                 <target>Rendre une page trouvable et bien partagée</target>
+            </trans-unit>
+            <trans-unit id="vsASUMQ">
+                <source>label.guided_project_page_translation</source>
+                <target>Dire une page dans une autre langue</target>
             </trans-unit>
             <trans-unit id=".dL2TAJ">
                 <source>label.guided_project_trash</source>
@@ -766,6 +830,26 @@
                 <source>label.guided_step_footer_style</source>
                 <target>Choisir la disposition des lignes</target>
             </trans-unit>
+            <trans-unit id="qg4jejB">
+                <source>label.guided_step_menu_translation_action</source>
+                <target>Cliquez sur « Traduire »</target>
+            </trans-unit>
+            <trans-unit id="8zJZCC1">
+                <source>label.guided_step_menu_translation_locale</source>
+                <target>Choisissez la langue</target>
+            </trans-unit>
+            <trans-unit id="Lsnb.sJ">
+                <source>label.guided_step_menu_translation_open</source>
+                <target>Ouvrez les menus</target>
+            </trans-unit>
+            <trans-unit id="viwQY8A">
+                <source>label.guided_step_menu_translation_save</source>
+                <target>Enregistrez</target>
+            </trans-unit>
+            <trans-unit id="YCl05E3">
+                <source>label.guided_step_menu_translation_write</source>
+                <target>Écrivez les libellés</target>
+            </trans-unit>
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
                 <target>Ajouter un block</target>
@@ -829,6 +913,14 @@
             <trans-unit id="of6P8Dq">
                 <source>label.guided_step_page_menu_add_link</source>
                 <target>Ajouter un lien de menu</target>
+            </trans-unit>
+            <trans-unit id="v5h6c_t">
+                <source>label.guided_step_page_menu_brand</source>
+                <target>Ajoutez la baseline sous le nom du site</target>
+            </trans-unit>
+            <trans-unit id="RFGEX.0">
+                <source>label.guided_step_page_menu_brand_write</source>
+                <target>Écrivez-la comme un block</target>
             </trans-unit>
             <trans-unit id="mMM6W5A">
                 <source>label.guided_step_page_menu_check</source>
@@ -913,6 +1005,34 @@
             <trans-unit id="nFcZCYg">
                 <source>label.guided_step_page_seo_summary</source>
                 <target>Écrire son résumé</target>
+            </trans-unit>
+            <trans-unit id="0yl7omC">
+                <source>label.guided_step_page_translation_action</source>
+                <target>Cliquez sur « Traduire »</target>
+            </trans-unit>
+            <trans-unit id=".gWgNor">
+                <source>label.guided_step_page_translation_blocks</source>
+                <target>Reprenez les blocks</target>
+            </trans-unit>
+            <trans-unit id=".3jOopF">
+                <source>label.guided_step_page_translation_check</source>
+                <target>Vérifiez sur le site</target>
+            </trans-unit>
+            <trans-unit id="iQfmEA7">
+                <source>label.guided_step_page_translation_locale</source>
+                <target>Choisissez la langue</target>
+            </trans-unit>
+            <trans-unit id="1eGYN.t">
+                <source>label.guided_step_page_translation_open</source>
+                <target>Ouvrez les pages</target>
+            </trans-unit>
+            <trans-unit id="t0Ib67I">
+                <source>label.guided_step_page_translation_save</source>
+                <target>Enregistrez</target>
+            </trans-unit>
+            <trans-unit id="QgL.JcP">
+                <source>label.guided_step_page_translation_title</source>
+                <target>Écrivez le titre</target>
             </trans-unit>
             <trans-unit id="ngP0HHK">
                 <source>label.guided_step_trash_back</source>
@@ -1274,6 +1394,10 @@
                 <source>label.navbar</source>
                 <target>Navigation</target>
             </trans-unit>
+            <trans-unit id="sQtMj4o">
+                <source>label.navbar_brand</source>
+                <target>Sous le nom du site</target>
+            </trans-unit>
             <trans-unit id="CEVLUY_">
                 <source>label.never</source>
                 <target>Jamais</target>
@@ -1405,6 +1529,18 @@
             <trans-unit id="dbWhw.4">
                 <source>label.site_sample_collection_name</source>
                 <target>Nos réalisations</target>
+            </trans-unit>
+            <trans-unit id="hleAzv5">
+                <source>label.site_sample_page_former_offer_body</source>
+                <target>Les tarifs qui y figuraient ne sont plus pratiqués. La page reste consultable ici, dépubliée, et peut être remise en ligne ou supprimée définitivement.</target>
+            </trans-unit>
+            <trans-unit id="xqESBvL">
+                <source>label.site_sample_page_former_offer_lead</source>
+                <target>Cette page a été remplacée par la nouvelle grille de services. Elle est conservée en corbeille le temps de vérifier que rien ne pointe encore vers elle.</target>
+            </trans-unit>
+            <trans-unit id="I2FUmtZ">
+                <source>label.site_sample_page_former_offer_title</source>
+                <target>Notre offre 2025</target>
             </trans-unit>
             <trans-unit id="sd_HyXd">
                 <source>label.site_sample_page_history_body</source>
@@ -1553,6 +1689,22 @@
             <trans-unit id="NKuTZhq">
                 <source>text.confirm_email_instructions</source>
                 <target>Merci de confirmer votre adresse email en cliquant sur le lien suivant :</target>
+            </trans-unit>
+            <trans-unit id="Q7GPK.2">
+                <source>text.email_layout_closing</source>
+                <target><![CDATA[Merci de votre confiance. Nous restons à votre disposition pour la moindre demande.<br><br>Cordialement,<br>L'équipe <strong>{{ site }}</strong>]]></target>
+            </trans-unit>
+            <trans-unit id="EnBs72B">
+                <source>text.email_layout_hello</source>
+                <target>Bonjour,</target>
+            </trans-unit>
+            <trans-unit id="qUv_QU1">
+                <source>text.email_layout_no_spam</source>
+                <target>Nous vous conseillons d'enregistrer notre adresse dans votre carnet d'adresses, afin que nos messages ne soient pas classés en indésirables.</target>
+            </trans-unit>
+            <trans-unit id="aZySD3m">
+                <source>text.email_layout_sent_by</source>
+                <target><![CDATA[Cet e-mail vous a été envoyé par <strong>{{ site }}</strong>.]]></target>
             </trans-unit>
             <trans-unit id="39RTBwl">
                 <source>text.err</source>

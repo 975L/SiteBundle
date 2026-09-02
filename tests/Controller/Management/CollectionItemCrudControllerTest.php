@@ -39,7 +39,52 @@ class CollectionItemCrudControllerTest extends TestCase
     use ControllerContainerTestTrait;
 
     // AdminUrlGenerator is final - can't be mocked, so it's built for real with stubbed interface collaborators, same pattern as PageCrudControllerTest
-    private function createAdminUrlGenerator(): AdminUrlGenerator
+    // Everything on this screen is scoped by a "?collectionGroup=", and EasyAdmin's own url generator carries none of
+    // it: without this, "Nouveau" opened a new() with no collection to attach to, which bounces back to the list of
+    // collections - what an admin got instead of the form they asked for
+    public function testTheNewActionCarriesTheCollectionTheScreenIsScopedBy(): void
+    {
+        $parameters = [];
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $urlGenerator->method('generate')->willReturnCallback(
+            static function (string $route, array $routeParameters = []) use (&$parameters): string {
+                $parameters = $routeParameters;
+
+                return '/management/collection-items';
+            }
+        );
+
+        $request = new Request(['collectionGroup' => '7']);
+        $requestStack = new RequestStack([$request]);
+
+        $group = new CollectionGroup();
+        new \ReflectionProperty(CollectionGroup::class, 'id')->setValue($group, 7);
+
+        $collectionGroupRepository = $this->createStub(CollectionGroupRepository::class);
+        $collectionGroupRepository->method('find')->willReturn($group);
+
+        $actions = $this->createController(
+            null,
+            $collectionGroupRepository,
+            null,
+            $this->createAdminUrlGenerator($urlGenerator),
+            $requestStack,
+        )->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::NEW)
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $new = $actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, Action::NEW);
+        $url = $new?->getUrl();
+
+        $this->assertIsCallable($url);
+        $url();
+        $this->assertSame('7', (string) ($parameters['collectionGroup'] ?? ''));
+    }
+
+    private function createAdminUrlGenerator(?UrlGeneratorInterface $urlGenerator = null): AdminUrlGenerator
     {
         $adminControllers = $this->createStub(AdminControllerRegistryInterface::class);
         $adminControllers->method('getDashboardCount')->willReturn(1);
@@ -49,8 +94,11 @@ class CollectionItemCrudControllerTest extends TestCase
         $routeGenerator = $this->createStub(AdminRouteGeneratorInterface::class);
         $routeGenerator->method('findRouteName')->willReturn('admin');
 
-        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
-        $urlGenerator->method('generate')->willReturn('/management/collection-items');
+        if (null === $urlGenerator) {
+            $stub = $this->createStub(UrlGeneratorInterface::class);
+            $stub->method('generate')->willReturn('/management/collection-items');
+            $urlGenerator = $stub;
+        }
 
         return new AdminUrlGenerator(
             $this->createStub(AdminContextProviderInterface::class),
@@ -71,6 +119,7 @@ class CollectionItemCrudControllerTest extends TestCase
         return $requestStack;
     }
 
+    // Given collaborators over defaults, rather than one "??" per parameter: each of those counts as branching and put this factory over the complexity threshold without holding a single branch
     private function createController(
         ?CollectionItemRepository $collectionItemRepository = null,
         ?CollectionGroupRepository $collectionGroupRepository = null,
@@ -84,14 +133,30 @@ class CollectionItemCrudControllerTest extends TestCase
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
+        $given = array_filter([
+            'slugger' => $slugger,
+            'collectionItemRepository' => $collectionItemRepository,
+            'collectionGroupRepository' => $collectionGroupRepository,
+            'adminUrlGenerator' => $adminUrlGenerator,
+            'requestStack' => $requestStack,
+        ]);
+
+        $collaborators = $given + [
+            'slugger' => new AsciiSlugger(),
+            'collectionItemRepository' => $this->createStub(CollectionItemRepository::class),
+            'collectionGroupRepository' => $this->createStub(CollectionGroupRepository::class),
+            'adminUrlGenerator' => $this->createAdminUrlGenerator(),
+            'requestStack' => new RequestStack(),
+        ];
+
         return new CollectionItemCrudController(
             $configService,
             $translator,
-            $slugger ?? new AsciiSlugger(),
-            $collectionItemRepository ?? $this->createStub(CollectionItemRepository::class),
-            $collectionGroupRepository ?? $this->createStub(CollectionGroupRepository::class),
-            $adminUrlGenerator ?? $this->createAdminUrlGenerator(),
-            $requestStack ?? new RequestStack(),
+            $collaborators['slugger'],
+            $collaborators['collectionItemRepository'],
+            $collaborators['collectionGroupRepository'],
+            $collaborators['adminUrlGenerator'],
+            $collaborators['requestStack'],
         );
     }
 
@@ -149,6 +214,7 @@ class CollectionItemCrudControllerTest extends TestCase
     {
         $actions = $this->createController()->configureActions(
             Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::NEW)
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
         );
@@ -161,6 +227,7 @@ class CollectionItemCrudControllerTest extends TestCase
     {
         $actions = $this->createController()->configureActions(
             Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::NEW)
                 ->add(Crud::PAGE_INDEX, Action::EDIT)
                 ->add(Crud::PAGE_INDEX, Action::DELETE)
         );

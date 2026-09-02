@@ -55,15 +55,15 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
-    public function testGetGuidedProjectsReturnsNineProjectsContinuingConfigBundlesOrderSequence(): void
+    public function testGetGuidedProjectsReturnsElevenProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['site-collection', 'site-page-creation', 'site-page-seo', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-footer'],
+            ['site-collection', 'site-page-creation', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([2010, 2020, 2030, 2040, 2050, 2060, 2070, 2080, 2090], array_column($projects, 'order'));
+        $this->assertSame([2010, 2020, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
@@ -93,11 +93,13 @@ class SiteGuidedProjectProviderTest extends TestCase
             'site-collection' => 'ROLE_EDITOR',
             'site-page-creation' => 'ROLE_EDITOR',
             'site-page-seo' => 'ROLE_EDITOR',
+            'site-page-translation' => 'ROLE_EDITOR',
             'site-page-health' => 'ROLE_EDITOR',
             'site-page-revision' => 'ROLE_EDITOR',
             'site-trash' => 'ROLE_ADMIN',
             'site-content-export' => 'ROLE_ADMIN',
             'site-page-menu' => 'ROLE_EDITOR',
+            'site-menu-translation' => 'ROLE_EDITOR',
             'site-footer' => 'ROLE_EDITOR',
         ];
 
@@ -146,7 +148,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController'],
+            ['CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers)
         );
     }
@@ -185,7 +187,7 @@ class SiteGuidedProjectProviderTest extends TestCase
             $highlights = array_column($project['steps'], 'highlight');
 
             if ('site-footer' === $project['slug']) {
-                $this->assertContains('#Menu_style' . self::TOM_SELECT_SUFFIX, $highlights);
+                $this->assertContains('#Menu_style', $highlights);
 
                 continue;
             }
@@ -231,20 +233,22 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // A ChoiceField takes EasyAdmin's autocomplete widget unless it asks for the native or the expanded one (see ChoiceConfigurator), and TomSelect then hides the original select behind ".ts-hidden-accessible" - clipped to a pixel, so a step pointing at its id outlines nothing the user can see. The wrapper TomSelect inserts right after it is what shows
-    public function testEveryChoiceFieldHighlightPointsAtTheWidgetAndNotAtTheClippedSelect(): void
+    // TomSelect wraps the select of an association asking for autocomplete() - whose id then gains the "_autocomplete"
+    // suffix - and nothing else: a plain ChoiceField is rendered as a native select, visible and pointable, which is
+    // what the back office draws (measured on "#Page_changeFrequency": a visible <select> followed by its help text,
+    // on a screen carrying four ".ts-wrapper" elsewhere). A step naming the wrapper beside one outlines nothing
+    public function testNoHighlightExpectsAWrapperEasyAdminDoesNotDraw(): void
     {
         foreach ($this->fieldHighlights() as [$project, $index, $entity, $property, $highlight]) {
-            $isChoice = 'ChoiceField' === $this->declaredFields(self::FIELD_CONTROLLERS[$entity])[$property];
-            $message = sprintf('Step %d of "%s" highlights "%s"', $index, $project, $highlight);
-
-            if ($isChoice) {
-                $this->assertStringEndsWith(self::TOM_SELECT_SUFFIX, $highlight, $message . ', a ChoiceField whose select TomSelect clips - point at the wrapper instead');
-
+            if (str_ends_with($property, '_autocomplete')) {
                 continue;
             }
 
-            $this->assertStringEndsNotWith(self::TOM_SELECT_SUFFIX, $highlight, $message . ', which is no ChoiceField and therefore has no TomSelect wrapper next to it');
+            $this->assertStringEndsNotWith(
+                self::TOM_SELECT_SUFFIX,
+                $highlight,
+                sprintf('Step %d of "%s" highlights "%s", a field TomSelect leaves alone - point at it directly', $index, $project, $highlight),
+            );
         }
     }
 

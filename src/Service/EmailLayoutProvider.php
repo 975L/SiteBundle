@@ -21,8 +21,10 @@ class EmailLayoutProvider implements EmailLayoutProviderInterface
     ) {
     }
 
-    public function wrap(string $bodyHtml): string
+    // The locale is the one the body was resolved in, handed down so the layout's own four sentences are read in the
+    // same language rather than in whichever one the database returns first (see fullLayout.html.twig)
+    public function wrap(string $bodyHtml, ?string $locale = null): string
     {
-        return $this->twig->render('@c975LSite/emails/emailTemplateLayout.html.twig', ['bodyHtml' => $bodyHtml]);
+        return $this->twig->render('@c975LSite/emails/emailTemplateLayout.html.twig', ['bodyHtml' => $bodyHtml, 'locale' => $locale]);
     }
 }

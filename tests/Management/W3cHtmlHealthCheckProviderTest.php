@@ -119,11 +119,14 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $this->assertSame('w3c-html', $provider->getKind());
     }
 
-    public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
+    // Throws rather than returning empty: the kind is exhaustive, so an empty run would tell HealthCheckRunner to clear every stored row of it
+    public function testRunChecksThrowsWithoutASiteUrl(): void
     {
         $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => [], 'warnings' => []]), null);
 
-        $this->assertSame([], $provider->runChecks());
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
     }
 
     public function testRunChecksStatusIsOkWithNoErrorsOrWarnings(): void

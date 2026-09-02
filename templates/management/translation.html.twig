@@ -6,7 +6,7 @@
     <p class="text-muted">{{ subject.description|trans({}, 'site') }}</p>
 
     {% if locales|length > 1 %}
-        <ul class="nav nav-pills mb-3">
+        <ul class="nav nav-pills mb-3" data-site-content-locales>
             {% for code, name in locales %}
                 <li class="nav-item">
                     <a class="nav-link{{ code == locale ? ' active' : '' }}" href="{{ path(subject.route, {id: subject.id, locale: code}) }}">{{ name }}</a>

@@ -63,6 +63,16 @@ class NavbarBrandLinkTest extends TestCase
         );
     }
 
+    // The empty alt says the image is decorative, aria-hidden says it on purpose - an accessibility checker reading the markup alone cannot tell an intentional alt="" from a forgotten one otherwise (see ConfigBundle's ContentQualityClient)
+    public function testTheLogoIsMarkedDecorativeWhenTheNameIsPrintedBesideIt(): void
+    {
+        $this->assertSame(
+            2,
+            substr_count($this->template(), '{% if showBrandName %} aria-hidden="true"{% endif %}'),
+            'A navbar logo is left without aria-hidden while the name is printed next to it.'
+        );
+    }
+
     // _links.scss underlines every hovered link, which would now be drawn through the name when the logo is the part being hovered
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
     public function testEachStylesheetKeepsTheBrandLinksUnderlineOff(string $file): void

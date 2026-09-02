@@ -103,6 +103,29 @@ class SiteMediaUsageProviderTest extends TestCase
         $usages = $provider->getUsages([$media]);
 
         $this->assertSame('label.media_used_in_page_block', $usages[3][0]['label']);
+        $this->assertFalse($usages[3][0]['binned']);
+    }
+
+    // The usage of a page in the bin is reported as it stands, only marked: dropping it would make the media read as unused and hand it to the delete button (see MediaUsageProviderInterface)
+    public function testGetUsagesMarksTheUsageOfABinnedPage(): void
+    {
+        $block = new Block();
+        new \ReflectionProperty(Block::class, 'id')->setValue($block, 11);
+
+        $media = $this->mediaWithId(5);
+        $media->setBlock($block);
+
+        $page = new Page();
+        $page->setTitle('Old page');
+        $page->addBlock($block);
+        $page->setIsDeleted(true);
+
+        $provider = $this->createProvider($this->createPageRepository([$page], []));
+
+        $usages = $provider->getUsages([$media]);
+
+        $this->assertSame('label.media_used_in_page_block', $usages[5][0]['label']);
+        $this->assertTrue($usages[5][0]['binned']);
     }
 
     // A media set as a Page's own og-image override is reported as such

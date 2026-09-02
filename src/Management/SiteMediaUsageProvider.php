@@ -62,6 +62,8 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
                             '%page%' => $page->getTitle(),
                         ], 'site'),
                         'url' => $this->pageEditUrl($page, $block),
+                        // A page in the bin still holds its blocks, and its medias with them: the usage is reported as it stands, only marked for what it is (see MediaUsageProviderInterface)
+                        'binned' => $page->isDeleted(),
                     ];
                 }
             }
@@ -82,6 +84,7 @@ class SiteMediaUsageProvider implements MediaUsageProviderInterface
             $usages[$page->getOgImage()->getId()][] = [
                 'label' => $this->translator->trans('label.media_used_as_og_image', ['%page%' => $page->getTitle()], 'site'),
                 'url' => $this->pageEditUrl($page),
+                'binned' => $page->isDeleted(),
             ];
         }
     }

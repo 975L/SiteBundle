@@ -106,18 +106,24 @@ class MixedContentHealthCheckProviderTest extends TestCase
         $this->assertSame('mixed-content', $provider->getKind());
     }
 
-    public function testRunChecksReturnsEmptyArrayWhenSiteIsNotHttps(): void
+    // Same as above: an http site is a configuration this check cannot run against, not a site whose stored rows have all become stale
+    public function testRunChecksThrowsWhenSiteIsNotHttps(): void
     {
         $provider = $this->createProvider([$this->createPage('home')], $this->createStub(MixedContentClient::class), 'http://example.com');
 
-        $this->assertSame([], $provider->runChecks());
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
     }
 
-    public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
+    // Throws rather than returning empty: the kind is exhaustive, so an empty run would tell HealthCheckRunner to clear every stored row of it
+    public function testRunChecksThrowsWithoutASiteUrl(): void
     {
         $provider = $this->createProvider([$this->createPage('home')], $this->createStub(MixedContentClient::class), null);
 
-        $this->assertSame([], $provider->runChecks());
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
     }
 
     public function testRunChecksStatusIsOkWhenNoInsecureResourceFound(): void

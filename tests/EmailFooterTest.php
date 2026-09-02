@@ -13,7 +13,7 @@ namespace c975L\SiteBundle\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// An email's footer links read like the "email-text-sent-by" line they sit next to - one centered inline row, grey, small and undecorated - not like the page's colored footer band, whose --footer-text is white on the white background an email keeps
+// An email's footer links read like the "layout_sent_by" line they sit next to - one centered inline row, grey, small and undecorated - not like the page's colored footer band, whose --footer-text is white on the white background an email keeps
 class EmailFooterTest extends TestCase
 {
     /**

@@ -1,7 +1,6 @@
 {# <twig:c975LSite:General:Navbar/> #}
 {% set logo = site_media('logo') %}
 {% set siteName = config('site-name') %}
-{% set siteTagline = config('site-tagline') %}
 {% set showSiteName = config('site-navbar-show-name') %}
 {# Read by both branches below, hence set here: a "set" inside the first one never runs on the fallback bar #}
 {% set showBrandName = showSiteName and siteName is not null %}
@@ -23,8 +22,8 @@
                                 <span class="menu-logo">
 {# eager: the navbar logo is above the fold on every page #}
 {# Intrinsic dimensions, the free-text width/height possibly holding an unusable "50%"; older rows have neither, hence the fallback #}
-{# Decorative once the name is printed beside it, both being inside the same link: an alt there would have the link read its own name twice #}
-                                    <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
+{# Decorative once the name is printed beside it, both being inside the same link: an alt there would have the link read its own name twice. aria-hidden says so outright rather than leaving an empty alt to be read as an oversight - by a reader as much as by an accessibility checker #}
+                                    <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %}{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
                                 </span>
                             {% endif %}
 
@@ -35,9 +34,11 @@
                     {% endif %}
                 </div>
 
-                {# site-tagline is authored via a rich-text field in the backoffice, so it comes back wrapped in a <div> #}
-                {% if siteTagline is not null %}
-                    <div class="menu-site-tagline">{{ siteTagline|raw }}</div>
+                {# The tagline, and anything else the site says under its own name: blocks of the "navbar-brand" menu, so it is written once and read in each of the site's languages - it was the "site-tagline" setting, which a config entry says in one language to everyone #}
+                {% if menu_blocks('navbar-brand') is not empty %}
+                    <div class="menu-site-tagline">
+                        <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar-brand') }}" />
+                    </div>
                 {% endif %}
             </div>
 
@@ -60,8 +61,8 @@
             <a href="{{ path('page_home') }}" class="nav-simple-brand">
                 {% if logo is not null %}
 {# eager, never lazy: same reason as the menu logo above #}
-{# Decorative once the name is printed under it, both being inside the same link: an alt there would have the link read its own name twice #}
-                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}" class="img" height="70" loading="eager" fetchpriority="high">
+{# Decorative once the name is printed under it, both being inside the same link: an alt there would have the link read its own name twice. aria-hidden says so outright, same as the menu brand above #}
+                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %} class="img" height="70" loading="eager" fetchpriority="high">
                 {% endif %}
 
                 {% if showBrandName %}

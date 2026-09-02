@@ -38,6 +38,7 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
     // Written down rather than taken from the clock: a demo site is reloaded often, and a date moving with each reload would have "published three days ago" say something else in every take of the same recorded sequence
     private const string CREATION_HOME = '2026-01-08';
     private const string CREATION_SERVICES = '2026-02-04';
+    private const string CREATION_FORMER_OFFER = '2026-02-12';
     private const string CREATION_HISTORY = '2026-03-11';
 
     public function __construct(
@@ -67,6 +68,13 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
         yield $services;
 
         yield $this->page('notre-histoire', 'history', self::CREATION_HISTORY);
+
+        // One page already in the bin, which is what a bin is: a site that never binned anything shows an empty
+        // screen where the two things a bin is for - putting a page back, or removing it for good - have nothing to
+        // act on. Unpublished with it, the way trashing a page unpublishes it (see PageCrudController::trash)
+        yield $this->page('ancienne-offre', 'former_offer', self::CREATION_FORMER_OFFER)
+            ->setIsPublished(false)
+            ->setIsDeleted(true);
 
         $group = new CollectionGroup()
             ->setName($this->trans('label.site_sample_collection_name'))

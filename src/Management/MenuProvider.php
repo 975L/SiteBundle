@@ -37,6 +37,7 @@ class MenuProvider implements MenuProviderInterface
             'page' => [
                 'controller' => PageCrudController::class,
                 'label' => 'label.pages',
+                'narration' => 'narration.pages',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-file',
                 // Same key as page_crud_index.html.twig/page_crud_edit.html.twig's own explanatory text - one text, reused, not a separate onboarding-only string (see MenuProviderInterface::getMenus())
@@ -47,6 +48,7 @@ class MenuProvider implements MenuProviderInterface
             'menu' => [
                 'controller' => MenuCrudController::class,
                 'label' => 'label.menus',
+                'narration' => 'narration.menus',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-bars',
                 'tier' => 'advanced',
@@ -57,6 +59,7 @@ class MenuProvider implements MenuProviderInterface
             'collection' => [
                 'controller' => CollectionCrudController::class,
                 'label' => 'label.collections',
+                'narration' => 'narration.collections',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-layer-group',
                 // The bar CollectionCrudController sets on its own index

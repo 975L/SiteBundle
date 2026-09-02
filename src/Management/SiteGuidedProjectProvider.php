@@ -34,11 +34,13 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->collectionProject(),
             $this->pageCreationProject(),
             $this->pageSeoProject(),
+            $this->pageTranslationProject(),
             $this->pageHealthProject(),
             $this->pageRevisionProject(),
             $this->trashProject(),
             $this->contentExportProject(),
             $this->pageMenuProject(),
+            $this->menuTranslationProject(),
             $this->footerProject(),
         ];
     }
@@ -57,40 +59,48 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_collection_open',
                     'description' => 'description.guided_step_collection_open',
+                    'narration' => 'narration.guided_step_collection_open',
                     'url' => $this->indexUrl(CollectionCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_collection_new',
+                    'narration' => 'narration.guided_step_collection_new',
                     'highlight' => '.action-new',
                 ],
                 [
                     'label' => 'label.guided_step_collection_name',
                     'description' => 'description.guided_step_collection_name',
+                    'narration' => 'narration.guided_step_collection_name',
                     'highlight' => '#CollectionGroup_name',
                 ],
                 [
                     'label' => 'label.guided_step_collection_save',
+                    'narration' => 'narration.guided_step_collection_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_collection_items',
                     'description' => 'description.guided_step_collection_items',
+                    'narration' => 'narration.guided_step_collection_items',
                     'highlight' => '.action-items',
                 ],
                 [
                     'label' => 'label.guided_step_collection_add_item',
                     'description' => 'description.guided_step_collection_add_item',
+                    'narration' => 'narration.guided_step_collection_add_item',
                     'highlight' => '.action-new',
                 ],
                 [
                     // The row marker collection_item_crud_index.html.twig opts each item into, read by UiBundle's ea-index-sort.js - an index row carries no id of its own to point at
                     'label' => 'label.guided_step_collection_order',
                     'description' => 'description.guided_step_collection_order',
+                    'narration' => 'narration.guided_step_collection_order',
                     'highlight' => '[data-reorder-group]',
                 ],
                 [
                     'label' => 'label.guided_step_collection_display',
                     'description' => 'description.guided_step_collection_display',
+                    'narration' => 'narration.guided_step_collection_display',
                 ],
             ],
         ];
@@ -110,45 +120,54 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_creation_open',
                     'description' => 'description.guided_step_page_creation_open',
+                    'narration' => 'narration.guided_step_page_creation_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_new',
                     'description' => 'description.guided_step_page_creation_new',
+                    'narration' => 'narration.guided_step_page_creation_new',
                     'highlight' => '.action-new',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_title',
                     'description' => 'description.guided_step_page_creation_title',
+                    'narration' => 'narration.guided_step_page_creation_title',
                     'highlight' => '#Page_title',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_save',
                     'description' => 'description.guided_step_page_creation_save',
+                    'narration' => 'narration.guided_step_page_creation_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_reopen',
                     'description' => 'description.guided_step_page_creation_reopen',
+                    'narration' => 'narration.guided_step_page_creation_reopen',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_blocks',
                     'description' => 'description.guided_step_page_creation_blocks',
+                    'narration' => 'narration.guided_step_page_creation_blocks',
                     'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_publish',
                     'description' => 'description.guided_step_page_creation_publish',
+                    'narration' => 'narration.guided_step_page_creation_publish',
                     'highlight' => '#Page_isPublished',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_save_again',
+                    'narration' => 'narration.guided_step_page_creation_save_again',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_view',
                     'description' => 'description.guided_step_page_creation_view',
+                    'narration' => 'narration.guided_step_page_creation_view',
                     'highlight' => '.action-viewOnSite',
                 ],
             ],
@@ -169,47 +188,113 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_seo_open',
                     'description' => 'description.guided_step_page_seo_open',
+                    'narration' => 'narration.guided_step_page_seo_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_edit',
                     'description' => 'description.guided_step_page_seo_edit',
+                    'narration' => 'narration.guided_step_page_seo_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_slug',
                     'description' => 'description.guided_step_page_seo_slug',
+                    'narration' => 'narration.guided_step_page_seo_slug',
                     'highlight' => '#Page_slug',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_summary',
                     'description' => 'description.guided_step_page_seo_summary',
+                    'narration' => 'narration.guided_step_page_seo_summary',
                     'highlight' => '#Page_summarySocialNetwork',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_image',
                     'description' => 'description.guided_step_page_seo_image',
+                    'narration' => 'narration.guided_step_page_seo_image',
                     // The wrapping div OgImageType renders as a compound type, the upload sitting inside it
                     'highlight' => '#Page_ogImage',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_indexable',
                     'description' => 'description.guided_step_page_seo_indexable',
+                    'narration' => 'narration.guided_step_page_seo_indexable',
                     'highlight' => '#Page_isIndexable',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_frequency',
                     'description' => 'description.guided_step_page_seo_frequency',
+                    'narration' => 'narration.guided_step_page_seo_frequency',
                     // The step names the priority right below it rather than taking a ninth step of its own: the two are read together, and are the only sitemap hints
-                    'highlight' => '#Page_changeFrequency + .ts-wrapper',
+                    'highlight' => '#Page_changeFrequency',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_save',
+                    'narration' => 'narration.guided_step_page_seo_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_check',
                     'description' => 'description.guided_step_page_seo_check',
+                    'narration' => 'narration.guided_step_page_seo_check',
+                ],
+            ],
+        ];
+    }
+
+    // A page written and made findable is said again in each of the site's languages, on its very own edit screen opened on another one
+    private function pageTranslationProject(): array
+    {
+        return [
+            'slug' => 'site-page-translation',
+            'label' => 'label.guided_project_page_translation',
+            'description' => 'description.guided_project_page_translation',
+            'translation_domain' => 'site',
+            'order' => 2035,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_page_translation_open',
+                    'description' => 'description.guided_step_page_translation_open',
+                    'narration' => 'narration.guided_step_page_translation_open',
+                    'url' => $this->indexUrl(PageCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_action',
+                    'description' => 'description.guided_step_page_translation_action',
+                    'narration' => 'narration.guided_step_page_translation_action',
+                    // Only shown where the site declares more than one language, which is what the step's description says
+                    'highlight' => '.action-translate',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_locale',
+                    'description' => 'description.guided_step_page_translation_locale',
+                    'narration' => 'narration.guided_step_page_translation_locale',
+                    // The pill bar of page_crud_edit.html.twig, which carries this marker for want of a class of its own
+                    'highlight' => '[data-site-content-locales]',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_title',
+                    'description' => 'description.guided_step_page_translation_title',
+                    'narration' => 'narration.guided_step_page_translation_title',
+                    'highlight' => '#Page_title',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_blocks',
+                    'description' => 'description.guided_step_page_translation_blocks',
+                    'narration' => 'narration.guided_step_page_translation_blocks',
+                    'highlight' => '[data-ui-sort-group="block"]',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_save',
+                    'narration' => 'narration.guided_step_page_translation_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_check',
+                    'description' => 'description.guided_step_page_translation_check',
+                    'narration' => 'narration.guided_step_page_translation_check',
                 ],
             ],
         ];
@@ -229,35 +314,41 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_health_open',
                     'description' => 'description.guided_step_page_health_open',
+                    'narration' => 'narration.guided_step_page_health_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_page_health_edit',
                     'description' => 'description.guided_step_page_health_edit',
+                    'narration' => 'narration.guided_step_page_health_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     // The QR code comes before the tab below, and not after it: it sits in the "Data" tab, the one already open, so the parcours never sends the user back and forth between the two
                     'label' => 'label.guided_step_page_health_qrcode',
                     'description' => 'description.guided_step_page_health_qrcode',
+                    'narration' => 'narration.guided_step_page_health_qrcode',
                     'highlight' => '[data-page-qrcode]',
                 ],
                 [
                     // The tab link itself, the user opening the pane by clicking it: highlight() only expands the sidebar's own submenu (see guided-ui.js), so a step pointing straight into an inactive tab would outline something nobody sees. Positional rather than by id, EasyAdmin building the id off the translated label - the health check tab is the last one configureFields() declares
                     'label' => 'label.guided_step_page_health_tab',
                     'description' => 'description.guided_step_page_health_tab',
+                    'narration' => 'narration.guided_step_page_health_tab',
                     'highlight' => '.form-tabs-tablist .nav-item:last-child .nav-link',
                 ],
                 [
                     // ConfigBundle's own health check table, included as-is by PageHealthCheckPanelType's widget (see page_crud_form_theme.html.twig)
                     'label' => 'label.guided_step_page_health_table',
                     'description' => 'description.guided_step_page_health_table',
+                    'narration' => 'narration.guided_step_page_health_table',
                     'highlight' => '[data-controller="health-check-table"]',
                 ],
                 [
                     // Running the check is ConfigBundle's own screen and its own parcours ("config-health-check"), a site-wide one this step names rather than sends the user into
                     'label' => 'label.guided_step_page_health_run',
                     'description' => 'description.guided_step_page_health_run',
+                    'narration' => 'narration.guided_step_page_health_run',
                 ],
             ],
         ];
@@ -277,31 +368,37 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_revision_open',
                     'description' => 'description.guided_step_page_revision_open',
+                    'narration' => 'narration.guided_step_page_revision_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_duplicate',
                     'description' => 'description.guided_step_page_revision_duplicate',
+                    'narration' => 'narration.guided_step_page_revision_duplicate',
                     'highlight' => '.action-duplicate',
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_rework',
                     'description' => 'description.guided_step_page_revision_rework',
+                    'narration' => 'narration.guided_step_page_revision_rework',
                     'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_preview',
                     'description' => 'description.guided_step_page_revision_preview',
+                    'narration' => 'narration.guided_step_page_revision_preview',
                     'highlight' => '.action-preview',
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_replace',
                     'description' => 'description.guided_step_page_revision_replace',
+                    'narration' => 'narration.guided_step_page_revision_replace',
                     'highlight' => '.action-publishAsReplacement',
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_done',
                     'description' => 'description.guided_step_page_revision_done',
+                    'narration' => 'narration.guided_step_page_revision_done',
                 ],
             ],
         ];
@@ -322,32 +419,38 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_trash_open',
                     'description' => 'description.guided_step_trash_open',
+                    'narration' => 'narration.guided_step_trash_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_trash_delete',
                     'description' => 'description.guided_step_trash_delete',
+                    'narration' => 'narration.guided_step_trash_delete',
                     'highlight' => '.action-delete',
                 ],
                 [
                     'label' => 'label.guided_step_trash_open_trash',
                     'description' => 'description.guided_step_trash_open_trash',
+                    'narration' => 'narration.guided_step_trash_open_trash',
                     // The one button toggling between the pages and the trash, see PageCrudController::trashAction()
                     'highlight' => '.action-trash',
                 ],
                 [
                     'label' => 'label.guided_step_trash_restore',
                     'description' => 'description.guided_step_trash_restore',
+                    'narration' => 'narration.guided_step_trash_restore',
                     'highlight' => '.action-restore',
                 ],
                 [
                     'label' => 'label.guided_step_trash_delete_permanently',
                     'description' => 'description.guided_step_trash_delete_permanently',
+                    'narration' => 'narration.guided_step_trash_delete_permanently',
                     'highlight' => '.action-deletePermanently',
                 ],
                 [
                     'label' => 'label.guided_step_trash_back',
                     'description' => 'description.guided_step_trash_back',
+                    'narration' => 'narration.guided_step_trash_back',
                 ],
             ],
         ];
@@ -368,28 +471,33 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_content_export_open',
                     'description' => 'description.guided_step_content_export_open',
+                    'narration' => 'narration.guided_step_content_export_open',
                     'url' => $this->indexUrl(PageCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_content_export_select',
                     'description' => 'description.guided_step_content_export_select',
+                    'narration' => 'narration.guided_step_content_export_select',
                     // EasyAdmin's own "check them all" box, in the index header - the batch actions stay hidden until at least one row is checked, so this step comes before the export button below
                     'highlight' => '#form-batch-checkbox-all',
                 ],
                 [
                     'label' => 'label.guided_step_content_export_run',
                     'description' => 'description.guided_step_content_export_run',
+                    'narration' => 'narration.guided_step_content_export_run',
                     'highlight' => '.action-exportSelection',
                 ],
                 [
                     // The zip is re-uploaded from ConfigBundle's own import screen, a stricter one this parcours does not walk into (see its README) - the step names it rather than sending the user there
                     'label' => 'label.guided_step_content_export_import',
                     'description' => 'description.guided_step_content_export_import',
+                    'narration' => 'narration.guided_step_content_export_import',
                 ],
                 [
                     // The other export, a global one this time: the pages as a table, in the format the reader needs. An ActionGroup carries no default class, so PageCrudController states this one itself
                     'label' => 'label.guided_step_content_export_formats',
                     'description' => 'description.guided_step_content_export_formats',
+                    'narration' => 'narration.guided_step_content_export_formats',
                     'highlight' => '.action-export',
                 ],
             ],
@@ -410,35 +518,102 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_page_menu_open',
                     'description' => 'description.guided_step_page_menu_open',
+                    'narration' => 'narration.guided_step_page_menu_open',
                     'url' => $this->indexUrl(MenuCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_create',
                     'description' => 'description.guided_step_page_menu_create',
+                    'narration' => 'narration.guided_step_page_menu_create',
                     // One create button per location not created yet, so the value is what tells the navbar's apart - and nothing is highlighted on a site already holding it, which is what the step's own description says to do
                     'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR),
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_edit',
                     'description' => 'description.guided_step_page_menu_edit',
+                    'narration' => 'narration.guided_step_page_menu_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_add_link',
                     'description' => 'description.guided_step_page_menu_add_link',
+                    'narration' => 'narration.guided_step_page_menu_add_link',
                     'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_target',
                     'description' => 'description.guided_step_page_menu_target',
+                    'narration' => 'narration.guided_step_page_menu_target',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_save',
+                    'narration' => 'narration.guided_step_page_menu_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_check',
                     'description' => 'description.guided_step_page_menu_check',
+                    'narration' => 'narration.guided_step_page_menu_check',
+                ],
+                [
+                    'label' => 'label.guided_step_page_menu_brand',
+                    'description' => 'description.guided_step_page_menu_brand',
+                    'narration' => 'narration.guided_step_page_menu_brand',
+                    // Back on the same screen, for the fifth location: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting
+                    'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR_BRAND),
+                ],
+                [
+                    'label' => 'label.guided_step_page_menu_brand_write',
+                    'description' => 'description.guided_step_page_menu_brand_write',
+                    'narration' => 'narration.guided_step_page_menu_brand_write',
+                    'highlight' => '[data-ui-sort-group="block"]',
+                ],
+            ],
+        ];
+    }
+
+    // A menu says its own labels again in each language from a screen of its own, an item taking its label from the page it points at being translated with that page
+    private function menuTranslationProject(): array
+    {
+        return [
+            'slug' => 'site-menu-translation',
+            'label' => 'label.guided_project_menu_translation',
+            'description' => 'description.guided_project_menu_translation',
+            'translation_domain' => 'site',
+            'order' => 2085,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_menu_translation_open',
+                    'description' => 'description.guided_step_menu_translation_open',
+                    'narration' => 'narration.guided_step_menu_translation_open',
+                    'url' => $this->indexUrl(MenuCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_menu_translation_action',
+                    'description' => 'description.guided_step_menu_translation_action',
+                    'narration' => 'narration.guided_step_menu_translation_action',
+                    // Only shown where the site declares more than one language, which is what the step's description says
+                    'highlight' => '.action-translate',
+                ],
+                [
+                    'label' => 'label.guided_step_menu_translation_locale',
+                    'description' => 'description.guided_step_menu_translation_locale',
+                    'narration' => 'narration.guided_step_menu_translation_locale',
+                    // The pill bar of translation.html.twig, which carries this marker for want of a class of its own
+                    'highlight' => '[data-site-content-locales]',
+                ],
+                [
+                    'label' => 'label.guided_step_menu_translation_write',
+                    'description' => 'description.guided_step_menu_translation_write',
+                    'narration' => 'narration.guided_step_menu_translation_write',
+                    'highlight' => 'textarea.form-control',
+                ],
+                [
+                    'label' => 'label.guided_step_menu_translation_save',
+                    'narration' => 'narration.guided_step_menu_translation_save',
+                    // The screen is a form of its own, not an EasyAdmin CRUD, so there is no ".action-saveAndReturn" here
+                    'highlight' => 'form button[type="submit"]',
                 ],
             ],
         ];
@@ -458,41 +633,49 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_footer_open',
                     'description' => 'description.guided_step_footer_open',
+                    'narration' => 'narration.guided_step_footer_open',
                     'url' => $this->indexUrl(MenuCrudController::class),
                 ],
                 [
                     'label' => 'label.guided_step_footer_create',
                     'description' => 'description.guided_step_footer_create',
+                    'narration' => 'narration.guided_step_footer_create',
                     // Same button as the navbar step above, for the footer's own location - nothing is highlighted on a site already holding the row, which is what the step's description says to do
                     'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_FOOTER),
                 ],
                 [
                     'label' => 'label.guided_step_footer_edit',
                     'description' => 'description.guided_step_footer_edit',
+                    'narration' => 'narration.guided_step_footer_edit',
                     'highlight' => '.action-edit',
                 ],
                 [
                     'label' => 'label.guided_step_footer_items',
                     'description' => 'description.guided_step_footer_items',
+                    'narration' => 'narration.guided_step_footer_items',
                     'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
                     'label' => 'label.guided_step_footer_group',
                     'description' => 'description.guided_step_footer_group',
+                    'narration' => 'narration.guided_step_footer_group',
                 ],
                 [
                     'label' => 'label.guided_step_footer_style',
                     'description' => 'description.guided_step_footer_style',
+                    'narration' => 'narration.guided_step_footer_style',
                     // Offered on the footer alone, see MenuCrudController::configureFields()
-                    'highlight' => '#Menu_style + .ts-wrapper',
+                    'highlight' => '#Menu_style',
                 ],
                 [
                     'label' => 'label.guided_step_footer_save',
+                    'narration' => 'narration.guided_step_footer_save',
                     'highlight' => '.action-saveAndReturn',
                 ],
                 [
                     'label' => 'label.guided_step_footer_check',
                     'description' => 'description.guided_step_footer_check',
+                    'narration' => 'narration.guided_step_footer_check',
                 ],
             ],
         ];

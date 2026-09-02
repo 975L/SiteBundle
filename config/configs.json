@@ -1,16 +1,5 @@
 [
     {
-        "label": "label.site_tagline",
-        "slug": "site-tagline",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "text",
-        "group": "general",
-        "severity": null,
-        "description": "description.site_tagline"
-    },
-    {
         "label": "label.site_navbar_show_name",
         "slug": "site-navbar-show-name",
         "sensitive": false,
@@ -49,50 +38,6 @@
         "group": "general",
         "severity": null,
         "description": "description.site_preconnect"
-    },
-    {
-        "label": "label.email_text_no_spam",
-        "slug": "email-text-no-spam",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "html",
-        "group": "email",
-        "severity": null,
-        "description": "description.email_text_no_spam"
-    },
-    {
-        "label": "label.email_text_hello",
-        "slug": "email-text-hello",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "html",
-        "group": "email",
-        "severity": null,
-        "description": "description.email_text_hello"
-    },
-    {
-        "label": "label.email_text_closing",
-        "slug": "email-text-closing",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "html",
-        "group": "email",
-        "severity": null,
-        "description": "description.email_text_closing"
-    },
-    {
-        "label": "label.email_text_sent_by",
-        "slug": "email-text-sent-by",
-        "sensitive": false,
-        "restricted": false,
-        "value": null,
-        "kind": "html",
-        "group": "email",
-        "severity": null,
-        "description": "description.email_text_sent_by"
     },
     {
         "label": "label.site_menu_link_copyright_auto",

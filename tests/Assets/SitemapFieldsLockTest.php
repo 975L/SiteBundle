@@ -12,22 +12,26 @@ namespace c975L\SiteBundle\Tests\Assets;
 
 use PHPUnit\Framework\TestCase;
 
-// Guards assets/js/sitemap-fields.js, which dims and blocks the sitemap fields a page's state makes meaningless - the repository has no browser to run it in, and the back-office layout carries a nonce on style-src, under which anything the controller writes to a style attribute is silently dropped
+// What SitemapFieldsBehaviourTest cannot see about assets/js/sitemap-fields.js: it mounts markup of its own, so a class the controller writes is a class it also invents, and a style silently dropped by the back-office nonce looks in a scenario exactly like a style that applied
+// Everything the scenarios do prove - the readonly, the aria, the tab order, the dimming - was taken out of here rather than asserted twice
 class SitemapFieldsLockTest extends TestCase
 {
     private const string CONTROLLER = 'assets/js/sitemap-fields.js';
 
-    // .ui-field-locked comes from UiBundle's management.css (sass/management/_form-fields.scss), hence the c975l/core-bundle floor in composer.json
-    public function testTheLockedStateIsCarriedByTheSharedClass(): void
+    // The class comes from UiBundle (sass/management/_form-fields.scss), hence the c975l/core-bundle floor in composer.json: a scenario sees the class land on the row, never that anything paints it
+    public function testTheLockedRowIsPaintedByTheClassUiBundleShips(): void
     {
+        $stylesheet = \dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/UiBundle/public/css/management.css';
+        $this->assertFileExists($stylesheet, 'The back-office stylesheet this bundle locks its rows with is not installed.');
+
         $this->assertStringContainsString(
-            "classList.toggle('ui-field-locked', locked)",
-            $this->read(),
-            'sitemap-fields.js no longer marks a locked row with the "ui-field-locked" class UiBundle styles.'
+            '.ui-field-locked',
+            (string) file_get_contents($stylesheet),
+            'UiBundle no longer paints ".ui-field-locked", so a locked row is marked with a class nothing draws and looks fully editable.'
         );
     }
 
-    // A style written from script never applies under the back-office nonce, so the row stayed fully bright and clickable
+    // A style written from script never applies under the back-office nonce, so the row would stay bright and clickable while reading as locked
     public function testNoStyleIsWrittenFromScript(): void
     {
         $controller = $this->read();
@@ -37,22 +41,10 @@ class SitemapFieldsLockTest extends TestCase
         $this->assertStringNotContainsString('setAttribute(\'style\'', $controller, 'sitemap-fields.js sets an inline style again, which the back-office style-src nonce drops.');
     }
 
-    // "disabled" isn't submitted, so the locked values would be wiped on every save of a non-indexable page
-    public function testTheLockedFieldsStaySubmitted(): void
+    // The scenario proves the fields still leave with the form; this proves no future edit reaches for the one attribute that would stop them
+    public function testTheLockIsNeverATrueDisabling(): void
     {
-        $controller = $this->read();
-
-        $this->assertStringContainsString('field.readOnly = locked;', $controller, 'sitemap-fields.js no longer keeps the locked fields readonly.');
-        $this->assertStringNotContainsString('.disabled =', $controller, 'sitemap-fields.js disables the locked fields, whose values are then dropped on save.');
-    }
-
-    // The class alone says nothing to a screen reader, and the field would still be reachable by tab
-    public function testTheLockedStateIsExposedToAssistiveTech(): void
-    {
-        $controller = $this->read();
-
-        $this->assertStringContainsString("setAttribute('aria-disabled'", $controller, 'sitemap-fields.js no longer tells assistive tech a field is locked.');
-        $this->assertStringContainsString('field.tabIndex = locked ? -1 : 0;', $controller, 'sitemap-fields.js leaves a locked field reachable by the keyboard.');
+        $this->assertStringNotContainsString('.disabled =', $this->read(), 'sitemap-fields.js disables the locked fields, whose values are then dropped on save.');
     }
 
     private function read(): string

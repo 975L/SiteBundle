@@ -26,6 +26,11 @@ class Menu implements HasBlocksInterface, \Stringable
 
     // Site-wide menus, one row per location - enforced at the DB level (see $location). Each owns a single ordered $blocks collection: menu links are the "menu_link" Block kind (see MenuLinkType/MenuExtension::getMenuLinkUrl()), sortable alongside any other block
     public const LOCATION_NAVBAR = 'navbar';
+
+    // The line under the site's name in the navigation bar - its tagline, and anything else a site wants to say there.
+    // A location rather than a setting: a sentence a visitor reads has to be said in each of the site's languages, which a config entry cannot do and a block does without being asked (see Navbar.html.twig)
+    public const LOCATION_NAVBAR_BRAND = 'navbar-brand';
+
     public const LOCATION_FOOTER = 'footer';
     public const LOCATION_EMAIL_FOOTER = 'email-footer';
     public const LOCATION_EMAIL_HEADER = 'email-header';

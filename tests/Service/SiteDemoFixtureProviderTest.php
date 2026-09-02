@@ -109,15 +109,34 @@ class SiteDemoFixtureProviderTest extends TestCase
     {
         $pages = array_filter($this->fixtures($this->createProvider()), static fn (object $e): bool => $e instanceof Page);
 
-        $this->assertCount(3, $pages);
+        $this->assertCount(4, $pages);
 
         // The home page opens on a hero and carries two alerts under it, the others two sections apiece - "nos-services" with its collection block on top of them
-        $expected = ['home' => 3, 'nos-services' => 3, 'notre-histoire' => 2];
+        $expected = ['home' => 3, 'nos-services' => 3, 'notre-histoire' => 2, 'ancienne-offre' => 2];
 
         foreach ($pages as $page) {
-            $this->assertTrue($page->isPublished(), (string) $page->getSlug());
             $this->assertCount($expected[$page->getSlug()], $page->getBlocks(), (string) $page->getSlug());
+
+            if ('ancienne-offre' === $page->getSlug()) {
+                continue;
+            }
+
+            $this->assertTrue($page->isPublished(), (string) $page->getSlug());
         }
+    }
+
+    // A bin that has never been used shows an empty screen where putting a page back and removing it for good both have nothing to act on - and unpublished with it, the way trashing a page unpublishes it
+    public function testOnePageIsAlreadyInTheBin(): void
+    {
+        $binned = array_filter(
+            $this->fixtures($this->createProvider()),
+            static fn (object $e): bool => $e instanceof Page && $e->isDeleted(),
+        );
+
+        $this->assertCount(1, $binned);
+        $page = reset($binned);
+        $this->assertSame('ancienne-offre', $page->getSlug());
+        $this->assertFalse($page->isPublished());
     }
 
     // What a demo says about itself is a block like any other, so a visitor can open it in the editor and change it

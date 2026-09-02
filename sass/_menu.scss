@@ -110,7 +110,18 @@ body.navbar-fixed {
     font-weight: normal;
     color: var(--navbar-site-tagline-color);
     margin-bottom: 5px;
-    // Trix (backoffice rich-text editor) wraps the saved value in its own <div>
+    // A block of the "navbar-brand" menu arrives with a page section's own markup (see Navbar.html.twig): the shared gutter and measure, plus - for the "text_hook" kind a tagline is usually written as - a lead-in paragraph's scale and its accent bar. Each one is a custom property with a fallback, which is what lets them be turned off here rather than fought with "!important"
+    --section-wrap-gutter: 0;
+    --section-wrap-max-width: none;
+    --text-hook-size: inherit;
+    --text-hook-line-height: inherit;
+    --text-hook-max-width: none;
+    --text-hook-color: inherit;
+    --text-hook-margin-bottom: 0;
+    --text-hook-bar-width: 0;
+    --text-hook-bar-gap: 0;
+    --text-hook-standalone-margin: 0;
+    // Trix (backoffice rich-text editor) wraps the saved value in its own <div>, and so does every block around it
     div {
         margin: 0;
         // The global "*" rule matches that <div> directly, beating the color it would have inherited

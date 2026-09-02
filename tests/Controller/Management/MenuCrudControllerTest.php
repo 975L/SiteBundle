@@ -194,7 +194,7 @@ class MenuCrudControllerTest extends TestCase
         $choices = $location->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES);
 
         $this->assertSame(
-            [Menu::LOCATION_NAVBAR, Menu::LOCATION_FOOTER, Menu::LOCATION_EMAIL_HEADER, Menu::LOCATION_EMAIL_FOOTER],
+            [Menu::LOCATION_NAVBAR, Menu::LOCATION_NAVBAR_BRAND, Menu::LOCATION_FOOTER, Menu::LOCATION_EMAIL_HEADER, Menu::LOCATION_EMAIL_FOOTER],
             array_keys($choices)
         );
     }

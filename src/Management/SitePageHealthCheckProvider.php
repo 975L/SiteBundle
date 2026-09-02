@@ -12,7 +12,7 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckErrorRow;
-use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
+use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
@@ -24,7 +24,7 @@ use c975L\UiBundle\Service\ConfigEditUrlResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Runs PageSpeed Insights (Lighthouse performance/accessibility/best-practices/SEO scores, including the detailed WCAG-related audits under "accessibility", plus the errors-in-console audit) against every published page, for ConfigBundle's "Health check" dashboard page (see HealthCheckProviderInterface, run only from c975l:health-check:run)
-class SitePageHealthCheckProvider implements HealthCheckProviderInterface
+class SitePageHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     // Lighthouse's own thresholds for its 0-100 category scores (see https://developer.chrome.com/docs/lighthouse/performance/performance-scoring)
     private const int SCORE_THRESHOLD_OK = 90;
@@ -53,8 +53,9 @@ class SitePageHealthCheckProvider implements HealthCheckProviderInterface
 
     public function runChecks(): array
     {
+        // Thrown rather than returned empty: this kind is exhaustive, so an empty run tells HealthCheckRunner every stored row is stale and clears them. A missing site url says nothing about the pages already checked - the runner catches this and leaves the kind untouched
         if (!$this->configService->get('site-url')) {
-            return [];
+            throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
         }
 
         $results = [];

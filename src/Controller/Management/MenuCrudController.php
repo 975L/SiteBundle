@@ -50,6 +50,7 @@ class MenuCrudController extends AbstractCrudController
     // Public so the screen that translates a menu can name it the same way the index does (see TranslationController::menu())
     public const array LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
+        Menu::LOCATION_NAVBAR_BRAND => 'label.navbar_brand',
         Menu::LOCATION_FOOTER => 'label.footer',
         Menu::LOCATION_EMAIL_HEADER => 'label.email_header',
         Menu::LOCATION_EMAIL_FOOTER => 'label.email_footer',

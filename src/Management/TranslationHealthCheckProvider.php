@@ -11,7 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
-use c975L\ConfigBundle\Management\HealthCheckProviderInterface;
+use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\SiteUrlResolver;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Entity\Menu;
@@ -33,7 +33,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // A half-translated page is not broken - a text nobody translated keeps the one it was written in (see ContentTranslator) - so it says nothing on its own, and a site could publish "hreflang" groups pointing at pages still mostly in the first language. This is what says so.
 // Menus get a row of their own, one per menu rather than one per page: their items' labels are read on every page of the site, so a navbar left in the writing language shows up on all of them at once.
 // Nothing to report on a site declaring a single language: it returns an empty list, and the Health check dashboard shows no such rows at all.
-class TranslationHealthCheckProvider implements HealthCheckProviderInterface
+class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     // Named here rather than restated wherever a row of this kind is picked out
     public const string KIND = 'translations';
@@ -67,7 +67,12 @@ class TranslationHealthCheckProvider implements HealthCheckProviderInterface
         $results = [];
         foreach ($this->pageRepository->findAllOrdered() as $page) {
             $url = $this->pagePublicUrlResolver->resolve($page);
-            if (null === $url || !$page->isPublished()) {
+            // Thrown rather than skipped: this kind is exhaustive, so a run skipping every page returns an empty list, which tells HealthCheckRunner every stored row is stale and clears them. A url that cannot be resolved means the site url is not configured, which says nothing about the pages already checked
+            if (null === $url) {
+                throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
+            }
+
+            if (!$page->isPublished()) {
                 continue;
             }
 

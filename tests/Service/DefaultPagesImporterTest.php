@@ -24,6 +24,7 @@ use c975L\UiBundle\Repository\EmailTemplateRepository;
 use c975L\UiBundle\Repository\FormRepository;
 use c975L\UiBundle\Service\EmailTemplateFactory;
 use c975L\UiBundle\Service\FormSeeder;
+use c975L\UiBundle\Service\FormTranslator;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -108,6 +109,7 @@ class DefaultPagesImporterTest extends TestCase
             $formRepository ?? $this->createFormRepository(),
             $emailTemplateRepository ?? $this->createEmailTemplateRepository(),
             new EmailTemplateFactory(),
+            new FormTranslator(),
             $defaultLocale,
         );
 
@@ -149,6 +151,43 @@ class DefaultPagesImporterTest extends TestCase
         $pages = array_values(array_filter($persisted, static fn ($entity) => $entity instanceof Page));
         $this->assertCount(9, $pages);
         $this->assertSame('home', $pages[0]->getSlug());
+    }
+
+    // A page is one page in every language (see PageTranslator), so a bilingual site gets one set of pages and not two - it used to get one per declared locale, which meant two legal notices pointing at the same model and, on the one slug the French and English sets share, two rows for "contact" that took the whole command down on the flush
+    public function testABilingualSiteGetsOneSetOfPagesAndNoDuplicateSlug(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository();
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted), 'fr', ['fr', 'en']);
+
+        $result = $importer->import();
+
+        $this->assertSame(['created' => 9, 'skipped' => 0, 'summarised' => []], $result);
+
+        $slugs = array_map(
+            static fn (Page $page): string => (string) $page->getSlug(),
+            array_values(array_filter($persisted, static fn ($entity) => $entity instanceof Page))
+        );
+        $this->assertSame($slugs, array_unique($slugs));
+        $this->assertContains('mentions-legales', $slugs);
+        $this->assertNotContains('legal-notice', $slugs);
+    }
+
+    // The wording follows the language the site is written in, whatever else it declares
+    public function testASiteWrittenInEnglishGetsTheEnglishSet(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository();
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted), 'en', ['en', 'fr']);
+
+        $importer->import();
+
+        $slugs = array_map(
+            static fn (Page $page): string => (string) $page->getSlug(),
+            array_values(array_filter($persisted, static fn ($entity) => $entity instanceof Page))
+        );
+        $this->assertContains('legal-notice', $slugs);
+        $this->assertNotContains('mentions-legales', $slugs);
     }
 
     // The account-related pages have no SEO value, so they're seeded out of the sitemap and out of Google's index; every other default page is indexable

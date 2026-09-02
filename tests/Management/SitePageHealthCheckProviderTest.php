@@ -133,7 +133,8 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertSame('pagespeed', $provider->getKind());
     }
 
-    public function testRunChecksReturnsEmptyArrayWithoutASiteUrl(): void
+    // Throws rather than returning empty: the kind is exhaustive, so an empty run would tell HealthCheckRunner to clear every stored row of it
+    public function testRunChecksThrowsWithoutASiteUrl(): void
     {
         $provider = $this->createProvider(
             $this->createPageRepository([$this->createPage('home', 'Home')]),
@@ -141,7 +142,9 @@ class SitePageHealthCheckProviderTest extends TestCase
             $this->createConfigService(null),
         );
 
-        $this->assertSame([], $provider->runChecks());
+        $this->expectException(\RuntimeException::class);
+
+        $provider->runChecks();
     }
 
     // PSI answers by loading the page itself, so batching every page's request() up front had Google hitting this site with as many simultaneous loads as it has pages - inflating the TTFB it was measuring and dragging every score down. analyze() blocks until each page is done before the next one starts, which is the whole point; request()/read() being used again here would silently bring the batching back

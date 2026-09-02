@@ -91,10 +91,10 @@ class CollectionItemSourceProviderTest extends TestCase
 
         $item = new CollectionItem()
             ->setCollectionGroup($projects)
-            ->setTitle('Papa Câlin')
-            ->setSlug('papa-calin')
+            ->setTitle('Projet Alpha')
+            ->setSlug('projet-alpha')
             ->setDescription("Des histoires inventées à partir des idées d'enfants.")
-            ->setUrl('https://papa-calin.com');
+            ->setUrl('https://projet-alpha.example');
 
         $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
         $collectionItemRepository->method('findByCollectionGroup')->willReturn([$item]);
@@ -110,11 +110,11 @@ class CollectionItemSourceProviderTest extends TestCase
         $items = ($sources['site.collection.projects']['items'])(6);
 
         $this->assertCount(1, $items);
-        $this->assertSame('Papa Câlin', $items[0]->title);
-        $this->assertSame('papa-calin', $items[0]->slug);
+        $this->assertSame('Projet Alpha', $items[0]->title);
+        $this->assertSame('projet-alpha', $items[0]->slug);
         $this->assertSame("Des histoires inventées à partir des idées d'enfants.", $items[0]->description);
         $this->assertSame('/medias/site/collection-projects-42-abc.webp', $items[0]->imageUrl);
-        $this->assertSame('https://papa-calin.com', $items[0]->url);
+        $this->assertSame('https://projet-alpha.example', $items[0]->url);
     }
 
     // The "collection" block's title-link feature (see UiBundle's CollectionExtension) relies on this "detail" callable resolving the same slug items() exposed on the CollectionItem model
@@ -124,15 +124,15 @@ class CollectionItemSourceProviderTest extends TestCase
 
         $item = new CollectionItem()
             ->setCollectionGroup($projects)
-            ->setTitle('Papa Câlin')
-            ->setSlug('papa-calin')
+            ->setTitle('Projet Alpha')
+            ->setSlug('projet-alpha')
             ->setDescription("Des histoires inventées à partir des idées d'enfants.")
-            ->setUrl('https://papa-calin.com');
+            ->setUrl('https://projet-alpha.example');
 
         $collectionItemRepository = $this->createMock(CollectionItemRepository::class);
         $collectionItemRepository->expects($this->once())
             ->method('findOneByCollectionGroupAndSlug')
-            ->with($projects, 'papa-calin')
+            ->with($projects, 'projet-alpha')
             ->willReturn($item);
 
         $uploaderHelper = $this->createStub(UploaderHelperInterface::class);
@@ -143,13 +143,13 @@ class CollectionItemSourceProviderTest extends TestCase
             $collectionItemRepository,
             $uploaderHelper,
         )->getSources();
-        $detail = ($sources['site.collection.projects']['detail'])('papa-calin');
+        $detail = ($sources['site.collection.projects']['detail'])('projet-alpha');
 
         $this->assertSame([
-            'title' => 'Papa Câlin',
+            'title' => 'Projet Alpha',
             'description' => "Des histoires inventées à partir des idées d'enfants.",
             'imageUrl' => '/medias/site/collection-projects-42-abc.webp',
-            'url' => 'https://papa-calin.com',
+            'url' => 'https://projet-alpha.example',
         ], $detail);
     }
 
