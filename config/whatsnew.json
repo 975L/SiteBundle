@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-03",
+        "description": [
+            {
+                "en": "Your introduction paragraphs and the site name shown under your logo now follow the same weight as your titles, instead of always being bold",
+                "fr": "Vos paragraphes d'introduction et le nom du site affiché sous votre logo suivent maintenant la même graisse que vos titres, au lieu d'être toujours en gras",
+                "es": "Sus párrafos de introducción y el nombre del sitio mostrado bajo su logotipo siguen ahora el mismo grosor que sus títulos, en lugar de estar siempre en negrita"
+            }
+        ]
+    },
+    {
         "date": "2026-09-02",
         "description": [
             {

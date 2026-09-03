@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.10.4
+
+The lead line and the fallback site name follow the title weight
+
+- `.lead` takes `--font-title-weight` rather than `bold`, like the headings it shares its family with - `normal` by default (03/09/2026)
+- `.nav-simple-name` takes it too; `.menu-site-name` keeps `bold`, being set in the body family (03/09/2026)
+- New `TitleWeightTest`, locking the three title-family rules on the token in the compiled stylesheets, and `.menu-site-name`'s `bold` beside them (03/09/2026)
+
 ## v8.10.3
 
 Two guided steps and a language bar point at what is drawn

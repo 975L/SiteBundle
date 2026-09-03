@@ -46,11 +46,12 @@ h6 {
     font-size: calc(1.05rem * var(--font-size-title-scale, 1));
 }
 
+// The token rather than "bold", as the headings above take it: this line is set in the title family, and a face uploaded in one weight only would be thickened by the browser rather than by a bolder cut of itself - which is exactly what --font-title-weight exists to avoid. A site whose title family ships a bold face raises the token once, for its headings and this line together
 .lead {
     font-family: var(--font-family-title);
     color: var(--black);
     font-size: calc(1.25rem * var(--font-size-title-scale, 1));
-    font-weight: bold;
+    font-weight: var(--font-title-weight);
 }
 
 .big,

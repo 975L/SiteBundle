@@ -461,7 +461,7 @@ h6 {
   font-family: var(--font-family-title);
   color: var(--black);
   font-size: calc(1.25rem * var(--font-size-title-scale, 1));
-  font-weight: bold;
+  font-weight: var(--font-title-weight);
 }
 
 .big,
@@ -895,7 +895,7 @@ body.navbar-fixed {
 
 .nav-simple-name {
   font-size: 1.25rem;
-  font-weight: bold;
+  font-weight: var(--font-title-weight);
   margin: 0.5rem 0;
   font-family: var(--font-family-title);
   color: var(--navbar-site-name-color);

@@ -32,9 +32,10 @@
 // The site name on the fallback navbar. Same size and weight as the menu brand's .menu-site-name, stacked under the logo instead of beside it since this bar is a centered column
 // Its own token rather than the --primary the rules above hand every link here, so the name reads the same on both branches - the dark theme lightens that token. Declared on the element itself: it is a <span> inside the link now, and would otherwise just inherit that --primary
 // Same for the title font, set on the link above: _typography.scss puts the body one on "*", which lands on this <span> and beats what it inherits. The bottom margin keeps it off the page's first block
+// The weight is the token and not "bold": this name is set in the title family, where a face uploaded in one weight only would be thickened by the browser instead of by a bolder cut. .menu-site-name keeps its own "bold" - it is set in the body family, which ships a real 700
 .nav-simple-name {
     font-size: 1.25rem;
-    font-weight: bold;
+    font-weight: var(--font-title-weight);
     margin: 0.5rem 0;
     font-family: var(--font-family-title);
     color: var(--navbar-site-name-color);
