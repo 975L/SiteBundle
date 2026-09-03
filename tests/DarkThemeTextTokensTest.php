@@ -13,10 +13,10 @@ namespace c975L\SiteBundle\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// --primary is a deep brand blue reading at 1.43:1 on the #121212 page, under the 3:1 even large text asks for. It is left alone as a surface (buttons, flats, the footer band, where the white --button-color needs it dark), so every token painting text off it has to be lightened instead - and in both dark branches, a site fixed to dark by its admin and one following the visitor's OS being the same page to read
+// --primary is a deep brand blue reading at 1.43:1 on the #121212 page, under the 3:1 even large text asks for. It is left alone as a surface (buttons, flats, the footer band, where the white --button-color needs it dark), so the ink read against the page is lightened instead - and in both dark branches, a site fixed to dark by its admin and one following the visitor's OS being the same page to read
 class DarkThemeTextTokensTest extends TestCase
 {
-    // Each reads --primary in light mode, and each paints text rather than a surface
+    // Every token painting text off the brand goes through --primary-ink (UiBundle's sass/_tokens.scss), so this file lightens that one and they all follow
     private const array TOKENS = ['--link-color', '--title-color', '--navbar-active-color', '--navbar-site-name-color'];
 
     /**
@@ -45,16 +45,19 @@ class DarkThemeTextTokensTest extends TestCase
     {
         $css = $this->stylesheet($file);
 
-        foreach (self::TOKENS as $token) {
-            $matches = preg_match_all(
-                sprintf('/%s:\s*color-mix\(in srgb,\s*var\(--primary\)\s*\d+%%,\s*#fff\)/', preg_quote($token, '/')),
-                $css
-            );
+        $matches = preg_match_all('/--primary-ink:\s*color-mix\(in srgb,\s*var\(--primary\)\s*\d+%,\s*#fff\)/', $css);
 
-            $this->assertSame(
-                2,
-                $matches,
-                sprintf('"%s" lightens %s in %d dark branch(es) instead of 2, so it paints text at --primary\'s 1.43:1 on the dark page.', $file, $token, $matches)
+        $this->assertSame(
+            2,
+            $matches,
+            sprintf('"%s" lightens --primary-ink in %d dark branch(es) instead of 2, so every ink reading it paints at --primary\'s 1.43:1 on the dark page.', $file, $matches)
+        );
+
+        foreach (self::TOKENS as $token) {
+            $this->assertMatchesRegularExpression(
+                sprintf('/%s:\s*var\(--primary-ink\)/', preg_quote($token, '/')),
+                $css,
+                sprintf('"%s" declares %s off --primary rather than --primary-ink, so the dark page never lightens it.', $file, $token)
             );
         }
     }

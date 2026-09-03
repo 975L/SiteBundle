@@ -18,6 +18,7 @@
     *:not(.print-exact, .print-exact *)::before,
     *:not(.print-exact, .print-exact *)::after {
         color: #000 !important;
+        border-color: #000 !important;
         background-color: transparent !important;
         background-image: none !important;
         box-shadow: none !important;

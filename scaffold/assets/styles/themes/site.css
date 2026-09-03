@@ -7,15 +7,15 @@
     /* The size every text set in the body font is read at - a "text" block's paragraphs, a caption, an article, a legal page, a form. In rem, not px, so a visitor who raised their browser's own font size is still followed. Headings sit outside it (rem too) and so do UiBundle's block titles and eyebrows (px), so opening up the body copy here leaves both exactly where the design put them */
     /* --font-size-body: 1rem; */
 
-    /* Ink of every heading - the site's own primary color by default, which is also the surface of the primary button and of the footer band, so a design wanting its titles in another ink says it here rather than by repainting the brand */
-    /* --title-color: var(--primary); */
+    /* Ink of every heading - the brand color as ink by default (--primary-ink, offered in themes/ui.css), which is what a dark page lightens, so a design wanting its titles in another ink says it here rather than by repainting the brand */
+    /* --title-color: var(--primary-ink); */
 
     /* What a link turns on hover - the link's own color by default (--link-color, offered in themes/ui.css), the underline being what marks the state */
     /* --link-hover-color: var(--link-color); */
 
     /* --navbar-background: var(--white); */
     /* --navbar-text: var(--black); */
-    /* --navbar-active-color: var(--primary); */
+    /* --navbar-active-color: var(--primary-ink); */
     /* --shadow-nav: 0 2px 4px var(--primary); */
     /* --border-nav: none; */
     /* --navbar-position: relative; */
@@ -30,8 +30,8 @@
     /* The bar bleeds full-viewport-width, past --body-max-width - set both to auto/0 for a design that frames the page, so the navbar stays inside the frame. Same pair as the footer's below */
     /* --navbar-width: 100vw; */
     /* --navbar-margin-x: calc(50% - 50vw); */
-    /* Site name and tagline, left of the nav - point both at var(--navbar-text) if the navbar is a colored flat, where the default --primary/--text would be unreadable */
-    /* --navbar-site-name-color: var(--primary); */
+    /* Site name and tagline, left of the nav - point both at var(--navbar-text) if the navbar is a colored flat, where the default --primary-ink/--text would be unreadable */
+    /* --navbar-site-name-color: var(--primary-ink); */
     /* --navbar-site-tagline-color: var(--text); */
     /* The bar's height: the room above and below its line, and that line's floor (which is also the burger's touch target). --navbar-height derives from the two - a fixed navbar gives that much back to the page - so a taller or tighter bar is a matter of retuning either of the first two */
     /* --navbar-padding-y: 8px; */

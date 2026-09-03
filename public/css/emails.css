@@ -49,8 +49,8 @@
   --shadow-nav: 0 2px 4px var(--primary);
   --navbar-background: var(--white);
   --navbar-text: var(--black);
-  --navbar-active-color: var(--primary);
-  --navbar-site-name-color: var(--primary);
+  --navbar-active-color: var(--primary-ink);
+  --navbar-site-name-color: var(--primary-ink);
   --navbar-site-tagline-color: var(--text);
   --border-nav: none;
   --navbar-position: relative;
@@ -84,10 +84,10 @@
   --form-label-color: var(--black);
   --font-title-weight: normal;
   --font-body-weight: normal;
-  --title-color: var(--primary);
+  --title-color: var(--primary-ink);
   --font-size-body: 1rem;
   --label-color: #808080;
-  --link-color: var(--primary);
+  --link-color: var(--primary-ink);
   --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;

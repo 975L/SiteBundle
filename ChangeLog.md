@@ -1,5 +1,20 @@
 # Changelog
 
+## v8.10.5
+
+The brand ink is lightened once, not token by token
+
+- Every rule painting brand-colored text reads UiBundle's `--primary-ink` rather than `--primary` (03/09/2026)
+- `sass/_theme-dark.scss` lightens `--primary-ink` alone, in place of the four tokens it declared one by one (03/09/2026)
+- The burger's focus ring, a `.jumbotron`'s border, a blockquote's bar and the table rules join them (03/09/2026)
+- The scaffolded `site.css` offers the three tokens at their new default (03/09/2026)
+- New `PrimaryInkRoleTest`, failing on any ink property under `sass/` that reads `--primary` (03/09/2026)
+- `DarkThemeTextTokensTest` and `TextInkTokensTest` lock the token rather than each ink (03/09/2026)
+- `TextInkTokensTest` locks the three inks in the scaffolded `site.css` too (03/09/2026)
+- The Readme and `c975l-site-layout` state the ink/fill split (03/09/2026)
+- `c975l/core-bundle` requires `^1.22` (03/09/2026)
+- The print reset blacks out `border-color` (03/09/2026)
+
 ## v8.10.4
 
 The lead line and the fallback site name follow the title weight

@@ -6,6 +6,11 @@
                 "en": "Your introduction paragraphs and the site name shown under your logo now follow the same weight as your titles, instead of always being bold",
                 "fr": "Vos paragraphes d'introduction et le nom du site affiché sous votre logo suivent maintenant la même graisse que vos titres, au lieu d'être toujours en gras",
                 "es": "Sus párrafos de introducción y el nombre del sitio mostrado bajo su logotipo siguen ahora el mismo grosor que sus títulos, en lugar de estar siempre en negrita"
+            },
+            {
+                "en": "In dark mode, every text written in your brand color - titles, links, the site name, the active menu item, and every block that uses it - is now lightened so it stays readable on the dark page",
+                "fr": "En mode sombre, tous les textes écrits dans la couleur de votre marque - titres, liens, nom du site, élément de menu actif, et tous les blocs qui l'utilisent - sont maintenant éclaircis pour rester lisibles sur la page sombre",
+                "es": "En modo oscuro, todos los textos escritos en el color de su marca - títulos, enlaces, nombre del sitio, elemento de menú activo, y todos los bloques que lo usan - se aclaran ahora para seguir siendo legibles en la página oscura"
             }
         ]
     },

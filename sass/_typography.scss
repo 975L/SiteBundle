@@ -111,7 +111,7 @@ blockquote {
     margin: 2em;
     padding: 0.5em;
     text-align: left;
-    border-left: 10px solid var(--primary);
+    border-left: 10px solid var(--primary-ink);
 }
 
 // The hook excluded: this rule is one point more specific than its own, and would take back the margin it sets

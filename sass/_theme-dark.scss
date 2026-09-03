@@ -33,11 +33,8 @@
     // The last fallback is this bundle's own, not UiBundle's: its secondary is a light orange carrying black, where the azure below carries black at 4.38:1 - under the 4.5:1 WCAG AA asks of a button's label. The pair goes together, a black label beside a white icon being the same button written twice
     --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
     --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
-    // --primary itself is left alone, being a surface everywhere else (the primary button, a "primary" flat, the footer band) where the white --button-color needs it dark. Only the three roles where it paints text are lightened, a deep brand blue reading at 1.43:1 on the #121212 page - and an admin who fills theme-color-primary-dark-mode is followed here too, the mix taking whatever --primary resolved to
-    --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+    // --primary is left alone, being a surface everywhere else (the primary button, a "primary" flat, the footer band) where the white --button-color needs it dark; lightening the one token every ink goes through reaches --link-color, --title-color, the two navbar tokens and everything UiBundle paints with it at once, where four declarations left the rest behind - a deep brand blue reads at 1.43:1 on the #121212 page, and theme-color-primary-dark-mode is followed here too, the mix taking whatever --primary resolved to
+    --primary-ink: color-mix(in srgb, var(--primary) 55%, #fff);
 
     // The icon of an alert follows the tint it sits on rather than the page: the background having stayed light, the white silhouette --icon-filter draws on a dark page would be invisible on it
     .alert {

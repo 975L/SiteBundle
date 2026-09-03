@@ -27,13 +27,13 @@ class TextInkTokensTest extends TestCase
         ];
     }
 
-    // Both default to what they replace, so nothing moves until a design says otherwise
+    // Both default to what they replace, --primary-ink itself defaulting to --primary in UiBundle, so nothing moves until a design says otherwise
     #[DataProvider('stylesheetProvider')]
     public function testRootOffersBothTokensAtTheirPreviousValue(string $file): void
     {
         $css = $this->stylesheet($file);
 
-        foreach (['--title-color' => 'var(--primary)', '--link-hover-color' => 'var(--link-color)'] as $token => $value) {
+        foreach (['--title-color' => 'var(--primary-ink)', '--link-hover-color' => 'var(--link-color)'] as $token => $value) {
             $this->assertMatchesRegularExpression(
                 sprintf('/%s:\s*%s/', preg_quote($token, '/'), preg_quote($value, '/')),
                 $css,
@@ -51,6 +51,23 @@ class TextInkTokensTest extends TestCase
             $this->stylesheet($file),
             sprintf('"%s" no longer paints the headings with --title-color, so a page cannot set its titles in another ink.', $file)
         );
+    }
+
+    // The scaffolded site.css restates every chrome token at its default value, the three inks included - a copy kept by hand, so it drifts off --primary-ink on its own
+    public function testScaffoldedThemeRestatesTheInksOnTheToken(): void
+    {
+        $path = \dirname(__DIR__) . '/scaffold/assets/styles/themes/site.css';
+        $this->assertFileExists($path);
+
+        $css = (string) file_get_contents($path);
+
+        foreach (['--title-color', '--navbar-active-color', '--navbar-site-name-color'] as $token) {
+            $this->assertStringContainsString(
+                $token . ': var(--primary-ink);',
+                $css,
+                sprintf('The scaffolded site.css states %s off --primary rather than --primary-ink, so it hands a new site a default a dark page never lightens.', $token)
+            );
+        }
     }
 
     // The link at rest, which read --primary while --link-color only ever moved the hover

@@ -62,9 +62,9 @@
     // Fixed --black default matches this base --navbar-background being a fixed white too - a theme whose --navbar-background instead follows --background overrides this to var(--text) so nav links stay readable whatever the admin sets theme-color-text to
     --navbar-text: var(--black);
     // Active-page underline (desktop nav, see _menu.scss) - defaults to --primary like before this token existed, but a template whose --navbar-background follows --primary itself now has somewhere to point this that isn't invisible against its own background
-    --navbar-active-color: var(--primary);
+    --navbar-active-color: var(--primary-ink);
     // Site name and tagline (the brand block, left of the nav) - same reasoning as --navbar-active-color: both were hardcoded to --primary, which is exactly the color a navbar painted with --navbar-background: var(--primary) makes invisible. A site whose navbar is a colored flat points these at var(--navbar-text) instead. The tagline's default is --text, not --primary like the name's: it is authored in the backoffice's rich-text editor, so it comes back wrapped in a <div> that _typography.scss's own "* { color: var(--text) }" paints directly - which is what every site has actually been showing, whatever _menu.scss asked for
-    --navbar-site-name-color: var(--primary);
+    --navbar-site-name-color: var(--primary-ink);
     --navbar-site-tagline-color: var(--text);
     --border-nav: none;
     // The admin's own site-navbar-position config (Navbar.html.twig) adds a .menu.menu-position-* class on the bar, which beats this fallback and any site override, be it on :root or on .menu itself - this is only the template's own fallback, for a design that wants e.g. a sticky header without the admin having to set that config
@@ -113,12 +113,12 @@
     --font-title-weight: normal;
     --font-body-weight: normal;
     // Ink of every heading (see sass/_typography.scss). Its own token, defaulting to the color they were hardcoded to: --primary is a surface everywhere else - the primary button, a "primary" flat, the footer band - where the white --button-color needs it dark, so a page wanting its titles in another ink had nowhere to say so short of repainting the brand. Same pattern as UiBundle's own --card-accent / --flip-card-accent, and what a page laid on a ground of its own reaches for: a deep brand color reads at barely more than 1:1 on a near-black page (see GalleryBundle's dark style)
-    --title-color: var(--primary);
+    --title-color: var(--primary-ink);
     // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a visitor who raised their browser's own font size is still followed; 1rem is that default, i.e. the size the site was read at before this token existed. Headings and UiBundle's block titles/eyebrows are outside it on purpose - the first in rem, the second in px - so a design can open up its body copy alone
     --font-size-body: 1rem;
     --label-color: #808080;
     // Follows theme-color-primary by default; apps that want a distinct link color can still override --link-color directly in their own _variables.css, same as any other variable here
-    --link-color: var(--primary);
+    --link-color: var(--primary-ink);
     // What a link turns on hover - its own color by default, the underline being what marks the state. Its own token because --link-color was carrying both jobs: a link at rest read --primary directly (see sass/_links.scss), so setting --link-color only ever moved the hover
     --link-hover-color: var(--link-color);
     --input-border-bottom-color: #bfbfbf;

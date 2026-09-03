@@ -228,8 +228,8 @@ summary {
   --shadow-nav: 0 2px 4px var(--primary);
   --navbar-background: var(--white);
   --navbar-text: var(--black);
-  --navbar-active-color: var(--primary);
-  --navbar-site-name-color: var(--primary);
+  --navbar-active-color: var(--primary-ink);
+  --navbar-site-name-color: var(--primary-ink);
   --navbar-site-tagline-color: var(--text);
   --border-nav: none;
   --navbar-position: relative;
@@ -263,10 +263,10 @@ summary {
   --form-label-color: var(--black);
   --font-title-weight: normal;
   --font-body-weight: normal;
-  --title-color: var(--primary);
+  --title-color: var(--primary-ink);
   --font-size-body: 1rem;
   --label-color: #808080;
-  --link-color: var(--primary);
+  --link-color: var(--primary-ink);
   --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
   --input-border-color: #4d4d4d;
@@ -315,10 +315,7 @@ summary {
   --button-icon-invert: var(--c975l-button-icon-invert-dark-mode, var(--c975l-button-icon-invert, 1));
   --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
   --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
-  --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
-  --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
-  --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
-  --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+  --primary-ink: color-mix(in srgb, var(--primary) 55%, #fff);
 }
 [data-theme=dark] .alert {
   --icon-filter: none;
@@ -352,10 +349,7 @@ summary {
     --button-icon-invert: var(--c975l-button-icon-invert-dark-mode, var(--c975l-button-icon-invert, 1));
     --button-secondary-color: var(--c975l-button-secondary-color-dark-mode, var(--c975l-button-secondary-color, #fff));
     --button-secondary-icon-invert: var(--c975l-button-secondary-icon-invert-dark-mode, var(--c975l-button-secondary-icon-invert, 1));
-    --link-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --title-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --navbar-active-color: color-mix(in srgb, var(--primary) 55%, #fff);
-    --navbar-site-name-color: color-mix(in srgb, var(--primary) 55%, #fff);
+    --primary-ink: color-mix(in srgb, var(--primary) 55%, #fff);
   }
   :root:not([data-theme]) .alert,
   [data-theme]:not([data-theme=light]) .alert {
@@ -403,7 +397,7 @@ main:has(+ footer) > :last-child {
 }
 
 .brand {
-  color: var(--primary);
+  color: var(--primary-ink);
 }
 
 .hidden {
@@ -519,7 +513,7 @@ blockquote {
   margin: 2em;
   padding: 0.5em;
   text-align: left;
-  border-left: 10px solid var(--primary);
+  border-left: 10px solid var(--primary-ink);
 }
 
 .site-article > div:not(.text-hook) {
@@ -545,7 +539,7 @@ blockquote {
 }
 
 .jumbotron {
-  border-color: var(--primary);
+  border-color: var(--primary-ink);
   border-style: solid;
   border-width: 6px;
   border-radius: 25px;
@@ -705,7 +699,7 @@ body.navbar-fixed {
   background-color: transparent;
 }
 .menu-toggle:focus {
-  outline: 2px solid var(--primary);
+  outline: 2px solid var(--primary-ink);
   outline-offset: 2px;
 }
 
@@ -875,7 +869,7 @@ body.navbar-fixed {
 
 .nav-simple a,
 .nav-simple a:hover {
-  color: var(--primary);
+  color: var(--primary-ink);
   font-family: var(--font-family-title);
 }
 
@@ -969,20 +963,20 @@ table {
 }
 
 table.border {
-  border: 2px solid var(--primary);
+  border: 2px solid var(--primary-ink);
 }
 
 th {
   padding: 0.5em 1em;
   text-align: center;
-  border-bottom: 5px solid var(--primary);
+  border-bottom: 5px solid var(--primary-ink);
   font-weight: normal;
   font-family: var(--font-family-title);
   font-size: 1.5em;
 }
 
 tr {
-  border-bottom: 1px solid var(--primary);
+  border-bottom: 1px solid var(--primary-ink);
 }
 
 td {
@@ -992,7 +986,7 @@ td {
 }
 
 tfoot tr {
-  border-top: 5px solid var(--primary);
+  border-top: 5px solid var(--primary-ink);
   border-bottom: none;
 }
 
@@ -1106,6 +1100,7 @@ footer a:visited:hover .img-above {
   *:not(.print-exact, .print-exact *)::before,
   *:not(.print-exact, .print-exact *)::after {
     color: #000 !important;
+    border-color: #000 !important;
     background-color: transparent !important;
     background-image: none !important;
     box-shadow: none !important;

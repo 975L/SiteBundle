@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, EmailLayoutProvider, EmailLayoutTemplateProvider, layout_no_spam, layout_hello, layout_closing, layout_sent_by, email_template_body, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --primary-ink, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, EmailLayoutProvider, EmailLayoutTemplateProvider, layout_no_spam, layout_hello, layout_closing, layout_sent_by, email_template_body, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -139,10 +139,18 @@ Tokens worth knowing, all in `site.css`:
 | `--navbar-width` / `--navbar-margin-x`, `--footer-width` / `--footer-margin-x` | full viewport | whether the bars bleed past `--body-max-width` |
 | `--footer-margin-top` | `--section-space` | the gap above the footer band |
 | `--font-size-body` | `1rem` | the size copy is read at; headings are sized against the root and stay out |
-| `--title-color` | `var(--primary)` | the ink of every heading, without repainting the brand |
-| `--link-color` / `--link-hover-color` | `var(--primary)` / `var(--link-color)` | a link at rest, and on hover |
+| `--title-color` | `var(--primary-ink)` | the ink of every heading, without repainting the brand |
+| `--link-color` / `--link-hover-color` | `var(--primary-ink)` / `var(--link-color)` | a link at rest, and on hover |
 | `--reading-max-width` | `min(75ch, 90vw)` | the measure body copy is laid out on |
 | `--footer-items-direction` / `--footer-items-justify` | column | the footer's layout, unless an admin picks a Display style |
+
+**Brand-colored text reads `--primary-ink`, never `--primary`.** UiBundle's token splits the brand's
+two roles: `--primary` is the **fill** a button, a `primary` flat and the footer band need dark, while
+`--primary-ink` is the same color read **against** the page — a heading, a link, an outline, a rule,
+a focus ring. It defaults to `--primary`, so a light page is unchanged; `sass/_theme-dark.scss`
+lightens that one token and every ink follows, a deep brand blue reading at 1.43:1 on the `#121212`
+page. `DarkThemeTextTokensTest` locks it, and `PrimaryInkRoleTest` scans `sass/` for any ink property
+still reading `--primary`.
 
 **Declare a token on `:root, [data-theme]`, never on `:root` alone.** A `var()` inside a custom
 property's value is substituted on the element carrying the declaration: on `:root` only, every derived
@@ -244,6 +252,8 @@ of your own keeps both anchors.
 - **Do not import a stylesheet from `assets/app.js`.** CSP blocks the whole entrypoint.
 - **Do not declare a theme token on `:root` alone.** Use `:root, [data-theme]`.
 - **Do not set colors or fonts in a theme file** — they belong to the admin, in the config screen.
+- **Do not paint text, an outline or a rule with `var(--primary)`.** Read `var(--primary-ink)`, which
+  is what dark mode lightens; `--primary` is the fill a surface needs.
 - **Do not call another bundle's site-wide band function from the layout.** Include its template with
   `ignore_missing`.
 - **Do not write a `<head>` tag in this bundle's layout.** Core-bundle's is the only one, and a copy

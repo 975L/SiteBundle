@@ -7,20 +7,20 @@ table {
 }
 
 table.border {
-    border: 2px solid var(--primary);
+    border: 2px solid var(--primary-ink);
 }
 
 th {
     padding: 0.5em 1em;
     text-align: center;
-    border-bottom: 5px solid var(--primary);
+    border-bottom: 5px solid var(--primary-ink);
     font-weight: normal;
     font-family: var(--font-family-title);
     font-size: 1.5em;
 }
 
 tr {
-    border-bottom: 1px solid var(--primary);
+    border-bottom: 1px solid var(--primary-ink);
 }
 
 td {
@@ -30,7 +30,7 @@ td {
 }
 
 tfoot tr {
-    border-top: 5px solid var(--primary);
+    border-top: 5px solid var(--primary-ink);
     border-bottom: none;
 }
 
