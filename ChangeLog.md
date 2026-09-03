@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.10.3
+
+Two guided steps and a language bar point at what is drawn
+
+- The language bar of the translation screen is shown as soon as there is a language to translate into, `> 1` having hidden it on every bilingual site (03/09/2026)
+- The blocks step of `site-page-translation` highlights `#Page_blocks`, a translation screen carrying no sort group (03/09/2026)
+- The brand step of the page-menu project carries no highlight, its create button existing only for a location not created yet (03/09/2026)
+
 ## v8.10.2
 
 The one-off that carried the old texts across is gone

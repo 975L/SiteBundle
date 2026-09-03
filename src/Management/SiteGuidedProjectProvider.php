@@ -284,7 +284,8 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_translation_blocks',
                     'description' => 'description.guided_step_page_translation_blocks',
                     'narration' => 'narration.guided_step_page_translation_blocks',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    // The collection itself and not its sort group: a language screen renders the blocks without the reordering markup, a page not being reordered from a translation of it (see configureFields)
+                    'highlight' => '#Page_blocks',
                 ],
                 [
                     'label' => 'label.guided_step_page_translation_save',
@@ -559,8 +560,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_brand',
                     'description' => 'description.guided_step_page_menu_brand',
                     'narration' => 'narration.guided_step_page_menu_brand',
-                    // Back on the same screen, for the fifth location: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting
-                    'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR_BRAND),
+                    // Back on the same screen, for the fifth location: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting. No highlight, unlike the navigation bar step above, the create button existing only for a location not created yet and a site carrying a brand line already holding the menu
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_brand_write',
