@@ -428,7 +428,7 @@
             </trans-unit>
             <trans-unit id="ouWxTAi">
                 <source>description.guided_step_page_translation_title</source>
-                <target>The source text is shown between brackets: a field left holding it counts as nothing written.</target>
+                <target>The source text is shown between brackets: a field left holding it counts as nothing written. The title is what opens the language-prefixed address: without it, the page does not exist in that language.</target>
             </trans-unit>
             <trans-unit id="TNnaa8j">
                 <source>description.guided_step_trash_back</source>

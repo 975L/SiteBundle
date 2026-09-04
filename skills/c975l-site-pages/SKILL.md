@@ -74,6 +74,11 @@ and its blocks alone, unmapped and through `BlockType`'s `translation_locale`, s
 there can reach the text the site was written in. The kind, the animation, the medias, the "+" and the
 bin are all left off: a page is composed once, in the language it was written in.
 
+**The title is what makes a page exist in a language.** `PageTranslator::translatedLocales()` reads it
+and nothing else: a page whose blocks were translated while its title stayed in the writing language is
+not published under `/{lang}/pages/{slug}` (which answers 404), is named by no `hreflang` group, and is
+linked to by no menu — a French `<title>` being the first thing a result page shows.
+
 A **menu** keeps a screen of its own (`management_menu_translate`, `TranslationController::menu()`) —
 it is a list of labels with no page to show them in. See `c975l-site-seo` for the urls and the
 `hreflang` groups.

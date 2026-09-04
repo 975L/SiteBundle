@@ -57,7 +57,7 @@ class MixedContentHealthCheckProviderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales());
+        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator());
     }
 
     private function createUrlStatusChecker(bool $exists = true): UrlStatusChecker

@@ -26,6 +26,10 @@
                 <source>description.site_preconnect</source>
                 <target>Origins to preconnect (JSON array), e.g. ["https://example.com"] - useful when credits/Matomo logos are on a third-party domain</target>
             </trans-unit>
+            <trans-unit id="t_.BnHf">
+                <source>description.site_schema_type</source>
+                <target>What the site declares itself to be in its structured data: Organization for a company or a publishing house, Person for a personal site or a CV</target>
+            </trans-unit>
             <trans-unit id=".HY9J1w">
                 <source>label.email_debug</source>
                 <target>Email debug mode</target>
@@ -49,6 +53,10 @@
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>
                 <target>Preconnect URLs</target>
+            </trans-unit>
+            <trans-unit id="o9mIRYE">
+                <source>label.site_schema_type</source>
+                <target>Type of the entity publishing the site</target>
             </trans-unit>
         </body>
     </file>

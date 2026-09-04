@@ -22,6 +22,7 @@ class PagePublicUrlResolver
         private readonly ConfigServiceInterface $configService,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SiteLocales $siteLocales,
+        private readonly PageTranslator $pageTranslator,
     ) {
     }
 
@@ -36,37 +37,30 @@ class PagePublicUrlResolver
      */
     public function resolveAlternates(Page $page): array
     {
-        return $this->alternatesFor(fn (string $locale): string => $this->resolvePath($page, $locale));
+        return $this->alternatesFor(
+            $this->pageTranslator->translatedLocales($page),
+            fn (string $locale): string => $this->resolvePath($page, $locale),
+        );
     }
 
     /**
-     * The same group for a url no Page of its own answers: a "collection" block's item detail view, which is served
-     * by its parent Page (see PageController::resolveCollectionDetail()) and would otherwise declare that Page's group.
+     * One url per language the page was really written in, from whatever builds the path of one.
      *
-     * The slug is the one the writing language answers on, item slug included ("blog/mon-article"), the way
-     * page_display already receives it.
+     * Empty on a site declaring a single language, while "site-url" is unconfigured (a group needing absolute urls),
+     * and - the reason the languages are passed in rather than read from the site - whenever the page exists in one
+     * language only: a group that names itself alone repeats what the canonical already said, and one that does not
+     * name itself at all is invalid. The same contract as BookBundle's book_alternates().
      *
-     * @return array<string, string> hreflang => absolute url
-     */
-    public function resolveAlternatesForSlug(string $slug): array
-    {
-        return $this->alternatesFor(fn (string $locale): string => $this->generate('page_display', $slug, $locale));
-    }
-
-    /**
-     * One url per declared language, from whatever builds the path of one - empty on a site declaring a single
-     * language, and while "site-url" is unconfigured, a group needing absolute urls.
-     *
+     * @param list<string>             $locales
      * @param callable(string): string $path
      *
      * @return array<string, string> hreflang => absolute url
      */
-    private function alternatesFor(callable $path): array
+    private function alternatesFor(array $locales, callable $path): array
     {
         $siteUrl = $this->siteUrl();
-        $locales = $this->siteLocales->all();
 
-        if (null === $siteUrl || \count($locales) < 2) {
+        if (null === $siteUrl || \count($locales) < 2 || !\in_array($this->siteLocales->getDefaultLocale(), $locales, true)) {
             return [];
         }
 

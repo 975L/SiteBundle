@@ -1,5 +1,21 @@
 # Changelog
 
+## v8.11.0
+
+A translated title opens a language, and the site names its publisher
+
+- Home page publishes a schema.org publisher/WebSite graph, `site_json_ld()` and `SiteSnippetBuilder` (04/09/2026)
+- New `site-schema-type` config: `Organization`, `Person`, `ProfessionalService` or `LocalBusiness` (04/09/2026)
+- `hreflang` names only the languages a page's title was translated into (04/09/2026)
+- [BC-Break] `/{lang}/pages/{slug}` answers 404 for a page that language was not written in (04/09/2026)
+- [BC-Break] `PagePublicUrlResolver::resolveAlternatesForSlug()` removed, a collection detail view declares no language (04/09/2026)
+- [BC-Break] `PagePublicUrlResolver`, `SitePageSitemapProvider` and `PageTranslator` take one more constructor argument (04/09/2026)
+- A menu keeps the writing language's url for a page nobody translated (04/09/2026)
+- The site graph survives an invalid UTF-8 byte typed into a setting (04/09/2026)
+- The four navbar and preconnect settings leave the *Général* drawer for a *Site* one of their own (04/09/2026) **Needs `c975l/core-bundle` ^1.22.1, then `c975l:config:load-all`**
+- `healthcheck-pagespeed-api-key` moves from *Sécurité* to *Bilan de santé* (04/09/2026) **Needs `c975l/core-bundle` ^1.22.1, then `c975l:config:load-all`**
+- New `translations/config.{en,es,fr}.xlf`, holding `label.group_site` and `label.group_health_check` (04/09/2026)
+
 ## v8.10.5
 
 The brand ink is lightened once, not token by token

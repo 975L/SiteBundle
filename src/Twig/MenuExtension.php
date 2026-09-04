@@ -139,8 +139,10 @@ class MenuExtension
 
         // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
         // Read in another language, the whole menu is written in that language's urls: generating the writing language's ones would send the visitor back into it at the first click (PageController answers "/" and "/pages/{page}" in the writing language alone). The route attribute rather than getLocale(), which PageController switches back for the duration of the render
+        // Only for a page really written in that language: a localised url answers for nothing else (PageController::requireTranslated() 404s it), so an untranslated page keeps the writing language's url rather than a link the visitor lands on a 404 from. The && short-circuits, so the writing language costs no lookup at all
         $locale = $this->requestStack->getCurrentRequest()?->attributes->get('_locale');
-        $localized = \is_string($locale) && '' !== $locale && $locale !== $this->defaultLocale;
+        $localized = \is_string($locale) && '' !== $locale && $locale !== $this->defaultLocale
+            && \in_array($locale, $this->pageTranslator->translatedLocales($page), true);
         $parameters = $localized ? ['_locale' => $locale] : [];
 
         $path = 'home' === $page->getSlug()

@@ -26,6 +26,10 @@
                 <source>description.site_preconnect</source>
                 <target>Orígenes a preconectar (array JSON), ej. ["https://example.com"] - útil si logos de créditos/Matomo están en otro dominio</target>
             </trans-unit>
+            <trans-unit id="t_.BnHf">
+                <source>description.site_schema_type</source>
+                <target>Lo que el sitio declara ser en sus datos estructurados: Organization para una empresa o una editorial, Person para un sitio personal o un CV</target>
+            </trans-unit>
             <trans-unit id=".HY9J1w">
                 <source>label.email_debug</source>
                 <target>Modo debug de emails</target>
@@ -49,6 +53,10 @@
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>
                 <target>URLs de preconexión</target>
+            </trans-unit>
+            <trans-unit id="o9mIRYE">
+                <source>label.site_schema_type</source>
+                <target>Tipo de la entidad que publica el sitio</target>
             </trans-unit>
         </body>
     </file>

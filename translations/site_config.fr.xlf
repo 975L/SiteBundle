@@ -26,6 +26,10 @@
                 <source>description.site_preconnect</source>
                 <target>Origines à préconnecter (tableau JSON), ex. ["https://example.com"] - utile si logos crédits/Matomo sont sur un domaine tiers</target>
             </trans-unit>
+            <trans-unit id="t_.BnHf">
+                <source>description.site_schema_type</source>
+                <target>Ce que le site déclare être dans ses données structurées : Organization pour une entreprise ou une maison d'édition, Person pour un site personnel ou un CV</target>
+            </trans-unit>
             <trans-unit id=".HY9J1w">
                 <source>label.email_debug</source>
                 <target>Mode debug des emails</target>
@@ -49,6 +53,10 @@
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>
                 <target>URLs de préconnexion</target>
+            </trans-unit>
+            <trans-unit id="o9mIRYE">
+                <source>label.site_schema_type</source>
+                <target>Type de l'entité qui publie le site</target>
             </trans-unit>
         </body>
     </file>

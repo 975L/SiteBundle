@@ -428,7 +428,7 @@
             </trans-unit>
             <trans-unit id="ouWxTAi">
                 <source>description.guided_step_page_translation_title</source>
-                <target>Le texte d'origine est affiché entre crochets : un champ qui le garde tel quel compte pour rien d'écrit.</target>
+                <target>Le texte d'origine est affiché entre crochets : un champ qui le garde tel quel compte pour rien d'écrit. C'est le titre qui ouvre l'adresse préfixée par la langue : sans lui, la page n'existe pas dans cette langue.</target>
             </trans-unit>
             <trans-unit id="TNnaa8j">
                 <source>description.guided_step_trash_back</source>

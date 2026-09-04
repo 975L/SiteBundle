@@ -428,7 +428,7 @@
             </trans-unit>
             <trans-unit id="ouWxTAi">
                 <source>description.guided_step_page_translation_title</source>
-                <target>El texto original se muestra entre corchetes: un campo que lo conserva cuenta como nada escrito.</target>
+                <target>El texto original se muestra entre corchetes: un campo que lo conserva cuenta como nada escrito. El título es el que abre la dirección con el prefijo del idioma: sin él, la página no existe en ese idioma.</target>
             </trans-unit>
             <trans-unit id="TNnaa8j">
                 <source>description.guided_step_trash_back</source>

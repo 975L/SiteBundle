@@ -6,7 +6,7 @@
         "restricted": false,
         "value": "true",
         "kind": "bool",
-        "group": "general",
+        "group": "site",
         "severity": null,
         "description": "description.site_navbar_show_name"
     },
@@ -24,7 +24,7 @@
             "static",
             "absolute"
         ],
-        "group": "general",
+        "group": "site",
         "severity": null,
         "description": "description.site_navbar_position"
     },
@@ -35,7 +35,7 @@
         "restricted": true,
         "value": "[]",
         "kind": "json",
-        "group": "general",
+        "group": "site",
         "severity": null,
         "description": "description.site_preconnect"
     },
@@ -46,9 +46,26 @@
         "restricted": false,
         "value": "true",
         "kind": "bool",
-        "group": "general",
+        "group": "site",
         "severity": null,
         "description": "description.site_menu_link_copyright_auto"
+    },
+    {
+        "label": "label.site_schema_type",
+        "slug": "site-schema-type",
+        "sensitive": false,
+        "restricted": false,
+        "value": "Organization",
+        "kind": "choice",
+        "choices": [
+            "Organization",
+            "Person",
+            "ProfessionalService",
+            "LocalBusiness"
+        ],
+        "group": "site",
+        "severity": null,
+        "description": "description.site_schema_type"
     },
     {
         "label": "label.healthcheck_pagespeed_api_key",
@@ -57,7 +74,7 @@
         "restricted": true,
         "value": null,
         "kind": "text",
-        "group": "security",
+        "group": "health_check",
         "severity": "warning",
         "description": "description.healthcheck_pagespeed_api_key"
     }

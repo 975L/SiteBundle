@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests;
 
 use c975L\ConfigBundle\Service\SiteLocales;
+use c975L\SiteBundle\Service\PageTranslator;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -30,6 +31,15 @@ trait PagePublicUrlGeneratorTestTrait
         $routes->add('page_display_localized', new Route('/{_locale}/pages/{page}', [], ['page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)']));
 
         return new UrlGenerator($routes, new RequestContext());
+    }
+
+    // The languages a page was written in, which is what gates its "hreflang" group. A double and not the real service: reading them means a database, and only the tests about the group itself care what it answers - the others take the writing language alone, whose group is empty
+    private function createPageTranslator(array $translatedLocales = ['fr']): PageTranslator
+    {
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('translatedLocales')->willReturn($translatedLocales);
+
+        return $pageTranslator;
     }
 
     // The real SiteLocales rather than a double: it is the one place saying which languages a site speaks, and a test replacing it would stop testing the list a site actually declares

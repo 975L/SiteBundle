@@ -13,8 +13,8 @@ namespace c975L\SiteBundle\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageServiceInterface;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Twig\CollectionItemContext;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Registry\CollectionSourceRegistry;
@@ -46,8 +46,17 @@ class PageController extends AbstractController
         private readonly RequestStack $requestStack,
         private readonly LocaleSwitcher $localeSwitcher,
         private readonly SiteLocales $siteLocales,
-        private readonly PagePublicUrlResolver $pagePublicUrlResolver,
+        private readonly PageTranslator $pageTranslator,
     ) {
+    }
+
+    // A localised url answers only for a page that language was really written in: the routes exist for every language the site declares, but a page nobody translated has nothing to serve there but the writing language's own text under another "lang" attribute. Nothing links to those urls - they are declared neither in the head nor in the sitemap (see PagePublicUrlResolver::resolveAlternates()), and a menu writes the writing language's url for a page nobody translated (see MenuExtension::pageUrl()) - so a 404 is what they always should have answered, and a redirect would only buy a crawler a hop
+    private function requireTranslated(Request $request, Page $page): void
+    {
+        $locale = $request->attributes->get('_locale');
+        if (\is_string($locale) && '' !== $locale && !\in_array($locale, $this->pageTranslator->translatedLocales($page), true)) {
+            throw $this->createNotFoundException();
+        }
     }
 
     /**
@@ -78,12 +87,14 @@ class PageController extends AbstractController
      * anyone else is served the writing language for good - the locale is switched back to it, LocaleListener having
      * already handed the translator whatever the browser asked for.
      *
-     * Null when there is nothing to redirect to, which is every request of a site declaring a single language, and every
-     * localised url, one having already said in its path which language it answers in.
+     * Null when there is nothing to redirect to, which is every request of a site declaring a single language, every
+     * localised url, one having already said in its path which language it answers in, and every page this language
+     * was never written in - sending a visitor to an untranslated "/en/" would only hand them the French page under
+     * lang="en" (see PageTranslator::translatedLocales()).
      *
      * @param array<string, string> $parameters
      */
-    private function writingLanguage(Request $request, string $route, array $parameters = []): ?Response
+    private function writingLanguage(Request $request, Page $page, string $route, array $parameters = []): ?Response
     {
         if (null !== $request->attributes->get('_locale')) {
             return null;
@@ -95,7 +106,7 @@ class PageController extends AbstractController
         $asked = $locale === $request->getPreferredLanguage($this->siteLocales->all())
             || ($request->hasPreviousSession() && $locale === $request->getSession()->get('_locale'));
 
-        if ($asked && $locale !== $this->siteLocales->getDefaultLocale() && \in_array($locale, $this->siteLocales->all(), true)) {
+        if ($asked && $locale !== $this->siteLocales->getDefaultLocale() && \in_array($locale, $this->pageTranslator->translatedLocales($page), true)) {
             // The query string goes along: a campaign's "utm_source" or a block's own filter would otherwise be dropped by the redirect. The route's own parameters come first, and the language right after them, so a "?page=" or a "?_locale=" of the visitor's own making is absorbed by the key collision rather than sending them somewhere else
             return $this->redirectToRoute($route . '_localized', $parameters + ['_locale' => $locale] + $request->query->all());
         }
@@ -158,7 +169,9 @@ class PageController extends AbstractController
             // No "page" route parameter on "/" (unlike page_display's "/pages/{page}") - set it manually so a "collection" block rendered on the home page can still resolve its own items' detail links (see UiBundle's CollectionExtension::buildDetailUrl())
             $request->attributes->set('page', 'home');
 
-            $otherLanguage = $this->writingLanguage($request, 'page_home');
+            $this->requireTranslated($request, $homePage);
+
+            $otherLanguage = $this->writingLanguage($request, $homePage, 'page_home');
             if (null !== $otherLanguage) {
                 return $this->varyOnLanguage($request, $otherLanguage);
             }
@@ -249,7 +262,9 @@ class PageController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $otherLanguage = $this->writingLanguage($request, 'page_display', ['page' => $slug]);
+        $this->requireTranslated($request, $pageObject);
+
+        $otherLanguage = $this->writingLanguage($request, $pageObject, 'page_display', ['page' => $slug]);
         if (null !== $otherLanguage) {
             return $this->varyOnLanguage($request, $otherLanguage);
         }
@@ -260,8 +275,6 @@ class PageController extends AbstractController
                 'page' => $pageObject,
                 'detailHtml' => $detailHtml,
                 'detailTitle' => $detailTitle,
-                // A collection item is served by its parent Page, whose own group names the parent's urls: this url's group is built from the url itself instead, or the page would declare somebody else's languages and never itself
-                'detailAlternates' => null === $detailHtml ? [] : $this->pagePublicUrlResolver->resolveAlternatesForSlug($slug),
             ]
         ));
     }

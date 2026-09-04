@@ -5,14 +5,24 @@
 {% set title = detailTitle is defined and detailTitle ? detailTitle : page_title(page) %}
 {% set summarySocialNetwork = page_summary(page) %}
 
-{# The other languages of this same page, read by the layout's "hreflang" links; empty on a site declaring a single language. A collection item has no Page of its own, so its group is built from its own url by the controller rather than from the parent Page shown here #}
-{% set alternates = detailHtml is defined and detailHtml ? detailAlternates|default([]) : page_alternates(page) %}
+{# The other languages of this same page, read by the layout's "hreflang" links; empty on a site declaring a single language. A collection item's detail view declares none: nothing translates the item itself (CollectionItem carries no Translation rows), and the parent Page's group would name languages this url is not written in #}
+{% set alternates = detailHtml is defined and detailHtml ? [] : page_alternates(page) %}
 
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
 {% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
 
+{# Who publishes this site and what the site itself is, stated once on the home page: every other page describes its own subject - a book, a product, a photo - and none of them names the publisher behind it. Built by SiteSnippetBuilder from the site's own configuration, so it follows the back-office rather than this template; empty while the site has neither name nor url #}
+{# The logo is resolved here because only a template turns a Media into an absolute url, and the description is the page's own summary, which is already its meta description #}
+{% if page.slug == 'home' and (detailHtml is not defined or not detailHtml) %}
+    {% set siteJsonLd = site_json_ld(site_media('logo') ? absolute_url(asset('/' ~ site_media('logo').filename)) : null, summarySocialNetwork) %}
+{% endif %}
+
 {# Overrides "container" so blocks render full-width beside the alerts; the div is dropped when empty, its padding opening a gap otherwise #}
 {% block container %}
+    {% if siteJsonLd|default('') %}
+        {# "raw" as a {% set %} drops the function's is_safe marking, the builder escaping what could close the tag #}
+        <script type="application/ld+json">{{ siteJsonLd|raw }}</script>
+    {% endif %}
     {% if isPreview|default(false) and not page.isPublished %}
         <div class="container">
             <twig:c975LUi:Alert:Alert type="warning" message="{{ 'label.preview_mode'|trans({}, 'site') }}" />

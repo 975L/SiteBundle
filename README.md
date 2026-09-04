@@ -406,7 +406,7 @@ Two things to know when adding this to a site already serving several languages.
 
 ### Urls
 
-The writing language keeps its bare urls byte for byte (`/`, `/pages/{slug}`) — the ones the sitemap has always declared — and every other language answers under its own prefix (`/en/`, `/en/pages/{slug}`), through the `page_home_localized`/`page_display_localized` routes. The `c975l_site.locales_pattern` container parameter is what those routes accept between their slashes: the declared languages minus the writing one, so the same page is never answered under two urls, and a pattern matching nothing while there is only one language.
+The writing language keeps its bare urls byte for byte (`/`, `/pages/{slug}`) — the ones the sitemap has always declared — and every other language answers under its own prefix (`/en/`, `/en/pages/{slug}`), through the `page_home_localized`/`page_display_localized` routes — for the pages written in that language alone, the others answering 404 there. The `c975l_site.locales_pattern` container parameter is what those routes accept between their slashes: the declared languages minus the writing one, so the same page is never answered under two urls, and a pattern matching nothing while there is only one language.
 
 A visitor asking a bare url for a language the site has been translated into is redirected to that language's url; anyone else — a crawler announcing nothing included — is served the writing language on the url they asked for. Those bare urls carry `Vary: Accept-Language`, redirect included, so a shared cache doesn't hand the first visitor's answer to everyone after them.
 
@@ -420,7 +420,7 @@ What is translatable is declared by the block kind itself, through the `translat
 
 ### Head and sitemap
 
-Every page emits an `hreflang` group naming itself in each declared language, built by `PagePublicUrlResolver::resolveAlternates()` and read by the layout through the `page_alternates()` Twig function. A collection item's detail view has no Page of its own, so its group is built from its own url instead (`::resolveAlternatesForSlug()`), never from the parent page's. The same group is carried into `sitemap-site.xml`, where a translated page is declared once per language, each entry carrying the whole group.
+Every page emits an `hreflang` group naming itself in each language it was **really written in**, built by `PagePublicUrlResolver::resolveAlternates()` and read by the layout through the `page_alternates()` Twig function. A language counts as written when the page's *title* has been translated into it (`PageTranslator::translatedLocales()`), not merely when the site declares it — declaring the whole list is what had `/en/` serve French text under `lang="en"`, which a search engine reads as duplicated content rather than as a translation. A page existing in one language alone therefore emits no group at all, and a collection item's detail view none either: nothing translates the item itself, `CollectionItem` carrying no `Translation` rows. The same group is carried into `sitemap-site.xml`, where a translated page is declared once per language, each entry carrying the whole group. A localised url of a page nobody translated answers 404 (`PageController::requireTranslated()`), and no menu ever links to one.
 
 ---
 
@@ -446,6 +446,16 @@ On a site scaffolded before this, `App\Command\SitemapCreateCommand` (`app:sitem
 
 To contribute a sitemap from another bundle, see [Contributing a sitemap](https://github.com/975L/ConfigBundle#contributing-a-sitemap-from-other-bundles) in ConfigBundle's own README — it's a two-method interface, and the file/index writing is none of the contributing bundle's business.
 
+### Who publishes the site
+
+The home page carries a `schema.org` graph naming the site's publisher and the site itself, built by `SiteSnippetBuilder` from the back-office alone — nothing to write in a template. Every bundle already describes its own entities (a book, a product, a photo) and none of them says who stands behind them: this is that missing node, and it is what the `sameAs` profiles hang from, tying the site, its social accounts and its catalog into a single entity rather than a scattering of unrelated pages.
+
+What the site says it is comes from `site-schema-type` (`choice`: `Organization` (default), `Person`, `ProfessionalService`, `LocalBusiness`) — a publishing house is an `Organization`, a personal site or a CV is the `Person` it is about, an agency selling a service a `ProfessionalService`, and a business with an address a `LocalBusiness`. They are not interchangeable: publishing an agency as a `Person` is the kind of claim a search engine builds a knowledge panel on. A `Person` takes `site-author` as its own name and the logo under `image`; every other type takes `site-name`, the logo under `logo`, and `site-author` as its `founder` when that name isn't the site's own.
+
+The graph is emitted only where there is something to publish: no `site-name` or no `site-url`, and nothing is written at all. It names the language the page is being served in, its description being the home page's own summary read in that same language. The `sameAs` list is contributed by whichever bundle owns each profile (UiBundle's `SameAsProviderInterface`).
+
+The `site_json_ld(logoUrl, description)` Twig function is what `pages/page.html.twig` prints it with, the logo resolved template-side because only a template turns a `Media` into an absolute url.
+
 ### Canonical url
 
 `<link rel="canonical">` and `og:url` are built by the `canonical_url()` Twig function, out of the `site-url`
@@ -465,10 +475,10 @@ by Symfony's error renderer) — a 404 rendered with the site's own layout used 
 default and offer itself to the index. `follow` is kept, so the links the page carries still pass on. It is
 defaulted in the layout rather than set in each error template, so none of them can forget it.
 
-`hreflang` tags are built out of the declared languages, not out of `app.request.uri` — which, with no
-`languagesAlt` defined, used to declare every page its own alternate, query string included. Each page names
-itself in each language the site declares, in its head and in the sitemap alike, and a site declaring a single
-language emits nothing at all. See [Languages](#languages).
+`hreflang` tags are built out of the languages a page was written in, not out of `app.request.uri` — which,
+with no `languagesAlt` defined, used to declare every page its own alternate, query string included. Each page
+names itself in each language its title has been translated into, in its head and in the sitemap alike, and a
+page existing in a single language emits nothing at all. See [Languages](#languages).
 
 ### Open Graph image
 
@@ -793,9 +803,10 @@ document sits on, and at which public address.
 | `page_health_check(page)` | The page's own health check panel, rendered in the back-office (see [Health check](#health-check)) |
 | `page_title(page)` | The page's title in the language being served (see [Languages](#languages)) |
 | `page_summary(page)` | The page's social network summary in the language being served |
-| `page_alternates(page)` | The page's url in each declared language, keyed by `hreflang` — read by the layout's `<link rel="alternate">` tags |
+| `page_alternates(page)` | The page's url in each language it was written in, keyed by `hreflang` — read by the layout's `<link rel="alternate">` tags |
+| `site_json_ld(logoUrl, description)` | The home page's `schema.org` publisher/`WebSite` graph, already encoded for a `<script type="application/ld+json">` (see [Who publishes the site](#who-publishes-the-site)) |
 
-All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension`, `PageHealthCheckExtension` and `PageTranslationExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
+All of them are declared with Twig's `#[AsTwigFunction]` attribute, directly on the method that backs them: `MenuExtension`, `PageExtension`, `PageHealthCheckExtension`, `PageTranslationExtension` and `SiteJsonLdExtension` are plain autowired services, no longer `AbstractExtension` subclasses with a `getFunctions()` to keep in sync. A site overriding one of them decorates or replaces the service as usual, and carries the attributes over — the function names live nowhere else (`TwigFunctionRegistrationTest` locks them for this bundle).
 
 Two of UiBundle's own are worth knowing here, both used by core-bundle's `layout.html.twig`: `theme_variables_css()`, returning the CSS compiled from the admin-editable theme configs (see [Themes](#themes)) for inlining where a `<link>` isn't possible (e.g. emails), and `font_preloads()`, returning the font files the current theme actually uses to emit as `<link rel="preload">` in the `<head>`.
 

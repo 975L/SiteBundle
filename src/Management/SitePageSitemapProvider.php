@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\SelfCheckedSitemapProviderInterface;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageServiceInterface;
+use c975L\SiteBundle\Service\PageTranslator;
 
 // Declares the site's own pages (public/sitemap-site.xml) - SiteBundle's contribution to the sitemap, collected like any other bundle's by SitemapCreateCommand. Self-checked (see the interface): these urls already have ContentQualityHealthCheckProvider, which reports them in more detail than the generic declared-urls check DeclaredUrlsHealthCheckPass builds for every other sitemap
 class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
@@ -20,6 +21,7 @@ class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
     public function __construct(
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly PageServiceInterface $pageService,
+        private readonly PageTranslator $pageTranslator,
     ) {
     }
 
@@ -32,6 +34,9 @@ class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
     public function getUrls(): array
     {
         $pages = $this->pageService->findAll();
+
+        // Every page's translations in one query per language, resolveAlternates() below asking them of each page in turn
+        $this->pageTranslator->preload($pages);
 
         // Urls for the pages
         $urls = [];

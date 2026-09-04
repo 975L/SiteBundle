@@ -14,6 +14,7 @@ use c975L\SiteBundle\Twig\MenuExtension;
 use c975L\SiteBundle\Twig\PageExtension;
 use c975L\SiteBundle\Twig\PageHealthCheckExtension;
 use c975L\SiteBundle\Twig\PageTranslationExtension;
+use c975L\SiteBundle\Twig\SiteJsonLdExtension;
 use c975L\SiteBundle\Twig\TwigContentExtension;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -47,6 +48,9 @@ class TwigFunctionRegistrationTest extends TestCase
                 'page_alternates' => 'getAlternates',
                 'page_summary' => 'getSummary',
                 'page_title' => 'getTitle',
+            ]],
+            'SiteJsonLdExtension' => [SiteJsonLdExtension::class, [
+                'site_json_ld' => 'jsonLd',
             ]],
             'TwigContentExtension' => [TwigContentExtension::class, [
                 'site_twig_content_allowed' => 'isAllowed',

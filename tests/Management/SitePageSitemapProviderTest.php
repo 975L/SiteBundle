@@ -16,6 +16,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\SitePageSitemapProvider;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageServiceInterface;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -40,11 +41,18 @@ class SitePageSitemapProviderTest extends TestCase
     }
 
     // A real PagePublicUrlResolver over a real UrlGenerator, so the urls asserted below are the ones the routes actually produce
-    private function createProvider(array $pages = [], string $urlRoot = 'https://example.com', array $enabledLocales = [], string $defaultLocale = 'fr'): SitePageSitemapProvider
+    /**
+     * @param list<string> $translatedLocales the languages the pages themselves were written in, which is what gates their group - the declared ones alone never did
+     */
+    private function createProvider(array $pages = [], string $urlRoot = 'https://example.com', array $enabledLocales = [], string $defaultLocale = 'fr', array $translatedLocales = ['fr']): SitePageSitemapProvider
     {
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('translatedLocales')->willReturn($translatedLocales);
+
         return new SitePageSitemapProvider(
-            new PagePublicUrlResolver($this->createConfigService($urlRoot), $this->createUrlGenerator(), $this->createSiteLocales($enabledLocales, $defaultLocale)),
-            $this->createPageService($pages)
+            new PagePublicUrlResolver($this->createConfigService($urlRoot), $this->createUrlGenerator(), $this->createSiteLocales($enabledLocales, $defaultLocale), $pageTranslator),
+            $this->createPageService($pages),
+            $pageTranslator
         );
     }
 
@@ -165,7 +173,7 @@ class SitePageSitemapProviderTest extends TestCase
     {
         $page = new Page()->setTitle('About')->setSlug('about');
         $page->setModification(new \DateTime('2026-01-15'));
-        $provider = $this->createProvider([$page], 'https://example.com', ['fr', 'en'], 'fr');
+        $provider = $this->createProvider([$page], 'https://example.com', ['fr', 'en'], 'fr', ['fr', 'en']);
 
         $urls = $provider->getUrls();
 

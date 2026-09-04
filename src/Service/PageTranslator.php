@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Service\ContentTranslator;
 
@@ -23,8 +24,10 @@ class PageTranslator
     // What a translation may cover of the page itself: what a visitor reads, and what a search engine or a social network quotes
     public const array FIELDS = ['title', 'summarySocialNetwork'];
 
-    public function __construct(private readonly ContentTranslator $contentTranslator)
-    {
+    public function __construct(
+        private readonly ContentTranslator $contentTranslator,
+        private readonly SiteLocales $siteLocales,
+    ) {
     }
 
     public function isActive(): bool
@@ -113,6 +116,60 @@ class PageTranslator
         if ([] !== $staged) {
             $this->contentTranslator->stage(self::OWNER, $id, $locale, $staged);
         }
+    }
+
+    /**
+     * Reads ahead the translations of a whole set of pages, so asking translatedLocales() of each of them costs one
+     * query per language rather than one per page - what the sitemap does over every page of the site.
+     *
+     * @param iterable<Page> $pages
+     */
+    public function preload(iterable $pages): void
+    {
+        $ids = [];
+        foreach ($pages as $page) {
+            $id = $page->getId();
+            if (null !== $id) {
+                $ids[] = $id;
+            }
+        }
+
+        foreach ($this->contentTranslator->getTranslatableLocales() as $locale) {
+            $this->contentTranslator->preload(self::OWNER, $ids, $locale);
+        }
+    }
+
+    /**
+     * The languages this page really exists in, its own included: the ones a "hreflang" group may name and the ones a
+     * localised url may answer on.
+     *
+     * A language counts as written when the page's title has been translated into it, and not merely when the site
+     * declares it. Declaring the whole list instead is what had "/en/" serve a page written in French under
+     * lang="en" - an alternate a search engine reads as duplicated content rather than as a translation. The title
+     * and not the blocks: a page whose blocks were translated while its title stayed French still renders a French
+     * <title>, which is the first thing a result page shows.
+     *
+     * Read through ContentTranslator::values(), whose preload() caches a whole set of pages in one query - the sitemap
+     * asks this of every page of the site (see SitePageSitemapProvider).
+     *
+     * @return list<string>
+     */
+    public function translatedLocales(Page $page): array
+    {
+        $id = $page->getId();
+        $locales = [$this->siteLocales->getDefaultLocale()];
+        if (null === $id) {
+            return $locales;
+        }
+
+        foreach ($this->contentTranslator->getTranslatableLocales() as $locale) {
+            $title = $this->contentTranslator->values(self::OWNER, $id, $locale)['title'] ?? null;
+            if (null !== $title && '' !== $title) {
+                $locales[] = $locale;
+            }
+        }
+
+        return $locales;
     }
 
     /**

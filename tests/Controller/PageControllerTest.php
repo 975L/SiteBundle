@@ -10,7 +10,6 @@ namespace c975L\SiteBundle\Tests\Controller;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\PageController;
 use c975L\SiteBundle\Entity\Page;
-use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use c975L\SiteBundle\Twig\CollectionItemContext;
@@ -35,14 +34,6 @@ class PageControllerTest extends TestCase
     use PagePublicUrlGeneratorTestTrait;
 
     // The real resolver against the real routes, so what the controller hands the template is the group a visitor would be given
-    private function createPagePublicUrlResolver(array $enabledLocales = [], string $defaultLocale = 'fr', string $siteUrl = 'https://exemple.com'): PagePublicUrlResolver
-    {
-        $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturn($siteUrl);
-
-        return new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales($enabledLocales, $defaultLocale));
-    }
-
     private function createPageService(?Page $bySlug = null, array $forDisplayBySlug = []): PageServiceInterface
     {
         $service = $this->createStub(PageServiceInterface::class);
@@ -72,25 +63,33 @@ class PageControllerTest extends TestCase
         ?BlockRenderContext $blockRenderContext = null,
         array $enabledLocales = [],
         string $defaultLocale = 'fr',
+        // The languages the page itself was written in, the declared ones by default - a localised url only ever answers for one of them (see PageTranslator::translatedLocales())
+        ?array $translatedLocales = null,
     ): PageController {
-        if (null === $twig) {
-            $twig = $this->createStub(Environment::class);
-            $twig->method('render')->willReturnCallback(
-                static fn (string $view, array $parameters = []): string => $view . ':' . ($parameters['page']->getTitle() ?? '')
-            );
-        }
+        // What the test hands over wins, the rest falls back to the defaults beside it - an array union rather than a chain of "??", each of which counts as branching where none of this branches
+        $collaborators = array_filter([
+            'collectionSourceRegistry' => $collectionSourceRegistry,
+            'twig' => $twig,
+            'blockRenderContext' => $blockRenderContext,
+            'translatedLocales' => $translatedLocales,
+        ]) + [
+            'collectionSourceRegistry' => $this->createStub(CollectionSourceRegistry::class),
+            'twig' => $this->createRenderingTwig(),
+            'blockRenderContext' => new BlockRenderContext(),
+            'translatedLocales' => array_values(array_unique([$defaultLocale, ...$enabledLocales])),
+        ];
 
         $controller = new PageController(
             $pageService,
             $configService,
-            $collectionSourceRegistry ?? $this->createStub(CollectionSourceRegistry::class),
-            $twig,
+            $collaborators['collectionSourceRegistry'],
+            $collaborators['twig'],
             new CollectionItemContext(),
-            $blockRenderContext ?? new BlockRenderContext(),
+            $collaborators['blockRenderContext'],
             new RequestStack(),
             new LocaleSwitcher($defaultLocale, []),
             $this->createSiteLocales($enabledLocales, $defaultLocale),
-            $this->createPagePublicUrlResolver($enabledLocales, $defaultLocale),
+            $this->createPageTranslator($collaborators['translatedLocales']),
         );
 
         // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
@@ -103,12 +102,23 @@ class PageControllerTest extends TestCase
         $authorizationChecker->method('isGranted')->willReturn($isGranted);
 
         $container = new Container();
-        $container->set('twig', $twig);
+        $container->set('twig', $collaborators['twig']);
         $container->set('router', $router);
         $container->set('security.authorization_checker', $authorizationChecker);
         $controller->setContainer($container);
 
         return $controller;
+    }
+
+    // The render stub a test saying nothing about Twig gets: the view name and the page's own title, which is what most assertions read
+    private function createRenderingTwig(): Environment
+    {
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(
+            static fn (string $view, array $parameters = []): string => $view . ':' . ($parameters['page']->getTitle() ?? '')
+        );
+
+        return $twig;
     }
 
     public function testRedirectPagesRedirectsToHome(): void
@@ -396,7 +406,7 @@ class PageControllerTest extends TestCase
             new RequestStack(),
             new LocaleSwitcher('fr', []),
             $this->createSiteLocales(),
-            $this->createPagePublicUrlResolver(),
+            $this->createPageTranslator(),
         );
         $router = $this->createStub(UrlGeneratorInterface::class);
         $container = new Container();
@@ -688,6 +698,57 @@ class PageControllerTest extends TestCase
         $this->assertSame(['Accept-Language'], $response->getVary());
     }
 
+    // The same visitor, on a page nobody translated: sending them to "/en/" would only hand them the French page under lang="en", which is what the site did before the gate
+    public function testAVisitorAskingForALanguageThePageWasNeverWrittenInStaysOnIt(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+            translatedLocales: ['fr'],
+        );
+
+        $request = Request::create('/');
+        $request->headers->set('Accept-Language', 'en');
+        $request->setLocale('en');
+
+        $this->assertSame(200, $controller->home($request)->getStatusCode());
+    }
+
+    // The localised routes exist for every language the site declares, and answer only for the pages that language was written in: nothing ever linked to the others, neither the head nor the sitemap declaring them
+    public function testALocalisedUrlIsNotFoundOnAPageThatLanguageWasNeverWrittenIn(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+            translatedLocales: ['fr'],
+        );
+
+        $request = Request::create('/en/');
+        $request->attributes->set('_locale', 'en');
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $controller->home($request);
+    }
+
+    // The very same url, once that language has been written: the gate is about the page, never about the route
+    public function testALocalisedUrlAnswersOnceThePageIsTranslated(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+            translatedLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/en/');
+        $request->attributes->set('_locale', 'en');
+
+        $this->assertSame(200, $controller->home($request)->getStatusCode());
+    }
+
     // A crawler announcing no language at all is left on the url it asked for, answered in the writing language
     public function testAVisitorAskingForNothingIsServedTheWritingLanguage(): void
     {
@@ -808,8 +869,8 @@ class PageControllerTest extends TestCase
         $this->assertSame(['Accept-Language'], $controller->home($request)->getVary());
     }
 
-    // A collection item is served by its parent Page: its "hreflang" group names its own url in each language, never the parent's
-    public function testACollectionDetailViewDeclaresItsOwnLanguages(): void
+    // A collection item is served by its parent Page and nothing translates the item itself - CollectionItem carries no Translation rows. The controller hands over no group at all, the template declaring none for a detail view
+    public function testACollectionDetailViewDeclaresNoLanguages(): void
     {
         $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
         $parent->addBlock(new Block()->setKind('collection')->setData([
@@ -849,37 +910,6 @@ class PageControllerTest extends TestCase
 
         $controller->display('catalog/item-1', $request);
 
-        $this->assertSame([
-            'fr' => 'https://exemple.com/pages/catalog/item-1',
-            'en' => 'https://exemple.com/en/pages/catalog/item-1',
-        ], $capturedPageParameters['detailAlternates']);
-    }
-
-    // An ordinary page hands over no group of its own: the template reads it from page_alternates() as it always has
-    public function testAPageThatIsNotACollectionDetailHandsOverNoAlternates(): void
-    {
-        $capturedPageParameters = null;
-        $twig = $this->createStub(Environment::class);
-        $twig->method('render')->willReturnCallback(
-            function (string $view, array $parameters = []) use (&$capturedPageParameters): string {
-                $capturedPageParameters = $parameters;
-
-                return $view;
-            }
-        );
-
-        $controller = $this->createController(
-            $this->createPageService(forDisplayBySlug: ['contact' => new Page()->setSlug('contact')->setTitle('Contact')->setIsPublished(true)]),
-            $this->createConfigService(),
-            twig: $twig,
-            enabledLocales: ['fr', 'en'],
-        );
-
-        $request = Request::create('/pages/contact');
-        $request->attributes->set('_locale', 'en');
-
-        $controller->display('contact', $request);
-
-        $this->assertSame([], $capturedPageParameters['detailAlternates']);
+        $this->assertArrayNotHasKey('detailAlternates', $capturedPageParameters);
     }
 }

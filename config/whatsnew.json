@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-04",
+        "description": [
+            {
+                "en": "Your home page now tells search engines who publishes the site - your name or your organisation, your logo, your contact details and your social accounts, all taken from your settings; pick what your site is under Configuration",
+                "fr": "Votre page d'accueil indique désormais aux moteurs de recherche qui publie le site - votre nom ou votre organisation, votre logo, vos coordonnées et vos comptes sociaux, le tout repris de vos réglages ; choisissez ce qu'est votre site dans la Configuration",
+                "es": "Su página de inicio indica ahora a los motores de búsqueda quién publica el sitio - su nombre o su organización, su logotipo, sus datos de contacto y sus cuentas sociales, todo tomado de sus ajustes; elija lo que es su sitio en la Configuración"
+            },
+            {
+                "en": "A page is only offered in another language once you have translated its title: without it the page keeps its original address, and search engines are no longer told a translation exists where there is none",
+                "fr": "Une page n'est proposée dans une autre langue qu'une fois son titre traduit : sans lui elle garde son adresse d'origine, et les moteurs de recherche ne se voient plus annoncer une traduction qui n'existe pas",
+                "es": "Una página solo se ofrece en otro idioma una vez traducido su título: sin él conserva su dirección original, y a los motores de búsqueda ya no se les anuncia una traducción que no existe"
+            },
+            {
+                "en": "Your settings are easier to find: the navbar and preconnection ones now sit in their own Site drawer, and the PageSpeed key with the health check it belongs to",
+                "fr": "Vos réglages sont plus faciles à trouver : ceux de la barre de navigation et des préconnexions ont désormais leur propre tiroir Site, et la clé PageSpeed rejoint le bilan de santé auquel elle sert",
+                "es": "Sus ajustes son más fáciles de encontrar: los de la barra de navegación y las preconexiones tienen ahora su propio cajón Sitio, y la clave PageSpeed se une al balance de salud al que sirve"
+            }
+        ]
+    },
+    {
         "date": "2026-09-03",
         "description": [
             {

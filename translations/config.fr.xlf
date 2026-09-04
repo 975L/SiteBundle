@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="fr" datatype="plaintext" original="config.fr.xlf">
+        <body>
+            <trans-unit id="5VoqLAB">
+                <source>label.group_health_check</source>
+                <target>Bilan de santé</target>
+            </trans-unit>
+            <trans-unit id="F0XJY7i">
+                <source>label.group_site</source>
+                <target>Site</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

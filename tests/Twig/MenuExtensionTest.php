@@ -174,13 +174,22 @@ class MenuExtensionTest extends TestCase
         ];
     }
 
-    // The title a menu item derives from the page it points at, read in the language the page is being read in - untranslated, which is the page's own title
-    private function createPageTranslator(?string $translated = null): PageTranslator
+    /**
+     * The title a menu item derives from the page it points at, read in the language the page is being read in -
+     * untranslated, which is the page's own title.
+     *
+     * The languages default to a page written in both, which is what every test saying nothing about them expects of
+     * its links; a test of an untranslated page hands over the writing language alone.
+     *
+     * @param array<int, string> $translatedLocales
+     */
+    private function createPageTranslator(?string $translated = null, array $translatedLocales = ['fr', 'en']): PageTranslator
     {
         $pageTranslator = $this->createStub(PageTranslator::class);
         $pageTranslator->method('getTitle')->willReturnCallback(
             static fn (Page $page): string => $translated ?? (string) $page->getTitle()
         );
+        $pageTranslator->method('translatedLocales')->willReturn($translatedLocales);
 
         return $pageTranslator;
     }
@@ -709,6 +718,25 @@ class MenuExtensionTest extends TestCase
         $extension = $this->createExtension($this->createRegistry([]), ['42' => $page], requestStack: $requestStack);
 
         $this->assertSame('/page_display/ateliers', $extension->getMenuLinkUrl('page:42'));
+    }
+
+    // A page nobody translated keeps the writing language's url even in the menu of a localised page: the localised one answers 404 (see PageController::requireTranslated()), so linking to it would break the navigation of a partly translated site
+    public function testGetMenuLinkUrlKeepsTheBareUrlForAPageThatLanguageWasNotWrittenIn(): void
+    {
+        $page = new Page()->setTitle('Contact')->setSlug('contact')->setIsPublished(true);
+
+        $request = new Request();
+        $request->attributes->set('_locale', 'en');
+        $requestStack = new RequestStack([$request]);
+
+        $extension = $this->createExtension(
+            $this->createRegistry([]),
+            ['42' => $page],
+            requestStack: $requestStack,
+            pageTranslator: $this->createPageTranslator(translatedLocales: ['fr']),
+        );
+
+        $this->assertSame('/page_display/contact', $extension->getMenuLinkUrl('page:42'));
     }
 
     // An item deriving its label from the page it points at reads that page's title in the language being read, not the raw column

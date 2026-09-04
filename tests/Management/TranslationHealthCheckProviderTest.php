@@ -87,7 +87,7 @@ class TranslationHealthCheckProviderTest extends TestCase
             $contentTranslator,
             $pageTranslator,
             $blockRegistry,
-            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(['fr', 'en'], 'fr')),
+            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(['fr', 'en'], 'fr'), $pageTranslator),
             $this->createStub(PageEditUrlResolver::class),
             $siteUrlResolver,
             $this->createStub(AdminUrlGeneratorInterface::class),

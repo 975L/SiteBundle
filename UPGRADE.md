@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+**Update `c975l/core-bundle` first, then run `c975l:config:load-all`.** The drawers these settings move to are
+named by this bundle, and core-bundle refused an unknown one until 1.22.1 - moving them under an older core would
+make them unsavable from the back office. Until the command runs, they sit in the drawers they had, values
+untouched: nothing reads a setting by its group, and no page changes.
+
 **The layout is now a child of core-bundle's, not a copy of it.**
 `@c975LSite/layout.html.twig` extends `@c975LUi/layout.html.twig` and keeps only what having Pages,
 menus and a navbar brings: the `header`, `navigation`, `container` and `footer` blocks, plus four
@@ -64,6 +69,24 @@ when the mode asks for it. Four keys leave this bundle for core-bundle with them
 so **nothing to run** beyond the `c975l:config:load-all` above. A site still holding `true`/`false` in
 those two rows keeps rendering what it rendered (`true` reads as the logo, `false` as nothing) until the
 value is re-picked — see core-bundle's UPGRADE.md for the SQL doing it in one go.
+
+**A localised url now answers only for a page really translated into that language, and `hreflang` names only
+those languages.** A page counts as written in a language when its *title* has been translated into it (see
+`PageTranslator::translatedLocales()`). Two consequences for a site already translated:
+
+- **`/{lang}/pages/{slug}` returns 404 where it returned 200**, for every page whose title was left in the
+  writing language. Those urls were never declared — neither in the `hreflang` group nor in the sitemap — but
+  a bookmark, an inbound link or an already-indexed result may reach one. Translate the page's title to get
+  the url back; the menu no longer builds those links either, an untranslated page keeping the writing
+  language's url even in a localised menu.
+- **`PagePublicUrlResolver::resolveAlternatesForSlug()` is gone.** A collection item's detail view declares no
+  language at all — nothing translates the item itself, `CollectionItem` carrying no `Translation` rows — so
+  there is nothing left for the method to return. A caller building a group for a page has
+  `resolveAlternates(Page $page)` instead.
+
+Three services take one more constructor argument, so **an app instantiating or decorating one of them has to
+pass it**: `PagePublicUrlResolver` and `SitePageSitemapProvider` now take a `PageTranslator`, and
+`PageTranslator` itself a `SiteLocales`. All three are autowired, so an app doing neither has nothing to run.
 
 ## v8.1.2
 

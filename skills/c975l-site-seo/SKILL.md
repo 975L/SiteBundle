@@ -1,6 +1,6 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_site.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, llms.txt."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_site.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, llms.txt, site_json_ld, SiteSnippetBuilder, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
@@ -10,7 +10,7 @@ description: "Use this skill when working on the searchability or the monitoring
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
+`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SiteSnippetBuilder.php`, `src/Twig/SiteJsonLdExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
 
 **Related skills:** `c975l-site-pages`, `c975l-site-layout` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
 
@@ -32,8 +32,9 @@ Each url also carries the page's title and summary as optional `title` / `descri
 sitemap ignores — ConfigBundle's `SeoFilesWriter` reads them to build `public/llms.txt`.
 
 Each url carries an `alternates` key too (`PagePublicUrlResolver::resolveAlternates()`): the same page in
-every declared language, keyed by `hreflang`. It is empty on a site declaring a single language, whose
-sitemap is then exactly the one it has always been.
+every language it was **really written in**, keyed by `hreflang`. A language counts as written when the
+page's title has been translated into it (`PageTranslator::translatedLocales()`), so a page existing in one
+language alone carries an empty key, as does every page of a site declaring a single language.
 
 To contribute a sitemap from another bundle, implement `SitemapProviderInterface`; the file and index
 writing is none of the contributing bundle's business.
@@ -69,8 +70,29 @@ asked for. Those bare urls therefore carry `Vary: Accept-Language`, the redirect
 or a shared cache hands the first visitor's answer to everyone after them.
 
 `page_alternates(page)` is what the layout writes its `<link rel="alternate" hreflang>` tags from, the
-page naming itself in every declared language, itself included. `page_title(page)` and
-`page_summary(page)` read the page's own two texts in the language being served.
+page naming itself in every language it was written in, itself included — a page whose title was left
+untranslated names none. That same rule closes the localised urls: `/{lang}/pages/{slug}` answers 404 for a
+page that language was not written in, rather than serving the writing language's text under another `lang`
+attribute, and a menu read in that language keeps the writing language's url for such a page.
+`page_title(page)` and `page_summary(page)` read the page's own two texts in the language being served.
+
+## Who publishes the site
+
+The home page carries a `schema.org` `@graph` naming the site's publisher and the site itself, built by
+`SiteSnippetBuilder` from the back-office alone and printed by the `site_json_ld(logoUrl, description)`
+Twig function. Every bundle already describes its own entities — a book, a product, a photo — and none of
+them says who stands behind them; this is that missing node, and it is what the `sameAs` profiles hang
+from, tying the site, its accounts and its catalog into one entity.
+
+`site-schema-type` (`choice`) says what the site is: `Organization` (default), `Person`,
+`ProfessionalService` or `LocalBusiness`. They are **not** interchangeable — a `Person` takes
+`site-author` as its own name and its logo under `image`, every other type takes `site-name`, the logo
+under `logo`, and `site-author` as its `founder` when that name is not the site's own.
+
+Nothing is emitted at all while `site-name` or `site-url` is empty: the first identifies the entity, the
+second builds both `@id`. The `WebSite` node names the language the page is being served in, its
+description being the home page's own summary read in that same language. The `sameAs` list comes from
+whichever bundle owns each profile (`SameAsProviderInterface`).
 
 ## Open Graph image
 
@@ -173,5 +195,9 @@ worked on.
   `alternates`; the writing language's bare url is the entry.
 - **Do not serve a bare url in a language other than the writing one.** Redirect to that language's
   own url, and say `Vary: Accept-Language` on the answer.
+- **Do not declare a `hreflang` group from the languages the site declares.** Only the ones the page's
+  title was translated into (`PageTranslator::translatedLocales()`); the others answer 404.
+- **Do not hand-write an `Organization`/`WebSite` graph in a template.** `site_json_ld()` builds it from
+  the back-office, and a second graph on the same page states the entity twice.
 - **Do not add a page-level check to the smoke test** — it must stay fast enough to run on every
   deployment.
