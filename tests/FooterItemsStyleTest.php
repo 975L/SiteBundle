@@ -38,8 +38,9 @@ class FooterItemsStyleTest extends TestCase
             sprintf('"%s" no longer inlines a footer menu picked as such in the backoffice.', $file)
         );
 
+        // The third token goes with the pair: a group's flex basis sits on the main axis, so the width a theme gives it in a row footer becomes a height once the footer stacks
         $this->assertStringContainsString(
-            'footer .menu-items--block{--footer-items-direction:column;--footer-items-justify:flex-start',
+            'footer .menu-items--block{--footer-items-direction:column;--footer-items-justify:flex-start;--footer-group-flex:0 0 auto',
             $css,
             sprintf('"%s" no longer stacks a footer menu picked as such in the backoffice.', $file)
         );

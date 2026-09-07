@@ -1202,9 +1202,13 @@
                 <source>label.health_check_summary_w3c_html</source>
                 <target>%errors% error(s), %warnings% warning(s)</target>
             </trans-unit>
+            <trans-unit id="PQlYy3n">
+                <source>label.health_check_w3c_benign_errors</source>
+                <target>of which %actionable% actionable error(s) (%benign% benign: CSS properties too recent for the validator, or values holding variables it does not resolve)</target>
+            </trans-unit>
             <trans-unit id="Ag5xH55">
                 <source>label.health_check_w3c_benign_warnings</source>
-                <target>of which %actionable% actionable (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
+                <target>of which %actionable% actionable warning(s) (%benign% benign: CSS variables, vendor prefixes, none checkable by the validator)</target>
             </trans-unit>
             <trans-unit id="qYfmk2.">
                 <source>label.health_check_w3c_css_call_failed</source>

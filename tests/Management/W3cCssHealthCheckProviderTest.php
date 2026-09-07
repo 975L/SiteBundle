@@ -181,6 +181,31 @@ class W3cCssHealthCheckProviderTest extends TestCase
         $this->assertStringContainsString('1 2', $summary);
     }
 
+    // The errors get their own breakdown, on the same rule as the warnings: the total is the report's, only the actionable count drives the status
+    public function testRunChecksSummaryBreaksDownTheBenignErrorsToo(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient([
+            'errors' => ['line 12: Property “colr” doesn\'t exist'],
+            'benignErrors' => ['line 4: Property “corner-shape” doesn\'t exist', 'line 9: Invalid type'],
+            'warnings' => [],
+        ]));
+
+        $summary = $provider->runChecks()[0]['summary'];
+
+        // %errors% 3 (1 actionable + 2 benign), %warnings% 0, then %actionable% 1 / %benign% 2
+        $this->assertStringContainsString('3 0', $summary);
+        $this->assertStringContainsString('label.health_check_w3c_benign_errors', $summary);
+        $this->assertStringContainsString('1 2', $summary);
+    }
+
+    // Nothing to break down, nothing appended - and the HTML validator, which has no benign class at all, never shows it
+    public function testRunChecksSummaryOmitsTheBreakdownWithoutBenignErrors(): void
+    {
+        $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => ['line 12: Property “colr” doesn\'t exist'], 'warnings' => []]));
+
+        $this->assertStringNotContainsString('label.health_check_w3c_benign_errors', $provider->runChecks()[0]['summary']);
+    }
+
     // Nothing to break down, nothing appended - and the HTML validator, which has no benign class at all, never shows it
     public function testRunChecksSummaryOmitsTheBreakdownWithoutBenignWarnings(): void
     {
@@ -215,7 +240,8 @@ class W3cCssHealthCheckProviderTest extends TestCase
         $this->assertSame('label.health_check_page_not_found', $result['summary']);
     }
 
-    public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void
+    // A validator that never answered says the verdict is missing, not that the stylesheet is invalid - HealthCheckErrorRow ranks it a warning
+    public function testRunChecksReturnsAWarningRowWhenTheCallFails(): void
     {
         $client = $this->createStub(W3cValidatorClient::class);
         $client->method('requestCss')->willReturn($this->stubResponse());
@@ -225,7 +251,7 @@ class W3cCssHealthCheckProviderTest extends TestCase
 
         $result = $provider->runChecks()[0];
 
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame(['error' => 'Timeout'], $result['details']);
     }
 

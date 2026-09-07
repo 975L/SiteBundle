@@ -1,5 +1,24 @@
 # Changelog
 
+## v8.11.1
+
+A CSS verdict is excused on the sheet that earned it, not on the page
+
+- `composer qa` runs `mess` and `lizard`, and `phpmd.xml.dist` drops `NPathComplexity` (07/09/2026)
+- `.gitignore` the phpmd report naming how many files PDepend could not read (07/09/2026)
+- New `scripts-descriptions` for `mess`, `lizard`, `lizard-ccn` and `lizard-nloc` (07/09/2026)
+- `bin/ci.sh` and `.github/workflows/ci.yml` install phpmd and lizard, pinned to 1.17.31 (07/09/2026)
+- New `--footer-group-flex`: a footer menu group takes a whole line by default, or a share of the row for a footer laid out in columns (07/09/2026)
+- The *Block* footer style resets `--footer-group-flex`, a basis sitting on the main axis laying the groups out as tall as the width a theme gave them (07/09/2026)
+- `W3cValidatorClient` counts the errors the validator's CSS3 profile predates apart as benign, under a new `benignErrors` key (07/09/2026)
+- A CSS type verdict is excused per stylesheet `source`, one sheet using variables no longer covering the others (07/09/2026)
+- The W3C summary names what each benign count counts, two identical "of which N actionable" having followed one another (07/09/2026)
+- `PageSpeedInsightsClient` reports what Google's error body says, in place of a bare status code (07/09/2026)
+- `c975l/core-bundle` requires `^1.24`, `HealthCheckErrorRow` having moved to `STATUS_WARNING` (07/09/2026)
+- The five health check provider tests expect a warning where a call that never answered was ranked an error (07/09/2026)
+- `W3cValidatorClientTest` and `PageSpeedInsightsClientTest` cover the per-sheet verdict and the error body (07/09/2026)
+- `W3cCssHealthCheckProviderTest` covers the benign error breakdown in the summary (07/09/2026)
+
 ## v8.11.0
 
 A translated title opens a language, and the site names its publisher

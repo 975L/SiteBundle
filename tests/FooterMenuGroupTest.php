@@ -35,12 +35,12 @@ class FooterMenuGroupTest extends TestCase
         ];
     }
 
-    // Without its full width the group would just be one more item of the footer's own flex row, which is what it exists to break out of
+    // Without its full width the group would just be one more item of the footer's own flex row, which is what it exists to break out of - a line of its own by default, and a share of the row for a footer laid out in columns, which is all --footer-group-flex says
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
     public function testEachStylesheetGivesAFooterGroupItsOwnLine(string $file): void
     {
         $this->assertStringContainsString(
-            'footer .menu-items .blocks-group,footer .menu-items .blocks>:has(>.blocks-group){flex:0 0 100%',
+            'footer .menu-items .blocks-group,footer .menu-items .blocks>:has(>.blocks-group){flex:var(--footer-group-flex,0 0 100%)',
             $this->stylesheet($file),
             sprintf('"%s" no longer gives a footer menu group a line of its own.', $file)
         );

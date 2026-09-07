@@ -22,6 +22,9 @@ class PageSpeedInsightsClient
     private const string ENDPOINT = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
     private const array CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo'];
 
+    // Google's own explanation is one sentence ("Lighthouse returned error: ERRORED_DOCUMENT_REQUEST..."), but the error body also carries quota tables and help links, and this message is stored as a row's summary and read in a table cell. Cut rather than dropped: the first words are the ones that name the cause
+    private const int MAX_REASON_LENGTH = 200;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly ConfigServiceInterface $configService,
@@ -83,12 +86,33 @@ class PageSpeedInsightsClient
         }
     }
 
-    // Google only accepts its API key in the query string, so HttpClient quotes the whole url - key included - in the message of every exception it raises. That message is what HealthCheckErrorRow stores as a row's summary AND details, which means the database, the dashboard, the CSV export and any status report leaving the site. None of those is a place for a credential, and the status code alone is all that's actionable anyway - the row already carries the url it was checking. The original exception is deliberately NOT kept as "previous": Symfony's error logging unrolls the whole chain, which would put the key straight back in the logs
+    // Google only accepts its API key in the query string, so HttpClient quotes the whole url - key included - in the message of every exception it raises. That message is what HealthCheckErrorRow stores as a row's summary AND details, which means the database, the dashboard, the CSV export and any status report leaving the site. None of those is a place for a credential, so the exception's own message is dropped and rebuilt here from the status code and the *response body*, which is Google's json error and carries no credential of its own - the request url is not echoed back in it. The original exception is deliberately NOT kept as "previous": Symfony's error logging unrolls the whole chain, which would put the key straight back in the logs
     private static function withoutUrl(\Throwable $e): \RuntimeException
     {
-        $status = $e instanceof HttpExceptionInterface ? $e->getResponse()->getStatusCode() : null;
+        if (!$e instanceof HttpExceptionInterface) {
+            return new \RuntimeException('PageSpeed Insights could not be reached');
+        }
 
-        return new \RuntimeException($status ? sprintf('PageSpeed Insights returned HTTP %d', $status) : 'PageSpeed Insights could not be reached');
+        $reason = self::reason($e->getResponse());
+
+        return new \RuntimeException(sprintf('PageSpeed Insights returned HTTP %d%s', $e->getResponse()->getStatusCode(), null !== $reason ? ' : ' . $reason : ''));
+    }
+
+    // What Google says went wrong, read from the error body it answers with. Worth the few lines: "HTTP 500" says only that the analysis did not happen, where the body says whether the page failed to load, whether Lighthouse never saw a first paint, or whether the day's quota is spent - three different things to go and do, and a bare status code sends the reader to look for a page defect in all three cases. Absent or unparseable, the status code alone still stands on its own
+    private static function reason(ResponseInterface $response): ?string
+    {
+        try {
+            $message = $response->toArray(false)['error']['message'] ?? null;
+        } catch (\Throwable) {
+            return null;
+        }
+
+        if (!\is_string($message) || '' === trim($message)) {
+            return null;
+        }
+
+        // Belt and braces: the key is not in what Google answers, and it is not going in a row summary if that ever changes
+        return mb_substr(trim((string) preg_replace('/key=[^&\s]+/', 'key=***', $message)), 0, self::MAX_REASON_LENGTH);
     }
 
     private static function parseScores(array $data): array

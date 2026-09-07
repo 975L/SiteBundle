@@ -118,11 +118,16 @@ chains, deployment, declared urls) are ConfigBundle's.
 | --- | --- | --- |
 | `pagespeed` | Lighthouse performance / accessibility / best-practices / SEO + console errors | optional `healthcheck-pagespeed-api-key`, the anonymous quota being shared worldwide |
 | `w3c-html` | markup, via the W3C Nu checker | none |
-| `w3c-css` | stylesheets; warnings the validator's CSS3 profile predates are counted apart as *benign* | none |
+| `w3c-css` | stylesheets; the warnings **and the errors** the validator's CSS3 profile predates are counted apart as *benign*, a type verdict being excused only on the stylesheet the validator said it did not resolve the variables of | none |
 | `content-quality` | noindex contradictions, title and description length, `<h1>`, share tags, image `alt`, broken links | none |
 | `mixed-content` | `http://` assets on an `https://` page | none |
 | `files-site` | that the image every `CollectionItem` names is still under `public/` — read off the disk, not over http | none |
 | `translations` | what is published in one language and not in the others — one row per published page, plus one per menu, each linking to its own Translate screen; returns nothing at all on a site declaring one language | none |
+
+A check whose call never completed — a quota spent, a validator that never answered, a host down — is a
+**warning, never an error** (`HealthCheckErrorRow`, core-bundle): the verdict is missing, which says
+nothing about the page. Only errors are mailed out by `StatusReportBuilder`, so ranking the two alike
+had a site whose PageSpeed quota ran out announce pages it had never looked at.
 
 What `content-quality` deliberately does **not** flag, and why it matters when reading a report:
 

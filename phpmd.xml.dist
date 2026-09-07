@@ -20,9 +20,12 @@
         <exclude name="ExcessiveClassComplexity"/>
         <exclude name="ExcessiveParameterList"/>
         <exclude name="CyclomaticComplexity"/>
+        <exclude name="NPathComplexity"/>
     </rule>
 
-    <!-- The same fifteen Lizard's ccn-medium palier uses: PHPMD's own default of 10 is McCabe's 1976 figure, which counts the ??, ?: and && that PHP 8 makes concise -->
+    <!-- NPath multiplies where CyclomaticComplexity adds, so the ?? and ?: PHP 8 makes concise cost it a factor each: a method Lizard and Codacy both read as simple reaches 800 here, and no threshold separates that from a real tangle -->
+
+    <!-- The same fifteen Lizard's ccn-medium tier uses: PHPMD's own default of 10 is McCabe's 1976 figure, which counts the ??, ?: and && that PHP 8 makes concise -->
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
         <properties>
             <property name="reportLevel" value="15"/>

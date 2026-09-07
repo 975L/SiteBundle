@@ -290,7 +290,8 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertSame('/management/page/1/edit', $provider->runChecks()[0]['editUrl']);
     }
 
-    public function testRunChecksReturnsAnErrorRowWhenThePageSpeedCallFails(): void
+    // A quota that ran out says the verdict is missing, not that the page is broken - HealthCheckErrorRow ranks it a warning, which keeps it off the console watching every site
+    public function testRunChecksReturnsAWarningRowWhenThePageSpeedCallFails(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
         $pageSpeedInsightsClient->method('analyze')->willThrowException(new \RuntimeException('Quota exceeded'));
@@ -303,7 +304,7 @@ class SitePageHealthCheckProviderTest extends TestCase
 
         $result = $provider->runChecks()[0];
 
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame(['error' => 'Quota exceeded'], $result['details']);
     }
 

@@ -180,4 +180,60 @@ class PageSpeedInsightsClientTest extends TestCase
             $this->assertNull($e->getPrevious());
         }
     }
+
+    // "HTTP 500" alone had a page whose analysis never ran read as a page found broken. What Google answers says which of the two it is, and it is the sentence the reader acts on
+    public function testAnalyzeCarriesGooglesOwnReasonAlongsideTheStatusCode(): void
+    {
+        $body = json_encode(['error' => ['code' => 500, 'message' => 'Lighthouse returned error: ERRORED_DOCUMENT_REQUEST. Status code: 503']]);
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse($body, ['http_code' => 500])
+        );
+
+        $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService('my-key'));
+
+        try {
+            $client->analyze('https://example.com/pages/home/');
+            $this->fail('Expected a RuntimeException.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('PageSpeed Insights returned HTTP 500 : Lighthouse returned error: ERRORED_DOCUMENT_REQUEST. Status code: 503', $e->getMessage());
+            $this->assertStringNotContainsString('my-key', $e->getMessage());
+            $this->assertNull($e->getPrevious());
+        }
+    }
+
+    // An error page that is not Google's json - a proxy's html, an empty body - still has to leave a usable message rather than take the row down with it
+    public function testAnalyzeFallsBackToTheStatusCodeWhenTheBodyCarriesNoReason(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse('<html>Bad gateway</html>', ['http_code' => 502])
+        );
+
+        $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService('my-key'));
+
+        try {
+            $client->analyze('https://example.com/pages/home/');
+            $this->fail('Expected a RuntimeException.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('PageSpeed Insights returned HTTP 502', $e->getMessage());
+        }
+    }
+
+    // The key is not in what Google answers, and the day it is, it does not reach a row summary read on a dashboard
+    public function testAnalyzeRedactsAKeyEchoedBackInTheReason(): void
+    {
+        $body = json_encode(['error' => ['message' => 'Invalid request: key=my-key is not authorized']]);
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse($body, ['http_code' => 403])
+        );
+
+        $client = new PageSpeedInsightsClient($httpClient, $this->createConfigService('my-key'));
+
+        try {
+            $client->analyze('https://example.com/pages/home/');
+            $this->fail('Expected a RuntimeException.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringNotContainsString('my-key', $e->getMessage());
+            $this->assertStringContainsString('key=***', $e->getMessage());
+        }
+    }
 }

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -91,6 +91,11 @@ exists only so a menu's grouping stays out of a page's containers.
 **`menu_group` is the only group a menu offers**, and UiBundle's own `block_group` is not: a group
 taken from anywhere else would be picked happily, then refuse every link dropped into it. A group
 cannot hold another group, so the tree is always one level deep.
+
+What a group takes of the footer's row is read from `--footer-group-flex` (`0 0 100%` by default, a
+whole line): a theme laying its footer out in columns gives it a shareable basis such as `1 1 200px`
+and picks *Inline*, and the *Block* style resets it to `0 0 auto` — a basis sits on the main axis, so
+a group's width becomes its height once the footer stacks.
 
 ## Footer display style
 

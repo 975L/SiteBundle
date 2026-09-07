@@ -102,6 +102,70 @@ class W3cValidatorClientTest extends TestCase
         $this->assertSame([], $result['benignWarnings']);
     }
 
+    // The real case behind this: six errors on nine pages of one site for a correct stylesheet - a property the validator's profile predates, and two type verdicts on values made of variables it has just said it does not resolve
+    public function testValidateCssSplitsOffTheErrorsTheValidatorCannotJudge(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'cssvalidation' => [
+                    'errors' => [
+                        ['line' => 1385, 'type' => 'noexistence-at-all', 'message' => 'Property “corner-shape” doesn\'t exist : '],
+                        ['line' => 1467, 'type' => 'incompatibletypes', 'message' => 'The types are incompatible'],
+                        ['line' => 1469, 'type' => 'invalidtype', 'message' => 'Invalid type: “100% - var(--sheet-cards-row)”'],
+                        ['line' => 12, 'type' => 'noexistence-at-all', 'message' => 'Property “colr” doesn\'t exist : '],
+                    ],
+                    'warnings' => [['line' => 3, 'message' => 'Due to their dynamic nature, CSS variables are currently not statically checked']],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        // The typo stays an error: only the properties named one by one are excused
+        $this->assertSame(['line 12: Property “colr” doesn\'t exist : '], $result['errors']);
+        $this->assertCount(3, $result['benignErrors']);
+    }
+
+    // Without the validator's admission about variables, a type verdict stays a verdict: a sheet with no variable writing calc(10px + 5) has a real error
+    public function testATypeVerdictStaysAnErrorWhenTheValidatorDidNotDeclareVariablesUnchecked(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'cssvalidation' => [
+                    'errors' => [['line' => 8, 'type' => 'invalidtype', 'message' => 'Invalid type: “10px + 5”']],
+                    'warnings' => [],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        $this->assertSame(['line 8: Invalid type: “10px + 5”'], $result['errors']);
+        $this->assertSame([], $result['benignErrors']);
+    }
+
+    // A page links several stylesheets and the validator names the one each message came from: the admission that variables were not resolved excuses the type verdicts of that sheet, and of no other
+    public function testATypeVerdictStaysAnErrorOnASheetTheValidatorDidResolve(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => new MockResponse(json_encode([
+                'cssvalidation' => [
+                    'errors' => [
+                        ['line' => 14, 'type' => 'invalidtype', 'source' => 'https://example.com/css/theme.css', 'message' => 'Invalid type: “100% - var(--gap)”'],
+                        ['line' => 8, 'type' => 'invalidtype', 'source' => 'https://example.com/css/print.css', 'message' => 'Invalid type: “10px + 5”'],
+                    ],
+                    'warnings' => [['line' => 3, 'source' => 'https://example.com/css/theme.css', 'message' => 'Due to their dynamic nature, CSS variables are currently not statically checked']],
+                ],
+            ]), ['http_code' => 200])
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        // print.css declared no variable, so its verdict is the validator's own and stands
+        $this->assertSame(['line 8: Invalid type: “10px + 5”'], $result['errors']);
+        $this->assertSame(['line 14: Invalid type: “100% - var(--gap)”'], $result['benignErrors']);
+    }
+
     // The validator sometimes splits a message into several parts - both errors and warnings have to join them, or the row reads "line 9: Array"
     public function testValidateCssJoinsAMessageReturnedAsAnArray(): void
     {

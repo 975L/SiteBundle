@@ -31,6 +31,19 @@ class W3cValidatorClient
         'but is supported in multiple browsers',
     ];
 
+    // The warning by which the validator declares it did not resolve this stylesheet's custom properties (it is one of the benign ones above). Its own admission, and the only evidence that makes a type verdict on a var() expression worth discarding
+    private const string CSS_VARIABLES_UNCHECKED = 'not statically checked';
+
+    // What the validator answers for a property its profile does not carry, and the two verdicts it returns for a value it could not type
+    private const string TYPE_PROPERTY_UNKNOWN = 'noexistence-at-all';
+    private const array CSS_TYPE_VERDICTS = ['incompatibletypes', 'invalidtype'];
+
+    // Properties that exist in a CSS level the css3svg profile predates, so "doesn't exist" says something about the validator and not about the stylesheet. Named one by one, never inferred: an unknown property is a typo far more often than it is the future, and only the ones written here are excused
+    private const array CSS_PROPERTIES_NEWER_THAN_PROFILE = [
+        // CSS Borders and Box Decorations Level 4, shipped in Chrome 139. Used with border-radius to round or notch a corner, and correctly guarded by @supports on the sites using it - a guard this validator does not read
+        'corner-shape',
+    ];
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
     ) {
@@ -91,30 +104,61 @@ class W3cValidatorClient
     {
         $result = $response->toArray()['cssvalidation'] ?? [];
 
-        $errors = array_map(
-            static fn (array $error) => self::messageLine($error, 'line', 'Unknown error'),
-            $result['errors'] ?? [],
-        );
-
         $warnings = [];
         $benignWarnings = [];
+        // Indexed by the stylesheet the validator names, not kept as one flag for the whole page: a page links several sheets, and the validator saying it did not resolve the custom properties of one of them says nothing about the others - a single flag had one variable-using sheet excuse every type verdict raised on all the rest
+        $uncheckedSources = [];
         foreach ($result['warnings'] ?? [] as $warning) {
             $text = self::messageLine($warning, 'line', 'Unknown warning');
             if ($this->isBenignCssWarning($text)) {
                 $benignWarnings[] = $text;
+                // Read off the benign ones, where this warning always lands: its own wording is in BENIGN_CSS_WARNING_PATTERNS
+                if (str_contains($text, self::CSS_VARIABLES_UNCHECKED)) {
+                    $uncheckedSources[$warning['source'] ?? ''] = true;
+                }
+
                 continue;
             }
 
             $warnings[] = $text;
         }
 
-        return ['errors' => $errors, 'warnings' => $warnings, 'benignWarnings' => $benignWarnings];
+        $errors = [];
+        $benignErrors = [];
+        foreach ($result['errors'] ?? [] as $error) {
+            $text = self::messageLine($error, 'line', 'Unknown error');
+            if ($this->isBenignCssError($error, $uncheckedSources)) {
+                $benignErrors[] = $text;
+                continue;
+            }
+
+            $errors[] = $text;
+        }
+
+        return ['errors' => $errors, 'benignErrors' => $benignErrors, 'warnings' => $warnings, 'benignWarnings' => $benignWarnings];
     }
 
     // The validator's messages are always English (no Accept-Language is sent), so matching on their own wording is stable
     private function isBenignCssWarning(string $message): bool
     {
         return array_any(self::BENIGN_CSS_WARNING_PATTERNS, fn ($pattern) => str_contains($message, $pattern));
+    }
+
+    // An error the validator's own profile is not in a position to raise, matched on the machine-readable "type" rather than on wording: a property this profile predates is excused by name only, so a typo stays an error, and a type verdict is excused only on a stylesheet the validator has just declared it did not resolve the variables of
+    /** @param array<string, true> $uncheckedSources stylesheets the validator declared unresolved, keyed by the "source" it reports */
+    private function isBenignCssError(array $error, array $uncheckedSources): bool
+    {
+        $message = $error['message'] ?? '';
+        $message = \is_array($message) ? implode(' ', $message) : (string) $message;
+
+        if (self::TYPE_PROPERTY_UNKNOWN === ($error['type'] ?? null)) {
+            return array_any(
+                self::CSS_PROPERTIES_NEWER_THAN_PROFILE,
+                static fn (string $property): bool => str_contains($message, sprintf('“%s”', $property)),
+            );
+        }
+
+        return isset($uncheckedSources[$error['source'] ?? '']) && \in_array($error['type'] ?? null, self::CSS_TYPE_VERDICTS, true);
     }
 
     // Convenience for a single-URL validation - returns the same shape as readCss(), or throws on a network/API error

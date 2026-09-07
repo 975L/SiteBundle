@@ -212,7 +212,8 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $this->assertSame('label.health_check_page_not_found', $result['summary']);
     }
 
-    public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void
+    // A validator that never answered says the verdict is missing, not that the markup is invalid - HealthCheckErrorRow ranks it a warning
+    public function testRunChecksReturnsAWarningRowWhenTheCallFails(): void
     {
         $client = $this->createStub(W3cValidatorClient::class);
         $client->method('requestHtml')->willReturn($this->stubResponse());
@@ -222,7 +223,7 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
 
         $result = $provider->runChecks()[0];
 
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame(['error' => 'Timeout'], $result['details']);
     }
 

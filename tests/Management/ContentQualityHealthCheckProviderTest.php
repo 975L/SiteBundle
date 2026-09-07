@@ -303,7 +303,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertSame('label.health_check_url_gone', $result['summary']);
     }
 
-    // No status at all: the host never answered, which is not the same as it answering 404 - reported as unreachable rather than as a page that isn't there
+    // No status at all: the host never answered, which is not the same as it answering 404 - reported as unreachable rather than as a page that isn't there, and as a warning: nothing was read, so nothing says the page is broken
     public function testRunChecksReportsAnUnreachableHostAsSuch(): void
     {
         $provider = $this->createProvider(
@@ -313,7 +313,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         );
 
         $result = $provider->runChecks()[0];
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame('label.health_check_url_unreachable', $result['summary']);
     }
 
@@ -346,6 +346,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $this->assertNull($result['details']['redirect']);
     }
 
+    // HealthCheckErrorRow ranks a call that never completed a warning: the verdict is missing, not the page broken
     public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void
     {
         $client = $this->createStub(ContentQualityClient::class);
@@ -355,7 +356,7 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
         $result = $provider->runChecks()[0];
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame(['error' => 'Timeout'], $result['details']);
     }
 

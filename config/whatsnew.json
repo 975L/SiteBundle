@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-09-07",
+        "description": [
+            {
+                "en": "The health check no longer reports a page as broken when a check simply could not run - a spent quota or a validator that never answered now shows as a warning, and only real defects stay red",
+                "fr": "Le bilan de santé ne signale plus une page comme cassée quand un contrôle n'a simplement pas pu tourner - un quota épuisé ou un validateur qui n'a jamais répondu s'affiche désormais en avertissement, et seuls les vrais défauts restent en rouge",
+                "es": "El estado de salud ya no señala una página como rota cuando una comprobación simplemente no ha podido ejecutarse - una cuota agotada o un validador que nunca respondió se muestra ahora como advertencia, y solo los defectos reales siguen en rojo"
+            },
+            {
+                "en": "A page whose PageSpeed analysis fails now says why, in Google's own words, instead of only showing an error code",
+                "fr": "Une page dont l'analyse PageSpeed échoue indique désormais pourquoi, dans les mots de Google, au lieu de n'afficher qu'un code d'erreur",
+                "es": "Una página cuyo análisis PageSpeed falla ahora indica por qué, en palabras de Google, en lugar de mostrar solo un código de error"
+            },
+            {
+                "en": "The CSS check no longer counts as defects the errors its own validator is too old to judge, so a site built on modern stylesheets stops showing errors it has nothing to fix",
+                "fr": "Le contrôle CSS ne compte plus comme défauts les erreurs que son propre validateur est trop ancien pour juger, si bien qu'un site aux feuilles de style modernes cesse d'afficher des erreurs sans rien à corriger",
+                "es": "La comprobación CSS ya no cuenta como defectos los errores que su propio validador es demasiado antiguo para juzgar, de modo que un sitio con hojas de estilo modernas deja de mostrar errores sin nada que corregir"
+            },
+            {
+                "en": "A footer laid out in columns keeps its groups the height of their own content, where the stacked display used to make them all as tall as the width the theme gave them",
+                "fr": "Un pied de page en colonnes garde ses groupes à la hauteur de leur propre contenu, là où l'affichage empilé les rendait tous aussi hauts que la largeur donnée par le thème",
+                "es": "Un pie de página en columnas mantiene sus grupos a la altura de su propio contenido, donde la presentación apilada los hacía a todos tan altos como el ancho que les daba el tema"
+            }
+        ]
+    },
+    {
         "date": "2026-09-04",
         "description": [
             {

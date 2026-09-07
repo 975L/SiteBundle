@@ -36,7 +36,7 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
 
     abstract protected function request(string $url): ResponseInterface;
 
-    // ['errors' => string[], 'warnings' => string[], 'benignWarnings'? => string[]] - see W3cValidatorClient::readCss() for what lands in that last, optional key
+    // ['errors' => string[], 'warnings' => string[], 'benignErrors'? => string[], 'benignWarnings'? => string[]] - see W3cValidatorClient::readCss() for what lands in the two optional keys, which checkPage() reads to split the actionable counts from the totals
     abstract protected function read(ResponseInterface $response): array;
 
     abstract protected function summaryTranslationId(): string;
@@ -93,8 +93,9 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
             return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, $this->callFailedTranslationId(), $e->getMessage(), $editUrl);
         }
 
+        // Only the actionable ones drive the status, on both counts: what the validator itself cannot judge (see W3cValidatorClient::isBenignCssError() and BENIGN_CSS_WARNING_PATTERNS) is nothing anyone can act on, and would otherwise pin this row to red or orange for good
         $errorCount = \count($result['errors']);
-        // Only the actionable ones drive the status: a benign warning (see W3cValidatorClient::BENIGN_CSS_WARNING_PATTERNS) is nothing anyone can act on, and would otherwise pin this row to orange for good
+        $benignErrorCount = \count($result['benignErrors'] ?? []);
         $actionableCount = \count($result['warnings']);
         $benignCount = \count($result['benignWarnings'] ?? []);
 
@@ -102,19 +103,26 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
             'url' => $url,
             'label' => $label,
             'status' => $this->resolveStatus($errorCount, $actionableCount),
-            'summary' => $this->summary($errorCount, $actionableCount, $benignCount),
+            'summary' => $this->summary($errorCount, $benignErrorCount, $actionableCount, $benignCount),
             'details' => $result,
             'editUrl' => $editUrl,
         ];
     }
 
-    // The warning total stays exactly the one the W3C report itself shows (actionable + benign) - a dashboard disagreeing with the report it links to reads as broken, whichever of the two is right. Only the breakdown is appended, and only when there is something to break down (never for HTML, which has no benign class)
-    private function summary(int $errorCount, int $actionableCount, int $benignCount): string
+    // Both totals stay exactly the ones the W3C report itself shows (actionable + benign) - a dashboard disagreeing with the report it links to reads as broken, whichever of the two is right. Only the breakdowns are appended, and only where there is something to break down (never for HTML, which has no benign class)
+    private function summary(int $errorCount, int $benignErrorCount, int $actionableCount, int $benignCount): string
     {
         $summary = $this->translator->trans($this->summaryTranslationId(), [
-            '%errors%' => $errorCount,
+            '%errors%' => $errorCount + $benignErrorCount,
             '%warnings%' => $actionableCount + $benignCount,
         ], 'site');
+
+        if ($benignErrorCount > 0) {
+            $summary .= ' ' . $this->translator->trans('label.health_check_w3c_benign_errors', [
+                '%actionable%' => $errorCount,
+                '%benign%' => $benignErrorCount,
+            ], 'site');
+        }
 
         if (0 === $benignCount) {
             return $summary;

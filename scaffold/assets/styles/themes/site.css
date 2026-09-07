@@ -41,7 +41,12 @@
     /* --footer-background: var(--primary); */
     /* --footer-text: #fff; */
     /* --footer-text-hover: var(--footer-text); */
-    /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides both from the menu edit screen, its default being whatever these two are left at here */
+    /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides all three from the menu edit screen, its default being whatever they are left at here */
+    /* What a "menu_group" of the footer takes of its row - a whole line by default, so a footer stacks its social
+       links, then its links. Set it to a basis it can share (e.g. "1 1 200px") for a footer laid out in columns,
+       one group per column - that basis only reads as a width in a row, so the "Block" style resets it to
+       "0 0 auto" rather than lay the stacked groups out that tall each */
+    /* --footer-group-flex: 0 0 100%; */
     /* --footer-items-direction: column; */
     /* --footer-items-justify: flex-start; */
     /* Mixed out of the footer's own background rather than a flat grey, so the rule between the page and the band stays in the site's own hue - and follows it if the admin retunes the primary color */

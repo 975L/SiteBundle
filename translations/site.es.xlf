@@ -1202,9 +1202,13 @@
                 <source>label.health_check_summary_w3c_html</source>
                 <target>%errors% error(es), %warnings% advertencia(s)</target>
             </trans-unit>
+            <trans-unit id="PQlYy3n">
+                <source>label.health_check_w3c_benign_errors</source>
+                <target>de los cuales %actionable% error(es) accionable(s) (%benign% benignos: propiedades CSS demasiado recientes para el validador, o valores con variables que no resuelve)</target>
+            </trans-unit>
             <trans-unit id="Ag5xH55">
                 <source>label.health_check_w3c_benign_warnings</source>
-                <target>de los cuales %actionable% accionable(s) (%benign% benignos: variables CSS, prefijos de proveedor, no verificables por el validador)</target>
+                <target>de los cuales %actionable% advertencia(s) accionable(s) (%benign% benignos: variables CSS, prefijos de proveedor, no verificables por el validador)</target>
             </trans-unit>
             <trans-unit id="qYfmk2.">
                 <source>label.health_check_w3c_css_call_failed</source>
