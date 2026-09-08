@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.12.0
+
+An ecosystem cannot hold two majors of the same uploader
+
+- `vich/uploader-bundle` requires `^3.0` (08/09/2026)
+- `c975l/core-bundle` requires `^1.25`, its Vich storage and namer having moved to the 3.0 signatures (08/09/2026)
+
 ## v8.11.1
 
 A CSS verdict is excused on the sheet that earned it, not on the page
