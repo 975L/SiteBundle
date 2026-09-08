@@ -1,5 +1,10 @@
 {# <twig:c975LSite:General:Navbar/> #}
 {% set logo = site_media('logo') %}
+{# The same logo drawn for a dark page, uploaded on its own site-graphic role (see UiBundle's Media::ROLE_LOGO_ON_DARK). Written beside the other one and hidden by the stylesheet rather than picked here: which of the two is read depends on the visitor's own system when theme-mode is "auto", something no template knows. A site that uploaded none writes one image, exactly as before #}
+{% set logoOnDark = site_media('logo-on-dark') %}
+{# Only a site carrying both gets the pair the stylesheet switches between. One alone is painted on either ground, whichever of the two it is: a site that uploaded only the dark one is a site whose logo is meant to be read that way, not a site without a logo #}
+{% set hasLogoPair = logo is not null and logoOnDark is not null %}
+{% set anyLogo = logo ?? logoOnDark %}
 {% set siteName = config('site-name') %}
 {% set showSiteName = config('site-navbar-show-name') %}
 {# Read by both branches below, hence set here: a "set" inside the first one never runs on the fallback bar #}
@@ -16,14 +21,18 @@
             <div class="menu-brand">
                 {# Logo and site name both point at the home page: one single link around the pair, where two adjacent ones made a screen reader announce the same destination twice in a row #}
                 <div class="menu-brand-top">
-                    {% if logo is not null or showBrandName %}
+                    {% if anyLogo is not null or showBrandName %}
                         <a href="{{ path('page_home') }}" class="menu-brand-link">
-                            {% if logo is not null %}
+                            {% if anyLogo is not null %}
                                 <span class="menu-logo">
-{# eager: the navbar logo is above the fold on every page #}
-{# Intrinsic dimensions, the free-text width/height possibly holding an unusable "50%"; older rows have neither, hence the fallback #}
-{# Decorative once the name is printed beside it, both being inside the same link: an alt there would have the link read its own name twice. aria-hidden says so outright rather than leaving an empty alt to be read as an oversight - by a reader as much as by an accessibility checker #}
-                                    <img src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %}{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
+{# eager, the navbar logo being above the fold on every page; intrinsic dimensions, the free-text width/height possibly holding an unusable "50%" and older rows neither, hence the fallback; and decorative once the name is printed beside it inside the same link, aria-hidden saying so outright rather than leaving an empty alt to be read as an oversight #}
+                                    {% if logo is not null %}
+                                        <img{% if hasLogoPair %} class="menu-logo__on-light"{% endif %} src="{{ asset('/' ~ logo.filename) }}{{ logo.updatedAt ? '?v=' ~ logo.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %}{% if logo.intrinsicWidth and logo.intrinsicHeight %} width="{{ logo.intrinsicWidth }}" height="{{ logo.intrinsicHeight }}"{% else %} height="40"{% endif %} loading="eager" fetchpriority="high">
+                                    {% endif %}
+                                    {% if logoOnDark is not null %}
+{# The twin of the one above, named exactly like it: the CSS paints one of the two and takes the other out of the accessibility tree, so the name sits on both or the theme showing this one leaves the home link unnamed. Lazy and without a priority, a browser leaving a hidden lazy image alone until it is shown - standing alone it takes back the priority a pair drops #}
+                                        <img{% if hasLogoPair %} class="menu-logo__on-dark"{% endif %} src="{{ asset('/' ~ logoOnDark.filename) }}{{ logoOnDark.updatedAt ? '?v=' ~ logoOnDark.updatedAt.timestamp : '' }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %}{% if logoOnDark.intrinsicWidth and logoOnDark.intrinsicHeight %} width="{{ logoOnDark.intrinsicWidth }}" height="{{ logoOnDark.intrinsicHeight }}"{% else %} height="40"{% endif %}{{ hasLogoPair ? ' loading="lazy"' : ' loading="eager" fetchpriority="high"' }}>
+                                    {% endif %}
                                 </span>
                             {% endif %}
 
@@ -55,14 +64,16 @@
     </nav>
 {% else %}
     <nav class="hidden-print nav-simple">
-        {# One link around the logo and the name, as on the menu brand above: both point at the home page, and two adjacent links had a screen reader announce that destination twice #}
-        {# site-navbar-show-name answers "show the name in the navbar", and this is the navbar a site with no menu blocks gets - the menu brand that usually carries the name is simply not on this branch #}
-        {% if logo is not null or showBrandName %}
+        {# One link around the logo and the name, as on the menu brand above, two adjacent links having had a screen reader announce that destination twice; site-navbar-show-name answers "show the name in the navbar", and this is the navbar a site with no menu blocks gets #}
+        {% if anyLogo is not null or showBrandName %}
             <a href="{{ path('page_home') }}" class="nav-simple-brand">
+{# eager and decorative, same reasons as the menu logo above: an alt inside the same link as the name would have that link read its own name twice #}
                 {% if logo is not null %}
-{# eager, never lazy: same reason as the menu logo above #}
-{# Decorative once the name is printed under it, both being inside the same link: an alt there would have the link read its own name twice. aria-hidden says so outright, same as the menu brand above #}
-                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %} class="img" height="70" loading="eager" fetchpriority="high">
+                    <img src="{{ asset('/' ~ logo.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %} class="img{% if hasLogoPair %} menu-logo__on-light{% endif %}" height="70" loading="eager" fetchpriority="high">
+                {% endif %}
+{# The dark counterpart, on the fallback bar too: same pair, same switch and same reasons as the menu brand above #}
+                {% if logoOnDark is not null %}
+                    <img src="{{ asset('/' ~ logoOnDark.filename) }}" alt="{{ showBrandName ? '' : siteName|default('Logo') }}"{% if showBrandName %} aria-hidden="true"{% endif %} class="img{% if hasLogoPair %} menu-logo__on-dark{% endif %}" height="70"{{ hasLogoPair ? ' loading="lazy"' : ' loading="eager" fetchpriority="high"' }}>
                 {% endif %}
 
                 {% if showBrandName %}

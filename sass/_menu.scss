@@ -92,6 +92,35 @@ body.navbar-fixed {
     }
 }
 
+// The pair of logos, one drawn for a light page and one for a dark one: both are written, the stylesheet paints one, and a site that uploaded no dark logo gets neither class. Written as "img.class" so the ".menu-logo img" rule above does not win over it and show both at once
+img.menu-logo__on-dark {
+    display: none;
+}
+
+// The same two selectors the dark palette is declared on: the theme fixed to dark by the administration, and the "auto" mode following the visitor's own system
+[data-theme="dark"] {
+    img.menu-logo__on-light {
+        display: none;
+    }
+
+    img.menu-logo__on-dark {
+        display: block;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]),
+    [data-theme]:not([data-theme="light"]) {
+        img.menu-logo__on-light {
+            display: none;
+        }
+
+        img.menu-logo__on-dark {
+            display: block;
+        }
+    }
+}
+
 .menu-site-name {
     font-size: 1.25rem;
     font-weight: bold;

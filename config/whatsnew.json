@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-08",
+        "description": [
+            {
+                "en": "Upload a second version of your logo, drawn for a dark background, and the site shows it to visitors reading in dark mode while everyone else keeps seeing the usual one",
+                "fr": "Chargez une seconde version de votre logo, dessinée pour un fond sombre, et le site la montre aux visiteurs qui lisent en mode sombre tandis que les autres continuent de voir la version habituelle",
+                "es": "Suba una segunda versión de su logotipo, diseñada para un fondo oscuro, y el sitio la muestra a los visitantes que leen en modo oscuro mientras el resto sigue viendo la habitual"
+            }
+        ]
+    },
+    {
         "date": "2026-09-07",
         "description": [
             {

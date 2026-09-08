@@ -43,21 +43,40 @@ class NavbarBrandLinkTest extends TestCase
         $this->assertStringContainsString('<span class="nav-simple-name">{{ siteName }}</span>', $template);
     }
 
-    // Either part on its own still gets the link: a site showing only its logo, and one showing only its name
+    // Either part on its own still gets the link: a site showing only its logo, and one showing only its name. "anyLogo" and not "logo": a site may carry the dark logo alone
     public function testEachBranchRendersTheBrandAsSoonAsEitherPartIsThere(): void
     {
         $this->assertSame(
             2,
-            substr_count($this->template(), '{% if logo is not null or showBrandName %}'),
+            substr_count($this->template(), '{% if anyLogo is not null or showBrandName %}'),
             'Navbar.html.twig no longer opens the brand link on both branches.'
         );
     }
 
-    // Both are inside the same link now: an alt on the image would have that link read the site name twice
+    // The two logos are written on both branches, each behind its own test: a site uploads the light one, the dark one, both, or neither
+    public function testBothBranchesWriteEachLogoBehindItsOwnTest(): void
+    {
+        $template = $this->template();
+
+        $this->assertSame(2, substr_count($template, '{% if logo is not null %}'));
+        $this->assertSame(2, substr_count($template, '{% if logoOnDark is not null %}'));
+    }
+
+    // The classes the stylesheet switches on are only written when both were uploaded - carried by one logo alone, they would hide it on one of the two grounds
+    public function testTheSwitchingClassesAreOnlyWrittenWhenBothLogosExist(): void
+    {
+        $template = $this->template();
+
+        $this->assertSame(2, substr_count($template, '{% if hasLogoPair %} class="menu-logo__on-light"{% endif %}') + substr_count($template, '{% if hasLogoPair %} menu-logo__on-light{% endif %}'));
+        $this->assertSame(2, substr_count($template, '{% if hasLogoPair %} class="menu-logo__on-dark"{% endif %}') + substr_count($template, '{% if hasLogoPair %} menu-logo__on-dark{% endif %}'));
+        $this->assertStringContainsString('{% set hasLogoPair = logo is not null and logoOnDark is not null %}', $template);
+    }
+
+    // Both are inside the same link now: an alt on the image would have that link read the site name twice. Four, the pair of logos on each branch being written the same: the theme hiding one of the two must not take the name with it
     public function testTheLogoAltIsEmptiedWhenTheNameIsPrintedBesideIt(): void
     {
         $this->assertSame(
-            2,
+            4,
             substr_count($this->template(), 'alt="{{ showBrandName ? \'\' : siteName|default(\'Logo\') }}"'),
             'A navbar logo keeps its alt while the name is printed next to it, which reads the link twice.'
         );
@@ -67,9 +86,26 @@ class NavbarBrandLinkTest extends TestCase
     public function testTheLogoIsMarkedDecorativeWhenTheNameIsPrintedBesideIt(): void
     {
         $this->assertSame(
-            2,
+            4,
             substr_count($this->template(), '{% if showBrandName %} aria-hidden="true"{% endif %}'),
             'A navbar logo is left without aria-hidden while the name is printed next to it.'
+        );
+    }
+
+    // Only the dark twin of a pair is deferred: a browser leaves a hidden lazy image alone until it is shown, so a light-themed visitor never fetches it. Standing alone it is the painted logo, and takes back the priority the light one has
+    public function testOnlyTheHiddenTwinOfAPairIsDeferred(): void
+    {
+        $template = $this->template();
+
+        $this->assertSame(
+            2,
+            substr_count($template, '{{ hasLogoPair ? \' loading="lazy"\' : \' loading="eager" fetchpriority="high"\' }}'),
+            'The dark navbar logo no longer defers to its twin, so a light-themed visitor fetches an image no theme paints for them.'
+        );
+        $this->assertSame(
+            2,
+            substr_count($template, ' loading="eager" fetchpriority="high">'),
+            'The light navbar logo is no longer fetched first, though it is what a page above the fold paints by default.'
         );
     }
 

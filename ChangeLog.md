@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.12.1
+
+The navbar carries the logo the dark page reads
+
+- The navbar writes `logo-on-dark` beside `logo`, on the menu brand and on the fallback bar (08/09/2026)
+- New `.menu-logo__on-light` and `.menu-logo__on-dark`, the stylesheet painting one per theme (08/09/2026)
+- The dark logo is `loading="lazy"` and carries no `fetchpriority` (08/09/2026)
+- Both logos of a pair carry the same `alt`, a hidden one being out of the accessibility tree (08/09/2026)
+- A site carrying only one of the two logos paints it on either ground (08/09/2026)
+- `NavbarBrandLinkTest` covers the pair and the switching classes (08/09/2026)
+- New `NavbarDarkLogoTest` locks the switch in both compiled stylesheets (08/09/2026)
+
 ## v8.12.0
 
 An ecosystem cannot hold two majors of the same uploader

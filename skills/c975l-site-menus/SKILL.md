@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -127,6 +127,15 @@ more than the navigation inside opts out of it** and has to arrange its own stic
 Logo and name are wrapped in **one single link** to the home page, not two adjacent ones — a screen
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed
 beside it.
+
+A site may upload a second logo on the `logo-on-dark` site-graphic role, drawn for a dark page. Both
+images are then written — on the menu brand and on the fallback bar alike — and the stylesheet paints
+one, `.menu-logo__on-light` and `.menu-logo__on-dark` following the same two selectors as the dark
+palette, since which one applies depends on the visitor's own system when `theme-mode` is `auto`. The
+dark one is `loading="lazy"` and carries no `fetchpriority`, so a light-themed visitor never downloads
+it. Both carry the same `alt`, `display: none` already taking one of the two out of the accessibility
+tree — naming only one would leave the home link unnamed on the theme showing the other. A site
+carrying only one of the two writes that one, unchanged and unclassed, painted on either ground.
 
 With no navbar menu at all, the component falls back to the logo centered with the name under it, on a
 `<nav class="nav-simple">` — that class, not the bare element, is what the stylesheet targets, so an

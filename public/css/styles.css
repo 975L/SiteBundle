@@ -655,6 +655,27 @@ body.navbar-fixed {
   width: auto;
 }
 
+img.menu-logo__on-dark {
+  display: none;
+}
+
+[data-theme=dark] img.menu-logo__on-light {
+  display: none;
+}
+[data-theme=dark] img.menu-logo__on-dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) img.menu-logo__on-light,
+  [data-theme]:not([data-theme=light]) img.menu-logo__on-light {
+    display: none;
+  }
+  :root:not([data-theme]) img.menu-logo__on-dark,
+  [data-theme]:not([data-theme=light]) img.menu-logo__on-dark {
+    display: block;
+  }
+}
 .menu-site-name {
   font-size: 1.25rem;
   font-weight: bold;
