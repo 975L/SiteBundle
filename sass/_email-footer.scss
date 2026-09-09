@@ -16,7 +16,8 @@
 .email-footer a,
 .email-footer a:visited,
 .email-footer .menu-label {
-    color: var(--label-color);
+    // Stated and not read off --label-color: CssVariableResolver does evaluate the mix, but against the admin's own palette, so a site set to a dark one would send a near-white grey onto the plain white a message keeps (see UiBundle's emails/_base.scss). The #666 its emails/_typography.scss gives .text-muted, clearing 4.5:1 on that white where the token's former #808080 read 3.95:1
+    color: #666;
     font-size: 90%;
     text-decoration: none;
 }

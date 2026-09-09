@@ -1,6 +1,6 @@
 ---
 name: c975l-site-layout
-description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --primary-ink, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, EmailLayoutProvider, EmailLayoutTemplateProvider, layout_no_spam, layout_hello, layout_closing, layout_sent_by, email_template_body, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
+description: "Use this skill when working on the shell of a page in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the layout, its Twig blocks, the theme tokens, the error pages, the email layouts or the footer components. Covers what a template must set, which block to override, where a design token belongs and what a Content-Security-Policy nonce forbids. Triggers on: layout.html.twig, bodyClass, heading, summarySocialNetwork, theme, themes/site.css, ScaffoldThemeTest, flashes, Scroll:Buttons, backTop, pullDown, --navbar-height, --reading-max-width, --title-color, --label-color, --primary-ink, --bottom-bar-height, error404, emails/fullLayout, emailUnsubscribe, EmailLayoutProvider, EmailLayoutTemplateProvider, layout_no_spam, layout_hello, layout_closing, layout_sent_by, email_template_body, site-owner, url-privacy-policy, HostedBy, MadeBy, Preconnect, theme_variables_css, absolute_urls, ui.management_stylesheet, getManagementStylesheets, block-thumbs, alternates, hreflang, page_alternates, page_title, page_summary."
 ---
 
 # c975L SiteBundle — layout, theme and emails
@@ -262,3 +262,5 @@ of your own keeps both anchors.
 - **Do not override `title` to hide a page heading** — it is the `<title>` tag. Override `heading`.
 - **Do not hardcode the email copy.** The four `layout_*` templates are the site's own, one row per language.
 - **Do not make an email's paths absolute template by template.** `fullLayout` already does it for all.
+- **Do not read a `color-mix()` token in an email stylesheet.** No mail client resolves it and the
+  inliner drops the declaration — state the value, as `sass/_email-footer.scss` does for `--label-color`.

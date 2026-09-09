@@ -116,7 +116,8 @@
     --title-color: var(--primary-ink);
     // The size every text set in the body font is read at (see sass/_typography.scss). In rem, not px, so a visitor who raised their browser's own font size is still followed; 1rem is that default, i.e. the size the site was read at before this token existed. Headings and UiBundle's block titles/eyebrows are outside it on purpose - the first in rem, the second in px - so a design can open up its body copy alone
     --font-size-body: 1rem;
-    --label-color: #808080;
+    // The ink of a line that qualifies rather than says - the author and date under a message, a card's details, a section's secondary line (see sass/_typography.scss ".text-muted"); a form label is not one of them, it reads --form-label-color. Mixed out of the two tokens rather than stated: a fixed grey follows neither the palette a site sets nor its dark mode, and #808080 read at 2.97:1 on a warm off-white ground, well under the 4.5:1 WCAG AA asks of a line this size. Same recipe as UiBundle's --input-placeholder-color, at 70%: at its 62% the mix still lands at 4.46:1 on a pale ground
+    --label-color: color-mix(in srgb, var(--text) 70%, var(--background));
     // Follows theme-color-primary by default; apps that want a distinct link color can still override --link-color directly in their own _variables.css, same as any other variable here
     --link-color: var(--primary-ink);
     // What a link turns on hover - its own color by default, the underline being what marks the state. Its own token because --link-color was carrying both jobs: a link at rest read --primary directly (see sass/_links.scss), so setting --link-color only ever moved the hover

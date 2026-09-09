@@ -86,7 +86,7 @@
   --font-body-weight: normal;
   --title-color: var(--primary-ink);
   --font-size-body: 1rem;
-  --label-color: #808080;
+  --label-color: color-mix(in srgb, var(--text) 70%, var(--background));
   --link-color: var(--primary-ink);
   --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
@@ -146,6 +146,33 @@ footer .menu-items--block {
   --footer-group-flex: 0 0 auto;
 }
 
+footer .menu-items--columns {
+  --footer-items-direction: row;
+  --footer-items-justify: center;
+}
+
+footer .menu-items--columns .blocks {
+  flex: 1 1 100%;
+  flex-direction: column;
+  --footer-group-flex: 0 0 auto;
+}
+
+@media (min-width: 768px) {
+  footer .menu-items--columns .blocks {
+    display: grid;
+    grid-template-columns: var(--footer-grid-columns, 1.6fr repeat(3, 1fr));
+    grid-template-rows: var(--footer-grid-rows, auto auto);
+    grid-auto-flow: column;
+    align-items: start;
+  }
+  footer .menu-items--columns .blocks-group,
+  footer .menu-items--columns .blocks > :has(> .blocks-group) {
+    grid-row: 1/-1;
+  }
+  footer .menu-items--columns .blocks-group--column {
+    align-items: flex-start;
+  }
+}
 footer a,
 footer a:visited {
   color: var(--footer-text);
@@ -212,7 +239,7 @@ footer a:visited:hover .img-above {
 .email-footer a,
 .email-footer a:visited,
 .email-footer .menu-label {
-  color: var(--label-color);
+  color: #666;
   font-size: 90%;
   text-decoration: none;
 }

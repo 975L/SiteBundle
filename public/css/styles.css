@@ -265,7 +265,7 @@ summary {
   --font-body-weight: normal;
   --title-color: var(--primary-ink);
   --font-size-body: 1rem;
-  --label-color: #808080;
+  --label-color: color-mix(in srgb, var(--text) 70%, var(--background));
   --link-color: var(--primary-ink);
   --link-hover-color: var(--link-color);
   --input-border-bottom-color: #bfbfbf;
@@ -297,7 +297,6 @@ summary {
   --white: #1e1e1e;
   --card-background: #1e1e1e;
   --form-input-color: #e0e0e0;
-  --label-color: #a8a8a8;
   --required-color: #e0e0e0;
   --input-background: rgba(255, 255, 255, 0.05);
   --input-border-bottom-color: #5a5a5a;
@@ -331,7 +330,6 @@ summary {
     --white: #1e1e1e;
     --card-background: #1e1e1e;
     --form-input-color: #e0e0e0;
-    --label-color: #a8a8a8;
     --required-color: #e0e0e0;
     --input-background: rgba(255, 255, 255, 0.05);
     --input-border-bottom-color: #5a5a5a;

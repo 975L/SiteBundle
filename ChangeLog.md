@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.13.2
+
+A label's ink follows the palette, not a fixed grey
+
+- `--label-color` mixed out of `--text` and `--background` instead of a fixed grey (09/09/2026)
+- The dark theme no longer restates `--label-color` (09/09/2026)
+- The email footer states its grey instead of reading `--label-color` (09/09/2026)
+- `c975l/core-bundle` required in `^1.26.4`, whose UiBundle no longer states `--label-color` (09/09/2026)
+- README lists `--label-color` among the derived tokens (09/09/2026)
+- `DarkThemeTextTokensTest` locks `--label-color` to a single mixed declaration (09/09/2026)
+- `emails.css` recompiled, catching up the footer columns of v8.13.1 (09/09/2026)
+
 ## v8.13.1
 
 A footer lays its links out in columns

@@ -72,6 +72,26 @@ class DarkThemeTextTokensTest extends TestCase
         $this->assertMatchesRegularExpression('/\.menu-label\{[^}]*color:#fff/', $css, sprintf('"%s" has the mobile dropdown\'s labels read a swappable token, which dark mode turns near-black on --primary.', $file));
     }
 
+    // The other way to survive dark mode: a token mixed out of --text and --background follows the palette wherever it is repainted, so it is declared once and restated in neither branch - a second declaration would freeze it back to a fixed grey
+    #[DataProvider('stylesheetProvider')]
+    public function testAMixedTokenIsDeclaredOnceAndNeverRestatedInTheDarkBranches(string $file): void
+    {
+        $css = $this->stylesheet($file);
+        $declarations = preg_match_all('/--label-color:/', $css);
+
+        $this->assertSame(
+            1,
+            $declarations,
+            sprintf('"%s" declares --label-color %d times: restated in a dark branch, the mix stops following the palette a scope repaints.', $file, $declarations)
+        );
+
+        $this->assertMatchesRegularExpression(
+            '/--label-color:\s*color-mix\(in srgb,\s*var\(--text\)\s*\d+%,\s*var\(--background\)\)/',
+            $css,
+            sprintf('"%s" states --label-color rather than mixing it out of --text and --background, so it follows neither the palette nor dark mode.', $file)
+        );
+    }
+
     private function stylesheet(string $file): string
     {
         $path = \dirname(__DIR__) . '/public/css/' . $file;

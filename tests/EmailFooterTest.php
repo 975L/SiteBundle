@@ -43,7 +43,8 @@ class EmailFooterTest extends TestCase
     {
         $css = $this->stylesheet($file);
 
-        foreach (['color:\s*var\(--label-color\)', 'font-size:\s*90%', 'text-decoration:\s*none'] as $declaration) {
+        // Stated and not read off --label-color any more: the inliner resolves that mix against the admin's palette, so a dark one would send a near-white grey onto the white a message keeps - see sass/_email-footer.scss. The #666 UiBundle's emails/_typography.scss gives ".text-muted", which is what the "sent by" line below wears
+        foreach (['color:\s*#666', 'font-size:\s*90%', 'text-decoration:\s*none'] as $declaration) {
             $this->assertMatchesRegularExpression(
                 sprintf('/\.email-footer a[^{]*\{[^}]*%s[;}]/', $declaration),
                 $css,
