@@ -19,6 +19,7 @@ class MenuTest extends TestCase
     {
         $this->assertSame(Menu::STYLE_INLINE, new Menu()->setStyle(Menu::STYLE_INLINE)->getStyle());
         $this->assertSame(Menu::STYLE_BLOCK, new Menu()->setStyle(Menu::STYLE_BLOCK)->getStyle());
+        $this->assertSame(Menu::STYLE_COLUMNS, new Menu()->setStyle(Menu::STYLE_COLUMNS)->getStyle());
     }
 
     // The value ends up in a CSS class (see Footer.html.twig), so anything else would only ever name a rule no stylesheet carries - null instead, which reads as "the site's theme decides"
@@ -26,6 +27,7 @@ class MenuTest extends TestCase
     {
         $this->assertNull(new Menu()->getStyle());
         $this->assertNull(new Menu()->setStyle('grid')->getStyle());
+        $this->assertNull(new Menu()->setStyle('column')->getStyle());
         $this->assertNull(new Menu()->setStyle('')->getStyle());
         $this->assertNull(new Menu()->setStyle(Menu::STYLE_INLINE)->setStyle(null)->getStyle());
     }

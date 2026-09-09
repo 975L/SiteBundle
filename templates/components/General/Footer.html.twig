@@ -1,7 +1,7 @@
 {# <twig:c975LSite:General:Footer [copyright="{{ copyright }}"]> #}
 {% set footerBlocks = menu_blocks('footer') %}
 {# The layout picked in the backoffice (see MenuCrudController), empty when left to the theme's own --footer-items-* tokens - whitelisted, it lands in a class name #}
-{% set footerStyle = menu_style('footer') in ['inline', 'block'] ? menu_style('footer') : null %}
+{% set footerStyle = menu_style('footer') in ['inline', 'block', 'columns'] ? menu_style('footer') : null %}
 {# A "Copyright"-page menu_link already renders the computed copyright, so the span would duplicate it. The links can be grouped in a "menu_group", one level down, hence the slots joining the top-level blocks here - a group can't hold another group ("menu_slot" is a slot context, and BlockRegistry::isAllowedInContext() excludes containers from those), so one level is the whole tree #}
 {% set footerItems = footerBlocks|reduce((items, block) => items|merge([block])|merge(block.slots|map(slot => slot)), []) %}
 {% set hasCopyrightLink = footerItems|filter(

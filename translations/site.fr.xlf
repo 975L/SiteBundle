@@ -248,7 +248,7 @@
             </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
-                <target>Les uns à côté des autres ou les uns sous les autres. Laissé vide, c'est le fichier de thème du site qui décide.</target>
+                <target>Les uns à côté des autres, les uns sous les autres, ou en colonnes. Laissé vide, c'est le fichier de thème du site qui décide.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
@@ -1369,6 +1369,10 @@
             <trans-unit id="vMqQILz">
                 <source>label.menu_style_block</source>
                 <target>En bloc (les uns sous les autres)</target>
+            </trans-unit>
+            <trans-unit id="D83YuwC">
+                <source>label.menu_style_columns</source>
+                <target>En colonnes (une colonne par groupe de liens)</target>
             </trans-unit>
             <trans-unit id="yF.KBLV">
                 <source>label.menu_style_help</source>

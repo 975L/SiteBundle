@@ -88,7 +88,7 @@
             </trans-unit>
             <trans-unit id="9BaGnGr">
                 <source>narration.guided_step_footer_style</source>
-                <target>Choose how the lines lay out: side by side, or one below the other. Left empty, the site's theme file decides.</target>
+                <target>Choose how the lines lay out: side by side, one below the other, or in columns. Left empty, the site's theme file decides.</target>
             </trans-unit>
             <trans-unit id="m4WQRgw">
                 <source>narration.guided_step_menu_translation_action</source>

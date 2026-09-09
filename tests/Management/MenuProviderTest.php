@@ -40,13 +40,14 @@ class MenuProviderTest extends TestCase
         }
     }
 
-    // The dashboard section this bundle contributes must carry the 'site' translation domain
+    // The dashboard section this bundle contributes must carry the 'site' translation domain, and the icon a CoreBundle rendering its sections as submenus draws it with - read through a null coalesce, the required constraint declaring no such key in its shape
     public function testGetMenuSectionReturnsLabelAndDomain(): void
     {
         $section = $this->createProvider()->getMenuSection();
 
         $this->assertSame('label.management', $section['label']);
         $this->assertSame('site', $section['translation_domain']);
+        $this->assertSame('fas fa-sliders', $section['icon'] ?? null);
     }
 
     // Every CRUD entry this bundle contributes to the dashboard - all of them page-related, everything else having moved to the bundle owning it

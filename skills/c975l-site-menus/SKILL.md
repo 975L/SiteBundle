@@ -94,18 +94,25 @@ cannot hold another group, so the tree is always one level deep.
 
 What a group takes of the footer's row is read from `--footer-group-flex` (`0 0 100%` by default, a
 whole line): a theme laying its footer out in columns gives it a shareable basis such as `1 1 200px`
-and picks *Inline*, and the *Block* style resets it to `0 0 auto` — a basis sits on the main axis, so
-a group's width becomes its height once the footer stacks.
+and picks *Inline*, or picks *Columns* (below) and lets the grid draw them, and the *Block* style resets
+it to `0 0 auto` — a basis sits on the main axis, so a group's width becomes its height once the footer
+stacks.
 
 ## Footer display style
 
 The footer's edit screen carries a **Display style** select (`Menu::$style`): the site theme's own
-choice (default), *Inline* or *Block*. The two classes **retune `--footer-items-direction` /
+choice (default), *Inline*, *Block* or *Columns*. The three classes **retune `--footer-items-direction` /
 `--footer-items-justify` on the `.menu-items` element** rather than writing `flex-direction`, so one
 class covers the wrapper and its `.blocks` child and beats what the theme left on `:root`. Left on its
 placeholder it stores `null` and adds no class: **a site that already picked its layout in
-`themes/site.css` keeps rendering exactly as it did.** Anything but the two known values is stored as
+`themes/site.css` keeps rendering exactly as it did.** Anything but the three known values is stored as
 `null` — the value ends up in a class name.
+
+*Columns* retunes that pair, then writes a grid on the `.blocks` child from 768px up (the
+stack is the base, mobile first): its first column stacks the blocks placed **before the first group**
+— a site's name and its social links — and each group spans every row of a column of its own. Both
+track lists read through `--footer-grid-columns` / `--footer-grid-rows`, so a footer counting another
+number of groups is retuned from `themes/site.css` rather than from the style.
 
 No other location offers it. The choice is cached with the menu's blocks (`menu_style()`, same
 `menus_all` tag).

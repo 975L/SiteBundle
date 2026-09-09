@@ -41,6 +41,50 @@ footer .menu-items--block {
     --footer-group-flex: 0 0 auto;
 }
 
+// The third style lays the menu out in columns instead of on a line - it retunes the direction like the two above, then writes a grid the two of them have no use for, because its first column holds several blocks the markup gives no wrapper for: a menu's own container ("menu_group") only ever takes links, so that column is drawn by the layout rather than by a block around them.
+// Only the ".blocks" child is that grid, the ".menu-items" wrapper staying the flex row the token now makes it - it holds the blocks and the fallback copyright line side by side, and a grid there would give the track list that line rather than the blocks
+footer .menu-items--columns {
+    --footer-items-direction: row;
+    // The pair, like the two styles above: the ".blocks" grid takes the whole band whatever the justification, but the fallback copyright line sits beside it as a flex item of its own, and left to "flex-start" it would hang from the edge under a centered stack
+    --footer-items-justify: center;
+}
+
+// Mobile first: the stack every footer falls back to, four tracks on a phone leaving a column per word. The grid itself only comes with the breakpoint below
+footer .menu-items--columns .blocks {
+    // The whole band, where a flex item is laid out on what it holds: fr tracks have nothing to share out of a width sized on its own content, and the stack below the breakpoint would be that narrow too
+    flex: 1 1 100%;
+    // The direction the wrapper retuned to a row is the one this child inherits, and the stack is what it falls back to
+    flex-direction: column;
+    // Same trap the "block" style above guards against: the width a theme gave a group to make it a column becomes a height once the footer stacks. Declared on the container, which is what the groups read it through - and inert once the grid takes over, a grid item having no flex basis to read
+    --footer-group-flex: 0 0 auto;
+}
+
+// From the breakpoint up, the columns the style is named for
+@media (min-width: 768px) {
+    footer .menu-items--columns .blocks {
+        display: grid;
+        // A first column half again as wide as the others, for the name it usually opens on, then one per group of links - both retunable by a site whose footer counts a different number of them
+        grid-template-columns: var(--footer-grid-columns, 1.6fr repeat(3, 1fr));
+        // As many rows as the first column stacks blocks, the groups spanning all of them (see below)
+        grid-template-rows: var(--footer-grid-rows, auto auto);
+        // Filled top to bottom rather than left to right, which is what stacks those first blocks in one column instead of running them along the first row
+        grid-auto-flow: column;
+        align-items: start;
+    }
+
+    // A group takes a column of its own, whole - the grid counterpart of "--footer-group-flex" above, and what leaves the blocks preceding it stacked in the first column instead of pushing every group one row down.
+    // Same two selectors as that rule, for the same reason: UiBundle's Block.html.twig wraps a block as soon as it carries an animation or an editor's edit-url, and it is that wrapper the grid then lays out
+    footer .menu-items--columns .blocks-group,
+    footer .menu-items--columns .blocks > :has(> .blocks-group) {
+        grid-row: 1 / -1;
+    }
+
+    // A group laid out as a column inside a columns footer hangs from its column's edge rather than from its middle: centered, a list of links of uneven lengths reads as a ragged block, where the whole point of the style is a run of aligned columns. Only the column direction is touched, a group left as a row still centering its blocks on their line - and below the breakpoint the centering ".blocks-group" ships with is the one that holds, each group being on its own width there
+    footer .menu-items--columns .blocks-group--column {
+        align-items: flex-start;
+    }
+}
+
 footer a,
 footer a:visited {
     color: var(--footer-text);

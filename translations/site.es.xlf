@@ -248,7 +248,7 @@
             </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
-                <target>Uno al lado del otro o uno debajo del otro. Si se deja vacío, decide el archivo de tema del sitio.</target>
+                <target>Uno al lado del otro, uno debajo del otro, o en columnas. Si se deja vacío, decide el archivo de tema del sitio.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
@@ -1369,6 +1369,10 @@
             <trans-unit id="vMqQILz">
                 <source>label.menu_style_block</source>
                 <target>En bloque (uno debajo del otro)</target>
+            </trans-unit>
+            <trans-unit id="D83YuwC">
+                <source>label.menu_style_columns</source>
+                <target>En columnas (una columna por grupo de enlaces)</target>
             </trans-unit>
             <trans-unit id="yF.KBLV">
                 <source>label.menu_style_help</source>

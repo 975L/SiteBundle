@@ -41,7 +41,7 @@
     /* --footer-background: var(--primary); */
     /* --footer-text: #fff; */
     /* --footer-text-hover: var(--footer-text); */
-    /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides all three from the menu edit screen, its default being whatever they are left at here */
+    /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides all three from the menu edit screen, its default being whatever they are left at here. Its third choice, "Columns", writes a grid of its own instead and reads the two track lists below */
     /* What a "menu_group" of the footer takes of its row - a whole line by default, so a footer stacks its social
        links, then its links. Set it to a basis it can share (e.g. "1 1 200px") for a footer laid out in columns,
        one group per column - that basis only reads as a width in a row, so the "Block" style resets it to
@@ -49,6 +49,12 @@
     /* --footer-group-flex: 0 0 100%; */
     /* --footer-items-direction: column; */
     /* --footer-items-justify: flex-start; */
+    /* The two track lists of the "Columns" style - read only under it, and only from 768px up, where the footer
+       is a grid rather than a row: a first column for the blocks placed before the first group (a site's name,
+       its social links), then one column per group of links. Retune the pair for a footer counting a different
+       number of groups, or stacking a different number of blocks in that first column - as many rows as it holds */
+    /* --footer-grid-columns: 1.6fr repeat(3, 1fr); */
+    /* --footer-grid-rows: auto auto; */
     /* Mixed out of the footer's own background rather than a flat grey, so the rule between the page and the band stays in the site's own hue - and follows it if the admin retunes the primary color */
     /* --footer-border: solid color-mix(in srgb, var(--footer-background) 80%, black) 2px; */
     /* --footer-width: 100vw; */

@@ -28,6 +28,7 @@ class MenuProvider implements MenuProviderInterface
         return [
             'label' => 'label.management',
             'translation_domain' => 'site',
+            'icon' => 'fas fa-sliders',
         ];
     }
 

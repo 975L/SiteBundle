@@ -248,7 +248,7 @@
             </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
-                <target>Side by side or one below the other. Left empty, the site's theme file decides.</target>
+                <target>Side by side, one below the other, or in columns. Left empty, the site's theme file decides.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
@@ -1369,6 +1369,10 @@
             <trans-unit id="vMqQILz">
                 <source>label.menu_style_block</source>
                 <target>Block (one below the other)</target>
+            </trans-unit>
+            <trans-unit id="D83YuwC">
+                <source>label.menu_style_columns</source>
+                <target>Columns (one column per group of links)</target>
             </trans-unit>
             <trans-unit id="yF.KBLV">
                 <source>label.menu_style_help</source>

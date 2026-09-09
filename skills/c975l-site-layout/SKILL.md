@@ -143,6 +143,7 @@ Tokens worth knowing, all in `site.css`:
 | `--link-color` / `--link-hover-color` | `var(--primary-ink)` / `var(--link-color)` | a link at rest, and on hover |
 | `--reading-max-width` | `min(75ch, 90vw)` | the measure body copy is laid out on |
 | `--footer-items-direction` / `--footer-items-justify` | column | the footer's layout, unless an admin picks a Display style |
+| `--footer-grid-columns` / `--footer-grid-rows` | `1.6fr repeat(3, 1fr)` / `auto auto` | the tracks of the *Columns* display style, read from 768px up |
 
 **Brand-colored text reads `--primary-ink`, never `--primary`.** UiBundle's token splits the brand's
 two roles: `--primary` is the **fill** a button, a `primary` flat and the footer band need dark, while

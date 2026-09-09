@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.13.1
+
+A footer lays its links out in columns
+
+- `Menu::STYLE_COLUMNS`, a third footer display style laying the menu out as a grid, one column per group of links (09/09/2026)
+- `--footer-grid-columns`/`--footer-grid-rows` retune that grid's two track lists from a site's own theme (09/09/2026)
+- The dashboard section carries an icon, drawn by a CoreBundle rendering its sections as submenus (09/09/2026)
+
 ## v8.13.0
 
 A collection shows the items it holds

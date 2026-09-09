@@ -221,7 +221,7 @@ class MenuCrudControllerTest extends TestCase
 
         $this->assertNotNull($style);
         $this->assertSame(
-            [Menu::STYLE_INLINE, Menu::STYLE_BLOCK],
+            [Menu::STYLE_INLINE, Menu::STYLE_BLOCK, Menu::STYLE_COLUMNS],
             array_keys($style->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES))
         );
         // Empty is the placeholder, not a choice: it has to keep meaning "the site's theme decides"

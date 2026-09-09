@@ -183,6 +183,7 @@ class MenuCrudController extends AbstractCrudController
                 ->setTranslatableChoices([
                     Menu::STYLE_INLINE => t('label.menu_style_inline', [], 'site'),
                     Menu::STYLE_BLOCK => t('label.menu_style_block', [], 'site'),
+                    Menu::STYLE_COLUMNS => t('label.menu_style_columns', [], 'site'),
                 ])
                 ->setFormTypeOption('placeholder', $this->translator->trans('label.menu_style_theme', [], 'site'))
                 ->setRequired(false)

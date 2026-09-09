@@ -88,7 +88,7 @@
             </trans-unit>
             <trans-unit id="9BaGnGr">
                 <source>narration.guided_step_footer_style</source>
-                <target>Choisissez la disposition des lignes : les unes à côté des autres, ou les unes sous les autres. Laissé vide, c'est le fichier de thème du site qui décide.</target>
+                <target>Choisissez la disposition des lignes : les unes à côté des autres, les unes sous les autres, ou en colonnes. Laissé vide, c'est le fichier de thème du site qui décide.</target>
             </trans-unit>
             <trans-unit id="m4WQRgw">
                 <source>narration.guided_step_menu_translation_action</source>

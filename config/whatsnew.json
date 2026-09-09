@@ -6,6 +6,11 @@
                 "en": "A new button lets you create a collection and stay on it, ready to add its first items, instead of going back to the list",
                 "fr": "Un nouveau bouton permet de créer une collection et de rester dessus, prêt à y ajouter ses premiers éléments, au lieu de revenir à la liste",
                 "es": "Un nuevo botón permite crear una colección y quedarse en ella, listo para añadir sus primeros elementos, en lugar de volver a la lista"
+            },
+            {
+                "en": "The footer menu can now be laid out in columns, one per group of links, with the site's name and its social links stacked in a first, wider one",
+                "fr": "Le menu du pied de page peut désormais être disposé en colonnes, une par groupe de liens, le nom du site et ses liens sociaux étant empilés dans une première, plus large",
+                "es": "El menú del pie de página ahora puede disponerse en columnas, una por grupo de enlaces, con el nombre del sitio y sus enlaces sociales apilados en una primera, más ancha"
             }
         ]
     },

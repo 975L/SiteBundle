@@ -39,6 +39,9 @@ class Menu implements HasBlocksInterface, \Stringable
     public const STYLE_INLINE = 'inline';
     public const STYLE_BLOCK = 'block';
 
+    // The third one lays the menu out in columns rather than on a line: a first column holding the blocks placed before the first group - a site's name, its social links - then one column per group of links, which is the shape a footer carrying more than a row of links takes
+    public const STYLE_COLUMNS = 'columns';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -90,7 +93,7 @@ class Menu implements HasBlocksInterface, \Stringable
     // Anything but one of the STYLE_* constants is stored as null: the value ends up in a CSS class, and an unknown one would only ever name a rule no stylesheet carries
     public function setStyle(?string $style): self
     {
-        $this->style = in_array($style, [self::STYLE_INLINE, self::STYLE_BLOCK], true) ? $style : null;
+        $this->style = in_array($style, [self::STYLE_INLINE, self::STYLE_BLOCK, self::STYLE_COLUMNS], true) ? $style : null;
 
         return $this;
     }
