@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-09",
+        "description": [
+            {
+                "en": "A new button lets you create a collection and stay on it, ready to add its first items, instead of going back to the list",
+                "fr": "Un nouveau bouton permet de créer une collection et de rester dessus, prêt à y ajouter ses premiers éléments, au lieu de revenir à la liste",
+                "es": "Un nuevo botón permite crear una colección y quedarse en ella, listo para añadir sus primeros elementos, en lugar de volver a la lista"
+            }
+        ]
+    },
+    {
+        "date": "2026-09-08",
+        "description": [
+            {
+                "en": "A collection now lists its own items right above its edit form, so you see what it holds and open any of them without going back to the list of collections first",
+                "fr": "Une collection liste désormais ses propres éléments au-dessus de son formulaire de modification, si bien que vous voyez ce qu'elle contient et ouvrez l'un d'eux sans repasser par la liste des collections",
+                "es": "Una colección ahora lista sus propios elementos encima de su formulario de edición, de modo que ve lo que contiene y abre cualquiera de ellos sin volver antes a la lista de colecciones"
+            }
+        ]
+    },
+    {
         "date": "2026-09-08",
         "description": [
             {

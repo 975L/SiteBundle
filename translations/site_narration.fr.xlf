@@ -36,7 +36,7 @@
             </trans-unit>
             <trans-unit id="9b0NAQR">
                 <source>narration.guided_step_collection_save</source>
-                <target>Enregistrez la collection avec le bouton en bas du formulaire.</target>
+                <target>Enregistrez la collection avec « Créer et modifier » : vous restez sur la collection que vous venez de créer.</target>
             </trans-unit>
             <trans-unit id="3q0a6F9">
                 <source>narration.guided_step_content_export_formats</source>

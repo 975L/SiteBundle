@@ -36,7 +36,7 @@
             </trans-unit>
             <trans-unit id="9b0NAQR">
                 <source>narration.guided_step_collection_save</source>
-                <target>Save the collection with the button at the bottom of the form.</target>
+                <target>Save the collection with “Create and continue editing”: you stay on the collection you have just created.</target>
             </trans-unit>
             <trans-unit id="3q0a6F9">
                 <source>narration.guided_step_content_export_formats</source>

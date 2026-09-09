@@ -76,7 +76,8 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_collection_save',
                     'narration' => 'narration.guided_step_collection_save',
-                    'highlight' => '.action-saveAndReturn',
+                    // Stays on the collection just created, where the next step's ".action-items" is the only one on the screen - on the index it exists once per row and querySelector would take the first
+                    'highlight' => '.action-saveAndContinue',
                 ],
                 [
                     'label' => 'label.guided_step_collection_items',

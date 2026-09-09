@@ -2,6 +2,10 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="site.en.xlf">
         <body>
+            <trans-unit id="ml8DK6j">
+                <source>action.add_collection_item</source>
+                <target>Ajouter un élément</target>
+            </trans-unit>
             <trans-unit id="wPEuKmL">
                 <source>action.cancel</source>
                 <target>Annuler</target>
@@ -573,6 +577,14 @@
             <trans-unit id=".QE11YL">
                 <source>label.collection_items</source>
                 <target>Éléments</target>
+            </trans-unit>
+            <trans-unit id="6KSDh6D">
+                <source>label.collection_items_empty</source>
+                <target>Cette collection ne contient encore aucun élément.</target>
+            </trans-unit>
+            <trans-unit id="pCwq_a7">
+                <source>label.collection_items_truncated</source>
+                <target>%total% éléments, seuls les %shown% premiers sont affichés ici :</target>
             </trans-unit>
             <trans-unit id="4MUXFHW">
                 <source>label.collection_name</source>

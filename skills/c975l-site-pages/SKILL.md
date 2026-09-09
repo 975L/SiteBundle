@@ -126,10 +126,13 @@ example content with no relation kept afterwards. Use Duplicate.
 
 A `CollectionGroup` ("Projects") is a named, slugified container of `CollectionItem` rows — one table
 backs every collection of a site, what separates two collections being only which group an item belongs
-to. Two CRUDs on purpose: **Collections** creates and renames the groups, and its index's *Items*
-action opens `CollectionItemCrudController` filtered to that one group (`?collectionGroup=<id>`), so a
-typo can never spawn an unrelated collection. An item's slug is unique **within its collection only**,
-unlike `Page::$slug`.
+to. Two CRUDs on purpose: **Collections** creates and renames the groups, and its *Items* action — on
+the index and on the edit screen alike — opens `CollectionItemCrudController` filtered to that one group
+(`?collectionGroup=<id>`), so a typo can never spawn an unrelated collection. The edit screen also lists
+the group's own items above the form (`configureResponseParameters()` hands them to
+`collection_crud_edit.html.twig`, capped at 100 with the total alongside), each row linking to that
+item's edit; reordering and deleting stay on the items index. An item's slug is unique **within its
+collection only**, unlike `Page::$slug`.
 
 `CollectionItemSourceProvider` exposes every group to UiBundle's `collection` block, keyed
 `site.collection.{slug}` — **creating a collection is enough to make it pickable, no code change**.

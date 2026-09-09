@@ -1,5 +1,21 @@
 # Changelog
 
+## v8.13.0
+
+A collection shows the items it holds
+
+- `CollectionCrudController::configureResponseParameters()` hands the edit screen the collection's own items (08/09/2026)
+- `collection_crud_edit.html.twig` lists them above the form, each row opening its item in `CollectionItemCrudController` (08/09/2026)
+- The "Items" action is on the edit screen too, reordering and deleting staying on the items index (08/09/2026)
+- New `action.add_collection_item` and `label.collection_items_empty` in the three locales (08/09/2026)
+- `CollectionCrudControllerTest` covers the exposed items and the action on the edit page (08/09/2026)
+- The panel caps the items it lists at 100 and links out to their index beyond that (09/09/2026)
+- New `label.collection_items_truncated` in the three locales (09/09/2026)
+- `Action::SAVE_AND_CONTINUE` is on the create screen, keeping a new collection on its own edit page (09/09/2026)
+- The guided "Collections" project highlights `.action-saveAndContinue` rather than an items row of the index (09/09/2026)
+- `CollectionCrudControllerTest` covers the cap, the total and the action on the create page (09/09/2026)
+- README and `c975l-site-pages` describe the panel and its cap (09/09/2026)
+
 ## v8.12.1
 
 The navbar carries the logo the dark page reads

@@ -14,11 +14,13 @@ use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
+use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
@@ -32,11 +34,15 @@ use function Symfony\Component\Translation\t;
 // Named, slugified grouping of CollectionItems - creating one here (rather than free-typing a "group" string on the item, as before) makes it a real, browsable entry point: its "Items" action leads into CollectionItemCrudController scoped to it (see ?collectionGroup=<id>). Its slug is what CollectionItemSourceProvider exposes to UiBundle's "Collection" block as a pickable source.
 class CollectionCrudController extends AbstractCrudController
 {
+    // Same ceiling as CollectionItemCrudController's own paginated index, which the panel links to when a collection holds more
+    private const int ITEMS_LIMIT = 100;
+
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
         private readonly SluggerInterface $slugger,
         private readonly CollectionGroupRepository $collectionGroupRepository,
+        private readonly CollectionItemRepository $collectionItemRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
@@ -98,7 +104,10 @@ class CollectionCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         return $actions
+            // EasyAdmin only puts it on PAGE_EDIT by default - here it keeps a freshly created collection on its own edit screen, where the "Items" action leads into that collection rather than the first row of the list
+            ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
             ->add(Crud::PAGE_INDEX, $itemsAction)
+            ->add(Crud::PAGE_EDIT, $itemsAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
@@ -117,6 +126,23 @@ class CollectionCrudController extends AbstractCrudController
             // Detail adds no information beyond what edit already shows
             ->disable(Action::DETAIL)
         ;
+    }
+
+    // The collection's own items, listed above the form (see collection_crud_edit.html.twig) so they are visible from the collection itself and no longer reachable from the collections list alone - editing, reordering and deleting stay in CollectionItemCrudController, the one screen built for them
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        if (Crud::PAGE_EDIT === $responseParameters->get('pageName')) {
+            $collectionGroup = $responseParameters->get('entity')?->getInstance();
+
+            if ($collectionGroup instanceof CollectionGroup) {
+                $responseParameters->set('collection_items', $this->collectionItemRepository->findByCollectionGroup($collectionGroup, self::ITEMS_LIMIT));
+                $responseParameters->set('collection_items_total', $this->collectionItemRepository->countByCollectionGroup($collectionGroup));
+                $responseParameters->set('collection_item_controller', CollectionItemCrudController::class);
+            }
+        }
+
+        return $responseParameters;
     }
 
     // New collection

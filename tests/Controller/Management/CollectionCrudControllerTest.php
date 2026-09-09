@@ -12,15 +12,21 @@ namespace c975L\SiteBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
+use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
 use c975L\SiteBundle\Entity\CollectionGroup;
+use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
+use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Registry\AdminControllerRegistryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -57,6 +63,7 @@ class CollectionCrudControllerTest extends TestCase
     private function createController(
         ?CollectionGroupRepository $collectionGroupRepository = null,
         ?SluggerInterface $slugger = null,
+        ?CollectionItemRepository $collectionItemRepository = null,
     ): CollectionCrudController {
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn('ROLE_EDITOR');
@@ -69,6 +76,7 @@ class CollectionCrudControllerTest extends TestCase
             $translator,
             $slugger ?? new AsciiSlugger(),
             $collectionGroupRepository ?? $this->createStub(CollectionGroupRepository::class),
+            $collectionItemRepository ?? $this->createStub(CollectionItemRepository::class),
             $this->createAdminUrlGenerator(),
         );
     }
@@ -122,6 +130,81 @@ class CollectionCrudControllerTest extends TestCase
         );
 
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'items'));
+    }
+
+    // Same action on the edit screen, so a collection being edited leads to its own items rather than back through the list
+    public function testConfigureActionsAddsAnItemsActionOnEdit(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'items'));
+    }
+
+    // The guided project highlights ".action-saveAndContinue" on the create screen, where EasyAdmin does not put it by default
+    public function testConfigureActionsAddsSaveAndContinueOnNew(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertNotNull($actions->getAsDto(Crud::PAGE_NEW)->getAction(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE));
+    }
+
+    // --- configureResponseParameters ----------------------------------------------------------------
+
+    // The items listed above the edit form (see collection_crud_edit.html.twig)
+    public function testConfigureResponseParametersExposesTheCollectionItemsOnEdit(): void
+    {
+        $collectionGroup = $this->withId(new CollectionGroup()->setName('Projects'), 5);
+        $item = new CollectionItem()->setTitle('First');
+
+        $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
+        $collectionItemRepository->method('findByCollectionGroup')->willReturn([$item]);
+        $collectionItemRepository->method('countByCollectionGroup')->willReturn(250);
+
+        $parameters = $this->createController(null, null, $collectionItemRepository)
+            ->configureResponseParameters($this->responseParameters(Crud::PAGE_EDIT, $collectionGroup));
+
+        $this->assertSame([$item], $parameters->get('collection_items'));
+        $this->assertSame(250, $parameters->get('collection_items_total'));
+        $this->assertSame(CollectionItemCrudController::class, $parameters->get('collection_item_controller'));
+    }
+
+    // The panel is capped like CollectionItemCrudController's own index, so a large collection does not hydrate whole on every display - the total exposed alongside is what tells the template to link out to that index
+    public function testConfigureResponseParametersCapsTheItemsItLists(): void
+    {
+        $collectionGroup = $this->withId(new CollectionGroup()->setName('Projects'), 5);
+
+        $collectionItemRepository = $this->createMock(CollectionItemRepository::class);
+        $collectionItemRepository->expects($this->once())
+            ->method('findByCollectionGroup')
+            ->with($collectionGroup, 100)
+            ->willReturn([]);
+
+        $this->createController(null, null, $collectionItemRepository)
+            ->configureResponseParameters($this->responseParameters(Crud::PAGE_EDIT, $collectionGroup));
+    }
+
+    // Nothing to list on the other screens - the new one has no collection to list items for
+    public function testConfigureResponseParametersLeavesOtherPagesUntouched(): void
+    {
+        $parameters = $this->createController()
+            ->configureResponseParameters($this->responseParameters(Crud::PAGE_NEW, new CollectionGroup()));
+
+        $this->assertNull($parameters->get('collection_items'));
+    }
+
+    private function responseParameters(string $pageName, CollectionGroup $collectionGroup): KeyValueStore
+    {
+        $entityDto = new EntityDto(CollectionGroup::class, new ClassMetadata(CollectionGroup::class), null, $collectionGroup);
+
+        return KeyValueStore::new(['pageName' => $pageName, 'entity' => $entityDto]);
     }
 
     // --- persistEntity / updateEntity ----------------------------------------------------------------

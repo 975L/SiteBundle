@@ -3,5 +3,65 @@
 {% block main %}
     <p>{{ ('label.info_collections'|trans({}, 'site')) }}</p>
 
+    {# The collection's own items, so they no longer have to be reached from the collections list - shown above the form so its links are not at the end of a typing gesture, and reordering and deleting stay in CollectionItemCrudController, whose index the "Items" action at the top of this screen opens #}
+    {% if collection_items is defined %}
+        {% set collection_group_id = entity.instance.id %}
+
+        <div class="content-panel mb-4">
+            <div class="content-panel-header d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <h4 class="mb-0">{{ 'label.collection_items'|trans({}, 'site') }}</h4>
+
+                <a class="btn btn-primary" href="{{ ea_url().setController(collection_item_controller).setAction('new').set('collectionGroup', collection_group_id).set('entityId', null) }}">
+                    <i class="fas fa-plus"></i>
+                    {{ 'action.add_collection_item'|trans({}, 'site') }}
+                </a>
+            </div>
+
+            <div class="content-panel-body">
+                {% if collection_items is empty %}
+                    <p class="mb-0">{{ 'label.collection_items_empty'|trans({}, 'site') }}</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'label.position'|trans({}, 'site') }}</th>
+                                    <th>{{ 'label.title'|trans({}, 'ui') }}</th>
+                                    <th>{{ 'label.url'|trans({}, 'ui') }}</th>
+                                    <th>{{ 'label.image'|trans({}, 'site') }}</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in collection_items %}
+                                    <tr>
+                                        <td>{{ item.position }}</td>
+                                        <td>{{ item.title }}</td>
+                                        <td>{{ item.url }}</td>
+                                        <td>{{ item.filename }}</td>
+                                        <td class="text-end">
+                                            <a class="btn btn-secondary btn-sm" href="{{ ea_url().setController(collection_item_controller).setAction('edit').setEntityId(item.id).set('collectionGroup', collection_group_id) }}" title="{{ 'action.edit'|trans({}, 'EasyAdminBundle') }}">
+                                                <i class="fas fa-edit"></i>
+                                                <span class="visually-hidden">{{ 'action.edit'|trans({}, 'EasyAdminBundle') }}</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {# Only the first items are listed here - the rest are reached through their own paginated index #}
+                    {% if collection_items_total > collection_items|length %}
+                        <p class="mt-3 mb-0">
+                            {{ 'label.collection_items_truncated'|trans({'%total%': collection_items_total, '%shown%': collection_items|length}, 'site') }}
+                            <a href="{{ ea_url().setController(collection_item_controller).setAction('index').set('collectionGroup', collection_group_id).set('entityId', null) }}">{{ 'label.collection_items'|trans({}, 'site') }}</a>
+                        </p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
     {{ parent() }}
 {% endblock main %}
