@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.13.3
+
+The QR code answers 404 on a page that is not there
+
+- `PageCrudController::qrcode()` answers 404 when the url names a page that is gone (09/09/2026)
+- `PageCrudControllerTest` covers the qrcode of a missing page (09/09/2026)
+
 ## v8.13.2
 
 A label's ink follows the palette, not a fixed grey

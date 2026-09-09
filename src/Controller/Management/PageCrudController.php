@@ -1085,6 +1085,11 @@ class PageCrudController extends AbstractCrudController
 
         $page = $context->getEntity()->getInstance();
 
+        // A page deleted since the screen was drawn leaves nothing to point the code at
+        if (!$page instanceof Page) {
+            throw $this->createNotFoundException();
+        }
+
         $result = new Builder()->build(
             data: $this->buildPageUrl($page),
             size: 250,

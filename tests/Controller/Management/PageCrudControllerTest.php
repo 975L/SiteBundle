@@ -66,6 +66,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -214,7 +215,7 @@ class PageCrudControllerTest extends TestCase
         return new \ReflectionMethod($controller, $method)->invoke($controller, ...$args);
     }
 
-    private function createAdminContext(Page $page): AdminContext
+    private function createAdminContext(?Page $page): AdminContext
     {
         $entityDto = new EntityDto(Page::class, new ClassMetadata(Page::class), null, $page);
 
@@ -1606,6 +1607,19 @@ class PageCrudControllerTest extends TestCase
         $controller->restore($this->createAdminContext($page), new Request(['token' => 'token']), $this->createStub(EntityManagerInterface::class));
 
         $this->assertSame('old-page', $page->getSlug());
+    }
+
+    // An entityId pointing at nothing would build the url off a null
+    public function testQrcodeAnswersNotFoundWhenPageIsGone(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+        ]));
+
+        $controller->qrcode($this->createAdminContext(null));
     }
 
     public function testQrcodeDeniesAccessBelowEditor(): void
