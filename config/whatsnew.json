@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-10",
+        "description": [
+            {
+                "en": "The navigation bar now offers the languages a page was written in, so a visitor can read it in their own language in one click",
+                "fr": "La barre de navigation propose désormais les langues dans lesquelles une page a été écrite, pour la lire dans sa propre langue en un clic",
+                "es": "La barra de navegación ahora ofrece los idiomas en los que se ha escrito una página, para leerla en su propio idioma con un clic"
+            },
+            {
+                "en": "The guided tour for translating a page now stops on the pictures' own texts, so a caption or a card's title is not left in the language the page was written in",
+                "fr": "Le parcours guidé de traduction d'une page s'arrête désormais sur les textes que portent les images, pour qu'une légende ou le titre d'une carte ne reste pas dans la langue d'écriture",
+                "es": "El recorrido guiado para traducir una página se detiene ahora en los textos que llevan las imágenes, para que un pie de foto o el título de una tarjeta no se quede en el idioma en que se escribió"
+            }
+        ]
+    },
+    {
         "date": "2026-09-09",
         "description": [
             {

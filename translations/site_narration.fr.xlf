@@ -282,6 +282,10 @@
                 <source>narration.guided_step_page_translation_locale</source>
                 <target>En haut de l'écran, une barre d'onglets : un par langue du site. C'est le même écran d'édition, ouvert sur celle que vous choisissez.</target>
             </trans-unit>
+            <trans-unit id="H4u2Q6J">
+                <source>narration.guided_step_page_translation_medias</source>
+                <target>Sous les blocks qui portent des images, chaque image qui dit quelque chose a ses propres champs. Redites ces mots dans la nouvelle langue. Le fichier, son lien et ses crédits n'y sont pas : une image est la même image dans toutes les langues.</target>
+            </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>
                 <target>Ouvrez le menu « Pages », dans la colonne de gauche : c'est de cette liste que part chaque traduction.</target>

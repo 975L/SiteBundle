@@ -821,6 +821,42 @@ class PageControllerTest extends TestCase
         $this->assertSame('/page_home_localized', $response->getTargetUrl());
     }
 
+    // The first click on the language menu, by a visitor arriving without a session cookie: the language is read from the query the menu links to, or that click would be served the writing language and only the one after it would move them
+    public function testAPickedLanguageMovesTheVisitorOnThatVeryRequest(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        // What the menu links to, on a browser asking for the language the site is written in: the query alone says otherwise
+        $request = Request::create('/?_locale=en');
+        $request->headers->set('Accept-Language', 'fr');
+        // LocaleListener has read the query and set the request's locale from it, which is what makes the value below anything but a string a visitor typed
+        $request->setLocale('en');
+
+        $response = $controller->home($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/page_home_localized', $response->getTargetUrl());
+    }
+
+    // A language nobody picked and no browser asked for: the query is only ever read back through the locale LocaleListener accepted, so a url typed by hand moves nobody
+    public function testAQueryTheListenerRefusedMovesNobody(): void
+    {
+        $controller = $this->createController(
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+        );
+
+        $request = Request::create('/?_locale=de');
+        $request->headers->set('Accept-Language', 'fr');
+
+        $this->assertSame(200, $controller->home($request)->getStatusCode());
+    }
+
     // The redirect carries the query string along: a campaign's attribution would otherwise be lost on the way to the visitor's own language
     public function testTheLanguageRedirectKeepsTheQueryString(): void
     {

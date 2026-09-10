@@ -23,7 +23,8 @@
 {% block header %}
     <header>
         {% block navigation %}
-            <twig:c975LSite:General:Navbar />
+{# "navbarPage" rather than "page": a template declares it only where its url is the one the language menu can rewrite, so a screen showing something else under a Page's url - a collection item, a preview - leaves it unset and the component renders nothing #}
+            <twig:c975LSite:General:Navbar page="{{ navbarPage|default(null) }}" />
         {% endblock %}
     </header>
 {% endblock %}

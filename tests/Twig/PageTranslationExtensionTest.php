@@ -25,15 +25,18 @@ class PageTranslationExtensionTest extends TestCase
 
     /**
      * @param array<string, string> $alternates
+     * @param list<string>          $translatedLocales
      */
-    private function createExtension(string $title = 'Nos ateliers', ?string $summary = 'Un atelier par mois', array $alternates = []): PageTranslationExtension
+    private function createExtension(string $title = 'Nos ateliers', ?string $summary = 'Un atelier par mois', array $alternates = [], array $translatedLocales = ['fr'], string $path = '/pages/ateliers'): PageTranslationExtension
     {
         $pageTranslator = $this->createStub(PageTranslator::class);
         $pageTranslator->method('getTitle')->willReturn($title);
         $pageTranslator->method('getSummarySocialNetwork')->willReturn($summary);
+        $pageTranslator->method('translatedLocales')->willReturn($translatedLocales);
 
         $pagePublicUrlResolver = $this->createStub(PagePublicUrlResolver::class);
         $pagePublicUrlResolver->method('resolveAlternates')->willReturn($alternates);
+        $pagePublicUrlResolver->method('resolvePath')->willReturn($path);
 
         return new PageTranslationExtension($pageTranslator, $pagePublicUrlResolver);
     }
@@ -73,5 +76,22 @@ class PageTranslationExtensionTest extends TestCase
     public function testThereAreNoAlternatesOnASiteDeclaringOneLanguage(): void
     {
         $this->assertSame([], $this->createExtension()->getAlternates($this->createPage()));
+    }
+
+    // The language menu points at the bare url with "?_locale=xx", never at "/en/..." : a localised route says on its own which language it answers in, and ConfigBundle's LocaleListener leaves the session alone there - the choice would last exactly one page
+    public function testTheLanguagesAreSwitchedThroughTheBareUrl(): void
+    {
+        $languages = $this->createExtension(translatedLocales: ['fr', 'en'])->getLanguages($this->createPage());
+
+        $this->assertSame([
+            'fr' => '/pages/ateliers?_locale=fr',
+            'en' => '/pages/ateliers?_locale=en',
+        ], $languages);
+    }
+
+    // A page written in one language alone offers no menu: there is nothing to choose between, and its other urls answer 404
+    public function testThereAreNoLanguagesOnAPageNobodyTranslated(): void
+    {
+        $this->assertSame([], $this->createExtension()->getLanguages($this->createPage()));
     }
 }

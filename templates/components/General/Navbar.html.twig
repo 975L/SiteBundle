@@ -1,4 +1,4 @@
-{# <twig:c975LSite:General:Navbar/> #}
+{# <twig:c975LSite:General:Navbar [page="{{ page }}"]> #}
 {% set logo = site_media('logo') %}
 {# The same logo drawn for a dark page, uploaded on its own site-graphic role (see UiBundle's Media::ROLE_LOGO_ON_DARK). Written beside the other one and hidden by the stylesheet rather than picked here: which of the two is read depends on the visitor's own system when theme-mode is "auto", something no template knows. A site that uploaded none writes one image, exactly as before #}
 {% set logoOnDark = site_media('logo-on-dark') %}
@@ -60,6 +60,8 @@
 
         <div class="menu-items" data-menu-target="items">
             <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
+{# Inside the items and not beside them: on a phone the bar collapses into that dropdown, and a language menu left outside it would sit alone next to the burger #}
+            <twig:c975LSite:General:Languages page="{{ page|default(null) }}" />
         </div>
     </nav>
 {% else %}
@@ -81,5 +83,8 @@
                 {% endif %}
             </a>
         {% endif %}
+
+{# The bar a site with no menu blocks gets, which is still a site a visitor has to be able to read in their own language #}
+        <twig:c975LSite:General:Languages page="{{ page|default(null) }}" />
     </nav>
 {% endif %}

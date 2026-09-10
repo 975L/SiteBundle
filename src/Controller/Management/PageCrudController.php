@@ -27,6 +27,7 @@ use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
@@ -78,6 +79,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -112,6 +114,8 @@ class PageCrudController extends AbstractCrudController
         private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly PageTranslator $pageTranslator,
         private readonly SiteLocales $siteLocales,
+        // Appended rather than slotted in beside PageTranslator: every construction of this controller is positional
+        private readonly PagePublicUrlResolver $pagePublicUrlResolver,
     ) {
     }
 
@@ -219,6 +223,12 @@ class PageCrudController extends AbstractCrudController
             ->setFormTypeOption('by_reference', false)
             ->setFormTypeOption('entry_options.context', 'page')
             ->setFormTypeOption('entry_options.translation_locale', $locale);
+
+        // Last, as on the screen the page is written on: the url this language is read at, to open on a phone - the very reason a code is scanned. That screen carries the bare url, this one carries "/xx/..." (see PageQrCodeType and the qrcode action)
+        yield Field::new('qrcode', false)
+            ->setFormType(PageQrCodeType::class)
+            ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
+            ->setFormTypeOption('content_locale', $locale);
     }
 
     // The language a page is being written in, when it is not the one the site was written in: read from the url the language selector links to (see page_crud_edit.html.twig), and only ever one the site declares
@@ -242,6 +252,9 @@ class PageCrudController extends AbstractCrudController
             return $this->translationFields($entity, $contentLocale);
         }
 
+        // The language the page itself is written in, named in its own words: "Dans cette langue (français)" says which one an editor is looking at, a multilingual site having several screens that look alike
+        $writingLocale = $this->siteLocales->getDefaultLocale();
+
         // Trashed pages are always unpublished, no need to show that column in the trash view
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
         $isPublishedField = BooleanField::new('isPublished')
@@ -263,112 +276,159 @@ class PageCrudController extends AbstractCrudController
             $isIndexableField->hideOnIndex();
         }
 
-        return [
+        // Each field is defined once here and assembled below: a multilingual site reads them in two groups, a single-language one in the order it always had
+        // Confirmed with the user, the title change also changing the slug; not needed on a new page
+        $titleField = TextField::new('title')
+            ->setLabel(t('label.title', [], 'site'))
+            ->setRequired(true)
+            ->setFormTypeOption('attr', ($isHomePage || Crud::PAGE_NEW === $pageName) ? [] : [
+                'data-controller' => 'title-confirm',
+                'data-action' => 'focus->title-confirm#confirm click->title-confirm#confirm',
+                'data-title-confirm-message-value' => $this->translator->trans('confirm.title_change', [], 'site'),
+            ]);
+
+        $slugField = SlugField::new('slug')
+            ->setLabel(t('label.slug', [], 'site'))
+            ->setTargetFieldName('title')
+            ->setRequired(true)
+            ->setHelp(t('label.slug_help', [], 'site'))
+            ->setFormTypeOption('disabled', $isHomePage);
+
+        // Unchecking it drops the layout's own <h1> for this page, for one opened by a block already carrying it (a "hero" left on its h1 level) - the page keeps its title everywhere else (browser tab, share tags, menus), it just stops being printed twice on screen
+        $isTitleDisplayedField = BooleanField::new('isTitleDisplayed')
+            ->setLabel(t('label.is_title_displayed', [], 'site'))
+            ->setHelp(t('label.is_title_displayed_help', [], 'site'))
+            ->hideOnIndex();
+
+        // Opts this textarea into UiBundle's rephrase button, off by default there for non-prose values
+        $summaryField = TextareaField::new('summarySocialNetwork')
+            // In the 'config' domain: the health check names this very field back to the reader (see ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL), and one label read from two bundles is kept in one place
+            ->setLabel(t('label.summary_social_network', [], 'config'))
+            ->setHelp(t('label.summary_social_network_help', [], 'site'))
+            ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true'])
+            ->hideOnIndex();
+
+        $changeFrequencyField = ChoiceField::new('changeFrequency')
+            ->setLabel(t('label.change_frequency', [], 'site'))
+            ->setHelp(t('label.change_frequency_help', [], 'site'))
+            ->setTranslatableChoices([
+                'always' => t('label.always', [], 'site'),
+                'hourly' => t('label.hourly', [], 'site'),
+                'daily' => t('label.daily', [], 'site'),
+                'weekly' => t('label.weekly', [], 'site'),
+                'monthly' => t('label.monthly', [], 'site'),
+                'yearly' => t('label.yearly', [], 'site'),
+                'never' => t('label.never', [], 'site'),
+            ])
+            ->setRequired(false)
+            ->hideOnIndex();
+
+        $priorityField = IntegerField::new('priority')
+            ->setLabel(t('label.priority', [], 'site'))
+            ->setHelp(t('label.priority_help', [], 'site'))
+            ->setFormTypeOption('attr', ['min' => 0, 'max' => 10])
+            ->setRequired(false)
+            ->hideOnIndex();
+
+        // OgImageField carries the upload widget and the write-screens-only rule with it
+        $ogImageField = OgImageField::new('ogImage')
+            ->setLabel(t('label.og_image', [], 'site'))
+            ->setHelp(t('label.og_image_help', [], 'site'));
+
+        // Blocks row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
+        $blocksField = CollectionField::new('blocks')
+            ->setLabel(t('label.blocks', [], 'ui'))
+            // CollectionField's own default is "col-md-8 col-xxl-7" - every nesting level of blocks-in-blocks eats into that same width (EasyAdmin lays each entry out as a 20% label + the rest), so the block editor is given the full row instead of 7/12 of it
+            ->setColumns('col-12')
+            ->setEntryType(BlockType::class)
+            ->allowAdd()
+            ->allowDelete()
+            ->setFormTypeOption('by_reference', false)
+            ->setFormTypeOption('entry_options.context', 'page')
+            ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_PAGE, $entity instanceof Page ? $entity->getId() : null))
+            ->hideOnIndex();
+
+        $creationField = DateTimeField::new('creation')
+            ->setLabel(t('label.creation', [], 'site'))
+            ->setFormTypeOption('disabled', 'disabled')
+            ->onlyOnDetail();
+
+        $modificationField = DateTimeField::new('modification')
+            ->setLabel(t('label.modification', [], 'site'))
+            ->setFormTypeOption('disabled', 'disabled')
+            ->onlyOnDetail();
+
+        // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new")
+        // Marker on the row: the widget itself is rendered by our own form theme block, which prints no id at all, and SiteGuidedProjectProvider's "site-page-health" parcours needs something to point at
+        $qrCodeField = Field::new('qrcode', false)
+            ->setFormType(PageQrCodeType::class)
+            ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
+            ->onlyWhenUpdating();
+
+        $head = [
             IdField::new('id')
                 ->onlyOnIndex(),
 
             FormField::addTab(t('label.tab_data', [], 'site'))
                 ->hideOnIndex(),
+        ];
 
-            // Data
-            // Confirmed with the user, the title change also changing the slug; not needed on a new page
-            TextField::new('title')
-                ->setLabel(t('label.title', [], 'site'))
-                ->setRequired(true)
-                ->setFormTypeOption('attr', ($isHomePage || Crud::PAGE_NEW === $pageName) ? [] : [
-                    'data-controller' => 'title-confirm',
-                    'data-action' => 'focus->title-confirm#confirm click->title-confirm#confirm',
-                    'data-title-confirm-message-value' => $this->translator->trans('confirm.title_change', [], 'site'),
-                ]),
-            SlugField::new('slug')
-                ->setLabel(t('label.slug', [], 'site'))
-                ->setTargetFieldName('title')
-                ->setRequired(true)
-                ->setHelp(t('label.slug_help', [], 'site'))
-                ->setFormTypeOption('disabled', $isHomePage),
-            // Unchecking it drops the layout's own <h1> for this page, for one opened by a block already carrying it (a "hero" left on its h1 level) - the page keeps its title everywhere else (browser tab, share tags, menus), it just stops being printed twice on screen
-            BooleanField::new('isTitleDisplayed')
-                ->setLabel(t('label.is_title_displayed', [], 'site'))
-                ->setHelp(t('label.is_title_displayed_help', [], 'site'))
-                ->hideOnIndex(),
-
-            // Content
-            // Opts this textarea into UiBundle's rephrase button, off by default there for non-prose values
-            TextareaField::new('summarySocialNetwork')
-                // In the 'config' domain: the health check names this very field back to the reader (see ContentQualityAnalyzer::DESCRIPTION_FIELD_LABEL), and one label read from two bundles is kept in one place
-                ->setLabel(t('label.summary_social_network', [], 'config'))
-                ->setHelp(t('label.summary_social_network_help', [], 'site'))
-                ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true'])
-                ->hideOnIndex(),
-            $isPublishedField,
-
-            // Sitemaps
-            $isIndexableField,
-            ChoiceField::new('changeFrequency')
-                ->setLabel(t('label.change_frequency', [], 'site'))
-                ->setHelp(t('label.change_frequency_help', [], 'site'))
-                ->setTranslatableChoices([
-                    'always' => t('label.always', [], 'site'),
-                    'hourly' => t('label.hourly', [], 'site'),
-                    'daily' => t('label.daily', [], 'site'),
-                    'weekly' => t('label.weekly', [], 'site'),
-                    'monthly' => t('label.monthly', [], 'site'),
-                    'yearly' => t('label.yearly', [], 'site'),
-                    'never' => t('label.never', [], 'site'),
-                ])
-                ->setRequired(false)
-                ->hideOnIndex(),
-            IntegerField::new('priority')
-                ->setLabel(t('label.priority', [], 'site'))
-                ->setHelp(t('label.priority_help', [], 'site'))
-                ->setFormTypeOption('attr', ['min' => 0, 'max' => 10])
-                ->setRequired(false)
-                ->hideOnIndex(),
-
-            // SEO
-            // OgImageField carries the upload widget and the write-screens-only rule with it
-            OgImageField::new('ogImage')
-                ->setLabel(t('label.og_image', [], 'site'))
-                ->setHelp(t('label.og_image_help', [], 'site')),
-
-            // Blocks row_attr markers read by ea-sortable.js, to drag a saved Block into a container on this page
-            CollectionField::new('blocks')
-                ->setLabel(t('label.blocks', [], 'ui'))
-                // CollectionField's own default is "col-md-8 col-xxl-7" - every nesting level of blocks-in-blocks eats into that same width (EasyAdmin lays each entry out as a 20% label + the rest), so the block editor is given the full row instead of 7/12 of it
-                ->setColumns('col-12')
-                ->setEntryType(BlockType::class)
-                ->allowAdd()
-                ->allowDelete()
-                ->setFormTypeOption('by_reference', false)
-                ->setFormTypeOption('entry_options.context', 'page')
-                ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_PAGE, $entity instanceof Page ? $entity->getId() : null))
-                ->hideOnIndex(),
-
-            // Dates
-            DateTimeField::new('creation')
-                ->setLabel(t('label.creation', [], 'site'))
-                ->setFormTypeOption('disabled', 'disabled')
-                ->onlyOnDetail(),
-            DateTimeField::new('modification')
-                ->setLabel(t('label.modification', [], 'site'))
-                ->setFormTypeOption('disabled', 'disabled')
-                ->onlyOnDetail(),
-
-            // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new")
-            // Marker on the row: the widget itself is rendered by our own form theme block, which prints no id at all, and SiteGuidedProjectProvider's "site-page-health" parcours needs something to point at
-            Field::new('qrcode', false)
-                ->setFormType(PageQrCodeType::class)
-                ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
-                ->onlyWhenUpdating(),
-
-            // Health check
-            // Edit only: the page must exist and have been checked once before there is anything to show
+        // Health check
+        // Edit only: the page must exist and have been checked once before there is anything to show
+        $tail = [
             FormField::addTab(t('label.tab_health_check', [], 'site'))
                 ->hideOnIndex()
                 ->onlyWhenUpdating(),
             Field::new('healthCheck', false)
                 ->setFormType(PageHealthCheckPanelType::class)
                 ->onlyWhenUpdating(),
+        ];
+
+        // One language, nothing to tell apart: the screen keeps the order it always had, and no group appears where every field acts on the only language there is
+        if (!$this->pageTranslator->isActive()) {
+            return [
+                ...$head,
+                $titleField,
+                $slugField,
+                $isTitleDisplayedField,
+                $summaryField,
+                $isPublishedField,
+                $isIndexableField,
+                $changeFrequencyField,
+                $priorityField,
+                $ogImageField,
+                $blocksField,
+                $creationField,
+                $modificationField,
+                $qrCodeField,
+                ...$tail,
+            ];
+        }
+
+        // What a language cannot change comes first, so an editor opening a page in another language knows before touching anything which of these fields they would be changing for every language at once - the very question a screen mixing the two leaves them to guess (see translationFields, which is the other half of this)
+        return [
+            ...$head,
+
+            FormField::addFieldset(t('label.fieldset_all_languages', [], 'site'))
+                ->setHelp(t('label.fieldset_all_languages_help', [], 'site')),
+            $slugField,
+            $isTitleDisplayedField,
+            $isPublishedField,
+            $isIndexableField,
+            $changeFrequencyField,
+            $priorityField,
+            $ogImageField,
+            $creationField,
+            $modificationField,
+            $qrCodeField,
+
+            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($writingLocale, $writingLocale)], 'site'))
+                ->setHelp(t('label.fieldset_this_language_help', [], 'site')),
+            $titleField,
+            $summaryField,
+            $blocksField,
+
+            ...$tail,
         ];
     }
 
@@ -1014,20 +1074,24 @@ class PageCrudController extends AbstractCrudController
         $responseParameters->set('page_content_urls', $urls);
     }
 
-    // Relative path of the page on the public site: preview link if unpublished, otherwise home or its slug
-    private function pagePath(Page $page): string
+    /**
+     * Relative path of the page on the public site: preview link if unpublished, otherwise the one the resolver
+     * builds - home or its slug, prefixed by the language when it is not the one the site is written in.
+     *
+     * A preview has no localised route of its own: it is the page as it stands, shown to whoever may see it before it
+     * is published, and there is nothing to read it in another language yet.
+     */
+    private function pagePath(Page $page, ?string $locale = null): string
     {
-        return match (true) {
-            !$page->isPublished() => $this->generateUrl('page_preview', ['page' => $page->getSlug()]),
-            'home' === $page->getSlug() => $this->generateUrl('page_home'),
-            default => $this->generateUrl('page_display', ['page' => $page->getSlug()]),
-        };
+        return $page->isPublished()
+            ? $this->pagePublicUrlResolver->resolvePath($page, $locale)
+            : $this->generateUrl('page_preview', ['page' => $page->getSlug()]);
     }
 
     // Absolute, public-facing URL of the page (site-url + its path), used for the QR code
-    private function buildPageUrl(Page $page): string
+    private function buildPageUrl(Page $page, ?string $locale = null): string
     {
-        return rtrim((string) $this->configService->get('site-url'), '/') . $this->pagePath($page);
+        return rtrim((string) $this->configService->get('site-url'), '/') . $this->pagePath($page, $locale);
     }
 
     // Normalizes the slug entered by the user (removes accents, spaces, uppercase...)
@@ -1091,7 +1155,8 @@ class PageCrudController extends AbstractCrudController
         }
 
         $result = new Builder()->build(
-            data: $this->buildPageUrl($page),
+            // The language the screen was opened on, when it is not the one the page was written in (see contentLocale)
+            data: $this->buildPageUrl($page, $this->contentLocale()),
             size: 250,
             margin: 10,
         );

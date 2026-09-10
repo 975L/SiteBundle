@@ -1,0 +1,19 @@
+{# <twig:c975LSite:General:Languages page="{{ page }}" /> #}
+{# The languages this very page can be read in, and nothing at all anywhere else: a site declaring one language, a page nobody translated, and any screen with no Page behind it - a book, a product, a photo are translated by the bundle that owns them or not at all. Each url is the bare one with "?_locale=xx", which is what keeps the choice for the rest of the visit (see PageTranslationExtension::getLanguages) #}
+{% set languages = page is defined and page is not null ? page_languages(page) : [] %}
+
+{% if languages is not empty %}
+    <ul class="menu-languages" aria-label="{{ 'menu.languages'|trans({}, 'site') }}">
+        {% for locale, url in languages %}
+            <li class="menu-language">
+                {# The language being read is named, never linked: the link would lead to the page already open, and aria-current is what says which one it is #}
+                {% if locale == app.request.locale %}
+                    <span class="menu-language-current" lang="{{ locale }}" aria-current="true">{{ locale|locale_name(locale) }}</span>
+                {% else %}
+                    {# nofollow: these urls are query-string variants of pages the sitemap already declares in each language, and a crawler following them would index the same page twice #}
+                    <a class="menu-language-link" href="{{ url }}" lang="{{ locale }}" hreflang="{{ locale }}" rel="nofollow">{{ locale|locale_name(locale) }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}

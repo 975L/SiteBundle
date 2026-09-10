@@ -420,11 +420,15 @@
             </trans-unit>
             <trans-unit id="wvdruZT">
                 <source>description.guided_step_page_translation_check</source>
-                <target>The translated page opens on the address prefixed by the language.</target>
+                <target>The translated page opens on the address prefixed by the language, and the navigation bar now offers that language to visitors.</target>
             </trans-unit>
             <trans-unit id="d7wYwPo">
                 <source>description.guided_step_page_translation_locale</source>
                 <target>The bar at the top of the screen: each of the site's languages has its tab there, and the edit screen opens on it.</target>
+            </trans-unit>
+            <trans-unit id="y4W.h8Y">
+                <source>description.guided_step_page_translation_medias</source>
+                <target>A caption, the title and the text of a card, the alternative a screen reader announces: a picture's own words are said in the new language too, the file itself staying as it is.</target>
             </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
@@ -693,6 +697,22 @@
             <trans-unit id="J2sBc_e">
                 <source>label.export</source>
                 <target>Export</target>
+            </trans-unit>
+            <trans-unit id="X9dC6JM">
+                <source>label.fieldset_all_languages</source>
+                <target>Common to every language</target>
+            </trans-unit>
+            <trans-unit id="epzK18j">
+                <source>label.fieldset_all_languages_help</source>
+                <target>These settings belong to the page itself: changing one changes every language at once.</target>
+            </trans-unit>
+            <trans-unit id="LHpZe.c">
+                <source>label.fieldset_this_language</source>
+                <target>In this language (%language%)</target>
+            </trans-unit>
+            <trans-unit id="p8XUdUk">
+                <source>label.fieldset_this_language_help</source>
+                <target>These texts belong to this language alone. The “Translate” button opens the same screen in another.</target>
             </trans-unit>
             <trans-unit id="y9I5gZL">
                 <source>label.footer</source>
@@ -1033,6 +1053,10 @@
             <trans-unit id="iQfmEA7">
                 <source>label.guided_step_page_translation_locale</source>
                 <target>Pick the language</target>
+            </trans-unit>
+            <trans-unit id="IRlJAsj">
+                <source>label.guided_step_page_translation_medias</source>
+                <target>Take in the pictures' texts</target>
             </trans-unit>
             <trans-unit id="1eGYN.t">
                 <source>label.guided_step_page_translation_open</source>
@@ -1701,6 +1725,10 @@
             <trans-unit id="Je1Jsmh">
                 <source>label.yearly</source>
                 <target>Yearly</target>
+            </trans-unit>
+            <trans-unit id="Gt_Gk_e">
+                <source>menu.languages</source>
+                <target>Language</target>
             </trans-unit>
             <trans-unit id="UFzGawd">
                 <source>menu.toggle</source>

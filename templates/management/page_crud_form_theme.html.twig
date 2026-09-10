@@ -15,7 +15,12 @@
 {# PageQrCodeType (the "Data" tab) - moved here from being appended below the whole tabbed form (visible under every tab regardless of which one was active) to being scoped to the tab it actually belongs to #}
 {% block c975l_page_qrcode_widget %}
     {% set page = form.parent.vars.data %}
+    {# The language the screen was opened on, handed down by PageQrCodeType: a form theme block is given the form and nothing else, and the code has to point at that language's own url #}
+    {% set url = ea_url().setAction('qrcode').setEntityId(page.id) %}
+    {% if content_locale is not empty %}
+        {% set url = url.set('contenu', content_locale) %}
+    {% endif %}
     <legend class="col-form-label">{{ 'label.qrcode'|trans({}, 'site') }}</legend>
     <p class="text-muted">{{ 'label.qrcode_help'|trans({}, 'site') }}</p>
-    <img src="{{ ea_url().setAction('qrcode').setEntityId(page.id) }}" alt="QR Code">
+    <img src="{{ url }}" alt="QR Code">
 {% endblock %}

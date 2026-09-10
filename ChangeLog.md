@@ -1,5 +1,27 @@
 # Changelog
 
+## v8.14.0
+
+The bar offers the languages a page was written in
+
+- New `General:Languages` component in the navbar, one link per language the page was written in, drawn from `page_languages()` (10/09/2026)
+- Shown on both bars: inside the menu's items, so it follows the mobile dropdown, and on the fallback one (10/09/2026)
+- Each link is the bare url carrying `?_locale=xx`, kept in session by ConfigBundle's `LocaleListener`, never that language's own `/en/...` (10/09/2026)
+- Nothing is rendered on a site declaring one language, on a page nobody translated, and on any screen with no `Page` behind it (10/09/2026)
+- No menu on a collection item's detail view, nor in preview (10/09/2026)
+- `sass/_menu.scss` draws the menu with classes of its own rather than the `menu-item`/`menu-link` pair (10/09/2026)
+- The layout hands a `navbarPage` over to the navbar, declared by the template (10/09/2026)
+- The `c975l-site-menus` skill and the README describe the menu and the url it links to (10/09/2026)
+- `PageController::writingLanguage()` reads `_locale` from the query as well as the session, so the first click moves the visitor (10/09/2026)
+- **`TranslationHealthCheckProvider` counts the texts a media carries**, `label`, `description` and `alt`, which CoreBundle now stores as `ui_media` - a page whose grid was translated and whose every card is still in the writing language used to be reported as done (10/09/2026)
+- Requires `c975l/core-bundle` `^1.27.0`, which is what ships `MediaTranslator` (10/09/2026)
+- **The page translation parcours walks the pictures' texts**, one step between the blocks and the save (10/09/2026)
+- It points at `[data-media-translation]`, the marker CoreBundle puts on each media translation sub-form (10/09/2026)
+- Its label and description ship in `site.en/fr/es`, its narration in `site_narration.en/fr` (10/09/2026)
+- **A language screen carries a QR code of its own**, last on the screen as on the one the page is written on, pointing at that language's url (`/en/pages/...`) rather than at the writing language's - the very reason a code is scanned being to open the page on a phone (10/09/2026)
+- `PageQrCodeType` takes a `content_locale`, handed to its form theme block, a theme being given the form and nothing else (10/09/2026)
+- `PageCrudController::pagePath()` delegates a published page to `PagePublicUrlResolver`, which already knew the home slug and the localised route - said in one place rather than in two (10/09/2026)
+
 ## v8.13.3
 
 The QR code answers 404 on a page that is not there

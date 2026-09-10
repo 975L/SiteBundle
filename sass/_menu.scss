@@ -370,3 +370,66 @@ img.menu-logo__on-dark {
         }
     }
 }
+// Language menu (see templates/components/General/Languages.html.twig): classes of its own rather than the "menu-item"/"menu-link" pair, whose underline and hover wash say "this is the page you are on" - a language is not a page
+.menu-languages {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-language-link,
+.menu-language-current {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-family-title);
+    font-size: 1rem;
+    color: var(--navbar-text);
+    text-decoration: none;
+}
+
+// The language already being read: named, never linked (the link would lead to the page already open), and dimmed so the ones that are a choice read as one
+.menu-language-current {
+    opacity: 0.6;
+}
+
+.menu-language-link:hover,
+.menu-language-link:focus {
+    color: var(--navbar-active-color);
+    text-decoration: none;
+    outline: none;
+}
+
+// Inside the navbar's mobile dropdown, whose --primary background stays the same in both modes - same statement and same reason as .menu-label above, undone at the desktop breakpoint where the bar keeps its own background
+.menu .menu-language-link,
+.menu .menu-language-current {
+    color: #fff;
+}
+
+// The separator every line of the mobile dropdown carries, and the room the languages need when they follow the menu's own items
+.menu .menu-languages {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (min-width: 768px) {
+    .menu .menu-languages {
+        border-top: none;
+        align-items: center;
+    }
+
+    .menu .menu-language-link,
+    .menu .menu-language-current {
+        color: var(--navbar-text);
+    }
+
+    .menu.is-scrolled .menu-language-link,
+    .menu.is-scrolled .menu-language-current {
+        color: var(--navbar-text-scrolled);
+    }
+}
+
+// The fallback bar, a centered column with no items row to sit in: the languages take a line of their own under the brand
+.nav-simple .menu-languages {
+    justify-content: center;
+}

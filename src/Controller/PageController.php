@@ -102,8 +102,9 @@ class PageController extends AbstractController
 
         $locale = $request->getLocale();
 
-        // Only a language the visitor actually asked for: the one their browser announced, asked through getPreferredLanguage() exactly as LocaleListener did, so "en-GB" is read as "en" here too rather than matching nothing; or the one they picked from a language menu, which the listener keeps under Symfony's own "_locale" session key. Announcing neither, the method hands back the first declared language - the writing one - and a crawler that asked for nothing has no business being moved off the url it requested
+        // Only a language the visitor actually asked for: the one their browser announced, read through getPreferredLanguage() exactly as LocaleListener did so "en-GB" matches "en"; the one just picked from the language menu, which lands in the query; or the one picked earlier, which the listener keeps under Symfony's own "_locale" session key. The query is read as well as the session because a visitor arriving without a session cookie has none, so their first click on the menu would be served the writing language; it is trusted no more than the session, only ever matching when LocaleListener has already accepted it. Announcing none of the three, the method hands back the writing language, a crawler having no business being moved off the url it requested
         $asked = $locale === $request->getPreferredLanguage($this->siteLocales->all())
+            || $locale === $request->query->get('_locale')
             || ($request->hasPreviousSession() && $locale === $request->getSession()->get('_locale'));
 
         if ($asked && $locale !== $this->siteLocales->getDefaultLocale() && \in_array($locale, $this->pageTranslator->translatedLocales($page), true)) {

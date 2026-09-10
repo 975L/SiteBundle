@@ -46,6 +46,7 @@ class TwigFunctionRegistrationTest extends TestCase
             ]],
             'PageTranslationExtension' => [PageTranslationExtension::class, [
                 'page_alternates' => 'getAlternates',
+                'page_languages' => 'getLanguages',
                 'page_summary' => 'getSummary',
                 'page_title' => 'getTitle',
             ]],

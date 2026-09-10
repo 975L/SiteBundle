@@ -74,6 +74,15 @@ likewise generates the localised routes while a page is read in another language
 does not send the visitor back into the writing language. Both actions show only where the site
 declares more than one language.
 
+The bar also carries the **language menu** itself (`General:Languages`, rendered inside the items so it
+follows the mobile dropdown, and on the fallback bar too). It offers only the languages the page being
+read was really written in — the list `page_languages()` answers — and links each to the **bare url with
+`?_locale=xx`**, never to that language's own `/en/...`: a localised route already says which language it
+answers in, so ConfigBundle's `LocaleListener` leaves the session alone there and the choice would last a
+single page. A template says which `Page` the menu rewrites the url of by setting `navbarPage`, left null
+on a collection item's detail view and in preview, so the menu draws nothing there. Restyled through
+`.menu-languages`, `.menu-language-link` and `.menu-language-current`.
+
 ### Exposing another bundle's route
 
 Implement ConfigBundle's `LinkableRouteProviderInterface` — **never add a dependency on SiteBundle to

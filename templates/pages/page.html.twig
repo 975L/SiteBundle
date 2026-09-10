@@ -8,6 +8,9 @@
 {# The other languages of this same page, read by the layout's "hreflang" links; empty on a site declaring a single language. A collection item's detail view declares none: nothing translates the item itself (CollectionItem carries no Translation rows), and the parent Page's group would name languages this url is not written in #}
 {% set alternates = detailHtml is defined and detailHtml ? [] : page_alternates(page) %}
 
+{# The Page the navbar's language menu rewrites the url of, on the same rule as the "hreflang" group above: nothing for a collection item, whose url the Page's languages do not name, and nothing in preview either, where the menu's public urls would take the editor out of the preview and onto a 404 while the Page is unpublished #}
+{% set navbarPage = (detailHtml is defined and detailHtml) or isPreview|default(false) ? null : page %}
+
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
 {% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
 

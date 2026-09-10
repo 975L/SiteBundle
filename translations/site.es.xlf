@@ -420,11 +420,15 @@
             </trans-unit>
             <trans-unit id="wvdruZT">
                 <source>description.guided_step_page_translation_check</source>
-                <target>La página traducida se abre en la dirección precedida por el idioma.</target>
+                <target>La página traducida se abre en la dirección precedida por el idioma, y la barra de navegación ahora ofrece ese idioma a los visitantes.</target>
             </trans-unit>
             <trans-unit id="d7wYwPo">
                 <source>description.guided_step_page_translation_locale</source>
                 <target>La barra en la parte superior: cada idioma del sitio tiene su pestaña y la pantalla de edición se abre en ella.</target>
+            </trans-unit>
+            <trans-unit id="y4W.h8Y">
+                <source>description.guided_step_page_translation_medias</source>
+                <target>Un pie de foto, el título y el texto de una tarjeta, la alternativa que anuncia un lector de pantalla: las palabras que lleva una imagen se dicen también en el nuevo idioma, sin que el archivo en sí cambie.</target>
             </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
@@ -693,6 +697,22 @@
             <trans-unit id="J2sBc_e">
                 <source>label.export</source>
                 <target>Exportar</target>
+            </trans-unit>
+            <trans-unit id="X9dC6JM">
+                <source>label.fieldset_all_languages</source>
+                <target>Común a todos los idiomas</target>
+            </trans-unit>
+            <trans-unit id="epzK18j">
+                <source>label.fieldset_all_languages_help</source>
+                <target>Estos ajustes pertenecen a la página misma: cambiar uno cambia todos los idiomas a la vez.</target>
+            </trans-unit>
+            <trans-unit id="LHpZe.c">
+                <source>label.fieldset_this_language</source>
+                <target>En este idioma (%language%)</target>
+            </trans-unit>
+            <trans-unit id="p8XUdUk">
+                <source>label.fieldset_this_language_help</source>
+                <target>Estos textos pertenecen solo a este idioma. El botón «Traducir» abre la misma pantalla en otro.</target>
             </trans-unit>
             <trans-unit id="y9I5gZL">
                 <source>label.footer</source>
@@ -1033,6 +1053,10 @@
             <trans-unit id="iQfmEA7">
                 <source>label.guided_step_page_translation_locale</source>
                 <target>Elija el idioma</target>
+            </trans-unit>
+            <trans-unit id="IRlJAsj">
+                <source>label.guided_step_page_translation_medias</source>
+                <target>Repase los textos de las imágenes</target>
             </trans-unit>
             <trans-unit id="1eGYN.t">
                 <source>label.guided_step_page_translation_open</source>
@@ -1701,6 +1725,10 @@
             <trans-unit id="Je1Jsmh">
                 <source>label.yearly</source>
                 <target>Cada año</target>
+            </trans-unit>
+            <trans-unit id="Gt_Gk_e">
+                <source>menu.languages</source>
+                <target>Idioma</target>
             </trans-unit>
             <trans-unit id="UFzGawd">
                 <source>menu.toggle</source>

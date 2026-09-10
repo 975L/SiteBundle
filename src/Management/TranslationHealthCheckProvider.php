@@ -25,6 +25,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\ContentTranslator;
+use c975L\UiBundle\Service\MediaTranslator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -37,6 +38,12 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     // Named here rather than restated wherever a row of this kind is picked out
     public const string KIND = 'translations';
+
+    // What each prefix of the key vocabulary below names, a text belonging either to a block's own data or to one of the medias it hangs (see MediaTranslator)
+    private const array OWNER_TYPES = [
+        'block' => Translation::OWNER_BLOCK,
+        'media' => Translation::OWNER_MEDIA,
+    ];
 
     public function __construct(
         private readonly PageRepository $pageRepository,
@@ -150,7 +157,7 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
      * One row of the dashboard, whatever it is that carries the texts.
      *
      * @param list<string>                              $ownKeys         the subject's own texts, in expected()'s vocabulary
-     * @param list<string>                              $blockKeys       its blocks' texts, walked once and read by every language
+     * @param list<string>                              $blockKeys       its blocks' own texts and their medias', walked once and read by every language
      * @param array<string, array<string, string|null>> $ownTranslations locale => field => value, empty for a subject holding no text of its own
      * @param list<string>                              $locales
      *
@@ -160,11 +167,11 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
     {
         $expected = array_merge($ownKeys, $blockKeys);
 
-        // Read once for the whole subject rather than once per language: ContentTranslator::all() hands back every locale a block was given, so each language below reads the same rows instead of asking for them again
+        // Read once for the whole subject rather than once per language: ContentTranslator::all() hands back every locale a row was given, so each language below reads the same rows instead of asking for them again
         $blockTranslations = [];
         foreach ($blockKeys as $key) {
-            [, $id] = explode('.', $key, 3) + [null, null, null];
-            $blockTranslations[(int) $id] ??= $this->contentTranslator->all(Translation::OWNER_BLOCK, (int) $id);
+            [$prefix, $id] = explode('.', $key, 3) + [null, null, null];
+            $blockTranslations[$prefix . '.' . $id] ??= $this->contentTranslator->all(self::OWNER_TYPES[$prefix], (int) $id);
         }
 
         $missing = [];
@@ -227,24 +234,61 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
             }
             $seen[$id] = true;
 
-            $data = $block->getData();
-            foreach ($this->blockRegistry->getTranslatable($kind) as $field) {
-                $value = $data[$field] ?? null;
-                if (\is_string($value) && '' !== trim($value)) {
-                    $keys[] = 'block.' . $id . '.' . $field;
-                }
-            }
+            $this->collectDataKeys($block, $id, $kind, $keys);
+            $this->collectMediaKeys($block, $keys);
 
             $this->collectBlockKeys($block->getSlots(), $keys, $seen);
         }
     }
 
     /**
+     * The texts a block carries in its own data.
+     *
+     * @param list<string> $keys
+     */
+    private function collectDataKeys(Block $block, int $id, string $kind, array &$keys): void
+    {
+        $data = $block->getData();
+
+        foreach ($this->blockRegistry->getTranslatable($kind) as $field) {
+            $value = $data[$field] ?? null;
+
+            if (\is_string($value) && '' !== trim($value)) {
+                $keys[] = 'block.' . $id . '.' . $field;
+            }
+        }
+    }
+
+    /**
+     * A grid's cards carry their title and their text on the media itself rather than in the block's data, so a page counted on its blocks alone would report a translated grid whose every card is still in the writing language.
+     *
+     * @param list<string> $keys
+     */
+    private function collectMediaKeys(Block $block, array &$keys): void
+    {
+        foreach ($block->getMedias() as $media) {
+            $mediaId = $media->getId();
+
+            if (null === $mediaId) {
+                continue;
+            }
+
+            foreach (MediaTranslator::FIELDS as $field) {
+                $value = $media->getUntranslated($field);
+
+                if (\is_string($value) && '' !== trim($value)) {
+                    $keys[] = 'media.' . $mediaId . '.' . $field;
+                }
+            }
+        }
+    }
+
+    /**
      * The keys actually written in that language, in the same vocabulary the expected ones use.
      *
-     * @param list<string>                                          $blockKeys
-     * @param array<int, array<string, array<string, string|null>>> $blockTranslations block id => locale => field => value
-     * @param array<string, array<string, string|null>>             $ownTranslations   locale => field => value
+     * @param list<string>                                             $blockKeys
+     * @param array<string, array<string, array<string, string|null>>> $blockTranslations "block.<id>"/"media.<id>" => locale => field => value
+     * @param array<string, array<string, string|null>>                $ownTranslations   locale => field => value
      *
      * @return list<string>
      */
@@ -259,8 +303,8 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
         }
 
         foreach ($blockKeys as $key) {
-            [, $id, $field] = explode('.', $key, 3) + [null, null, null];
-            $written = $blockTranslations[(int) $id][$locale][$field] ?? null;
+            [$prefix, $id, $field] = explode('.', $key, 3) + [null, null, null];
+            $written = $blockTranslations[$prefix . '.' . $id][$locale][$field] ?? null;
 
             if (\is_string($written) && '' !== trim($written)) {
                 $keys[] = $key;

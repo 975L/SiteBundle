@@ -289,6 +289,13 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '#Page_blocks',
                 ],
                 [
+                    'label' => 'label.guided_step_page_translation_medias',
+                    'description' => 'description.guided_step_page_translation_medias',
+                    'narration' => 'narration.guided_step_page_translation_medias',
+                    // The marker UiBundle's BlockType puts on each media translation sub-form: the pictures' own texts hang under the blocks, with no id of their own to point at (see MediaTranslationType)
+                    'highlight' => '[data-media-translation]',
+                ],
+                [
                     'label' => 'label.guided_step_page_translation_save',
                     'narration' => 'narration.guided_step_page_translation_save',
                     'highlight' => '.action-saveAndReturn',

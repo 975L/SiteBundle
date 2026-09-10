@@ -46,4 +46,20 @@ class PageTranslationExtension
     {
         return $this->pagePublicUrlResolver->resolveAlternates($page);
     }
+
+    // The languages this page can be read in, each with the bare url carrying "?_locale=xx" and never that language's own "/en/...": ConfigBundle's LocaleListener returns early on a localised route, so a link straight to it would serve that one page in that language and hand the writing language back on the next click, where the query is kept in session and PageController::writingLanguage() redirects to the localised url itself. Empty on a page written in a single language, whose other urls would answer 404 (see PageController::requireTranslated())
+    /** @return array<string, string> locale => the url that switches to it */
+    #[AsTwigFunction('page_languages')]
+    public function getLanguages(Page $page): array
+    {
+        $locales = $this->pageTranslator->translatedLocales($page);
+
+        if (\count($locales) < 2) {
+            return [];
+        }
+
+        $path = $this->pagePublicUrlResolver->resolvePath($page);
+
+        return array_combine($locales, array_map(static fn (string $locale): string => $path . '?_locale=' . $locale, $locales));
+    }
 }

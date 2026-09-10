@@ -23,6 +23,7 @@ use c975L\SiteBundle\Form\Type\PageHealthCheckPanelType;
 use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
@@ -168,6 +169,7 @@ class PageCrudControllerTest extends TestCase
             $services['csrfTokenManager'],
             $services['pageTranslator'],
             $services['siteLocales'],
+            $services['pagePublicUrlResolver'],
         );
     }
 
@@ -199,6 +201,8 @@ class PageCrudControllerTest extends TestCase
             'pageTranslator' => $services['pageTranslator'] ?? $this->createStub(PageTranslator::class),
             // The site declares a single language in every test but the ones about the language selector
             'siteLocales' => $services['siteLocales'] ?? new SiteLocales([], 'fr'),
+            // What the QR code points at, the language screen asking it for that language's own url
+            'pagePublicUrlResolver' => $services['pagePublicUrlResolver'] ?? $this->createStub(PagePublicUrlResolver::class),
         ];
     }
 
@@ -795,20 +799,28 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('page_preview:draft-page', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
 
-    public function testPagePathPointsToHomeRouteForTheHomeSlug(): void
+    // The path of a published page is the resolver's business, home slug and localised route included - said in one place rather than here as well
+    public function testPagePathOfAPublishedPageIsTheOneTheResolverBuilds(): void
     {
-        $router = $this->createStub(UrlGeneratorInterface::class);
-        $router->method('generate')->willReturnCallback(static fn (string $route) => $route);
+        $controller = $this->createController(['pagePublicUrlResolver' => $this->createPublicUrlResolver()]);
 
-        $controller = $this->createController();
-        $controller->setContainer($this->createContainer(['router' => $router]));
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
 
-        $page = new Page()->setTitle('x')->setSlug('home')->setIsPublished(true);
-
-        $this->assertSame('page_home', $this->invokePrivate($controller, 'pagePath', [$page]));
+        $this->assertSame('/about', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
 
-    public function testPagePathPointsToDisplayRouteForARegularPublishedPage(): void
+    // A language screen asks for that language's own url, which is what its QR code points at
+    public function testPagePathTakesTheLanguageItIsAskedFor(): void
+    {
+        $controller = $this->createController(['pagePublicUrlResolver' => $this->createPublicUrlResolver()]);
+
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
+
+        $this->assertSame('/es/about', $this->invokePrivate($controller, 'pagePath', [$page, 'es']));
+    }
+
+    // A preview has no localised route of its own: it is the page as it stands, shown before it is published
+    public function testPagePathOfAnUnpublishedPageIsItsPreview(): void
     {
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(
@@ -818,27 +830,36 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController();
         $controller->setContainer($this->createContainer(['router' => $router]));
 
-        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
+        $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(false);
 
-        $this->assertSame('page_display:about', $this->invokePrivate($controller, 'pagePath', [$page]));
+        $this->assertSame('page_preview:about', $this->invokePrivate($controller, 'pagePath', [$page]));
     }
 
     public function testBuildPageUrlCombinesSiteUrlAndPagePath(): void
     {
-        $router = $this->createStub(UrlGeneratorInterface::class);
-        $router->method('generate')->willReturnCallback(
-            static fn (string $route, array $params = []) => '/' . ($params['page'] ?? $route)
-        );
-
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn('https://example.com/');
 
-        $controller = $this->createController(['configService' => $configService]);
-        $controller->setContainer($this->createContainer(['router' => $router]));
+        $controller = $this->createController([
+            'configService' => $configService,
+            'pagePublicUrlResolver' => $this->createPublicUrlResolver(),
+        ]);
 
         $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
 
         $this->assertSame('https://example.com/about', $this->invokePrivate($controller, 'buildPageUrl', [$page]));
+        $this->assertSame('https://example.com/es/about', $this->invokePrivate($controller, 'buildPageUrl', [$page, 'es']));
+    }
+
+    // The resolver as the controller reads it: a path, prefixed by the language when it is not the one the site is written in
+    private function createPublicUrlResolver(): PagePublicUrlResolver
+    {
+        $resolver = $this->createStub(PagePublicUrlResolver::class);
+        $resolver->method('resolvePath')->willReturnCallback(
+            static fn (Page $page, ?string $locale = null): string => (null === $locale ? '' : '/' . $locale) . '/' . $page->getSlug()
+        );
+
+        return $resolver;
     }
 
     // --- configureResponseParameters ---------------------------------------------------------------------
@@ -863,7 +884,7 @@ class PageCrudControllerTest extends TestCase
 
     public function testConfigureResponseParametersHandsTheEditScreenThePublicPathOfAPublishedPage(): void
     {
-        $controller = $this->createController();
+        $controller = $this->createController(['pagePublicUrlResolver' => $this->createPublicUrlResolver()]);
         $controller->setContainer($this->createContainer(['router' => $this->createRouterStub()]));
 
         $page = new Page()->setTitle('x')->setSlug('about')->setIsPublished(true);
@@ -1275,7 +1296,7 @@ class PageCrudControllerTest extends TestCase
         $fields = iterator_to_array($this->translationScreenFields());
 
         $this->assertSame(
-            ['title', 'summarySocialNetwork', 'blocks'],
+            ['title', 'summarySocialNetwork', 'blocks', 'qrcode'],
             array_map(static fn ($field) => $field->getAsDto()->getProperty(), $fields),
         );
     }
@@ -1286,7 +1307,8 @@ class PageCrudControllerTest extends TestCase
         foreach ($this->translationScreenFields() as $field) {
             $options = $field->getAsDto()->getFormTypeOptions();
 
-            if ('blocks' !== $field->getAsDto()->getProperty()) {
+            // "qrcode" is bound to no property at all, its own form type saying so once (see PageQrCodeType)
+            if (!in_array($field->getAsDto()->getProperty(), ['blocks', 'qrcode'], true)) {
                 $this->assertFalse($options['mapped'], 'A mapped field would overwrite the page in its own language.');
             }
         }

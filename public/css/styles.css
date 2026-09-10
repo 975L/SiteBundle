@@ -881,6 +881,62 @@ img.menu-logo__on-dark {
     border-bottom: none;
   }
 }
+.menu-languages {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-language-link,
+.menu-language-current {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-family-title);
+  font-size: 1rem;
+  color: var(--navbar-text);
+  text-decoration: none;
+}
+
+.menu-language-current {
+  opacity: 0.6;
+}
+
+.menu-language-link:hover,
+.menu-language-link:focus {
+  color: var(--navbar-active-color);
+  text-decoration: none;
+  outline: none;
+}
+
+.menu .menu-language-link,
+.menu .menu-language-current {
+  color: #fff;
+}
+
+.menu .menu-languages {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (min-width: 768px) {
+  .menu .menu-languages {
+    border-top: none;
+    align-items: center;
+  }
+  .menu .menu-language-link,
+  .menu .menu-language-current {
+    color: var(--navbar-text);
+  }
+  .menu.is-scrolled .menu-language-link,
+  .menu.is-scrolled .menu-language-current {
+    color: var(--navbar-text-scrolled);
+  }
+}
+.nav-simple .menu-languages {
+  justify-content: center;
+}
+
 .nav-simple {
   text-align: center;
   padding: var(--navbar-padding-y) 15px;
