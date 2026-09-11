@@ -82,16 +82,16 @@ class MenuCacheInvalidationListenerTest extends TestCase
             ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
-    // A Block of any other kind never belongs to a Menu - nothing to invalidate here
-    public function testInvalidateIsSkippedForBlocksOfAnotherKind(): void
+    // The tagline under the site's name is a "text_hook" of the "navbar-brand" menu, and a footer takes any kind: removing one left the menu cached for good
+    public function testPreRemoveInvalidatesMenusAllTagForABlockOfAnyKind(): void
     {
-        $block = new Block()->setKind('article');
+        $block = new Block()->setKind('text_hook');
 
         $cache = $this->createMock(TagAwareCacheInterface::class);
-        $cache->expects($this->never())->method('invalidateTags');
+        $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
         new MenuCacheInvalidationListener($cache)
-            ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+            ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
     }
 
     // The Menu row carries a field of its own - its layout style, read by MenuExtension::getMenuStyle() - which no Block event would ever signal

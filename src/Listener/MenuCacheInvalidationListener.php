@@ -17,7 +17,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
-// A Menu's own row is never touched by adding/removing/reordering/editing one of its "menu_link" items (that ManyToMany's join table isn't Menu's own mapped state, see MenuRepository::findOneByLocation()) - but every one of those actions is a lifecycle event on the Block itself instead: adding one persists a new Block (cascade, see Menu::$blocks), removing one is a cascade-remove (see BlockRemovalListener), and reordering/editing updates its position/data column. Listening on Block here, filtered to "menu_link", is what catches all of them for MenuExtension::loadMenuBlocks()'s own cache
+// A Menu's own row is never touched by adding/removing/reordering/editing one of its blocks (that ManyToMany's join table isn't Menu's own mapped state, see MenuRepository::findOneByLocation()) - but every one of those actions is a lifecycle event on the Block itself instead: adding one persists a new Block (cascade, see Menu::$blocks), removing one is a cascade-remove (see BlockRemovalListener), and reordering/editing updates its position/data column. Listening on Block here is what catches all of them for MenuExtension::loadMenuBlocks()'s own cache
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
@@ -28,11 +28,10 @@ class MenuCacheInvalidationListener extends AbstractBlockCacheInvalidationListen
     ) {
     }
 
-    // The Menu row itself is watched too since it carries a field of its own: its layout style (see Menu::$style, read by MenuExtension::getMenuStyle()), which nothing on the Block side would ever signal
-    // "menu_group" joins "menu_link" because a footer's items can be laid out in such a group, whose own edits (its direction, its alignment) are a lifecycle event on nothing else - the kind is restricted to the "menu" context (see config/services.yaml), so no group living anywhere else ever reaches this
+    // The Menu row is watched for its own layout style (see Menu::$style), which no Block event signals. Every Block kind is watched, not "menu_link"/"menu_group" alone: a footer and the "navbar-brand" menu take any kind and a Block does not know its owner, so a removed tagline stayed cached for good - a page block saved only costs the menus one lookup on the next request
     protected function invalidate(object $entity): void
     {
-        if ($entity instanceof Menu || ($entity instanceof Block && in_array($entity->getKind(), ['menu_link', 'menu_group'], true))) {
+        if ($entity instanceof Menu || $entity instanceof Block) {
             $this->cache->invalidateTags(['menus_all']);
         }
     }

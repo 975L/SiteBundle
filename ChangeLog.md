@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.15.5
+
+A menu block of any kind now invalidates the cached menus
+
+- Saving or removing a `Block` of any kind invalidates the `menus_all` cache tag, not only `menu_link`/`menu_group` (11/09/2026)
+
 ## v8.15.4
 
 A page slug in another case redirects to the stored one

@@ -3,6 +3,11 @@
         "date": "2026-09-11",
         "description": [
             {
+                "en": "Changing or removing the tagline or a footer item now shows on the site straight away",
+                "fr": "Modifier ou supprimer le slogan ou un élément du pied de page s'affiche désormais tout de suite sur le site",
+                "es": "Modificar o eliminar el eslogan o un elemento del pie de página se refleja ahora de inmediato en el sitio"
+            },
+            {
                 "en": "A collection's items can now be translated: their title and description are shown in the language the visitor reads, on the cards and on the item's own page",
                 "fr": "Les éléments d'une collection se traduisent désormais : leur titre et leur description s'affichent dans la langue du visiteur, sur les cartes comme sur la page de l'élément",
                 "es": "Los elementos de una colección ya se pueden traducir: su título y su descripción se muestran en el idioma del visitante, en las tarjetas y en la página del elemento"

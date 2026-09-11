@@ -134,6 +134,10 @@ number of groups is retuned from `themes/site.css` rather than from the style.
 No other location offers it. The choice is cached with the menu's blocks (`menu_style()`, same
 `menus_all` tag).
 
+`MenuCacheInvalidationListener` clears `menus_all` whenever a `Menu` row or **a `Block` of any kind** is
+saved or removed — a `Block` doesn't know which owner holds it, and a footer or the `navbar-brand` menu
+takes any kind, not only `menu_link`/`menu_group`.
+
 ## Navbar
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `menu_blocks('navbar-brand')` — nothing
