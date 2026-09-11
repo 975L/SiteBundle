@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.15.2
+
+The scaffold's page tests hold on a site publishing no page
+
+- The scaffold's `ContentAccessTest` fabricates a published page instead of failing on a site publishing none (11/09/2026)
+- Its draft and deleted checks leave `home` out, which always redirects to the site root (11/09/2026)
+- It checks a browser asking for a language reaches that language's url once the page is written in it, skipped on a site declaring a single language (11/09/2026)
+
 ## v8.15.1
 
 The scaffold tests that a plain member gets a 403 on /management
