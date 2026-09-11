@@ -28,11 +28,11 @@ class PageHealthCheckExtension
     ) {
     }
 
-    // ['results' => HealthCheckResult[], 'advice' => string[]] - empty results (and no advice) when "site-url" isn't configured yet, same as every HealthCheckProviderInterface implementation
+    // ['results' => HealthCheckResult[], 'advice' => string[]] - empty results (and no advice) when "site-url" isn't configured yet, same as every HealthCheckProviderInterface implementation. $locale is the language screen the panel is rendered on: the rows are stored by url, and that language is read at one of its own (see PageHealthCheckTargets)
     #[AsTwigFunction('page_health_check')]
-    public function getPanel(Page $page): array
+    public function getPanel(Page $page, ?string $locale = null): array
     {
-        $url = $this->pagePublicUrlResolver->resolve($page);
+        $url = $this->pagePublicUrlResolver->resolve($page, $locale);
         if (null === $url) {
             return ['results' => [], 'advice' => []];
         }

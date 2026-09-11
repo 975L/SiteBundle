@@ -83,6 +83,27 @@ class PageHealthCheckExtensionTest extends TestCase
         $this->assertSame(['content-quality|https://example.com/' => [['text' => 'label.health_check_advice_no_description', 'url' => null, 'items' => []]]], $panel['advice']);
     }
 
+    public function testGetPanelReadsTheRowsOfTheLanguageItIsAskedFor(): void
+    {
+        // The rows are stored by url, and a page read in another language answers at one of its own (see PageHealthCheckTargets)
+        $repository = $this->createMock(HealthCheckResultRepository::class);
+        $repository->expects($this->once())->method('findLatestByUrl')->with('https://example.com/en/pages/workshops')->willReturn([]);
+
+        $extension = new PageHealthCheckExtension($this->createUrlResolver(), $repository, $this->createAdviceBuilder());
+
+        $this->assertSame([], $extension->getPanel($this->createPage('workshops'), 'en')['results']);
+    }
+
+    public function testGetPanelReadsTheWritingLanguageRowsForTheLanguageTheSiteIsWrittenIn(): void
+    {
+        $repository = $this->createMock(HealthCheckResultRepository::class);
+        $repository->expects($this->once())->method('findLatestByUrl')->with('https://example.com/pages/workshops')->willReturn([]);
+
+        $extension = new PageHealthCheckExtension($this->createUrlResolver(), $repository, $this->createAdviceBuilder());
+
+        $this->assertSame([], $extension->getPanel($this->createPage('workshops'), 'fr')['results']);
+    }
+
     public function testGetPanelDropsTheSiteWideSecurityHeadersResult(): void
     {
         // Always stored under the homepage's own url (see SecurityHeadersHealthCheckProvider) - already shown in ConfigBundle's dashboard "Site" section, so it'd be redundant here

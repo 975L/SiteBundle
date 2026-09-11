@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -18,17 +19,24 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 // Builds a Page's EasyAdmin edit URL, shared by every health check listing pages
 class PageEditUrlResolver
 {
-    public function __construct(private readonly AdminUrlGeneratorInterface $adminUrlGenerator)
-    {
+    public function __construct(
+        private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
+        private readonly SiteLocales $siteLocales,
+    ) {
     }
 
-    // unsetAll() first: the generator keeps its route parameters, leaking the previous entityId otherwise
-    public function resolve(Page $page): string
+    // unsetAll() first: the generator keeps its route parameters, leaking the previous entityId otherwise. $locale opens the screen that language is written on, where a health check row about the English page sends its reader - the writing language keeps the url it always had (see PageCrudController::contentLocale)
+    public function resolve(Page $page, ?string $locale = null): string
     {
-        return $this->adminUrlGenerator->unsetAll()
+        $urlGenerator = $this->adminUrlGenerator->unsetAll()
             ->setController(PageCrudController::class)
             ->setAction(Action::EDIT)
-            ->setEntityId($page->getId())
-            ->generateUrl();
+            ->setEntityId($page->getId());
+
+        if (null !== $locale && $locale !== $this->siteLocales->getDefaultLocale()) {
+            $urlGenerator->set(PageCrudController::CONTENT_LOCALE_PARAM, $locale);
+        }
+
+        return $urlGenerator->generateUrl();
     }
 }

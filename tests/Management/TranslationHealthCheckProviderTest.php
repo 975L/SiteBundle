@@ -33,14 +33,15 @@ class TranslationHealthCheckProviderTest extends TestCase
 {
     use PagePublicUrlGeneratorTestTrait;
 
-    private function createPage(): Page
+    // $blockData replaces the block's own two texts, which is how a test gives it a collection to expand
+    private function createPage(array $blockData = ['title' => 'Ce que nous faisons', 'content' => 'Un atelier par mois']): Page
     {
         $page = new Page();
         $page->setSlug('ateliers')->setTitle('Nos ateliers')->setIsPublished(true);
         new \ReflectionProperty(Page::class, 'id')->setValue($page, 12);
 
         $block = new Block();
-        $block->setKind('text_section')->setData(['title' => 'Ce que nous faisons', 'content' => 'Un atelier par mois']);
+        $block->setKind('text_section')->setData($blockData);
         new \ReflectionProperty(Block::class, 'id')->setValue($block, 34);
         $page->addBlock($block);
 
@@ -52,10 +53,10 @@ class TranslationHealthCheckProviderTest extends TestCase
      * @param array<string, array<string, string|null>> $pageValues  locale => field => value
      * @param array<string, array<string, string|null>> $blockValues locale => field => value
      */
-    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = [], ?string $siteUrl = 'https://exemple.com'): TranslationHealthCheckProvider
+    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = [], ?string $siteUrl = 'https://exemple.com', ?array $blockData = null): TranslationHealthCheckProvider
     {
         $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findAllOrdered')->willReturn([$this->createPage()]);
+        $pageRepository->method('findAllOrdered')->willReturn([null === $blockData ? $this->createPage() : $this->createPage($blockData)]);
 
         $menuRepository = $this->createStub(MenuRepository::class);
         $menuRepository->method('findAll')->willReturn($menus);
@@ -70,6 +71,10 @@ class TranslationHealthCheckProviderTest extends TestCase
         $blockRegistry = $this->createStub(BlockRegistry::class);
         $blockRegistry->method('getTranslatable')->willReturnCallback(
             static fn (string $kind): array => 'menu_link' === $kind ? ['label'] : ['title', 'content']
+        );
+        // The repeated texts of the kind, named one entry at a time off the data itself - a block holding no "cards" key expands to nothing
+        $blockRegistry->method('getTranslatableCollections')->willReturnCallback(
+            static fn (string $kind): array => 'menu_link' === $kind ? [] : ['cards' => ['title']]
         );
 
         $configService = $this->createStub(ConfigServiceInterface::class);
@@ -147,6 +152,42 @@ class TranslationHealthCheckProviderTest extends TestCase
         // English is complete, Spanish only has the page's title: a warning, not a page never translated
         $this->assertSame(HealthCheckResult::STATUS_WARNING, $results[0]['status']);
         $this->assertSame(['es' => 2], $results[0]['details']['missing']);
+    }
+
+    // A grid's cards are prose a visitor reads like any other: a page whose grid was translated and whose every card stayed in the writing language is not done
+    public function testTheRepeatedTextsOfABlockAreCounted(): void
+    {
+        $results = $this->createProvider(
+            ['en'],
+            ['en' => ['title' => 'Our workshops']],
+            ['en' => ['title' => 'What we do', 'content' => 'One a month']],
+            blockData: [
+                'title' => 'Ce que nous faisons',
+                'content' => 'Un atelier par mois',
+                'cards' => [['title' => 'Poterie'], ['title' => 'Reliure']],
+            ],
+        )->runChecks();
+
+        // The page's title and the block's two texts are done, the two cards are not
+        $this->assertSame(5, $results[0]['details']['texts']);
+        $this->assertSame(['en' => 2], $results[0]['details']['missing']);
+    }
+
+    public function testACardTranslatedByItsOwnPlaceCountsAsDone(): void
+    {
+        $results = $this->createProvider(
+            ['en'],
+            ['en' => ['title' => 'Our workshops']],
+            ['en' => ['title' => 'What we do', 'content' => 'One a month', 'cards.0.title' => 'Pottery', 'cards.1.title' => 'Bookbinding']],
+            blockData: [
+                'title' => 'Ce que nous faisons',
+                'content' => 'Un atelier par mois',
+                'cards' => [['title' => 'Poterie'], ['title' => 'Reliure']],
+            ],
+        )->runChecks();
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $results[0]['status']);
+        $this->assertSame([], $results[0]['details']['missing']);
     }
 
     // A menu gets a row of its own, named after its location and pointed at the site root: it is read on every page and has no url of its own

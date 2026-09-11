@@ -12,6 +12,8 @@ namespace c975L\SiteBundle\Tests\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ConfigBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
@@ -64,7 +66,7 @@ class MenuExtensionTest extends TestCase
     {
         $entries = [];
         foreach ($registeredRoutes as $name => $entry) {
-            $entries[$name] = $entry + ['route' => $name, 'params' => [], 'translation_domain' => false];
+            $entries[$name] = $entry + ['route' => $name, 'params' => [], 'translation_domain' => false, 'locales' => null];
         }
 
         $registry = $this->createStub(LinkableRouteRegistry::class);
@@ -152,7 +154,14 @@ class MenuExtensionTest extends TestCase
             new BlockAnchorCollector(),
             $collaborators['requestStack'],
             $collaborators['pageTranslator'],
+            $this->createLocalizedUrlGenerator($collaborators['router'], $collaborators['requestStack']),
         );
+    }
+
+    // The real one rather than a double: what it does with a route, its parameters and the entry's languages is what half the assertions here are about (see ConfigBundle's LocalizedUrlGenerator)
+    private function createLocalizedUrlGenerator(UrlGeneratorInterface $router, RequestStack $requestStack): LocalizedUrlGenerator
+    {
+        return new LocalizedUrlGenerator($router, new SiteLocales(['fr', 'en'], 'fr'), $requestStack);
     }
 
     /**
@@ -174,15 +183,8 @@ class MenuExtensionTest extends TestCase
         ];
     }
 
-    /**
-     * The title a menu item derives from the page it points at, read in the language the page is being read in -
-     * untranslated, which is the page's own title.
-     *
-     * The languages default to a page written in both, which is what every test saying nothing about them expects of
-     * its links; a test of an untranslated page hands over the writing language alone.
-     *
-     * @param array<int, string> $translatedLocales
-     */
+    // The title a menu item derives from the page it points at, read in the language the page is being read in - untranslated, which is the page's own title. The languages default to a page written in both, which is what every test saying nothing about them expects of its links; a test of an untranslated page hands over the writing language alone.
+    /** @param array<int, string> $translatedLocales */
     private function createPageTranslator(?string $translated = null, array $translatedLocales = ['fr', 'en']): PageTranslator
     {
         $pageTranslator = $this->createStub(PageTranslator::class);
@@ -271,6 +273,7 @@ class MenuExtensionTest extends TestCase
             new BlockAnchorCollector(),
             new RequestStack(),
             $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
         );
 
         $first = $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -359,6 +362,7 @@ class MenuExtensionTest extends TestCase
             new BlockAnchorCollector(),
             new RequestStack(),
             $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -399,6 +403,7 @@ class MenuExtensionTest extends TestCase
             new BlockAnchorCollector(),
             new RequestStack(),
             $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_FOOTER);
@@ -429,6 +434,7 @@ class MenuExtensionTest extends TestCase
             new BlockAnchorCollector(),
             new RequestStack(),
             $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
         );
 
         $extension->getMenuBlocks(Menu::LOCATION_NAVBAR);
@@ -737,6 +743,40 @@ class MenuExtensionTest extends TestCase
         );
 
         $this->assertSame('/page_display/contact', $extension->getMenuLinkUrl('page:42'));
+    }
+
+    // A route another bundle declares twice is written in the language being read - the shop index answering in every language the site declares
+    public function testGetMenuLinkUrlKeepsTheLanguageForARouteAnsweringInIt(): void
+    {
+        $request = new Request();
+        $request->attributes->set('_locale', 'en');
+
+        $extension = $this->createExtension(
+            $this->createRegistry(['shop_index' => ['label' => 'label.shop', 'translation_domain' => 'shop', 'locales' => ['fr', 'en']]]),
+            requestStack: new RequestStack([$request]),
+        );
+
+        $this->assertSame('/shop_index_localized/en', $extension->getMenuLinkUrl('route:shop_index'));
+    }
+
+    // The same rule the page items follow, for an entry standing for a row of another bundle's data: a shop category or a campaign not translated yet has a localised route that matches and answers 404, so the item keeps the bare url rather than being written as a link that breaks
+    public function testGetMenuLinkUrlKeepsTheBareUrlForARouteThatLanguageAnswersNothingIn(): void
+    {
+        $request = new Request();
+        $request->attributes->set('_locale', 'en');
+
+        $extension = $this->createExtension(
+            $this->createRegistry(['shop_category.12' => [
+                'label' => 'Salon',
+                'translation_domain' => false,
+                'route' => 'category_display',
+                'params' => ['slug' => 'salon'],
+                'locales' => ['fr'],
+            ]]),
+            requestStack: new RequestStack([$request]),
+        );
+
+        $this->assertSame('/category_display/salon', $extension->getMenuLinkUrl('route:shop_category.12'));
     }
 
     // An item deriving its label from the page it points at reads that page's title in the language being read, not the raw column

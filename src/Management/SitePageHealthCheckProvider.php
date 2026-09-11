@@ -16,9 +16,6 @@ use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
-use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageSpeedInsightsClient;
 use c975L\UiBundle\Service\ConfigEditUrlResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,10 +31,8 @@ class SitePageHealthCheckProvider implements HealthCheckExhaustiveInterface
     private const string API_KEY_SLUG = 'healthcheck-pagespeed-api-key';
 
     public function __construct(
-        private readonly PageRepository $pageRepository,
         private readonly PageSpeedInsightsClient $pageSpeedInsightsClient,
-        private readonly PagePublicUrlResolver $pagePublicUrlResolver,
-        private readonly PageEditUrlResolver $pageEditUrlResolver,
+        private readonly PageHealthCheckTargets $targets,
         private readonly UrlStatusChecker $urlStatusChecker,
         private readonly ConfigServiceInterface $configService,
         private readonly ConfigRepository $configRepository,
@@ -63,17 +58,17 @@ class SitePageHealthCheckProvider implements HealthCheckExhaustiveInterface
             $results[] = $this->missingApiKeyRow();
         }
 
-        // One page at a time, deliberately. Firing every request up front let the HttpClient transport run them concurrently, but PSI answers by *loading the page itself*: N in-flight analyses means Google hitting this very site with N simultaneous requests, which inflates the TTFB it then measures and drags every score down - the check was scoring the load it was itself creating. It also crowds PSI's per-minute quota, where the daily one is the only limit an API key really lifts. This command runs from cron (see HealthCheckProviderInterface), so the extra wall-clock costs nothing anyone is waiting on
+        // One page at a time, deliberately. Firing every request up front let the HttpClient transport run them concurrently, but PSI answers by *loading the page itself*: N in-flight analyses means Google hitting this very site with N simultaneous requests, which inflates the TTFB it then measures and drags every score down - the check was scoring the load it was itself creating. It also crowds PSI's per-minute quota, where the daily one is the only limit an API key really lifts. This command runs from cron (see HealthCheckProviderInterface), so the extra wall-clock costs nothing anyone is waiting on. One analysis per page and per language it was written in: a translated page is another page to a performance report, and the only quota this doubles is PSI's own (see PageHealthCheckTargets)
         $pageRows = [];
-        foreach ($this->pageRepository->findAllOrdered() as $page) {
-            $url = $this->pagePublicUrlResolver->resolve($page);
-            $editUrl = $this->pageEditUrlResolver->resolve($page);
+        foreach ($this->targets->all() as $target) {
+            ['url' => $url, 'label' => $label, 'editUrl' => $editUrl] = $target;
+
             if (!$this->urlStatusChecker->exists($url)) {
-                $pageRows[] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
+                $pageRows[] = $this->pageNotFoundRow($url, $label, $editUrl);
                 continue;
             }
 
-            $pageRows[] = $this->checkPage($url, $page->getTitle(), $editUrl);
+            $pageRows[] = $this->checkPage($url, $label, $editUrl);
         }
 
         return [...$results, ...$pageRows];

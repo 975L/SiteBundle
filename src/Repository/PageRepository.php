@@ -28,6 +28,7 @@ class PageRepository extends ServiceEntityRepository
     }
 
     // Find all pages ordered by position
+    /** @return list<Page> */
     public function findAllOrdered(): array
     {
         return $this->createQueryBuilder('p')

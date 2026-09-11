@@ -233,10 +233,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // TomSelect wraps the select of an association asking for autocomplete() - whose id then gains the "_autocomplete"
-    // suffix - and nothing else: a plain ChoiceField is rendered as a native select, visible and pointable, which is
-    // what the back office draws (measured on "#Page_changeFrequency": a visible <select> followed by its help text,
-    // on a screen carrying four ".ts-wrapper" elsewhere). A step naming the wrapper beside one outlines nothing
+    // TomSelect wraps the select of an association asking for autocomplete() - whose id then gains the "_autocomplete" suffix - and nothing else: a plain ChoiceField is rendered as a native select, visible and pointable, which is what the back office draws (measured on "#Page_changeFrequency": a visible <select> followed by its help text, on a screen carrying four ".ts-wrapper" elsewhere). A step naming the wrapper beside one outlines nothing
     public function testNoHighlightExpectsAWrapperEasyAdminDoesNotDraw(): void
     {
         foreach ($this->fieldHighlights() as [$project, $index, $entity, $property, $highlight]) {
@@ -294,6 +291,38 @@ class SiteGuidedProjectProviderTest extends TestCase
 
         $this->assertStringContainsString("'data-page-qrcode'", $source, 'The marker is set nowhere in PageCrudController, so the QR code row no longer carries it');
         $this->assertStringContainsString('[data-page-qrcode]', $this->highlightsOf('site-page-health'));
+    }
+
+    // A language screen's blocks are a collection EasyAdmin renders with no id and without the writing screen's sort group - the row's marker is the only thing the step can point at, and it lives in the controller
+    public function testTheTranslationBlocksStepPointsAtTheMarkerTheControllerSets(): void
+    {
+        $this->assertStringContainsString("'data-page-translation-blocks'", $this->controllerSource('PageCrudController'), 'The marker is set nowhere in PageCrudController, so the blocks row of a language screen no longer carries it');
+        $this->assertStringContainsString('[data-page-translation-blocks]', $this->highlightsOf('site-page-translation'));
+    }
+
+    // The menu translation screen's language bar is this bundle's own template: rename its marker there alone and the step highlights nothing, in silence
+    public function testTheMenuLocaleStepPointsAtTheMarkerTheTranslationTemplateWrites(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/translation.html.twig');
+
+        $this->assertStringContainsString('data-site-content-locales', $template, 'The translation screen no longer marks its language bar, so there is no selector left to point at');
+        $this->assertStringContainsString('[data-site-content-locales]', $this->highlightsOf('site-menu-translation'));
+    }
+
+    // A page's language tabs are drawn by CoreBundle: the one selector of the parcours crossing a bundle boundary
+    public function testThePageLocaleStepPointsAtTheMarkerCoreBundlesTabsWrite(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/ConfigBundle/templates/management/_content_locale_tabs.html.twig');
+
+        $this->assertStringContainsString('data-content-locales', $template, "CoreBundle's language tabs no longer carry their marker, so there is no selector left to point at");
+        $this->assertStringContainsString('[data-content-locales]', $this->highlightsOf('site-page-translation'));
+    }
+
+    // The coloured fieldset holding what a language cannot change is a class the controller sets on a form panel, and a class is all the step has to point at - rename it on one side alone and the step highlights nothing, in silence
+    public function testTheCommonFieldsStepPointsAtTheClassTheControllerSets(): void
+    {
+        $this->assertStringContainsString("'fieldset-all-languages'", $this->controllerSource('PageCrudController'), 'The class is set nowhere in PageCrudController, so the panel no longer carries it');
+        $this->assertStringContainsString('.fieldset-all-languages', $this->highlightsOf('site-page-translation'));
     }
 
     // A collection field is pointed at through the row marker its controller sets, never through an id: EasyAdmin's collection_row merges its markers into row_attr and renders form_row, which writes no id at all - a "#Page_blocks" step would highlight nothing, silently

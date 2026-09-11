@@ -8,6 +8,7 @@
 namespace c975L\SiteBundle\Tests\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
 use c975L\SiteBundle\Controller\PageController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PageServiceInterface;
@@ -65,6 +66,8 @@ class PageControllerTest extends TestCase
         string $defaultLocale = 'fr',
         // The languages the page itself was written in, the declared ones by default - a localised url only ever answers for one of them (see PageTranslator::translatedLocales())
         ?array $translatedLocales = null,
+        // One router for both the container and the negotiator, the redirect across languages being built by the second (see ConfigBundle's LocalizedRouteNegotiator)
+        ?UrlGeneratorInterface $router = null,
     ): PageController {
         // What the test hands over wins, the rest falls back to the defaults beside it - an array union rather than a chain of "??", each of which counts as branching where none of this branches
         $collaborators = array_filter([
@@ -79,6 +82,16 @@ class PageControllerTest extends TestCase
             'translatedLocales' => array_values(array_unique([$defaultLocale, ...$enabledLocales])),
         ];
 
+        // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
+        if (null === $router) {
+            $router = $this->createStub(UrlGeneratorInterface::class);
+            $router->method('generate')->willReturnCallback(
+                static fn (string $name, array $parameters = []): string => '/' . $name . (isset($parameters['page']) ? '/' . $parameters['page'] : '')
+            );
+        }
+
+        $siteLocales = $this->createSiteLocales($enabledLocales, $defaultLocale);
+
         $controller = new PageController(
             $pageService,
             $configService,
@@ -87,15 +100,9 @@ class PageControllerTest extends TestCase
             new CollectionItemContext(),
             $collaborators['blockRenderContext'],
             new RequestStack(),
-            new LocaleSwitcher($defaultLocale, []),
-            $this->createSiteLocales($enabledLocales, $defaultLocale),
+            // The real negotiator rather than a double: the three rules it holds are what half the assertions below are about (see ConfigBundle's LocalizedRouteNegotiator)
+            new LocalizedRouteNegotiator($siteLocales, new LocaleSwitcher($defaultLocale, []), $router),
             $this->createPageTranslator($collaborators['translatedLocales']),
-        );
-
-        // The "page" parameter is appended when there is one, so a redirect to page_display can be asserted on the slug it targets and not only on its status code
-        $router = $this->createStub(UrlGeneratorInterface::class);
-        $router->method('generate')->willReturnCallback(
-            static fn (string $name, array $parameters = []): string => '/' . $name . (isset($parameters['page']) ? '/' . $parameters['page'] : '')
         );
 
         $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
@@ -312,6 +319,53 @@ class PageControllerTest extends TestCase
         $this->assertSame('@c975LSite/pages/_blocks.html.twig:1', $capturedPageParameters['detailHtml']);
     }
 
+    // A block writes its internal links in the language being read, then caches the html under that language (see PageLinkLocalizer). Rendering the detail before the language is settled cached the writing language's links under the reading language's key, and the redirect that follows served that very entry, for good
+    public function testAnItemDetailAskedInAnotherLanguageIsRedirectedBeforeAnythingIsRendered(): void
+    {
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
+            'source' => 'app.collection.demo',
+            'detailPage' => 'catalog-detail',
+        ]));
+
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true);
+        $detailPage->addBlock(new Block()->setKind('twig_content')->setData(['templatePath' => 'demo/detail.html.twig']));
+
+        $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
+
+        $rendered = [];
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(
+            function (string $view, array $parameters = []) use (&$rendered): string {
+                $rendered[] = $view;
+
+                return 'rendered';
+            }
+        );
+
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: [
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
+            ]),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+            collectionSourceRegistry: $collectionSourceRegistry,
+            twig: $twig,
+        );
+
+        $request = Request::create('/pages/catalog/item-1');
+        $request->headers->set('Accept-Language', 'en');
+        $request->setLocale('en');
+
+        $response = $controller->display('catalog/item-1', $request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/page_display_localized/catalog/item-1', $response->getTargetUrl());
+        $this->assertSame([], $rendered, 'The detail was rendered before the language was settled, caching the writing language\'s links under the reading language\'s key');
+    }
+
     // A page can carry more than one "collection" block, each with its own source/detailPage - only the one whose source actually resolves the item slug must win, not just the last one on the page (the matching block is deliberately NOT last here, so a "last one wins" regression would 404)
     public function testDisplayResolvesTheCollectionBlockWhoseSourceMatchesWhenThePageHasSeveral(): void
     {
@@ -404,8 +458,7 @@ class PageControllerTest extends TestCase
             $collectionItemContext,
             new BlockRenderContext(),
             new RequestStack(),
-            new LocaleSwitcher('fr', []),
-            $this->createSiteLocales(),
+            new LocalizedRouteNegotiator($this->createSiteLocales(), new LocaleSwitcher('fr', []), $this->createStub(UrlGeneratorInterface::class)),
             $this->createPageTranslator(),
         );
         $router = $this->createStub(UrlGeneratorInterface::class);
@@ -860,21 +913,18 @@ class PageControllerTest extends TestCase
     // The redirect carries the query string along: a campaign's attribution would otherwise be lost on the way to the visitor's own language
     public function testTheLanguageRedirectKeepsTheQueryString(): void
     {
-        $controller = $this->createController(
-            $this->createPageService(forDisplayBySlug: ['contact' => new Page()->setSlug('contact')->setTitle('Contact')->setIsPublished(true)]),
-            $this->createConfigService(),
-            enabledLocales: ['fr', 'en'],
-        );
-
         // A router spelling out every parameter it is given, the shared stub only naming the page
         $router = $this->createStub(UrlGeneratorInterface::class);
         $router->method('generate')->willReturnCallback(
             static fn (string $name, array $parameters = []): string => '/' . $name . '?' . http_build_query($parameters)
         );
-        $container = new Container();
-        $container->set('twig', $this->createStub(Environment::class));
-        $container->set('router', $router);
-        $controller->setContainer($container);
+
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['contact' => new Page()->setSlug('contact')->setTitle('Contact')->setIsPublished(true)]),
+            $this->createConfigService(),
+            enabledLocales: ['fr', 'en'],
+            router: $router,
+        );
 
         $request = Request::create('/pages/contact?utm_source=newsletter&_locale=es');
         $request->headers->set('Accept-Language', 'en');

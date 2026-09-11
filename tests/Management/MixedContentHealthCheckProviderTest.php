@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\MixedContentHealthCheckProvider;
+use c975L\SiteBundle\Management\PageHealthCheckTargets;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\MixedContentClient;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
@@ -89,10 +90,8 @@ class MixedContentHealthCheckProviderTest extends TestCase
     private function createProvider(array $pages, MixedContentClient $client, ?string $siteUrl = 'https://example.com', bool $pageExists = true): MixedContentHealthCheckProvider
     {
         return new MixedContentHealthCheckProvider(
-            $this->createPageRepository($pages),
             $client,
-            $this->createUrlResolver($siteUrl),
-            $this->createPageEditUrlResolver(),
+            $this->createTargets($pages, $this->createUrlResolver($siteUrl), $this->createPageEditUrlResolver()),
             $this->createUrlStatusChecker($pageExists),
             $this->createConfigService($siteUrl),
             $this->createTranslator(),
@@ -180,5 +179,17 @@ class MixedContentHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
         $this->assertSame('/management/page/1/edit', $provider->runChecks()[0]['editUrl']);
+    }
+
+    // One row per page and per language it says something in - built from the very pieces this test already stubs (see PageHealthCheckTargets)
+    private function createTargets(array $pages, PagePublicUrlResolver $urlResolver, PageEditUrlResolver $editUrlResolver): PageHealthCheckTargets
+    {
+        return new PageHealthCheckTargets(
+            $this->createPageRepository($pages),
+            $urlResolver,
+            $editUrlResolver,
+            $this->createPageTranslator(),
+            $this->createSiteLocales(),
+        );
     }
 }

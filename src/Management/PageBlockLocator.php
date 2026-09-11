@@ -30,8 +30,8 @@ class PageBlockLocator
     ) {
     }
 
-    // Returns ['label' => (string) $block, 'editUrl' => ...] for the block holding the image at $src, or null when no block claims it (a theme/template image, a logo, an image coming from somewhere other than this page's blocks)
-    public function locateImage(Page $page, string $src): ?array
+    // Returns ['label' => (string) $block, 'editUrl' => ...] for the block holding the image at $src, or null when no block claims it (a theme/template image, a logo, an image coming from somewhere other than this page's blocks). The language screen to open when the offence was read in one, null for the language the site is written in
+    public function locateImage(Page $page, string $src, ?string $contentLocale = null): ?array
     {
         $needle = $this->basename($src);
         if ('' === $needle) {
@@ -41,21 +41,21 @@ class PageBlockLocator
         foreach ($this->blocksOf($page) as $block) {
             foreach ($block->getMedias() as $media) {
                 if ($this->matchesFilename($needle, $media->getFilename()) || $this->matchesFilename($needle, $this->basename((string) $media->getUrl()))) {
-                    return $this->describe($page, $block);
+                    return $this->describe($page, $block, $contentLocale);
                 }
             }
 
             // A media of this page's blocks is the common case, but an image can also be written straight into a block's own data (a rich-text body, an imported html snippet) - same length floor as locateLink(), a "cv.png" is too generic to claim a block on a substring alone
             if (\strlen($needle) >= self::MIN_LOOSE_NEEDLE_LENGTH && str_contains($this->haystack($block), $needle)) {
-                return $this->describe($page, $block);
+                return $this->describe($page, $block, $contentLocale);
             }
         }
 
         return null;
     }
 
-    // Returns ['label' => (string) $block, 'editUrl' => ...] for the block holding a link to $href, or null (a link coming from the menu, the footer, a template - none of them this page's blocks)
-    public function locateLink(Page $page, string $href): ?array
+    // Returns ['label' => (string) $block, 'editUrl' => ...] for the block holding a link to $href, or null (a link coming from the menu, the footer, a template - none of them this page's blocks). Same language rule as locateImage()
+    public function locateLink(Page $page, string $href, ?string $contentLocale = null): ?array
     {
         $path = (string) (parse_url($href, \PHP_URL_PATH) ?: $href);
         // Both the path as written and its last segment: a block's data usually stores the full target ("/pages/contact/"), but a link field pointing at another page can hold just that page's slug
@@ -65,7 +65,7 @@ class PageBlockLocator
             $haystack = $this->haystack($block);
             foreach ($needles as $needle) {
                 if (\strlen($needle) >= self::MIN_LOOSE_NEEDLE_LENGTH && str_contains($haystack, $needle)) {
-                    return $this->describe($page, $block);
+                    return $this->describe($page, $block, $contentLocale);
                 }
             }
         }
@@ -125,11 +125,13 @@ class PageBlockLocator
         return rawurldecode(basename($path));
     }
 
-    private function describe(Page $page, Block $block): array
+    private function describe(Page $page, Block $block, ?string $contentLocale): array
     {
+        $parameters = null === $contentLocale ? [] : [PageCrudController::CONTENT_LOCALE_PARAM => $contentLocale];
+
         return [
             'label' => (string) $block,
-            'editUrl' => BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block),
+            'editUrl' => BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block, $parameters),
         ];
     }
 }

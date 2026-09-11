@@ -26,15 +26,8 @@ class PagePublicUrlResolver
     ) {
     }
 
-    /**
-     * The same page in every language the site declares, itself included: what a "hreflang" group is made of, both
-     * in the page's own head and in the sitemap.
-     *
-     * Empty on a site declaring a single language, which is every c975L site until it says otherwise - so nothing
-     * is written anywhere, and a page keeps the head and the sitemap entry it has always had.
-     *
-     * @return array<string, string> hreflang => absolute url
-     */
+    // The same page in every language the site declares, itself included: what a "hreflang" group is made of, both in the page's own head and in the sitemap. Empty on a site declaring a single language, which is every c975L site until it says otherwise - so nothing is written anywhere, and a page keeps the head and the sitemap entry it has always had.
+    /** @return array<string, string> hreflang => absolute url */
     public function resolveAlternates(Page $page): array
     {
         return $this->alternatesFor(
@@ -43,14 +36,8 @@ class PagePublicUrlResolver
         );
     }
 
+    // One url per language the page was really written in, from whatever builds the path of one. Empty on a site declaring a single language, while "site-url" is unconfigured (a group needing absolute urls), and - the reason the languages are passed in rather than read from the site - whenever the page exists in one language only: a group that names itself alone repeats what the canonical already said, and one that does not name itself at all is invalid. The same contract as BookBundle's book_alternates().
     /**
-     * One url per language the page was really written in, from whatever builds the path of one.
-     *
-     * Empty on a site declaring a single language, while "site-url" is unconfigured (a group needing absolute urls),
-     * and - the reason the languages are passed in rather than read from the site - whenever the page exists in one
-     * language only: a group that names itself alone repeats what the canonical already said, and one that does not
-     * name itself at all is invalid. The same contract as BookBundle's book_alternates().
-     *
      * @param list<string>             $locales
      * @param callable(string): string $path
      *
@@ -73,11 +60,27 @@ class PagePublicUrlResolver
     }
 
     // Null if "site-url" isn't configured yet - every HealthCheckProvider using this treats that the same way (nothing to check)
-    public function resolve(Page $page): ?string
+    public function resolve(Page $page, ?string $locale = null): ?string
     {
         $siteUrl = $this->siteUrl();
 
-        return null === $siteUrl ? null : $siteUrl . $this->resolvePath($page);
+        return null === $siteUrl ? null : $siteUrl . $this->resolvePath($page, $locale);
+    }
+
+    // One url per language the page was really written in, the writing language first. What a health check walks: a page read at "/en/pages/nos-ateliers" is another page to a crawler, a validator and a performance report - another title, another prose, another set of links - so it earns a row of its own. A single-language site, and a page nobody translated, give back the one url they always had. Empty while "site-url" is unconfigured, which resolve() reports the same way.
+    /** @return array<string, string> locale => absolute url */
+    public function resolveAll(Page $page): array
+    {
+        if (null === $this->siteUrl()) {
+            return [];
+        }
+
+        $urls = [];
+        foreach ($this->pageTranslator->translatedLocales($page) as $locale) {
+            $urls[$locale] = (string) $this->resolve($page, $locale);
+        }
+
+        return $urls;
     }
 
     // The configured host without its trailing slash, null when unconfigured - every path appended to it already opens with a slash, and a "site-url" saved as "https://example.com/" would otherwise double it

@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="hAyw9ep">
                 <source>narration.guided_step_collection_add_item</source>
-                <target>Ajoutez un élément. Titre, texte, image, lien : remplissez ce dont vous avez besoin et laissez le reste vide.</target>
+                <target>Ajoutez un élément. Titre, texte, image, lien : remplissez ce dont vous avez besoin et laissez le reste vide. Sur un site en plusieurs langues, le bouton Traduire de la liste ouvre le même élément dans une autre langue.</target>
             </trans-unit>
             <trans-unit id="jRzg9Ja">
                 <source>narration.guided_step_collection_display</source>
@@ -272,11 +272,15 @@
             </trans-unit>
             <trans-unit id="xftaUFh">
                 <source>narration.guided_step_page_translation_blocks</source>
-                <target>Descendez sur les blocks : ce sont ceux de la page d'origine, à redire dans la nouvelle langue. La composition ne bouge pas, seuls les mots changent.</target>
+                <target>Descendez sur les blocks : ce sont ceux de la page d'origine, à redire dans la nouvelle langue. La composition ne bouge pas, seuls les mots changent. Ouvrez chacun d'eux : les textes qu'il répète, une question et sa réponse, une carte, une étape, un élément d'une barre, le nom d'un point de carte, s'écrivent entrée par entrée.</target>
             </trans-unit>
             <trans-unit id="lhBwYfz">
                 <source>narration.guided_step_page_translation_check</source>
                 <target>Allez voir la page sur le site : elle s'ouvre à son adresse préfixée par la langue.</target>
+            </trans-unit>
+            <trans-unit id="HVDPuf2">
+                <source>narration.guided_step_page_translation_common</source>
+                <target>Attention à ce bloc sur fond coloré : il appartient à la page, pas à la langue. L'adresse, la publication, l'indexation, l'image de partage. Ce que vous y écrivez depuis l'écran anglais, vous l'écrivez pour toutes les langues.</target>
             </trans-unit>
             <trans-unit id="lf7jI8O">
                 <source>narration.guided_step_page_translation_locale</source>
@@ -293,6 +297,10 @@
             <trans-unit id="4Ql9BNG">
                 <source>narration.guided_step_page_translation_save</source>
                 <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="k9VRiG7">
+                <source>narration.guided_step_page_translation_summary</source>
+                <target>Juste sous le titre, le résumé de partage. C'est ce que montrent Facebook et LinkedIn quand on partage cette adresse : dites-le dans la langue de la page, sinon c'est le résumé français qui s'affichera.</target>
             </trans-unit>
             <trans-unit id="BGcVABm">
                 <source>narration.guided_step_page_translation_title</source>

@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-09-11",
+        "description": [
+            {
+                "en": "A collection's items can now be translated: their title and description are shown in the language the visitor reads, on the cards and on the item's own page",
+                "fr": "Les éléments d'une collection se traduisent désormais : leur titre et leur description s'affichent dans la langue du visiteur, sur les cartes comme sur la page de l'élément",
+                "es": "Los elementos de una colección ya se pueden traducir: su título y su descripción se muestran en el idioma del visitante, en las tarjetas y en la página del elemento"
+            },
+            {
+                "en": "Duplicating a page now keeps what it says in the site's other languages",
+                "fr": "Dupliquer une page conserve désormais ce qu'elle dit dans les autres langues du site",
+                "es": "Duplicar una página conserva ahora lo que dice en los demás idiomas del sitio"
+            },
+            {
+                "en": "The default pages of a new site are now written in every language the site offers",
+                "fr": "Les pages par défaut d'un nouveau site sont désormais écrites dans toutes les langues qu'il propose",
+                "es": "Las páginas predeterminadas de un sitio nuevo se escriben ahora en todos los idiomas que ofrece"
+            },
+            {
+                "en": "Deleting a page now also deletes its translations",
+                "fr": "Supprimer une page supprime désormais aussi ses traductions",
+                "es": "Eliminar una página elimina ahora también sus traducciones"
+            }
+        ]
+    },
+    {
         "date": "2026-09-10",
         "description": [
             {
@@ -11,6 +36,46 @@
                 "en": "The guided tour for translating a page now stops on the pictures' own texts, so a caption or a card's title is not left in the language the page was written in",
                 "fr": "Le parcours guidé de traduction d'une page s'arrête désormais sur les textes que portent les images, pour qu'une légende ou le titre d'une carte ne reste pas dans la langue d'écriture",
                 "es": "El recorrido guiado para traducir una página se detiene ahora en los textos que llevan las imágenes, para que un pie de foto o el título de una tarjeta no se quede en el idioma en que se escribió"
+            },
+            {
+                "en": "Reading the site in another language keeps you in it: the links inside a page now lead to that language's pages",
+                "fr": "Lire le site dans une autre langue vous y garde : les liens à l'intérieur d'une page mènent désormais aux pages de cette langue",
+                "es": "Leer el sitio en otro idioma le mantiene en él: los enlaces dentro de una página llevan ahora a las páginas de ese idioma"
+            },
+            {
+                "en": "The health check now reports each page in each of its languages, and each row opens the screen of the language to correct",
+                "fr": "Le bilan de santé signale désormais chaque page dans chacune de ses langues, et chaque ligne ouvre l'écran de la langue à corriger",
+                "es": "El control de salud informa ahora de cada página en cada uno de sus idiomas, y cada fila abre la pantalla del idioma que hay que corregir"
+            },
+            {
+                "en": "A translation screen shows apart the fields that belong to the page rather than to the language, so nothing is changed for every language by mistake",
+                "fr": "Un écran de traduction montre à part les champs qui appartiennent à la page et non à la langue, pour ne rien changer par erreur pour toutes les langues",
+                "es": "Una pantalla de traducción muestra aparte los campos que pertenecen a la página y no al idioma, para no cambiar nada por error para todos los idiomas"
+            },
+            {
+                "en": "The guided tour for translating a page now covers the sharing summary, the text shown when that page's address is shared",
+                "fr": "Le parcours guidé de traduction d'une page couvre désormais le résumé de partage, le texte affiché quand cette adresse est partagée",
+                "es": "El recorrido guiado para traducir una página cubre ahora el resumen para compartir, el texto que se muestra cuando se comparte esa dirección"
+            },
+            {
+                "en": "The guided visit is now narrated in Spanish, alongside French and English",
+                "fr": "La visite guidée est désormais racontée en espagnol, à côté du français et de l'anglais",
+                "es": "La visita guiada ya se narra en español, junto al francés y el inglés"
+            },
+            {
+                "en": "An item's own page now opens in the language being read, its links leading to that language's pages",
+                "fr": "La page d'un élément de collection s'ouvre désormais dans la langue lue, ses liens menant aux pages de cette langue",
+                "es": "La página de un elemento de colección ya se abre en el idioma que se está leyendo, y sus enlaces llevan a las páginas de ese idioma"
+            },
+            {
+                "en": "The \"edit this block\" button on the site now opens the language being read, so correcting the English page never lands on the original text",
+                "fr": "Le bouton « modifier ce bloc » sur le site ouvre désormais la langue en cours de lecture, pour que corriger la page anglaise ne tombe jamais sur le texte d'origine",
+                "es": "El botón «modificar este bloque» del sitio abre ahora el idioma que se está leyendo, para que corregir la página en inglés nunca lleve al texto original"
+            },
+            {
+                "en": "The language menu now shows on the screens that have no page behind them - a shop listing, a product sheet, a basket - and offers the languages those answer in",
+                "fr": "Le menu des langues s'affiche désormais sur les écrans qui n'ont pas de page derrière eux - une liste de boutique, une fiche produit, un panier - et propose les langues dans lesquelles ils répondent",
+                "es": "El menú de idiomas se muestra ahora en las pantallas que no tienen una página detrás - un listado de tienda, una ficha de producto, una cesta - y ofrece los idiomas en los que responden"
             }
         ]
     },

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -80,7 +80,10 @@ read was really written in — the list `page_languages()` answers — and links
 `?_locale=xx`**, never to that language's own `/en/...`: a localised route already says which language it
 answers in, so ConfigBundle's `LocaleListener` leaves the session alone there and the choice would last a
 single page. A template says which `Page` the menu rewrites the url of by setting `navbarPage`, left null
-on a collection item's detail view and in preview, so the menu draws nothing there. Restyled through
+on a collection item's detail view and in preview. **With no `Page` behind the screen** — a shop listing, a
+product sheet, a campaign, a basket — the menu falls back on `screen_languages()` (ConfigBundle's
+`LocalizedUrlGenerator::screenLanguages()`), the languages that screen itself answers in, and draws nothing
+where it answers in one language alone. Restyled through
 `.menu-languages`, `.menu-language-link` and `.menu-language-current`.
 
 ### Exposing another bundle's route
@@ -90,6 +93,11 @@ do it**, which is precisely why that interface lives in ConfigBundle. A provider
 per row of its own data, each naming the route and its parameters; the url is generated at each render,
 so renaming a row leaves no menu item behind. An entry can carry a `picker_label` so it says what it is
 in the list while the rendered item keeps the bare title.
+
+An entry also declares the **`locales` it answers in**, and `menu_link_url()` generates it through
+ConfigBundle's `LocalizedUrlGenerator`: read in another language, `/shop` is written `/en/shop` wherever
+that route has a localised twin answering in it, and exactly as it always was elsewhere — a basket, a token
+url, a category nobody translated yet, whose localised url would match the route and answer 404.
 
 ## menu_group
 

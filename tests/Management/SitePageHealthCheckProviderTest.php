@@ -16,6 +16,7 @@ use c975L\ConfigBundle\Repository\ConfigRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Management\PageHealthCheckTargets;
 use c975L\SiteBundle\Management\SitePageHealthCheckProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
@@ -110,10 +111,14 @@ class SitePageHealthCheckProviderTest extends TestCase
         ?PageEditUrlResolver $pageEditUrlResolver = null,
     ): SitePageHealthCheckProvider {
         return new SitePageHealthCheckProvider(
-            $pageRepository,
             $pageSpeedInsightsClient,
-            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator()),
-            $pageEditUrlResolver ?? $this->createPageEditUrlResolver(),
+            new PageHealthCheckTargets(
+                $pageRepository,
+                new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator()),
+                $pageEditUrlResolver ?? $this->createPageEditUrlResolver(),
+                $this->createPageTranslator(),
+                $this->createSiteLocales(),
+            ),
             $urlStatusChecker ?? $this->createUrlStatusChecker(),
             $configService,
             $configRepository ?? $this->createConfigRepository(),

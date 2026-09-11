@@ -30,10 +30,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-// What is published in one language and not in the others.
-// A half-translated page is not broken - a text nobody translated keeps the one it was written in (see ContentTranslator) - so it says nothing on its own, and a site could publish "hreflang" groups pointing at pages still mostly in the first language. This is what says so.
-// Menus get a row of their own, one per menu rather than one per page: their items' labels are read on every page of the site, so a navbar left in the writing language shows up on all of them at once.
-// Nothing to report on a site declaring a single language: it returns an empty list, and the Health check dashboard shows no such rows at all.
+// What is published in one language and not in the others. A half-translated page is not broken - a text nobody translated keeps the one it was written in (see ContentTranslator) - so it says nothing on its own, and a site could publish "hreflang" groups pointing at pages still mostly in the first language. This is what says so. Menus get a row of their own, one per menu rather than one per page: their items' labels are read on every page of the site, so a navbar left in the writing language shows up on all of them at once. Nothing to report on a site declaring a single language: it returns an empty list, and the Health check dashboard shows no such rows at all.
 class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     // Named here rather than restated wherever a row of this kind is picked out
@@ -250,8 +247,15 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
     {
         $data = $block->getData();
 
-        foreach ($this->blockRegistry->getTranslatable($kind) as $field) {
-            $value = $data[$field] ?? null;
+        // The repeated texts too - a FAQ's questions, a grid's cards - named one entry at a time off the data itself (see ContentTranslator::expand)
+        $fields = ContentTranslator::expand(
+            $data,
+            $this->blockRegistry->getTranslatable($kind),
+            $this->blockRegistry->getTranslatableCollections($kind),
+        );
+
+        foreach ($fields as $field) {
+            $value = ContentTranslator::read($data, $field);
 
             if (\is_string($value) && '' !== trim($value)) {
                 $keys[] = 'block.' . $id . '.' . $field;

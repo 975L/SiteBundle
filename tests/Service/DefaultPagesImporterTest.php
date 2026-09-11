@@ -22,6 +22,7 @@ use c975L\UiBundle\Entity\Form;
 use c975L\UiBundle\Entity\FormField;
 use c975L\UiBundle\Repository\EmailTemplateRepository;
 use c975L\UiBundle\Repository\FormRepository;
+use c975L\UiBundle\Service\ContentTranslator;
 use c975L\UiBundle\Service\EmailTemplateFactory;
 use c975L\UiBundle\Service\FormSeeder;
 use c975L\UiBundle\Service\FormTranslator;
@@ -99,6 +100,7 @@ class DefaultPagesImporterTest extends TestCase
         array $enabledLocales = ['fr'],
         ?FormRepository $formRepository = null,
         ?EmailTemplateRepository $emailTemplateRepository = null,
+        ?ContentTranslator $contentTranslator = null,
     ): DefaultPagesImporter {
         $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
@@ -122,7 +124,62 @@ class DefaultPagesImporterTest extends TestCase
             $defaultLocale,
             $enabledLocales,
             self::translator('ui', __DIR__ . '/../../vendor/c975l/core-bundle/UiBundle/translations'),
+            $contentTranslator ?? $this->createStub(ContentTranslator::class),
         );
+    }
+
+    // A multilingual site is given its default pages in each of its languages at once: the English set is the same pages said in English, matched on what each page is rather than on its slug
+    public function testTheOtherLanguagesAreWrittenFromTheirOwnSet(): void
+    {
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            // The id a flush would give it, which is what a translation is written against
+            if ($entity instanceof Page) {
+                new \ReflectionProperty(Page::class, 'id')->setValue($entity, \count($persisted) + 1);
+            }
+            $persisted[] = $entity;
+        });
+
+        $stored = [];
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('getTranslatableLocales')->willReturn(['en']);
+        $contentTranslator->method('values')->willReturn([]);
+        $contentTranslator->method('store')->willReturnCallback(static function (string $ownerType, int $ownerId, string $locale, array $values) use (&$stored): void {
+            $stored[$locale][] = $values;
+        });
+
+        $this->createImporter($this->createPageRepository(), $em, 'fr', ['fr', 'en'], contentTranslator: $contentTranslator)->import();
+
+        $this->assertContains(['title' => 'Home'], $stored['en']);
+        $this->assertContains(['title' => 'Legal notice', 'summarySocialNetwork' => 'Legal notice for this website: publisher, publication director, hosting provider and contact details, as required by applicable regulations.'], $stored['en']);
+        $this->assertContains(['title' => 'Contact', 'summarySocialNetwork' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.'], $stored['en']);
+    }
+
+    // A page an admin already renamed keeps its own title in every language: only the words a page still carries from its seeding are said again in another one - here the description, which this very run fills in
+    public function testARenamedPageIsNotRetitled(): void
+    {
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturnCallback(static function (array $criteria): ?Page {
+            $page = new Page()->setSlug($criteria['slug'])->setTitle('Nous écrire');
+            new \ReflectionProperty(Page::class, 'id')->setValue($page, 12);
+
+            return 'contact' === $criteria['slug'] ? $page : null;
+        });
+
+        $stored = [];
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('getTranslatableLocales')->willReturn(['en']);
+        $contentTranslator->method('values')->willReturn([]);
+        $contentTranslator->method('store')->willReturnCallback(static function (string $ownerType, int $ownerId, string $locale, array $values) use (&$stored): void {
+            $stored[$ownerId] = $values;
+        });
+
+        $persisted = [];
+        $this->createImporter($pageRepository, $this->createEntityManager($persisted), 'fr', ['fr', 'en'], contentTranslator: $contentTranslator)->import();
+
+        $this->assertArrayNotHasKey('title', $stored[12]);
+        $this->assertSame('A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.', $stored[12]['summarySocialNetwork']);
     }
 
     // Real catalogues rather than a stub: the seeded wording is read from them, and a mistyped key would be seeded as the key itself

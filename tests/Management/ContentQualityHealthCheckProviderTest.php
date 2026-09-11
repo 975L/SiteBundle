@@ -21,6 +21,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\ContentQualityHealthCheckProvider;
 use c975L\SiteBundle\Management\PageBlockLocator;
 use c975L\SiteBundle\Management\PageContentOffenceLocator;
+use c975L\SiteBundle\Management\PageHealthCheckTargets;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
@@ -140,16 +141,14 @@ class ContentQualityHealthCheckProviderTest extends TestCase
     ): ContentQualityHealthCheckProvider {
         // The real ContentQualityAnalyzer rather than a stub: it holds every check this provider is about, so testing through it is testing what actually runs
         return new ContentQualityHealthCheckProvider(
-            $this->createPageRepository($pages),
-            $this->createUrlResolver($siteUrl),
-            $this->createPageEditUrlResolver(),
             new ContentQualityAnalyzer(
                 $client,
                 $urlStatusChecker ?? $this->createUrlStatusChecker(),
-                new ContentOffenceLocatorRegistry([new PageContentOffenceLocator($pageBlockLocator ?? $this->createPageBlockLocator())]),
+                new ContentOffenceLocatorRegistry([new PageContentOffenceLocator($pageBlockLocator ?? $this->createPageBlockLocator(), $this->createPageTranslator())]),
                 $translator ?? $this->createTranslator(),
                 $this->createExternalLinkCheckSchedule(),
             ),
+            $this->createTargets($pages, $this->createUrlResolver($siteUrl), $this->createPageEditUrlResolver()),
         );
     }
 
@@ -182,10 +181,8 @@ class ContentQualityHealthCheckProviderTest extends TestCase
         ))->willReturn([]);
 
         $provider = new ContentQualityHealthCheckProvider(
-            $this->createPageRepository([$this->createPage('home'), $private]),
-            $this->createUrlResolver(),
-            $this->createPageEditUrlResolver(),
             $analyzer,
+            $this->createTargets([$this->createPage('home'), $private], $this->createUrlResolver(), $this->createPageEditUrlResolver()),
         );
 
         $this->assertSame([], $provider->runChecks());
@@ -781,5 +778,17 @@ class ContentQualityHealthCheckProviderTest extends TestCase
 
         $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
         $this->assertSame([], $result['details']['missingSocialTags']);
+    }
+
+    // One row per page and per language it says something in - built from the very pieces this test already stubs (see PageHealthCheckTargets)
+    private function createTargets(array $pages, PagePublicUrlResolver $urlResolver, PageEditUrlResolver $editUrlResolver): PageHealthCheckTargets
+    {
+        return new PageHealthCheckTargets(
+            $this->createPageRepository($pages),
+            $urlResolver,
+            $editUrlResolver,
+            $this->createPageTranslator(),
+            $this->createSiteLocales(),
+        );
     }
 }

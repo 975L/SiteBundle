@@ -180,7 +180,7 @@
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
-                <target>Titre, texte, image, lien : remplissez ce dont vous avez besoin, laissez le reste vide.</target>
+                <target>Titre, texte, image, lien : remplissez ce dont vous avez besoin, laissez le reste vide. Sur un site en plusieurs langues, le bouton Traduire de la liste ouvre le même élément dans une autre langue.</target>
             </trans-unit>
             <trans-unit id="zRhb8OX">
                 <source>description.guided_step_collection_display</source>
@@ -316,7 +316,7 @@
             </trans-unit>
             <trans-unit id="afZEoUx">
                 <source>description.guided_step_page_health_tab</source>
-                <target>Cliquez dessus : l'onglet porte les contrôles de cette page-là, et n'apparaît que sur une page enregistrée.</target>
+                <target>Cliquez dessus : l'onglet porte les contrôles de cette page-là, et n'apparaît que sur une page enregistrée. Chaque écran de langue a le sien, qui contrôle l'adresse de cette langue.</target>
             </trans-unit>
             <trans-unit id="Fk.cUv.">
                 <source>description.guided_step_page_health_table</source>
@@ -416,11 +416,15 @@
             </trans-unit>
             <trans-unit id="HNEB.MS">
                 <source>description.guided_step_page_translation_blocks</source>
-                <target>Les mêmes blocks que la page d'origine, à dire dans la nouvelle langue : la composition ne change pas, seuls les mots changent.</target>
+                <target>Les mêmes blocks que la page d'origine, à dire dans la nouvelle langue : la composition ne change pas, seuls les mots changent. Les textes qu'un block répète (une question et sa réponse, une carte, une étape, un élément d'une barre, le nom d'un point de carte) s'écrivent là aussi, entrée par entrée.</target>
             </trans-unit>
             <trans-unit id="wvdruZT">
                 <source>description.guided_step_page_translation_check</source>
                 <target>La page traduite s'ouvre sur l'adresse préfixée par la langue, et la barre de navigation propose désormais cette langue aux visiteurs.</target>
+            </trans-unit>
+            <trans-unit id="lDGUvtG">
+                <source>description.guided_step_page_translation_common</source>
+                <target>Le bloc sur fond coloré appartient à la page et non à la langue : l'adresse, la publication, l'indexation, l'image de partage. Les modifier ici les modifie pour toutes les langues à la fois.</target>
             </trans-unit>
             <trans-unit id="d7wYwPo">
                 <source>description.guided_step_page_translation_locale</source>
@@ -432,7 +436,11 @@
             </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
-                <target>La liste des pages, d'où part chaque traduction.</target>
+                <target>La liste des pages, d'où part chaque traduction. Vous pouvez aussi partir de la page lue sur le site : le bouton « éditer ce block » ouvre directement l'écran de la langue que vous lisez.</target>
+            </trans-unit>
+            <trans-unit id="rB3x4bd">
+                <source>description.guided_step_page_translation_summary</source>
+                <target>Le texte que montrent Facebook et LinkedIn quand cette adresse-là est partagée : sans lui, la page anglaise se partage avec le résumé français.</target>
             </trans-unit>
             <trans-unit id="ouWxTAi">
                 <source>description.guided_step_page_translation_title</source>
@@ -1050,6 +1058,10 @@
                 <source>label.guided_step_page_translation_check</source>
                 <target>Vérifiez sur le site</target>
             </trans-unit>
+            <trans-unit id="RQqwbsm">
+                <source>label.guided_step_page_translation_common</source>
+                <target>Repérez ce qui vaut pour toutes les langues</target>
+            </trans-unit>
             <trans-unit id="iQfmEA7">
                 <source>label.guided_step_page_translation_locale</source>
                 <target>Choisissez la langue</target>
@@ -1065,6 +1077,10 @@
             <trans-unit id="t0Ib67I">
                 <source>label.guided_step_page_translation_save</source>
                 <target>Enregistrez</target>
+            </trans-unit>
+            <trans-unit id="WJw7EX5">
+                <source>label.guided_step_page_translation_summary</source>
+                <target>Écrivez le résumé de partage</target>
             </trans-unit>
             <trans-unit id="QgL.JcP">
                 <source>label.guided_step_page_translation_title</source>
@@ -1480,7 +1496,7 @@
             </trans-unit>
             <trans-unit id="qSqgPB2">
                 <source>label.page_translation_help</source>
-                <target>Les mêmes champs, dans la langue choisie. Le texte d'origine entre crochets marque ce qui reste à traduire : laissé tel quel, il n'est pas enregistré. La composition de la page se fait dans la langue d'origine.</target>
+                <target>Les mêmes champs, dans la langue choisie. Le texte d'origine entre crochets marque ce qui reste à traduire : laissé tel quel, il n'est pas enregistré. La composition de la page se fait dans la langue d'origine. Les champs sur fond coloré appartiennent à la page et non à la langue : les écrire ici les écrit pour toutes les langues.</target>
             </trans-unit>
             <trans-unit id="Nh8Y4Zo">
                 <source>label.page_translation_missing</source>
@@ -1729,6 +1745,10 @@
             <trans-unit id="Gt_Gk_e">
                 <source>menu.languages</source>
                 <target>Langue</target>
+            </trans-unit>
+            <trans-unit id="UVkRqWV">
+                <source>menu.languages_submit</source>
+                <target>Changer de langue</target>
             </trans-unit>
             <trans-unit id="UFzGawd">
                 <source>menu.toggle</source>

@@ -2,7 +2,8 @@
 
 {# PageHealthCheckPanelType (the "Health check" tab) #}
 {% block c975l_page_health_check_panel_widget %}
-    {% set panel = page_health_check(form.parent.vars.data) %}
+    {# The language the screen was opened on, handed down by PageHealthCheckPanelType: that language is read at another url, so its bilan is another one #}
+    {% set panel = page_health_check(form.parent.vars.data, content_locale) %}
 
     {% if panel.results is empty %}
         <p class="text-muted">{{ 'label.health_check_panel_empty'|trans({}, 'site') }}</p>

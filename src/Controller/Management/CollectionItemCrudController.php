@@ -10,12 +10,14 @@
 
 namespace c975L\SiteBundle\Controller\Management;
 
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemTranslator;
 use c975L\UiBundle\Form\VichImageOptions;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,18 +28,23 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Locales;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
@@ -55,6 +62,8 @@ class CollectionItemCrudController extends AbstractCrudController
         private readonly CollectionGroupRepository $collectionGroupRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly RequestStack $requestStack,
+        private readonly ContentLocaleScreen $contentLocaleScreen,
+        private readonly CollectionItemTranslator $collectionItemTranslator,
     ) {
     }
 
@@ -155,8 +164,16 @@ class CollectionItemCrudController extends AbstractCrudController
             ->linkToUrl(fn (): string => $this->scopedUrl(Action::INDEX))
             ->addCssClass('btn btn-secondary');
 
+        // The very same edit screen, opened on another language - shown only where the site declares more than one
+        $translateAction = EasyAdminActionHelper::toIconOnly(
+            $this->contentLocaleScreen->action('translate', t('action.translate', [], 'site'), 'fa fa-language', $this->collectionItemTranslator->getTranslatableLocales())
+                ->displayIf(fn (): bool => $this->collectionItemTranslator->isActive()),
+            $this->translator->trans('action.translate', [], 'site'),
+        );
+
         return $actions
             ->add(Crud::PAGE_INDEX, $backToCollectionsAction)
+            ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
             // The one thing EasyAdmin cannot know: this screen is scoped by a "?collectionGroup=" of its own, which
@@ -175,6 +192,7 @@ class CollectionItemCrudController extends AbstractCrudController
             ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission('collections', $role)
+            ->setPermission('translate', $role)
             ->setPermission(Action::NEW, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)
@@ -228,6 +246,13 @@ class CollectionItemCrudController extends AbstractCrudController
     #[\Override]
     public function configureFields(string $pageName): iterable
     {
+        // The very same edit screen, opened on another language: what that language says of the item, and nothing else - its image, its link, its slug and its place are the same in every language (see ContentLocaleScreen)
+        $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
+        $item = null !== $contentLocale ? $this->getContext()?->getEntity()->getInstance() : null;
+        if (null !== $contentLocale && $item instanceof CollectionItem) {
+            return $this->translationFields($item, $contentLocale);
+        }
+
         return [
             IdField::new('id')->onlyOnIndex(),
 
@@ -318,6 +343,70 @@ class CollectionItemCrudController extends AbstractCrudController
         $existing = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $candidate);
 
         return null !== $existing && $existing->getId() !== $collectionItem->getId();
+    }
+
+    // The language this item is being written in, when it is not the one the site was written in (see ContentLocaleScreen)
+    private function contentLocale(): ?string
+    {
+        return $this->contentLocaleScreen->locale($this->collectionItemTranslator->getTranslatableLocales());
+    }
+
+    // What a language screen offers: the item's title and description, unmapped - what is written here belongs to the translation table, and mapped back it would overwrite the text the item was written in
+    /** @return list<FieldInterface> */
+    private function translationFields(CollectionItem $item, string $locale): array
+    {
+        $values = $this->collectionItemTranslator->promptValues($item, $locale);
+
+        return [
+            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($locale, $locale)], 'site'))
+                ->setHelp(t('label.fieldset_this_language_help', [], 'site')),
+            TextField::new('title')
+                ->setLabel(t('label.title', [], 'ui'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['title']),
+            TextareaField::new('description')
+                ->setLabel(t('label.description', [], 'ui'))
+                ->setRequired(false)
+                ->setFormTypeOption('mapped', false)
+                ->setFormTypeOption('data', $values['description'])
+                ->setFormTypeOption('attr', ['data-ai-rephrase' => 'true']),
+        ];
+    }
+
+    // What the language tabs at the top of the edit screen need, and nothing at all where the site declares a single language
+    #[\Override]
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        $responseParameters = parent::configureResponseParameters($responseParameters);
+
+        $item = $responseParameters->get('entity')?->getInstance();
+        if (Crud::PAGE_EDIT === $responseParameters->get('pageName') && $item instanceof CollectionItem && null !== $item->getId() && $this->collectionItemTranslator->isActive()) {
+            $this->contentLocaleScreen->addParameters($responseParameters, self::class, $item->getId(), $this->collectionItemTranslator->getTranslatableLocales(), $this->contentLocale());
+        }
+
+        return $responseParameters;
+    }
+
+    // What a language screen wrote, handed over to be stored on the flush that saves the item and never before it (see ContentLocaleScreen::stageOnSubmit)
+    #[\Override]
+    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
+    {
+        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
+        $contentLocale = $this->contentLocale();
+
+        $this->contentLocaleScreen->stageOnSubmit(
+            $formBuilder,
+            $contentLocale,
+            CollectionItemTranslator::FIELDS,
+            function (object $entity, array $values) use ($contentLocale): void {
+                if ($entity instanceof CollectionItem && null !== $contentLocale) {
+                    $this->collectionItemTranslator->stage($entity, $contentLocale, $values);
+                }
+            }
+        );
+
+        return $formBuilder;
     }
 
     private function currentCollectionGroup(): ?CollectionGroup

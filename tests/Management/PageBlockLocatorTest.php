@@ -19,22 +19,22 @@ use PHPUnit\Framework\TestCase;
 
 class PageBlockLocatorTest extends TestCase
 {
-    // Every setter returns the generator itself (BlockFocusUrl chains them), and generateUrl() echoes back whatever focusBlock was set - all this test cares about is which block was pointed at
+    // Every setter returns the generator itself (BlockFocusUrl chains them), and generateUrl() echoes back every parameter that was set - all this test cares about is which block was pointed at, and on which language screen
     private function createLocator(): PageBlockLocator
     {
-        $focusBlock = null;
+        $parameters = [];
         $generator = $this->createStub(AdminUrlGeneratorInterface::class);
         $generator->method('unsetAll')->willReturnSelf();
         $generator->method('setController')->willReturnSelf();
         $generator->method('setAction')->willReturnSelf();
         $generator->method('setEntityId')->willReturnSelf();
-        $generator->method('set')->willReturnCallback(function (string $key, mixed $value) use ($generator, &$focusBlock) {
-            $focusBlock = $value;
+        $generator->method('set')->willReturnCallback(function (string $key, mixed $value) use ($generator, &$parameters) {
+            $parameters[$key] = $value;
 
             return $generator;
         });
-        $generator->method('generateUrl')->willReturnCallback(function () use (&$focusBlock): string {
-            return '/management?focusBlock=' . $focusBlock;
+        $generator->method('generateUrl')->willReturnCallback(function () use (&$parameters): string {
+            return '/management?' . http_build_query($parameters);
         });
 
         return new PageBlockLocator($generator);
@@ -156,5 +156,35 @@ class PageBlockLocatorTest extends TestCase
         $page = $this->createPage($this->createBlock(11, 'text', ['content' => 'Nothing here']));
 
         $this->assertNull($this->createLocator()->locateLink($page, 'https://example.com/pages/old-offer/'));
+    }
+
+    // An offence read in another language is corrected on that language's screen, not on the one the site is written in
+    public function testLocateImageOpensTheLanguageScreenItIsGiven(): void
+    {
+        $block = $this->createBlock(12, 'image');
+        $block->addMedia(new Media()->setFilename('beach-holiday.jpg'));
+
+        $located = $this->createLocator()->locateImage($this->createPage($block), '/images/beach-holiday.jpg', 'en');
+
+        $this->assertSame('/management?focusBlock=12&contenu=en', $located['editUrl']);
+    }
+
+    public function testLocateLinkOpensTheLanguageScreenItIsGiven(): void
+    {
+        $block = $this->createBlock(41, 'cta', ['url' => '/pages/old-offer/']);
+
+        $located = $this->createLocator()->locateLink($this->createPage($block), '/pages/old-offer/', 'en');
+
+        $this->assertSame('/management?focusBlock=41&contenu=en', $located['editUrl']);
+    }
+
+    // No language given is the screen the page is written on, which keeps the url it always had
+    public function testLocateLinkKeepsThePlainEditUrlWithoutALanguage(): void
+    {
+        $block = $this->createBlock(41, 'cta', ['url' => '/pages/old-offer/']);
+
+        $located = $this->createLocator()->locateLink($this->createPage($block), '/pages/old-offer/');
+
+        $this->assertSame('/management?focusBlock=41', $located['editUrl']);
     }
 }

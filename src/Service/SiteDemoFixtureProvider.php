@@ -13,10 +13,13 @@ namespace c975L\SiteBundle\Service;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Entity\Page;
+use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 use c975L\UiBundle\Contract\DemoFixtureProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureTranslator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -33,8 +36,14 @@ use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
  * reads as a Spanish site. The slugs are ordinary words a small site would use, not "demo-" prefixed ones: a demo
  * is worth nothing if it does not look like the real thing.
  */
-class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
+class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
 {
+    // The catalogue every sample text is read from, in the language the site is written in and in each of the others
+    private const string DOMAIN = 'site';
+
+    // What a rich-text block wraps its prose in, so a translation is stored exactly as the text it stands for
+    private const string RICH_TEXT_WRAPPER = '<div>%s</div>';
+
     // Written down rather than taken from the clock: a demo site is reloaded often, and a date moving with each reload would have "published three days ago" say something else in every take of the same recorded sequence
     private const string CREATION_HOME = '2026-01-08';
     private const string CREATION_SERVICES = '2026-02-04';
@@ -42,6 +51,7 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
     private const string CREATION_HISTORY = '2026-03-11';
 
     public function __construct(
+        private readonly DemoFixtureTranslator $demoFixtureTranslator,
         private readonly TranslatorInterface $translator,
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
         #[Autowire(param: 'kernel.project_dir')]
@@ -109,24 +119,36 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
             ->setCreation($date)
             ->setModification($date);
 
+        $this->demoFixtureTranslator->stage($page, PageTranslator::OWNER, self::DOMAIN, ['title' => 'label.site_sample_page_home_title']);
+
         $page->addBlock($this->hero($image));
-        $page->addBlock($this->alert('info', $this->trans('label.site_sample_page_home_lead'), 1));
-        $page->addBlock($this->alert('warning', $this->trans('label.site_sample_page_home_body'), 2));
+        $page->addBlock($this->alert('info', 'label.site_sample_page_home_lead', 1));
+        $page->addBlock($this->alert('warning', 'label.site_sample_page_home_body', 2));
 
         return $page;
     }
 
-    // The keys an "alert" carries in the back office, "info" for what a demo offers and "warning" for what it takes back
-    private function alert(string $type, string $content, int $position): Block
+    // The keys an "alert" carries in the back office, "info" for what a demo offers and "warning" for what it takes back. The key is taken rather than the words, the block being staged for translation from the very key it was written from
+    private function alert(string $type, string $contentKey, int $position): Block
     {
-        return new Block()
+        $block = new Block()
             ->setKind('alert')
             ->setPosition($position)
             ->setData([
                 'type' => $type,
-                'content' => '<div>' . $content . '</div>',
+                'content' => sprintf(self::RICH_TEXT_WRAPPER, $this->trans($contentKey)),
                 'cssClasses' => null,
             ]);
+
+        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, ['content' => $contentKey], $this->richText(...));
+
+        return $block;
+    }
+
+    // What a rich-text field stores around its prose: a translation written without it is the same words in another box, and the two read as two different texts to whatever compares them
+    private function richText(string $value): string
+    {
+        return sprintf(self::RICH_TEXT_WRAPPER, $value);
     }
 
     // No button: a link stored in a block's data is a raw path, and a demo served under a prefix would send whoever clicks it back to the site around it
@@ -152,6 +174,13 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
                 'mediaLayout' => 'grid',
             ]);
 
+        // Two calls rather than one: the badge is stored as it is typed, the title and the subtitle inside their own box
+        $this->demoFixtureTranslator->stage($hero, Translation::OWNER_BLOCK, self::DOMAIN, ['badge' => 'label.site_sample_page_home_badge']);
+        $this->demoFixtureTranslator->stage($hero, Translation::OWNER_BLOCK, self::DOMAIN, [
+            'title' => 'label.site_sample_page_home_title',
+            'subtitle' => 'label.site_sample_page_home_subtitle',
+        ], $this->richText(...));
+
         // A site declaring no placeholder gets the hero without its picture, which the template renders as readily
         if (null !== $image) {
             $file = $this->temporaryCopy($image);
@@ -159,6 +188,8 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
                 // setFile() returns nothing, unlike the setters around it, so the two calls stay apart
                 $media = new Media()->setAlt($this->trans('label.site_sample_page_home_title'));
                 $media->setFile($file);
+
+                $this->demoFixtureTranslator->stage($media, Translation::OWNER_MEDIA, self::DOMAIN, ['alt' => 'label.site_sample_page_home_title']);
 
                 $hero->addMedia($media);
             }
@@ -180,34 +211,40 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
             ->setCreation($date)
             ->setModification($date);
 
-        $page->addBlock($this->textSection($this->trans('label.site_sample_page_' . $key . '_lead'), 0));
-        $page->addBlock($this->textSection($this->trans('label.site_sample_page_' . $key . '_body'), 1));
+        $this->demoFixtureTranslator->stage($page, PageTranslator::OWNER, self::DOMAIN, ['title' => 'label.site_sample_page_' . $key . '_title']);
+
+        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_lead', 0));
+        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_body', 1));
 
         return $page;
     }
 
     // The keys a "text_section" carries in the back office, filled or left null exactly as a saved one is
-    private function textSection(string $content, int $position): Block
+    private function textSection(string $contentKey, int $position): Block
     {
-        return new Block()
+        $block = new Block()
             ->setKind('text_section')
             ->setPosition($position)
             ->setData([
                 'title' => null,
                 'slug' => '',
-                'content' => '<div>' . $content . '</div>',
+                'content' => sprintf(self::RICH_TEXT_WRAPPER, $this->trans($contentKey)),
                 'image' => null,
                 'eyebrow' => null,
                 'tone' => 'normal',
                 'background' => null,
                 'cssClasses' => null,
             ]);
+
+        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, ['content' => $contentKey], $this->richText(...));
+
+        return $block;
     }
 
     // The keys a "collection" carries in the back office, its source naming the group yielded below - resolved at render time by CollectionItemSourceProvider, so the order the two are recorded in does not matter
     private function collection(): Block
     {
-        return new Block()
+        $block = new Block()
             ->setKind('collection')
             ->setPosition(2)
             ->setData([
@@ -222,6 +259,17 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
                 'detailPage' => null,
                 'variant' => '',
             ]);
+
+        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, ['title' => 'label.site_sample_collection_name']);
+
+        return $block;
+    }
+
+    // The very same demo site said in each of the other languages it declares, its keys already written there (see DemoFixtureTranslator). A collection item is left out, the demo dataset holding no "site" key for one
+    /** @return iterable<object> */
+    public function getLinkedDemoFixtures(): iterable
+    {
+        return $this->demoFixtureTranslator->translations();
     }
 
     private function item(CollectionGroup $group, string $key, int $position, ?string $image): CollectionItem
@@ -267,6 +315,6 @@ class SiteDemoFixtureProvider implements DemoFixtureProviderInterface
 
     private function trans(string $key): string
     {
-        return $this->translator->trans($key, [], 'site');
+        return $this->translator->trans($key, [], self::DOMAIN);
     }
 }

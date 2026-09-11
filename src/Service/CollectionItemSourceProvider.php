@@ -32,6 +32,7 @@ class CollectionItemSourceProvider implements CollectionSourceProviderInterface
         private readonly CollectionGroupRepository $collectionGroupRepository,
         private readonly CollectionItemRepository $collectionItemRepository,
         private readonly UploaderHelperInterface $uploaderHelper,
+        private readonly CollectionItemTranslator $collectionItemTranslator,
     ) {
     }
 
@@ -59,10 +60,14 @@ class CollectionItemSourceProvider implements CollectionSourceProviderInterface
     // Caches the unlimited list per collection and slices it in-memory for any smaller $limit, so two blocks referencing the same collection (e.g. a teaser and a full listing) share a single query
     private function itemsByCollectionGroup(CollectionGroup $collectionGroup, ?int $limit): array
     {
-        $this->items[$collectionGroup->getId()] ??= array_map(
-            $this->toCollectionItemModel(...),
-            $this->collectionItemRepository->findByCollectionGroup($collectionGroup)
-        );
+        if (!isset($this->items[$collectionGroup->getId()])) {
+            $items = $this->collectionItemRepository->findByCollectionGroup($collectionGroup);
+
+            // What the whole collection says in the language being rendered, read in one query rather than one per card
+            $this->collectionItemTranslator->preload($items);
+
+            $this->items[$collectionGroup->getId()] = array_map($this->toCollectionItemModel(...), $items);
+        }
 
         return null !== $limit
             ? array_slice($this->items[$collectionGroup->getId()], 0, $limit)
@@ -71,9 +76,12 @@ class CollectionItemSourceProvider implements CollectionSourceProviderInterface
 
     private function toCollectionItemModel(CollectionItem $item): CollectionItemModel
     {
+        // The title and the description in the language being rendered, each falling back on the words it was written in (see CollectionItemTranslator)
+        $translated = $this->collectionItemTranslator->translate($item);
+
         return new CollectionItemModel(
-            title: (string) $item->getTitle(),
-            description: $item->getDescription(),
+            title: (string) ($translated['title'] ?? $item->getTitle()),
+            description: $translated['description'] ?? $item->getDescription(),
             imageUrl: $this->uploaderHelper->asset($item, 'file'),
             url: $item->getUrl(),
             slug: $item->getSlug(),

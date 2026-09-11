@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, page_title, page_summary, translatable, ContentTranslator."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -10,7 +10,7 @@ description: "Use this skill when working with pages or collections in a Symfony
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
+`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
 
@@ -73,6 +73,18 @@ screen and writes `?contenu=<locale>` (`PageCrudController::CONTENT_LOCALE_PARAM
 and its blocks alone, unmapped and through `BlockType`'s `translation_locale`, so nothing written
 there can reach the text the site was written in. The kind, the animation, the medias, the "+" and the
 bin are all left off: a page is composed once, in the language it was written in.
+
+What a language cannot change on its own — the slug, the publication and indexation flags, the change
+frequency and priority, the sharing image — is repeated on that screen in a group of its own
+(`.fieldset-all-languages`) and **mapped**: written from the English screen, those fields are written for
+every language at once. Everything from the title down belongs to the language on screen, its own
+"Health check" tab included (`PageHealthCheckPanelType`'s `content_locale`, the rows of that language's
+url). UiBundle's "edit this block" button on the site opens the screen of the language the page is being
+read in (`SiteBlockEditUrlProvider`, reading the `_locale` route attribute).
+
+Reading one translated field of many pages goes through `PageTranslator::value($page, $locale, $field)`,
+which reads the cache `preload()` fills; `PageTranslator::all($page)` goes straight to base whatever was
+read ahead, so it costs a query per page and per language in a walk over the whole site.
 
 **The title is what makes a page exist in a language.** `PageTranslator::translatedLocales()` reads it
 and nothing else: a page whose blocks were translated while its title stayed in the writing language is
@@ -138,6 +150,11 @@ collection only**, unlike `Page::$slug`.
 `site.collection.{slug}` — **creating a collection is enough to make it pickable, no code change**.
 Each source declares its own cache tag, invalidated when an item or the group is saved.
 
+An item's title and description are translatable through `CollectionItemTranslator` (owner
+`site_collection_item`): the items index offers a "Translate" action on a site declaring more than one
+language, its language screen carrying those two fields alone, and the cards and the detail page read them
+in the language being read. Image, link, slug and position are the same in every language.
+
 The items index reorders by drag-and-drop through **UiBundle's `ea-index-sort.js`**, which SiteBundle no
 longer duplicates: `collection_item_crud_index.html.twig` opts in by declaring `data-reorder-url`,
 `data-reorder-group` and `data-reorder-token` on each row, and `CollectionItemCrudController::reorder()`
@@ -162,6 +179,13 @@ renders the detail page's blocks with a `collectionItem` Twig global exposing it
 `{% include templatePath with collectionItem.get() %}`, its `templatePath` being one of the app's own
 templates. A null result falls through to a 404. **Nothing
 is persisted per item.**
+
+**The language is confirmed before the detail renders.** `PageController::display()` runs its gate — deleted,
+unpublished, untranslated, asked-in-another-language — on the parent page *before* resolving the item, because
+resolving it renders its blocks and their internal links, read in the language of the response (UiBundle's
+`BlockExtension::localizeLinks()`, applied outside the block cache): nothing is rendered for a page the gate
+turns away or a language it redirects from. `PageController::preview()` deliberately
+skips the gate, a preview being the screen for a page the public gate turns away, and caches nothing.
 
 ## Commands
 
@@ -211,5 +235,9 @@ over on its own, nothing cascading off a `CollectionGroup`.
 - **Do not cache a preview render.**
 - **Do not add a locale column to `Page`, nor duplicate a page per language.** The translations live
   beside the row; the structure is edited once.
+- **Do not render a collection item detail before the gate** — a deleted or unpublished page, or a language
+  the gate redirects from, would be rendered for nothing.
+- **Do not empty the block cache when a page enters or leaves a language** — no cached html holds a localised
+  link, `BlockExtension::localizeLinks()` running outside the cache on every request.
 - **Do not replace an entity's title in memory to translate it** — Doctrine writes it back on the next
   flush. Read it through `page_title()` / `PageTranslator`.

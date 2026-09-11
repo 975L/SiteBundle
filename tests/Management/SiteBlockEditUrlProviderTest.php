@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\SiteBlockEditUrlProvider;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Controller\Management\FormCrudController;
 use c975L\UiBundle\Controller\Management\LegalModelController;
 use c975L\UiBundle\Entity\Block;
@@ -21,11 +22,14 @@ use c975L\UiBundle\Repository\FormRepository;
 use c975L\UiBundle\Service\LegalModelCatalog;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SiteBlockEditUrlProviderTest extends TestCase
 {
-    private function createProvider(array $pagesOwningBlocks): SiteBlockEditUrlProvider
+    // $readingLocale is the language the page is being read in - null on a site with one language, or on the language it was written in
+    private function createProvider(array $pagesOwningBlocks, ?string $readingLocale = null): SiteBlockEditUrlProvider
     {
         return new SiteBlockEditUrlProvider(
             $this->createPageRepository($pagesOwningBlocks),
@@ -33,7 +37,27 @@ class SiteBlockEditUrlProviderTest extends TestCase
             $this->createUrlGenerator(),
             new LegalModelCatalog(),
             $this->createFormRepository(),
+            $this->createPageTranslator(),
+            $this->createRequestStack($readingLocale),
         );
+    }
+
+    private function createPageTranslator(): PageTranslator
+    {
+        $translator = $this->createStub(PageTranslator::class);
+        $translator->method('getTranslatableLocales')->willReturn(['en', 'es']);
+
+        return $translator;
+    }
+
+    private function createRequestStack(?string $readingLocale): RequestStack
+    {
+        $request = new Request();
+        if (null !== $readingLocale) {
+            $request->attributes->set('_locale', $readingLocale);
+        }
+
+        return new RequestStack([$request]);
     }
 
     // No Form answers to any name here, so a form block falls through to the Page's own form - the case where one does has its own test below
@@ -60,8 +84,17 @@ class SiteBlockEditUrlProviderTest extends TestCase
         $generator->method('setController')->willReturnSelf();
         $generator->method('setAction')->willReturnSelf();
         $generator->method('setEntityId')->willReturnSelf();
-        $generator->method('set')->willReturnSelf();
-        $generator->method('generateUrl')->willReturn('/admin/edit');
+        $query = [];
+        $generator->method('set')->willReturnCallback(function (string $name, mixed $value) use (&$query, $generator) {
+            $query[$name] = $value;
+
+            return $generator;
+        });
+        $generator->method('generateUrl')->willReturnCallback(
+            function () use (&$query): string {
+                return '/admin/edit' . ([] === $query ? '' : '?' . http_build_query($query));
+            }
+        );
 
         return $generator;
     }
@@ -94,7 +127,33 @@ class SiteBlockEditUrlProviderTest extends TestCase
 
         $provider = $this->createProvider([$page]);
 
-        $this->assertSame([10 => '/admin/edit'], $provider->getEditUrls([$block]));
+        $this->assertSame([10 => '/admin/edit?focusBlock=10'], $provider->getEditUrls([$block]));
+    }
+
+    // An editor clicking "edit" on the English page means that block's English: landing on the writing language would have them overwrite the source text
+    public function testABlockReadInAnotherLanguageOpensThatLanguagesScreen(): void
+    {
+        $block = $this->blockWithId(11);
+
+        $page = new Page();
+        $page->addBlock($block);
+
+        $provider = $this->createProvider([$page], 'en');
+
+        $this->assertSame([11 => '/admin/edit?focusBlock=11&contenu=en'], $provider->getEditUrls([$block]));
+    }
+
+    // The no-regression contract: the language the site is written in is edited on the screen it always was
+    public function testABlockReadInTheWritingLanguageOpensTheOrdinaryScreen(): void
+    {
+        $block = $this->blockWithId(12);
+
+        $page = new Page();
+        $page->addBlock($block);
+
+        $provider = $this->createProvider([$page]);
+
+        $this->assertSame([12 => '/admin/edit?focusBlock=12'], $provider->getEditUrls([$block]));
     }
 
     // A block with no owning Page (not found by findByBlockIds) resolves to nothing - no error
@@ -168,6 +227,8 @@ class SiteBlockEditUrlProviderTest extends TestCase
             $this->createUrlGenerator(),
             new LegalModelCatalog(),
             $this->createFormRepository($form),
+            $this->createPageTranslator(),
+            $this->createRequestStack(null),
         );
 
         $this->assertSame([50 => '/admin/' . FormCrudController::class], $provider->getEditUrls([$block]));
@@ -183,7 +244,7 @@ class SiteBlockEditUrlProviderTest extends TestCase
         $page = new Page();
         $page->addBlock($block);
 
-        $this->assertSame([51 => '/admin/edit'], $this->createProvider([$page])->getEditUrls([$block]));
+        $this->assertSame([51 => '/admin/edit?focusBlock=51'], $this->createProvider([$page])->getEditUrls([$block]));
     }
 
     // A model no longer shipped by the bundle would 404 on the customization screen, so the Page's form stays the way in
@@ -198,6 +259,6 @@ class SiteBlockEditUrlProviderTest extends TestCase
 
         $provider = $this->createProvider([$page]);
 
-        $this->assertSame([40 => '/admin/edit'], $provider->getEditUrls([$block]));
+        $this->assertSame([40 => '/admin/edit?focusBlock=40'], $provider->getEditUrls([$block]));
     }
 }

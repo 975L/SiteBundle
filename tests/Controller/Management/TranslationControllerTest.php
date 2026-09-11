@@ -50,10 +50,25 @@ class TranslationControllerTest extends TestCase
         return $menu;
     }
 
-    private function createController(Request $request): TranslationController
+    // A block repeating a text per entry - a grid's cards - holds it as json, one title per card beside what says the same in every language
+    private function createMenuWithCards(): Menu
+    {
+        $menu = new Menu();
+        $menu->setLocation(Menu::LOCATION_NAVBAR);
+        new \ReflectionProperty(Menu::class, 'id')->setValue($menu, 7);
+
+        $grid = new Block();
+        $grid->setKind('features')->setData(['cards' => [['title' => 'Ateliers', 'icon' => 'hammer'], ['title' => 'Stages']]]);
+        new \ReflectionProperty(Block::class, 'id')->setValue($grid, 57);
+        $menu->addBlock($grid);
+
+        return $menu;
+    }
+
+    private function createController(Request $request, ?Menu $menu = null): TranslationController
     {
         $menuRepository = $this->createStub(MenuRepository::class);
-        $menuRepository->method('find')->willReturn($this->createMenu());
+        $menuRepository->method('find')->willReturn($menu ?? $this->createMenu());
 
         $this->contentTranslator = $this->createMock(ContentTranslator::class);
         $this->contentTranslator->method('getTranslatableLocales')->willReturn(['en']);
@@ -62,6 +77,9 @@ class TranslationControllerTest extends TestCase
         $blockRegistry = $this->createStub(BlockRegistry::class);
         $blockRegistry->method('getTranslatable')->willReturnCallback(
             static fn (string $kind): array => 'menu_link' === $kind ? ['label'] : ['title', 'content']
+        );
+        $blockRegistry->method('getTranslatableCollections')->willReturnCallback(
+            static fn (string $kind): array => 'features' === $kind ? ['cards' => ['title']] : []
         );
         $blockRegistry->method('getLabel')->willReturn('Section de texte');
 
@@ -159,5 +177,36 @@ class TranslationControllerTest extends TestCase
         $controller->menu($request, 7, 'en');
 
         $this->assertSame([Translation::OWNER_BLOCK . ':56:en' => ['label' => 'Contact us']], $stored);
+    }
+
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    // One row per repeated text the block really holds, the very ones the translation health check counts: a card it reports untranslated has a field here to be translated in
+    public function testABlockOffersEachOfItsRepeatedTexts(): void
+    {
+        $request = $this->createRequest();
+
+        $response = $this->createController($request, $this->createMenuWithCards())->menu($request, 7, 'en');
+
+        $this->assertSame(
+            ['rows' => ['block_57_cards.0.title', 'block_57_cards.1.title']],
+            json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR),
+        );
+    }
+
+    // What is sent back for a repeated text is stored under the entry it names, the way a page's own language screen stores it
+    public function testARepeatedTextIsStoredUnderTheEntryItNames(): void
+    {
+        $request = $this->createRequest('POST', ['block_57_cards.0.title' => 'Workshops']);
+        $controller = $this->createController($request, $this->createMenuWithCards());
+
+        $stored = [];
+        $this->contentTranslator->expects($this->once())->method('store')
+            ->willReturnCallback(static function (string $owner, int $id, string $locale, array $values) use (&$stored): void {
+                $stored[$owner . ':' . $id . ':' . $locale] = $values;
+            });
+
+        $controller->menu($request, 7, 'en');
+
+        $this->assertSame([Translation::OWNER_BLOCK . ':57:en' => ['cards.0.title' => 'Workshops', 'cards.1.title' => null]], $stored);
     }
 }

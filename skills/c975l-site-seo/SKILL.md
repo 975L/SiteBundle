@@ -1,6 +1,6 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_site.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, llms.txt, site_json_ld, SiteSnippetBuilder, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_config.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, PageHealthCheckTargets, PageLinkLocalizer, InternalLinkLocalizerInterface, llms.txt, site_json_ld, SiteSnippetBuilder, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
@@ -10,7 +10,7 @@ description: "Use this skill when working on the searchability or the monitoring
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Service/PagePublicUrlResolver.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SiteSnippetBuilder.php`, `src/Twig/SiteJsonLdExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
+`src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Management/PageHealthCheckTargets.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageLinkLocalizer.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SiteSnippetBuilder.php`, `src/Twig/SiteJsonLdExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
 
 **Related skills:** `c975l-site-pages`, `c975l-site-layout` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
 
@@ -59,8 +59,8 @@ prefix, no `hreflang`, no `Vary`, and a sitemap byte for byte the one it was.
 **The writing language keeps the bare urls**, `/` and `/pages/{slug}` — the ones the sitemap and every
 `hreflang` group declare. Every other declared language answers under its own prefix through
 `page_home_localized` / `page_display_localized`, whose `_locale` accepts the
-`%c975l_site.locales_pattern%` container parameter: the declared languages **minus** the writing one,
-built in `c975LSiteBundle::loadExtension()` from `kernel.enabled_locales`. Accepting `/fr/pages/x`
+`%c975l_config.locales_pattern%` container parameter: the declared languages **minus** the writing one,
+built by ConfigBundle from `kernel.enabled_locales`. Accepting `/fr/pages/x`
 beside `/pages/x` would answer one page under two urls; a site declaring one language gets a pattern
 matching nothing, so the routes exist without ever answering.
 
@@ -75,6 +75,13 @@ untranslated names none. That same rule closes the localised urls: `/{lang}/page
 page that language was not written in, rather than serving the writing language's text under another `lang`
 attribute, and a menu read in that language keeps the writing language's url for such a page.
 `page_title(page)` and `page_summary(page)` read the page's own two texts in the language being served.
+
+**The links inside a page follow the language it is read in.** `PageLinkLocalizer` answers UiBundle's
+`InternalLinkLocalizerInterface`, so a `/pages/{slug}` written in a block — a card, a call to action, a
+word linked inside a rich text — is rendered as that language's url, and left as it is for a page that
+language was not written in, whose localised url would answer 404. The path comes from
+`PagePublicUrlResolver::resolvePath()`, so a link to the home page lands on `/{lang}/` rather than on the
+`/{lang}/pages/home` that only ever redirects there.
 
 ## Who publishes the site
 
@@ -110,7 +117,9 @@ rather than the site logo.
 ## Health checks
 
 Seven providers, five of them about a **published page** and fetched with plain HttpClient calls, no
-Node or headless browser involved. The other two read the database instead — a file a row declares, and
+Node or headless browser involved. Each of those five walks `PageHealthCheckTargets`: **one row per page
+and per language it was written in** — another url is another title, another prose and another set of
+links — each row named in that language's own words and opening that language's edit screen. The other two read the database instead — a file a row declares, and
 what is written in each language. The site-wide checks (TLS, security headers, robots.txt, redirect
 chains, deployment, declared urls) are ConfigBundle's.
 

@@ -370,40 +370,52 @@ img.menu-logo__on-dark {
         }
     }
 }
-// Language menu (see templates/components/General/Languages.html.twig): classes of its own rather than the "menu-item"/"menu-link" pair, whose underline and hover wash say "this is the page you are on" - a language is not a page
+// Language menu (see templates/components/General/Languages.html.twig): one field rather than a row of links - a site declaring a third language used to take a line of the bar with it, and a fourth would take two. Drawn as a menu entry and not as a form control: the bar reads as a row of words, and a bordered box in the middle of it reads as a stray widget. Classes of its own rather than the "menu-item"/"menu-link" pair, whose underline and hover wash say "this is the page you are on" - a language is not a page
 .menu-languages {
     display: flex;
-    list-style: none;
+    align-items: center;
+    // Neither grows nor shrinks: the bar's items row distributes its free space, and a field taking a share of it would have pulled the whole row off the right edge it is aligned on
+    flex: 0 0 auto;
+    // Undoes what UiBundle gives every form - "min(--form-width, 100%)" and an auto margin, the measure a form has when it has the page to itself (see UiBundle's _forms.scss). This one is three words in a navigation bar: it took 70vw of the bar, pushed the menu off its right edge and left the whole row looking centred
+    width: auto;
     margin: 0;
     padding: 0;
 }
 
-.menu-language-link,
-.menu-language-current {
-    display: flex;
-    align-items: center;
+// The arrow the browser draws is kept - it is what says the field opens - and everything else it draws around it is not: the navbar's own type and colour, on no border and no fill, so the field sits on the bar exactly where the links it replaces sat
+.menu-languages-select,
+.menu-languages-submit {
     padding: 0.5rem 1rem;
+    border: none;
+    background-color: transparent;
     font-family: var(--font-family-title);
     font-size: 1rem;
     color: var(--navbar-text);
-    text-decoration: none;
+    cursor: pointer;
 }
 
-// The language already being read: named, never linked (the link would lead to the page already open), and dimmed so the ones that are a choice read as one
-.menu-language-current {
-    opacity: 0.6;
+// Underlined where the select is not: it is a button, and nothing else on the bar would say so once the border is gone. It only ever shows where javascript does not run, the controller taking it away otherwise
+.menu-languages-submit {
+    text-decoration: underline;
 }
 
-.menu-language-link:hover,
-.menu-language-link:focus {
+.menu-languages-select:hover,
+.menu-languages-select:focus,
+.menu-languages-submit:hover,
+.menu-languages-submit:focus {
     color: var(--navbar-active-color);
-    text-decoration: none;
     outline: none;
 }
 
+// The list a select opens is drawn by the browser on a surface of its own, which no navbar colour reaches: its entries take the page's own ink and paper rather than the bar's, which would be white on white
+.menu-languages-select option {
+    color: var(--text);
+    background-color: var(--background);
+}
+
 // Inside the navbar's mobile dropdown, whose --primary background stays the same in both modes - same statement and same reason as .menu-label above, undone at the desktop breakpoint where the bar keeps its own background
-.menu .menu-language-link,
-.menu .menu-language-current {
+.menu .menu-languages-select,
+.menu .menu-languages-submit {
     color: #fff;
 }
 
@@ -415,17 +427,21 @@ img.menu-logo__on-dark {
 @media screen and (min-width: 768px) {
     .menu .menu-languages {
         border-top: none;
-        align-items: center;
     }
 
-    .menu .menu-language-link,
-    .menu .menu-language-current {
+    .menu .menu-languages-select,
+    .menu .menu-languages-submit {
         color: var(--navbar-text);
     }
 
-    .menu.is-scrolled .menu-language-link,
-    .menu.is-scrolled .menu-language-current {
+    .menu.is-scrolled .menu-languages-select,
+    .menu.is-scrolled .menu-languages-submit {
         color: var(--navbar-text-scrolled);
+    }
+
+    // Flush with the row it ends: the field's own right padding would add to the gutter .menu-items already keeps, and the bar would end on a hole where every other line of it ends on a word
+    .menu .menu-languages-select {
+        padding-right: 0;
     }
 }
 

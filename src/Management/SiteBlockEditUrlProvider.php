@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Contract\BlockEditUrlProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Repository\FormRepository;
@@ -21,6 +22,7 @@ use c975L\UiBundle\Service\FormEditUrl;
 use c975L\UiBundle\Service\LegalModelCatalog;
 use c975L\UiBundle\Service\LegalModelEditUrl;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 // Resolves, for UiBundle's front-end "Edit this block" hover button, the EasyAdmin edit URL of the Page owning a given Block
@@ -32,6 +34,8 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LegalModelCatalog $catalog,
         private readonly FormRepository $formRepository,
+        private readonly PageTranslator $pageTranslator,
+        private readonly RequestStack $requestStack,
     ) {
     }
 
@@ -60,6 +64,17 @@ class SiteBlockEditUrlProvider implements BlockEditUrlProviderInterface
     {
         return FormEditUrl::build($this->adminUrlGenerator, $this->formRepository, $block)
             ?? LegalModelEditUrl::build($this->urlGenerator, $this->catalog, $block)
-            ?? BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block);
+            ?? BlockFocusUrl::build($this->adminUrlGenerator, PageCrudController::class, $page->getId(), $block, $this->contentLocaleParam());
+    }
+
+    // The language screen to open when the page is being read in one: an editor clicking "edit" on the English page means that block's English, and landing on the writing language would have them overwrite the source text. The route attribute rather than getLocale(), which a preview leaves on the session's language - the same reading PageLinkLocalizer does.
+    /** @return array<string, string> */
+    private function contentLocaleParam(): array
+    {
+        $locale = $this->requestStack->getCurrentRequest()?->attributes->get('_locale');
+
+        return \is_string($locale) && \in_array($locale, $this->pageTranslator->getTranslatableLocales(), true)
+            ? [PageCrudController::CONTENT_LOCALE_PARAM => $locale]
+            : [];
     }
 }

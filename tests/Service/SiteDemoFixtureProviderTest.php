@@ -15,7 +15,10 @@ use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\SiteDemoFixtureProvider;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -51,7 +54,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $registry = $this->createStub(PlaceholderMediaRegistry::class);
         $registry->method('getImages')->willReturn($images);
 
-        return new SiteDemoFixtureProvider($translator, $registry, $this->projectDir);
+        return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->projectDir);
     }
 
     /** @return list<object> */
@@ -268,6 +271,56 @@ class SiteDemoFixtureProviderTest extends TestCase
     {
         foreach ($this->fixtures($this->createProvider()) as $entity) {
             $this->assertNotInstanceOf(\c975L\SiteBundle\Entity\Menu::class, $entity);
+        }
+    }
+
+    // The second pass says the whole demo in the other languages the site declares, and says a rich text exactly as the block stores it - the same words outside their box would read as another text to whatever compares the two
+    public function testTheSecondPassWritesEveryLanguageAndKeepsTheRichTextInItsBox(): void
+    {
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(
+            static fn (string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string => sprintf('%s[%s]', $id, $locale ?? 'fr')
+        );
+
+        $registry = $this->createStub(PlaceholderMediaRegistry::class);
+        $registry->method('getImages')->willReturn([]);
+
+        $demoFixtureTranslator = new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr');
+        $provider = new SiteDemoFixtureProvider($demoFixtureTranslator, $translator, $registry, $this->projectDir);
+
+        $flushed = [];
+        foreach ($provider->getDemoFixtures() as $index => $entity) {
+            $this->giveAnIdentifier($entity, $index + 1);
+            $flushed[] = $entity;
+        }
+
+        $rows = iterator_to_array($provider->getLinkedDemoFixtures(), false);
+
+        $this->assertNotSame([], $rows, 'The demo site was not staged for translation at all.');
+
+        foreach ($rows as $row) {
+            $this->assertSame('en', $row->getLocale());
+        }
+
+        $wrapped = array_values(array_filter($rows, static fn (Translation $row): bool => 'content' === $row->getField()));
+        $this->assertNotSame([], $wrapped, 'No rich text was staged.');
+        $this->assertStringStartsWith('<div>', (string) $wrapped[0]->getValue());
+        $this->assertStringEndsWith('</div>', (string) $wrapped[0]->getValue());
+    }
+
+    // The blocks ride the ORM cascade off their page, so nothing yields them and only the page is walked here - each of them is given an identifier the way a flush would
+    private function giveAnIdentifier(object $entity, int $id): void
+    {
+        if ($entity instanceof Page) {
+            new \ReflectionProperty(Page::class, 'id')->setValue($entity, $id);
+
+            foreach ($entity->getBlocks() as $position => $block) {
+                new \ReflectionProperty(Block::class, 'id')->setValue($block, $id * 100 + $position);
+
+                foreach ($block->getMedias() as $mediaPosition => $media) {
+                    new \ReflectionProperty(Media::class, 'id')->setValue($media, $id * 1000 + $mediaPosition);
+                }
+            }
         }
     }
 }

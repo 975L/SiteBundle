@@ -19,6 +19,7 @@ use c975L\UiBundle\Contract\FormBlockDependencyProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\EmailBlock;
 use c975L\UiBundle\Entity\FormField;
+use c975L\UiBundle\Service\ContentTranslator;
 use c975L\UiBundle\Service\FormSeeder;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -85,6 +86,10 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         return ['contact_notification' => $this->contactNotificationBlocks()];
     }
 
+    // The pages this run has handed a definition to, created or found in place - what translateSeededPages() says again in the site's other languages once they carry an id
+    /** @var list<array{0: Page, 1: array<string, mixed>}> */
+    private array $seeded = [];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly PageRepository $pageRepository,
@@ -96,6 +101,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         #[Autowire(param: 'kernel.enabled_locales')]
         private readonly array $enabledLocales,
         private readonly TranslatorInterface $translator,
+        private readonly ContentTranslator $contentTranslator,
     ) {
     }
 
@@ -109,6 +115,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $user = $this->security->getUser();
         $user = $user instanceof UserInterface ? $user : null;
         $definitions = $this->getDefinitions();
+        $this->seeded = [];
 
         // One set only, in the language the site is written in: a page is one page in every language - one row, one
         // set of blocks - and its other languages live beside it in the translation table (see PageTranslator). One
@@ -129,6 +136,8 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         if ($counts['created'] > 0 || $counts['backfilled'] > 0) {
             $this->em->flush();
         }
+
+        $this->translateSeededPages($definitions);
 
         return ['created' => $counts['created'], 'skipped' => $counts['skipped'], 'summarised' => $summarised];
     }
@@ -177,6 +186,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $existingPage = $this->pageRepository->findOneBy(['slug' => $def['slug']]);
         if ($existingPage) {
             $counters = ['skipped'];
+            $this->seeded[] = [$existingPage, $def];
 
             // A page created before this bundle seeded descriptions renders none at all - filled in here so re-running the command is all it takes, on this site and on every other one
             if ($this->backfillSummary($existingPage, $def)) {
@@ -206,9 +216,67 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
             $def['isPublished'] = $decision['isPublished'];
         }
 
-        $this->em->persist($this->buildPage($def, $now, $user));
+        $page = $this->buildPage($def, $now, $user);
+        $this->em->persist($page);
+        $this->seeded[] = [$page, $def];
 
         return ['created'];
+    }
+
+    // What each default page says in the site's other languages, read off the English and Spanish sets it was seeded from and matched on what each page is rather than on a slug every language spells its own way. Written only where that language says nothing yet, a translation an admin typed staying theirs
+    /** @param array<string, list<array<string, mixed>>> $definitions */
+    private function translateSeededPages(array $definitions): void
+    {
+        $seeded = $this->seeded;
+        $this->seeded = [];
+
+        foreach ($this->contentTranslator->getTranslatableLocales() as $locale) {
+            $byKey = [];
+            foreach ($definitions[$locale] ?? [] as $def) {
+                $byKey[$this->definitionKey($def)] = $def;
+            }
+
+            foreach ($seeded as [$page, $def]) {
+                $translated = $byKey[$this->definitionKey($def)] ?? null;
+                $id = $page->getId();
+                if (null === $translated || null === $id || [] !== $this->contentTranslator->values(PageTranslator::OWNER, $id, $locale)) {
+                    continue;
+                }
+
+                $values = $this->untouchedTranslations($page, $def, $translated);
+                if ([] !== $values) {
+                    $this->contentTranslator->store(PageTranslator::OWNER, $id, $locale, $values);
+                }
+            }
+        }
+    }
+
+    // The translations of the texts a seeded page still carries as they were seeded, a title an admin rewrote staying theirs. The title is written even where it reads the same ("Contact"), a page counting as written in a language the moment its title is (see PageTranslator::translatedLocales)
+    /**
+     * @param array<string, mixed> $def
+     * @param array<string, mixed> $translated
+     *
+     * @return array<string, mixed>
+     */
+    private function untouchedTranslations(Page $page, array $def, array $translated): array
+    {
+        $values = [];
+        if ($page->getTitle() === $def['title']) {
+            $values['title'] = $translated['title'];
+        }
+
+        if (isset($def['summary'], $translated['summary']) && $page->getSummarySocialNetwork() === $def['summary']) {
+            $values['summarySocialNetwork'] = $translated['summary'];
+        }
+
+        return $values;
+    }
+
+    // What a definition is, whatever language it is written in: the legal model it renders, the form it holds, or its slug for the one page spelled the same everywhere
+    /** @param array<string, mixed> $def */
+    private function definitionKey(array $def): string
+    {
+        return (string) ($def['model'] ?? $def['block']['data']['name'] ?? $def['slug']);
     }
 
     private function buildPage(array $def, \DateTime $now, ?UserInterface $user): Page

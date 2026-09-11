@@ -14,9 +14,6 @@ use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckErrorRow;
 use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
-use c975L\SiteBundle\Repository\PageRepository;
-use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\W3cValidatorClient;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -25,10 +22,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     public function __construct(
-        protected readonly PageRepository $pageRepository,
         protected readonly W3cValidatorClient $w3cValidatorClient,
-        protected readonly PagePublicUrlResolver $pagePublicUrlResolver,
-        protected readonly PageEditUrlResolver $pageEditUrlResolver,
+        protected readonly PageHealthCheckTargets $targets,
         protected readonly UrlStatusChecker $urlStatusChecker,
         protected readonly TranslatorInterface $translator,
     ) {
@@ -48,20 +43,16 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
         // Every validator request is fired before any response is read, letting the HttpClient transport run them concurrently instead of paying each page's up-to-60s timeout serially (see W3cValidatorClient::requestHtml()/requestCss() + readHtml()/readCss()). Rows are keyed by the page's own position (not appended as each branch resolves) and ksort()ed back at the end, so a not-found page in the middle of the list doesn't shuffle every row after it to the bottom
         $results = [];
         $pending = [];
-        foreach ($this->pageRepository->findAllOrdered() as $index => $page) {
-            $url = $this->pagePublicUrlResolver->resolve($page);
-            // Thrown rather than returned empty: this kind is exhaustive, so an empty run tells HealthCheckRunner every stored row is stale and clears them. A page whose url cannot be resolved means the site url is not configured, which says nothing about the pages already checked - the runner catches this and leaves the kind untouched
-            if (null === $url) {
-                throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
-            }
+        // One validation per page and per language it was written in: read in another language a page is other html, so it earns a row of its own (see PageHealthCheckTargets)
+        foreach ($this->targets->all() as $index => $target) {
+            ['url' => $url, 'label' => $label, 'editUrl' => $editUrl] = $target;
 
-            $editUrl = $this->pageEditUrlResolver->resolve($page);
             if (!$this->urlStatusChecker->exists($url)) {
-                $results[$index] = $this->pageNotFoundRow($url, $page->getTitle(), $editUrl);
+                $results[$index] = $this->pageNotFoundRow($url, $label, $editUrl);
                 continue;
             }
 
-            $pending[$index] = [$url, $page->getTitle(), $editUrl, $this->request($url)];
+            $pending[$index] = [$url, $label, $editUrl, $this->request($url)];
         }
 
         foreach ($pending as $index => [$url, $label, $editUrl, $response]) {

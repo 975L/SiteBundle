@@ -13,6 +13,9 @@ namespace c975L\SiteBundle\Tests\Listener;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Listener\CollectionCacheInvalidationListener;
+use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemTranslator;
+use c975L\UiBundle\Entity\Translation;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
@@ -43,7 +46,7 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_4']);
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->postUpdate(new PostUpdateEventArgs($item, $this->createEntityManager()));
     }
 
@@ -55,7 +58,7 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_7']);
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->postPersist(new PostPersistEventArgs($item, $this->createEntityManager()));
     }
 
@@ -66,7 +69,7 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_9']);
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->preRemove(new PreRemoveEventArgs($item, $this->createEntityManager()));
     }
 
@@ -76,8 +79,23 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_11']);
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->postUpdate(new PostUpdateEventArgs($this->createCollectionGroup(11), $this->createEntityManager()));
+    }
+
+    // A language screen writes the item's translation and nothing of the item itself: the collection it belongs to is what goes stale all the same
+    public function testTranslatingAnItemInvalidatesItsCollection(): void
+    {
+        $item = new CollectionItem()->setCollectionGroup($this->createCollectionGroup(5));
+
+        $repository = $this->createStub(CollectionItemRepository::class);
+        $repository->method('find')->willReturn($item);
+
+        $cache = $this->createMock(TagAwareCacheInterface::class);
+        $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_5']);
+
+        new CollectionCacheInvalidationListener($cache, $repository)
+            ->postPersist(new PostPersistEventArgs(new Translation(CollectionItemTranslator::OWNER, 3, 'title', 'en'), $this->createEntityManager()));
     }
 
     public function testNothingIsInvalidatedForAnotherEntity(): void
@@ -85,7 +103,7 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createEntityManager()));
     }
 
@@ -95,7 +113,7 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        new CollectionCacheInvalidationListener($cache)
+        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
             ->postUpdate(new PostUpdateEventArgs(new CollectionItem(), $this->createEntityManager()));
     }
 }

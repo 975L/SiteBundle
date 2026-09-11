@@ -272,8 +272,15 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_translation_locale',
                     'description' => 'description.guided_step_page_translation_locale',
                     'narration' => 'narration.guided_step_page_translation_locale',
-                    // The pill bar of page_crud_edit.html.twig, which carries this marker for want of a class of its own
-                    'highlight' => '[data-site-content-locales]',
+                    // The pill bar CoreBundle's _content_locale_tabs.html.twig draws above the page's edit screen, which carries this marker for want of a class of its own
+                    'highlight' => '[data-content-locales]',
+                ],
+                [
+                    'label' => 'label.guided_step_page_translation_common',
+                    'description' => 'description.guided_step_page_translation_common',
+                    'narration' => 'narration.guided_step_page_translation_common',
+                    // The group a language cannot change on its own, painted apart on every language screen (see configureFields): written here, these fields are written for every language at once
+                    'highlight' => '.fieldset-all-languages',
                 ],
                 [
                     'label' => 'label.guided_step_page_translation_title',
@@ -282,11 +289,17 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '#Page_title',
                 ],
                 [
+                    'label' => 'label.guided_step_page_translation_summary',
+                    'description' => 'description.guided_step_page_translation_summary',
+                    'narration' => 'narration.guided_step_page_translation_summary',
+                    'highlight' => '#Page_summarySocialNetwork',
+                ],
+                [
                     'label' => 'label.guided_step_page_translation_blocks',
                     'description' => 'description.guided_step_page_translation_blocks',
                     'narration' => 'narration.guided_step_page_translation_blocks',
-                    // The collection itself and not its sort group: a language screen renders the blocks without the reordering markup, a page not being reordered from a translation of it (see configureFields)
-                    'highlight' => '#Page_blocks',
+                    // The marker the controller puts on the collection's row, EasyAdmin writing no id on it, and not its sort group: a language screen renders the blocks without the reordering markup, a page not being reordered from a translation of it (see translationFields). The step names the repeated texts a block holds too - a question and its answer, a card, a step, an item of a bar, the name of a map point - which are written entry by entry inside the block rather than on a screen of their own (see UiBundle's BlockRegistry::getTranslatableCollections())
+                    'highlight' => '[data-page-translation-blocks]',
                 ],
                 [
                     'label' => 'label.guided_step_page_translation_medias',

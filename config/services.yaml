@@ -6,7 +6,10 @@ services:
 
     c975L\SiteBundle\:
         resource: '../src/'
-        exclude: '../src/Entity/'
+        # PageLocaleSource is a value object built by the code that needs it, not a service: registered, its Page argument would be autowired, and the container refuses to compile at all
+        exclude:
+            - '../src/Entity/'
+            - '../src/Management/PageLocaleSource.php'
 
     # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own interface - CollectionItemSourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'

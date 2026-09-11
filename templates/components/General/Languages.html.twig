@@ -1,19 +1,21 @@
 {# <twig:c975LSite:General:Languages page="{{ page }}" /> #}
-{# The languages this very page can be read in, and nothing at all anywhere else: a site declaring one language, a page nobody translated, and any screen with no Page behind it - a book, a product, a photo are translated by the bundle that owns them or not at all. Each url is the bare one with "?_locale=xx", which is what keeps the choice for the rest of the visit (see PageTranslationExtension::getLanguages) #}
-{% set languages = page is defined and page is not null ? page_languages(page) : [] %}
+{# The languages this very page can be read in where there is a Page behind the screen - offering one nobody translated leads to a 404 (see PageTranslationExtension::getLanguages) - and anywhere else the ones the screen itself answers in, a shop listing or a product sheet being the owning bundle's own interface (see ConfigBundle's LocalizedUrlGenerator::screenLanguages) #}
+{% set languages = page is defined and page is not null ? page_languages(page) : screen_languages() %}
 
 {% if languages is not empty %}
-    <ul class="menu-languages" aria-label="{{ 'menu.languages'|trans({}, 'site') }}">
-        {% for locale, url in languages %}
-            <li class="menu-language">
-                {# The language being read is named, never linked: the link would lead to the page already open, and aria-current is what says which one it is #}
-                {% if locale == app.request.locale %}
-                    <span class="menu-language-current" lang="{{ locale }}" aria-current="true">{{ locale|locale_name(locale) }}</span>
-                {% else %}
-                    {# nofollow: these urls are query-string variants of pages the sitemap already declares in each language, and a crawler following them would index the same page twice #}
-                    <a class="menu-language-link" href="{{ url }}" lang="{{ locale }}" hreflang="{{ locale }}" rel="nofollow">{{ locale|locale_name(locale) }}</a>
-                {% endif %}
-            </li>
+    {# A list of links took a line of its own the moment a site declared a third language; one field says as many as it likes. Every url of the map is the same path carrying "?_locale=xx" - the query LocaleListener reads to keep the choice for the rest of the visit - so one GET form says all of them, the select naming the language and the path being the action #}
+    <form class="menu-languages" method="get" action="{{ (languages|first)|split('?')|first }}" data-controller="languages" data-action="change->languages#submit">
+        {# What the visitor is already reading under - a page number, a filter, a sort order: a GET submission drops the action's own query string, so it rides along as fields. An array value is left out, the language menu having no business rebuilding a multiple-choice filter #}
+        {% for name, value in app.request.query.all|filter((value, name) => name != '_locale' and value is not iterable) %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}">
         {% endfor %}
-    </ul>
+        {# Labelled on the field itself rather than through a <label for="...">: the component is rendered twice on the same screen, once per bar, and an id would be there twice with it #}
+        <select class="menu-languages-select" name="_locale" aria-label="{{ 'menu.languages'|trans({}, 'site') }}">
+            {% for locale in languages|keys %}
+                <option value="{{ locale }}" lang="{{ locale }}"{{ locale == app.request.locale ? ' selected' : '' }}>{{ locale|language_name }}</option>
+            {% endfor %}
+        </select>
+        {# What sends the choice where javascript does not run; where it does, the controller takes it away and the field submits on its own #}
+        <button class="menu-languages-submit" type="submit" data-languages-target="submit">{{ 'menu.languages_submit'|trans({}, 'site') }}</button>
+    </form>
 {% endif %}

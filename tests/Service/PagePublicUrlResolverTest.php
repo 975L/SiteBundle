@@ -142,4 +142,28 @@ class PagePublicUrlResolverTest extends TestCase
             'en' => 'https://exemple.com/en/pages/contact',
         ], $resolver->resolveAlternates($this->createPage('contact')));
     }
+
+    // What a health check walks: one url per language a page was really written in, the writing language first
+    public function testResolveAllGivesOneUrlPerLanguageThePageWasWrittenIn(): void
+    {
+        $this->assertSame(
+            ['fr' => 'https://example.com/pages/nos-ateliers', 'en' => 'https://example.com/en/pages/nos-ateliers'],
+            $this->createResolver('https://example.com', ['fr', 'en'], 'fr', ['fr', 'en'])->resolveAll($this->createPage('nos-ateliers')),
+        );
+    }
+
+    // A single-language site, and a page nobody translated, give back the one url they always had
+    public function testResolveAllGivesTheOneUrlItAlwaysHadOnASingleLanguageSite(): void
+    {
+        $this->assertSame(
+            ['fr' => 'https://example.com/pages/nos-ateliers'],
+            $this->createResolver('https://example.com')->resolveAll($this->createPage('nos-ateliers')),
+        );
+    }
+
+    // Empty while "site-url" is unconfigured, which resolve() reports the same way with a null
+    public function testResolveAllIsEmptyWithoutASiteUrl(): void
+    {
+        $this->assertSame([], $this->createResolver(null)->resolveAll($this->createPage('nos-ateliers')));
+    }
 }

@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Management\PageHealthCheckTargets;
 use c975L\SiteBundle\Management\W3cHtmlHealthCheckProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
@@ -103,10 +104,8 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         ?UrlStatusChecker $urlStatusChecker = null,
     ): W3cHtmlHealthCheckProvider {
         return new W3cHtmlHealthCheckProvider(
-            $this->createPageRepository($pages),
             $client,
-            $this->createUrlResolver($siteUrl),
-            $this->createPageEditUrlResolver(),
+            $this->createTargets($pages, $this->createUrlResolver($siteUrl), $this->createPageEditUrlResolver()),
             $urlStatusChecker ?? $this->createUrlStatusChecker(),
             $this->createTranslator(),
         );
@@ -232,5 +231,17 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => [], 'warnings' => []]));
 
         $this->assertSame('/management/page/1/edit', $provider->runChecks()[0]['editUrl']);
+    }
+
+    // One row per page and per language it says something in - built from the very pieces this test already stubs (see PageHealthCheckTargets)
+    private function createTargets(array $pages, PagePublicUrlResolver $urlResolver, PageEditUrlResolver $editUrlResolver): PageHealthCheckTargets
+    {
+        return new PageHealthCheckTargets(
+            $this->createPageRepository($pages),
+            $urlResolver,
+            $editUrlResolver,
+            $this->createPageTranslator(),
+            $this->createSiteLocales(),
+        );
     }
 }

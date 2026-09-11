@@ -1,0 +1,343 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="es" datatype="plaintext" original="site_narration.es.xlf">
+        <body>
+            <trans-unit id="2xeaP1w">
+                <source>narration.collections</source>
+                <target>«Colecciones» reúne las listas de elementos parecidos, equipo, trabajos, eventos, para mostrarlos después en cualquier página mediante un bloque de colección.</target>
+            </trans-unit>
+            <trans-unit id="hAyw9ep">
+                <source>narration.guided_step_collection_add_item</source>
+                <target>Añada un elemento. Título, texto, imagen, enlace: complete lo que necesite y deje el resto vacío. En un sitio en varios idiomas, el botón Traducir de la lista abre el mismo elemento en otro idioma.</target>
+            </trans-unit>
+            <trans-unit id="jRzg9Ja">
+                <source>narration.guided_step_collection_display</source>
+                <target>Solo queda mostrarla: vuelva a una página, añádale un bloque de colección y elija la que acaba de crear.</target>
+            </trans-unit>
+            <trans-unit id="okcRN..">
+                <source>narration.guided_step_collection_items</source>
+                <target>Abra ahora sus elementos. La colección no es más que un contenedor: son sus elementos los que llevan el contenido.</target>
+            </trans-unit>
+            <trans-unit id="b3fiYV6">
+                <source>narration.guided_step_collection_name</source>
+                <target>Póngale nombre en el primer campo. Ese nombre es el que volverá a encontrar en los bloques: «Equipo», «Trabajos».</target>
+            </trans-unit>
+            <trans-unit id="qwDY2Z1">
+                <source>narration.guided_step_collection_new</source>
+                <target>Cree una colección con el botón situado encima de la lista.</target>
+            </trans-unit>
+            <trans-unit id="t0QPwrS">
+                <source>narration.guided_step_collection_open</source>
+                <target>El panel le lleva a las colecciones. Una colección contiene una lista de elementos parecidos, en lugar de otras tantas páginas construidas a mano.</target>
+            </trans-unit>
+            <trans-unit id="q8cnSWX">
+                <source>narration.guided_step_collection_order</source>
+                <target>Ordene los elementos: tome una fila por su asa para moverla. La página los mostrará en ese orden.</target>
+            </trans-unit>
+            <trans-unit id="9b0NAQR">
+                <source>narration.guided_step_collection_save</source>
+                <target>Guarde la colección con «Crear y modificar»: permanecerá en la colección que acaba de crear.</target>
+            </trans-unit>
+            <trans-unit id="3q0a6F9">
+                <source>narration.guided_step_content_export_formats</source>
+                <target>El botón de exportación clásico, en cambio, saca la lista en SQL, CSV o JSON, esta vez para todas las páginas a la vez: para leerlas en una hoja de cálculo o guardar una copia, no para reponerlas en otro sitio.</target>
+            </trans-unit>
+            <trans-unit id="TGsJ0d0">
+                <source>narration.guided_step_content_export_import</source>
+                <target>En el otro sitio, la pantalla «Importación de contenido» de los ajustes acepta ese zip. Los identificadores nunca tienen que coincidir: las páginas se reconstruyen a partir de lo que contiene el archivo.</target>
+            </trans-unit>
+            <trans-unit id="WW1Bw8w">
+                <source>narration.guided_step_content_export_open</source>
+                <target>El panel le lleva a las páginas: la exportación parte de esta lista.</target>
+            </trans-unit>
+            <trans-unit id="6t9OxmB">
+                <source>narration.guided_step_content_export_run</source>
+                <target>Exporte la selección: se descarga un zip que contiene cada página con sus bloques y las imágenes que utilizan.</target>
+            </trans-unit>
+            <trans-unit id="TM1GBIj">
+                <source>narration.guided_step_content_export_select</source>
+                <target>Marque las páginas que quiera llevarse. Esta casilla las marca todas, pero también puede marcarlas una a una. El botón de exportación solo aparece cuando hay una marcada.</target>
+            </trans-unit>
+            <trans-unit id=".N9y61w">
+                <source>narration.guided_step_footer_check</source>
+                <target>Compruébelo en el sitio: ábralo en otra pestaña, el pie de página lleva sus líneas, en el orden que les ha dado.</target>
+            </trans-unit>
+            <trans-unit id="u3aASpY">
+                <source>narration.guided_step_footer_create</source>
+                <target>Cree el pie de página si falta: se le propone un botón por cada ubicación aún no creada. Si ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="hZUYIYH">
+                <source>narration.guided_step_footer_edit</source>
+                <target>Abra el pie de página. Si acaba de crearlo, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>
+            </trans-unit>
+            <trans-unit id="iQpFzkY">
+                <source>narration.guided_step_footer_group</source>
+                <target>Repártalos en varias líneas: añada un grupo de menú por línea y arrastre allí los bloques ya presentes. Los enlaces sociales en una línea, los enlaces en otra, sin tener que recrear nada.</target>
+            </trans-unit>
+            <trans-unit id="4RsudW2">
+                <source>narration.guided_step_footer_items</source>
+                <target>Añádale sus elementos. Un pie de página está hecho de bloques, como una página: sus enlaces, pero también un texto o una imagen si quiere alguno ahí.</target>
+            </trans-unit>
+            <trans-unit id="TNKIW6q">
+                <source>narration.guided_step_footer_open</source>
+                <target>El panel le lleva a los menús. Hay uno por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+            </trans-unit>
+            <trans-unit id="4G7DYra">
+                <source>narration.guided_step_footer_save</source>
+                <target>Guarde el pie de página.</target>
+            </trans-unit>
+            <trans-unit id="9BaGnGr">
+                <source>narration.guided_step_footer_style</source>
+                <target>Elija la disposición de las líneas: unas al lado de otras, unas debajo de otras, o en columnas. Si se deja vacío, decide el archivo de tema del sitio.</target>
+            </trans-unit>
+            <trans-unit id="m4WQRgw">
+                <source>narration.guided_step_menu_translation_action</source>
+                <target>En la fila del menú, haga clic en «Traducir».</target>
+            </trans-unit>
+            <trans-unit id="zNcHvAq">
+                <source>narration.guided_step_menu_translation_locale</source>
+                <target>Elija el idioma en la barra de pestañas, arriba.</target>
+            </trans-unit>
+            <trans-unit id="GTNgHkX">
+                <source>narration.guided_step_menu_translation_open</source>
+                <target>Abra el menú «Menús», en la columna de la izquierda.</target>
+            </trans-unit>
+            <trans-unit id="DjRxDLr">
+                <source>narration.guided_step_menu_translation_save</source>
+                <target>Guarde.</target>
+            </trans-unit>
+            <trans-unit id="Q0IzWoG">
+                <source>narration.guided_step_menu_translation_write</source>
+                <target>Escriba las etiquetas. El texto original se muestra bajo cada campo, nunca dentro: un campo rellenado se guardaría tal cual y el menú parecería traducido sin estarlo.</target>
+            </trans-unit>
+            <trans-unit id="mTJ2iSx">
+                <source>narration.guided_step_page_creation_blocks</source>
+                <target>Añada un bloque. El contenido de una página está hecho de bloques: texto, imagen, galería, formulario. Añada uno y complételo.</target>
+            </trans-unit>
+            <trans-unit id="hE.O12b">
+                <source>narration.guided_step_page_creation_new</source>
+                <target>Haga clic en el botón situado encima de la lista: abre el formulario de creación.</target>
+            </trans-unit>
+            <trans-unit id="YMiaHyz">
+                <source>narration.guided_step_page_creation_open</source>
+                <target>Vamos a crear una página. En la columna de la izquierda, el panel le lleva a la lista de páginas: todas las del sitio están aquí, publicadas o no.</target>
+            </trans-unit>
+            <trans-unit id="5db92y2">
+                <source>narration.guided_step_page_creation_publish</source>
+                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa.</target>
+            </trans-unit>
+            <trans-unit id="QLpcgUd">
+                <source>narration.guided_step_page_creation_reopen</source>
+                <target>Vuelva a abrir la página con el lápiz, al final de su fila: arrastrar y soltar bloques exige una página ya guardada.</target>
+            </trans-unit>
+            <trans-unit id="53s_MZT">
+                <source>narration.guided_step_page_creation_save</source>
+                <target>Guarde la página. Vuelve a la lista: la página existe, todavía vacía y sin publicar.</target>
+            </trans-unit>
+            <trans-unit id="AlDx_Bq">
+                <source>narration.guided_step_page_creation_save_again</source>
+                <target>Guarde de nuevo.</target>
+            </trans-unit>
+            <trans-unit id="O3sDFei">
+                <source>narration.guided_step_page_creation_title</source>
+                <target>Dé un título a la página. Su dirección se rellena sola a partir del título, y sigue siendo editable.</target>
+            </trans-unit>
+            <trans-unit id="Kox8Hj3">
+                <source>narration.guided_step_page_creation_view</source>
+                <target>La página ya es pública. Este botón la abre tal como la ven sus visitantes.</target>
+            </trans-unit>
+            <trans-unit id="OAyUGgS">
+                <source>narration.guided_step_page_health_edit</source>
+                <target>Abra la página que quiera controlar. Ni el código QR ni el diagnóstico aparecen en una página en creación: los dos necesitan una página guardada.</target>
+            </trans-unit>
+            <trans-unit id="qM5LOeW">
+                <source>narration.guided_step_page_health_open</source>
+                <target>El panel le lleva a las páginas. Tome una ya publicada: tanto el código QR como el diagnóstico se leen sobre lo que está guardado.</target>
+            </trans-unit>
+            <trans-unit id="qT5y9.3">
+                <source>narration.guided_step_page_health_qrcode</source>
+                <target>Aquí está su código QR, que lleva la dirección pública de la página. Escanéelo para verla en un teléfono, o haga clic derecho para guardar la imagen y ponerla en un cartel o un folleto.</target>
+            </trans-unit>
+            <trans-unit id="8OWR.Gd">
+                <source>narration.guided_step_page_health_run</source>
+                <target>Si la tabla está vacía, es que el control nunca se ha ejecutado sobre esta página. Se lanza desde la pantalla «Estado de salud» de los ajustes, que repasa todo el sitio de una vez.</target>
+            </trans-unit>
+            <trans-unit id="ETCpHUr">
+                <source>narration.guided_step_page_health_tab</source>
+                <target>Abra la última pestaña, la del estado de salud. Lleva los controles de esta página, y solo aparece en una página guardada.</target>
+            </trans-unit>
+            <trans-unit id="7yPbZ56">
+                <source>narration.guided_step_page_health_table</source>
+                <target>Lea la tabla: una fila por control, un resumen que falta, una imagen sin texto alternativo, html inválido, cada una con el consejo que nombra el campo que hay que rellenar.</target>
+            </trans-unit>
+            <trans-unit id="sP9WgJw">
+                <source>narration.guided_step_page_menu_add_link</source>
+                <target>Añada un enlace de menú. Un menú está hecho de bloques, como una página: añada uno de tipo «Enlace de menú».</target>
+            </trans-unit>
+            <trans-unit id="ZI5leP5">
+                <source>narration.guided_step_page_menu_brand</source>
+                <target>Vuelva a los menús: una quinta ubicación lleva lo que el sitio dice bajo su propio nombre, su lema. Créela si aún no existe.</target>
+            </trans-unit>
+            <trans-unit id="e_Rrc63">
+                <source>narration.guided_step_page_menu_brand_write</source>
+                <target>Escríbalo como un bloque, y por tanto traducido como el resto del sitio, mientras que el lema era un ajuste que hablaba un solo idioma a todos.</target>
+            </trans-unit>
+            <trans-unit id="H2MmCdF">
+                <source>narration.guided_step_page_menu_check</source>
+                <target>Compruébelo en el sitio: ábralo en otra pestaña, el enlace está en la barra de navegación, en la posición que le ha dado.</target>
+            </trans-unit>
+            <trans-unit id="WPhSp6Z">
+                <source>narration.guided_step_page_menu_create</source>
+                <target>Cree el menú si falta: se le propone un botón por cada ubicación aún no creada. Si la barra de navegación ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="ah4TpfP">
+                <source>narration.guided_step_page_menu_edit</source>
+                <target>Abra la barra de navegación. Si acaba de crearla, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>
+            </trans-unit>
+            <trans-unit id="5l8xWTL">
+                <source>narration.guided_step_page_menu_open</source>
+                <target>El panel le lleva a los menús. Hay uno por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+            </trans-unit>
+            <trans-unit id="kQXsnf2">
+                <source>narration.guided_step_page_menu_save</source>
+                <target>Guarde el menú.</target>
+            </trans-unit>
+            <trans-unit id="xkmDMIh">
+                <source>narration.guided_step_page_menu_target</source>
+                <target>Elija la página de destino. El enlace puede apuntar a una página del sitio, a uno de sus anclajes o a una dirección externa.</target>
+            </trans-unit>
+            <trans-unit id="C_XxP3U">
+                <source>narration.guided_step_page_revision_done</source>
+                <target>Ya está publicada. El original sigue siendo recuperable desde la papelera mientras no lo elimine definitivamente.</target>
+            </trans-unit>
+            <trans-unit id="XqtY3R5">
+                <source>narration.guided_step_page_revision_duplicate</source>
+                <target>Duplíquela con el botón de duplicación. La copia recoge todo el contenido del original pero no está publicada, y se abre directamente.</target>
+            </trans-unit>
+            <trans-unit id="Gl.yDMG">
+                <source>narration.guided_step_page_revision_open</source>
+                <target>El panel le lleva a la lista de páginas. Localice la que ya está publicada y quiere retrabajar.</target>
+            </trans-unit>
+            <trans-unit id="3ZdQdf5">
+                <source>narration.guided_step_page_revision_preview</source>
+                <target>Véala en vista previa. Una página sin publicar solo es visible para usted, en esta dirección de vista previa.</target>
+            </trans-unit>
+            <trans-unit id="eMCosO4">
+                <source>narration.guided_step_page_revision_replace</source>
+                <target>Publíquela en lugar del original: la copia toma su dirección y se publica, mientras que el original pasa a la papelera.</target>
+            </trans-unit>
+            <trans-unit id="0ao3tKG">
+                <source>narration.guided_step_page_revision_rework</source>
+                <target>Retrabaje la copia todo lo que haga falta: mientras tanto, sus visitantes siguen viendo el original.</target>
+            </trans-unit>
+            <trans-unit id="LrcEh8a">
+                <source>narration.guided_step_page_seo_check</source>
+                <target>Compruebe el resultado: la página ya está en sitemap.xml, y pegar su dirección en cualquier sitio muestra el título, el resumen y la imagen que acaba de ajustar. Pero cuidado, una red social guarda en memoria la primera vista previa que vio de esa dirección; la nota bajo el formulario da el enlace para pedirle que vuelva a leer la página.</target>
+            </trans-unit>
+            <trans-unit id="4c9JKMa">
+                <source>narration.guided_step_page_seo_edit</source>
+                <target>Abra la página que quiera modificar. Los campos que nos interesan están todos en la pestaña «Datos», debajo del título.</target>
+            </trans-unit>
+            <trans-unit id="5QGMRLR">
+                <source>narration.guided_step_page_seo_frequency</source>
+                <target>Diga con qué frecuencia cambia. Esta y la prioridad justo debajo son las dos únicas indicaciones que lleva el sitemap: una página de inicio se declara modificada más a menudo que un aviso legal.</target>
+            </trans-unit>
+            <trans-unit id="xwZbWkc">
+                <source>narration.guided_step_page_seo_image</source>
+                <target>Elija su imagen para compartir, la que se muestra junto al enlace cuando se comparte la página. Si se deja vacía, sirve la del sitio.</target>
+            </trans-unit>
+            <trans-unit id="lW6LlUQ">
+                <source>narration.guided_step_page_seo_indexable</source>
+                <target>Déjela en el sitemap. Sin marcar, la página sale de sitemap.xml y los dos ajustes de debajo se bloquean. Desmárquela solo si la página no tiene nada que hacer en los resultados de búsqueda, como una creación de cuenta o una contraseña olvidada.</target>
+            </trans-unit>
+            <trans-unit id="9cZbDkQ">
+                <source>narration.guided_step_page_seo_open</source>
+                <target>El panel le lleva a las páginas. Tome una ya publicada: ninguno de los ajustes que siguen toca su contenido, solo lo que se muestra de ella en otros sitios.</target>
+            </trans-unit>
+            <trans-unit id="8G5ogTs">
+                <source>narration.guided_step_page_seo_save</source>
+                <target>Guarde la página.</target>
+            </trans-unit>
+            <trans-unit id="uMDaXYg">
+                <source>narration.guided_step_page_seo_slug</source>
+                <target>Compruebe su dirección. El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Cambiarlo en una página ya publicada rompe todos los enlaces que apuntaban a ella: abra el candado solo si declara también una redirección.</target>
+            </trans-unit>
+            <trans-unit id="ly5qz_Z">
+                <source>narration.guided_step_page_seo_summary</source>
+                <target>Escriba su resumen, dos o tres frases: un motor de búsqueda las muestra bajo el título, una red social bajo la vista previa del enlace. El estado de salud también las reclama.</target>
+            </trans-unit>
+            <trans-unit id="PFbLTTf">
+                <source>narration.guided_step_page_translation_action</source>
+                <target>En la fila de la página, haga clic en «Traducir». El botón solo aparece si el sitio declara más de un idioma.</target>
+            </trans-unit>
+            <trans-unit id="xftaUFh">
+                <source>narration.guided_step_page_translation_blocks</source>
+                <target>Baje hasta los bloques: son los de la página original, para decirlos en el nuevo idioma. La composición no cambia, solo cambian las palabras. Abra cada uno: los textos que repite, una pregunta y su respuesta, una tarjeta, un paso, un elemento de una barra, el nombre de un punto de mapa, se escriben una entrada tras otra.</target>
+            </trans-unit>
+            <trans-unit id="lhBwYfz">
+                <source>narration.guided_step_page_translation_check</source>
+                <target>Vaya a ver la página en el sitio: se abre en su dirección precedida por el idioma.</target>
+            </trans-unit>
+            <trans-unit id="HVDPuf2">
+                <source>narration.guided_step_page_translation_common</source>
+                <target>Atención a este bloque de fondo coloreado: pertenece a la página, no al idioma. La dirección, la publicación, la indexación, la imagen para compartir. Lo que escriba ahí desde la pantalla inglesa, lo escribe para todos los idiomas.</target>
+            </trans-unit>
+            <trans-unit id="lf7jI8O">
+                <source>narration.guided_step_page_translation_locale</source>
+                <target>En la parte superior de la pantalla, una barra de pestañas: una por idioma del sitio. Es la misma pantalla de edición, abierta en el que elija.</target>
+            </trans-unit>
+            <trans-unit id="H4u2Q6J">
+                <source>narration.guided_step_page_translation_medias</source>
+                <target>Bajo los bloques que llevan imágenes, cada imagen que dice algo tiene sus propios campos. Diga esas palabras también en el nuevo idioma. El archivo, su enlace y sus créditos no están ahí: una imagen es la misma imagen en todos los idiomas.</target>
+            </trans-unit>
+            <trans-unit id="iydPVi0">
+                <source>narration.guided_step_page_translation_open</source>
+                <target>Abra el menú «Páginas», en la columna de la izquierda: de esta lista parte cada traducción.</target>
+            </trans-unit>
+            <trans-unit id="4Ql9BNG">
+                <source>narration.guided_step_page_translation_save</source>
+                <target>Guarde.</target>
+            </trans-unit>
+            <trans-unit id="k9VRiG7">
+                <source>narration.guided_step_page_translation_summary</source>
+                <target>Justo debajo del título, el resumen para compartir. Es lo que muestran Facebook y LinkedIn cuando se comparte esta dirección: dígalo en el idioma de la página, si no se mostrará el resumen francés.</target>
+            </trans-unit>
+            <trans-unit id="BGcVABm">
+                <source>narration.guided_step_page_translation_title</source>
+                <target>Escriba el título en el nuevo idioma. El texto original se le muestra entre corchetes: dejarlo tal cual es no haber escrito nada.</target>
+            </trans-unit>
+            <trans-unit id="2oarkh_">
+                <source>narration.guided_step_trash_back</source>
+                <target>Vuelva a las páginas. Una página en la papelera nunca está en el sitio, ni en un menú, ni en el sitemap: la papelera puede quedarse tal cual.</target>
+            </trans-unit>
+            <trans-unit id="VJVr58Y">
+                <source>narration.guided_step_trash_delete</source>
+                <target>Envíela a la papelera. No se borra nada: la página abandona el sitio y sus menús, y espera ahí.</target>
+            </trans-unit>
+            <trans-unit id="jUNOiXm">
+                <source>narration.guided_step_trash_delete_permanently</source>
+                <target>También puede eliminarla definitivamente. Esta no tiene vuelta atrás y se lleva los bloques de la página: se le pide una confirmación.</target>
+            </trans-unit>
+            <trans-unit id="fAhjLKA">
+                <source>narration.guided_step_trash_open</source>
+                <target>El panel le lleva a las páginas. Elija una que pueda retirar del sitio un momento sin consecuencias.</target>
+            </trans-unit>
+            <trans-unit id="sqYcsDS">
+                <source>narration.guided_step_trash_open_trash</source>
+                <target>Abra la papelera con este botón. El mismo le devolverá después a las páginas.</target>
+            </trans-unit>
+            <trans-unit id="p02AJTl">
+                <source>narration.guided_step_trash_restore</source>
+                <target>Vuelva a poner la página en su sitio. Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio.</target>
+            </trans-unit>
+            <trans-unit id="SVUFTiL">
+                <source>narration.menus</source>
+                <target>«Menús» tiene un menú por ubicación: barra de navegación, pie de página, encabezado y pie de los correos. Cada ubicación existe una sola vez.</target>
+            </trans-unit>
+            <trans-unit id="HfyKzW.">
+                <source>narration.pages</source>
+                <target>«Páginas» lista todas las páginas del sitio, publicadas o no. Es desde ahí donde se crean, se duplican, se publican y se envían a la papelera.</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

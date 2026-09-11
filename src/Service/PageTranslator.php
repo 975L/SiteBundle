@@ -14,8 +14,7 @@ use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Service\ContentTranslator;
 
-// What a page says in another language: its own two texts, the rest being its blocks' business (see ContentTranslator).
-// A page is one page in every language - one structure, one set of blocks, one row - and its translations live beside it rather than in a second row. A site declaring a single language never reads any of this.
+// What a page says in another language: its own two texts, the rest being its blocks' business (see ContentTranslator). A page is one page in every language - one structure, one set of blocks, one row - and its translations live beside it rather than in a second row. A site declaring a single language never reads any of this.
 class PageTranslator
 {
     // The vocabulary this bundle's rows are named with, the way Favorite and Rating name theirs
@@ -57,6 +56,14 @@ class PageTranslator
         return null === $page->getId() ? [] : $this->contentTranslator->all(self::OWNER, $page->getId());
     }
 
+    // One field in one language, read the way translatedLocales() reads a title: through the cache preload() fills, where all() goes straight to base whatever was read ahead
+    public function value(Page $page, string $locale, string $field): ?string
+    {
+        $id = $page->getId();
+
+        return null === $id ? null : ($this->contentTranslator->values(self::OWNER, $id, $locale)[$field] ?? null);
+    }
+
     /**
      * The languages a page may be written in besides the one it was written in.
      *
@@ -67,12 +74,8 @@ class PageTranslator
         return $this->contentTranslator->getTranslatableLocales();
     }
 
-    /**
-     * What a language screen offers for each of the page's own texts: what that language already says, or the source
-     * text between brackets where it says nothing yet.
-     *
-     * @return array<string, string|null> field => value
-     */
+    // What a language screen offers for each of the page's own texts: what that language already says, or the source text between brackets where it says nothing yet.
+    /** @return array<string, string|null> field => value */
     public function promptValues(Page $page, string $locale): array
     {
         $written = $this->all($page)[$locale] ?? [];
@@ -89,10 +92,8 @@ class PageTranslator
         return $values;
     }
 
+    // Hands what a language screen wrote over to be stored on the flush that saves the page, a field left holding the bracketed source counting as nothing written (see ContentTranslator::stage).
     /**
-     * Hands what a language screen wrote over to be stored on the flush that saves the page, a field left holding the
-     * bracketed source counting as nothing written (see ContentTranslator::stage).
-     *
      * @param array<string, string|null> $values field => value
      */
     public function stage(Page $page, string $locale, array $values): void
@@ -113,17 +114,15 @@ class PageTranslator
             $staged[$field] = ContentTranslator::untouched($values[$field], $source[$field] ?? null) ? null : $values[$field];
         }
 
-        if ([] !== $staged) {
-            $this->contentTranslator->stage(self::OWNER, $id, $locale, $staged);
+        if ([] === $staged) {
+            return;
         }
+
+        $this->contentTranslator->stage(self::OWNER, $id, $locale, $staged);
     }
 
-    /**
-     * Reads ahead the translations of a whole set of pages, so asking translatedLocales() of each of them costs one
-     * query per language rather than one per page - what the sitemap does over every page of the site.
-     *
-     * @param iterable<Page> $pages
-     */
+    // Reads ahead the translations of a whole set of pages, so asking translatedLocales() or value() of each of them costs one query per language rather than one per page - what the sitemap does over every page of the site.
+    /** @param iterable<Page> $pages */
     public function preload(iterable $pages): void
     {
         $ids = [];
@@ -139,21 +138,8 @@ class PageTranslator
         }
     }
 
-    /**
-     * The languages this page really exists in, its own included: the ones a "hreflang" group may name and the ones a
-     * localised url may answer on.
-     *
-     * A language counts as written when the page's title has been translated into it, and not merely when the site
-     * declares it. Declaring the whole list instead is what had "/en/" serve a page written in French under
-     * lang="en" - an alternate a search engine reads as duplicated content rather than as a translation. The title
-     * and not the blocks: a page whose blocks were translated while its title stayed French still renders a French
-     * <title>, which is the first thing a result page shows.
-     *
-     * Read through ContentTranslator::values(), whose preload() caches a whole set of pages in one query - the sitemap
-     * asks this of every page of the site (see SitePageSitemapProvider).
-     *
-     * @return list<string>
-     */
+    // The languages this page really exists in, its own included: the ones a "hreflang" group may name and the ones a localised url may answer on. A language counts as written when the page's title has been translated into it, and not merely when the site declares it. Declaring the whole list instead is what had "/en/" serve a page written in French under lang="en" - an alternate a search engine reads as duplicated content rather than as a translation. The title and not the blocks: a page whose blocks were translated while its title stayed French still renders a French <title>, which is the first thing a result page shows. Read through ContentTranslator::values(), whose preload() caches a whole set of pages in one query - the sitemap asks this of every page of the site (see SitePageSitemapProvider).
+    /** @return list<string> */
     public function translatedLocales(Page $page): array
     {
         $id = $page->getId();

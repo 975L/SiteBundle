@@ -146,8 +146,12 @@ class TranslationController extends AbstractController
             $seen[$id] = true;
 
             $data = $block->getData();
-            foreach ($this->blockRegistry->getTranslatable($kind) as $field) {
-                $reference = $data[$field] ?? null;
+
+            // The repeated texts too - a FAQ's questions, a grid's cards - named one entry at a time off the data itself, the very fields the translation health check counts (see ContentTranslator::expand)
+            $fields = ContentTranslator::expand($data, $this->blockRegistry->getTranslatable($kind), $this->blockRegistry->getTranslatableCollections($kind));
+
+            foreach ($fields as $field) {
+                $reference = ContentTranslator::read($data, $field);
 
                 // A field left empty in the writing language has nothing to translate: there is no text behind it
                 if (!\is_string($reference) || '' === trim($reference)) {

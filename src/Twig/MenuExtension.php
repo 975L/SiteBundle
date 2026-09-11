@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
@@ -61,12 +62,13 @@ class MenuExtension
         private readonly BlockAnchorCollector $anchorCollector,
         private readonly RequestStack $requestStack,
         private readonly PageTranslator $pageTranslator,
+        private readonly LocalizedUrlGenerator $localizedUrlGenerator,
         #[Autowire(param: 'kernel.default_locale')]
         private readonly string $defaultLocale = 'fr',
     ) {
     }
 
-    // @return Collection<int, Block>
+    /** @return Collection<int, Block> */
     #[AsTwigFunction('menu_blocks')]
     public function getMenuBlocks(string $location): Collection
     {
@@ -137,9 +139,7 @@ class MenuExtension
             return '';
         }
 
-        // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url
-        // Read in another language, the whole menu is written in that language's urls: generating the writing language's ones would send the visitor back into it at the first click (PageController answers "/" and "/pages/{page}" in the writing language alone). The route attribute rather than getLocale(), which PageController switches back for the duration of the render
-        // Only for a page really written in that language: a localised url answers for nothing else (PageController::requireTranslated() 404s it), so an untranslated page keeps the writing language's url rather than a link the visitor lands on a 404 from. The && short-circuits, so the writing language costs no lookup at all
+        // The home page's only canonical url is the site root - PageController 301s "/pages/home" there, so going through page_display would cost a redirect hop on every single menu click (same rule as PagePublicUrlResolver and PageCrudController::pagePath()). Only the "home" slug: every other menu target keeps its own "/pages/{slug}" url. Read in another language, the whole menu is written in that language's urls: generating the writing language's ones would send the visitor back into it at the first click (PageController answers "/" and "/pages/{page}" in the writing language alone). The route attribute rather than getLocale(), which PageController switches back for the duration of the render. Only for a page really written in that language: a localised url answers for nothing else (PageController::requireTranslated() 404s it), so an untranslated page keeps the writing language's url rather than a link the visitor lands on a 404 from. The && short-circuits, so the writing language costs no lookup at all
         $locale = $this->requestStack->getCurrentRequest()?->attributes->get('_locale');
         $localized = \is_string($locale) && '' !== $locale && $locale !== $this->defaultLocale
             && \in_array($locale, $this->pageTranslator->translatedLocales($page), true);
@@ -160,9 +160,9 @@ class MenuExtension
             return '';
         }
 
-        // Generated rather than stored: an entry standing for a database row (a gallery category...) carries the parameters it is reached by, read again at each render, so renaming that row's slug keeps the item pointing at it. Caught for the same reason as an entry dropped from the registry: an entry whose route was renamed, or whose parameters no longer fit its placeholders, drops the item rather than 500-ing every page through the navbar
+        // Read in another language, a menu item pointing at a route another bundle declares twice - "/shop" and "/{_locale}/shop" - is written in that language's url too, the same rule the page items above follow, and the very one a template applies through "localized_path". The entry's own "locales" say where that holds: a twin exists for every row of a bundle's data, and generating one for a row not translated yet would write the item as a url that 404s. Generated rather than stored: an entry standing for a database row (a gallery category...) carries the parameters it is reached by, read again at each render, so renaming that row's slug keeps the item pointing at it. Caught for the same reason as an entry dropped from the registry: an entry whose route was renamed, or whose parameters no longer fit its placeholders, drops the item rather than 500-ing every page through the navbar
         try {
-            return $this->router->generate($entry['route'], $entry['params']);
+            return $this->localizedUrlGenerator->path($entry['route'], $entry['params'], $entry['locales']);
         } catch (RoutingExceptionInterface) {
             return '';
         }
@@ -234,7 +234,7 @@ class MenuExtension
     }
 
     // Single point of "type:value" parsing, shared by every target reader above
-    // @return array{type: ?string, value: ?string, pageId: ?string, fragment: ?string}
+    /** @return array{type: ?string, value: ?string, pageId: ?string, fragment: ?string} */
     private static function parseTarget(?string $target): array
     {
         [$type, $value] = array_pad(explode(':', (string) $target, 2), 2, null);

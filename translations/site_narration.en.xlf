@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="hAyw9ep">
                 <source>narration.guided_step_collection_add_item</source>
-                <target>Add an item. Title, text, image, link: fill in what you need and leave the rest empty.</target>
+                <target>Add an item. Title, text, image, link: fill in what you need and leave the rest empty. On a site in several languages, the list's Translate button opens the same item in another language.</target>
             </trans-unit>
             <trans-unit id="jRzg9Ja">
                 <source>narration.guided_step_collection_display</source>
@@ -272,11 +272,15 @@
             </trans-unit>
             <trans-unit id="xftaUFh">
                 <source>narration.guided_step_page_translation_blocks</source>
-                <target>Move down to the blocks: they are the original page's, to be said again in the new language. The composition does not move, only the words change.</target>
+                <target>Move down to the blocks: they are the original page's, to be said again in the new language. The composition does not move, only the words change. Open each one: the texts it repeats, a question and its answer, a card, a step, an item of a bar, the name of a map point, are written entry by entry.</target>
             </trans-unit>
             <trans-unit id="lhBwYfz">
                 <source>narration.guided_step_page_translation_check</source>
                 <target>Go and see the page on the site: it opens at its address prefixed by the language.</target>
+            </trans-unit>
+            <trans-unit id="HVDPuf2">
+                <source>narration.guided_step_page_translation_common</source>
+                <target>Careful with the coloured group: it belongs to the page, not to the language. The address, whether it is published, whether it is indexed, the sharing image. What you write there from the English screen, you write for every language.</target>
             </trans-unit>
             <trans-unit id="lf7jI8O">
                 <source>narration.guided_step_page_translation_locale</source>
@@ -293,6 +297,10 @@
             <trans-unit id="4Ql9BNG">
                 <source>narration.guided_step_page_translation_save</source>
                 <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="k9VRiG7">
+                <source>narration.guided_step_page_translation_summary</source>
+                <target>Just under the title, the sharing summary. It is what Facebook and LinkedIn show when this address is shared: say it in the page's language, or the French summary is what people will read.</target>
             </trans-unit>
             <trans-unit id="BGcVABm">
                 <source>narration.guided_step_page_translation_title</source>

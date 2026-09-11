@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
 use c975L\ConfigBundle\Management\EasyAdminActionHelper;
 use c975L\ConfigBundle\Repository\RedirectRepository;
@@ -31,11 +32,13 @@ use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Field\OgImageField;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\TranslationCopier;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,7 +97,7 @@ class PageCrudController extends AbstractCrudController
     public const DELETE_PERMANENTLY_CSRF_TOKEN = 'page_delete_permanently';
 
     // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
-    public const string CONTENT_LOCALE_PARAM = 'contenu';
+    public const string CONTENT_LOCALE_PARAM = ContentLocaleScreen::PARAM;
 
     public function __construct(
         private readonly Security $security,
@@ -116,6 +119,8 @@ class PageCrudController extends AbstractCrudController
         private readonly SiteLocales $siteLocales,
         // Appended rather than slotted in beside PageTranslator: every construction of this controller is positional
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
+        private readonly TranslationCopier $translationCopier,
+        private readonly ContentLocaleScreen $contentLocaleScreen,
     ) {
     }
 
@@ -133,24 +138,17 @@ class PageCrudController extends AbstractCrudController
 
         $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->guardSubmittedBlocks($event, $contentLocale));
 
-        // The page's own two texts, handed over the way a block's are: written on the flush that saves the page, never before it, so a refused submission writes nothing (see ContentTranslator::stage)
-        if (null !== $contentLocale) {
-            $formBuilder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($contentLocale): void {
-                $page = $event->getData();
-                if (!$page instanceof Page) {
-                    return;
+        // The page's own two texts, handed over the way a block's are: written on the flush that saves the page, never before it, so a refused submission writes nothing (see ContentLocaleScreen::stageOnSubmit)
+        $this->contentLocaleScreen->stageOnSubmit(
+            $formBuilder,
+            $contentLocale,
+            PageTranslator::FIELDS,
+            function (object $page, array $values) use ($contentLocale): void {
+                if ($page instanceof Page && null !== $contentLocale) {
+                    $this->pageTranslator->stage($page, $contentLocale, $values);
                 }
-
-                $values = [];
-                foreach (PageTranslator::FIELDS as $field) {
-                    if ($event->getForm()->has($field)) {
-                        $values[$field] = $event->getForm()->get($field)->getData();
-                    }
-                }
-
-                $this->pageTranslator->stage($page, $contentLocale, $values);
-            });
-        }
+            }
+        );
 
         return $formBuilder;
     }
@@ -188,15 +186,8 @@ class PageCrudController extends AbstractCrudController
         }
     }
 
-    /**
-     * The very same page, offered in the language being written: its own two texts, then its blocks through the form
-     * they are always edited with (see BlockType's "translation_locale").
-     *
-     * Unmapped, all of them: what is written here belongs to the translation table, and mapped back it would
-     * overwrite the text the site itself was written in.
-     *
-     * @return iterable<FieldInterface>
-     */
+    // The very same page, offered in the language being written: its own two texts, then its blocks through the form they are always edited with (see BlockType's "translation_locale"). Unmapped, all of them: what is written here belongs to the translation table, and mapped back it would overwrite the text the site itself was written in.
+    /** @return iterable<FieldInterface> */
     private function translationFields(Page $page, string $locale): iterable
     {
         $values = $this->pageTranslator->promptValues($page, $locale);
@@ -222,7 +213,9 @@ class PageCrudController extends AbstractCrudController
             ->setEntryType(BlockType::class)
             ->setFormTypeOption('by_reference', false)
             ->setFormTypeOption('entry_options.context', 'page')
-            ->setFormTypeOption('entry_options.translation_locale', $locale);
+            ->setFormTypeOption('entry_options.translation_locale', $locale)
+            // Marker on the row: EasyAdmin writes no id on a collection, and SiteGuidedProjectProvider's "site-page-translation" parcours needs something to point at
+            ->setFormTypeOption('row_attr', ['data-page-translation-blocks' => '1']);
 
         // Last, as on the screen the page is written on: the url this language is read at, to open on a phone - the very reason a code is scanned. That screen carries the bare url, this one carries "/xx/..." (see PageQrCodeType and the qrcode action)
         yield Field::new('qrcode', false)
@@ -234,9 +227,7 @@ class PageCrudController extends AbstractCrudController
     // The language a page is being written in, when it is not the one the site was written in: read from the url the language selector links to (see page_crud_edit.html.twig), and only ever one the site declares
     private function contentLocale(): ?string
     {
-        $asked = (string) $this->requestStack->getCurrentRequest()?->query->get(self::CONTENT_LOCALE_PARAM);
-
-        return \in_array($asked, $this->pageTranslator->getTranslatableLocales(), true) ? $asked : null;
+        return $this->contentLocaleScreen->locale($this->pageTranslator->getTranslatableLocales());
     }
 
     #[\Override]
@@ -246,11 +237,8 @@ class PageCrudController extends AbstractCrudController
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
         $isHomePage = $entity instanceof Page && 'home' === $entity->getSlug();
 
-        // A language screen shows what a language can change and nothing else: the page is composed, published and given its image once, in the language it was written in
+        // A language screen carries the same fields as the screen the page was written on, in the same order: what a language says is offered in that language, the rest is offered once for all of them (see the assembly below)
         $contentLocale = Crud::PAGE_EDIT === $pageName ? $this->contentLocale() : null;
-        if (null !== $contentLocale && $entity instanceof Page) {
-            return $this->translationFields($entity, $contentLocale);
-        }
 
         // The language the page itself is written in, named in its own words: "Dans cette langue (français)" says which one an editor is looking at, a multilingual site having several screens that look alike
         $writingLocale = $this->siteLocales->getDefaultLocale();
@@ -262,9 +250,7 @@ class PageCrudController extends AbstractCrudController
             // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly, a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
             ->setHtmlAttribute('data-controller', 'publication-switch');
 
-        // Sitemaps
-        // Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway
-        // Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
+        // Sitemaps. Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway. Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
         $isIndexableField = BooleanField::new('isIndexable')
             ->setLabel(t('label.is_indexable', [], 'site'))
             ->setHelp(t('label.is_indexable_help', [], 'site'))
@@ -276,8 +262,7 @@ class PageCrudController extends AbstractCrudController
             $isIndexableField->hideOnIndex();
         }
 
-        // Each field is defined once here and assembled below: a multilingual site reads them in two groups, a single-language one in the order it always had
-        // Confirmed with the user, the title change also changing the slug; not needed on a new page
+        // Each field is defined once here and assembled below: a multilingual site reads them in two groups, a single-language one in the order it always had. Confirmed with the user, the title change also changing the slug; not needed on a new page
         $titleField = TextField::new('title')
             ->setLabel(t('label.title', [], 'site'))
             ->setRequired(true)
@@ -358,8 +343,7 @@ class PageCrudController extends AbstractCrudController
             ->setFormTypeOption('disabled', 'disabled')
             ->onlyOnDetail();
 
-        // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new")
-        // Marker on the row: the widget itself is rendered by our own form theme block, which prints no id at all, and SiteGuidedProjectProvider's "site-page-health" parcours needs something to point at
+        // QR code - needs a saved entity id, and previously only ever rendered on the edit page anyway (a separate template, @c975LSite/management/page_crud_new.html.twig, is used for "new"). Marker on the row: the widget itself is rendered by our own form theme block, which prints no id at all, and SiteGuidedProjectProvider's "site-page-health" parcours needs something to point at
         $qrCodeField = Field::new('qrcode', false)
             ->setFormType(PageQrCodeType::class)
             ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
@@ -373,16 +357,44 @@ class PageCrudController extends AbstractCrudController
                 ->hideOnIndex(),
         ];
 
-        // Health check
-        // Edit only: the page must exist and have been checked once before there is anything to show
+        // Health check. Edit only: the page must exist and have been checked once before there is anything to show. The language the screen was opened on travels with it: that language is read at another url, so it has a bilan of its own (see PageHealthCheckTargets)
         $tail = [
             FormField::addTab(t('label.tab_health_check', [], 'site'))
                 ->hideOnIndex()
                 ->onlyWhenUpdating(),
             Field::new('healthCheck', false)
                 ->setFormType(PageHealthCheckPanelType::class)
+                ->setFormTypeOption('content_locale', $contentLocale)
                 ->onlyWhenUpdating(),
         ];
+
+        // The very same group on every screen, and mapped on all of them: what it holds belongs to the page and not to a language, so writing it from the English screen writes it for the French one too - the way the blocks a page is composed of are the same set whichever language they are read in
+        $allLanguages = [
+            FormField::addFieldset(t('label.fieldset_all_languages', [], 'site'))
+                ->setHelp(t('label.fieldset_all_languages_help', [], 'site'))
+                // Painted apart by the back-office stylesheet, so an editor sees at a glance which fields reach beyond the language on screen (see sass/management/_form-fields.scss)
+                ->setCssClass('fieldset-all-languages'),
+            $slugField,
+            $isTitleDisplayedField,
+            $isPublishedField,
+            $isIndexableField,
+            $changeFrequencyField,
+            $priorityField,
+            $ogImageField,
+            $creationField,
+            $modificationField,
+        ];
+
+        // A language screen: the common group, then what that language alone says, then that language's own bilan
+        if (null !== $contentLocale && $entity instanceof Page) {
+            return [
+                ...$head,
+                ...$allLanguages,
+                $this->thisLanguageFieldset($contentLocale),
+                ...$this->translationFields($entity, $contentLocale),
+                ...$tail,
+            ];
+        }
 
         // One language, nothing to tell apart: the screen keeps the order it always had, and no group appears where every field acts on the only language there is
         if (!$this->pageTranslator->isActive()) {
@@ -405,31 +417,27 @@ class PageCrudController extends AbstractCrudController
             ];
         }
 
-        // What a language cannot change comes first, so an editor opening a page in another language knows before touching anything which of these fields they would be changing for every language at once - the very question a screen mixing the two leaves them to guess (see translationFields, which is the other half of this)
+        // What a language cannot change comes first, and is painted apart: an editor opening a page in another language sees, before touching anything, which of these fields they would be changing for every language at once (see the "fieldset-all-languages" rule in CoreBundle's back-office stylesheet)
         return [
             ...$head,
+            ...$allLanguages,
 
-            FormField::addFieldset(t('label.fieldset_all_languages', [], 'site'))
-                ->setHelp(t('label.fieldset_all_languages_help', [], 'site')),
-            $slugField,
-            $isTitleDisplayedField,
-            $isPublishedField,
-            $isIndexableField,
-            $changeFrequencyField,
-            $priorityField,
-            $ogImageField,
-            $creationField,
-            $modificationField,
-            $qrCodeField,
-
-            FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($writingLocale, $writingLocale)], 'site'))
-                ->setHelp(t('label.fieldset_this_language_help', [], 'site')),
+            $this->thisLanguageFieldset($writingLocale),
             $titleField,
             $summaryField,
             $blocksField,
+            // Last of its group on both screens, the language screen carrying the same order with its own url in the code (see translationFields)
+            $qrCodeField,
 
             ...$tail,
         ];
+    }
+
+    // The group holding what only the language on screen says, named in that language's own words: "Dans cette langue (english)" says which of the lookalike screens an editor is on
+    private function thisLanguageFieldset(string $locale): FieldInterface
+    {
+        return FormField::addFieldset(t('label.fieldset_this_language', ['%language%' => Locales::getName($locale, $locale)], 'site'))
+            ->setHelp(t('label.fieldset_this_language_help', [], 'site'));
     }
 
     #[\Override]
@@ -472,8 +480,7 @@ class PageCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
     }
 
-    // Publishes this page in place of another, one sub-action per page; the target is always the id the link carries
-    // Edit screen only, being a rarer deliberate act; not added at all with no other page, an ActionGroup needing at least one action
+    // Publishes this page in place of another, one sub-action per page; the target is always the id the link carries. Edit screen only, being a rarer deliberate act; not added at all with no other page, an ActionGroup needing at least one action
     private function addPublishAsReplacementGroup(Actions $actions, string $role): void
     {
         $subActions = [];
@@ -507,8 +514,7 @@ class PageCrudController extends AbstractCrudController
         ));
     }
 
-    // Edit screen only, skipping a full page query and one closure per page on every other render
-    // Read off the request attribute: the AdminContext is only attached after configureActions() runs
+    // Edit screen only, skipping a full page query and one closure per page on every other render. Read off the request attribute: the AdminContext is only attached after configureActions() runs
     private function replaceableTargets(): array
     {
         if (Crud::PAGE_EDIT !== $this->requestStack->getCurrentRequest()?->attributes->get(EA::CRUD_ACTION)) {
@@ -525,8 +531,7 @@ class PageCrudController extends AbstractCrudController
     // Every action this CRUD adds on top of EasyAdmin's own built-in ones, and where each of them shows
     private function addPageActions(Actions $actions): Actions
     {
-        // Permanently removes the page, only shown once already in the trash askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to trash") instead of a native confirm() - keeps the UI consistent
-        // Built as a url rather than linked to the crud action, so the csrf token the action checks travels with it
+        // Permanently removes the page, only shown once already in the trash askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to trash") instead of a native confirm() - keeps the UI consistent. Built as a url rather than linked to the crud action, so the csrf token the action checks travels with it
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
             ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('deletePermanently', $page, self::DELETE_PERMANENTLY_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
@@ -555,13 +560,7 @@ class PageCrudController extends AbstractCrudController
             ->addCssClass('btn btn-secondary');
 
         // The very same edit screen, opened on another language: the fields are the page's own, filled in that language (see translationFields). Shown only where the site declares more than one - on a single-language site there is nothing to open
-        $translateAction = Action::new('translate', t('action.translate', [], 'site'), 'fa fa-language')
-            ->linkToUrl(fn (Page $page) => $this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction(Action::EDIT)
-                ->setEntityId($page->getId())
-                ->set(self::CONTENT_LOCALE_PARAM, $this->pageTranslator->getTranslatableLocales()[0] ?? null)
-                ->generateUrl())
+        $translateAction = $this->contentLocaleScreen->action('translate', t('action.translate', [], 'site'), 'fa fa-language', $this->pageTranslator->getTranslatableLocales())
             ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted())
             ->addCssClass('btn btn-secondary');
 
@@ -849,8 +848,7 @@ class PageCrudController extends AbstractCrudController
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
-            // isIndexable is deliberately not carried over: the copy is created unpublished, and Page::unreferenceWhenUnpublished() would unreference it at the very next flush anyway. Referencing it is a deliberate call, made when it gets published - or taken over from the page it replaces, see publishAsReplacement()
-            // The whole payload rather than option by option: the copy holds the same blocks, so every display option the source had answered stays true of it - and a new option needs nothing here
+            // isIndexable is deliberately not carried over: the copy is created unpublished, and Page::unreferenceWhenUnpublished() would unreference it at the very next flush anyway. Referencing it is a deliberate call, made when it gets published - or taken over from the page it replaces, see publishAsReplacement(). The whole payload rather than option by option: the copy holds the same blocks, so every display option the source had answered stays true of it - and a new option needs nothing here
             ->setOptions($source->getOptions())
             ->setIsPublished(false)
             ->setCreation($now)
@@ -866,6 +864,9 @@ class PageCrudController extends AbstractCrudController
         foreach ($source->getBlocks() as $block) {
             $copy->addBlock($this->cloneBlock($block, $user));
         }
+
+        // What it says in the site's other languages goes with it, written once the copy is saved (see TranslationCopier)
+        $this->translationCopier->copy(PageTranslator::OWNER, $source, $copy);
 
         return $copy;
     }
@@ -962,6 +963,9 @@ class PageCrudController extends AbstractCrudController
             $copy->addSlot($this->cloneBlock($slot, $user));
         }
 
+        // What it says in the site's other languages goes with it, written once the copy is saved (see TranslationCopier)
+        $this->translationCopier->copy(Translation::OWNER_BLOCK, $source, $copy);
+
         return $copy;
     }
 
@@ -990,6 +994,9 @@ class PageCrudController extends AbstractCrudController
                 $copy->setFile(new ReplacingFile($path));
             }
         }
+
+        // What it says in the site's other languages goes with it, written once the copy is saved (see TranslationCopier)
+        $this->translationCopier->copy(Translation::OWNER_MEDIA, $source, $copy);
 
         return $copy;
     }
@@ -1045,42 +1052,16 @@ class PageCrudController extends AbstractCrudController
                 $responseParameters->set('page_public_path', $this->pagePath($page));
             }
 
-            if ($page instanceof Page) {
-                $this->addContentLocaleParameters($responseParameters, $page);
+            // The language tabs above the form, shared with every other screen that has a language of its own (see ContentLocaleScreen)
+            if ($page instanceof Page && null !== $page->getId()) {
+                $this->contentLocaleScreen->addParameters($responseParameters, self::class, $page->getId(), $this->pageTranslator->getTranslatableLocales(), $this->contentLocale());
             }
         }
 
         return $responseParameters;
     }
 
-    // What the language selector at the top of the edit screen needs: the languages offered, the one being written, and where each of them opens the very same page
-    private function addContentLocaleParameters(KeyValueStore $responseParameters, Page $page): void
-    {
-        $locales = $this->pageTranslator->getTranslatableLocales();
-
-        $urls = [];
-        foreach ([null, ...$locales] as $locale) {
-            $urls[$locale ?? ''] = $this->adminUrlGenerator
-                ->setController(self::class)
-                ->setAction(Action::EDIT)
-                ->setEntityId($page->getId())
-                ->set(self::CONTENT_LOCALE_PARAM, $locale)
-                ->generateUrl();
-        }
-
-        $responseParameters->set('page_content_locales', $locales);
-        $responseParameters->set('page_content_locale', $this->contentLocale());
-        $responseParameters->set('page_default_locale', $this->siteLocales->getDefaultLocale());
-        $responseParameters->set('page_content_urls', $urls);
-    }
-
-    /**
-     * Relative path of the page on the public site: preview link if unpublished, otherwise the one the resolver
-     * builds - home or its slug, prefixed by the language when it is not the one the site is written in.
-     *
-     * A preview has no localised route of its own: it is the page as it stands, shown to whoever may see it before it
-     * is published, and there is nothing to read it in another language yet.
-     */
+    // Relative path of the page on the public site: preview link if unpublished, otherwise the one the resolver builds - home or its slug, prefixed by the language when it is not the one the site is written in. A preview has no localised route of its own: it is the page as it stands, shown to whoever may see it before it is published, and there is nothing to read it in another language yet.
     private function pagePath(Page $page, ?string $locale = null): string
     {
         return $page->isPublished()

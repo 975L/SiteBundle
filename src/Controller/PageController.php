@@ -11,7 +11,7 @@
 namespace c975L\SiteBundle\Controller;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
-use c975L\ConfigBundle\Service\SiteLocales;
+use c975L\ConfigBundle\Service\LocalizedRouteNegotiator;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PageServiceInterface;
 use c975L\SiteBundle\Service\PageTranslator;
@@ -25,7 +25,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Translation\LocaleSwitcher;
 use Twig\Environment;
 
 /**
@@ -44,8 +43,7 @@ class PageController extends AbstractController
         private readonly CollectionItemContext $collectionItemContext,
         private readonly BlockRenderContext $blockRenderContext,
         private readonly RequestStack $requestStack,
-        private readonly LocaleSwitcher $localeSwitcher,
-        private readonly SiteLocales $siteLocales,
+        private readonly LocalizedRouteNegotiator $negotiator,
         private readonly PageTranslator $pageTranslator,
     ) {
     }
@@ -53,18 +51,13 @@ class PageController extends AbstractController
     // A localised url answers only for a page that language was really written in: the routes exist for every language the site declares, but a page nobody translated has nothing to serve there but the writing language's own text under another "lang" attribute. Nothing links to those urls - they are declared neither in the head nor in the sitemap (see PagePublicUrlResolver::resolveAlternates()), and a menu writes the writing language's url for a page nobody translated (see MenuExtension::pageUrl()) - so a 404 is what they always should have answered, and a redirect would only buy a crawler a hop
     private function requireTranslated(Request $request, Page $page): void
     {
-        $locale = $request->attributes->get('_locale');
-        if (\is_string($locale) && '' !== $locale && !\in_array($locale, $this->pageTranslator->translatedLocales($page), true)) {
+        if (!$this->negotiator->isTranslated($request, $this->pageTranslator->translatedLocales($page))) {
             throw $this->createNotFoundException();
         }
     }
 
+    // The same route, in the language the request is being answered in. Without it a redirect - the home page, a trailing slash - would drop a visitor reading in one language back into the one the site was written in, and hand a crawler a redirect across languages.
     /**
-     * The same route, in the language the request is being answered in.
-     *
-     * Without it a redirect - the home page, a trailing slash - would drop a visitor reading in one language back
-     * into the one the site was written in, and hand a crawler a redirect across languages.
-     *
      * @param array<string, string> $parameters
      *
      * @return array{0: string, 1: array<string, string>}
@@ -78,54 +71,17 @@ class PageController extends AbstractController
             : [$route, $parameters];
     }
 
-    /**
-     * The writing language's own urls, asked for in another language: the visitor is sent to that language's url instead.
-     *
-     * "/" and "/pages/{page}" are what the sitemap and the hreflang groups declare as the writing language's versions
-     * (see PagePublicUrlResolver::resolvePath()), so they may only ever answer in it. A visitor whose own language the
-     * site has been translated into is redirected to that language's url rather than served another language here, and
-     * anyone else is served the writing language for good - the locale is switched back to it, LocaleListener having
-     * already handed the translator whatever the browser asked for.
-     *
-     * Null when there is nothing to redirect to, which is every request of a site declaring a single language, every
-     * localised url, one having already said in its path which language it answers in, and every page this language
-     * was never written in - sending a visitor to an untranslated "/en/" would only hand them the French page under
-     * lang="en" (see PageTranslator::translatedLocales()).
-     *
-     * @param array<string, string> $parameters
-     */
+    // The writing language's own urls, asked for in another language: the visitor is sent to that language's url instead. "/" and "/pages/{page}" are what the sitemap and the hreflang groups declare as the writing language's versions (see PagePublicUrlResolver::resolvePath()), so they may only ever answer in it. A visitor whose own language the site has been translated into is redirected to that language's url rather than served another language here, and anyone else is served the writing language for good - the locale is switched back to it, LocaleListener having already handed the translator whatever the browser asked for. Null when there is nothing to redirect to, which is every request of a site declaring a single language, every localised url, one having already said in its path which language it answers in, and every page this language was never written in - sending a visitor to an untranslated "/en/" would only hand them the French page under lang="en" (see PageTranslator::translatedLocales()).
+    /** @param array<string, string> $parameters */
     private function writingLanguage(Request $request, Page $page, string $route, array $parameters = []): ?Response
     {
-        if (null !== $request->attributes->get('_locale')) {
-            return null;
-        }
-
-        $locale = $request->getLocale();
-
-        // Only a language the visitor actually asked for: the one their browser announced, read through getPreferredLanguage() exactly as LocaleListener did so "en-GB" matches "en"; the one just picked from the language menu, which lands in the query; or the one picked earlier, which the listener keeps under Symfony's own "_locale" session key. The query is read as well as the session because a visitor arriving without a session cookie has none, so their first click on the menu would be served the writing language; it is trusted no more than the session, only ever matching when LocaleListener has already accepted it. Announcing none of the three, the method hands back the writing language, a crawler having no business being moved off the url it requested
-        $asked = $locale === $request->getPreferredLanguage($this->siteLocales->all())
-            || $locale === $request->query->get('_locale')
-            || ($request->hasPreviousSession() && $locale === $request->getSession()->get('_locale'));
-
-        if ($asked && $locale !== $this->siteLocales->getDefaultLocale() && \in_array($locale, $this->pageTranslator->translatedLocales($page), true)) {
-            // The query string goes along: a campaign's "utm_source" or a block's own filter would otherwise be dropped by the redirect. The route's own parameters come first, and the language right after them, so a "?page=" or a "?_locale=" of the visitor's own making is absorbed by the key collision rather than sending them somewhere else
-            return $this->redirectToRoute($route . '_localized', $parameters + ['_locale' => $locale] + $request->query->all());
-        }
-
-        $this->localeSwitcher->setLocale($this->siteLocales->getDefaultLocale());
-        $request->setLocale($this->siteLocales->getDefaultLocale());
-
-        return null;
+        return $this->negotiator->redirectToAskedLanguage($request, $this->pageTranslator->translatedLocales($page), $route, $parameters);
     }
 
     // What a non-prefixed url answers depends on the language the browser asks for - that language's url for a visitor the site has been translated for, the page itself for everyone else - which a shared cache has to be told, or the first visitor's answer would be handed to every one after them. The redirect carries it as much as the page does: a cached 302 would send every visitor into one visitor's language
     private function varyOnLanguage(Request $request, Response $response): Response
     {
-        if (null === $request->attributes->get('_locale') && $this->siteLocales->isMultilingual()) {
-            $response->setVary('Accept-Language', false);
-        }
-
-        return $response;
+        return $this->negotiator->vary($request, $response);
     }
 
     // REDIRECT HOME
@@ -150,12 +106,11 @@ class PageController extends AbstractController
         return $this->redirectToRoute('page_home', [], 303);
     }
 
-    // HOME
-    // The same home page, in another language: the writing language keeps "/" byte for byte, the others go through "/{_locale}/". The pattern holds the languages the site declares beside the one it is written in, and matches nothing while there are none (see c975LSiteBundle::loadExtension()), so a single-language site only ever answers on the second
+    // HOME. The same home page, in another language: the writing language keeps "/" byte for byte, the others go through "/{_locale}/". The pattern holds the languages the site declares beside the one it is written in, and matches nothing while there are none (see c975LSiteBundle::loadExtension()), so a single-language site only ever answers on the second
     #[Route(
         path: '/{_locale}/',
         name: 'page_home_localized',
-        requirements: ['_locale' => '%c975l_site.locales_pattern%'],
+        requirements: ['_locale' => '%c975l_config.locales_pattern%'],
         methods: ['GET']
     )]
     #[Route(
@@ -206,7 +161,7 @@ class PageController extends AbstractController
         path: '/{_locale}/pages/{page}',
         name: 'page_display_localized',
         requirements: [
-            '_locale' => '%c975l_site.locales_pattern%',
+            '_locale' => '%c975l_config.locales_pattern%',
             'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
         ],
         methods: ['GET']
@@ -243,7 +198,17 @@ class PageController extends AbstractController
 
         // No exact Page for this slug: the last segment may be a "collection" block's item slug, carried by the Page one level up (see resolveCollectionDetail())
         if (null === $pageObject && str_contains($slug, '/')) {
-            [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
+            $parentPage = $this->parentPageOf($slug);
+
+            // Resolving the detail renders its blocks and their internal links (see UiBundle's BlockExtension::localizeLinks): the gate confirms the language the response is read in, and turns a deleted or unpublished page away, before anything of the detail is rendered
+            if (null !== $parentPage) {
+                $answered = $this->gate($request, $parentPage, $slug);
+                if (null !== $answered) {
+                    return $answered;
+                }
+
+                [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($parentPage, $slug);
+            }
         }
 
         if (null === $pageObject) {
@@ -253,21 +218,29 @@ class PageController extends AbstractController
         return $this->renderPage($request, $pageObject, $slug, $detailHtml, $detailTitle);
     }
 
-    // The page a slug resolved to, once it is one a visitor may read: a deleted page is gone for good, an unpublished one was never there, and a request written in another language is answered in that one
-    private function renderPage(Request $request, Page $pageObject, string $slug, ?string $detailHtml, ?string $detailTitle): Response
+    // What a page's url has to pass before anything of it is rendered: a deleted page is gone for good, an unpublished one was never there, and a request written in another language is answered in that one. A response back is the answer to return as is; null means the request may be served here. Called twice on an item detail - once in display() before the detail is rendered, once through renderPage() - the second run being the same computation on a page that has already passed
+    private function gate(Request $request, Page $page, string $slug): ?Response
     {
-        if ($pageObject->isDeleted()) {
+        if ($page->isDeleted()) {
             throw new GoneHttpException();
         }
-        if (!$pageObject->isPublished()) {
+        if (!$page->isPublished()) {
             throw $this->createNotFoundException();
         }
 
-        $this->requireTranslated($request, $pageObject);
+        $this->requireTranslated($request, $page);
 
-        $otherLanguage = $this->writingLanguage($request, $pageObject, 'page_display', ['page' => $slug]);
-        if (null !== $otherLanguage) {
-            return $this->varyOnLanguage($request, $otherLanguage);
+        $otherLanguage = $this->writingLanguage($request, $page, 'page_display', ['page' => $slug]);
+
+        return null !== $otherLanguage ? $this->varyOnLanguage($request, $otherLanguage) : null;
+    }
+
+    // The page a slug resolved to, once it is one a visitor may read
+    private function renderPage(Request $request, Page $pageObject, string $slug, ?string $detailHtml, ?string $detailTitle): Response
+    {
+        $answered = $this->gate($request, $pageObject, $slug);
+        if (null !== $answered) {
+            return $answered;
         }
 
         return $this->varyOnLanguage($request, $this->render(
@@ -280,16 +253,16 @@ class PageController extends AbstractController
         ));
     }
 
-    // Tries the slug's last segment as a "collection" block's item slug, resolved against the block's own source, then rendered via a separate Page (the block's "detailPage") whose own blocks render normally, with "collectionItem" (see CollectionItemContext) set for the duration of this render - no Page/Block row persisted per item (see README, "Item detail pages"); tries each "collection" block on the page independently, so only the one whose source resolves this item slug wins; @return array{0: ?Page, 1: ?string, 2: ?string}
-    private function resolveCollectionDetail(string $slug): array
+    // The Page one level up from an item detail's slug, the one carrying the "collection" block that resolves its last segment
+    private function parentPageOf(string $slug): ?Page
     {
-        $lastSlash = strrpos($slug, '/');
-        $parentPage = $this->pageService->findForDisplay(substr($slug, 0, $lastSlash));
-        if (null === $parentPage) {
-            return [null, null, null];
-        }
+        return $this->pageService->findForDisplay(substr($slug, 0, (int) strrpos($slug, '/')));
+    }
 
-        $itemSlug = substr($slug, $lastSlash + 1);
+    // Tries, on a parent page its caller has already found and gated, the slug's last segment as a "collection" block's item slug, resolved against the block's own source, then rendered via a separate Page (the block's "detailPage") whose own blocks render normally, with "collectionItem" (see CollectionItemContext) set for the duration of this render - no Page/Block row persisted per item (see README, "Item detail pages"); tries each "collection" block on the page independently, so only the one whose source resolves this item slug wins; @return array{0: ?Page, 1: ?string, 2: ?string}
+    private function resolveCollectionDetail(Page $parentPage, string $slug): array
+    {
+        $itemSlug = substr($slug, (int) strrpos($slug, '/') + 1);
 
         foreach ($parentPage->getBlocks() as $block) {
             $detail = $this->renderCollectionDetail($block, $itemSlug);
@@ -355,9 +328,13 @@ class PageController extends AbstractController
         $detailHtml = null;
         $detailTitle = null;
 
-        // Same fallback as display(): lets an editor preview an unpublished Page's own collection detail views before publishing
+        // Same fallback as display(), minus its gate: a preview is exactly the screen for a page the public gates turn away, and none of its html is cached (see disableCache above)
         if (null === $pageObject && str_contains($slug, '/')) {
-            [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($slug);
+            $parentPage = $this->parentPageOf($slug);
+
+            if (null !== $parentPage) {
+                [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($parentPage, $slug);
+            }
         }
 
         if (null === $pageObject || $pageObject->isDeleted()) {

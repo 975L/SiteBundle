@@ -15,6 +15,7 @@ use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\SiteBundle\Service\CollectionItemSourceProvider;
+use c975L\SiteBundle\Service\CollectionItemTranslator;
 use PHPUnit\Framework\TestCase;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface;
 
@@ -44,6 +45,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects, $books]),
             $this->createStub(CollectionItemRepository::class),
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         );
 
         $this->assertSame(
@@ -62,6 +64,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects, $books]),
             $this->createStub(CollectionItemRepository::class),
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
 
         $this->assertSame(['site_collection_1'], $sources['site.collection.projects']['cacheTags']);
@@ -79,6 +82,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
 
         $this->assertSame(12, ($sources['site.collection.projects']['count'])());
@@ -106,6 +110,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $uploaderHelper,
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
         $items = ($sources['site.collection.projects']['items'])(6);
 
@@ -115,6 +120,35 @@ class CollectionItemSourceProviderTest extends TestCase
         $this->assertSame("Des histoires inventées à partir des idées d'enfants.", $items[0]->description);
         $this->assertSame('/medias/site/collection-projects-42-abc.webp', $items[0]->imageUrl);
         $this->assertSame('https://projet-alpha.example', $items[0]->url);
+    }
+
+    // A card reads in the language being rendered, and falls back on the words it was written in where that language says nothing
+    public function testItemsAreReadInTheLanguageBeingRendered(): void
+    {
+        $projects = $this->withId(new CollectionGroup()->setName('Projects')->setSlug('projects'), 1);
+
+        $item = new CollectionItem()
+            ->setCollectionGroup($projects)
+            ->setTitle('Projet Alpha')
+            ->setSlug('projet-alpha')
+            ->setDescription("Des histoires inventées à partir des idées d'enfants.");
+
+        $collectionItemRepository = $this->createStub(CollectionItemRepository::class);
+        $collectionItemRepository->method('findByCollectionGroup')->willReturn([$item]);
+
+        $collectionItemTranslator = $this->createStub(CollectionItemTranslator::class);
+        $collectionItemTranslator->method('translate')->willReturn(['title' => 'Alpha project', 'description' => null]);
+
+        $sources = new CollectionItemSourceProvider(
+            $this->collectionGroupRepository([$projects]),
+            $collectionItemRepository,
+            $this->createStub(UploaderHelperInterface::class),
+            $collectionItemTranslator,
+        )->getSources();
+        $items = ($sources['site.collection.projects']['items'])(null);
+
+        $this->assertSame('Alpha project', $items[0]->title);
+        $this->assertSame("Des histoires inventées à partir des idées d'enfants.", $items[0]->description);
     }
 
     // The "collection" block's title-link feature (see UiBundle's CollectionExtension) relies on this "detail" callable resolving the same slug items() exposed on the CollectionItem model
@@ -142,6 +176,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $uploaderHelper,
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
         $detail = ($sources['site.collection.projects']['detail'])('projet-alpha');
 
@@ -165,6 +200,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
 
         $this->assertNull(($sources['site.collection.projects']['detail'])('unknown-slug'));
@@ -188,6 +224,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
         $items = ($sources['site.collection.projects']['items'])(2);
 
@@ -209,6 +246,7 @@ class CollectionItemSourceProviderTest extends TestCase
             $this->collectionGroupRepository([$projects]),
             $collectionItemRepository,
             $this->createStub(UploaderHelperInterface::class),
+            $this->createStub(CollectionItemTranslator::class),
         )->getSources();
 
         ($sources['site.collection.projects']['count'])();

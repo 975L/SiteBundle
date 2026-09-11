@@ -10,12 +10,15 @@
 
 namespace c975L\SiteBundle\Tests\Controller\Management;
 
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Controller\Management\CollectionItemCrudController;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemTranslator;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -24,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Contracts\Provider\AdminContextProviderInter
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Registry\AdminControllerRegistryInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpFoundation\Request;
@@ -157,6 +161,9 @@ class CollectionItemCrudControllerTest extends TestCase
             $collaborators['collectionGroupRepository'],
             $collaborators['adminUrlGenerator'],
             $collaborators['requestStack'],
+            // A site declaring a single language, which is what every one of these tests describes: the "Translate" action never shows
+            new ContentLocaleScreen(new RequestStack(), $this->createStub(AdminUrlGeneratorInterface::class), new SiteLocales([], 'fr')),
+            $this->createStub(CollectionItemTranslator::class),
         );
     }
 

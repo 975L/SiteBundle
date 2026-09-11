@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Entity\Redirect;
+use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\Export\ContentExporter;
@@ -27,8 +28,10 @@ use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Management\BlockDataExporter;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\TranslationCopier;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -170,10 +173,30 @@ class PageCrudControllerTest extends TestCase
             $services['pageTranslator'],
             $services['siteLocales'],
             $services['pagePublicUrlResolver'],
+            $services['translationCopier'],
+            // Built on the very request stack, url generator and languages the test hands over, so a screen opened on a language reads it off the same request
+            $services['contentLocaleScreen'] ?? new ContentLocaleScreen($services['requestStack'], $services['adminUrlGenerator'], $services['siteLocales']),
         );
     }
 
     // Default collaborators; the page repository is read from the overrides first, so an overridden one also backs the export provider
+    // What the page and each of its blocks say in the site's other languages go with its copy, written once it is saved (see TranslationCopier)
+    public function testTheCopyOfAPageCarriesItsTranslations(): void
+    {
+        $copied = [];
+        $translationCopier = $this->createStub(TranslationCopier::class);
+        $translationCopier->method('copy')->willReturnCallback(static function (string $ownerType) use (&$copied): void {
+            $copied[] = $ownerType;
+        });
+
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers');
+        $page->addBlock(new Block()->setKind('text'));
+
+        $this->invokePrivate($this->createController(['translationCopier' => $translationCopier]), 'clonePage', [$page]);
+
+        $this->assertSame([Translation::OWNER_BLOCK, PageTranslator::OWNER], $copied);
+    }
+
     private function createControllerServices(array $services): array
     {
         $translator = $this->createStub(TranslatorInterface::class);
@@ -203,6 +226,8 @@ class PageCrudControllerTest extends TestCase
             'siteLocales' => $services['siteLocales'] ?? new SiteLocales([], 'fr'),
             // What the QR code points at, the language screen asking it for that language's own url
             'pagePublicUrlResolver' => $services['pagePublicUrlResolver'] ?? $this->createStub(PagePublicUrlResolver::class),
+            // What a duplicated page says in the site's other languages, carried over to its copy
+            'translationCopier' => $services['translationCopier'] ?? $this->createStub(TranslationCopier::class),
         ];
     }
 
@@ -1290,27 +1315,74 @@ class PageCrudControllerTest extends TestCase
             ->invoke($controller, new FormEvent($form, ['title' => 'Nos ateliers']), $contentLocale);
     }
 
-    // A language screen shows what a language can change and nothing else: the page is composed, published and given its image once, in the language it was written in
-    public function testConfigureFieldsOnALanguageScreenOffersTheTextsAndTheBlocksAlone(): void
+    // A language screen carries the very same screen: the group acting on every language, then what that language alone says - and the code last, as on the screen the page was written on
+    public function testConfigureFieldsOnALanguageScreenCarriesTheCommonGroupThenTheLanguageOne(): void
     {
         $fields = iterator_to_array($this->translationScreenFields());
 
         $this->assertSame(
-            ['title', 'summarySocialNetwork', 'blocks', 'qrcode'],
+            [
+                'id', 'ea_form_tab',
+                'ea_form_fieldset', 'slug', 'isTitleDisplayed', 'isPublished', 'isIndexable', 'changeFrequency', 'priority', 'ogImage', 'creation', 'modification',
+                'ea_form_fieldset', 'title', 'summarySocialNetwork', 'blocks', 'qrcode',
+                'ea_form_tab', 'healthCheck',
+            ],
             array_map(static fn ($field) => $field->getAsDto()->getProperty(), $fields),
         );
     }
 
-    // Unmapped, all of them: what is written on a language screen belongs to the translation table, and mapped back it would overwrite the text the site itself was written in
-    public function testConfigureFieldsOnALanguageScreenMapsNothingBackOntoThePage(): void
+    // The whole point of reproducing it: the group is painted apart, so an editor sees before the first keystroke which fields reach beyond the language on screen
+    public function testConfigureFieldsMarksTheCommonGroupForTheStylesheet(): void
+    {
+        $fields = iterator_to_array($this->translationScreenFields());
+
+        $this->assertStringContainsString('fieldset-all-languages', $fields[2]->getAsDto()->getCssClass());
+    }
+
+    // A language screen carries a bilan of its own: that language is read at another url, so it is another page to a crawler, a validator and a performance report
+    public function testConfigureFieldsOnALanguageScreenCarriesThatLanguagesOwnHealthCheck(): void
+    {
+        $healthCheck = $this->findFieldByProperty($this->translationScreenFields(), 'healthCheck');
+
+        $this->assertNotNull($healthCheck);
+        $this->assertSame('es', $healthCheck->getAsDto()->getFormTypeOptions()['content_locale']);
+    }
+
+    // The no-regression contract: on the screen the page was written on, the panel reads the url with no language in it
+    public function testTheHealthCheckPanelOfTheWritingScreenAsksForNoLanguage(): void
+    {
+        $healthCheck = $this->findFieldByProperty($this->createController()->configureFields(Crud::PAGE_EDIT), 'healthCheck');
+
+        $this->assertNull($healthCheck->getAsDto()->getFormTypeOptions()['content_locale']);
+    }
+
+    // Mapped, all of them: what the common group holds belongs to the row, so writing it from a language screen writes it for every language at once - the very thing that screen is now for
+    public function testConfigureFieldsOnALanguageScreenMapsTheCommonGroupBackOntoThePage(): void
     {
         foreach ($this->translationScreenFields() as $field) {
-            $options = $field->getAsDto()->getFormTypeOptions();
-
-            // "qrcode" is bound to no property at all, its own form type saying so once (see PageQrCodeType)
-            if (!in_array($field->getAsDto()->getProperty(), ['blocks', 'qrcode'], true)) {
-                $this->assertFalse($options['mapped'], 'A mapped field would overwrite the page in its own language.');
+            if (!in_array($field->getAsDto()->getProperty(), ['slug', 'isPublished', 'isIndexable', 'priority'], true)) {
+                continue;
             }
+
+            $this->assertNotFalse(
+                $field->getAsDto()->getFormTypeOptions()['mapped'] ?? null,
+                'A field of the common group left unmapped would not reach the page it is shared by.',
+            );
+        }
+    }
+
+    // Unmapped, the texts alone: what is written under "in this language" belongs to the translation table, and mapped back it would overwrite the text the site itself was written in
+    public function testConfigureFieldsOnALanguageScreenMapsNoTextBackOntoThePage(): void
+    {
+        foreach ($this->translationScreenFields() as $field) {
+            if (!in_array($field->getAsDto()->getProperty(), ['title', 'summarySocialNetwork'], true)) {
+                continue;
+            }
+
+            $this->assertFalse(
+                $field->getAsDto()->getFormTypeOptions()['mapped'],
+                'A mapped field would overwrite the page in its own language.',
+            );
         }
     }
 
@@ -1319,7 +1391,7 @@ class PageCrudControllerTest extends TestCase
     {
         $fields = iterator_to_array($this->translationScreenFields());
 
-        $this->assertSame('[Nos ateliers]', $fields[0]->getAsDto()->getFormTypeOptions()['data']);
+        $this->assertSame('[Nos ateliers]', $this->findFieldByProperty($fields, 'title')->getAsDto()->getFormTypeOptions()['data']);
     }
 
     // The language travels down into every block's own form, where the very same rule applies one level lower

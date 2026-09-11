@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Controller\Management\PageCrudController;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
@@ -36,8 +37,36 @@ class PageEditUrlResolverTest extends TestCase
         $urlGenerator->expects($this->once())->method('setEntityId')->with(42)->willReturnSelf();
         $urlGenerator->method('generateUrl')->willReturn('/management/page/42/edit');
 
-        $resolver = new PageEditUrlResolver($urlGenerator);
+        $resolver = new PageEditUrlResolver($urlGenerator, new SiteLocales(['fr', 'en'], 'fr'));
 
         $this->assertSame('/management/page/42/edit', $resolver->resolve($this->createPage(42)));
+    }
+
+    // A health check row about the English page sends its reader to the screen that language is written on, not to the one the page was written in
+    public function testALanguageOpensTheScreenThatLanguageIsWrittenOn(): void
+    {
+        $query = [];
+        $urlGenerator = $this->createStub(AdminUrlGeneratorInterface::class);
+        $urlGenerator->method('unsetAll')->willReturnSelf();
+        $urlGenerator->method('setController')->willReturnSelf();
+        $urlGenerator->method('setAction')->willReturnSelf();
+        $urlGenerator->method('setEntityId')->willReturnSelf();
+        $urlGenerator->method('set')->willReturnCallback(function (string $name, mixed $value) use (&$query, $urlGenerator) {
+            $query[$name] = $value;
+
+            return $urlGenerator;
+        });
+        $urlGenerator->method('generateUrl')->willReturn('/management/page/42/edit');
+
+        $resolver = new PageEditUrlResolver($urlGenerator, new SiteLocales(['fr', 'en'], 'fr'));
+        $page = $this->createPage(42);
+
+        $resolver->resolve($page, 'en');
+        $this->assertSame(['contenu' => 'en'], $query);
+
+        // The writing language keeps the url it always had
+        $query = [];
+        $resolver->resolve($page, 'fr');
+        $this->assertSame([], $query);
     }
 }

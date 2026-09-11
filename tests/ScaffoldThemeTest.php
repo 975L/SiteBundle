@@ -13,8 +13,7 @@ namespace c975L\SiteBundle\Tests;
 use c975L\UiBundle\c975LUiBundle;
 use PHPUnit\Framework\TestCase;
 
-// The scaffolded theme.css is a hand-maintained copy of the token defaults, so it drifts on its own
-// A name kept after the bundle dropped it is deliberately not asserted, vendor/ holding any version
+// The scaffolded theme.css is a hand-maintained copy of the token defaults, so it drifts on its own. A name kept after the bundle dropped it is deliberately not asserted, vendor/ holding any version
 class ScaffoldThemeTest extends TestCase
 {
     // Admin-editable from the backoffice, so listing them would hand the palette to this file's editor
@@ -40,10 +39,7 @@ class ScaffoldThemeTest extends TestCase
         '--slider-freeflow-vw',
     ];
 
-    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike.
-    // Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all.
-    // Same for "--slider-freeflow-item", "--contact-details-gutter" and "--calculator-gutter", declared on ".slider-freeflow", ".contact-details" and ".calculator" themselves, where the local declaration beats anything inherited from :root
-    // Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
+    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike. Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all. Same for "--slider-freeflow-item", "--contact-details-gutter" and "--calculator-gutter", declared on ".slider-freeflow", ".contact-details" and ".calculator" themselves, where the local declaration beats anything inherited from :root. Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
     private const array NOT_THEMABLE = [
         '--bottom-bar-height',
         '--c975l-button-color',
@@ -73,18 +69,18 @@ class ScaffoldThemeTest extends TestCase
         '--bs-secondary-bg',
         '--bs-secondary-color',
         '--bs-tertiary-bg',
+        '--bs-warning-bg-subtle',
+        '--bs-warning-border-subtle',
         '--calculator-gutter',
         '--contact-details-gutter',
         '--flex-columns-gap',
         '--flex-columns-span',
         '--flip-card-ratio',
+        '--form-fieldset-border-color',
         '--slider-freeflow-item',
     ];
 
-    // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root would collapse the three variants into a single look (the scaffold's own header says as much).
-    // Same for the card trio and for "--flip-card-accent", set inside each ".card--accent-*" and ".flip-card-accent-*" rule out of that hue's own token: a value in :root would head every unaccented card with it, and the text color and icon inversion that go with it only hold for the four light hues that carry dark text. What a design retunes is the twelve "--block-accent-*" the scaffold does offer, the hues these four merely point at.
-    // Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included.
-    // Same for "--rating-icon-on", set inside each ".rating--*" rule out of that sign's own color - golden for a star, red for a heart - where a value in :root would paint the four glyphs alike. A site wanting its own accent on all of them sets "--rating-on", which the scaffold does offer and which wins over the four
+    // Set inside each ".section--bg-*" rule, mixed out of that flat's own background - one value in :root would collapse the three variants into a single look (the scaffold's own header says as much). Same for the card trio and for "--flip-card-accent", set inside each ".card--accent-*" and ".flip-card-accent-*" rule out of that hue's own token: a value in :root would head every unaccented card with it, and the text color and icon inversion that go with it only hold for the four light hues that carry dark text. What a design retunes is the twelve "--block-accent-*" the scaffold does offer, the hues these four merely point at. Same for "--block-radius" and "--block-shadow", pointed by each ".block-radius-*" and ".block-shadow-*" step at one of the "--block-radius-small/medium/large" and "--block-shadow-small/medium/large" the scaffold does offer - a value in :root would round and shade every block alike, the one left on "theme" (no class at all) included. Same for "--rating-icon-on", set inside each ".rating--*" rule out of that sign's own color - golden for a star, red for a heart - where a value in :root would paint the four glyphs alike. A site wanting its own accent on all of them sets "--rating-on", which the scaffold does offer and which wins over the four
     private const array PER_VARIANT = [
         '--section-background',
         '--section-text',
@@ -235,14 +231,8 @@ class ScaffoldThemeTest extends TestCase
         return $this->declarations($block);
     }
 
-    /**
-     * One theme file per bundle, each listing what that bundle reads: this bundle's chrome in site.css, and
-     * everything UiBundle reads in its own ui.css, which travels with it so a site running it without
-     * SiteBundle still gets a catalogue. Both are asserted together - what matters to a design is that the
-     * union covers the surface, not which file a given token landed in.
-     *
-     * @return list<string>
-     */
+    // One theme file per bundle, each listing what that bundle reads: this bundle's chrome in site.css, and everything UiBundle reads in its own ui.css, which travels with it so a site running it without. SiteBundle still gets a catalogue. Both are asserted together - what matters to a design is that the union covers the surface, not which file a given token landed in.
+    /** @return list<string> */
     private function scaffoldPaths(): array
     {
         $ui = self::uiBundleDir() . '/scaffold/assets/styles/themes/ui.css';

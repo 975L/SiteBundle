@@ -14,20 +14,15 @@ use c975L\ConfigBundle\Entity\HealthCheckResult;
 use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
-use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\MixedContentClient;
-use c975L\SiteBundle\Service\PageEditUrlResolver;
-use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 // Flags http:// resources (images, scripts, stylesheets...) loaded from an https:// page - browsers block or warn on these ("mixed content"). Only meaningful once the site itself is served over https, skipped entirely otherwise (see runChecks())
 class MixedContentHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
     public function __construct(
-        private readonly PageRepository $pageRepository,
         private readonly MixedContentClient $mixedContentClient,
-        private readonly PagePublicUrlResolver $pagePublicUrlResolver,
-        private readonly PageEditUrlResolver $pageEditUrlResolver,
+        private readonly PageHealthCheckTargets $targets,
         private readonly UrlStatusChecker $urlStatusChecker,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
@@ -47,14 +42,9 @@ class MixedContentHealthCheckProvider implements HealthCheckExhaustiveInterface
         }
 
         $results = [];
-        foreach ($this->pageRepository->findAllOrdered() as $page) {
-            $url = $this->pagePublicUrlResolver->resolve($page);
-            // Thrown rather than returned empty: this kind is exhaustive, so an empty run tells HealthCheckRunner every stored row is stale and clears them. A page whose url cannot be resolved means the site url is not configured, which says nothing about the pages already checked - the runner catches this and leaves the kind untouched
-            if (null === $url) {
-                throw new \RuntimeException('Site url is not configured: no page url can be resolved.');
-            }
-
-            $results[] = $this->checkPage($url, $page->getTitle(), $this->pageEditUrlResolver->resolve($page));
+        // One row per page and per language it was written in (see PageHealthCheckTargets)
+        foreach ($this->targets->all() as $target) {
+            $results[] = $this->checkPage($target['url'], $target['label'], $target['editUrl']);
         }
 
         return $results;

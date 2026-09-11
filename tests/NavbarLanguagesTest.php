@@ -24,15 +24,16 @@ class NavbarLanguagesTest extends TestCase
         return (string) file_get_contents(dirname(__DIR__) . '/templates/' . $name);
     }
 
-    // The component as it ships, rendered against stubs of the three things it reads outside itself
-    private function renderLanguages(array $context, array $languages = []): string
+    // The component as it ships, rendered against stubs of the four things it reads outside itself - the two language readers being what it picks between on whether a Page is behind the screen
+    private function renderLanguages(array $context, array $languages = [], array $screenLanguages = [], array $query = []): string
     {
         $twig = new Environment(new ArrayLoader(['languages' => $this->template('components/General/Languages.html.twig')]));
         $twig->addFunction(new TwigFunction('page_languages', static fn (mixed $page): array => $languages));
+        $twig->addFunction(new TwigFunction('screen_languages', static fn (): array => $screenLanguages));
         $twig->addFilter(new TwigFilter('trans', static fn (string $id): string => $id));
-        $twig->addFilter(new TwigFilter('locale_name', static fn (string $locale): string => strtoupper($locale)));
+        $twig->addFilter(new TwigFilter('language_name', static fn (string $locale): string => strtoupper($locale)));
 
-        return $twig->render('languages', $context + ['app' => ['request' => ['locale' => 'fr']]]);
+        return $twig->render('languages', $context + ['app' => ['request' => ['locale' => 'fr', 'query' => ['all' => $query]]]]);
     }
 
     // Both bars: the one built out of menu blocks and the fallback a site with none is served
@@ -51,15 +52,25 @@ class NavbarLanguagesTest extends TestCase
     {
         $rendered = $this->renderLanguages(['page' => 'a-page'], ['fr' => '/pages/contact?_locale=fr', 'en' => '/pages/contact?_locale=en']);
 
-        $this->assertStringContainsString('href="/pages/contact?_locale=en"', $rendered);
-        $this->assertStringContainsString('hreflang="en"', $rendered);
+        $this->assertStringContainsString('action="/pages/contact"', $rendered);
+        $this->assertStringContainsString('name="_locale"', $rendered);
+        $this->assertStringContainsString('<option value="en" lang="en">EN</option>', $rendered);
     }
 
-    // Every screen with no Page behind it - a book, a product, a photo - and the two the layout hands a null for
-    public function testNoPageRendersNothingAtAll(): void
+    // A screen answering in one language alone - a back-office url, an endpoint, a token url - whether the layout hands a null or nothing at all
+    public function testAScreenAnsweringInOneLanguageRendersNothingAtAll(): void
     {
         $this->assertSame('', trim($this->renderLanguages(['page' => null])));
         $this->assertSame('', trim($this->renderLanguages([])));
+    }
+
+    // With no Page behind the screen the bar is built from the screen's own languages instead: a shop listing, a product sheet, a campaign, a basket are the owning bundle's interface and answer in every language the site declares
+    public function testAScreenWithNoPageOffersTheLanguagesItAnswersIn(): void
+    {
+        $rendered = $this->renderLanguages(['page' => null], screenLanguages: ['fr' => '/shop?_locale=fr', 'en' => '/shop?_locale=en']);
+
+        $this->assertStringContainsString('action="/shop"', $rendered);
+        $this->assertStringContainsString('<option value="en" lang="en">EN</option>', $rendered);
     }
 
     // A page nobody translated: page_languages() answers an empty list, and a bar with a single choice is no choice
@@ -68,19 +79,41 @@ class NavbarLanguagesTest extends TestCase
         $this->assertSame('', trim($this->renderLanguages(['page' => 'a-page'])));
     }
 
-    // A link onto the page already open leads nowhere: the language being read is named, and says so to a screen reader
-    public function testTheLanguageBeingReadIsNotALink(): void
+    // The language being read is the one the field opens on, so picking it back is a submission that changes nothing rather than a choice missing from the list
+    public function testTheLanguageBeingReadIsTheOneSelected(): void
     {
         $rendered = $this->renderLanguages(['page' => 'a-page'], ['fr' => '/pages/contact?_locale=fr', 'en' => '/pages/contact?_locale=en']);
 
-        $this->assertStringContainsString('<span class="menu-language-current" lang="fr" aria-current="true">FR</span>', $rendered);
-        $this->assertStringNotContainsString('_locale=fr"', $rendered);
+        $this->assertStringContainsString('<option value="fr" lang="fr" selected>FR</option>', $rendered);
     }
 
-    // These urls are query-string variants of pages the sitemap already declares once per language
-    public function testTheLinksAreNotFollowed(): void
+    // Nothing to follow at all: a crawler used to be handed one query-string variant per language of a page the sitemap already declares once per language, and told not to follow them
+    public function testTheMenuHoldsNoLinkAtAll(): void
     {
-        $this->assertStringContainsString('rel="nofollow"', $this->renderLanguages(['page' => 'a-page'], ['fr' => '/a?_locale=fr', 'en' => '/a?_locale=en']));
+        $this->assertStringNotContainsString('<a ', $this->renderLanguages(['page' => 'a-page'], ['fr' => '/a?_locale=fr', 'en' => '/a?_locale=en']));
+    }
+
+    // A GET submission drops the query string the action carries, so what the visitor is reading under - a page number, a filter - is written as fields; the language they are leaving is not, the field itself carrying it
+    public function testWhatTheVisitorIsReadingUnderRidesAlong(): void
+    {
+        $rendered = $this->renderLanguages(
+            ['page' => null],
+            screenLanguages: ['fr' => '/shop?_locale=fr', 'en' => '/shop?_locale=en'],
+            query: ['page' => '2', '_locale' => 'fr', 'filters' => ['a', 'b']]
+        );
+
+        $this->assertStringContainsString('<input type="hidden" name="page" value="2">', $rendered);
+        $this->assertStringNotContainsString('name="_locale" value=', $rendered);
+        $this->assertStringNotContainsString('name="filters"', $rendered);
+    }
+
+    // Without javascript the button is what sends the choice, so it ships in the markup and the controller takes it away
+    public function testTheChoiceIsSentWithoutJavascriptToo(): void
+    {
+        $rendered = $this->renderLanguages(['page' => 'a-page'], ['fr' => '/a?_locale=fr', 'en' => '/a?_locale=en']);
+
+        $this->assertStringContainsString('type="submit"', $rendered);
+        $this->assertStringContainsString('data-languages-target="submit"', $rendered);
     }
 
     // The urls come from page_languages() alone, which builds them out of the routes: the fragment this replaces rewrote the current url by hand ("/fr/" replaced with "/en/"), which broke on any url the language code appeared twice in

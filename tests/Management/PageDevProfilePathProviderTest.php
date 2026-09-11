@@ -13,7 +13,9 @@ namespace c975L\SiteBundle\Tests\Management;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\PageDevProfilePathProvider;
+use c975L\SiteBundle\Management\PageHealthCheckTargets;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
@@ -31,7 +33,8 @@ class PageDevProfilePathProviderTest extends TestCase
         return $page;
     }
 
-    private function createProvider(array $pages, ?string $siteUrl = 'https://example.com'): PageDevProfilePathProvider
+    /** @param list<string> $translatedLocales the languages every page here was written in */
+    private function createProvider(array $pages, ?string $siteUrl = 'https://example.com', array $translatedLocales = ['fr']): PageDevProfilePathProvider
     {
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findAllOrdered')->willReturn($pages);
@@ -39,7 +42,18 @@ class PageDevProfilePathProviderTest extends TestCase
         $configService = $this->createStub(ConfigServiceInterface::class);
         $configService->method('get')->willReturn($siteUrl);
 
-        return new PageDevProfilePathProvider($repository, new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator()));
+        return new PageDevProfilePathProvider(
+            $repository,
+            new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator($translatedLocales)),
+            $this->createPageTranslator($translatedLocales),
+            new PageHealthCheckTargets(
+                $repository,
+                new PagePublicUrlResolver($configService, $this->createUrlGenerator(), $this->createSiteLocales(), $this->createPageTranslator($translatedLocales)),
+                $this->createStub(PageEditUrlResolver::class),
+                $this->createPageTranslator($translatedLocales),
+                $this->createSiteLocales(),
+            ),
+        );
     }
 
     public function testGetPathsReturnsOneLocalPathPerPublishedPage(): void
@@ -49,6 +63,17 @@ class PageDevProfilePathProviderTest extends TestCase
         $this->assertSame([
             ['path' => '/', 'label' => 'Accueil'],
             ['path' => '/pages/contact', 'label' => 'Contact'],
+        ], $provider->getPaths());
+    }
+
+    // A page written in two languages is two pages to profile: read at "/en/pages/contact" it renders other blocks, other prose, other queries
+    public function testGetPathsWalksEveryLanguageAPageWasWrittenIn(): void
+    {
+        $provider = $this->createProvider([$this->createPage('contact', 'Contact')], translatedLocales: ['fr', 'en']);
+
+        $this->assertSame([
+            ['path' => '/pages/contact', 'label' => 'Contact'],
+            ['path' => '/en/pages/contact', 'label' => 'Contact (English)'],
         ], $provider->getPaths());
     }
 
