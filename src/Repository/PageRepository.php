@@ -39,7 +39,7 @@ class PageRepository extends ServiceEntityRepository
             ->andWhere('p.isDeleted = :deleted')
             ->setParameter('deleted', false)
             ->setParameter('published', true)
-            ->orderBy('p.slug', 'ASC')
+            ->orderBy('p.slug', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;

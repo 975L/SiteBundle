@@ -116,7 +116,7 @@ class CollectionItemCrudController extends AbstractCrudController
     public function createIndexQueryBuilder(...$args): QueryBuilder
     {
         $qb = parent::createIndexQueryBuilder(...$args)
-            ->addOrderBy('entity.position', 'ASC')
+            ->addOrderBy('entity.position', \SortDirection::Ascending)
         ;
 
         $collectionGroup = $this->currentCollectionGroup();

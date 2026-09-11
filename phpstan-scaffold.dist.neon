@@ -1,4 +1,8 @@
 # The scaffold is copied as is into the applications (see ScaffoldInstaller), which are analysed at level 6: what passes here at level 5 with the rest of the bundle comes back as an error on their first push. Hence this second pass, dedicated to the scaffold and set at the applications' own level.
+includes:
+    # Reports any call to what a library marks @deprecated, which the test suite only sees when that code runs
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
 parameters:
     level: 6
 

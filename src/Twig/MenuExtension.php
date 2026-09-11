@@ -93,7 +93,7 @@ class MenuExtension
         });
     }
 
-    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" or "menu_group" Block is saved/removed). The entities being cached whole, every relation a template may read has to be initialized before they go in, which is what MenuRepository::findOneByLocation() joins its slots and its medias for: a lazy collection cached uninitialized comes back detached and empty. Only "user" is left lazy, no menu template reading it
+    // Cross-request cache: a menu's items barely ever change but are read on every single page - cached as the Block entities themselves (invalidated by MenuCacheInvalidationListener whenever a "menu_link" or "menu_group" Block is saved/removed). The entities being cached whole, every relation a template may read has to be initialized before they go in, which is what MenuRepository::findOneByLocation() joins its slots and its medias for: a lazy collection cached uninitialized comes back detached and empty. Only "user" is left lazy, no menu template reading it, and Block::__serialize() leaves it out: serialize() would otherwise load it, and throw on every page once that account was deleted
     private function loadMenuBlocks(string $location): array
     {
         return $this->cache->get('menu_' . $location, function (ItemInterface $item) use ($location): array {

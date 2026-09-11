@@ -31,7 +31,7 @@ class CollectionItemRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('i')
             ->where('i.filename IS NOT NULL AND i.filename != :empty')
             ->setParameter('empty', '')
-            ->orderBy('i.filename', 'ASC')
+            ->orderBy('i.filename', \SortDirection::Ascending)
             ->getQuery()
             ->getResult()
         ;
@@ -43,7 +43,7 @@ class CollectionItemRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('c')
             ->andWhere('c.collectionGroup = :collectionGroup')
             ->setParameter('collectionGroup', $collectionGroup)
-            ->orderBy('c.position', 'ASC')
+            ->orderBy('c.position', \SortDirection::Ascending)
         ;
 
         if (null !== $limit) {

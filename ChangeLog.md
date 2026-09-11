@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.15.3
+
+Doctrine deprecations now fail PHPStan and the test suite
+
+- Sort directions passed to Doctrine use `SortDirection::Ascending` instead of `'ASC'` (11/09/2026)
+- Requires `doctrine/orm` `^3.7`, which ships `SortDirection` (11/09/2026)
+- Requires `c975l/core-bundle` `^1.29.0`, which ships `Block::__serialize()` (11/09/2026)
+- PHPStan reports calls to deprecated code through `phpstan/phpstan-deprecation-rules`, now in require-dev (11/09/2026)
+- The test suite sets `DOCTRINE_DEPRECATIONS`, so Doctrine's deprecations fail it (11/09/2026)
+- The CI takes PHPStan from require-dev instead of installing it apart (11/09/2026)
+
 ## v8.15.2
 
 The scaffold's page tests hold on a site publishing no page
