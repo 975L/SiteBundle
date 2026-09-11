@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.15.1
+
+The scaffold tests that a plain member gets a 403 on /management
+
+- The scaffold's `ManagementAccessTest` checks a signed-in member without back-office access gets a 403 on `/management` (11/09/2026)
+
 ## v8.15.0
 
 Every page, item, check and link follows the language being read

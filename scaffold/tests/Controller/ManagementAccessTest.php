@@ -2,6 +2,8 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -37,5 +39,33 @@ class ManagementAccessTest extends WebTestCase
         }
 
         $this->assertEmpty($failures, implode("\n", $failures));
+    }
+
+    // Signed in is not enough: access_control asks the back-office voter, which a plain member does not answer
+    public function testManagementRefusesAnAuthenticatedVisitorWithoutTheBackOfficeBar(): void
+    {
+        $this->client->loginUser($this->createMember());
+        $this->client->request('GET', '/management');
+
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
+    }
+
+    // Persisted because EntityUserProvider::refreshUser() reloads it by id - dama/doctrine-test-bundle rolls the transaction back, nothing reaches the database
+    private function createMember(): User
+    {
+        $user = new User()
+            ->setEmail('management-access@example.test')
+            ->setPassword('not-used')
+            ->setRoles(['ROLE_USER'])
+            ->setIsEnabled(true)
+            ->setIsVerified(true)
+            ->setCreation(new \DateTime())
+            ->setModification(new \DateTime());
+
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $user;
     }
 }
