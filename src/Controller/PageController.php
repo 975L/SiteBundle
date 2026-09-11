@@ -193,6 +193,14 @@ class PageController extends AbstractController
         }
 
         $pageObject = $this->pageService->findForDisplay($slug);
+
+        // The database collation finds a page whatever the case its slug is written in, so "/pages/About" would answer the very content of "/pages/about" - two urls for one page, and a way around an access rule a site writes on the stored slug. A 301 to the stored slug settles both, before anything of the page is rendered. A draft is left to the gate's 404, so the redirect never tells an unpublished slug exists
+        if (null !== $pageObject && $pageObject->isPublished() && $pageObject->getSlug() !== $slug) {
+            [$route, $parameters] = $this->sameLanguage('page_display', ['page' => (string) $pageObject->getSlug()]);
+
+            return $this->redirectToRoute($route, $parameters, 301);
+        }
+
         $detailHtml = null;
         $detailTitle = null;
 

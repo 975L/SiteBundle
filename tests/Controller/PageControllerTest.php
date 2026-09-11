@@ -221,6 +221,35 @@ class PageControllerTest extends TestCase
         $this->assertSame('/page_display/blocks', $response->getTargetUrl());
     }
 
+    // The database finds a page whatever the case of its slug: the same page would otherwise answer on as many urls, and an access rule written on the stored slug be walked around
+    public function testDisplayRedirectsASlugInAnotherCaseToTheStoredOne(): void
+    {
+        $page = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['About' => $page]),
+            $this->createConfigService(),
+        );
+
+        $response = $controller->display('About', new Request());
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame(301, $response->getStatusCode());
+        $this->assertSame('/page_display/about', $response->getTargetUrl());
+    }
+
+    // A draft asked in another case gets the same 404 as a slug nobody wrote: a redirect would tell the draft exists
+    public function testDisplayThrowsNotFoundForADraftSlugInAnotherCase(): void
+    {
+        $page = new Page()->setTitle('Draft')->setSlug('draft')->setIsPublished(false);
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['Draft' => $page]),
+            $this->createConfigService(),
+        );
+
+        $this->expectException(NotFoundHttpException::class);
+        $controller->display('Draft', new Request());
+    }
+
     // A deleted page yields a 410 Gone, not a plain 404 - lets clients/search engines know it's permanent
     public function testDisplayThrowsGoneWhenPageIsDeleted(): void
     {

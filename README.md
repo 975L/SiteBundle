@@ -485,7 +485,10 @@ path is the slashless form the sitemap declares (the site root keeping its own s
 all outside an http request or before `site-url` is set, rather than a tag pointing at the wrong host.
 
 `/pages/{slug}/` is answered with a `301` to `/pages/{slug}` on top of that: both used to serve the same
-content under two urls, and a canonical link alone is only a hint.
+content under two urls, and a canonical link alone is only a hint. The same goes for a slug written in another
+case: the database collation finds `/pages/About` as well as `/pages/about`, so the first one is answered with a
+`301` to the slug as stored, before anything of the page is rendered. A draft is not redirected: it gets the
+same `404` as a slug nobody wrote, so the redirect never tells an unpublished slug exists.
 
 ### Error pages are not indexable
 

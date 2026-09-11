@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.15.4
+
+A page slug in another case redirects to the stored one
+
+- A published page url whose slug differs from the stored one only by its case is redirected (301) to the stored slug (11/09/2026)
+
 ## v8.15.3
 
 Doctrine deprecations now fail PHPStan and the test suite

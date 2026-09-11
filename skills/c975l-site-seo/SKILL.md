@@ -49,7 +49,10 @@ all outside an http request or before `site-url` is set, rather than a tag point
 
 `/pages/{slug}/` answers `301` to `/pages/{slug}` on top of that — a canonical link alone is only a
 hint. The redirect stays in the language being read: `/en/pages/{slug}/` lands on `/en/pages/{slug}`,
-not back in the writing language.
+not back in the writing language. A published page's slug asked in another case than the stored one
+(`/pages/About`, which the database collation still finds) answers `301` to the stored slug the same
+way, before the page is rendered — never compare it case-insensitively further down. A draft is not
+redirected: it falls through to the gate's `404`, so the redirect never reveals an unpublished slug.
 
 ## Several languages
 
