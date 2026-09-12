@@ -231,4 +231,25 @@ class W3cValidatorClientTest extends TestCase
 
         $this->assertSame(['line 4: Value Error colour is not a valid property'], $result['errors']);
     }
+
+    // c975LHealthCheck is what HealthCheck::isProbe() matches on, and both endpoints have to be called under that same agent - requestCss() shipped without any header at all
+    public function testBothRequestsCarryTheSameProbeUserAgent(): void
+    {
+        $userAgents = [];
+        $httpClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$userAgents): MockResponse {
+                $userAgents[] = $options['normalized_headers']['user-agent'][0] ?? '';
+
+                return new MockResponse('{}', ['http_code' => 200]);
+            }
+        );
+
+        $client = new W3cValidatorClient($httpClient);
+        $client->requestHtml('https://example.com/')->getStatusCode();
+        $client->requestCss('https://example.com/')->getStatusCode();
+
+        $this->assertCount(2, $userAgents);
+        $this->assertSame($userAgents[0], $userAgents[1]);
+        $this->assertStringContainsString('c975LHealthCheck', $userAgents[0]);
+    }
 }

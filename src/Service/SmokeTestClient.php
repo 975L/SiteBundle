@@ -20,6 +20,9 @@ class SmokeTestClient
 
     private const int TIMEOUT = 30;
 
+    // Carries c975LHealthCheck so c975L\ConfigBundle\Service\HealthCheck::isProbe() matches it, which is what keeps a run of dozens of urls out of the front rate limiter, and "smoke-test" so an access log still tells a smoke test from a health check. Repeated rather than imported: core-bundle only gains that constant in the release this depends on next
+    private const string USER_AGENT = 'Mozilla/5.0 (compatible; c975LHealthCheck/1.0; smoke-test; +https://github.com/975L/ConfigBundle)';
+
     // A deployment purges var/cache/prod, so the very first request rebuilds it and can legitimately be slow - a plain timeout here would report a healthy site as broken
     private const int FIRST_BYTE_TIMEOUT = 60;
 
@@ -35,7 +38,7 @@ class SmokeTestClient
         foreach ($urls as $url) {
             try {
                 $responses[$url] = $this->httpClient->request('GET', $url, [
-                    'headers' => ['User-Agent' => 'Mozilla/5.0 (compatible; c975l-smoke-test)'],
+                    'headers' => ['User-Agent' => self::USER_AGENT],
                     'timeout' => self::FIRST_BYTE_TIMEOUT,
                     // Nothing here reads the body, so there's no reason to hold each asset in memory - a site's whole js bundle would otherwise be buffered just to learn it answered 200
                     'buffer' => false,
@@ -67,7 +70,7 @@ class SmokeTestClient
     {
         try {
             $html = $this->httpClient->request('GET', $url, [
-                'headers' => ['User-Agent' => 'Mozilla/5.0 (compatible; c975l-smoke-test)'],
+                'headers' => ['User-Agent' => self::USER_AGENT],
                 'timeout' => self::TIMEOUT,
             ])->getContent();
         } catch (\Throwable) {

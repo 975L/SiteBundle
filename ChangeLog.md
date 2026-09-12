@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.15.6
+
+Probe requests all go out under the same recognisable agent
+
+- `SmokeTestClient` sends a `c975LHealthCheck` agent, which `HealthCheck::isProbe()` matches, instead of `c975l-smoke-test` (12/09/2026)
+- `W3cValidatorClient` sends the same agent on both endpoints, `requestCss()` having sent none (12/09/2026)
+
 ## v8.15.5
 
 A menu block of any kind now invalidates the cached menus

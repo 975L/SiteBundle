@@ -114,4 +114,25 @@ class SmokeTestClientTest extends TestCase
 
         $this->assertSame([], $client->findAssets('https://example.com', 'https://example.com'));
     }
+
+    // A run fires dozens of urls at the site itself: without c975LHealthCheck in the agent, HealthCheck::isProbe() no longer matches and the front rate limiter answers 429, which check() reports as a broken page
+    public function testEveryRequestCarriesAProbeUserAgent(): void
+    {
+        $userAgents = [];
+        $httpClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$userAgents): MockResponse {
+                $userAgents[] = $options['normalized_headers']['user-agent'][0] ?? '';
+
+                return new MockResponse('<html></html>', ['http_code' => 200]);
+            }
+        );
+
+        $client = new SmokeTestClient($httpClient);
+        $client->check(['https://example.com/']);
+        $client->findAssets('https://example.com/', 'https://example.com');
+
+        $this->assertCount(2, $userAgents);
+        $this->assertSame($userAgents[0], $userAgents[1]);
+        $this->assertStringContainsString('c975LHealthCheck', $userAgents[0]);
+    }
 }

@@ -19,6 +19,9 @@ class W3cValidatorClient
     private const string HTML_ENDPOINT = 'https://validator.w3.org/nu/';
     private const string CSS_ENDPOINT = 'https://jigsaw.w3.org/css-validator/validator';
 
+    // Same string as c975L\ConfigBundle\Service\HealthCheck::USER_AGENT, repeated rather than imported: core-bundle only gains that constant in the release this depends on next, and a run has to be recognisable in an access log under one single agent. Becomes the constant once the requirement is raised
+    private const string USER_AGENT = 'Mozilla/5.0 (compatible; c975LHealthCheck/1.0; +https://github.com/975L/ConfigBundle)';
+
     // Warnings the CSS validator's own profile predates; returned in full, only counted apart so custom properties don't leave the row permanently orange
     private const array BENIGN_CSS_WARNING_PATTERNS = [
         // "Due to their dynamic nature, CSS variables are currently not statically checked" - custom properties are a W3C Recommendation the validator cannot resolve statically, not a defect
@@ -54,7 +57,7 @@ class W3cValidatorClient
     {
         return $this->httpClient->request('GET', self::HTML_ENDPOINT, [
             'query' => ['doc' => $url, 'out' => 'json'],
-            'headers' => ['User-Agent' => 'Mozilla/5.0 (compatible; c975l-health-check)'],
+            'headers' => ['User-Agent' => self::USER_AGENT],
             'timeout' => 60,
         ]);
     }
@@ -95,6 +98,7 @@ class W3cValidatorClient
     {
         return $this->httpClient->request('GET', self::CSS_ENDPOINT, [
             'query' => ['uri' => $url, 'output' => 'json', 'profile' => 'css3svg'],
+            'headers' => ['User-Agent' => self::USER_AGENT],
             'timeout' => 60,
         ]);
     }
