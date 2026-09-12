@@ -33,6 +33,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
         return [
             $this->collectionProject(),
             $this->pageCreationProject(),
+            $this->blockProject(),
             $this->pageSeoProject(),
             $this->pageTranslationProject(),
             $this->pageHealthProject(),
@@ -169,6 +170,63 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_creation_view',
                     'description' => 'description.guided_step_page_creation_view',
                     'narration' => 'narration.guided_step_page_creation_view',
+                    'highlight' => '.action-viewOnSite',
+                ],
+            ],
+        ];
+    }
+
+    // A block is more than its kind: each one carries settings of its own (a map's places as a menu, a single photograph's credits), all on the page's edit screen and all easy to leave at their default
+    private function blockProject(): array
+    {
+        return [
+            'slug' => 'site-block',
+            'label' => 'label.guided_project_block',
+            'description' => 'description.guided_project_block',
+            'translation_domain' => 'site',
+            'order' => 2025,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_block_open',
+                    'description' => 'description.guided_step_block_open',
+                    'narration' => 'narration.guided_step_block_open',
+                    'url' => $this->indexUrl(PageCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_block_edit',
+                    'narration' => 'narration.guided_step_block_edit',
+                    'highlight' => '.action-edit',
+                ],
+                [
+                    'label' => 'label.guided_step_block_add',
+                    'description' => 'description.guided_step_block_add',
+                    'narration' => 'narration.guided_step_block_add',
+                    'highlight' => '[data-ui-sort-group="block"]',
+                ],
+                [
+                    // The row marker UiBundle's BlockType puts on the kind picker, EasyAdmin writing no id on a collection entry's field
+                    'label' => 'label.guided_step_block_kind',
+                    'description' => 'description.guided_step_block_kind',
+                    'narration' => 'narration.guided_step_block_kind',
+                    'highlight' => '[data-kind-row]',
+                ],
+                [
+                    // The class UiBundle's BlockType gives the sub-form every kind renders its own settings into
+                    'label' => 'label.guided_step_block_options',
+                    'description' => 'description.guided_step_block_options',
+                    'narration' => 'narration.guided_step_block_options',
+                    'highlight' => '.block-data-form',
+                ],
+                [
+                    'label' => 'label.guided_step_block_save',
+                    'narration' => 'narration.guided_step_block_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_block_view',
+                    'description' => 'description.guided_step_block_view',
+                    'narration' => 'narration.guided_step_block_view',
                     'highlight' => '.action-viewOnSite',
                 ],
             ],

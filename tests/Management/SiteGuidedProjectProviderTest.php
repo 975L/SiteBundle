@@ -55,15 +55,15 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
-    public function testGetGuidedProjectsReturnsElevenProjectsContinuingConfigBundlesOrderSequence(): void
+    public function testGetGuidedProjectsReturnsTwelveProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['site-collection', 'site-page-creation', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
+            ['site-collection', 'site-page-creation', 'site-block', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([2010, 2020, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
+        $this->assertSame([2010, 2020, 2025, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
@@ -92,6 +92,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         $expected = [
             'site-collection' => 'ROLE_EDITOR',
             'site-page-creation' => 'ROLE_EDITOR',
+            'site-block' => 'ROLE_EDITOR',
             'site-page-seo' => 'ROLE_EDITOR',
             'site-page-translation' => 'ROLE_EDITOR',
             'site-page-health' => 'ROLE_EDITOR',
@@ -148,7 +149,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
+            ['CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers)
         );
     }
@@ -332,9 +333,20 @@ class SiteGuidedProjectProviderTest extends TestCase
             $this->assertStringContainsString('blockMoveRowAttrBuilder->build(', $this->controllerSource($controller), sprintf('%s no longer marks its blocks collection, so the row carries no selector to point at', $controller));
         }
 
-        foreach (['site-page-creation', 'site-page-revision', 'site-page-menu', 'site-footer'] as $slug) {
+        foreach (['site-page-creation', 'site-block', 'site-page-revision', 'site-page-menu', 'site-footer'] as $slug) {
             $this->assertStringContainsString(sprintf('[data-ui-sort-group="%s"]', BlockMoveRowAttrBuilder::GROUP), $this->highlightsOf($slug));
         }
+    }
+
+    // The kind picker and the settings under it are UiBundle's own form: rename either marker there alone and the step highlights nothing, in silence
+    public function testTheBlockStepsPointAtTheMarkersUiBundlesBlockTypeWrites(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/UiBundle/src/Form/BlockType.php');
+
+        $this->assertStringContainsString("'data-kind-row'", $source, "UiBundle's BlockType no longer marks the kind picker's row, so there is no selector left to point at");
+        $this->assertStringContainsString("'block-data-form'", $source, "UiBundle's BlockType no longer classes the settings sub-form, so there is no selector left to point at");
+        $this->assertStringContainsString('[data-kind-row]', $this->highlightsOf('site-block'));
+        $this->assertStringContainsString('.block-data-form', $this->highlightsOf('site-block'));
     }
 
     // The item rows carry no id of their own: the reorder marker its index template writes is the only thing the step can point at, and it lives in a template rather than in a constant

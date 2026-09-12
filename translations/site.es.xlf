@@ -134,6 +134,10 @@
                 <source>description.essential_action_pages</source>
                 <target>La página en la que aterriza cada visitante primero</target>
             </trans-unit>
+            <trans-unit id="5evvDmw">
+                <source>description.guided_project_block</source>
+                <target>Elegir qué es un bloque y ajustar lo que ofrece: un mapa que lista sus lugares en un menú, los créditos de una sola foto…</target>
+            </trans-unit>
             <trans-unit id="CU5AyIK">
                 <source>description.guided_project_collection</source>
                 <target>Agrupar contenidos que se repiten (equipo, trabajos, eventos) y mostrarlos en una página</target>
@@ -177,6 +181,26 @@
             <trans-unit id="HQvuvco">
                 <source>description.guided_project_trash</source>
                 <target>Retirar una página del sitio sin perderla y luego reponerla o borrarla definitivamente</target>
+            </trans-unit>
+            <trans-unit id="hx79f8B">
+                <source>description.guided_step_block_add</source>
+                <target>Añada un bloque, o abra uno que la página ya contiene.</target>
+            </trans-unit>
+            <trans-unit id="3PHL1c5">
+                <source>description.guided_step_block_kind</source>
+                <target>Cada tipo dice lo que hace. Un tipo que ya no se ofrece en este lugar se señala con una advertencia.</target>
+            </trans-unit>
+            <trans-unit id="rm_q3Do">
+                <source>description.guided_step_block_open</source>
+                <target>Los bloques de una página se ajustan en su propia pantalla de edición.</target>
+            </trans-unit>
+            <trans-unit id="JydBHlL">
+                <source>description.guided_step_block_options</source>
+                <target>Cada tipo tiene sus propios ajustes, justo debajo: un mapa puede listar sus lugares en un menú, un slider muestra los créditos de una sola foto.</target>
+            </trans-unit>
+            <trans-unit id="o0zeSR4">
+                <source>description.guided_step_block_view</source>
+                <target>Compruebe en el sitio cómo se muestra el bloque con sus opciones.</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -742,6 +766,10 @@
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Enlace a una página o ruta, usado en los menús del sitio.</target>
             </trans-unit>
+            <trans-unit id="PqyTEKO">
+                <source>label.guided_project_block</source>
+                <target>Ajustar los bloques de una página</target>
+            </trans-unit>
             <trans-unit id="K3pbZfO">
                 <source>label.guided_project_collection</source>
                 <target>Crear una colección</target>
@@ -785,6 +813,34 @@
             <trans-unit id=".dL2TAJ">
                 <source>label.guided_project_trash</source>
                 <target>Eliminar una página y recuperarla</target>
+            </trans-unit>
+            <trans-unit id="q567t7C">
+                <source>label.guided_step_block_add</source>
+                <target>Añadir un bloque</target>
+            </trans-unit>
+            <trans-unit id="lm1sLE1">
+                <source>label.guided_step_block_edit</source>
+                <target>Editar una página</target>
+            </trans-unit>
+            <trans-unit id="xjFy9b5">
+                <source>label.guided_step_block_kind</source>
+                <target>Elegir su tipo</target>
+            </trans-unit>
+            <trans-unit id="1BxwT6l">
+                <source>label.guided_step_block_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="iObgPTQ">
+                <source>label.guided_step_block_options</source>
+                <target>Ajustar sus opciones</target>
+            </trans-unit>
+            <trans-unit id="X1Cyh1L">
+                <source>label.guided_step_block_save</source>
+                <target>Guardar</target>
+            </trans-unit>
+            <trans-unit id="YshBIxS">
+                <source>label.guided_step_block_view</source>
+                <target>Ver el resultado</target>
             </trans-unit>
             <trans-unit id="0WfyPjZ">
                 <source>label.guided_step_collection_add_item</source>

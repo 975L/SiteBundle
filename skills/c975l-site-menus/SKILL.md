@@ -156,6 +156,10 @@ Logo and name are wrapped in **one single link** to the home page, not two adjac
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed
 beside it.
 
+From 768px up, a bar holding more items than its width fits **wraps them onto a second line**, flush
+right (`.menu .menu-items .blocks`) — left on one line, they ran past the viewport where the root's
+`overflow-x: clip` hid them. The footer lays its own row out in `sass/_footer.scss`, untouched.
+
 A site may upload a second logo on the `logo-on-dark` site-graphic role, drawn for a dark page. Both
 images are then written — on the menu brand and on the fallback bar alike — and the stylesheet paints
 one, `.menu-logo__on-light` and `.menu-logo__on-dark` following the same two selectors as the dark

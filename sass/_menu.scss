@@ -334,6 +334,12 @@ img.menu-logo__on-dark {
         flex-direction: row;
     }
 
+    // A bar holding more items than its width fits wraps them onto a second line, flush right like the first: left on one line, they ran past the viewport, where the root's "overflow-x: clip" cut them away with no way left to reach them. Scoped to .menu, the footer laying its own row out in _footer.scss
+    .menu .menu-items .blocks {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
     .menu .menu-label {
         color: var(--navbar-text);
     }

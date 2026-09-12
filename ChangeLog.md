@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.15.8
+
+An overflowing navbar wraps, and a guided project walks page blocks
+
+- From 768px up, navbar items wrap onto a second line instead of being clipped (12/09/2026)
+- A `site-block` guided project walks a page's blocks: adding one, choosing its kind, setting its own options (12/09/2026)
+
 ## v8.15.7
 
 The bundle's Stimulus controllers join the one application of the page

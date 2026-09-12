@@ -6,6 +6,34 @@
                 <source>narration.collections</source>
                 <target>«Colecciones» reúne las listas de elementos parecidos, equipo, trabajos, eventos, para mostrarlos después en cualquier página mediante un bloque de colección.</target>
             </trans-unit>
+            <trans-unit id="RUxTDKz">
+                <source>narration.guided_step_block_add</source>
+                <target>Añada un bloque, o abra uno que la página ya contiene.</target>
+            </trans-unit>
+            <trans-unit id="3BHpDY6">
+                <source>narration.guided_step_block_edit</source>
+                <target>Abra la página en la que quiere trabajar.</target>
+            </trans-unit>
+            <trans-unit id="xkasFXd">
+                <source>narration.guided_step_block_kind</source>
+                <target>Elija su tipo: cada uno dice lo que hace, y un tipo que ya no se ofrece aquí se señala con una advertencia.</target>
+            </trans-unit>
+            <trans-unit id="SroH_U3">
+                <source>narration.guided_step_block_open</source>
+                <target>Vamos a ajustar los bloques de una página. En la columna de la izquierda, el panel le lleva a la lista de páginas.</target>
+            </trans-unit>
+            <trans-unit id="IXYG.q6">
+                <source>narration.guided_step_block_options</source>
+                <target>Justo debajo, los ajustes propios del bloque. Un mapa puede listar sus lugares en un menú, un slider muestra los créditos de una sola foto.</target>
+            </trans-unit>
+            <trans-unit id="RgbyKN4">
+                <source>narration.guided_step_block_save</source>
+                <target>Guarde.</target>
+            </trans-unit>
+            <trans-unit id="vziUeT6">
+                <source>narration.guided_step_block_view</source>
+                <target>Compruebe en el sitio cómo se muestra el bloque.</target>
+            </trans-unit>
             <trans-unit id="hAyw9ep">
                 <source>narration.guided_step_collection_add_item</source>
                 <target>Añada un elemento. Título, texto, imagen, enlace: complete lo que necesite y deje el resto vacío. En un sitio en varios idiomas, el botón Traducir de la lista abre el mismo elemento en otro idioma.</target>

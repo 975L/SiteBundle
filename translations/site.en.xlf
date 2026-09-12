@@ -134,6 +134,10 @@
                 <source>description.essential_action_pages</source>
                 <target>The page every visitor lands on first</target>
             </trans-unit>
+            <trans-unit id="5evvDmw">
+                <source>description.guided_project_block</source>
+                <target>Choose what a block is, then set what it offers: a map listing its places as a menu, the credits of a single photograph…</target>
+            </trans-unit>
             <trans-unit id="CU5AyIK">
                 <source>description.guided_project_collection</source>
                 <target>Group repeating content (team, references, events) and show it in a page</target>
@@ -177,6 +181,26 @@
             <trans-unit id="HQvuvco">
                 <source>description.guided_project_trash</source>
                 <target>Take a page off the site without losing it, then either put it back or remove it for good</target>
+            </trans-unit>
+            <trans-unit id="hx79f8B">
+                <source>description.guided_step_block_add</source>
+                <target>Add a block, or open one the page already holds.</target>
+            </trans-unit>
+            <trans-unit id="3PHL1c5">
+                <source>description.guided_step_block_kind</source>
+                <target>Each kind says what it does. A kind no longer offered in this place is flagged with a warning.</target>
+            </trans-unit>
+            <trans-unit id="rm_q3Do">
+                <source>description.guided_step_block_open</source>
+                <target>A page's blocks are set up on its own edit screen.</target>
+            </trans-unit>
+            <trans-unit id="JydBHlL">
+                <source>description.guided_step_block_options</source>
+                <target>Every kind has settings of its own, right under it: a map can list its places as a menu, a slider shows the credits of a single photograph.</target>
+            </trans-unit>
+            <trans-unit id="o0zeSR4">
+                <source>description.guided_step_block_view</source>
+                <target>Check on the site how the block renders with its options.</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -742,6 +766,10 @@
                 <source>label.gallery_showcase_menu_link_description</source>
                 <target>Link to a page or a route, used in the site's menus.</target>
             </trans-unit>
+            <trans-unit id="PqyTEKO">
+                <source>label.guided_project_block</source>
+                <target>Set up the blocks of a page</target>
+            </trans-unit>
             <trans-unit id="K3pbZfO">
                 <source>label.guided_project_collection</source>
                 <target>Create a collection</target>
@@ -785,6 +813,34 @@
             <trans-unit id=".dL2TAJ">
                 <source>label.guided_project_trash</source>
                 <target>Delete a page and get it back</target>
+            </trans-unit>
+            <trans-unit id="q567t7C">
+                <source>label.guided_step_block_add</source>
+                <target>Add a block</target>
+            </trans-unit>
+            <trans-unit id="lm1sLE1">
+                <source>label.guided_step_block_edit</source>
+                <target>Edit a page</target>
+            </trans-unit>
+            <trans-unit id="xjFy9b5">
+                <source>label.guided_step_block_kind</source>
+                <target>Choose its kind</target>
+            </trans-unit>
+            <trans-unit id="1BxwT6l">
+                <source>label.guided_step_block_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="iObgPTQ">
+                <source>label.guided_step_block_options</source>
+                <target>Set its options</target>
+            </trans-unit>
+            <trans-unit id="X1Cyh1L">
+                <source>label.guided_step_block_save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="YshBIxS">
+                <source>label.guided_step_block_view</source>
+                <target>See the result</target>
             </trans-unit>
             <trans-unit id="0WfyPjZ">
                 <source>label.guided_step_collection_add_item</source>

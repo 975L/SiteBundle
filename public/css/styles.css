@@ -854,6 +854,10 @@ img.menu-logo__on-dark {
     display: flex;
     flex-direction: row;
   }
+  .menu .menu-items .blocks {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
   .menu .menu-label {
     color: var(--navbar-text);
   }

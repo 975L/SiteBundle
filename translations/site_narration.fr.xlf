@@ -6,6 +6,34 @@
                 <source>narration.collections</source>
                 <target>« Collections » tient les listes d'éléments qui se ressemblent, équipe, réalisations, événements, à afficher ensuite dans n'importe quelle page par un block de collection.</target>
             </trans-unit>
+            <trans-unit id="RUxTDKz">
+                <source>narration.guided_step_block_add</source>
+                <target>Ajoutez un block, ou ouvrez-en un que la page contient déjà.</target>
+            </trans-unit>
+            <trans-unit id="3BHpDY6">
+                <source>narration.guided_step_block_edit</source>
+                <target>Ouvrez la page sur laquelle vous voulez travailler.</target>
+            </trans-unit>
+            <trans-unit id="xkasFXd">
+                <source>narration.guided_step_block_kind</source>
+                <target>Choisissez son type : chacun dit ce qu'il fait, et un type qui n'est plus proposé ici est signalé par un avertissement.</target>
+            </trans-unit>
+            <trans-unit id="SroH_U3">
+                <source>narration.guided_step_block_open</source>
+                <target>Nous allons régler les blocks d'une page. Dans la colonne de gauche, le panneau vous emmène sur la liste des pages.</target>
+            </trans-unit>
+            <trans-unit id="IXYG.q6">
+                <source>narration.guided_step_block_options</source>
+                <target>Juste en dessous, les réglages propres au block. Une carte peut lister ses lieux en menu, un slider affiche les crédits d'une photo seule.</target>
+            </trans-unit>
+            <trans-unit id="RgbyKN4">
+                <source>narration.guided_step_block_save</source>
+                <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="vziUeT6">
+                <source>narration.guided_step_block_view</source>
+                <target>Vérifiez sur le site le rendu du block.</target>
+            </trans-unit>
             <trans-unit id="hAyw9ep">
                 <source>narration.guided_step_collection_add_item</source>
                 <target>Ajoutez un élément. Titre, texte, image, lien : remplissez ce dont vous avez besoin et laissez le reste vide. Sur un site en plusieurs langues, le bouton Traduire de la liste ouvre le même élément dans une autre langue.</target>

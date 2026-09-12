@@ -6,6 +6,34 @@
                 <source>narration.collections</source>
                 <target>"Collections" holds the lists of alike items, team, references, events, to be shown afterwards in any page through a collection block.</target>
             </trans-unit>
+            <trans-unit id="RUxTDKz">
+                <source>narration.guided_step_block_add</source>
+                <target>Add a block, or open one the page already holds.</target>
+            </trans-unit>
+            <trans-unit id="3BHpDY6">
+                <source>narration.guided_step_block_edit</source>
+                <target>Open the page you want to work on.</target>
+            </trans-unit>
+            <trans-unit id="xkasFXd">
+                <source>narration.guided_step_block_kind</source>
+                <target>Choose its kind: each one says what it does, and a kind no longer offered here is flagged with a warning.</target>
+            </trans-unit>
+            <trans-unit id="SroH_U3">
+                <source>narration.guided_step_block_open</source>
+                <target>We are going to set up the blocks of a page. In the left-hand column, the panel takes you to the pages list.</target>
+            </trans-unit>
+            <trans-unit id="IXYG.q6">
+                <source>narration.guided_step_block_options</source>
+                <target>Right under it, the block's own settings. A map can list its places as a menu, a slider shows the credits of a single photograph.</target>
+            </trans-unit>
+            <trans-unit id="RgbyKN4">
+                <source>narration.guided_step_block_save</source>
+                <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="vziUeT6">
+                <source>narration.guided_step_block_view</source>
+                <target>Check on the site how the block renders.</target>
+            </trans-unit>
             <trans-unit id="hAyw9ep">
                 <source>narration.guided_step_collection_add_item</source>
                 <target>Add an item. Title, text, image, link: fill in what you need and leave the rest empty. On a site in several languages, the list's Translate button opens the same item in another language.</target>

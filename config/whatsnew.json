@@ -3,6 +3,16 @@
         "date": "2026-09-12",
         "description": [
             {
+                "en": "A menu with more links than the bar can hold now goes onto a second line, so every link stays reachable",
+                "fr": "Un menu avec plus de liens que la barre ne peut en tenir passe désormais sur une deuxième ligne, et chaque lien reste accessible",
+                "es": "Un menú con más enlaces de los que caben en la barra pasa ahora a una segunda línea, y cada enlace sigue accesible"
+            },
+            {
+                "en": "A new guided project shows how to set up the blocks of a page: choosing their kind, then their own options",
+                "fr": "Un nouveau projet guidé montre comment régler les blocks d'une page : choisir leur type, puis leurs propres options",
+                "es": "Un nuevo proyecto guiado muestra cómo ajustar los bloques de una página: elegir su tipo y luego sus propias opciones"
+            },
+            {
                 "en": "A screen that refreshes on its own no longer answers the same click several times over",
                 "fr": "Un écran qui se met à jour tout seul ne répond plus plusieurs fois au même clic",
                 "es": "Una pantalla que se actualiza sola ya no responde varias veces al mismo clic"
