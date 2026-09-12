@@ -43,7 +43,7 @@ See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.co
 - **Twig extensions**: `site_page`, `site_legal_pages`, `menu_blocks`, `page_health_check`, `page_title`, `page_summary`, `page_alternates`
 - **File lists**: `extensions.txt` and `bots.txt`
 - **Admin help procedures** contributed to the dashboard AI assistant, describing how to create pages, redirects, menus, etc.
-- **Four skills for coding agents**, shipped in the package and read straight from `vendor/` — see [AI agent skills](#ai-agent-skills)
+- **Five skills for coding agents**, shipped in the package and read straight from `vendor/` — see [AI agent skills](#ai-agent-skills)
 
 ---
 
@@ -112,14 +112,15 @@ This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basi
 
 Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
-**Add two lines to `assets/bootstrap.js`** (or `assets/stimulus_bootstrap.js`):
+Each barrel is loaded as its own `<script type="module">` tag, so there is nothing to import in your app. It does
+not start a Stimulus application of its own either: `startStimulusApp()` also registers everything your
+`controllers.json` enables, so a page loading several c975L barrels would build `live` and `chart` once per barrel.
+Every barrel joins the one application of the page instead, and **your own `assets/stimulus_bootstrap.js` should
+join it too**, since it is usually the file that creates it - the line below replaces the
+`const app = startStimulusApp()` already sitting there, its `import { startStimulusApp }` line staying as it is:
 
 ```js
-import { startStimulusApp } from '@symfony/stimulus-bundle';
-import { register as registerc975lSite } from '@c975l/site-bundle/controllers.js';
-
-const app = startStimulusApp();
-registerc975lSite(app);
+const app = (globalThis.c975lStimulusApp ??= startStimulusApp());
 ```
 
 After that, all controllers are loaded with hashed filenames (cache busting). Adding or removing controllers in a future bundle update requires no change in your app.
@@ -1229,7 +1230,7 @@ $bots = file(
 
 ## AI agent skills
 
-The package ships four skills of its own, written for the coding agent of the site installing this bundle rather than for someone modifying it. Point your agent at the directory:
+The package ships five skills of its own, written for the coding agent of the site installing this bundle rather than for someone modifying it. Point your agent at the directory:
 
 ```text
 vendor/c975l/site-bundle/skills/
@@ -1241,6 +1242,7 @@ vendor/c975l/site-bundle/skills/
 | `c975l-site-pages` | `Page`, file-based pages, the block kinds this bundle adds, publish as replacement, collections and their item detail pages |
 | `c975l-site-menus` | the four menu locations, `menu_link` targets and anchors, `menu_group`, the navbar and the footer's display style |
 | `c975l-site-seo` | sitemaps, canonical urls, `hreflang` groups and the localised urls, the Open Graph image, the seven health checks, the smoke test and the dev profile |
+| `c975l-site-assets` | the two Stimulus barrels, the one application a page shares, the importmap entries a bundle contributes and the compiled stylesheets |
 
 They are split by subject rather than shipped as one file so that an agent loads the one it needs — a question about a menu doesn't pull in the health checks. Each holds what an agent gets wrong when left to its own habits: that a replacement layout still owes a `container` block, that a `style=""` attribute is dropped by the nonce, that a menu link stores an id rather than a slug, that a satellite exposes a route through `LinkableRouteProviderInterface` instead of depending on this bundle.
 

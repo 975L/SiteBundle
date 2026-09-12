@@ -47,6 +47,17 @@ class HorizontalOverflowTest extends TestCase
         );
     }
 
+    // Smooth scrolling at the root also animates the jump Turbo makes to an anchor after a visit, which travels the whole height of the page
+    #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
+    public function testTheRootDoesNotScrollSmoothly(string $file): void
+    {
+        $this->assertStringNotContainsString(
+            'scroll-behavior:smooth',
+            $this->stylesheet($file),
+            sprintf('"%s" scrolls smoothly at the root, so Turbo\'s jump to an anchor is animated across the whole page.', $file)
+        );
+    }
+
     // Strips comments and collapses whitespace, so the same assertions hold on the minified sheet
     private function stylesheet(string $file): string
     {

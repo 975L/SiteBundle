@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-09-12",
+        "description": [
+            {
+                "en": "A screen that refreshes on its own no longer answers the same click several times over",
+                "fr": "Un écran qui se met à jour tout seul ne répond plus plusieurs fois au même clic",
+                "es": "Una pantalla que se actualiza sola ya no responde varias veces al mismo clic"
+            },
+            {
+                "en": "Following a link to a spot inside a page now lands there straight away, instead of scrolling the whole page past you",
+                "fr": "Suivre un lien vers un endroit d'une page y arrive désormais directement, au lieu de faire défiler toute la page devant vous",
+                "es": "Seguir un enlace a un punto dentro de una página lleva ahora allí directamente, en vez de hacer desfilar toda la página ante usted"
+            }
+        ]
+    },
+    {
         "date": "2026-09-11",
         "description": [
             {

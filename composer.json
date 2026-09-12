@@ -71,7 +71,6 @@
         "stan": "phpstan analyse --no-progress",
         "stan-scaffold": "phpstan analyse -c phpstan-scaffold.dist.neon --no-progress",
         "rector": "rector process --dry-run",
-        "mess": "phpmd src text phpmd.xml.dist --ignore-errors-on-exit --report-file .phpmd-report.log; s=$?; grep -E \"^(/|[[:space:]]*-)\" .phpmd-report.log; n=$(grep -c \"Unexpected token\" .phpmd-report.log); if [ \"$n\" -gt 0 ]; then echo \"phpmd analysed nothing in $n file(s): PDepend cannot parse them\"; fi; exit $s",
         "lizard-ccn": "lizard -l php -C 14 -w src",
         "lizard-nloc": "find src -name '*.php' ! -name '*CrudController.php' ! -name '*Type.php' | xargs lizard -l php -T nloc=99 -C 999 -a 999 -w",
         "lizard": [
@@ -86,7 +85,6 @@
             "@stan",
             "@stan-scaffold",
             "@rector",
-            "@mess",
             "@lizard",
             "@test"
         ]
@@ -98,7 +96,6 @@
         "stan": "Analyse statique du bundle, level 5",
         "stan-scaffold": "Analyse statique du seul scaffold, level 6, au niveau des applications qui le recopient",
         "rector": "Modernisation du code (rector), en dry-run - le cache est dans .rector.cache, propre au dépôt",
-        "mess": "Détection des odeurs de code (phpmd)",
         "lizard-ccn": "Complexité cyclomatique par fonction, seuil Codacy de 14 (lizard)",
         "lizard-nloc": "Longueur des fonctions, seuil de 99 lignes, hors CrudController et Type (lizard)",
         "lizard": "Les deux mesures lizard du portail Codacy, complexité puis longueur",

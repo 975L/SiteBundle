@@ -12,7 +12,7 @@ description: "Use this skill when working on the searchability or the monitoring
 **Key source paths** (relative to the package root):
 `src/Management/SitePageSitemapProvider.php`, `src/Management/ContentQualityHealthCheckProvider.php`, `src/Management/SitePageHealthCheckProvider.php`, `src/Management/W3cHtmlHealthCheckProvider.php`, `src/Management/W3cCssHealthCheckProvider.php`, `src/Management/MixedContentHealthCheckProvider.php`, `src/Management/CollectionFilesHealthCheckProvider.php`, `src/Management/TranslationHealthCheckProvider.php`, `src/Management/PageDevProfilePathProvider.php`, `src/Management/PageHealthCheckTargets.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageLinkLocalizer.php`, `src/Twig/PageTranslationExtension.php`, `src/Service/SiteSnippetBuilder.php`, `src/Twig/SiteJsonLdExtension.php`, `src/Service/SmokeTestClient.php`, `src/Command/SmokeTestCommand.php`
 
-**Related skills:** `c975l-site-pages`, `c975l-site-layout` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
+**Related skills:** `c975l-site-pages`, `c975l-site-layout`, `c975l-site-assets` in this same package. The sitemap writer, the health-check runner, the dashboard and the site-wide checks live in `c975l/core-bundle`.
 
 ## Sitemaps
 

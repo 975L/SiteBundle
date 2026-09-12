@@ -5,9 +5,8 @@
   box-sizing: border-box;
 }
 
-// The 100vw full-bleeds (navbar, footer, banner title, colored flats) are as wide as the viewport plus its scrollbar, so they stick out by half of it on each side and have to be swallowed here. "clip" and not "hidden": both swallow it, but "hidden" also makes the root a scroll container of its own, which nothing on the page wants - "clip" leaves overflow-y "visible", so the document keeps scrolling as the viewport
+// The 100vw full-bleeds (navbar, footer, banner title, colored flats) are as wide as the viewport plus its scrollbar, so they stick out by half of it on each side and have to be swallowed here. "clip" and not "hidden": both swallow it, but "hidden" also makes the root a scroll container of its own, which nothing on the page wants - "clip" leaves overflow-y "visible", so the document keeps scrolling as the viewport. No "scroll-behavior: smooth" either: it also animates the jump Turbo makes to an anchor after a visit, which reads as a flicker - smoothness is UiBundle's scrollButtons controller's own, asked for element by element
 html {
-    scroll-behavior: smooth;
     overflow-x: clip;
     background-color: var(--frame-background);
 }

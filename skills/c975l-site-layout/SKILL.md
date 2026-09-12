@@ -12,7 +12,7 @@ description: "Use this skill when working on the shell of a page in a Symfony ap
 **Key source paths** (relative to the package root):
 `templates/layout.html.twig`, `templates/components/General/`, `templates/Exception/`, `templates/emails/`, `src/Service/EmailLayoutProvider.php`, `sass/`, `scaffold/assets/styles/themes/site.css`, `config/configs.json`
 
-**Related skills:** `c975l-site-pages`, `c975l-site-menus`, `c975l-site-seo` in this same package. The theme compiler, the block system and the fonts are in `c975l/core-bundle`.
+**Related skills:** `c975l-site-pages`, `c975l-site-menus`, `c975l-site-seo`, `c975l-site-assets` in this same package. The theme compiler, the block system and the fonts are in `c975l/core-bundle`.
 
 ## The layout contract
 

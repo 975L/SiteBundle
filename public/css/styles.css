@@ -362,7 +362,6 @@ summary {
 }
 
 html {
-  scroll-behavior: smooth;
   overflow-x: clip;
   background-color: var(--frame-background);
 }

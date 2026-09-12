@@ -12,7 +12,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Key source paths** (relative to the package root):
 `src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
-**Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo` in this same package. The block system and its contexts are in `c975l/core-bundle`.
+**Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
 ## One entity, four locations
 

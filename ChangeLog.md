@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.15.7
+
+The bundle's Stimulus controllers join the one application of the page
+
+- `controllers.js` and `controllers-admin.js` join the one Stimulus application of the page instead of starting their own, so `live` is no longer registered once per barrel (12/09/2026)
+- The site's own `assets/stimulus_bootstrap.js` has to join that application too, one line to change (see README) (12/09/2026)
+- `html` no longer carries `scroll-behavior: smooth`, which also animated the jump Turbo makes to an anchor (12/09/2026)
+- phpmd dropped from the quality gate, PDepend no longer parsing PHP 8.4 (12/09/2026)
+- The debug calls phpmd used to look for are now a `phpcs` rule, `eval` and Symfony's `dump`/`dd` included (12/09/2026)
+- A fifth agent skill, `c975l-site-assets`, covers the barrels, the shared Stimulus application and the stylesheets (12/09/2026)
+
 ## v8.15.6
 
 Probe requests all go out under the same recognisable agent

@@ -12,7 +12,7 @@ description: "Use this skill when working with pages or collections in a Symfony
 **Key source paths** (relative to the package root):
 `src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
 
-**Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
+**Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
 
 ## Two kinds of pages
 
