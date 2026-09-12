@@ -18,6 +18,7 @@ use c975L\UiBundle\Management\BlockDataImporter;
 use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MenuImportProviderTest extends TestCase
 {
@@ -32,7 +33,7 @@ class MenuImportProviderTest extends TestCase
     public function testSupportsImportOnlyMatchesSiteMenuKind(): void
     {
         $em = $this->createStub(EntityManagerInterface::class);
-        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $this->assertTrue($provider->supportsImport('site_menu'));
         $this->assertFalse($provider->supportsImport('site_page'));
@@ -46,7 +47,7 @@ class MenuImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $result = $provider->import([[
             'location' => Menu::LOCATION_FOOTER,
@@ -77,7 +78,7 @@ class MenuImportProviderTest extends TestCase
         $existingMenu = new Menu()->setLocation(Menu::LOCATION_FOOTER)->setStyle(Menu::STYLE_INLINE);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([['location' => Menu::LOCATION_FOOTER, 'blocks' => []]]);
 
@@ -91,7 +92,7 @@ class MenuImportProviderTest extends TestCase
         $existingMenu->addBlock($existingBlock);
 
         $em = $this->createStub(EntityManagerInterface::class);
-        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new MenuImportProvider($em, $this->createMenuRepository($existingMenu), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $result = $provider->import([[
             'location' => Menu::LOCATION_NAVBAR,

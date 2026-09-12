@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.15.9
+
+An imported page's og-image is converted like an uploaded one
+
+- A page's imported og-image is marked as such, so an SVG gets converted (12/09/2026)
+- An imported og-image the SVG conversion refuses leaves the page's current one in place (12/09/2026)
+- Requires `c975l/core-bundle` ^1.30.3 (12/09/2026)
+
 ## v8.15.8
 
 An overflowing navbar wraps, and a guided project walks page blocks

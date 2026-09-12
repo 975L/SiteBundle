@@ -3,6 +3,11 @@
         "date": "2026-09-12",
         "description": [
             {
+                "en": "A page's sharing image brought in by an import is now prepared for social networks just like one you upload",
+                "fr": "L'image de partage d'une page reprise par un import est désormais préparée pour les réseaux sociaux comme celle que vous téléversez",
+                "es": "La imagen para compartir de una página traída por una importación se prepara ahora para las redes sociales igual que la que usted sube"
+            },
+            {
                 "en": "A menu with more links than the bar can hold now goes onto a second line, so every link stays reachable",
                 "fr": "Un menu avec plus de liens que la barre ne peut en tenir passe désormais sur une deuxième ligne, et chaque lien reste accessible",
                 "es": "Un menú con más enlaces de los que caben en la barra pasa ahora a una segunda línea, y cada enlace sigue accesible"

@@ -19,6 +19,9 @@ use c975L\UiBundle\Management\BlockDataImporter;
 use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PageImportProviderTest extends TestCase
 {
@@ -36,7 +39,7 @@ class PageImportProviderTest extends TestCase
         $provider = new PageImportProvider(
             $em,
             $this->createPageRepository(),
-            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)),
         );
 
         $this->assertTrue($provider->supportsImport('site_page'));
@@ -58,7 +61,7 @@ class PageImportProviderTest extends TestCase
             ->method('ensureDependenciesExist')
             ->with(['kind' => 'form', 'position' => 0, 'data' => ['name' => 'contact']]);
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $formBlockDependencyRegistry));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $formBlockDependencyRegistry, $this->createStub(ValidatorInterface::class)));
 
         $result = $provider->import([[
             'title' => 'Contact',
@@ -96,7 +99,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([
             ['title' => 'Créer un compte', 'slug' => 'creer-un-compte', 'isPublished' => true, 'isIndexable' => false, 'blocks' => []],
@@ -117,7 +120,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([
             ['title' => 'Accueil', 'slug' => 'accueil', 'isPublished' => true, 'options' => ['titleDisplayed' => false], 'blocks' => []],
@@ -144,7 +147,7 @@ class PageImportProviderTest extends TestCase
         $provider = new PageImportProvider(
             $em,
             $this->createPageRepository($existingPage),
-            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)),
         );
 
         $result = $provider->import([[
@@ -177,7 +180,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -227,7 +230,7 @@ class PageImportProviderTest extends TestCase
         $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
             $persisted[] = $entity;
         });
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -284,7 +287,7 @@ class PageImportProviderTest extends TestCase
             $persisted[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -307,6 +310,7 @@ class PageImportProviderTest extends TestCase
         $this->assertInstanceOf(Page::class, $page);
         $this->assertSame('Shared on social networks', $page->getSummarySocialNetwork());
         $this->assertNotNull($page->getOgImage());
+        $this->assertTrue($page->getOgImage()->isOgImage());
         $this->assertSame('fake-og-image-bytes', file_get_contents($page->getOgImage()->getFile()->getPathname()));
 
         unlink($filesDir . '/files/og.jpg');
@@ -325,7 +329,7 @@ class PageImportProviderTest extends TestCase
             $removed[] = $entity;
         });
 
-        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class)));
+        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)));
 
         $provider->import([[
             'title' => 'About',
@@ -335,5 +339,33 @@ class PageImportProviderTest extends TestCase
 
         $this->assertSame([$existingOgImage], $removed);
         $this->assertNull($existingPage->getOgImage());
+    }
+
+    // A share image the SVG conversion refuses would be stored as markup under a .webp name, so the page keeps the one it has
+    public function testImportKeepsTheExistingOgImageWhenTheConversionRefusesTheNewOne(): void
+    {
+        $existingOgImage = new Media()->setFilename('uploads/old-og.jpg');
+        $existingPage = new Page()->setTitle('About')->setSlug('about')->setOgImage($existingOgImage);
+
+        $removed = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('remove')->willReturnCallback(static function (object $entity) use (&$removed): void {
+            $removed[] = $entity;
+        });
+
+        $validator = $this->createStub(ValidatorInterface::class);
+        $validator->method('validate')->willReturn(new ConstraintViolationList([new ConstraintViolation('refused', null, [], null, 'file', null)]));
+
+        $provider = new PageImportProvider($em, $this->createPageRepository($existingPage), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $validator));
+
+        $provider->import([[
+            'title' => 'About',
+            'slug' => 'about',
+            'ogImage' => ['originalFilename' => 'og.svg', 'file' => 'files/og.svg'],
+            'blocks' => [],
+        ]]);
+
+        $this->assertSame([], $removed);
+        $this->assertSame($existingOgImage, $existingPage->getOgImage());
     }
 }

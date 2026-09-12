@@ -92,21 +92,27 @@ class PageImportProvider implements ImportProviderInterface
         }
     }
 
-    // ogImage is exclusively owned by this Page (see Page::$ogImage's cascade), unlike Block medias there's no listener to orphan-remove it on its own - dropped by hand before a replacement (if any) is built
+    // ogImage is exclusively owned by this Page (see Page::$ogImage's cascade), unlike Block medias there's no listener to orphan-remove it on its own - dropped by hand once its replacement (if any) is known
     private function replaceOgImage(Page $page, ?array $ogImageData, ?string $filesDir): void
     {
+        $ogImage = null;
+        if (null !== $ogImageData) {
+            $ogImage = $this->blockDataImporter->buildOgImage($ogImageData, $filesDir);
+
+            // A file the SVG conversion can't handle leaves the current image in place
+            if (null === $ogImage) {
+                return;
+            }
+        }
+
         $existing = $page->getOgImage();
         if (null !== $existing) {
-            $page->setOgImage(null);
             $this->em->remove($existing);
         }
 
-        if (null === $ogImageData) {
-            return;
+        if (null !== $ogImage) {
+            $this->em->persist($ogImage);
         }
-
-        $ogImage = $this->blockDataImporter->buildMedia($ogImageData, $filesDir);
-        $this->em->persist($ogImage);
         $page->setOgImage($ogImage);
     }
 }
