@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.15.10
+
+Declare symfony/validator as a direct dependency
+
+- Requires `symfony/validator` ^8.0, already used by entities and forms (21/09/2026)
+
 ## v8.15.9
 
 An imported page's og-image is converted like an uploaded one

@@ -32,6 +32,7 @@
         "symfony/string": "^8.0",
         "symfony/twig-bundle": "^8.0",
         "symfony/ux-twig-component": "^3.3",
+        "symfony/validator": "^8.0",
         "twig/cssinliner-extra": "^3.26",
         "twig/intl-extra": "^3.26",
         "twig/twig": "^3.26",
