@@ -142,6 +142,10 @@
                 <source>description.guided_project_collection</source>
                 <target>Agrupar contenidos que se repiten (equipo, trabajos, eventos) y mostrarlos en una página</target>
             </trans-unit>
+            <trans-unit id="2DBltYc">
+                <source>description.guided_project_collection_translation</source>
+                <target>Cada elemento de una colección se dice después en los idiomas del sitio, desde su propia pantalla de edición abierta en uno de ellos.</target>
+            </trans-unit>
             <trans-unit id="CRY4jVY">
                 <source>description.guided_project_content_export</source>
                 <target>Llevarse páginas en un zip, con sus blocks y sus imágenes, para cargarlas en otro sitio o guardarlas fuera del servidor</target>
@@ -186,6 +190,10 @@
                 <source>description.guided_step_block_add</source>
                 <target>Añada un bloque, o abra uno que la página ya contiene.</target>
             </trans-unit>
+            <trans-unit id="CIjMxdx">
+                <source>description.guided_step_block_edit</source>
+                <target>Cualquier página ya guardada sirve. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
+            </trans-unit>
             <trans-unit id="3PHL1c5">
                 <source>description.guided_step_block_kind</source>
                 <target>Cada tipo dice lo que hace. Un tipo que ya no se ofrece en este lugar se señala con una advertencia.</target>
@@ -210,6 +218,10 @@
                 <source>description.guided_step_collection_display</source>
                 <target>Vuelva a una página, añádale un bloque de colección y elija la que acaba de crear.</target>
             </trans-unit>
+            <trans-unit id="3dSmc_k">
+                <source>description.guided_step_collection_item_save</source>
+                <target>Vuelve a la lista de elementos de la colección.</target>
+            </trans-unit>
             <trans-unit id="XYbqA8D">
                 <source>description.guided_step_collection_items</source>
                 <target>La colección es un contenedor: son sus elementos los que llevan el contenido.</target>
@@ -225,6 +237,30 @@
             <trans-unit id="sESmPiI">
                 <source>description.guided_step_collection_order</source>
                 <target>Tome una fila por su asa para moverla: la página los mostrará en ese orden.</target>
+            </trans-unit>
+            <trans-unit id="FjMe48o">
+                <source>description.guided_step_collection_translation_action</source>
+                <target>En la fila del elemento. El botón solo aparece si el sitio declara más de un idioma: si no, no hay nada que abrir.</target>
+            </trans-unit>
+            <trans-unit id="WPgj3Nv">
+                <source>description.guided_step_collection_translation_check</source>
+                <target>La página que muestra la colección, leída en ese idioma, muestra ahora el elemento traducido.</target>
+            </trans-unit>
+            <trans-unit id="Evudhcf">
+                <source>description.guided_step_collection_translation_items</source>
+                <target>En la fila de su colección: el botón resaltado es el de la primera.</target>
+            </trans-unit>
+            <trans-unit id="p8CoCA9">
+                <source>description.guided_step_collection_translation_locale</source>
+                <target>La barra en la parte superior: cada idioma del sitio tiene su pestaña y la pantalla de edición se abre en ella.</target>
+            </trans-unit>
+            <trans-unit id="2krCaUs">
+                <source>description.guided_step_collection_translation_open</source>
+                <target>La lista de colecciones, de donde parte la traducción de sus elementos.</target>
+            </trans-unit>
+            <trans-unit id="Jb_EpLx">
+                <source>description.guided_step_collection_translation_write</source>
+                <target>El texto original se muestra entre corchetes: un campo que lo conserva cuenta como nada escrito.</target>
             </trans-unit>
             <trans-unit id="aUJzndC">
                 <source>description.guided_step_content_export_formats</source>
@@ -268,7 +304,7 @@
             </trans-unit>
             <trans-unit id="TmVqMFG">
                 <source>description.guided_step_footer_open</source>
-                <target>Un menú por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+                <target>Un menú por ubicación del sitio, de la barra de navegación al pie de los correos: cada uno se crea una sola vez.</target>
             </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
@@ -308,7 +344,7 @@
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
-                <target>Los blocks solo se arrastran una vez que la página existe: guárdela y vuelva a abrirla para llenarla.</target>
+                <target>Los blocks solo se arrastran una vez que la página existe: guárdela y vuelva a abrirla para llenarla. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="Fu7HfYi">
                 <source>description.guided_step_page_creation_save</source>
@@ -318,13 +354,17 @@
                 <source>description.guided_step_page_creation_title</source>
                 <target>La dirección de la página se rellena sola a partir del título, y sigue siendo editable.</target>
             </trans-unit>
+            <trans-unit id="YNn0aYh">
+                <source>description.guided_step_page_creation_title_displayed</source>
+                <target>Desmárquelo si un bloque de cabecera («hero») ya lleva el título: así no se mostrará dos veces. La página conserva su título en todo lo demás (pestaña del navegador, enlaces compartidos, menús).</target>
+            </trans-unit>
             <trans-unit id="ZGnJv64">
                 <source>description.guided_step_page_creation_view</source>
-                <target>La página ya es pública: este botón la abre tal como la ven sus visitantes.</target>
+                <target>La página ya es pública: este botón la abre tal como la ven sus visitantes. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="MRmz1hF">
                 <source>description.guided_step_page_health_edit</source>
-                <target>Ninguno de los dos aparece en una página en creación: necesitan una página guardada.</target>
+                <target>Ninguno de los dos aparece en una página en creación: necesitan una página guardada. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="HfXsIEx">
                 <source>description.guided_step_page_health_open</source>
@@ -352,7 +392,7 @@
             </trans-unit>
             <trans-unit id="i0tTiPz">
                 <source>description.guided_step_page_menu_brand</source>
-                <target>De vuelta en los menús: la quinta ubicación lleva lo que el sitio dice bajo su propio nombre. No se resalta nada si ya existe.</target>
+                <target>De vuelta en los menús: la ubicación «Bajo el nombre del sitio» lleva lo que el sitio dice bajo su propio nombre. No se resalta nada si ya existe.</target>
             </trans-unit>
             <trans-unit id="7bcgCUX">
                 <source>description.guided_step_page_menu_brand_write</source>
@@ -372,7 +412,7 @@
             </trans-unit>
             <trans-unit id="_YVF1At">
                 <source>description.guided_step_page_menu_open</source>
-                <target>Un menú por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+                <target>Un menú por ubicación del sitio, de la barra de navegación al pie de los correos: cada uno se crea una sola vez.</target>
             </trans-unit>
             <trans-unit id="TkXHcvz">
                 <source>description.guided_step_page_menu_target</source>
@@ -384,7 +424,7 @@
             </trans-unit>
             <trans-unit id="xQXwn1q">
                 <source>description.guided_step_page_revision_duplicate</source>
-                <target>La copia recoge todo el contenido del original, pero no está publicada: se abre directamente.</target>
+                <target>La copia recoge todo el contenido del original, pero no está publicada: se abre directamente. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="3eae6FD">
                 <source>description.guided_step_page_revision_open</source>
@@ -408,7 +448,7 @@
             </trans-unit>
             <trans-unit id="bfIpkLz">
                 <source>description.guided_step_page_seo_edit</source>
-                <target>Todos estos campos están en la pestaña «Datos», debajo del título.</target>
+                <target>Todos estos campos están en la pestaña «Datos», debajo del título. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="Ve53OEd">
                 <source>description.guided_step_page_seo_frequency</source>
@@ -774,6 +814,10 @@
                 <source>label.guided_project_collection</source>
                 <target>Crear una colección</target>
             </trans-unit>
+            <trans-unit id="s7.vGLh">
+                <source>label.guided_project_collection_translation</source>
+                <target>Decir una colección en otro idioma</target>
+            </trans-unit>
             <trans-unit id="36ObQ1j">
                 <source>label.guided_project_content_export</source>
                 <target>Exportar páginas a otro sitio</target>
@@ -850,6 +894,10 @@
                 <source>label.guided_step_collection_display</source>
                 <target>Mostrar la colección en una página</target>
             </trans-unit>
+            <trans-unit id="AYEAYeU">
+                <source>label.guided_step_collection_item_save</source>
+                <target>Guardar el elemento</target>
+            </trans-unit>
             <trans-unit id="A9QBctX">
                 <source>label.guided_step_collection_items</source>
                 <target>Abrir sus elementos</target>
@@ -873,6 +921,34 @@
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Guardar la colección</target>
+            </trans-unit>
+            <trans-unit id="vb8kunb">
+                <source>label.guided_step_collection_translation_action</source>
+                <target>Hacer clic en «Traducir»</target>
+            </trans-unit>
+            <trans-unit id="BSSwaBx">
+                <source>label.guided_step_collection_translation_check</source>
+                <target>Comprobar en el sitio</target>
+            </trans-unit>
+            <trans-unit id="xg3O8hY">
+                <source>label.guided_step_collection_translation_items</source>
+                <target>Abrir sus elementos</target>
+            </trans-unit>
+            <trans-unit id="jUWeSNT">
+                <source>label.guided_step_collection_translation_locale</source>
+                <target>Elegir el idioma</target>
+            </trans-unit>
+            <trans-unit id="tgZ4JAZ">
+                <source>label.guided_step_collection_translation_open</source>
+                <target>Abrir las colecciones</target>
+            </trans-unit>
+            <trans-unit id="HWx6O.o">
+                <source>label.guided_step_collection_translation_save</source>
+                <target>Guardar</target>
+            </trans-unit>
+            <trans-unit id="pPeXVf4">
+                <source>label.guided_step_collection_translation_write</source>
+                <target>Escribir el título y el texto</target>
             </trans-unit>
             <trans-unit id="yjf91vT">
                 <source>label.guided_step_content_export_formats</source>
@@ -978,6 +1054,10 @@
                 <source>label.guided_step_page_creation_title</source>
                 <target>Dar un título a la página</target>
             </trans-unit>
+            <trans-unit id="YzBd6GB">
+                <source>label.guided_step_page_creation_title_displayed</source>
+                <target>Mostrar o no el título</target>
+            </trans-unit>
             <trans-unit id="BO9Oiu9">
                 <source>label.guided_step_page_creation_view</source>
                 <target>Ver la página en línea</target>
@@ -1012,11 +1092,11 @@
             </trans-unit>
             <trans-unit id="v5h6c_t">
                 <source>label.guided_step_page_menu_brand</source>
-                <target>Añada el lema bajo el nombre del sitio</target>
+                <target>Añadir el lema bajo el nombre del sitio</target>
             </trans-unit>
             <trans-unit id="RFGEX.0">
                 <source>label.guided_step_page_menu_brand_write</source>
-                <target>Escríbalo como un bloque</target>
+                <target>Escribirlo como un bloque</target>
             </trans-unit>
             <trans-unit id="mMM6W5A">
                 <source>label.guided_step_page_menu_check</source>
@@ -1356,7 +1436,7 @@
             </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
-                <target>Lista de los menús del sitio (barra de navegación, pie de página, cabecera/pie de correo). Edite un menú para añadir, quitar o reordenar sus enlaces; cada ubicación (navbar, footer...) solo puede usarse una vez.</target>
+                <target>Lista de los menús del sitio, uno por ubicación (barra de navegación, pie de página, correos...). Edite un menú para añadir, quitar o reordenar sus enlaces; cada ubicación solo puede usarse una vez.</target>
             </trans-unit>
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>

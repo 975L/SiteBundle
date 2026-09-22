@@ -32,6 +32,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
     {
         return [
             $this->collectionProject(),
+            $this->collectionTranslationProject(),
             $this->pageCreationProject(),
             $this->blockProject(),
             $this->pageSeoProject(),
@@ -93,6 +94,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '.action-new',
                 ],
                 [
+                    'label' => 'label.guided_step_collection_item_save',
+                    'description' => 'description.guided_step_collection_item_save',
+                    'narration' => 'narration.guided_step_collection_item_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
                     // The row marker collection_item_crud_index.html.twig opts each item into, read by UiBundle's ea-index-sort.js - an index row carries no id of its own to point at
                     'label' => 'label.guided_step_collection_order',
                     'description' => 'description.guided_step_collection_order',
@@ -103,6 +110,63 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_collection_display',
                     'description' => 'description.guided_step_collection_display',
                     'narration' => 'narration.guided_step_collection_display',
+                ],
+            ],
+        ];
+    }
+
+    // An item of a collection is said again in each of the site's languages, on its very own edit screen opened on another one - the same mechanism as a page's
+    private function collectionTranslationProject(): array
+    {
+        return [
+            'slug' => 'site-collection-translation',
+            'label' => 'label.guided_project_collection_translation',
+            'description' => 'description.guided_project_collection_translation',
+            'translation_domain' => 'site',
+            'order' => 2015,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_collection_translation_open',
+                    'description' => 'description.guided_step_collection_translation_open',
+                    'narration' => 'narration.guided_step_collection_translation_open',
+                    'url' => $this->indexUrl(CollectionCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_items',
+                    'description' => 'description.guided_step_collection_translation_items',
+                    'narration' => 'narration.guided_step_collection_translation_items',
+                    'highlight' => '.action-items',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_action',
+                    'description' => 'description.guided_step_collection_translation_action',
+                    'narration' => 'narration.guided_step_collection_translation_action',
+                    // Only shown where the site declares more than one language, which is what the step's description says
+                    'highlight' => '.action-translate',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_locale',
+                    'description' => 'description.guided_step_collection_translation_locale',
+                    'narration' => 'narration.guided_step_collection_translation_locale',
+                    // The same pill bar CoreBundle draws above a page's language screen
+                    'highlight' => '[data-content-locales]',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_write',
+                    'description' => 'description.guided_step_collection_translation_write',
+                    'narration' => 'narration.guided_step_collection_translation_write',
+                    'highlight' => '#CollectionItem_title',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_save',
+                    'narration' => 'narration.guided_step_collection_translation_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_translation_check',
+                    'description' => 'description.guided_step_collection_translation_check',
+                    'narration' => 'narration.guided_step_collection_translation_check',
                 ],
             ],
         ];
@@ -156,6 +220,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '[data-ui-sort-group="block"]',
                 ],
                 [
+                    'label' => 'label.guided_step_page_creation_title_displayed',
+                    'description' => 'description.guided_step_page_creation_title_displayed',
+                    'narration' => 'narration.guided_step_page_creation_title_displayed',
+                    'highlight' => '#Page_isTitleDisplayed',
+                ],
+                [
                     'label' => 'label.guided_step_page_creation_publish',
                     'description' => 'description.guided_step_page_creation_publish',
                     'narration' => 'narration.guided_step_page_creation_publish',
@@ -195,6 +265,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 ],
                 [
                     'label' => 'label.guided_step_block_edit',
+                    'description' => 'description.guided_step_block_edit',
                     'narration' => 'narration.guided_step_block_edit',
                     'highlight' => '.action-edit',
                 ],
@@ -639,7 +710,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_brand',
                     'description' => 'description.guided_step_page_menu_brand',
                     'narration' => 'narration.guided_step_page_menu_brand',
-                    // Back on the same screen, for the fifth location: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting. No highlight, unlike the navigation bar step above, the create button existing only for a location not created yet and a site carrying a brand line already holding the menu
+                    // Back on the same screen, for the location under the site's name: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting. No highlight, unlike the navigation bar step above, the create button existing only for a location not created yet and a site carrying a brand line already holding the menu
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_brand_write',
@@ -691,8 +762,8 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                 [
                     'label' => 'label.guided_step_menu_translation_save',
                     'narration' => 'narration.guided_step_menu_translation_save',
-                    // The screen is a form of its own, not an EasyAdmin CRUD, so there is no ".action-saveAndReturn" here
-                    'highlight' => 'form button[type="submit"]',
+                    // The screen is a form of its own, not an EasyAdmin CRUD, so there is no ".action-saveAndReturn" here - the marker translation.html.twig puts on its button, the layout carrying other forms
+                    'highlight' => '[data-menu-translation-submit]',
                 ],
             ],
         ];
@@ -726,7 +797,8 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_footer_edit',
                     'description' => 'description.guided_step_footer_edit',
                     'narration' => 'narration.guided_step_footer_edit',
-                    'highlight' => '.action-edit',
+                    // The row marker menu_crud_index.html.twig writes: ".action-edit" alone exists once per row and querySelector would take the first one, the navbar's in general
+                    'highlight' => sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_FOOTER),
                 ],
                 [
                     'label' => 'label.guided_step_footer_items',

@@ -18,3 +18,8 @@
 
     {{ parent() }}
 {% endblock main %}
+
+{# Tells the rows apart for a guided step pointing at one location's own buttons - an index row carries no id of its own (see SiteGuidedProjectProvider) #}
+{% block entity_row_attributes %}
+    data-menu-location="{{ entity.instance.location }}"
+{% endblock %}

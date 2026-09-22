@@ -53,6 +53,8 @@ plus the sitemap fields (indexable, change frequency, priority).
   `site-role-editor`: deleting only moves a page to the trash, which an editor may do, but pulling one
   back out or removing it for good is the bar those two methods state themselves — a button leading to
   its own 403 is a button not to draw.
+- **The three table exports (`exportSql`, `exportCsv`, `exportJson`) are `site-role-admin` too**, the
+  same bar their own methods state — an editor is shown no button leading to their 403.
 
 `PageController::preview()` opts out of the block render cache entirely — an editor's preview must show
 what was just saved, and its render is not the public one.

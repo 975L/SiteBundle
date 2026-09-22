@@ -142,6 +142,10 @@
                 <source>description.guided_project_collection</source>
                 <target>Group repeating content (team, references, events) and show it in a page</target>
             </trans-unit>
+            <trans-unit id="2DBltYc">
+                <source>description.guided_project_collection_translation</source>
+                <target>Each item of a collection is then said in the site's languages, from its very own edit screen opened on one of them.</target>
+            </trans-unit>
             <trans-unit id="CRY4jVY">
                 <source>description.guided_project_content_export</source>
                 <target>Take pages away as a zip, with their blocks and their images, to load them into another site or keep them off the server</target>
@@ -186,6 +190,10 @@
                 <source>description.guided_step_block_add</source>
                 <target>Add a block, or open one the page already holds.</target>
             </trans-unit>
+            <trans-unit id="CIjMxdx">
+                <source>description.guided_step_block_edit</source>
+                <target>Any page already saved will do. The highlighted button is the first row's: click the one on your page's row.</target>
+            </trans-unit>
             <trans-unit id="3PHL1c5">
                 <source>description.guided_step_block_kind</source>
                 <target>Each kind says what it does. A kind no longer offered in this place is flagged with a warning.</target>
@@ -210,6 +218,10 @@
                 <source>description.guided_step_collection_display</source>
                 <target>Go back to a page, add a collection block to it and pick the one you have just created.</target>
             </trans-unit>
+            <trans-unit id="3dSmc_k">
+                <source>description.guided_step_collection_item_save</source>
+                <target>You are back on the list of the collection's items.</target>
+            </trans-unit>
             <trans-unit id="XYbqA8D">
                 <source>description.guided_step_collection_items</source>
                 <target>The collection is a container: its items are what carry the content.</target>
@@ -225,6 +237,30 @@
             <trans-unit id="sESmPiI">
                 <source>description.guided_step_collection_order</source>
                 <target>Drag a row by its handle to move it: this is the order the page will show them in.</target>
+            </trans-unit>
+            <trans-unit id="FjMe48o">
+                <source>description.guided_step_collection_translation_action</source>
+                <target>On the item's row. The button only shows where the site declares more than one language: otherwise there is nothing to open.</target>
+            </trans-unit>
+            <trans-unit id="WPgj3Nv">
+                <source>description.guided_step_collection_translation_check</source>
+                <target>The page showing the collection, read in that language, now shows the translated item.</target>
+            </trans-unit>
+            <trans-unit id="Evudhcf">
+                <source>description.guided_step_collection_translation_items</source>
+                <target>On your collection's row: the highlighted button is the first row's.</target>
+            </trans-unit>
+            <trans-unit id="p8CoCA9">
+                <source>description.guided_step_collection_translation_locale</source>
+                <target>The bar at the top of the screen: each of the site's languages has its tab there, and the edit screen opens on it.</target>
+            </trans-unit>
+            <trans-unit id="2krCaUs">
+                <source>description.guided_step_collection_translation_open</source>
+                <target>The list of collections, where the translation of their items starts from.</target>
+            </trans-unit>
+            <trans-unit id="Jb_EpLx">
+                <source>description.guided_step_collection_translation_write</source>
+                <target>The source text is shown between brackets: a field left holding it counts as nothing written.</target>
             </trans-unit>
             <trans-unit id="aUJzndC">
                 <source>description.guided_step_content_export_formats</source>
@@ -268,7 +304,7 @@
             </trans-unit>
             <trans-unit id="TmVqMFG">
                 <source>description.guided_step_footer_open</source>
-                <target>One menu per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+                <target>One menu per location on the site, from the navigation bar to the e-mail footer: each is created once.</target>
             </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
@@ -308,7 +344,7 @@
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
-                <target>Blocks can be dragged into place only once the page exists - so save it, then reopen it.</target>
+                <target>Blocks can be dragged into place only once the page exists - so save it, then reopen it. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="Fu7HfYi">
                 <source>description.guided_step_page_creation_save</source>
@@ -318,13 +354,17 @@
                 <source>description.guided_step_page_creation_title</source>
                 <target>The page address fills itself in from the title, and stays editable.</target>
             </trans-unit>
+            <trans-unit id="YNn0aYh">
+                <source>description.guided_step_page_creation_title_displayed</source>
+                <target>Untick it if a header block ("hero") already carries the title, so it does not show twice. The page keeps its title everywhere else (browser tab, shares, menus).</target>
+            </trans-unit>
             <trans-unit id="ZGnJv64">
                 <source>description.guided_step_page_creation_view</source>
-                <target>The page is now public: this button opens it as your visitors see it.</target>
+                <target>The page is now public: this button opens it as your visitors see it. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="MRmz1hF">
                 <source>description.guided_step_page_health_edit</source>
-                <target>Neither shows on a page being created: both need a saved page.</target>
+                <target>Neither shows on a page being created: both need a saved page. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="HfXsIEx">
                 <source>description.guided_step_page_health_open</source>
@@ -352,7 +392,7 @@
             </trans-unit>
             <trans-unit id="i0tTiPz">
                 <source>description.guided_step_page_menu_brand</source>
-                <target>Back on the menus: the fifth location carries what the site says under its own name. Nothing is highlighted if it already exists.</target>
+                <target>Back on the menus: the "Under the site name" location carries what the site says under its own name. Nothing is highlighted if it already exists.</target>
             </trans-unit>
             <trans-unit id="7bcgCUX">
                 <source>description.guided_step_page_menu_brand_write</source>
@@ -372,7 +412,7 @@
             </trans-unit>
             <trans-unit id="_YVF1At">
                 <source>description.guided_step_page_menu_open</source>
-                <target>One menu per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+                <target>One menu per location on the site, from the navigation bar to the e-mail footer: each is created once.</target>
             </trans-unit>
             <trans-unit id="TkXHcvz">
                 <source>description.guided_step_page_menu_target</source>
@@ -384,7 +424,7 @@
             </trans-unit>
             <trans-unit id="xQXwn1q">
                 <source>description.guided_step_page_revision_duplicate</source>
-                <target>The copy takes over all the original's content, but is not published: it opens straight away.</target>
+                <target>The copy takes over all the original's content, but is not published: it opens straight away. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="3eae6FD">
                 <source>description.guided_step_page_revision_open</source>
@@ -408,7 +448,7 @@
             </trans-unit>
             <trans-unit id="bfIpkLz">
                 <source>description.guided_step_page_seo_edit</source>
-                <target>These fields all sit in the "Data" tab, below the title.</target>
+                <target>These fields all sit in the "Data" tab, below the title. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="Ve53OEd">
                 <source>description.guided_step_page_seo_frequency</source>
@@ -774,6 +814,10 @@
                 <source>label.guided_project_collection</source>
                 <target>Create a collection</target>
             </trans-unit>
+            <trans-unit id="s7.vGLh">
+                <source>label.guided_project_collection_translation</source>
+                <target>Say a collection in another language</target>
+            </trans-unit>
             <trans-unit id="36ObQ1j">
                 <source>label.guided_project_content_export</source>
                 <target>Export pages to another site</target>
@@ -850,6 +894,10 @@
                 <source>label.guided_step_collection_display</source>
                 <target>Show the collection in a page</target>
             </trans-unit>
+            <trans-unit id="AYEAYeU">
+                <source>label.guided_step_collection_item_save</source>
+                <target>Save the item</target>
+            </trans-unit>
             <trans-unit id="A9QBctX">
                 <source>label.guided_step_collection_items</source>
                 <target>Open its items</target>
@@ -873,6 +921,34 @@
             <trans-unit id="V5C4S.y">
                 <source>label.guided_step_collection_save</source>
                 <target>Save the collection</target>
+            </trans-unit>
+            <trans-unit id="vb8kunb">
+                <source>label.guided_step_collection_translation_action</source>
+                <target>Click "Translate"</target>
+            </trans-unit>
+            <trans-unit id="BSSwaBx">
+                <source>label.guided_step_collection_translation_check</source>
+                <target>Check on the site</target>
+            </trans-unit>
+            <trans-unit id="xg3O8hY">
+                <source>label.guided_step_collection_translation_items</source>
+                <target>Open its items</target>
+            </trans-unit>
+            <trans-unit id="jUWeSNT">
+                <source>label.guided_step_collection_translation_locale</source>
+                <target>Pick the language</target>
+            </trans-unit>
+            <trans-unit id="tgZ4JAZ">
+                <source>label.guided_step_collection_translation_open</source>
+                <target>Open the collections</target>
+            </trans-unit>
+            <trans-unit id="HWx6O.o">
+                <source>label.guided_step_collection_translation_save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="pPeXVf4">
+                <source>label.guided_step_collection_translation_write</source>
+                <target>Write the title and the text</target>
             </trans-unit>
             <trans-unit id="yjf91vT">
                 <source>label.guided_step_content_export_formats</source>
@@ -977,6 +1053,10 @@
             <trans-unit id="He2ILVu">
                 <source>label.guided_step_page_creation_title</source>
                 <target>Give the page a title</target>
+            </trans-unit>
+            <trans-unit id="YzBd6GB">
+                <source>label.guided_step_page_creation_title_displayed</source>
+                <target>Show the title or not</target>
             </trans-unit>
             <trans-unit id="BO9Oiu9">
                 <source>label.guided_step_page_creation_view</source>
@@ -1356,7 +1436,7 @@
             </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
-                <target>List of the site's menus (navbar, footer, email header/footer). Edit a menu to add, remove or reorder its links; each location (navbar, footer...) can only be used once.</target>
+                <target>List of the site's menus, one per location (navbar, footer, emails...). Edit a menu to add, remove or reorder its links; each location can only be used once.</target>
             </trans-unit>
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>

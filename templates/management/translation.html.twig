@@ -39,7 +39,7 @@
         {% endfor %}
 
         {% if rows is not empty %}
-            <button type="submit" class="btn btn-primary">{{ 'action.save'|trans({}, 'site') }}</button>
+            <button type="submit" class="btn btn-primary" data-menu-translation-submit>{{ 'action.save'|trans({}, 'site') }}</button>
         {% endif %}
         <a class="btn btn-secondary" href="{{ ea_url().setController(subject.backController).setAction('index') }}">{{ 'action.cancel'|trans({}, 'site') }}</a>
     </form>

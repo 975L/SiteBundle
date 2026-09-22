@@ -51,6 +51,9 @@
                 {% endif %}
             </div>
 
+            {# The site search's magnifier, next to the burger so a phone reaches it without opening the menu - its desktop twin ends the links below. UiBundle writes nothing while the search is off #}
+            <twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--mobile" />
+
             <button class="menu-toggle" data-action="click->menu#toggle" aria-label="{{ 'menu.toggle'|trans({}, 'site') }}" aria-expanded="false">
                 <svg class="menu-toggle-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false">
                     <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/>
@@ -60,6 +63,7 @@
 
         <div class="menu-items" data-menu-target="items">
             <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
+            <twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--desktop" />
 {# Inside the items and not beside them: on a phone the bar collapses into that dropdown, and a language menu left outside it would sit alone next to the burger #}
             <twig:c975LSite:General:Languages page="{{ page|default(null) }}" />
         </div>
@@ -83,6 +87,8 @@
                 {% endif %}
             </a>
         {% endif %}
+
+        <twig:c975LUi:AiSearch:Trigger />
 
 {# The bar a site with no menu blocks gets, which is still a site a visitor has to be able to read in their own language #}
         <twig:c975LSite:General:Languages page="{{ page|default(null) }}" />

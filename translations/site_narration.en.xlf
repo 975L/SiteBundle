@@ -42,6 +42,10 @@
                 <source>narration.guided_step_collection_display</source>
                 <target>All that is left is to show it: go back to a page, add a collection block to it and pick the one you have just created.</target>
             </trans-unit>
+            <trans-unit id="t33uyi5">
+                <source>narration.guided_step_collection_item_save</source>
+                <target>Save the item: you are back on the list of the collection's items.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Now open its items. The collection is only a container: its items are what carry the content.</target>
@@ -65,6 +69,34 @@
             <trans-unit id="9b0NAQR">
                 <source>narration.guided_step_collection_save</source>
                 <target>Save the collection with “Create and continue editing”: you stay on the collection you have just created.</target>
+            </trans-unit>
+            <trans-unit id="QEcOC8X">
+                <source>narration.guided_step_collection_translation_action</source>
+                <target>On the item's row, click "Translate". The button is only there if the site declares more than one language.</target>
+            </trans-unit>
+            <trans-unit id="7Fm6AmO">
+                <source>narration.guided_step_collection_translation_check</source>
+                <target>Go and see the page showing the collection on the site, in that language: the item is translated there.</target>
+            </trans-unit>
+            <trans-unit id="w4pmVZV">
+                <source>narration.guided_step_collection_translation_items</source>
+                <target>On your collection's row, open its items.</target>
+            </trans-unit>
+            <trans-unit id="OE_onoT">
+                <source>narration.guided_step_collection_translation_locale</source>
+                <target>At the top of the screen, a bar of tabs, one per language of the site. It is the same edit screen, opened on the one you pick.</target>
+            </trans-unit>
+            <trans-unit id="9yz_T9r">
+                <source>narration.guided_step_collection_translation_open</source>
+                <target>The panel takes you to the collections: the translation of their items starts from this list.</target>
+            </trans-unit>
+            <trans-unit id="OH27gDa">
+                <source>narration.guided_step_collection_translation_save</source>
+                <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="lm0WEyg">
+                <source>narration.guided_step_collection_translation_write</source>
+                <target>Write the title and the text in the new language. The source text is shown to you between brackets: leaving it as is counts as having written nothing.</target>
             </trans-unit>
             <trans-unit id="3q0a6F9">
                 <source>narration.guided_step_content_export_formats</source>
@@ -108,7 +140,7 @@
             </trans-unit>
             <trans-unit id="TNKIW6q">
                 <source>narration.guided_step_footer_open</source>
-                <target>The panel takes you to the menus. There is one per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+                <target>The panel takes you to the menus. There is one per location on the site, from the navigation bar to the e-mail footer.</target>
             </trans-unit>
             <trans-unit id="4G7DYra">
                 <source>narration.guided_step_footer_save</source>
@@ -170,6 +202,10 @@
                 <source>narration.guided_step_page_creation_title</source>
                 <target>Give the page a title. Its address fills itself in from the title, and stays editable.</target>
             </trans-unit>
+            <trans-unit id="9zwDy_A">
+                <source>narration.guided_step_page_creation_title_displayed</source>
+                <target>This setting prints the title at the top of the page. Untick it if a header block already carries the title, so it does not show twice.</target>
+            </trans-unit>
             <trans-unit id="Kox8Hj3">
                 <source>narration.guided_step_page_creation_view</source>
                 <target>The page is now public. This button opens it as your visitors see it.</target>
@@ -204,7 +240,7 @@
             </trans-unit>
             <trans-unit id="ZI5leP5">
                 <source>narration.guided_step_page_menu_brand</source>
-                <target>Come back to the menus: a fifth location carries what the site says under its own name, its baseline. Create it if it does not exist yet.</target>
+                <target>Come back to the menus: the "Under the site name" location carries what the site says under its own name, its baseline. Create it if it does not exist yet.</target>
             </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
@@ -224,7 +260,7 @@
             </trans-unit>
             <trans-unit id="5l8xWTL">
                 <source>narration.guided_step_page_menu_open</source>
-                <target>The panel takes you to the menus. There is one per location: navigation bar, footer, e-mail header and e-mail footer.</target>
+                <target>The panel takes you to the menus. There is one per location on the site, from the navigation bar to the e-mail footer.</target>
             </trans-unit>
             <trans-unit id="kQXsnf2">
                 <source>narration.guided_step_page_menu_save</source>

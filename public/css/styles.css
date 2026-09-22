@@ -829,7 +829,22 @@ img.menu-logo__on-dark {
   color: #fff;
 }
 
+.menu .menu-ai-search--mobile {
+  margin-left: auto;
+}
+
+.menu .menu-ai-search--desktop {
+  display: none;
+}
+
 @media screen and (min-width: 768px) {
+  .menu .menu-ai-search--mobile {
+    display: none;
+  }
+  .menu .menu-ai-search--desktop {
+    display: inline-flex;
+    margin-left: 0.5rem;
+  }
   .menu {
     flex-direction: row;
     align-items: center;

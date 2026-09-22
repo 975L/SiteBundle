@@ -1,5 +1,30 @@
 [
     {
+        "date": "2026-09-22",
+        "description": [
+            {
+                "en": "The navigation bar now carries the site search magnifier, within reach on a phone as on a computer",
+                "fr": "La barre de navigation porte désormais la loupe de recherche du site, à portée sur téléphone comme sur ordinateur",
+                "es": "La barra de navegación lleva ahora la lupa de búsqueda del sitio, al alcance tanto en el móvil como en el ordenador"
+            },
+            {
+                "en": "A new guided project shows how to say a collection's items in another language",
+                "fr": "Un nouveau projet guidé montre comment dire les éléments d'une collection dans une autre langue",
+                "es": "Un nuevo proyecto guiado muestra cómo decir los elementos de una colección en otro idioma"
+            },
+            {
+                "en": "The page creation project now shows the switch that prints the title at the top of the page, or leaves it to a header block",
+                "fr": "Le projet de création de page montre désormais l'interrupteur qui imprime le titre en haut de la page, ou le laisse à un block d'en-tête",
+                "es": "El proyecto de creación de página muestra ahora el interruptor que imprime el título en la parte superior de la página, o se lo deja a un bloque de cabecera"
+            },
+            {
+                "en": "An editor is no longer shown the table export buttons, which were reserved for administrators",
+                "fr": "Un rédacteur ne voit plus les boutons d'export du tableau des pages, réservés aux administrateurs",
+                "es": "Un redactor ya no ve los botones de exportación de la tabla de páginas, reservados a los administradores"
+            }
+        ]
+    },
+    {
         "date": "2026-09-12",
         "description": [
             {

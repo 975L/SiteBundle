@@ -1041,6 +1041,10 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('ROLE_ADMIN', $permissions['restore']);
         $this->assertSame('ROLE_ADMIN', $permissions['deletePermanently']);
         $this->assertSame('ROLE_ADMIN', $permissions['exportSelection']);
+        // The three table exports state that same bar themselves (see exportSql()/exportCsv()/exportJson()), so an editor must be shown no button leading to their 403
+        $this->assertSame('ROLE_ADMIN', $permissions['exportSql']);
+        $this->assertSame('ROLE_ADMIN', $permissions['exportCsv']);
+        $this->assertSame('ROLE_ADMIN', $permissions['exportJson']);
         $this->assertSame('ROLE_EDITOR', $permissions['trash'], 'Moving a page to the trash and going there is the editor\'s own');
         $this->assertSame('ROLE_EDITOR', $permissions[Action::DELETE]);
     }

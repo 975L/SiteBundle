@@ -55,15 +55,15 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
-    public function testGetGuidedProjectsReturnsTwelveProjectsContinuingConfigBundlesOrderSequence(): void
+    public function testGetGuidedProjectsReturnsThirteenProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['site-collection', 'site-page-creation', 'site-block', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
+            ['site-collection', 'site-collection-translation', 'site-page-creation', 'site-block', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([2010, 2020, 2025, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
+        $this->assertSame([2010, 2015, 2020, 2025, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
@@ -91,6 +91,7 @@ class SiteGuidedProjectProviderTest extends TestCase
     {
         $expected = [
             'site-collection' => 'ROLE_EDITOR',
+            'site-collection-translation' => 'ROLE_EDITOR',
             'site-page-creation' => 'ROLE_EDITOR',
             'site-block' => 'ROLE_EDITOR',
             'site-page-seo' => 'ROLE_EDITOR',
@@ -149,21 +150,27 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
+            ['CollectionCrudController', 'CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers)
         );
     }
 
-    // A label or description with no translation reads as its own key in the panel
-    public function testEveryLabelAndDescriptionIsTranslated(): void
+    // A label or description with no translation reads as its own key in the panel, and a narration with none is read aloud as its key - in each locale the bundle ships
+    public function testEveryLabelDescriptionAndNarrationIsTranslatedInEveryLocale(): void
     {
-        $translated = $this->translatedKeys();
+        foreach (['fr', 'en', 'es'] as $locale) {
+            $translated = $this->translatedKeys('site', $locale);
+            $narrated = $this->translatedKeys('site_narration', $locale);
 
-        foreach ($this->createProvider()->getGuidedProjects() as $project) {
-            foreach ([$project, ...$project['steps']] as $item) {
-                $this->assertContains($item['label'], $translated);
-                if (isset($item['description'])) {
-                    $this->assertContains($item['description'], $translated);
+            foreach ($this->createProvider()->getGuidedProjects() as $project) {
+                foreach ([$project, ...$project['steps']] as $item) {
+                    $this->assertContains($item['label'], $translated, sprintf('"%s" is missing from site.%s.xlf', $item['label'], $locale));
+                    if (isset($item['description'])) {
+                        $this->assertContains($item['description'], $translated, sprintf('"%s" is missing from site.%s.xlf', $item['description'], $locale));
+                    }
+                    if (isset($item['narration'])) {
+                        $this->assertContains($item['narration'], $narrated, sprintf('"%s" is missing from site_narration.%s.xlf', $item['narration'], $locale));
+                    }
                 }
             }
         }
@@ -193,7 +200,7 @@ class SiteGuidedProjectProviderTest extends TestCase
                 continue;
             }
 
-            $this->assertNotContains('#Menu_style' . self::TOM_SELECT_SUFFIX, $highlights, sprintf('Project "%s" points at a field only the footer renders', $project['slug']));
+            $this->assertNotContains('#Menu_style', $highlights, sprintf('Project "%s" points at a field only the footer renders', $project['slug']));
         }
     }
 
@@ -215,6 +222,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         'Page' => 'PageCrudController',
         'Menu' => 'MenuCrudController',
         'CollectionGroup' => 'CollectionCrudController',
+        'CollectionItem' => 'CollectionItemCrudController',
     ];
 
     // The suffix a field wrapped by TomSelect has to carry, the original control being clipped to a pixel once the widget replaces it
@@ -310,6 +318,24 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->assertStringContainsString('[data-site-content-locales]', $this->highlightsOf('site-menu-translation'));
     }
 
+    // The menu index rows carry no id of their own: the location marker its template writes is the only thing telling the footer's edit button from the navbar's
+    public function testTheFooterEditStepPointsAtTheRowMarkerTheIndexTemplateWrites(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/menu_crud_index.html.twig');
+
+        $this->assertStringContainsString('data-menu-location=', $template, 'The menu index no longer marks its rows, so there is no selector left to point at');
+        $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_FOOTER), $this->highlightsOf('site-footer'));
+    }
+
+    // The menu translation screen is no EasyAdmin form, and the layout carries other forms: its save button is pointed at through the marker the template writes
+    public function testTheMenuSaveStepPointsAtTheMarkerTheTranslationTemplateWrites(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/translation.html.twig');
+
+        $this->assertStringContainsString('data-menu-translation-submit', $template, 'The translation screen no longer marks its save button, so there is no selector left to point at');
+        $this->assertStringContainsString('[data-menu-translation-submit]', $this->highlightsOf('site-menu-translation'));
+    }
+
     // A page's language tabs are drawn by CoreBundle: the one selector of the parcours crossing a bundle boundary
     public function testThePageLocaleStepPointsAtTheMarkerCoreBundlesTabsWrite(): void
     {
@@ -317,6 +343,7 @@ class SiteGuidedProjectProviderTest extends TestCase
 
         $this->assertStringContainsString('data-content-locales', $template, "CoreBundle's language tabs no longer carry their marker, so there is no selector left to point at");
         $this->assertStringContainsString('[data-content-locales]', $this->highlightsOf('site-page-translation'));
+        $this->assertStringContainsString('[data-content-locales]', $this->highlightsOf('site-collection-translation'));
     }
 
     // The coloured fieldset holding what a language cannot change is a class the controller sets on a form panel, and a class is all the step has to point at - rename it on one side alone and the step highlights nothing, in silence
@@ -427,7 +454,7 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     /**
-     * EasyAdmin's own actions, this bundle's custom ones, and the groups stating a class of their own.
+     * EasyAdmin's own actions, this bundle's custom ones - built by Action::new() or by CoreBundle's ContentLocaleScreen::action() - and the groups stating a class of their own.
      *
      * @return string[]
      */
@@ -447,7 +474,7 @@ class SiteGuidedProjectProviderTest extends TestCase
             }
 
             $source = (string) file_get_contents($controller->getPathname());
-            preg_match_all('/Action::new\(\s*\'(\w+)\'/', $source, $custom);
+            preg_match_all('/(?:Action::new|->action)\(\s*\'(\w+)\'/', $source, $custom);
             preg_match_all('/addCssClass\(\s*\'action-(\w+)\'/', $source, $groups);
             $names = [...$names, ...$custom[1], ...$groups[1]];
         }
@@ -455,10 +482,10 @@ class SiteGuidedProjectProviderTest extends TestCase
         return array_unique($names);
     }
 
-    private function translatedKeys(): array
+    private function translatedKeys(string $domain, string $locale): array
     {
         $xliff = new \DOMDocument();
-        $xliff->load(\dirname(__DIR__, 2) . '/translations/site.fr.xlf');
+        $xliff->load(sprintf('%s/translations/%s.%s.xlf', \dirname(__DIR__, 2), $domain, $locale));
 
         $keys = [];
         foreach ($xliff->getElementsByTagName('source') as $source) {

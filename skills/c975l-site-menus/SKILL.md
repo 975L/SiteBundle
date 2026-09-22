@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -152,6 +152,13 @@ alone is its own containing block and has nowhere to travel — via
 `header:has(> .menu.menu-position-sticky:only-child)`. **An app overriding that `header` block with
 more than the navigation inside opts out of it** and has to arrange its own sticky header.
 
+The bar also carries UiBundle's site search magnifier (`<twig:c975LUi:AiSearch:Trigger>`), written
+twice: `.menu-ai-search--mobile` beside the burger, reachable without opening the menu, and
+`.menu-ai-search--desktop` after the links from 768px up, one of the two shown at a time. Both rules
+are **scoped under `.menu`** in `sass/_menu.scss`, UiBundle's own `.ai-search-trigger { display }`
+carrying the same specificity and winning wherever the sheets load in the other order. The component
+writes nothing while the search is off.
+
 Logo and name are wrapped in **one single link** to the home page, not two adjacent ones — a screen
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed
 beside it.
@@ -173,8 +180,8 @@ With no navbar menu at all, the component falls back to the logo centered with t
 `<nav class="nav-simple">` — that class, not the bare element, is what the stylesheet targets, so an
 app rendering its own `<nav>` is untouched.
 
-The tagline is the blocks of the `navbar-brand` `Menu` (`Menu::LOCATION_NAVBAR_BRAND`), the fifth
-location, rendered by `Blocks` inside a `.menu-site-tagline` wrapper — so it is written and translated
+The tagline is the blocks of the `navbar-brand` `Menu` (`Menu::LOCATION_NAVBAR_BRAND`), the "Under the
+site name" location, rendered by `Blocks` inside a `.menu-site-tagline` wrapper — so it is written and translated
 like any other block, where the `site-tagline` config entry said one language to everyone.
 `sass/_menu.scss` neutralizes the section gutter, the measure and the `text_hook` lead-in there. It is
 hidden on a fixed navbar.

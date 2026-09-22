@@ -647,10 +647,10 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
-    // Everything a page CRUD can do sits behind the same "site-role-editor" role - only "exportSelection" (see configureActions()) and the two trash actions below are stricter
+    // Everything a page CRUD can do sits behind the same "site-role-editor" role - only "exportSelection" (see configureActions()), the two trash actions and the three table exports below are stricter
     private function applyActionPermissions(Actions $actions, string $role): Actions
     {
-        // Deleting a page only moves it to the trash, which an editor may do - pulling one back out or removing it for good is the bar restore()/deletePermanently() state themselves, and a button leading to their own 403 is a button not to draw
+        // Deleting a page only moves it to the trash, which an editor may do - pulling one back out or removing it for good is the bar restore()/deletePermanently() state themselves, as exportSql()/exportCsv()/exportJson() do, and a button leading to their own 403 is a button not to draw
         $adminRole = $this->configService->get('site-role-admin');
 
         return $actions
@@ -667,9 +667,9 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('duplicate', $role)
             ->setPermission('publishAsReplacement', $role)
             ->setPermission('qrcode', $role)
-            ->setPermission('exportSql', $role)
-            ->setPermission('exportCsv', $role)
-            ->setPermission('exportJson', $role)
+            ->setPermission('exportSql', $adminRole)
+            ->setPermission('exportCsv', $adminRole)
+            ->setPermission('exportJson', $adminRole)
         ;
     }
 

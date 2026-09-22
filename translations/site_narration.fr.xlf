@@ -42,6 +42,10 @@
                 <source>narration.guided_step_collection_display</source>
                 <target>Il ne reste qu'à l'afficher : retournez sur une page, ajoutez-y un block de collection et choisissez celle que vous venez de créer.</target>
             </trans-unit>
+            <trans-unit id="t33uyi5">
+                <source>narration.guided_step_collection_item_save</source>
+                <target>Enregistrez l'élément : vous revenez sur la liste des éléments de la collection.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Ouvrez maintenant ses éléments. La collection n'est qu'un contenant : ce sont ses éléments qui portent le contenu.</target>
@@ -65,6 +69,34 @@
             <trans-unit id="9b0NAQR">
                 <source>narration.guided_step_collection_save</source>
                 <target>Enregistrez la collection avec « Créer et modifier » : vous restez sur la collection que vous venez de créer.</target>
+            </trans-unit>
+            <trans-unit id="QEcOC8X">
+                <source>narration.guided_step_collection_translation_action</source>
+                <target>Sur la ligne de l'élément, cliquez sur « Traduire ». Le bouton n'est là que si le site déclare plus d'une langue.</target>
+            </trans-unit>
+            <trans-unit id="7Fm6AmO">
+                <source>narration.guided_step_collection_translation_check</source>
+                <target>Allez voir sur le site la page qui affiche la collection, dans cette langue : l'élément y est traduit.</target>
+            </trans-unit>
+            <trans-unit id="w4pmVZV">
+                <source>narration.guided_step_collection_translation_items</source>
+                <target>Sur la ligne de votre collection, ouvrez ses éléments.</target>
+            </trans-unit>
+            <trans-unit id="OE_onoT">
+                <source>narration.guided_step_collection_translation_locale</source>
+                <target>En haut de l'écran, une barre d'onglets : un par langue du site. C'est le même écran d'édition, ouvert sur celle que vous choisissez.</target>
+            </trans-unit>
+            <trans-unit id="9yz_T9r">
+                <source>narration.guided_step_collection_translation_open</source>
+                <target>Le panneau vous emmène sur les collections : c'est de cette liste que part la traduction de leurs éléments.</target>
+            </trans-unit>
+            <trans-unit id="OH27gDa">
+                <source>narration.guided_step_collection_translation_save</source>
+                <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="lm0WEyg">
+                <source>narration.guided_step_collection_translation_write</source>
+                <target>Écrivez le titre et le texte dans la nouvelle langue. Le texte d'origine vous est montré entre crochets : le laisser tel quel, c'est ne rien avoir écrit.</target>
             </trans-unit>
             <trans-unit id="3q0a6F9">
                 <source>narration.guided_step_content_export_formats</source>
@@ -108,7 +140,7 @@
             </trans-unit>
             <trans-unit id="TNKIW6q">
                 <source>narration.guided_step_footer_open</source>
-                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement du site, de la barre de navigation au pied des e-mails.</target>
             </trans-unit>
             <trans-unit id="4G7DYra">
                 <source>narration.guided_step_footer_save</source>
@@ -170,6 +202,10 @@
                 <source>narration.guided_step_page_creation_title</source>
                 <target>Donnez un titre à la page. Son adresse se remplit toute seule à partir du titre, et elle reste modifiable.</target>
             </trans-unit>
+            <trans-unit id="9zwDy_A">
+                <source>narration.guided_step_page_creation_title_displayed</source>
+                <target>Ce réglage imprime le titre en haut de la page. Décochez-le si un block d'en-tête porte déjà le titre, pour qu'il ne s'affiche pas deux fois.</target>
+            </trans-unit>
             <trans-unit id="Kox8Hj3">
                 <source>narration.guided_step_page_creation_view</source>
                 <target>La page est maintenant publique. Ce bouton l'ouvre telle que la voient vos visiteurs.</target>
@@ -204,7 +240,7 @@
             </trans-unit>
             <trans-unit id="ZI5leP5">
                 <source>narration.guided_step_page_menu_brand</source>
-                <target>Revenez sur les menus : une cinquième location porte ce que le site dit sous son propre nom, sa baseline. Créez-la si elle n'existe pas encore.</target>
+                <target>Revenez sur les menus : l'emplacement « Sous le nom du site » porte ce que le site dit sous son propre nom, sa baseline. Créez-le s'il n'existe pas encore.</target>
             </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
@@ -224,7 +260,7 @@
             </trans-unit>
             <trans-unit id="5l8xWTL">
                 <source>narration.guided_step_page_menu_open</source>
-                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails.</target>
+                <target>Le panneau vous emmène sur les menus. Il y en a un par emplacement du site, de la barre de navigation au pied des e-mails.</target>
             </trans-unit>
             <trans-unit id="kQXsnf2">
                 <source>narration.guided_step_page_menu_save</source>

@@ -42,6 +42,10 @@
                 <source>narration.guided_step_collection_display</source>
                 <target>Solo queda mostrarla: vuelva a una página, añádale un bloque de colección y elija la que acaba de crear.</target>
             </trans-unit>
+            <trans-unit id="t33uyi5">
+                <source>narration.guided_step_collection_item_save</source>
+                <target>Guarde el elemento: vuelve a la lista de elementos de la colección.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Abra ahora sus elementos. La colección no es más que un contenedor: son sus elementos los que llevan el contenido.</target>
@@ -65,6 +69,34 @@
             <trans-unit id="9b0NAQR">
                 <source>narration.guided_step_collection_save</source>
                 <target>Guarde la colección con «Crear y modificar»: permanecerá en la colección que acaba de crear.</target>
+            </trans-unit>
+            <trans-unit id="QEcOC8X">
+                <source>narration.guided_step_collection_translation_action</source>
+                <target>En la fila del elemento, haga clic en «Traducir». El botón solo aparece si el sitio declara más de un idioma.</target>
+            </trans-unit>
+            <trans-unit id="7Fm6AmO">
+                <source>narration.guided_step_collection_translation_check</source>
+                <target>Vaya a ver en el sitio la página que muestra la colección, en ese idioma: el elemento aparece traducido.</target>
+            </trans-unit>
+            <trans-unit id="w4pmVZV">
+                <source>narration.guided_step_collection_translation_items</source>
+                <target>En la fila de su colección, abra sus elementos.</target>
+            </trans-unit>
+            <trans-unit id="OE_onoT">
+                <source>narration.guided_step_collection_translation_locale</source>
+                <target>En la parte superior de la pantalla, una barra de pestañas: una por idioma del sitio. Es la misma pantalla de edición, abierta en el que elija.</target>
+            </trans-unit>
+            <trans-unit id="9yz_T9r">
+                <source>narration.guided_step_collection_translation_open</source>
+                <target>El panel le lleva a las colecciones: de esta lista parte la traducción de sus elementos.</target>
+            </trans-unit>
+            <trans-unit id="OH27gDa">
+                <source>narration.guided_step_collection_translation_save</source>
+                <target>Guarde.</target>
+            </trans-unit>
+            <trans-unit id="lm0WEyg">
+                <source>narration.guided_step_collection_translation_write</source>
+                <target>Escriba el título y el texto en el nuevo idioma. El texto original se le muestra entre corchetes: dejarlo tal cual es no haber escrito nada.</target>
             </trans-unit>
             <trans-unit id="3q0a6F9">
                 <source>narration.guided_step_content_export_formats</source>
@@ -108,7 +140,7 @@
             </trans-unit>
             <trans-unit id="TNKIW6q">
                 <source>narration.guided_step_footer_open</source>
-                <target>El panel le lleva a los menús. Hay uno por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+                <target>El panel le lleva a los menús. Hay uno por ubicación del sitio, de la barra de navegación al pie de los correos.</target>
             </trans-unit>
             <trans-unit id="4G7DYra">
                 <source>narration.guided_step_footer_save</source>
@@ -170,6 +202,10 @@
                 <source>narration.guided_step_page_creation_title</source>
                 <target>Dé un título a la página. Su dirección se rellena sola a partir del título, y sigue siendo editable.</target>
             </trans-unit>
+            <trans-unit id="9zwDy_A">
+                <source>narration.guided_step_page_creation_title_displayed</source>
+                <target>Este ajuste muestra el título en la parte superior de la página. Desmárquelo si un bloque de cabecera ya lleva el título, para que no se muestre dos veces.</target>
+            </trans-unit>
             <trans-unit id="Kox8Hj3">
                 <source>narration.guided_step_page_creation_view</source>
                 <target>La página ya es pública. Este botón la abre tal como la ven sus visitantes.</target>
@@ -204,7 +240,7 @@
             </trans-unit>
             <trans-unit id="ZI5leP5">
                 <source>narration.guided_step_page_menu_brand</source>
-                <target>Vuelva a los menús: una quinta ubicación lleva lo que el sitio dice bajo su propio nombre, su lema. Créela si aún no existe.</target>
+                <target>Vuelva a los menús: la ubicación «Bajo el nombre del sitio» lleva lo que el sitio dice bajo su propio nombre, su lema. Créela si aún no existe.</target>
             </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
@@ -224,7 +260,7 @@
             </trans-unit>
             <trans-unit id="5l8xWTL">
                 <source>narration.guided_step_page_menu_open</source>
-                <target>El panel le lleva a los menús. Hay uno por ubicación: barra de navegación, pie de página, encabezado y pie de los correos.</target>
+                <target>El panel le lleva a los menús. Hay uno por ubicación del sitio, de la barra de navegación al pie de los correos.</target>
             </trans-unit>
             <trans-unit id="kQXsnf2">
                 <source>narration.guided_step_page_menu_save</source>

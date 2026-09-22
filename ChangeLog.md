@@ -1,5 +1,21 @@
 # Changelog
 
+## v8.16.0
+
+The navbar opens the site search, and a guided project translates a collection
+
+- The navbar carries UiBundle's site search magnifier, beside the burger on a phone and after the links on a desktop - nothing is drawn while the search is off (22/09/2026)
+- `c975l/core-bundle` is required at `^1.32.0`, where `AiSearch:Trigger` comes from (22/09/2026)
+- The magnifier's rules are scoped under `.menu`, so they hold whatever order the stylesheets load in (22/09/2026)
+- A `site-collection-translation` guided project walks translating a collection's items (22/09/2026)
+- The `site-collection` project gains its missing "save the item" step (22/09/2026)
+- A `site-page-creation` step walks the "Display the page title" switch (22/09/2026)
+- The footer project highlights the footer's own edit button, the menu index marking its rows by location (22/09/2026)
+- The menu translation project highlights the save button through a marker of its own (22/09/2026)
+- The steps pointing at a page's row say the highlighted button is the first one (22/09/2026)
+- The menu steps no longer enumerate the locations, and name the "Under the site name" one (22/09/2026)
+- The SQL, CSV and JSON page exports are restricted to `site-role-admin`, as their actions already were (22/09/2026)
+
 ## v8.15.10
 
 Declare symfony/validator as a direct dependency

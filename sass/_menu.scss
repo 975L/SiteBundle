@@ -302,8 +302,26 @@ img.menu-logo__on-dark {
     color: #fff;
 }
 
+// The site search's magnifier (UiBundle's AiSearch:Trigger): beside the burger on a phone, at the end of the links on a desktop - one of the two twins shown at a time, scoped under .menu to outweigh UiBundle's own display whatever order the sheets load in
+.menu .menu-ai-search--mobile {
+    margin-left: auto;
+}
+
+.menu .menu-ai-search--desktop {
+    display: none;
+}
+
 // Desktop styles
 @media screen and (min-width: 768px) {
+    .menu .menu-ai-search--mobile {
+        display: none;
+    }
+
+    .menu .menu-ai-search--desktop {
+        display: inline-flex;
+        margin-left: 0.5rem;
+    }
+
     .menu {
         flex-direction: row;
         align-items: center;
