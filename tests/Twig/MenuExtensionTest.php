@@ -53,9 +53,19 @@ class MenuExtensionTest extends TestCase
     // Builds a PageRepository double whose find() answers $pagesById, keyed by (string) id
     private function createPageRepository(array $pagesById = []): PageRepository
     {
+        // Each page given the id it is keyed on, the copyright link being told by it (see MenuExtension::isMenuLinkCopyright())
+        foreach ($pagesById as $id => $page) {
+            if (null === $page->getId()) {
+                new \ReflectionProperty(Page::class, 'id')->setValue($page, (int) $id);
+            }
+        }
+
         $repository = $this->createStub(PageRepository::class);
         $repository->method('find')->willReturnCallback(
             static fn (mixed $id): ?Page => $pagesById[(string) $id] ?? null
+        );
+        $repository->method('findOneBy')->willReturnCallback(
+            static fn (array $criteria): ?Page => array_find($pagesById, static fn (Page $page): bool => $page->getSlug() === ($criteria['slug'] ?? null))
         );
 
         return $repository;
@@ -74,6 +84,7 @@ class MenuExtensionTest extends TestCase
         $registry->method('get')->willReturnCallback(static fn (string $name): ?array => $entries[$name] ?? null);
         // Answers each entry with its raw label, the same way the translator double below answers each key with the key itself
         $registry->method('label')->willReturnCallback(static fn (string $name): string => $entries[$name]['label'] ?? '');
+        $registry->method('cacheTags')->willReturnCallback(static fn (string $name): ?array => $entries[$name]['cacheTags'] ?? null);
 
         return $registry;
     }
@@ -790,5 +801,110 @@ class MenuExtensionTest extends TestCase
         );
 
         $this->assertSame('Our workshops', $extension->getMenuLinkLabel('page:42'));
+    }
+
+    // A menu served from the cache reads no page: the batch waits for the first link actually resolved
+    public function testGetMenuBlocksAloneReadsNoPage(): void
+    {
+        $menu = new Menu()->setLocation(Menu::LOCATION_NAVBAR);
+        $menu->addBlock(new Block()->setKind('menu_link')->setData(['target' => 'page:42']));
+
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->never())->method('findBy');
+        $pageRepository->expects($this->never())->method('find');
+
+        new MenuExtension(
+            $this->createMenuRepository($menu),
+            $pageRepository,
+            $this->createRegistry([]),
+            $this->createRouter(),
+            $this->createCache(),
+            $this->createConfigService(),
+            $this->createDefaultPagesImporter(),
+            $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
+        )->getMenuBlocks(Menu::LOCATION_NAVBAR);
+    }
+
+    // The setting off, the footer asks this of every link on every page - no page has to be read to say no
+    public function testIsMenuLinkCopyrightReadsNoPageWhenTheSettingIsOff(): void
+    {
+        $pageRepository = $this->createMock(PageRepository::class);
+        $pageRepository->expects($this->never())->method('find');
+
+        $extension = new MenuExtension(
+            $this->createMenuRepository(),
+            $pageRepository,
+            $this->createRegistry([]),
+            $this->createRouter(),
+            $this->createCache(),
+            $this->createConfigService(false),
+            $this->createDefaultPagesImporter('copyright'),
+            $this->createCopyrightExtension(),
+            new BlockAnchorCollector(),
+            new RequestStack(),
+            $this->createPageTranslator(),
+            $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
+        );
+
+        $this->assertFalse($extension->isMenuLinkCopyright('page:42'));
+    }
+
+    // A page link goes stale with any block saved (a section label) or any page saved or translated (its slug, publication, title)
+    public function testAPageLinkIsCachedUnderTheMenusAndPageLanguagesTags(): void
+    {
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => new Page()->setSlug('about')]);
+
+        $this->assertSame(['menus_all', PageTranslator::LOCALES_CACHE_TAG], $extension->getMenuLinkCacheTags('page:42', null));
+    }
+
+    // The computed notice holds the year, and the setting deciding it is read at render - whatever that setting says now
+    public function testALinkLeftToTheCopyrightNoticeIsRenderedLive(): void
+    {
+        $extension = $this->createExtension(
+            $this->createRegistry([]),
+            ['42' => new Page()->setSlug('copyright')],
+            configService: $this->createConfigService(false),
+            defaultPagesImporter: $this->createDefaultPagesImporter('copyright'),
+        );
+
+        $this->assertNull($extension->getMenuLinkCacheTags('page:42', null));
+        $this->assertNotNull($extension->getMenuLinkCacheTags('page:42', 'Mentions'));
+    }
+
+    // A route standing for a database row is cached under the tags its provider declares, emptied with the row - live when it declares none
+    public function testARouteStandingForARowIsCachedUnderItsProvidersTags(): void
+    {
+        $extension = $this->createExtension($this->createRegistry([
+            'shop' => ['label' => 'Boutique'],
+            'gallery_category' => ['label' => 'Paysages', 'params' => ['slug' => 'paysages'], 'cacheTags' => ['gallery_galleries']],
+            'legacy_row' => ['label' => 'Ancien', 'params' => ['slug' => 'ancien']],
+        ]));
+
+        $this->assertSame(['menus_all'], $extension->getMenuLinkCacheTags('route:shop', null));
+        $this->assertSame(['menus_all', 'gallery_galleries'], $extension->getMenuLinkCacheTags('route:gallery_category', null));
+        $this->assertNull($extension->getMenuLinkCacheTags('route:legacy_row', null));
+    }
+
+    // Keyed by getLocale() while the urls follow the "_locale" attribute: a browser's language on an unprefixed route (contact, search...) renders the writing language's urls, which must not be stored for the "/{_locale}/..." pages
+    public function testAMenuLinkIsRenderedLiveWhenTheLanguageIsNotTheRoutes(): void
+    {
+        $browser = new Request();
+        $browser->setLocale('en');
+        $prefixed = new Request();
+        $prefixed->setLocale('en');
+        $prefixed->attributes->set('_locale', 'en');
+        $writing = new Request();
+        $writing->setLocale('fr');
+
+        $tagsFor = fn (Request $request): ?array => $this->createExtension($this->createRegistry(['shop' => ['label' => 'Boutique']]), requestStack: new RequestStack([$request]))
+            ->getMenuLinkCacheTags('route:shop', null);
+
+        $this->assertNull($tagsFor($browser));
+        $this->assertSame(['menus_all'], $tagsFor($prefixed));
+        $this->assertSame(['menus_all'], $tagsFor($writing));
     }
 }

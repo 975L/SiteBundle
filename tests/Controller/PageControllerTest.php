@@ -38,10 +38,13 @@ class PageControllerTest extends TestCase
     private function createPageService(?Page $bySlug = null, array $forDisplayBySlug = []): PageServiceInterface
     {
         $service = $this->createStub(PageServiceInterface::class);
-        $service->method('findOneBySlug')->willReturn($bySlug);
-        $service->method('findForDisplay')->willReturnCallback(
-            static fn (string $slug): ?Page => $forDisplayBySlug[$slug] ?? null
-        );
+        // The home page is looked up like any other, its status checked by the controller
+        if (null !== $bySlug) {
+            $forDisplayBySlug += ['home' => $bySlug];
+        }
+        $find = static fn (string $slug): ?Page => $forDisplayBySlug[$slug] ?? null;
+        $service->method('findForDisplay')->willReturnCallback($find);
+        $service->method('findWithBlocks')->willReturnCallback($find);
 
         return $service;
     }
@@ -155,7 +158,7 @@ class PageControllerTest extends TestCase
     // The home page is rendered when the 'home' slug resolves to a Page
     public function testHomeRendersPageWhenFound(): void
     {
-        $page = new Page()->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home')->setIsPublished(true);
         $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
 
         $response = $controller->home(new Request());
@@ -176,7 +179,7 @@ class PageControllerTest extends TestCase
     // A "collection" block rendered on the home page (route "/", no "{page}" route parameter unlike page_display's "/pages/{page}") must still be able to resolve its own items' detail links
     public function testHomeSetsPageRequestAttributeToHomeForCollectionBlockDetailLinks(): void
     {
-        $page = new Page()->setTitle('Home')->setSlug('home');
+        $page = new Page()->setTitle('Home')->setSlug('home')->setIsPublished(true);
         $controller = $this->createController($this->createPageService(bySlug: $page), $this->createConfigService());
 
         $request = new Request();
@@ -763,7 +766,7 @@ class PageControllerTest extends TestCase
     public function testAVisitorAskingForATranslatedLanguageIsSentToItsOwnUrl(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -784,7 +787,7 @@ class PageControllerTest extends TestCase
     public function testAVisitorAskingForALanguageThePageWasNeverWrittenInStaysOnIt(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
             translatedLocales: ['fr'],
@@ -801,7 +804,7 @@ class PageControllerTest extends TestCase
     public function testALocalisedUrlIsNotFoundOnAPageThatLanguageWasNeverWrittenIn(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
             translatedLocales: ['fr'],
@@ -819,7 +822,7 @@ class PageControllerTest extends TestCase
     public function testALocalisedUrlAnswersOnceThePageIsTranslated(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
             translatedLocales: ['fr', 'en'],
@@ -835,7 +838,7 @@ class PageControllerTest extends TestCase
     public function testAVisitorAskingForNothingIsServedTheWritingLanguage(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -855,7 +858,7 @@ class PageControllerTest extends TestCase
     public function testABareUrlSaysItsAnswerDependsOnTheLanguageAsked(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -870,7 +873,7 @@ class PageControllerTest extends TestCase
     public function testASingleLanguageSiteAnswersAsBefore(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
         );
 
@@ -888,7 +891,7 @@ class PageControllerTest extends TestCase
     public function testARegionalVariantIsRecognisedAsItsLanguage(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -907,7 +910,7 @@ class PageControllerTest extends TestCase
     public function testAPickedLanguageMovesTheVisitorOnThatVeryRequest(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -928,7 +931,7 @@ class PageControllerTest extends TestCase
     public function testAQueryTheListenerRefusedMovesNobody(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['fr', 'en'],
         );
@@ -973,7 +976,7 @@ class PageControllerTest extends TestCase
     public function testABareUrlVariesWhenTheDefaultLanguageIsNotDeclared(): void
     {
         $controller = $this->createController(
-            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')),
+            $this->createPageService(new Page()->setSlug('home')->setTitle('Accueil')->setIsPublished(true)),
             $this->createConfigService(),
             enabledLocales: ['en'],
         );

@@ -242,7 +242,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // TomSelect wraps the select of an association asking for autocomplete() - whose id then gains the "_autocomplete" suffix - and nothing else: a plain ChoiceField is rendered as a native select, visible and pointable, which is what the back office draws (measured on "#Page_changeFrequency": a visible <select> followed by its help text, on a screen carrying four ".ts-wrapper" elsewhere). A step naming the wrapper beside one outlines nothing
+    // TomSelect wraps the select of an association asking for autocomplete() - whose id then gains the "_autocomplete" suffix - and nothing else: a ChoiceField a step points at asks for renderAsNativeWidget(), EasyAdmin otherwise wrapping a collapsed one in TomSelect too (see "#Page_changeFrequency" and "#Menu_style"). A step naming the wrapper beside one outlines nothing
     public function testNoHighlightExpectsAWrapperEasyAdminDoesNotDraw(): void
     {
         foreach ($this->fieldHighlights() as [$project, $index, $entity, $property, $highlight]) {
@@ -374,6 +374,45 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->assertStringContainsString("'block-data-form'", $source, "UiBundle's BlockType no longer classes the settings sub-form, so there is no selector left to point at");
         $this->assertStringContainsString('[data-kind-row]', $this->highlightsOf('site-block'));
         $this->assertStringContainsString('.block-data-form', $this->highlightsOf('site-block'));
+    }
+
+    // EasyAdmin wraps a collapsed ChoiceField in TomSelect by default, which hides the very select a step outlines: the two it points at stay native whatever the default becomes
+    public function testTheChoiceFieldsAStepPointsAtStayNative(): void
+    {
+        foreach (['PageCrudController' => 'changeFrequency', 'MenuCrudController' => 'style'] as $controller => $property) {
+            $this->assertMatchesRegularExpression(
+                sprintf("/ChoiceField::new\\('%s'\\)[^;]*->renderAsNativeWidget\\(\\)/", $property),
+                $this->controllerSource($controller),
+                sprintf('%s no longer renders "%s" as a native select, so TomSelect may hide what the step outlines', $controller, $property)
+            );
+        }
+    }
+
+    // A container's slots carry the blocks' sorting group too: the marker only they have is what keeps the collection steps off them - drop it there and the ":not()" excludes nothing
+    public function testTheBlockCollectionStepsLeaveAContainersSlotsOut(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/UiBundle/src/Form/BlockType.php');
+
+        $this->assertStringContainsString("'data-ui-move-target'", $source, "UiBundle's BlockType no longer marks a container's slots, so the collection steps may land on them");
+        $this->assertStringContainsString(':not([data-ui-move-target])', $this->highlightsOf('site-page-creation'));
+    }
+
+    // The media picker of a language screen is UiBundle's own field: rename its marker there alone and the step highlights nothing, in silence
+    public function testTheMediaTranslationStepPointsAtTheMarkerUiBundlesBlockTypeWrites(): void
+    {
+        $source = (string) file_get_contents(\dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/UiBundle/src/Form/BlockType.php');
+
+        $this->assertStringContainsString("'data-media-translation'", $source, "UiBundle's BlockType no longer marks the media of a language screen, so there is no selector left to point at");
+        $this->assertStringContainsString('[data-media-translation]', $this->highlightsOf('site-page-translation'));
+    }
+
+    // The health check table is ConfigBundle's own template: rename its Stimulus controller there alone and the step highlights nothing, in silence
+    public function testTheHealthCheckStepPointsAtTheControllerConfigBundlesTableDeclares(): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/vendor/c975l/core-bundle/ConfigBundle/templates/management/health_check/_table.html.twig');
+
+        $this->assertStringContainsString('data-controller="health-check-table"', $template, "ConfigBundle's health check table no longer declares its controller, so there is no selector left to point at");
+        $this->assertStringContainsString('[data-controller="health-check-table"]', $this->highlightsOf('site-page-health'));
     }
 
     // The item rows carry no id of their own: the reorder marker its index template writes is the only thing the step can point at, and it lives in a template rather than in a constant

@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-23",
+        "description": [
+            {
+                "en": "Pages and menus display faster, being read from the cache instead of rebuilt at each visit",
+                "fr": "Les pages et les menus s'affichent plus vite, lus depuis le cache au lieu d'être reconstruits à chaque visite",
+                "es": "Las páginas y los menús se muestran más rápido, leídos desde la caché en lugar de reconstruirse en cada visita"
+            },
+            {
+                "en": "With automatic social publication installed, your pages can now be posted to your networks, one at a time",
+                "fr": "Avec la publication automatique sur les réseaux sociaux, vos pages peuvent désormais y être publiées, une à une",
+                "es": "Con la publicación automática en redes sociales, sus páginas pueden publicarse ahora en ellas, una a una"
+            },
+            {
+                "en": "The page creation guide now follows the screen from top to bottom",
+                "fr": "Le guide de création de page suit désormais l'écran de haut en bas",
+                "es": "La guía de creación de página sigue ahora la pantalla de arriba abajo"
+            }
+        ]
+    },
+    {
         "date": "2026-09-22",
         "description": [
             {

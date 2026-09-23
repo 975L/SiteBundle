@@ -35,6 +35,7 @@
         {# Already-rendered HTML standing in for the Page's blocks, the URL having resolved to a collection item #}
         {{ detailHtml|raw }}
     {% else %}
-        <twig:c975LUi:Blocks:Blocks blocks="{{ page.blocks }}" />
+        {# The whole run as one entry, emptied by UiBundle's OwnedBlocksCacheListener when a block is added, removed or moved #}
+        {{ render_owned_blocks(page) }}
     {% endif %}
 {% endblock %}

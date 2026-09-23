@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -138,6 +138,21 @@ No other location offers it. The choice is cached with the menu's blocks (`menu_
 saved or removed — a `Block` doesn't know which owner holds it, and a footer or the `navbar-brand` menu
 takes any kind, not only `menu_link`/`menu_group`.
 
+## Cached links, active item in the browser
+
+`menu_link` and `menu_group` are **cacheable** blocks: their html is shared by every page, so
+`MenuLink.html.twig` reads no request and marks no item. The `menu-active` Stimulus controller, set on the
+navbar and the footer, adds `.active` and `aria-current="page"` to the item whose link is the current path,
+or a path under it — never to a link leaving the site or pointing at a fragment.
+
+The tags come from `MenuBlockCacheTagProvider`, which asks `MenuExtension::getMenuLinkCacheTags()`: a page
+link is cached under `menus_all` and `PageTranslator::LOCALES_CACHE_TAG`, a route standing for a database row
+under the tags its `LinkableRouteCacheTagsInterface` provider declares. It answers `null` — rendered live —
+for a link left to the computed copyright notice, a row route whose provider declares no tags, and a request
+read in another language than its route says (a browser's language on an unprefixed route), the cache being
+keyed by `getLocale()` while the urls follow the `_locale` attribute. A `menu_group` inherits its links'
+tags and vetoes as a container.
+
 ## Navbar
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and `menu_blocks('navbar-brand')` — nothing
@@ -214,5 +229,7 @@ on every visit just to navigate.
 - **Do not set the navbar position with a `style` attribute.** The nonce drops it.
 - **Do not build a second navigation table.** A menu is a block collection like a page's.
 - **Do not create a menu per language.** One menu, translated once through its Translate screen.
+- **Do not read the request in a menu template.** The html is cached and served to every page; mark the
+  active item in the browser, as `menu-active` does.
 - **Do not read `page.title` for a derived menu label.** It is the writing language's, whatever
   language the page is being read in.

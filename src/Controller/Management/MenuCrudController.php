@@ -186,6 +186,7 @@ class MenuCrudController extends AbstractCrudController
                     Menu::STYLE_COLUMNS => t('label.menu_style_columns', [], 'site'),
                 ])
                 ->setFormTypeOption('placeholder', $this->translator->trans('label.menu_style_theme', [], 'site'))
+                ->renderAsNativeWidget()
                 ->setRequired(false)
                 ->onlyWhenUpdating();
         }

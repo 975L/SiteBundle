@@ -1,12 +1,11 @@
 {# Resolves "target" into a link, rendering nothing when it no longer resolves #}
 {% set url = menu_link_url(target) %}
 {% if url is not empty %}
-    {% set currentPath = app.request.pathinfo %}
-    {% set isActive = (url == currentPath) or (currentPath starts with url ~ '/') %}
-    {# "label" overrides the derived one; uncached, so the computed copyright's year stays fresh #}
+    {# "label" overrides the derived one; a link left to the copyright page's computed notice is rendered live, so its year stays fresh (see MenuExtension::getMenuLinkCacheTags) #}
     {% set resolvedLabel = label|default('') is not empty ? label : menu_link_label(target) %}
-    <div class="{{ ['menu-item', isActive ? 'active' : null, primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null]|filter(v => v is not null)|join(' ') }}">
-        <a href="{{ url }}" class="menu-link" {% if isActive %}aria-current="page"{% endif %}>
+    {# No active state here: the html is cached and shared by every page, menu-active.js marks the item of the page being read #}
+    <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null]|filter(v => v is not null)|join(' ') }}">
+        <a href="{{ url }}" class="menu-link">
             <span class="menu-label">{{ resolvedLabel }}</span>
         </a>
     </div>

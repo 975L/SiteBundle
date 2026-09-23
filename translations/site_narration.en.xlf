@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="RUxTDKz">
                 <source>narration.guided_step_block_add</source>
-                <target>Add a block, or open one the page already holds.</target>
+                <target>Add a block, or open one the page already holds. The next steps show the page's first block: the settings sit in the same place in yours.</target>
             </trans-unit>
             <trans-unit id="3BHpDY6">
                 <source>narration.guided_step_block_edit</source>

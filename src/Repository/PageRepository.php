@@ -77,8 +77,18 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
-    // Find one page by slug regardless of status (for display: handles redirects and 410)
+    // Find one page by slug regardless of status (for display: handles redirects and 410) - the row alone: its blocks are rendered through one cache entry (see page.html.twig), and only a miss reads them, with their medias and slots, through BlockRepository::preloadTree()
     public function findOneBySlugForDisplay(string $slug): ?Page
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    // The same with its blocks, their medias and their slots read up front - for the renders no cache entry stands in for: an editor's preview, a collection's detail page drawn for one item
+    public function findOneBySlugWithBlocks(string $slug): ?Page
     {
         return $this->withSlots($this->createQueryBuilder('p')
             ->select('p, b, m')

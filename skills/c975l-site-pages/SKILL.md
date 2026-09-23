@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -56,6 +56,12 @@ plus the sitemap fields (indexable, change frequency, priority).
 - **The three table exports (`exportSql`, `exportCsv`, `exportJson`) are `site-role-admin` too**, the
   same bar their own methods state — an editor is shown no button leading to their 403.
 
+A public page's blocks are rendered as **one cache entry** (`render_owned_blocks(page)` in
+`page.html.twig`, emptied by UiBundle's `OwnedBlocksCacheListener`): `PageServiceInterface::findForDisplay()`
+reads the row alone, the blocks, medias and slots being read only on a miss. The renders no entry stands in
+for — the preview, a collection's detail page — go through `findWithBlocks()`, which reads them up front; an
+app overriding `PageServiceInterface` implements both.
+
 `PageController::preview()` opts out of the block render cache entirely — an editor's preview must show
 what was just saved, and its render is not the public one.
 
@@ -91,7 +97,9 @@ read ahead, so it costs a query per page and per language in a walk over the who
 **The title is what makes a page exist in a language.** `PageTranslator::translatedLocales()` reads it
 and nothing else: a page whose blocks were translated while its title stayed in the writing language is
 not published under `/{lang}/pages/{slug}` (which answers 404), is named by no `hreflang` group, and is
-linked to by no menu — a French `<title>` being the first thing a result page shows.
+linked to by no menu — a French `<title>` being the first thing a result page shows. The answer is cached
+per page under `PageTranslator::LOCALES_CACHE_TAG`, emptied by `PageLocalesCacheListener` whenever a page or
+one of its translations is written.
 
 A **menu** keeps a screen of its own (`management_menu_translate`, `TranslationController::menu()`) —
 it is a list of labels with no page to show them in. See `c975l-site-seo` for the urls and the
@@ -215,6 +223,13 @@ site's own business, this bundle shipping no command that writes to a database. 
 own, and a dataset adding its own would fight the navigation the demo is browsed by. The pages carry written-down
 creation dates and are left out of the index; their blocks ride the cascade, while each `CollectionItem` is handed
 over on its own, nothing cascading off a `CollectionGroup`.
+
+## Social publication
+
+With SocialBundle installed, `PageSocialContentSource` (UiBundle's `SocialContentSourceInterface`, source
+type `page`) hands its automatic publication the oldest page not posted yet, once, with the page's own
+sharing image or as text without one. Non-indexable pages and pages holding a `legal_model` block are never
+offered, and nothing goes out while `site-url` is empty. What was posted where is SocialBundle's to record.
 
 ## Do not
 

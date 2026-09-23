@@ -24,7 +24,7 @@ class PageBlockPreloadTest extends TestCase
         return [
             'findOneByIdWithBlocks' => ['findOneByIdWithBlocks'],
             'findOneBySlug' => ['findOneBySlug'],
-            'findOneBySlugForDisplay' => ['findOneBySlugForDisplay'],
+            'findOneBySlugWithBlocks' => ['findOneBySlugWithBlocks'],
         ];
     }
 

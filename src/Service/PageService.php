@@ -40,4 +40,9 @@ class PageService implements PageServiceInterface
     {
         return $this->pageRepository->findOneBySlugForDisplay($slug);
     }
+
+    public function findWithBlocks(string $slug): ?Page
+    {
+        return $this->pageRepository->findOneBySlugWithBlocks($slug);
+    }
 }

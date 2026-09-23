@@ -1,5 +1,28 @@
 # Changelog
 
+## v8.17.0
+
+The menus and a page's blocks are cached
+
+- `menu_link` and `menu_group` are cacheable, tagged by `MenuBlockCacheTagProvider` (23/09/2026)
+- The active menu item is marked in the browser by the `menu-active` controller (23/09/2026)
+- A menu link stays live for the copyright notice, an untagged row route, or a language its route doesn't carry (23/09/2026)
+- A menu item pointing at a database row is cached under its provider's tags (23/09/2026)
+- `menu_blocks()` no longer preloads the target pages up front (23/09/2026)
+- `menu_link_is_copyright()` compares the copyright page's cached id (23/09/2026)
+- `PageTranslator::translatedLocales()` is cached, emptied by `PageLocalesCacheListener` (23/09/2026)
+- [BC-Break] `PageTranslator` takes a cache as one more constructor argument (23/09/2026)
+- A page's blocks are rendered as one cache entry through `render_owned_blocks()` (23/09/2026)
+- `findOneBySlugForDisplay()` reads the page row alone (23/09/2026)
+- [BC-Break] `PageServiceInterface::findWithBlocks()` added, for the preview and a collection's detail page (23/09/2026)
+- The home page is looked up like any other page (23/09/2026)
+- `PageSocialContentSource` offers the site's pages to SocialBundle's publication (23/09/2026)
+- The page change frequency and the footer style are native selects (23/09/2026)
+- `site-page-creation` shows the title switch before the blocks (23/09/2026)
+- The guided block collection steps leave a container's slots out (23/09/2026)
+- The `site-block` add step says the page's first block is the one shown (23/09/2026)
+- Requires `c975l/core-bundle` `^1.33.0` (23/09/2026)
+
 ## v8.16.0
 
 The navbar opens the site search, and a guided project translates a collection

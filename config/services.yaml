@@ -53,6 +53,7 @@ services:
               pickable: true
               cacheable: true
 
+    # Cached: the active item is marked in the browser (see assets/js/menu-active.js), and MenuBlockCacheTagProvider names the tags - or keeps a link live when what it prints can change with no save behind it
     site.block.menu_link:
         class: stdClass
         tags:
@@ -66,7 +67,7 @@ services:
               template: '@c975LSite/blocks/MenuLink.html.twig'
               category: 'label.category_navigation'
               pickable: true
-              cacheable: false
+              cacheable: true
               # "menu_navbar" is an exclusive context (see BlockRegistry::EXCLUSIVE_CONTEXTS): opting in here is what makes this the only kind a navbar ever offers, every other menu location ("menu") keeping the full picker. "menu_slot" is the slot context of the "menu_group" below: without it a link couldn't be picked - nor dragged, see BlockMoveController::validateTarget() - into a group. UiBundle's own "flex_slot" is deliberately left out, a link having no business being offered in a container placed on a Page
               contexts: 'menu,menu_navbar,menu_slot'
 
@@ -84,7 +85,7 @@ services:
               template: '@c975LUi/blocks/BlockGroup.html.twig'
               category: 'label.category_navigation'
               pickable: true
-              cacheable: false
+              cacheable: true
               container: true
               contexts: 'menu'
               slot_context: 'menu_slot'

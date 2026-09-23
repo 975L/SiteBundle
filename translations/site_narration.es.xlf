@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="RUxTDKz">
                 <source>narration.guided_step_block_add</source>
-                <target>Añada un bloque, o abra uno que la página ya contiene.</target>
+                <target>Añada un bloque, o abra uno que la página ya contiene. Los pasos siguientes muestran el primer bloque de la página: los ajustes están en el mismo lugar en el suyo.</target>
             </trans-unit>
             <trans-unit id="3BHpDY6">
                 <source>narration.guided_step_block_edit</source>

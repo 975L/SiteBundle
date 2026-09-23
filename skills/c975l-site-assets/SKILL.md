@@ -1,6 +1,6 @@
 ---
 name: c975l-site-assets
-description: "Use this skill when working on the front-end assets of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Stimulus controller barrels, the one Stimulus application a page shares, the importmap entries a bundle contributes, or the compiled stylesheets a bundle hands the layout. Covers why a barrel never starts an application of its own, what the consuming app owes its own stimulus_bootstrap.js, how a controller identifier is written and where a bundle's css comes from. Triggers on: controllers.js, controllers-admin.js, c975lStimulusApp, startStimulusApp, stimulus_bootstrap.js, barrel, importmap.php, ImportmapProvider, ScriptProvider, StylesheetProvider, BundleScriptProviderInterface, BundleScriptAdminProviderInterface, BundleStylesheetProviderInterface, BundleStylesheetManagementProviderInterface, assets:install, AssetMapper, sitemap-fields, publication-switch, basic, languages, block-thumbs, styles.min.css, StimulusAppSharingTest, live controller registered twice."
+description: "Use this skill when working on the front-end assets of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Stimulus controller barrels, the one Stimulus application a page shares, the importmap entries a bundle contributes, or the compiled stylesheets a bundle hands the layout. Covers why a barrel never starts an application of its own, what the consuming app owes its own stimulus_bootstrap.js, how a controller identifier is written and where a bundle's css comes from. Triggers on: controllers.js, controllers-admin.js, c975lStimulusApp, startStimulusApp, stimulus_bootstrap.js, barrel, importmap.php, ImportmapProvider, ScriptProvider, StylesheetProvider, BundleScriptProviderInterface, BundleScriptAdminProviderInterface, BundleStylesheetProviderInterface, BundleStylesheetManagementProviderInterface, assets:install, AssetMapper, sitemap-fields, publication-switch, basic, languages, menu-active, block-thumbs, styles.min.css, StimulusAppSharingTest, live controller registered twice."
 ---
 
 # c975L SiteBundle — assets, barrels and the shared Stimulus application
@@ -20,7 +20,7 @@ A c975L bundle ships its Stimulus controllers as two barrels, never one:
 
 | File | Loaded on | Registers |
 | --- | --- | --- |
-| `assets/controllers.js` | every public page | `basic`, `languages` |
+| `assets/controllers.js` | every public page | `basic`, `languages`, `menu-active` |
 | `assets/controllers-admin.js` | every back-office page | `sitemap-fields`, `publication-switch` |
 
 The controllers themselves are one file each under `assets/js`. Each barrel is loaded as its own

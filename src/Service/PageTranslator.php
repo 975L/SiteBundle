@@ -13,6 +13,8 @@ namespace c975L\SiteBundle\Service;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Service\ContentTranslator;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 // What a page says in another language: its own two texts, the rest being its blocks' business (see ContentTranslator). A page is one page in every language - one structure, one set of blocks, one row - and its translations live beside it rather than in a second row. A site declaring a single language never reads any of this.
 class PageTranslator
@@ -23,9 +25,13 @@ class PageTranslator
     // What a translation may cover of the page itself: what a visitor reads, and what a search engine or a social network quotes
     public const array FIELDS = ['title', 'summarySocialNetwork'];
 
+    // What translatedLocales() is cached under, invalidated by PageLocalesCacheListener when a page or one of its translations is written
+    public const string LOCALES_CACHE_TAG = 'page_locales';
+
     public function __construct(
         private readonly ContentTranslator $contentTranslator,
         private readonly SiteLocales $siteLocales,
+        private readonly TagAwareCacheInterface $cache,
     ) {
     }
 
@@ -148,14 +154,24 @@ class PageTranslator
             return $locales;
         }
 
-        foreach ($this->contentTranslator->getTranslatableLocales() as $locale) {
-            $title = $this->contentTranslator->values(self::OWNER, $id, $locale)['title'] ?? null;
-            if (null !== $title && '' !== $title) {
-                $locales[] = $locale;
-            }
+        $translatable = $this->contentTranslator->getTranslatableLocales();
+        if ([] === $translatable) {
+            return $locales;
         }
 
-        return $locales;
+        // Cached across requests, being asked of every page rendered, every menu link and every hreflang group, at one query per language otherwise
+        return $this->cache->get('page_locales_' . $id, function (ItemInterface $item) use ($id, $locales, $translatable): array {
+            $item->tag([self::LOCALES_CACHE_TAG]);
+
+            foreach ($translatable as $locale) {
+                $title = $this->contentTranslator->values(self::OWNER, $id, $locale)['title'] ?? null;
+                if (null !== $title && '' !== $title) {
+                    $locales[] = $locale;
+                }
+            }
+
+            return $locales;
+        });
     }
 
     /**

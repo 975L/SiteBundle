@@ -32,4 +32,7 @@ interface PageServiceInterface
 
     // Gets the page regardless of status (for display: handles redirects and 410).
     public function findForDisplay(string $slug): ?Page;
+
+    // Gets the page regardless of status, its blocks read up front (preview, collection detail page).
+    public function findWithBlocks(string $slug): ?Page;
 }

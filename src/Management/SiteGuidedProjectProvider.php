@@ -22,6 +22,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 // This bundle's guided projects, running the 2000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They are ordered like the sidebar itself reads (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks, and the projects sharing a screen follow each other in the order a page lives: created, made findable, checked, then reworked. Only the opening step of each project carries an url: from there the parcours walks the screen the user is on, each step highlighting the button or the field they are meant to use next - a button they click themselves, which brings the panel back on the very step that pointed at it (see guided-project.js resume())
 class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
 {
+    // The page's or menu's own blocks collection: a container's "slots" collection carries the same sorting group, and would be the one found first on an entity not saved yet, whose own collection is left unmarked
+    private const string BLOCK_COLLECTION = '[data-ui-sort-group="block"]:not([data-ui-move-target])';
+
     public function __construct(
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
         private readonly ConfigServiceInterface $configService,
@@ -214,16 +217,16 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '.action-edit',
                 ],
                 [
-                    'label' => 'label.guided_step_page_creation_blocks',
-                    'description' => 'description.guided_step_page_creation_blocks',
-                    'narration' => 'narration.guided_step_page_creation_blocks',
-                    'highlight' => '[data-ui-sort-group="block"]',
-                ],
-                [
                     'label' => 'label.guided_step_page_creation_title_displayed',
                     'description' => 'description.guided_step_page_creation_title_displayed',
                     'narration' => 'narration.guided_step_page_creation_title_displayed',
                     'highlight' => '#Page_isTitleDisplayed',
+                ],
+                [
+                    'label' => 'label.guided_step_page_creation_blocks',
+                    'description' => 'description.guided_step_page_creation_blocks',
+                    'narration' => 'narration.guided_step_page_creation_blocks',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_publish',
@@ -273,7 +276,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_block_add',
                     'description' => 'description.guided_step_block_add',
                     'narration' => 'narration.guided_step_block_add',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
                     // The row marker UiBundle's BlockType puts on the kind picker, EasyAdmin writing no id on a collection entry's field
@@ -532,7 +535,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_revision_rework',
                     'description' => 'description.guided_step_page_revision_rework',
                     'narration' => 'narration.guided_step_page_revision_rework',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
                     'label' => 'label.guided_step_page_revision_preview',
@@ -689,7 +692,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_add_link',
                     'description' => 'description.guided_step_page_menu_add_link',
                     'narration' => 'narration.guided_step_page_menu_add_link',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_target',
@@ -716,7 +719,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_brand_write',
                     'description' => 'description.guided_step_page_menu_brand_write',
                     'narration' => 'narration.guided_step_page_menu_brand_write',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
             ],
         ];
@@ -804,7 +807,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_footer_items',
                     'description' => 'description.guided_step_footer_items',
                     'narration' => 'narration.guided_step_footer_items',
-                    'highlight' => '[data-ui-sort-group="block"]',
+                    'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
                     'label' => 'label.guided_step_footer_group',

@@ -7,7 +7,7 @@
 {% set hasCopyrightLink = footerItems|filter(
     block => (block.data.label ?? '') is empty and menu_link_is_copyright(block.data.target ?? '')
 )|length > 0 %}
-<footer>
+<footer data-controller="menu-active">
     <div class="menu-items{{ footerStyle ? ' menu-items--' ~ footerStyle : '' }}">
         <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
         {% if not hasCopyrightLink and copyright is defined and copyright is not empty %}

@@ -188,7 +188,7 @@
             </trans-unit>
             <trans-unit id="hx79f8B">
                 <source>description.guided_step_block_add</source>
-                <target>Ajoutez un block, ou ouvrez-en un que la page contient déjà.</target>
+                <target>Ajoutez un block, ou ouvrez-en un que la page contient déjà. Les étapes suivantes montrent le premier block de la page : les réglages sont au même endroit dans le vôtre.</target>
             </trans-unit>
             <trans-unit id="CIjMxdx">
                 <source>description.guided_step_block_edit</source>

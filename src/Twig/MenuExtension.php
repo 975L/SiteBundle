@@ -73,9 +73,7 @@ class MenuExtension
     public function getMenuBlocks(string $location): Collection
     {
         if (!array_key_exists($location, $this->menuBlocksCache)) {
-            $blocks = new ArrayCollection($this->loadMenuBlocks($location));
-            $this->preloadPages($blocks);
-            $this->menuBlocksCache[$location] = $blocks;
+            $this->menuBlocksCache[$location] = new ArrayCollection($this->loadMenuBlocks($location));
         }
 
         return $this->menuBlocksCache[$location];
@@ -216,14 +214,30 @@ class MenuExtension
             return false;
         }
 
+        // The setting first, then the copyright page's id, cached: Footer.html.twig asks this of every item on every page, and comparing ids reads no page at all
         $parsed = self::parseTarget($target);
-        if ('page' !== $parsed['type']) {
+        if ('page' !== $parsed['type'] || null !== $parsed['fragment'] || !$this->configService->get('site-menu-link-copyright-auto')) {
             return false;
         }
 
-        $page = $this->resolvePage($parsed['pageId']);
+        $copyrightId = $this->copyrightPageId();
 
-        return null !== $page && null === $parsed['fragment'] && $this->isCopyrightPage($page);
+        return null !== $copyrightId && (string) $copyrightId === $parsed['pageId'];
+    }
+
+    // The id of the site's own "Copyright" legal page, null when there is none - kept under the pages' own tag, which a page saved empties
+    private function copyrightPageId(): ?int
+    {
+        $id = $this->cache->get('site_copyright_page_id', function (ItemInterface $item): int {
+            $item->expiresAfter(null);
+            $item->tag([PageTranslator::LOCALES_CACHE_TAG]);
+
+            $slug = $this->defaultPagesImporter->getLegalPageSlugsByModel()['france/copyright'] ?? null;
+
+            return null === $slug ? 0 : (int) $this->pageRepository->findOneBy(['slug' => $slug])?->getId();
+        });
+
+        return 0 === $id ? null : $id;
     }
 
     // Whether $page is the site's own "Copyright" legal page (see DefaultPagesImporter's "france/copyright" model), gated by the "site-menu-link-copyright-auto" config
@@ -231,6 +245,59 @@ class MenuExtension
     {
         return (bool) $this->configService->get('site-menu-link-copyright-auto')
             && $page->getSlug() === ($this->defaultPagesImporter->getLegalPageSlugsByModel()['france/copyright'] ?? null);
+    }
+
+    // The tags a "menu_link" block is cached under, or null to render it live (see MenuBlockCacheTagProvider). "menus_all" is emptied by any block saved, which covers a section label read off another page's blocks; the page's own languages tag by any page saved or translated, which covers its slug, its publication and its title. Live: a request read out of its route's language (see isLocaleOutOfItsRoute()), a link to the copyright page whose label is left to the page (the computed notice holds the year, and the setting deciding it is read at render), and a route standing for a database row whose provider cannot say when it changes
+    /** @return string[]|null */
+    public function getMenuLinkCacheTags(?string $target, ?string $label): ?array
+    {
+        if ($this->isLocaleOutOfItsRoute()) {
+            return null;
+        }
+
+        $parsed = self::parseTarget($target);
+
+        return match ($parsed['type']) {
+            'page' => $this->isLeftToTheCopyrightNotice($parsed, $label) ? null : ['menus_all', PageTranslator::LOCALES_CACHE_TAG],
+            'route' => $this->routeLinkCacheTags((string) $parsed['value']),
+            default => ['menus_all'],
+        };
+    }
+
+    // A request read in another language than its route says - a browser's language on an unprefixed route (contact, search, login...). The cache is keyed by getLocale() while the urls follow the "_locale" attribute, so storing that render would serve the writing language's urls on every "/{_locale}/..." page
+    private function isLocaleOutOfItsRoute(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return null !== $request
+            && !$request->attributes->has('_locale')
+            && $request->getLocale() !== $this->defaultLocale;
+    }
+
+    // A route of the bundle's own is cached with the menus; one standing for a database row under the tags its provider declares, emptied with the row - or live when it declares none (see ConfigBundle's LinkableRouteCacheTagsInterface)
+    /** @return string[]|null */
+    private function routeLinkCacheTags(string $key): ?array
+    {
+        if ([] === ($this->linkableRouteRegistry->get($key)['params'] ?? [])) {
+            return ['menus_all'];
+        }
+
+        $tags = $this->linkableRouteRegistry->cacheTags($key);
+
+        return null === $tags ? null : ['menus_all', ...$tags];
+    }
+
+    // A whole-page link to the copyright page with no label of its own, whatever "site-menu-link-copyright-auto" says now
+    private function isLeftToTheCopyrightNotice(array $parsed, ?string $label): bool
+    {
+        if (null !== $parsed['fragment'] || '' !== (string) $label) {
+            return false;
+        }
+
+        // The cached id rather than the page itself: this runs each time a menu's tags are resolved, and reads no page that way
+        $copyrightId = $this->copyrightPageId();
+
+        return null !== $copyrightId && (string) $copyrightId === $parsed['pageId'];
     }
 
     // Single point of "type:value" parsing, shared by every target reader above
@@ -282,11 +349,17 @@ class MenuExtension
         return $ids;
     }
 
-    // Single point of Page lookup for both getMenuLinkUrl()/getMenuLinkLabel() - reads from the batch preloaded by preloadPages(), falling back to an individual find() for a target reached without going through getMenuBlocks() first (defensive; every current caller does)
+    // Single point of Page lookup for both getMenuLinkUrl()/getMenuLinkLabel() - the first page asked for batches every page the menus read so far point at (see preloadPages()), so a menu whose links are all served from the cache reads none. An individual find() stays the fallback for a target reached without going through getMenuBlocks()
     private function resolvePage(?string $pageId): ?Page
     {
         if (null === $pageId) {
             return null;
+        }
+
+        if (!array_key_exists($pageId, $this->pageCache)) {
+            foreach ($this->menuBlocksCache as $blocks) {
+                $this->preloadPages($blocks);
+            }
         }
 
         return array_key_exists($pageId, $this->pageCache)

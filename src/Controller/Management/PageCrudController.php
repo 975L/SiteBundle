@@ -305,6 +305,7 @@ class PageCrudController extends AbstractCrudController
                 'yearly' => t('label.yearly', [], 'site'),
                 'never' => t('label.never', [], 'site'),
             ])
+            ->renderAsNativeWidget()
             ->setRequired(false)
             ->hideOnIndex();
 

@@ -120,8 +120,9 @@ class PageController extends AbstractController
     )]
     public function home(Request $request)
     {
-        $homePage = $this->pageService->findOneBySlug('home');
-        if ($homePage) {
+        // The row alone, the blocks being rendered through one cache entry - the same lookup as any other page, the status checked here rather than in the query
+        $homePage = $this->pageService->findForDisplay('home');
+        if (null !== $homePage && $homePage->isPublished() && !$homePage->isDeleted()) {
             // No "page" route parameter on "/" (unlike page_display's "/pages/{page}") - set it manually so a "collection" block rendered on the home page can still resolve its own items' detail links (see UiBundle's CollectionExtension::buildDetailUrl())
             $request->attributes->set('page', 'home');
 
@@ -301,7 +302,7 @@ class PageController extends AbstractController
             return null;
         }
 
-        $detailPage = $this->pageService->findForDisplay($detailPageSlug);
+        $detailPage = $this->pageService->findWithBlocks($detailPageSlug);
         if (null === $detailPage) {
             return null;
         }
@@ -332,7 +333,7 @@ class PageController extends AbstractController
         $this->blockRenderContext->disableCache();
 
         $slug = rtrim($page, '/');
-        $pageObject = $this->pageService->findForDisplay($slug);
+        $pageObject = $this->pageService->findWithBlocks($slug);
         $detailHtml = null;
         $detailTitle = null;
 

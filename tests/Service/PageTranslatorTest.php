@@ -15,6 +15,8 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Service\ContentTranslator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 
 class PageTranslatorTest extends TestCase
 {
@@ -33,7 +35,7 @@ class PageTranslatorTest extends TestCase
         $contentTranslator = $this->createStub(ContentTranslator::class);
         $contentTranslator->method('translate')->willReturnArgument(2);
 
-        $pageTranslator = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'));
+        $pageTranslator = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()));
         $page = $this->createPage();
 
         $this->assertSame('Nos ateliers', $pageTranslator->getTitle($page));
@@ -45,7 +47,7 @@ class PageTranslatorTest extends TestCase
         $contentTranslator = $this->createStub(ContentTranslator::class);
         $contentTranslator->method('translate')->willReturn(['title' => 'Our workshops', 'summarySocialNetwork' => 'One a month']);
 
-        $pageTranslator = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'));
+        $pageTranslator = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()));
 
         $this->assertSame('Our workshops', $pageTranslator->getTitle($this->createPage()));
     }
@@ -56,7 +58,7 @@ class PageTranslatorTest extends TestCase
         $contentTranslator = $this->createMock(ContentTranslator::class);
         $contentTranslator->expects($this->never())->method('all');
 
-        $this->assertSame([], new PageTranslator($contentTranslator, new SiteLocales([], 'fr'))->all(new Page()));
+        $this->assertSame([], new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()))->all(new Page()));
     }
 
     // What a language screen offers: what that language already says, and the source text between brackets where it says nothing yet - both the thing to translate and the mark of what is left to do
@@ -66,7 +68,7 @@ class PageTranslatorTest extends TestCase
         $contentTranslator->method('isActive')->willReturn(true);
         $contentTranslator->method('all')->willReturn(['es' => ['title' => 'Nuestros talleres']]);
 
-        $values = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'))->promptValues($this->createPage(), 'es');
+        $values = new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()))->promptValues($this->createPage(), 'es');
 
         $this->assertSame('Nuestros talleres', $values['title']);
         $this->assertSame('[Un atelier par mois]', $values['summarySocialNetwork']);
@@ -80,7 +82,7 @@ class PageTranslatorTest extends TestCase
             ->method('stage')
             ->with(PageTranslator::OWNER, 12, 'es', ['title' => 'Nuestros talleres', 'summarySocialNetwork' => null]);
 
-        new PageTranslator($contentTranslator, new SiteLocales([], 'fr'))->stage($this->createPage(), 'es', [
+        new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()))->stage($this->createPage(), 'es', [
             'title' => 'Nuestros talleres',
             'summarySocialNetwork' => '[Un atelier par mois]',
         ]);
@@ -92,13 +94,13 @@ class PageTranslatorTest extends TestCase
         $contentTranslator = $this->createMock(ContentTranslator::class);
         $contentTranslator->expects($this->never())->method('stage');
 
-        new PageTranslator($contentTranslator, new SiteLocales([], 'fr'))->stage(new Page()->setTitle('x'), 'es', ['title' => 'y']);
+        new PageTranslator($contentTranslator, new SiteLocales([], 'fr'), new TagAwareAdapter(new ArrayAdapter()))->stage(new Page()->setTitle('x'), 'es', ['title' => 'y']);
     }
 
     /**
      * @param array<string, array<string, string|null>> $written locale => field => value
      */
-    private function createTranslator(array $written, array $translatable = ['en', 'es']): PageTranslator
+    private function createTranslator(array $written, array $translatable = ['en', 'es'], ?TagAwareAdapter $cache = null): PageTranslator
     {
         $contentTranslator = $this->createStub(ContentTranslator::class);
         $contentTranslator->method('getTranslatableLocales')->willReturn($translatable);
@@ -106,7 +108,7 @@ class PageTranslatorTest extends TestCase
             static fn (string $ownerType, int $ownerId, string $locale): array => $written[$locale] ?? []
         );
 
-        return new PageTranslator($contentTranslator, new SiteLocales($translatable, 'fr'));
+        return new PageTranslator($contentTranslator, new SiteLocales($translatable, 'fr'), $cache ?? new TagAwareAdapter(new ArrayAdapter()));
     }
 
     // A language the site declares is not a language the page exists in: only the writing one is named while nobody has translated the title
@@ -143,5 +145,28 @@ class PageTranslatorTest extends TestCase
     public function testAPageWithNoIdOnlyNamesTheWritingLanguage(): void
     {
         $this->assertSame(['fr'], $this->createTranslator(['en' => ['title' => 'x']])->translatedLocales(new Page()));
+    }
+
+    // Asked of every page, menu link and hreflang group: read once, then served from the pool until a translation is written
+    public function testTheLanguagesAreCachedUntilTheTagIsInvalidated(): void
+    {
+        $written = [];
+        $cache = new TagAwareAdapter(new ArrayAdapter());
+        $page = $this->createPage();
+
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('getTranslatableLocales')->willReturn(['en']);
+        $contentTranslator->method('values')->willReturnCallback(static function () use (&$written): array {
+            return $written;
+        });
+        $translator = new PageTranslator($contentTranslator, new SiteLocales(['en'], 'fr'), $cache);
+
+        $this->assertSame(['fr'], $translator->translatedLocales($page));
+
+        $written = ['title' => 'Our workshops'];
+        $this->assertSame(['fr'], $translator->translatedLocales($page));
+
+        $cache->invalidateTags([PageTranslator::LOCALES_CACHE_TAG]);
+        $this->assertSame(['fr', 'en'], $translator->translatedLocales($page));
     }
 }
