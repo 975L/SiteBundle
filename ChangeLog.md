@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.18.0
+
+A block's link field offers the site's pages and sections
+
+- `LinkTargetChoices` lists the link targets, for `MenuLinkType` and UiBundle's `LinkTargetType` (24/09/2026)
+- `PageLinkLocalizer` turns a `page:`/`route:` target into its url in every language (24/09/2026)
+- Requires `c975l/core-bundle` `^1.34` (24/09/2026)
+
 ## v8.17.0
 
 The menus and a page's blocks are cached

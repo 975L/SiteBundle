@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -58,6 +58,8 @@ A target can point at a **section** of a page. Any UiBundle "Page sections" kind
 once one block on a page has one, `MenuLinkType`'s target select lists it right under that page's own
 entry (`Home → Services`) — the whole page tree is walked by UiBundle's `BlockAnchorCollector`, nested
 sections included. The target is stored as `page:<id>#<fragment>` and resolved into `/home#services-42`.
+The list is built by `LinkTargetChoices`, UiBundle's `LinkTargetProviderInterface`, so every block's link
+field (`LinkTargetType`) offers the same pages, sections and routes.
 
 A band rendered by the layout rather than by a page's own blocks is **not** in that list. To make one
 linkable, drop its block kind into the page and give it an anchor there.

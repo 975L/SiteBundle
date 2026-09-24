@@ -16,6 +16,7 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageLinkLocalizer;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
+use c975L\SiteBundle\Twig\MenuExtension;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -102,7 +103,30 @@ class PageLinkLocalizerTest extends TestCase
         $this->assertSame($text, $this->localizer('en', repository: $repository)->localize($text));
     }
 
-    private function localizer(?string $readingLocale, string $slug = 'nos-ateliers', ?PageRepository $repository = null): PageLinkLocalizer
+    // A target picked in a block's link field is the value a menu link stores, read back the same way - in the writing language too, where nothing else here is rewritten
+    public function testATargetPickedInALinkFieldIsTurnedIntoItsUrlInEveryLanguage(): void
+    {
+        $menu = $this->createStub(MenuExtension::class);
+        $menu->method('getMenuLinkUrl')->willReturnMap([['page:53#services-75', '/pages/publier-votre-histoire#services-75']]);
+
+        $this->assertSame(
+            '<a href="/pages/publier-votre-histoire#services-75" role="button">Nos services</a>',
+            $this->localizer(null, menuExtension: $menu)->localize('<a href="page:53#services-75" role="button">Nos services</a>'),
+        );
+    }
+
+    // A url of its own is left alone in the writing language, however many "page" or "route" words the prose around it holds
+    public function testAnAddressTypedByHandIsNotATarget(): void
+    {
+        $menu = $this->createMock(MenuExtension::class);
+        $menu->expects($this->never())->method('getMenuLinkUrl');
+
+        $text = 'Une page: <a href="/shop">la boutique</a>, une route: <a href="https://route.example">ailleurs</a>';
+
+        $this->assertSame($text, $this->localizer(null, menuExtension: $menu)->localize($text));
+    }
+
+    private function localizer(?string $readingLocale, string $slug = 'nos-ateliers', ?PageRepository $repository = null, ?MenuExtension $menuExtension = null): PageLinkLocalizer
     {
         $request = Request::create('/');
         if (null !== $readingLocale) {
@@ -127,6 +151,6 @@ class PageLinkLocalizerTest extends TestCase
         $translator = $this->createStub(PageTranslator::class);
         $translator->method('translatedLocales')->willReturn(['fr', 'en']);
 
-        return new PageLinkLocalizer($resolver, new SiteLocales(['fr', 'en', 'es'], 'fr'), $translator, $repository, new RequestStack([$request]));
+        return new PageLinkLocalizer($resolver, new SiteLocales(['fr', 'en', 'es'], 'fr'), $translator, $repository, new RequestStack([$request]), $menuExtension);
     }
 }

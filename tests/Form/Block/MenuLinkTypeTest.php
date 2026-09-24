@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Management\LinkableRouteRegistry;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Form\Block\MenuLinkType;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\LinkTargetChoices;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockAnchorCollector;
 use Doctrine\ORM\QueryBuilder;
@@ -50,7 +51,7 @@ class MenuLinkTypeTest extends TypeTestCase
     #[\Override]
     protected function getTypes(): array
     {
-        return [new MenuLinkType($this->linkableRouteRegistry, $this->pageRepository, $this->translator, new BlockAnchorCollector())];
+        return [new MenuLinkType(new LinkTargetChoices($this->linkableRouteRegistry, $this->pageRepository, $this->translator, new BlockAnchorCollector()))];
     }
 
     private function withPages(array $pages): void

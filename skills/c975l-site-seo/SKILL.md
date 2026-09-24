@@ -84,7 +84,9 @@ attribute, and a menu read in that language keeps the writing language's url for
 word linked inside a rich text — is rendered as that language's url, and left as it is for a page that
 language was not written in, whose localised url would answer 404. The path comes from
 `PagePublicUrlResolver::resolvePath()`, so a link to the home page lands on `/{lang}/` rather than on the
-`/{lang}/pages/home` that only ever redirects there.
+`/{lang}/pages/home` that only ever redirects there. A `page:<id>` or `route:<name>` target picked in a block's link
+field is turned into its url in every language, the writing one included, through
+`MenuExtension::getMenuLinkUrl()`.
 
 ## Who publishes the site
 

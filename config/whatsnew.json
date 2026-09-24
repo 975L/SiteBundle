@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-09-24",
+        "description": [
+            {
+                "en": "A card or button link can now point at one of your pages or sections, and keeps working when the page is renamed",
+                "fr": "Le lien d'une carte ou d'un bouton peut désormais pointer vers l'une de vos pages ou sections, et continue de fonctionner quand la page est renommée",
+                "es": "El enlace de una tarjeta o de un botón puede apuntar ahora a una de sus páginas o secciones, y sigue funcionando cuando la página cambia de nombre"
+            }
+        ]
+    },
+    {
         "date": "2026-09-23",
         "description": [
             {
