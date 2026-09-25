@@ -12,7 +12,10 @@ namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\SiteDemoFixtureProvider;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
@@ -46,7 +49,7 @@ class SiteDemoFixtureProviderTest extends TestCase
     }
 
     /** @param list<string> $images */
-    private function createProvider(array $images = [self::IMAGE]): SiteDemoFixtureProvider
+    private function createProvider(array $images = [self::IMAGE], ?Menu $existingNavbar = null): SiteDemoFixtureProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -54,7 +57,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $registry = $this->createStub(PlaceholderMediaRegistry::class);
         $registry->method('getImages')->willReturn($images);
 
-        return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->projectDir);
+        return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->pageRepository(), $this->menuRepository($existingNavbar), $this->projectDir);
     }
 
     /** @return list<object> */
@@ -266,12 +269,56 @@ class SiteDemoFixtureProviderTest extends TestCase
         }
     }
 
-    // A demo site holds one navbar and one footer of its own: a dataset adding a menu would fight the site's navigation
-    public function testNoMenuIsYielded(): void
+    // The navbar's links name their pages by identifier, which only the first flush hands out - so the first pass holds no menu
+    public function testTheFirstPassYieldsNoMenu(): void
     {
         foreach ($this->fixtures($this->createProvider()) as $entity) {
-            $this->assertNotInstanceOf(\c975L\SiteBundle\Entity\Menu::class, $entity);
+            $this->assertNotInstanceOf(Menu::class, $entity);
         }
+    }
+
+    // The second pass lays a navbar over the pages the first one wrote, each link with a label of its own for the menu translation screen to offer
+    public function testTheSecondPassLaysANavbarLinkingThePages(): void
+    {
+        $menus = array_values(array_filter(iterator_to_array($this->createProvider()->getLinkedDemoFixtures(), false), static fn (object $row): bool => $row instanceof Menu));
+
+        $this->assertCount(1, $menus);
+        $this->assertSame(Menu::LOCATION_NAVBAR, $menus[0]->getLocation());
+
+        $links = $menus[0]->getBlocks()->toArray();
+        $this->assertCount(3, $links);
+        $this->assertSame(['page:7', 'page:7', 'page:7'], array_map(static fn (Block $block): string => $block->getData()['target'], $links));
+        $this->assertSame('label.site_sample_menu_home', $links[0]->getData()['label']);
+        $this->assertSame([0, 1, 2], array_map(static fn (Block $block): int => (int) $block->getPosition(), $links));
+    }
+
+    // A database already holding a navbar keeps its own: refusing the demo's there would come after its pages are written
+    public function testAnExistingNavbarIsLeftInPlace(): void
+    {
+        $rows = iterator_to_array($this->createProvider(existingNavbar: new Menu())->getLinkedDemoFixtures(), false);
+
+        $this->assertSame([], array_filter($rows, static fn (object $row): bool => $row instanceof Menu));
+    }
+
+    // The navbar the database already holds, if any
+    private function menuRepository(?Menu $navbar = null): MenuRepository
+    {
+        $repository = $this->createStub(MenuRepository::class);
+        $repository->method('findOneBy')->willReturn($navbar);
+
+        return $repository;
+    }
+
+    // Every page the navbar links to, answered as the one written by the first pass
+    private function pageRepository(): PageRepository
+    {
+        $page = new Page();
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 7);
+
+        $repository = $this->createStub(PageRepository::class);
+        $repository->method('findOneBy')->willReturn($page);
+
+        return $repository;
     }
 
     // The second pass says the whole demo in the other languages the site declares, and says a rich text exactly as the block stores it - the same words outside their box would read as another text to whatever compares the two
@@ -286,7 +333,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $registry->method('getImages')->willReturn([]);
 
         $demoFixtureTranslator = new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr');
-        $provider = new SiteDemoFixtureProvider($demoFixtureTranslator, $translator, $registry, $this->projectDir);
+        $provider = new SiteDemoFixtureProvider($demoFixtureTranslator, $translator, $registry, $this->pageRepository(), $this->menuRepository(), $this->projectDir);
 
         $flushed = [];
         foreach ($provider->getDemoFixtures() as $index => $entity) {
@@ -297,6 +344,8 @@ class SiteDemoFixtureProviderTest extends TestCase
         $rows = iterator_to_array($provider->getLinkedDemoFixtures(), false);
 
         $this->assertNotSame([], $rows, 'The demo site was not staged for translation at all.');
+
+        $rows = array_values(array_filter($rows, static fn (object $row): bool => $row instanceof Translation));
 
         foreach ($rows as $row) {
             $this->assertSame('en', $row->getLocale());

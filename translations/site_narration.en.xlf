@@ -350,9 +350,13 @@
                 <source>narration.guided_step_page_translation_locale</source>
                 <target>At the top of the screen, a bar of tabs, one per language of the site. It is the same edit screen, opened on the one you pick.</target>
             </trans-unit>
+            <trans-unit id="lUrZwIa">
+                <source>narration.guided_step_page_translation_media_file</source>
+                <target>A picture carrying text, a screenshot or a banner, can be given its version in this language. Drop it in here: it stands in for the original in this language alone, the others keep theirs.</target>
+            </trans-unit>
             <trans-unit id="H4u2Q6J">
                 <source>narration.guided_step_page_translation_medias</source>
-                <target>Under the blocks that hang pictures, each picture that says something has boxes of its own. Say those words in the new language too. The file, its link and its credits are not there: a picture is the same picture in every language.</target>
+                <target>Under the blocks that hang pictures, each picture has boxes of its own. Say its words in the new language too. Its link and its credits are not there: they hold for every language.</target>
             </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>

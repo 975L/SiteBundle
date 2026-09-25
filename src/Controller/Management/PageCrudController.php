@@ -37,7 +37,9 @@ use c975L\UiBundle\Field\OgImageField;
 use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
+use c975L\UiBundle\Model\QrCodeOptions;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\DBAL\Connection;
@@ -72,7 +74,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Endroid\QrCode\Builder\Builder;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -232,11 +233,13 @@ class PageCrudController extends AbstractCrudController
             // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
             ->setFormTypeOption('attr', ['data-ai-rephrase' => true]);
 
-        // Neither allowAdd() nor allowDelete(), unlike the collection above: a page is composed once, and a block taken away from a language screen would be taken away from every language at once
+        // Neither add nor delete, unlike the collection above: a page is composed once, and a block taken away from a language screen would be taken away from every language at once. Said explicitly, EasyAdmin's CollectionField allowing both by default
         yield CollectionField::new('blocks')
             ->setLabel(t('label.blocks', [], 'ui'))
             ->setColumns('col-12')
             ->setEntryType(BlockType::class)
+            ->allowAdd(false)
+            ->allowDelete(false)
             ->setFormTypeOption('by_reference', false)
             ->setFormTypeOption('entry_options.context', 'page')
             ->setFormTypeOption('entry_options.translation_locale', $locale)
@@ -1163,9 +1166,9 @@ class PageCrudController extends AbstractCrudController
         return $user instanceof UserInterface ? $user : null;
     }
 
-    // Generates on the fly the QR code pointing to the page, shown in the edit view (see page_crud_edit.html.twig)
+    // The QR code pointing to the page, shown in the edit view (see page_crud_edit.html.twig) - drawn once, then read from the cache (see QrCodeGenerator)
     #[AdminRoute('/{entityId}/qrcode')]
-    public function qrcode(AdminContext $context): Response
+    public function qrcode(AdminContext $context, QrCodeGenerator $qrCodeGenerator): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
@@ -1176,14 +1179,10 @@ class PageCrudController extends AbstractCrudController
             throw $this->createNotFoundException();
         }
 
-        $result = new Builder()->build(
-            // The language the screen was opened on, when it is not the one the page was written in (see contentLocale)
-            data: $this->buildPageUrl($page, $this->contentLocale()),
-            size: 250,
-            margin: 10,
-        );
+        // The language the screen was opened on, when it is not the one the page was written in (see contentLocale)
+        $image = $qrCodeGenerator->generate($this->buildPageUrl($page, $this->contentLocale()), new QrCodeOptions(size: 250, margin: 10));
 
-        return new Response($result->getString(), Response::HTTP_OK, ['Content-Type' => $result->getMimeType()]);
+        return $qrCodeGenerator->response($image, $context->getRequest());
     }
 
     #[AdminRoute]

@@ -404,6 +404,7 @@ class SiteGuidedProjectProviderTest extends TestCase
 
         $this->assertStringContainsString("'data-media-translation'", $source, "UiBundle's BlockType no longer marks the media of a language screen, so there is no selector left to point at");
         $this->assertStringContainsString('[data-media-translation]', $this->highlightsOf('site-page-translation'));
+        $this->assertStringContainsString('[data-media-translation] input[type=file]', $this->highlightsOf('site-page-translation'));
     }
 
     // The health check table is ConfigBundle's own template: rename its Stimulus controller there alone and the step highlights nothing, in silence

@@ -16,8 +16,8 @@
 {# PageQrCodeType (the "Data" tab) - moved here from being appended below the whole tabbed form (visible under every tab regardless of which one was active) to being scoped to the tab it actually belongs to #}
 {% block c975l_page_qrcode_widget %}
     {% set page = form.parent.vars.data %}
-    {# The language the screen was opened on, handed down by PageQrCodeType: a form theme block is given the form and nothing else, and the code has to point at that language's own url #}
-    {% set url = ea_url().setAction('qrcode').setEntityId(page.id) %}
+    {# The language the screen was opened on, handed down by PageQrCodeType, for the code to point at that language's own url. The version moves on each save, so a renamed slug is never answered from a cached image #}
+    {% set url = ea_url().setAction('qrcode').setEntityId(page.id).set('v', page.version) %}
     {% if content_locale is not empty %}
         {% set url = url.set('contenu', content_locale) %}
     {% endif %}

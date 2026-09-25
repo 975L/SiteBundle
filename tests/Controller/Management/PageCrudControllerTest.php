@@ -31,6 +31,7 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Management\BlockDataExporter;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -60,6 +61,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvent;
@@ -1778,7 +1780,7 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
         ]));
 
-        $controller->qrcode($this->createAdminContext(null));
+        $controller->qrcode($this->createAdminContext(null), new QrCodeGenerator(new TagAwareAdapter(new ArrayAdapter())));
     }
 
     public function testQrcodeDeniesAccessBelowEditor(): void
@@ -1790,7 +1792,7 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
 
-        $controller->qrcode($this->createAdminContext(new Page()));
+        $controller->qrcode($this->createAdminContext(new Page()), new QrCodeGenerator(new TagAwareAdapter(new ArrayAdapter())));
     }
 
     public function testExportSqlDeniesAccessBelowSiteRoleAdmin(): void

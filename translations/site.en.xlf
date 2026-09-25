@@ -494,9 +494,13 @@
                 <source>description.guided_step_page_translation_locale</source>
                 <target>The bar at the top of the screen: each of the site's languages has its tab there, and the edit screen opens on it.</target>
             </trans-unit>
+            <trans-unit id="eG66BlX">
+                <source>description.guided_step_page_translation_media_file</source>
+                <target>A picture carrying text, a screenshot or a banner, can be given a version of its own: it stands in for the original in this language alone.</target>
+            </trans-unit>
             <trans-unit id="y4W.h8Y">
                 <source>description.guided_step_page_translation_medias</source>
-                <target>A caption, the title and the text of a card, the alternative a screen reader announces: a picture's own words are said in the new language too, the file itself staying as it is.</target>
+                <target>A caption, the title and the text of a card, the alternative a screen reader announces: a picture's own words are said in the new language too.</target>
             </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
@@ -1202,6 +1206,10 @@
                 <source>label.guided_step_page_translation_locale</source>
                 <target>Pick the language</target>
             </trans-unit>
+            <trans-unit id="D4M3W54">
+                <source>label.guided_step_page_translation_media_file</source>
+                <target>Drop in this language's picture</target>
+            </trans-unit>
             <trans-unit id="IRlJAsj">
                 <source>label.guided_step_page_translation_medias</source>
                 <target>Take in the pictures' texts</target>
@@ -1729,6 +1737,18 @@
             <trans-unit id="dbWhw.4">
                 <source>label.site_sample_collection_name</source>
                 <target>Our work</target>
+            </trans-unit>
+            <trans-unit id="mCYfhg.">
+                <source>label.site_sample_menu_history</source>
+                <target>Our story</target>
+            </trans-unit>
+            <trans-unit id="cIJHT.W">
+                <source>label.site_sample_menu_home</source>
+                <target>Home</target>
+            </trans-unit>
+            <trans-unit id="PLE.Y.u">
+                <source>label.site_sample_menu_services</source>
+                <target>Services</target>
             </trans-unit>
             <trans-unit id="hleAzv5">
                 <source>label.site_sample_page_former_offer_body</source>

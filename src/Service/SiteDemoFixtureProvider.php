@@ -12,7 +12,10 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Contract\DemoFixtureLinkerInterface;
 use c975L\UiBundle\Contract\DemoFixtureProviderInterface;
 use c975L\UiBundle\Entity\Block;
@@ -24,18 +27,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
-/**
- * The made-up pages and collection a demo site is browsed for.
- *
- * Menus are deliberately left out. A site holds one menu per location - one navbar, one footer - so a dataset
- * adding its own would either collide with the site's or replace what it navigates by, and a demo site's
- * navigation is its own content, not something a reload may put back where it thinks it belongs. Same reading as
- * everywhere else here: this dataset only ever adds what it can take back.
- *
- * Everything a visitor reads is a key of the "site" domain rather than a sentence, so a demo seeded in Spanish
- * reads as a Spanish site. The slugs are ordinary words a small site would use, not "demo-" prefixed ones: a demo
- * is worth nothing if it does not look like the real thing.
- */
+// The made-up pages, collection and navbar a demo site is browsed for, every visible text a "site" key so a demo seeded in Spanish reads as a Spanish site, and slugs a real small site would use
 class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
 {
     // The catalogue every sample text is read from, in the language the site is written in and in each of the others
@@ -54,6 +46,8 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         private readonly DemoFixtureTranslator $demoFixtureTranslator,
         private readonly TranslatorInterface $translator,
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
+        private readonly PageRepository $pageRepository,
+        private readonly MenuRepository $menuRepository,
         #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
     ) {
@@ -265,11 +259,41 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         return $block;
     }
 
-    // The very same demo site said in each of the other languages it declares, its keys already written there (see DemoFixtureTranslator). A collection item is left out, the demo dataset holding no "site" key for one
+    // The very same demo site said in each of the other languages it declares (see DemoFixtureTranslator), a collection item left out for lack of a "site" key. The navbar comes in this pass too, its links naming their pages by the identifier the first flush hands out ("page:ID", see MenuLinkType)
     /** @return iterable<object> */
     public function getLinkedDemoFixtures(): iterable
     {
-        return $this->demoFixtureTranslator->translations();
+        yield from $this->demoFixtureTranslator->translations();
+
+        // Only where none exists yet: Menu::$location is unique, and a database already holding a navbar keeps its own rather than failing with the pages already written
+        if (null === $this->menuRepository->findOneBy(['location' => Menu::LOCATION_NAVBAR])) {
+            yield $this->navbar();
+        }
+    }
+
+    // Each link carries a label of its own, shorter than its page's title - which is what a navbar asks for, and what the menu translation screen offers to translate. Left in the site's language: saying them in the others is the very task that guided project films
+    private function navbar(): Menu
+    {
+        $menu = new Menu()->setLocation(Menu::LOCATION_NAVBAR);
+
+        foreach (['home' => 'home', 'nos-services' => 'services', 'notre-histoire' => 'history'] as $slug => $key) {
+            $page = $this->pageRepository->findOneBy(['slug' => $slug]);
+            if (null === $page) {
+                continue;
+            }
+
+            $menu->addBlock(new Block()
+                ->setKind('menu_link')
+                ->setPosition($menu->getBlocks()->count())
+                ->setData([
+                    'target' => 'page:' . $page->getId(),
+                    'label' => $this->trans('label.site_sample_menu_' . $key),
+                    'primary' => false,
+                    'strong' => false,
+                ]));
+        }
+
+        return $menu;
     }
 
     private function item(CollectionGroup $group, string $key, int $position, ?string $image): CollectionItem

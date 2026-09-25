@@ -441,6 +441,13 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '[data-media-translation]',
                 ],
                 [
+                    'label' => 'label.guided_step_page_translation_media_file',
+                    'description' => 'description.guided_step_page_translation_media_file',
+                    'narration' => 'narration.guided_step_page_translation_media_file',
+                    // UiBundle's MediaTranslationType adds this field to a picture alone, a PDF or a video being the same file in every language
+                    'highlight' => '[data-media-translation] input[type=file]',
+                ],
+                [
                     'label' => 'label.guided_step_page_translation_save',
                     'narration' => 'narration.guided_step_page_translation_save',
                     'highlight' => '.action-saveAndReturn',

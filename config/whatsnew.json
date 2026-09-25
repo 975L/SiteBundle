@@ -16,6 +16,16 @@
                 "en": "Exported pages now take their translations along to the other site",
                 "fr": "Les pages exportées emportent désormais leurs traductions vers l'autre site",
                 "es": "Las páginas exportadas se llevan ahora sus traducciones al otro sitio"
+            },
+            {
+                "en": "A page's QR code follows its address right after you rename it",
+                "fr": "Le QR code d'une page suit son adresse dès que vous la renommez",
+                "es": "El código QR de una página sigue su dirección en cuanto la renombra"
+            },
+            {
+                "en": "The guided tour for translating a page now shows how to give a picture its own file in each language",
+                "fr": "Le parcours guidé de traduction d'une page montre désormais comment donner à une image son propre fichier dans chaque langue",
+                "es": "El recorrido guiado para traducir una página muestra ahora cómo dar a una imagen su propio archivo en cada idioma"
             }
         ]
     },

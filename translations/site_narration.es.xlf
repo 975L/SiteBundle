@@ -350,9 +350,13 @@
                 <source>narration.guided_step_page_translation_locale</source>
                 <target>En la parte superior de la pantalla, una barra de pestañas: una por idioma del sitio. Es la misma pantalla de edición, abierta en el que elija.</target>
             </trans-unit>
+            <trans-unit id="lUrZwIa">
+                <source>narration.guided_step_page_translation_media_file</source>
+                <target>Una imagen que lleva texto, una captura de pantalla o un banner, puede recibir su versión en este idioma. Deposítela aquí: sustituye a la original solo en este idioma, los demás conservan la suya.</target>
+            </trans-unit>
             <trans-unit id="H4u2Q6J">
                 <source>narration.guided_step_page_translation_medias</source>
-                <target>Bajo los bloques que llevan imágenes, cada imagen que dice algo tiene sus propios campos. Diga esas palabras también en el nuevo idioma. El archivo, su enlace y sus créditos no están ahí: una imagen es la misma imagen en todos los idiomas.</target>
+                <target>Bajo los bloques que llevan imágenes, cada imagen tiene sus propios campos. Diga sus palabras también en el nuevo idioma. Su enlace y sus créditos no están ahí: valen para todos los idiomas.</target>
             </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>

@@ -494,9 +494,13 @@
                 <source>description.guided_step_page_translation_locale</source>
                 <target>La barra en la parte superior: cada idioma del sitio tiene su pestaña y la pantalla de edición se abre en ella.</target>
             </trans-unit>
+            <trans-unit id="eG66BlX">
+                <source>description.guided_step_page_translation_media_file</source>
+                <target>Una imagen que lleva texto, una captura o un banner, puede recibir su propia versión: sustituye a la original solo en este idioma.</target>
+            </trans-unit>
             <trans-unit id="y4W.h8Y">
                 <source>description.guided_step_page_translation_medias</source>
-                <target>Un pie de foto, el título y el texto de una tarjeta, la alternativa que anuncia un lector de pantalla: las palabras que lleva una imagen se dicen también en el nuevo idioma, sin que el archivo en sí cambie.</target>
+                <target>Un pie de foto, el título y el texto de una tarjeta, la alternativa que anuncia un lector de pantalla: las palabras que lleva una imagen se dicen también en el nuevo idioma.</target>
             </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
@@ -1202,6 +1206,10 @@
                 <source>label.guided_step_page_translation_locale</source>
                 <target>Elija el idioma</target>
             </trans-unit>
+            <trans-unit id="D4M3W54">
+                <source>label.guided_step_page_translation_media_file</source>
+                <target>Deposite la imagen de este idioma</target>
+            </trans-unit>
             <trans-unit id="IRlJAsj">
                 <source>label.guided_step_page_translation_medias</source>
                 <target>Repase los textos de las imágenes</target>
@@ -1729,6 +1737,18 @@
             <trans-unit id="dbWhw.4">
                 <source>label.site_sample_collection_name</source>
                 <target>Nuestros trabajos</target>
+            </trans-unit>
+            <trans-unit id="mCYfhg.">
+                <source>label.site_sample_menu_history</source>
+                <target>Historia</target>
+            </trans-unit>
+            <trans-unit id="cIJHT.W">
+                <source>label.site_sample_menu_home</source>
+                <target>Inicio</target>
+            </trans-unit>
+            <trans-unit id="PLE.Y.u">
+                <source>label.site_sample_menu_services</source>
+                <target>Servicios</target>
             </trans-unit>
             <trans-unit id="hleAzv5">
                 <source>label.site_sample_page_former_offer_body</source>

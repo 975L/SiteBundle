@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.20.0
+
+The demo site gets a navbar, and QR codes come from UiBundle
+
+- The README opens on its bundle page, tutorials, block kinds and live demo with its back-office (25/09/2026)
+- The license badge links to `main`, the branch `master` became (25/09/2026)
+- The page translation parcours no longer says a picture's file is the same in every language, and walks the upload of its own (25/09/2026)
+- QR codes are drawn by UiBundle's `QrCodeGenerator`, cached, and no longer require `endroid/qr-code` directly (25/09/2026)
+- A page's QR code image url carries its version, so a renamed slug is never served from cache (25/09/2026)
+- The demo site gets a navbar, unless the database already holds one (25/09/2026)
+- A page's language screen can neither add nor remove a block (25/09/2026)
+- Requires `c975l/core-bundle` ^1.38.0 (25/09/2026)
+- Rector turns Symfony, Doctrine and Sensio annotations into attributes (25/09/2026)
+
 ## v8.19.1
 
 Map Page::$version as an explicit integer column

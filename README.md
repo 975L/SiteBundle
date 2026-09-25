@@ -2,18 +2,18 @@
 
 Symfony bundle that turns the c975L core into a complete website — full layout, database-driven pages, navbar and footer menus, collections, branded emails, per-page SEO and health check.
 
-[![GitHub](https://img.shields.io/github/license/975L/SiteBundle)](https://github.com/975L/SiteBundle/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/975L/SiteBundle)](https://github.com/975L/SiteBundle/blob/main/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/612a27f799464950b0c5cfd13577ec20)](https://app.codacy.com/gh/975L/SiteBundle/dashboard)
+
+**[Bundle page](https://bundles.975l.com/en/pages/site-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/site-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Site) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
 
 ## Why SiteBundle
 
 ![SiteBundle](.github/images/SiteBundle.svg)
 
 Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) (ConfigBundle + UiBundle, one package) and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
-
-See it in action at [bundles.975l.com/pages/site-bundle](https://bundles.975l.com/pages/site-bundle), and browse every block kind live in the [block gallery](https://bundles.975l.com/pages/blocks).
 
 ---
 
