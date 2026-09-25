@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.20.1
+
+Terms of sales are imported whenever PaymentBundle is installed
+
+- The default terms of sales page requires PaymentBundle instead of ShopBundle (25/09/2026)
+- The en and es terms of sales pages are no longer imported without PaymentBundle (25/09/2026)
+
 ## v8.20.0
 
 The demo site gets a navbar, and QR codes come from UiBundle

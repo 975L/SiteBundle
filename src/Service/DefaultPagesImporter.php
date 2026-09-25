@@ -178,7 +178,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
     // @return list<string>
     private function importDefinition(array $def, \DateTime $now, ?UserInterface $user, ?callable $onPage): array
     {
-        // Skips definitions tied to a bundle (i.e. Shop's "terms of sales") that isn't installed
+        // Skips definitions tied to a bundle that isn't installed (e.g. terms of sales without PaymentBundle)
         if (isset($def['requiresClass']) && !class_exists($def['requiresClass'])) {
             return [];
         }
@@ -362,7 +362,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $this->formSeeder->ensureEmailTemplate('contact_notification', $this->contactNotificationBlocks());
     }
 
-    // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without ShopBundle) is skipped.
+    // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without PaymentBundle) is skipped.
     public function getLegalPageSlugsByModel(): array
     {
         $order = ['france/legal-notice', 'france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright'];
@@ -441,7 +441,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => false,
-                'requiresClass' => 'c975L\\ShopBundle\\c975LShopBundle',
+                'requiresClass' => 'c975L\\PaymentBundle\\c975LPaymentBundle',
             ],
             [
                 'title' => 'Utilisation des cookies',
@@ -539,6 +539,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => false,
+                'requiresClass' => 'c975L\\PaymentBundle\\c975LPaymentBundle',
             ],
             [
                 'title' => 'Cookies usage',
@@ -636,6 +637,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => false,
+                'requiresClass' => 'c975L\\PaymentBundle\\c975LPaymentBundle',
             ],
             [
                 'title' => 'Uso de cookies',

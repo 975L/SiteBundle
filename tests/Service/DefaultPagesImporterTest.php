@@ -194,7 +194,7 @@ class DefaultPagesImporterTest extends TestCase
         return $translator;
     }
 
-    // A brand-new fr install has no pages yet: every definition but the ShopBundle-gated one is created
+    // A brand-new fr install has no pages yet: every definition but the PaymentBundle-gated one is created
     public function testImportCreatesAllDefinitionsForDefaultLocaleWhenNoneExist(): void
     {
         $persisted = [];
@@ -203,7 +203,7 @@ class DefaultPagesImporterTest extends TestCase
 
         $result = $importer->import();
 
-        // terms-of-sales is gated behind c975L\ShopBundle, not installed here, so it's neither created nor skipped
+        // terms-of-sales is gated behind c975L\PaymentBundle, not installed here, so it's neither created nor skipped
         $this->assertSame(['created' => 9, 'skipped' => 0, 'summarised' => []], $result);
         $pages = array_values(array_filter($persisted, static fn ($entity) => $entity instanceof Page));
         $this->assertCount(9, $pages);
@@ -245,6 +245,7 @@ class DefaultPagesImporterTest extends TestCase
         );
         $this->assertContains('legal-notice', $slugs);
         $this->assertNotContains('mentions-legales', $slugs);
+        $this->assertNotContains('terms-of-sales', $slugs);
     }
 
     // The account-related pages have no SEO value, so they're seeded out of the sitemap and out of Google's index; every other default page is indexable
