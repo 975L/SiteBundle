@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.19.1
+
+Map Page::$version as an explicit integer column
+
+- `Page::$version` declares its `INTEGER` column type (25/09/2026)
+
 ## v8.19.0
 
 Two tabs on the same page can no longer overwrite each other

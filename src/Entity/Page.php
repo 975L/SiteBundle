@@ -102,7 +102,7 @@ class Page implements HasBlocksInterface, \Stringable
 
     // Bumped by Doctrine on every UPDATE of the row: the edit form carries the one it was opened with, so a save made from a screen left open while the page was saved elsewhere is refused instead of overwriting it (see PageCrudController::guardStaleVersion)
     #[ORM\Version]
-    #[ORM\Column(options: ['default' => 1])]
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 1])]
     private int $version = 1;
 
     public function __construct()
