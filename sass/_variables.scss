@@ -20,11 +20,12 @@
     // Deep blue rather than the electric one it replaces: it is the base a fresh site is born with, and every derived token below is mixed out of it, so it has to hold up as a text-adjacent color too
     --button-background-primary: #0a2d6b;
     // Derived from --primary/--secondary (not from the -primary/-secondary base value above) so hover/light shades follow theme-color-primary/-secondary when an admin changes them
-    --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, black);
+    // Mixed towards the label's inverse, as UiBundle does: darker under a white label, lighter under a black one
+    --button-background-primary-dark: color-mix(in srgb, var(--primary) 85%, rgb(from var(--button-color) calc(255 - r) calc(255 - g) calc(255 - b)));
     --button-background-primary-light: color-mix(in srgb, var(--primary) 50%, white);
     // Azure, i.e. a lighter step of the primary's own hue - the orange it replaces read as a second brand color, where a secondary is meant to accent the first rather than compete with it. Deepened from the #12a7dc this hue starts at, which carried the white --button-secondary-color at 2.77:1, well under the 4.5:1 WCAG AA asks of a button's label
     --button-background-secondary: #0a7ba3;
-    --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, black);
+    --button-background-secondary-dark: color-mix(in srgb, var(--secondary) 85%, rgb(from var(--button-secondary-color) calc(255 - r) calc(255 - g) calc(255 - b)));
     --button-background-success: rgb(40, 167, 69);
     --button-background-success-dark: rgb(40, 167, 69, 0.9);
     --button-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.5);

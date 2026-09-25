@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-25",
+        "description": [
+            {
+                "en": "A page opened in two tabs can no longer be overwritten by mistake: the save made from the outdated tab is refused, and what you typed stays on screen",
+                "fr": "Une page ouverte dans deux onglets ne peut plus être écrasée par erreur : l'enregistrement fait depuis l'onglet périmé est refusé, et ce que vous avez saisi reste à l'écran",
+                "es": "Una página abierta en dos pestañas ya no puede sobrescribirse por error: el guardado hecho desde la pestaña desactualizada se rechaza, y lo que escribió permanece en pantalla"
+            },
+            {
+                "en": "Each page's edit tab now shows the page's title and the language you are writing in",
+                "fr": "L'onglet de modification d'une page affiche désormais son titre et la langue dans laquelle vous écrivez",
+                "es": "La pestaña de edición de una página muestra ahora su título y el idioma en el que escribe"
+            },
+            {
+                "en": "Exported pages now take their translations along to the other site",
+                "fr": "Les pages exportées emportent désormais leurs traductions vers l'autre site",
+                "es": "Las páginas exportadas se llevan ahora sus traducciones al otro sitio"
+            }
+        ]
+    },
+    {
         "date": "2026-09-24",
         "description": [
             {

@@ -74,6 +74,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Endroid\QrCode\Builder\Builder;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -85,6 +86,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
@@ -98,6 +100,9 @@ class PageCrudController extends AbstractCrudController
 
     // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
     public const string CONTENT_LOCALE_PARAM = ContentLocaleScreen::PARAM;
+
+    // The hidden field carrying the page's version the edit screen was opened on (see guardStaleVersion)
+    public const string OPENED_VERSION_FIELD = 'openedVersion';
 
     public function __construct(
         private readonly Security $security,
@@ -136,6 +141,13 @@ class PageCrudController extends AbstractCrudController
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
         $contentLocale = $this->contentLocale();
 
+        // The version the screen was opened on, sent back with the save (see guardStaleVersion)
+        $page = $entityDto->getInstance();
+        if ($page instanceof Page) {
+            $formBuilder->add(self::OPENED_VERSION_FIELD, HiddenType::class, ['mapped' => false, 'data' => $page->getVersion()]);
+        }
+
+        $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->guardStaleVersion($event));
         $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->guardSubmittedBlocks($event, $contentLocale));
 
         // The page's own two texts, handed over the way a block's are: written on the flush that saves the page, never before it, so a refused submission writes nothing (see ContentLocaleScreen::stageOnSubmit)
@@ -151,6 +163,20 @@ class PageCrudController extends AbstractCrudController
         );
 
         return $formBuilder;
+    }
+
+    // Two tabs open on the same page: the one saved last would silently overwrite the other. The page's version moved since this screen was opened, so the save is refused and the form re-rendered with what the editor typed, left for them to copy before reloading
+    private function guardStaleVersion(FormEvent $event): void
+    {
+        $data = $event->getData();
+        $page = $event->getForm()->getData();
+        if (!is_array($data) || !isset($data[self::OPENED_VERSION_FIELD]) || !$page instanceof Page) {
+            return;
+        }
+
+        if ((string) $page->getVersion() !== (string) $data[self::OPENED_VERSION_FIELD]) {
+            $event->getForm()->addError(new FormError($this->translator->trans('text.page_modified_elsewhere', [], 'site')));
+        }
     }
 
     // What the note above createEditFormBuilder() guards against, in the one place a test can reach it
@@ -698,12 +724,26 @@ class PageCrudController extends AbstractCrudController
             // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Page", "Créer Page"
             ->setEntityLabelInSingular(t('label.page', [], 'site'))
             ->setEntityLabelInPlural(t('label.pages', [], 'site'))
+            // The page's own title, and the language written in, so that several tabs open on the back office can be told apart
+            ->setPageTitle(Crud::PAGE_EDIT, $this->editPageTitle(...))
             ->setEntityPermission($this->configService->get('site-role-editor'))
             ->overrideTemplate('crud/index', '@c975LSite/management/page_crud_index.html.twig')
             ->overrideTemplate('crud/edit', '@c975LSite/management/page_crud_edit.html.twig')
             ->overrideTemplate('crud/new', '@c975LSite/management/page_crud_new.html.twig')
             ->addFormTheme('@c975LSite/management/page_crud_form_theme.html.twig')
         ;
+    }
+
+    // "Modifier « Accueil »", "Modifier « Accueil » (EN)" on a language screen
+    private function editPageTitle(Page $page): TranslatableMessage
+    {
+        $title = (string) $page->getTitle();
+        $contentLocale = $this->contentLocale();
+        if (null !== $contentLocale) {
+            $title .= ' (' . strtoupper($contentLocale) . ')';
+        }
+
+        return t('label.page_edit', ['%title%' => $title], 'site');
     }
 
     #[\Override]

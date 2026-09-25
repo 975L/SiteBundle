@@ -100,6 +100,11 @@ class Page implements HasBlocksInterface, \Stringable
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Media $ogImage = null;
 
+    // Bumped by Doctrine on every UPDATE of the row: the edit form carries the one it was opened with, so a save made from a screen left open while the page was saved elsewhere is refused instead of overwriting it (see PageCrudController::guardStaleVersion)
+    #[ORM\Version]
+    #[ORM\Column(options: ['default' => 1])]
+    private int $version = 1;
+
     public function __construct()
     {
         $this->blocks = new ArrayCollection();
@@ -173,6 +178,11 @@ class Page implements HasBlocksInterface, \Stringable
         $this->modification = $modification;
 
         return $this;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
     }
 
     public function getUser(): ?UserInterface

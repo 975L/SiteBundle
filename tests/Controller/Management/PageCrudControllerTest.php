@@ -61,8 +61,10 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -77,6 +79,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -1292,6 +1295,64 @@ class PageCrudControllerTest extends TestCase
         $this->assertCount(0, $page->getBlocks());
     }
 
+    // Two tabs open on the same page: the one saved second carries the version it was opened on, older than the row's, and is refused rather than overwriting the first save
+    public function testASaveFromAScreenOpenedOnAnOlderVersionIsRefused(): void
+    {
+        $this->assertCount(1, $this->invokeStaleVersionGuard('1')->getErrors());
+    }
+
+    // The no-regression contract: a screen saving the version it was opened on saves as before
+    public function testASaveFromAScreenOpenedOnTheCurrentVersionIsAccepted(): void
+    {
+        $this->assertCount(0, $this->invokeStaleVersionGuard('2')->getErrors());
+    }
+
+    // Fires the PRE_SUBMIT version guard on a page whose row is at version 2, with the version the screen says it was opened on
+    private function invokeStaleVersionGuard(string $openedVersion): FormInterface
+    {
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers');
+        new \ReflectionProperty(Page::class, 'version')->setValue($page, 2);
+
+        $form = Forms::createFormFactory()->createBuilder(FormType::class, $page, ['data_class' => Page::class])->getForm();
+
+        new \ReflectionMethod(PageCrudController::class, 'guardStaleVersion')
+            ->invoke($this->createController(), new FormEvent($form, [PageCrudController::OPENED_VERSION_FIELD => $openedVersion]));
+
+        return $form;
+    }
+
+    // Several back-office tabs are told apart by the page they edit: its title names the screen, and so the browser tab
+    public function testTheEditScreenIsNamedAfterThePage(): void
+    {
+        $page = new Page()->setTitle('Nos ateliers');
+
+        $title = $this->createController()->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_EDIT, $page);
+
+        $this->assertInstanceOf(TranslatableMessage::class, $title);
+        $this->assertSame('label.page_edit', $title->getMessage());
+        $this->assertSame('Nos ateliers', $title->getParameters()['%title%']);
+    }
+
+    // On a language screen the same page is open once per language, so the language is named too
+    public function testALanguageScreenIsNamedAfterThePageAndItsLanguage(): void
+    {
+        $page = new Page()->setTitle('Nos ateliers');
+
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('getTranslatableLocales')->willReturn(['es']);
+
+        $controller = $this->createController([
+            'requestStack' => new RequestStack([new Request([PageCrudController::CONTENT_LOCALE_PARAM => 'es'])]),
+            'pageTranslator' => $pageTranslator,
+            'siteLocales' => new SiteLocales(['fr', 'es'], 'fr'),
+        ]);
+
+        $title = $controller->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_EDIT, $page);
+
+        $this->assertInstanceOf(TranslatableMessage::class, $title);
+        $this->assertSame('Nos ateliers (ES)', $title->getParameters()['%title%']);
+    }
+
     private function pageWithOneBlock(): Page
     {
         $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers');
@@ -1878,6 +1939,7 @@ class PageCrudControllerTest extends TestCase
                 'medias' => [],
                 'slots' => [],
             ]],
+            'translations' => [],
         ]];
 
         $expectedResponse = new BinaryFileResponse(tempnam(sys_get_temp_dir(), 'export_test_'));

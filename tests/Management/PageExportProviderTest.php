@@ -17,6 +17,7 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Management\BlockDataExporter;
+use c975L\UiBundle\Repository\TranslationRepository;
 use PHPUnit\Framework\TestCase;
 
 class PageExportProviderTest extends TestCase
@@ -61,8 +62,39 @@ class PageExportProviderTest extends TestCase
                 'medias' => [],
                 'slots' => [],
             ]],
+            'translations' => [],
         ]], $data['items']);
         $this->assertSame([], $data['files']);
+    }
+
+    // A page's own title and summary in the other languages travel with it, the importing side knowing it by slug and not by id
+    public function testSerializeCarriesThePagesTranslations(): void
+    {
+        $page = new Page()->setTitle('À propos')->setSlug('about');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 15);
+
+        $repository = $this->createStub(TranslationRepository::class);
+        $repository->method('findByOwner')->willReturnCallback(static fn (string $ownerType, int $ownerId): array => 'site_page' === $ownerType && 15 === $ownerId
+            ? ['en' => ['title' => 'About']]
+            : []);
+
+        $data = new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter(sys_get_temp_dir(), $repository))->serialize([$page]);
+
+        $this->assertSame(['en' => ['title' => 'About']], $data['items'][0]['translations']);
+    }
+
+    // A page updated in place on import has its translations replaced, so an export without any still says so rather than leaving the target's stale ones
+    public function testSerializeCarriesAnEmptyTranslationsKeyForAPageWithoutAny(): void
+    {
+        $page = new Page()->setTitle('About')->setSlug('about');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 15);
+
+        $repository = $this->createStub(TranslationRepository::class);
+        $repository->method('findByOwner')->willReturn([]);
+
+        $data = new PageExportProvider($this->createStub(PageRepository::class), new BlockDataExporter(sys_get_temp_dir(), $repository))->serialize([$page]);
+
+        $this->assertSame([], $data['items'][0]['translations']);
     }
 
     public function testSerializeExportsAPagesOwnSummaryAndOgImage(): void

@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.19.0
+
+Two tabs on the same page can no longer overwrite each other
+
+- `Page::$version` is an optimistic lock, a stale edit screen's save is refused (25/09/2026)
+- The page edit screen's title names the page and the language written in (25/09/2026)
+- An exported page carries its translations, always under a `translations` key (25/09/2026)
+- An imported page's translations replace the existing ones (25/09/2026)
+- The content export guided project mentions translations (25/09/2026)
+- Requires `c975l/core-bundle` `^1.36` (25/09/2026)
+- CI uses `actions/setup-python@v6` (25/09/2026)
+- `--button-background-primary-dark`/`-secondary-dark` mix towards the label's inverse, as UiBundle (25/09/2026)
+
 ## v8.18.0
 
 A block's link field offers the site's pages and sections

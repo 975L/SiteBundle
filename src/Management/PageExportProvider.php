@@ -12,9 +12,10 @@ namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\ExportProviderInterface;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Management\BlockDataExporter;
 
-// Serializes Pages (title/slug/summary/ogImage/Blocks, Media files bundled in the archive) into the shape ContentExporter/PageImportProvider expect - shared by PageCrudController::exportSelection() (a checked subset) and exportAll() below (every Page, for the "export sync all" dashboard shortcut, see ConfigBundle's SyncAllExporter)
+// Serializes Pages (title/slug/summary/ogImage/Blocks and their translations, Media files bundled in the archive) into the shape ContentExporter/PageImportProvider expect - shared by PageCrudController::exportSelection() (a checked subset) and exportAll() below (every Page, for the "export sync all" dashboard shortcut, see ConfigBundle's SyncAllExporter)
 class PageExportProvider implements ExportProviderInterface
 {
     public function __construct(
@@ -42,7 +43,8 @@ class PageExportProvider implements ExportProviderInterface
         foreach ($pages as $page) {
             $ogImage = $page->getOgImage();
 
-            $items[] = [
+            // An empty 'translations' stays in the zip: the import replaces an existing page's translations, so a page without any must say so
+            $items[] = $this->blockDataExporter->withTranslations([
                 'title' => $page->getTitle(),
                 'slug' => $page->getSlug(),
                 'changeFrequency' => $page->getChangeFrequency(),
@@ -53,7 +55,8 @@ class PageExportProvider implements ExportProviderInterface
                 'options' => $page->getOptions(),
                 'ogImage' => null !== $ogImage ? $this->blockDataExporter->exportMedia($ogImage, $files) : null,
                 'blocks' => $this->blockDataExporter->exportBlocks($page->getBlocks(), $files),
-            ];
+                'translations' => [],
+            ], PageTranslator::OWNER, $page->getId());
         }
 
         return ['items' => $items, 'files' => $files];

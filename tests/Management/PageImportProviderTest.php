@@ -17,6 +17,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Management\BlockDataImporter;
 use c975L\UiBundle\Registry\FormBlockDependencyRegistry;
+use c975L\UiBundle\Service\TranslationCopier;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -44,6 +45,20 @@ class PageImportProviderTest extends TestCase
 
         $this->assertTrue($provider->supportsImport('site_page'));
         $this->assertFalse($provider->supportsImport('site_config'));
+    }
+
+    // The page's translations are handed to the copier with the page, to be written once the flush has given it its id
+    public function testImportHandsThePagesTranslationsToTheCopier(): void
+    {
+        $copier = $this->createMock(TranslationCopier::class);
+        $copier->expects($this->once())
+            ->method('carry')
+            ->with('site_page', $this->isInstanceOf(Page::class), ['en' => ['title' => 'About']]);
+
+        $em = $this->createStub(EntityManagerInterface::class);
+        $provider = new PageImportProvider($em, $this->createPageRepository(), new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class), $copier));
+
+        $provider->import([['title' => 'À propos', 'slug' => 'about', 'translations' => ['en' => ['title' => 'About']]]]);
     }
 
     public function testImportCreatesANewPageWithItsBlocks(): void

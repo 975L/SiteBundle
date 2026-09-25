@@ -148,7 +148,7 @@
             </trans-unit>
             <trans-unit id="CRY4jVY">
                 <source>description.guided_project_content_export</source>
-                <target>Llevarse páginas en un zip, con sus blocks y sus imágenes, para cargarlas en otro sitio o guardarlas fuera del servidor</target>
+                <target>Llevarse páginas en un zip, con sus blocks, sus imágenes y sus traducciones, para cargarlas en otro sitio o guardarlas fuera del servidor</target>
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
@@ -276,7 +276,7 @@
             </trans-unit>
             <trans-unit id="NNz0Te1">
                 <source>description.guided_step_content_export_run</source>
-                <target>Se descarga un zip que contiene cada página con sus blocks y las imágenes que utilizan.</target>
+                <target>Se descarga un zip que contiene cada página con sus blocks, las imágenes que utilizan y sus traducciones.</target>
             </trans-unit>
             <trans-unit id="W6.DZUN">
                 <source>description.guided_step_content_export_select</source>
@@ -1626,6 +1626,10 @@
                 <source>label.page_deleted</source>
                 <target>Página suprimida</target>
             </trans-unit>
+            <trans-unit id="LOKETB.">
+                <source>label.page_edit</source>
+                <target>Modificar «%title%»</target>
+            </trans-unit>
             <trans-unit id="lpx4e3r">
                 <source>label.page_translation_complete</source>
                 <target>Traducida a todos los idiomas declarados.</target>
@@ -1945,6 +1949,10 @@
             <trans-unit id="uZIQirh">
                 <source>text.only_french</source>
                 <target>Solo el texto en francés es válido, los demás idiomas son traducciones.</target>
+            </trans-unit>
+            <trans-unit id="DSiUjmf">
+                <source>text.page_modified_elsewhere</source>
+                <target>La página no se ha guardado: se ha guardado en otro lugar (otra pestaña, otra persona) desde que se abrió esta pantalla, y guardar habría sobrescrito esos cambios. Copie lo que ha cambiado, recargue la página y vuelva a introducirlo.</target>
             </trans-unit>
             <trans-unit id="MlF.VJl">
                 <source>text.page_submission_truncated</source>

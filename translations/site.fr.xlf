@@ -148,7 +148,7 @@
             </trans-unit>
             <trans-unit id="CRY4jVY">
                 <source>description.guided_project_content_export</source>
-                <target>Emporter des pages dans un zip, avec leurs blocks et leurs images, pour les charger dans un autre site ou les garder hors du serveur</target>
+                <target>Emporter des pages dans un zip, avec leurs blocks, leurs images et leurs traductions, pour les charger dans un autre site ou les garder hors du serveur</target>
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
@@ -276,7 +276,7 @@
             </trans-unit>
             <trans-unit id="NNz0Te1">
                 <source>description.guided_step_content_export_run</source>
-                <target>Un zip est téléchargé, contenant chaque page avec ses blocks et les images qu'ils utilisent.</target>
+                <target>Un zip est téléchargé, contenant chaque page avec ses blocks, les images qu'ils utilisent et ses traductions.</target>
             </trans-unit>
             <trans-unit id="W6.DZUN">
                 <source>description.guided_step_content_export_select</source>
@@ -1626,6 +1626,10 @@
                 <source>label.page_deleted</source>
                 <target>Page supprimée</target>
             </trans-unit>
+            <trans-unit id="LOKETB.">
+                <source>label.page_edit</source>
+                <target>Modifier « %title% »</target>
+            </trans-unit>
             <trans-unit id="lpx4e3r">
                 <source>label.page_translation_complete</source>
                 <target>Traduite dans toutes les langues déclarées.</target>
@@ -1945,6 +1949,10 @@
             <trans-unit id="uZIQirh">
                 <source>text.only_french</source>
                 <target>Seul le texte en français fait foi, les autres langues étant des traductions.</target>
+            </trans-unit>
+            <trans-unit id="DSiUjmf">
+                <source>text.page_modified_elsewhere</source>
+                <target>La page n'a pas été enregistrée : elle l'a été ailleurs (un autre onglet, une autre personne) depuis que cet écran a été ouvert, et enregistrer aurait écrasé ces modifications. Copiez ce que vous avez changé, rechargez la page, puis reportez-le.</target>
             </trans-unit>
             <trans-unit id="MlF.VJl">
                 <source>text.page_submission_truncated</source>

@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\ConfigBundle\Management\ImportProviderInterface;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Management\BlockDataImporter;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -60,6 +61,7 @@ class PageImportProvider implements ImportProviderInterface
         $this->replaceOgImage($page, $item['ogImage'] ?? null, $filesDir);
 
         $this->em->persist($page);
+        $this->blockDataImporter->importTranslations(PageTranslator::OWNER, $page, $item);
 
         return $isNew;
     }

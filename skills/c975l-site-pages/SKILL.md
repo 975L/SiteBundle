@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -43,6 +43,13 @@ plus the sitemap fields (indexable, change frequency, priority).
   migration for every app running this bundle. Read and write through named accessors
   (`isTitleDisplayed()` / `setIsTitleDisplayed()`), never as raw string keys. Anything the database has
   to filter, sort or join on (`slug`, `isPublished`, `isIndexable`) stays a real column.
+- **`version` is Doctrine's optimistic lock** (`#[ORM\Version]`). The edit form carries the version it
+  was opened on (`PageCrudController::OPENED_VERSION_FIELD`), and a save made after the page was saved
+  elsewhere is refused with the input kept on screen. The edit screen's title names the page and the
+  language written in, so several open tabs can be told apart.
+- **An exported page carries its translations**, always under a `translations` key, empty when it has
+  none: the import updates an existing page in place and replaces its translations with the zip's. A zip
+  without the key leaves them untouched.
 - Deleting permanently leaves gone rows behind on its own: one for the page's url, one per redirect
   that pointed at it.
 - **The trash's two row actions are GETs**, so each carries a CSRF token in its url
@@ -256,5 +263,7 @@ offered, and nothing goes out while `site-url` is empty. What was posted where i
   the gate redirects from, would be rendered for nothing.
 - **Do not empty the block cache when a page enters or leaves a language** — no cached html holds a localised
   link, `BlockExtension::localizeLinks()` running outside the cache on every request.
+- **Do not drop `OPENED_VERSION_FIELD` from an overridden edit form** — without it the lock never fires
+  and the save made last silently overwrites the other tab.
 - **Do not replace an entity's title in memory to translate it** — Doctrine writes it back on the next
   flush. Read it through `page_title()` / `PageTranslator`.

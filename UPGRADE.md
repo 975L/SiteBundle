@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+**`site_page` gains a `version` column** (`INT DEFAULT 1 NOT NULL`), Doctrine's optimistic lock: run
+`doctrine:migrations:diff` then `doctrine:migrations:migrate`. A page saved from a tab opened before
+another save of the same page is now refused, with the editor's input kept on screen.
+
 **Update `c975l/core-bundle` first, then run `c975l:config:load-all`.** The drawers these settings move to are
 named by this bundle, and core-bundle refused an unknown one until 1.22.1 - moving them under an older core would
 make them unsavable from the back office. Until the command runs, they sit in the drawers they had, values

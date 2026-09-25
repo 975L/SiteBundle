@@ -112,7 +112,7 @@
             </trans-unit>
             <trans-unit id="6t9OxmB">
                 <source>narration.guided_step_content_export_run</source>
-                <target>Export the selection: a zip is downloaded, holding each page with its blocks and the images they use.</target>
+                <target>Export the selection: a zip is downloaded, holding each page with its blocks, the images they use and its translations.</target>
             </trans-unit>
             <trans-unit id="TM1GBIj">
                 <source>narration.guided_step_content_export_select</source>

@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Tests\Entity;
 
 use c975L\SiteBundle\Entity\Page;
 use Doctrine\ORM\Mapping\PreFlush;
+use Doctrine\ORM\Mapping\Version;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -93,5 +94,12 @@ class PageTest extends TestCase
         $attributes = new \ReflectionMethod(Page::class, 'unreferenceWhenUnpublished')->getAttributes(PreFlush::class);
 
         $this->assertCount(1, $attributes);
+    }
+
+    // The lock against two tabs overwriting each other only holds if Doctrine bumps the column on every UPDATE (see PageCrudController::guardStaleVersion)
+    public function testVersionIsDoctrinesOptimisticLockColumn(): void
+    {
+        $this->assertCount(1, new \ReflectionProperty(Page::class, 'version')->getAttributes(Version::class));
+        $this->assertSame(1, new Page()->getVersion());
     }
 }

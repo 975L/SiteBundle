@@ -148,7 +148,7 @@
             </trans-unit>
             <trans-unit id="CRY4jVY">
                 <source>description.guided_project_content_export</source>
-                <target>Take pages away as a zip, with their blocks and their images, to load them into another site or keep them off the server</target>
+                <target>Take pages away as a zip, with their blocks, their images and their translations, to load them into another site or keep them off the server</target>
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
@@ -276,7 +276,7 @@
             </trans-unit>
             <trans-unit id="NNz0Te1">
                 <source>description.guided_step_content_export_run</source>
-                <target>A zip is downloaded, holding each page with its blocks and the images they use.</target>
+                <target>A zip is downloaded, holding each page with its blocks, the images they use and its translations.</target>
             </trans-unit>
             <trans-unit id="W6.DZUN">
                 <source>description.guided_step_content_export_select</source>
@@ -1626,6 +1626,10 @@
                 <source>label.page_deleted</source>
                 <target>Page deleted</target>
             </trans-unit>
+            <trans-unit id="LOKETB.">
+                <source>label.page_edit</source>
+                <target>Edit "%title%"</target>
+            </trans-unit>
             <trans-unit id="lpx4e3r">
                 <source>label.page_translation_complete</source>
                 <target>Translated in every declared language.</target>
@@ -1945,6 +1949,10 @@
             <trans-unit id="uZIQirh">
                 <source>text.only_french</source>
                 <target>Only the French text is authoritative, the other languages being translations.</target>
+            </trans-unit>
+            <trans-unit id="DSiUjmf">
+                <source>text.page_modified_elsewhere</source>
+                <target>The page was not saved: it was saved elsewhere (another tab, someone else) since this screen was opened, and saving would have overwritten those changes. Copy what you changed, reload the page, then enter it again.</target>
             </trans-unit>
             <trans-unit id="MlF.VJl">
                 <source>text.page_submission_truncated</source>
