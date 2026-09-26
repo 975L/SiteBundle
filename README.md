@@ -802,7 +802,7 @@ Follow the Symfony guide on [customizing error pages](https://symfony.com/doc/cu
 
 ## Legal models
 
-The legal models (legal notice, privacy policy, terms of sales, terms of use, cookies, copyright), the
+The legal models (legal notice, privacy policy, terms of sales, terms of use, cookies, copyright, photo licence), the
 `legal_model` block rendering them and the **Management → Legal models** screen customizing them section by
 section all live in **UiBundle** — a site running it with a shop but no page management needs them just as
 much. See its readme, under "Legal models".
@@ -946,7 +946,7 @@ It walks through, in order:
    confirms the import and the initial `isPublished` state for each page not already in database.
 7. **Footer menu** — offers to add, one by one (yes by default), every bundle-contributed route
    registered via `LinkableRouteProviderInterface`, then the legal pages just imported, in a fixed
-   order (mentions légales, règles de confidentialité, CGU, CGV, cookies, copyright). Re-running
+   order (mentions légales, règles de confidentialité, CGU, CGV, cookies, copyright, licence des photos). Re-running
    the command never creates duplicate items.
 
 #### `config/site-create-questions.json`
@@ -1067,6 +1067,7 @@ One page is created per locale — `%kernel.default_locale%` plus every locale l
 | `conditions-generales-de-vente` | `terms-of-sales` | `condiciones-de-venta` | Conditions générales de vente | `legal_model` → `france/terms-of-sales` (only if c975L/PaymentBundle is installed, i.e. with ShopBundle, PurchaseCreditsBundle…) |
 | `cookies` | `cookies-usage` | `uso-de-cookies` | Utilisation des cookies | `legal_model` → `france/cookies` |
 | `copyright` | `copyright-notice` | `aviso-de-copyright` | Copyright | `legal_model` → `france/copyright` |
+| `licence-des-photos` | `photo-licence` | `licencia-de-las-fotos` | Licence des photos | `legal_model` → `france/photo-licence` (only if c975L/GalleryBundle is installed) |
 | `creer-un-compte` | `register` | `crear-una-cuenta` | Créer un compte | `form` → `register` |
 | `mot-de-passe-oublie` | `forgot-password` | `contrasena-olvidada` | Mot de passe oublié | `form` → `reset_password_request` |
 | `contact` | `contact` | `contacto` | Contact | `form` → `contact` |

@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.22.0
+
+A photo licence page is imported whenever GalleryBundle is installed
+
+- The default pages include a photo licence page, imported only with GalleryBundle (26/09/2026)
+- SiteCreateCommand offers the photo licence page as a footer menu item (26/09/2026)
+- Requires c975l/core-bundle ^1.41.0 (26/09/2026)
+
 ## v8.21.2
 
 The browser language test skips a localized url a redirect row covers

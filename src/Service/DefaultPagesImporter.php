@@ -362,10 +362,10 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         $this->formSeeder->ensureEmailTemplate('contact_notification', $this->contactNotificationBlocks());
     }
 
-    // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without PaymentBundle) is skipped.
+    // Returns the default-locale legal pages' slugs, keyed by model and in the fixed display order below - used by SiteCreateCommand to offer them as footer menu items. A definition whose bundle isn't installed (e.g. terms-of-sales without PaymentBundle, photo-licence without GalleryBundle) is skipped.
     public function getLegalPageSlugsByModel(): array
     {
-        $order = ['france/legal-notice', 'france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright'];
+        $order = ['france/legal-notice', 'france/privacy-policy', 'france/terms-of-use', 'france/terms-of-sales', 'france/cookies', 'france/copyright', 'france/photo-licence'];
 
         $slugsByModel = [];
         $definitions = $this->getDefinitions();
@@ -406,6 +406,43 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'priority' => 10,
                 'isPublished' => true,
             ],
+            ...$this->frenchLegalPages(),
+            [
+                'title' => 'Créer un compte',
+                'slug' => 'creer-un-compte',
+                'summary' => 'Créez votre compte en quelques instants pour accéder à votre espace personnel et suivre vos demandes.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Mot de passe oublié',
+                'slug' => 'mot-de-passe-oublie',
+                'summary' => 'Mot de passe oublié ? Indiquez votre adresse email pour recevoir un lien de réinitialisation et retrouver l\'accès à votre compte.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contact',
+                'slug' => 'contact',
+                'summary' => 'Un formulaire pour nous écrire : question, demande d\'information ou de devis. Nous vous répondons dans les meilleurs délais.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+            ],
+        ];
+    }
+
+    // The legal pages of a French site, the models they carry being UiBundle's (see LegalModelCatalog) - apart from frenchPages() so neither list outgrows what a method may hold
+    private function frenchLegalPages(): array
+    {
+        return [
             [
                 'title' => 'Mentions légales',
                 'slug' => 'mentions-legales',
@@ -462,33 +499,14 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'isPublished' => true,
             ],
             [
-                'title' => 'Créer un compte',
-                'slug' => 'creer-un-compte',
-                'summary' => 'Créez votre compte en quelques instants pour accéder à votre espace personnel et suivre vos demandes.',
+                'title' => 'Licence des photos',
+                'slug' => 'licence-des-photos',
+                'summary' => 'Comment les photos des galeries peuvent être utilisées : tous droits réservés ou licence Creative Commons, crédit de l\'auteur, demande d\'une licence et tirages.',
+                'model' => 'france/photo-licence',
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-            ],
-            [
-                'title' => 'Mot de passe oublié',
-                'slug' => 'mot-de-passe-oublie',
-                'summary' => 'Mot de passe oublié ? Indiquez votre adresse email pour recevoir un lien de réinitialisation et retrouver l\'accès à votre compte.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-            ],
-            [
-                'title' => 'Contact',
-                'slug' => 'contact',
-                'summary' => 'Un formulaire pour nous écrire : question, demande d\'information ou de devis. Nous vous répondons dans les meilleurs délais.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+                'requiresClass' => 'c975L\\GalleryBundle\\c975LGalleryBundle',
             ],
         ];
     }
@@ -504,6 +522,43 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'priority' => 10,
                 'isPublished' => true,
             ],
+            ...$this->englishLegalPages(),
+            [
+                'title' => 'Register',
+                'slug' => 'register',
+                'summary' => 'Create your account in a few moments to access your personal area and keep track of your requests.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Forgot password',
+                'slug' => 'forgot-password',
+                'summary' => 'Forgot your password? Enter your email address to receive a reset link and get back into your account.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contact',
+                'slug' => 'contact',
+                'summary' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+            ],
+        ];
+    }
+
+    // Same legal pages, said in English
+    private function englishLegalPages(): array
+    {
+        return [
             [
                 'title' => 'Legal notice',
                 'slug' => 'legal-notice',
@@ -560,33 +615,14 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'isPublished' => true,
             ],
             [
-                'title' => 'Register',
-                'slug' => 'register',
-                'summary' => 'Create your account in a few moments to access your personal area and keep track of your requests.',
+                'title' => 'Photographs licence',
+                'slug' => 'photo-licence',
+                'summary' => 'How the galleries\' photographs may be used: all rights reserved or a Creative Commons licence, crediting the author, requesting a licence, and prints.',
+                'model' => 'france/photo-licence',
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-            ],
-            [
-                'title' => 'Forgot password',
-                'slug' => 'forgot-password',
-                'summary' => 'Forgot your password? Enter your email address to receive a reset link and get back into your account.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-            ],
-            [
-                'title' => 'Contact',
-                'slug' => 'contact',
-                'summary' => 'A form to write to us: a question, a request for information or a quote. We answer as quickly as we can.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+                'requiresClass' => 'c975L\\GalleryBundle\\c975LGalleryBundle',
             ],
         ];
     }
@@ -602,6 +638,43 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'priority' => 10,
                 'isPublished' => true,
             ],
+            ...$this->spanishLegalPages(),
+            [
+                'title' => 'Crear una cuenta',
+                'slug' => 'crear-una-cuenta',
+                'summary' => 'Cree su cuenta en unos instantes para acceder a su espacio personal y hacer seguimiento de sus solicitudes.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
+            ],
+            [
+                'title' => 'Contraseña olvidada',
+                'slug' => 'contrasena-olvidada',
+                'summary' => '¿Ha olvidado su contraseña? Indique su correo electrónico para recibir un enlace de restablecimiento y recuperar el acceso.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'isIndexable' => false,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
+            ],
+            [
+                'title' => 'Contacto',
+                'slug' => 'contacto',
+                'summary' => 'Un formulario para escribirnos: una pregunta, una solicitud de información o de presupuesto. Le respondemos lo antes posible.',
+                'changeFrequency' => 'yearly',
+                'priority' => 1,
+                'isPublished' => true,
+                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+            ],
+        ];
+    }
+
+    // Same legal pages, said in Spanish
+    private function spanishLegalPages(): array
+    {
+        return [
             [
                 'title' => 'Aviso legal',
                 'slug' => 'aviso-legal',
@@ -658,33 +731,14 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
                 'isPublished' => true,
             ],
             [
-                'title' => 'Crear una cuenta',
-                'slug' => 'crear-una-cuenta',
-                'summary' => 'Cree su cuenta en unos instantes para acceder a su espacio personal y hacer seguimiento de sus solicitudes.',
+                'title' => 'Licencia de las fotos',
+                'slug' => 'licencia-de-las-fotos',
+                'summary' => 'Cómo pueden usarse las fotos de las galerías: todos los derechos reservados o una licencia Creative Commons, crédito del autor, solicitud de una licencia e impresiones.',
+                'model' => 'france/photo-licence',
                 'changeFrequency' => 'yearly',
                 'priority' => 1,
                 'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'register']],
-            ],
-            [
-                'title' => 'Contraseña olvidada',
-                'slug' => 'contrasena-olvidada',
-                'summary' => '¿Ha olvidado su contraseña? Indique su correo electrónico para recibir un enlace de restablecimiento y recuperar el acceso.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'isIndexable' => false,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'reset_password_request']],
-            ],
-            [
-                'title' => 'Contacto',
-                'slug' => 'contacto',
-                'summary' => 'Un formulario para escribirnos: una pregunta, una solicitud de información o de presupuesto. Le respondemos lo antes posible.',
-                'changeFrequency' => 'yearly',
-                'priority' => 1,
-                'isPublished' => true,
-                'block' => ['kind' => 'form', 'data' => ['name' => 'contact']],
+                'requiresClass' => 'c975L\\GalleryBundle\\c975LGalleryBundle',
             ],
         ];
     }
