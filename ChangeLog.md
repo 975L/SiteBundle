@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.21.1
+
+The browser language test runs on single-language sites too
+
+- The scaffolded browser language test checks a single-language site ignores it instead of being skipped (26/09/2026)
+
 ## v8.21.0
 
 Three clicks on the footer lead to the login form and back to the page

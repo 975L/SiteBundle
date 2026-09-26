@@ -51,12 +51,14 @@ class ContentAccessTest extends FunctionalTestCase
         $this->assertSame($url, $response->headers->get('Location'));
     }
 
-    // Checks a visitor whose browser asks for a language is moved to that language's url only where the page really exists in it: an untranslated page is served on "/pages/<slug>", one whose title is written in that language redirects to "/<locale>/pages/<slug>" (see PageController::writingLanguage() and PageTranslator::translatedLocales()). On a fabricated page and the first language the site translates into, so it holds whatever the site's content and languages - skipped on a site declaring a single one, where no localized url exists
+    // Checks a visitor whose browser asks for a language is moved to that language's url only where the page really exists in it: an untranslated page is served on "/pages/<slug>", one whose title is written in that language redirects to "/<locale>/pages/<slug>" (see PageController::writingLanguage() and PageTranslator::translatedLocales()). On a fabricated page and the first language the site translates into, so it holds whatever the site's content and languages - on a site declaring a single one, the browser's language changes nothing and no localized url exists
     public function testBrowserLanguageRedirectsToItsLocalizedUrl(): void
     {
         $siteLocales = static::getContainer()->get(SiteLocales::class);
         if (!$siteLocales->isMultilingual()) {
-            $this->markTestSkipped('Site déclarant une seule langue, aucune url localisée à tester');
+            $this->assertBrowserLanguageIsIgnored($siteLocales->getDefaultLocale());
+
+            return;
         }
 
         $locale = $siteLocales->translatable()[0];
@@ -194,6 +196,19 @@ class ContentAccessTest extends FunctionalTestCase
         }
 
         $this->assertEmpty($failures, implode("\n", $failures));
+    }
+
+    // A single-language site serves the page whatever the browser asks for, and has no "/<locale>/pages/<slug>" to send it to: the "_locale" pattern matches nothing there (see c975LSiteBundle::loadExtension())
+    private function assertBrowserLanguageIsIgnored(string $defaultLocale): void
+    {
+        $locale = 'en' === $defaultLocale ? 'fr' : 'en';
+        $url = '/pages/' . $this->persistTemporaryPublishedPage()->getSlug();
+
+        $this->client->request('GET', $url, [], [], ['HTTP_ACCEPT_LANGUAGE' => $locale]);
+        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+
+        $this->client->request('GET', '/' . $locale . $url, [], [], ['HTTP_ACCEPT_LANGUAGE' => $locale]);
+        $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
 
     // Persists a published page no site holds, so the published code paths are exercised even on a site publishing none (DAMA rolls it back after the test)
