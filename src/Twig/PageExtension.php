@@ -12,13 +12,29 @@ namespace c975L\SiteBundle\Twig;
 
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\PageEditUrlResolver;
 use Twig\Attribute\AsTwigFunction;
 
 class PageExtension
 {
     public function __construct(
         private readonly PageRepository $pageRepository,
+        private readonly PageEditUrlResolver $pageEditUrlResolver,
     ) {
+    }
+
+    // The Page whose blocks a screen of the app's own shows (see components/Page/Blocks.html.twig), published or not - a content holder is meant to stay unpublished, its url answering 404. The row alone, as for a page display: render_owned_blocks() reads the blocks on a cache miss only. A trashed page is returned too, for the zone to render nothing rather than offer to create a page whose slug it still holds - restoring it brings the zone back
+    #[AsTwigFunction('site_content_page')]
+    public function getContentPage(string $slug): ?Page
+    {
+        return $this->pageRepository->findOneBySlugForDisplay($slug);
+    }
+
+    // The back-office screen creating the Page a content zone reads, its slug prefilled
+    #[AsTwigFunction('site_page_new_url')]
+    public function getPageNewUrl(string $slug): string
+    {
+        return $this->pageEditUrlResolver->resolveNew($slug);
     }
 
     // Resolves a Page (with its blocks/medias eager-loaded), used by blocks referencing another page (e.g. articles_slider)

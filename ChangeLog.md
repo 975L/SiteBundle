@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.23.0
+
+A screen of the app's own shows the blocks of a page edited in the back office
+
+- `<twig:c975LSite:Page:Blocks slug="…"/>` renders the blocks of the Page of that slug, published or not (26/09/2026)
+- An editor is offered a link creating the missing page, its slug prefilled on the new page screen (26/09/2026)
+- Adds the `site_content_page()` and `site_page_new_url()` Twig functions (26/09/2026)
+- The page index filters on its published status (26/09/2026)
+
 ## v8.22.0
 
 A photo licence page is imported whenever GalleryBundle is installed

@@ -694,6 +694,10 @@
                 <source>label.content_help</source>
                 <target>Paste the old .html.twig file's content here - interpreted as Twig (config(), path(), etc.).</target>
             </trans-unit>
+            <trans-unit id="PYFcrb1">
+                <source>label.content_zone_create</source>
+                <target>Write this zone: create the page "%slug%"</target>
+            </trans-unit>
             <trans-unit id="oo0X1dA">
                 <source>label.cookies</source>
                 <target>Cookies</target>

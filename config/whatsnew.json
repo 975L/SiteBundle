@@ -3,6 +3,11 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "The texts around your site's own screens (a form, a preview, a list) can now be written in the back office like any page: each zone reads an unpublished page, and a link on the screen offers to create it when it doesn't exist yet",
+                "fr": "Les textes autour des écrans propres à votre site (un formulaire, un aperçu, une liste) se rédigent désormais dans le back-office comme n'importe quelle page : chaque zone lit une page non publiée, et un lien sur l'écran propose de la créer tant qu'elle n'existe pas",
+                "es": "Los textos alrededor de las pantallas propias de su sitio (un formulario, una vista previa, una lista) se redactan ahora en el back-office como cualquier página: cada zona lee una página no publicada, y un enlace en la pantalla propone crearla mientras no exista"
+            },
+            {
                 "en": "Three quick clicks on the bottom of any page, away from its links, take you to the sign-in form and then back to that page, ready to edit",
                 "fr": "Trois clics rapides en bas de n'importe quelle page, hors de ses liens, vous mènent au formulaire de connexion puis vous ramènent sur cette page, prête à être modifiée",
                 "es": "Tres clics rápidos en la parte inferior de cualquier página, fuera de sus enlaces, le llevan al formulario de inicio de sesión y luego de vuelta a esa página, lista para editar"

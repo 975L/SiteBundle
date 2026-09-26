@@ -38,9 +38,10 @@ Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) 
 - **Error page templates** for 401, 403, 404, 410, and 500
 - **Open Graph** image support
 - **Email templates** with CSS inlining
+- **Content zones**: `<twig:c975LSite:Page:Blocks slug="…"/>` shows an unpublished page's blocks inside a screen of the app's own (a form, a preview, a list), so its prose is edited in the back office like any page (see [Content zones](#content-zones))
 - **Collections** of items (`CollectionGroup`/`CollectionItem`), exposed to UiBundle's `collection` block and given their own detail pages
 - **Several languages**: locale-prefixed routes, a "Translate" screen per page and per menu, `hreflang` groups in the head and in the sitemap, and a health check row per subject (see [Languages](#languages))
-- **Twig extensions**: `site_page`, `site_legal_pages`, `menu_blocks`, `page_health_check`, `page_title`, `page_summary`, `page_alternates`
+- **Twig extensions**: `site_page`, `site_content_page`, `site_page_new_url`, `site_legal_pages`, `menu_blocks`, `page_health_check`, `page_title`, `page_summary`, `page_alternates`
 - **File lists**: `extensions.txt` and `bots.txt`
 - **Admin help procedures** contributed to the dashboard AI assistant, describing how to create pages, redirects, menus, etc.
 - **Five skills for coding agents**, shipped in the package and read straight from `vendor/` — see [AI agent skills](#ai-agent-skills)
@@ -282,6 +283,22 @@ Any non-deleted page's edit screen carries a "Publish as replacement" action gro
 The usual way to prepare such a replacement is the "Duplicate" action: it builds an unpublished copy of a page — its whole block tree, a container's own columns and everything nested inside them included, each block's medias copied to their own files — which is then reworked at leisure and swapped in once ready. A page's `replaces` field is only a fallback default for the action group's target, never a requirement.
 
 There is deliberately **no page-template mechanism**: a page's block arrangement is composed in the admin, block by block, and never derived from a stored arrangement. A "template" here could only ever be a snapshot of example content copied once, with no relation kept afterwards — a maintenance cost with no matching benefit, since a page's structure is built once in a site's life. Use "Duplicate" for a page that should look like an existing one.
+
+### Content zones
+
+Every screen of a site is meant to be written in the back office, the ones the app's own controllers render included (a form, a preview, a user's list): the controller keeps rendering its functional part, and the prose around it comes from the blocks of a Page:
+
+```twig
+{# templates/shortcut/preview.html.twig, in the app #}
+<twig:c975LSite:Page:Blocks slug="shortcut-preview"/>
+{{ form(form) }}
+<twig:c975LSite:Page:Blocks slug="shortcut-preview-after"/>
+```
+
+- **The Page is a content holder**: one per zone, left **unpublished** (as any new page is), so it stays out of the site on its own - `/pages/{slug}` answers 404, the sitemap leaves it out and it is never indexable (`Page::unreferenceWhenUnpublished()`). The zone shows its blocks all the same, published or not.
+- **Rendered as a page display is**, through `render_owned_blocks()`: one cache entry per language emptied when a block changes, the fields in the language the screen is read in, and the usual *Edit* overlay for an editor, opening the page's form on that block.
+- **A zone with no page yet** renders nothing for a visitor; an editor (`site-role-editor`) gets a discreet link to the back-office page creation screen, its slug prefilled (`?slug=` on `PageCrudController`'s *new* action). A trashed page renders nothing for anyone, and is not offered for creation either: it still holds the slug, restoring it brings the zone back.
+- **Telling them apart in the page list**: filter on *Published* (no), and follow a naming convention - the slug names the screen (`shortcut-preview`, `account-list`), the title starts with `Écran - ` (`Écran - Aperçu du raccourci`), so they sort together and the title filter finds them all. No flag is stored: an unpublished page is already exactly what a content holder needs to be.
 
 ---
 
@@ -833,6 +850,8 @@ document sits on, and at which public address.
 | Function | Description |
 | --- | --- |
 | `site_page(id)` | The `Page` of that id, or `null` |
+| `site_content_page(slug)` | The `Page` of that slug whatever its status, trashed included, or `null` — read by the content zone component (see [Content zones](#content-zones)) |
+| `site_page_new_url(slug)` | The back-office page creation screen, that slug prefilled |
 | `site_legal_pages(models)` | The pages carrying one of the given legal models, keyed by model (see [Legal models](#legal-models)) |
 | `site_page_for_form_block(formName)` | The page carrying the `form` Block of that form, backing UiBundle's `form_url()` (see [Users](#users)) |
 | `menu_blocks(location)` | The ordered blocks of the `navbar`/`footer`/`email-header`/`email-footer` Menu (see [Menus](#menus)), alongside `menu_link_url()`, `menu_link_label()` and `menu_link_is_copyright()` |

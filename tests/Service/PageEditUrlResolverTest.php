@@ -69,4 +69,19 @@ class PageEditUrlResolverTest extends TestCase
         $resolver->resolve($page, 'fr');
         $this->assertSame([], $query);
     }
+
+    // A content zone missing its page hands an editor the new page screen, the slug it reads prefilled
+    public function testResolveNewOpensTheNewPageScreenWithTheSlug(): void
+    {
+        $urlGenerator = $this->createMock(AdminUrlGeneratorInterface::class);
+        $urlGenerator->method('unsetAll')->willReturnSelf();
+        $urlGenerator->expects($this->once())->method('setController')->with(PageCrudController::class)->willReturnSelf();
+        $urlGenerator->expects($this->once())->method('setAction')->with(Action::NEW)->willReturnSelf();
+        $urlGenerator->expects($this->once())->method('set')->with('slug', 'shortcut-preview')->willReturnSelf();
+        $urlGenerator->method('generateUrl')->willReturn('/management/page/new?slug=shortcut-preview');
+
+        $resolver = new PageEditUrlResolver($urlGenerator, new SiteLocales(['fr'], 'fr'));
+
+        $this->assertSame('/management/page/new?slug=shortcut-preview', $resolver->resolveNew('shortcut-preview'));
+    }
 }

@@ -1190,6 +1190,22 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Filters::class, $filters);
     }
 
+    // A content zone missing its page links to the new page screen with the slug it reads, which has to come prefilled and slugified the way a saved one is
+    public function testCreateEntityPrefillsTheSlugAContentZoneAsksFor(): void
+    {
+        $requestStack = new RequestStack([Request::create('/management/page/new', 'GET', ['slug' => 'Shortcut Preview'])]);
+
+        $page = $this->createController(['requestStack' => $requestStack])->createEntity(Page::class);
+
+        $this->assertSame('shortcut-preview', $page->getSlug());
+        $this->assertFalse($page->isPublished());
+    }
+
+    public function testCreateEntityLeavesTheSlugEmptyOtherwise(): void
+    {
+        $this->assertNull($this->createController()->createEntity(Page::class)->getSlug());
+    }
+
     public function testConfigureFieldsReturnsFieldsWhenThereIsNoAdminContext(): void
     {
         $fields = iterator_to_array($this->createController()->configureFields('index'));

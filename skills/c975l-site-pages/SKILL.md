@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -10,7 +10,7 @@ description: "Use this skill when working with pages or collections in a Symfony
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `config/services.yaml`
+`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `templates/components/Page/Blocks.html.twig`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
 
@@ -204,6 +204,17 @@ resolving it renders its blocks and their internal links, read in the language o
 turns away or a language it redirects from. `PageController::preview()` deliberately
 skips the gate, a preview being the screen for a page the public gate turns away, and caches nothing.
 
+## Content zones
+
+A screen the app's own controller renders (a form, a preview, a list) takes its prose from a Page:
+`<twig:c975LSite:Page:Blocks slug="shortcut-preview"/>` renders that Page's blocks through
+`render_owned_blocks()` - same cache, locale and editor overlay as a page display - **published or
+not**. The Page is a content holder, left unpublished so `/pages/{slug}` stays 404 and the sitemap
+leaves it out. No page yet: nothing for a visitor, a link to `PageCrudController`'s *new* action with
+`?slug=` prefilled (`createEntity()`) for `site-role-editor`. A trashed page renders nothing for anyone.
+Convention, no flag: slug named after the screen, title starting with `Écran - `, *Published* filter
+on the index.
+
 ## Commands
 
 ```bash
@@ -214,7 +225,7 @@ php bin/console c975l:site:create                       # one-shot wizard bootst
 
 ## Twig functions
 
-`site_page(id)`, `site_legal_pages(models)`, `site_page_for_form_block(formName)`,
+`site_page(id)`, `site_content_page(slug)`, `site_page_new_url(slug)`, `site_legal_pages(models)`, `site_page_for_form_block(formName)`,
 `page_health_check(page)`, `page_title(page)`, `page_summary(page)`, `page_alternates(page)`. All
 declared with `#[AsTwigFunction]` on the method backing them — a site overriding one decorates the
 service and carries the attribute over.
@@ -251,6 +262,8 @@ offered, and nothing goes out while `site-url` is empty. What was posted where i
 - **Do not re-publish a page expecting it to be indexed again** — `isIndexable` has to be checked back
   deliberately.
 - **Do not build a page-template feature.** Duplicate is the answer.
+- **Do not publish a content holder, nor hardcode a screen's prose in the app's template.** A
+  `<twig:c975LSite:Page:Blocks/>` zone reads the unpublished page; publishing it opens a second url.
 - **Do not add a free-text collection field on an item.** The group is picked by the screen it is
   opened from.
 - **Do not create a `Page` per collection item.** One detail page serves the whole collection.

@@ -1,0 +1,13 @@
+{# <twig:c975LSite:Page:Blocks slug="shortcut-preview"/> - the prose around a screen of the app's own (a form, a preview, a list), written in the back office: the blocks of the Page with that slug, published or not, rendered through render_owned_blocks() as a page display (see README, "Content zones") #}
+{% set contentPage = site_content_page(slug) %}
+{% if contentPage %}
+    {# A trashed page renders nothing, and is not offered for creation either: it still holds the slug, a new page would be saved under another one the zone never reads #}
+    {% if not contentPage.deleted %}
+        {{ render_owned_blocks(contentPage) }}
+    {% endif %}
+{% elseif is_granted(config('site-role-editor')) %}
+    {# Nothing for a visitor; an editor is told the zone exists, and handed the screen creating its page #}
+    <p class="small text-muted">
+        <a href="{{ site_page_new_url(slug) }}">{{ 'label.content_zone_create'|trans({'%slug%': slug}, 'site') }}</a>
+    </p>
+{% endif %}

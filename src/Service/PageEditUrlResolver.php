@@ -16,7 +16,7 @@ use c975L\SiteBundle\Entity\Page;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// Builds a Page's EasyAdmin edit URL, shared by every health check listing pages
+// Builds a Page's EasyAdmin edit URL, shared by every health check listing pages, and the new page one a content zone offers
 class PageEditUrlResolver
 {
     public function __construct(
@@ -38,5 +38,15 @@ class PageEditUrlResolver
         }
 
         return $urlGenerator->generateUrl();
+    }
+
+    // The new page screen, its slug prefilled (see PageCrudController::createEntity) - what a content zone missing its page offers an editor (see components/Page/Blocks.html.twig)
+    public function resolveNew(string $slug): string
+    {
+        return $this->adminUrlGenerator->unsetAll()
+            ->setController(PageCrudController::class)
+            ->setAction(Action::NEW)
+            ->set('slug', $slug)
+            ->generateUrl();
     }
 }

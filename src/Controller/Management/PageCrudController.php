@@ -755,6 +755,8 @@ class PageCrudController extends AbstractCrudController
         return $filters
             ->add('title')
             ->add('slug')
+            // Tells the content holders a screen reads (see components/Page/Blocks.html.twig), unpublished for good, from the pages visitors read
+            ->add('isPublished')
             ->add('creation')
         ;
     }
@@ -1043,6 +1045,20 @@ class PageCrudController extends AbstractCrudController
         $this->translationCopier->copy(Translation::OWNER_MEDIA, $source, $copy);
 
         return $copy;
+    }
+
+    // New page opened from a content zone missing its page (see components/Page/Blocks.html.twig): the slug it reads comes prefilled, EasyAdmin's slug field keeping a value it is given instead of following the title. Left unpublished, as any new page: a content holder is only ever read through its zone
+    #[\Override]
+    public function createEntity(string $entityFqcn): Page
+    {
+        $page = new Page();
+        $slug = $this->requestStack->getCurrentRequest()?->query->get('slug');
+        if (\is_string($slug) && '' !== $slug) {
+            $page->setSlug($slug);
+            $this->slugifyPage($page);
+        }
+
+        return $page;
     }
 
     // New page - Builds a unique slug from a base string (slugified), appending -2, -3... on collision

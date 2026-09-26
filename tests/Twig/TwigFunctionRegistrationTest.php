@@ -37,9 +37,11 @@ class TwigFunctionRegistrationTest extends TestCase
                 'menu_style' => 'getMenuStyle',
             ]],
             'PageExtension' => [PageExtension::class, [
+                'site_content_page' => 'getContentPage',
                 'site_legal_pages' => 'getLegalPages',
                 'site_page' => 'getPage',
                 'site_page_for_form_block' => 'getPageForFormBlock',
+                'site_page_new_url' => 'getPageNewUrl',
             ]],
             'PageHealthCheckExtension' => [PageHealthCheckExtension::class, [
                 'page_health_check' => 'getPanel',
