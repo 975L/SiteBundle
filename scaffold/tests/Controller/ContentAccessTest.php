@@ -207,7 +207,13 @@ class ContentAccessTest extends FunctionalTestCase
         $this->client->request('GET', $url, [], [], ['HTTP_ACCEPT_LANGUAGE' => $locale]);
         $this->assertSame(200, $this->client->getResponse()->getStatusCode());
 
-        $this->client->request('GET', '/' . $locale . $url, [], [], ['HTTP_ACCEPT_LANGUAGE' => $locale]);
+        // A redirect row covering the localized url (a "/en/*" gone one left by a former multilingual version) answers before the router, see isCoveredByRedirect()
+        $localizedUrl = '/' . $locale . $url;
+        if ($this->isCoveredByRedirect($localizedUrl, static::getContainer()->get(RedirectRepository::class)->findAll())) {
+            return;
+        }
+
+        $this->client->request('GET', $localizedUrl, [], [], ['HTTP_ACCEPT_LANGUAGE' => $locale]);
         $this->assertSame(404, $this->client->getResponse()->getStatusCode());
     }
 

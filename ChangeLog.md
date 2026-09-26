@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.21.2
+
+The browser language test skips a localized url a redirect row covers
+
+- The scaffolded browser language test skips a localized url a redirect row covers (26/09/2026)
+
 ## v8.21.1
 
 The browser language test runs on single-language sites too
