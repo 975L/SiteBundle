@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.25.0
+
+Tutorial films, shown on a page of the site
+
+- **New `site.collection.tutorials` source showing the guided projects' films published in `public/medias/films/<locale>/`** (26/09/2026)
+- New `/tutorials/film/{slug}` and `/tutorials/{slug}/report/{step}` routes (26/09/2026)
+- A guided project filmed on the site links its film there from the dashboard (`TutorialFilmUrlProvider`) (26/09/2026)
+- `public/medias/films` declared to the backup (`SiteBackupPathProvider`) (26/09/2026)
+- New `PageRepository::findOneByCollectionSource()` (26/09/2026)
+- New `site-tutorials-page` guided project (26/09/2026)
+
 ## v8.24.3
 
 The copyright's "©" is the footer's edit shortcut again

@@ -1,0 +1,163 @@
+// TUTORIALS (templates/collection/TutorialItem.html.twig). The films of the "site.collection.tutorials" source as cards numbered in parcours order, each opening its film in a dialog - laid out by the collection block's own grid
+.tutorial :is(h2, h3, h4) {
+    margin: 10px 0 5px;
+    font-size: 1.1rem;
+    text-align: left;
+}
+
+.tutorial-poster {
+    position: relative;
+    display: block;
+    aspect-ratio: 1440 / 900;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface-alt);
+}
+
+.tutorial-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.2s;
+}
+
+.tutorial-poster:hover img {
+    transform: scale(1.03);
+}
+
+.tutorial-number {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 14px;
+    background: var(--background);
+    color: var(--text);
+    font-weight: bold;
+    text-align: center;
+}
+
+// In a corner, the poster being the film's title card
+.tutorial-play {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 88%, transparent);
+}
+
+.tutorial-play::after {
+    content: "";
+    position: absolute;
+    top: 13px;
+    left: 17px;
+    border-left: 14px solid #fff;
+    border-block: 9px solid transparent;
+}
+
+// The description is read whole in the dialog: three lines are enough to choose a film
+.tutorial-description {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tutorial-dialog {
+    width: min(1100px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: var(--background);
+    color: var(--text);
+}
+
+.tutorial-dialog::backdrop {
+    background: rgb(0 0 0 / 75%);
+}
+
+.tutorial-dialog-body {
+    position: relative;
+    padding: 0 20px 20px;
+}
+
+// Short enough for the title and the way on to the next film to stay in sight under it
+.tutorial-dialog video {
+    display: block;
+    width: calc(100% + 40px);
+    max-width: none;
+    height: auto;
+    max-height: calc(100vh - 250px);
+    margin: 0 -20px 10px;
+    aspect-ratio: 1440 / 900;
+    background: #000;
+}
+
+// The site's forms have a width of their own
+.tutorial-dialog-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    width: auto;
+    margin: 0;
+}
+
+.tutorial-dialog-close button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--background);
+    color: var(--text);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.tutorial-dialog-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 15px 0 0;
+    padding: 15px 0 0;
+    border-top: 1px solid var(--surface-alt);
+}
+
+.tutorial-dialog-next {
+    margin-left: auto;
+    text-align: right;
+}
+
+.tutorial-try {
+    margin: 15px 0;
+}
+
+.tutorial-report {
+    margin: 10px 0 0;
+}
+
+.tutorial-report summary {
+    cursor: pointer;
+}
+
+.tutorial-report li.is-current {
+    font-weight: bold;
+}
+
+.tutorial-report .btn-link {
+    padding: 0;
+    vertical-align: baseline;
+}
+
+
+.tutorial-meta {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+}

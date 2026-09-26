@@ -402,6 +402,54 @@
                 <source>narration.guided_step_trash_restore</source>
                 <target>Remettez la page en place. Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site.</target>
             </trans-unit>
+            <trans-unit id="4d7k6Ej">
+                <source>narration.guided_step_tutorials_page_blocks</source>
+                <target>Ajoutez un block : les films tiennent tous dans un seul.</target>
+            </trans-unit>
+            <trans-unit id="XRH6U0b">
+                <source>narration.guided_step_tutorials_page_kind</source>
+                <target>Choisissez le type collection, qui affiche une liste sous forme de cartes.</target>
+            </trans-unit>
+            <trans-unit id="QL6NuYD">
+                <source>narration.guided_step_tutorials_page_new</source>
+                <target>Créez une nouvelle page pour accueillir les films.</target>
+            </trans-unit>
+            <trans-unit id="jttSJi.">
+                <source>narration.guided_step_tutorials_page_open</source>
+                <target>Ouvrez les pages. Les films s'afficheront dans une page ordinaire, dont l'adresse et le titre restent les vôtres.</target>
+            </trans-unit>
+            <trans-unit id="I2DlYCC">
+                <source>narration.guided_step_tutorials_page_publish</source>
+                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation.</target>
+            </trans-unit>
+            <trans-unit id="JHaHi5w">
+                <source>narration.guided_step_tutorials_page_reopen</source>
+                <target>Rouvrez-la : les blocks s'ajoutent une fois la page enregistrée.</target>
+            </trans-unit>
+            <trans-unit id="NQeEYlG">
+                <source>narration.guided_step_tutorials_page_report</source>
+                <target>Enfin, pour que les visiteurs puissent signaler une étape ou un film, une page du site doit contenir le formulaire de contact.</target>
+            </trans-unit>
+            <trans-unit id="GJkppbu">
+                <source>narration.guided_step_tutorials_page_save</source>
+                <target>Enregistrez.</target>
+            </trans-unit>
+            <trans-unit id="aSXxVGN">
+                <source>narration.guided_step_tutorials_page_save_again</source>
+                <target>Enregistrez à nouveau.</target>
+            </trans-unit>
+            <trans-unit id="GKOraYc">
+                <source>narration.guided_step_tutorials_page_source</source>
+                <target>Dans ses réglages, choisissez la source Tutoriels : chaque film devient une carte, qui l'ouvre avec ses étapes.</target>
+            </trans-unit>
+            <trans-unit id="uA4bBds">
+                <source>narration.guided_step_tutorials_page_title</source>
+                <target>Donnez-lui un titre, « Tutoriels » par exemple : son adresse en découle.</target>
+            </trans-unit>
+            <trans-unit id="DSKy2Wx">
+                <source>narration.guided_step_tutorials_page_view</source>
+                <target>Vérifiez sur le site que les films s'affichent.</target>
+            </trans-unit>
             <trans-unit id="SVUFTiL">
                 <source>narration.menus</source>
                 <target>« Menus » tient un menu par emplacement : barre de navigation, pied de page, en-tête et pied des e-mails. Chaque emplacement n'existe qu'une fois.</target>

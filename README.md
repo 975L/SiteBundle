@@ -21,7 +21,7 @@ Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) 
 
 ## Contents
 
-- **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
+- **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [tutorial films](#tutorial-films) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
 - **Users & access** — [moved to ConfigBundle](#users)
 - **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
 - **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
@@ -301,6 +301,34 @@ Every screen of a site is meant to be written in the back office, the ones the a
 - **Telling them apart in the page list**: filter on *Published* (no), and follow a naming convention - the slug names the screen (`shortcut-preview`, `account-list`), the title starts with `Écran - ` (`Écran - Aperçu du raccourci`), so they sort together and the title filter finds them all. No flag is stored: an unpublished page is already exactly what a content holder needs to be.
 
 ---
+
+## Tutorial films
+
+The back office's guided projects (ConfigBundle's `GuidedProjectProviderInterface`, contributed by every bundle and by the app itself) can be filmed and shown on the site. SiteBundle shows them; filming them is left to whatever tool you like - a screen recorder driven by Playwright is what the c975L bundles' own films are shot with - as long as it leaves them where this bundle reads them:
+
+```
+public/medias/films/<locale>/
+    films.json                 # the manifest, one entry per film
+    <slug>.webm                # the film, <slug> being the guided project's
+    <slug>.vtt                 # its subtitles (WebVTT)
+    <slug>.jpg                 # its poster
+```
+
+```json
+{
+    "site-page-creation": {"narrated": true, "version": 1758000000, "shotAt": 1757000000, "starts": [7.4, 16.4]}
+}
+```
+
+`version` is the film's timestamp, used as the files' cache-busting query string; `shotAt` (optional, `version` otherwise) the date it was shot; `starts` the second each step of the project starts at - one per step, or the steps are listed without being timed; `narrated` whether it speaks, a mute film showing its subtitles from the start. A language with no film of its own shows the site's default language films, subtitled.
+
+To show them, create a page and add a **`collection` block** on the **"Tutorials"** source (`site.collection.tutorials`): each film is a card, opening the film in a dialog with its steps, a click on a step seeking the film to it. The page is an ordinary page - its address, its title and the blocks around the films are yours. Then:
+
+- `/tutorials/film/{slug}` leads to a film on that page: a guided project filmed on the site links its film there from the dashboard (ConfigBundle's `TutorialFilmUrlProviderInterface`), the others keeping the c975L ecosystem's films;
+- each step, and the whole film, can be reported when the site has a page holding the `contact` form: `/tutorials/{slug}/report/{step}` opens it with its subject filled in;
+- `public/medias/films` is declared to ConfigBundle's backup. It is not a media any row points at: a media purge of your own must leave it alone.
+
+An app grouping its films otherwise (by bundle, by theme) draws them with the same card through `TutorialCollectionSourceProvider::items()`, and may add a `tryUrl` to a film to offer a place to walk the parcours for real.
 
 ## Menus
 
@@ -635,7 +663,7 @@ What stays here is `Management\SiteMediaUsageProvider`, which tells the Media li
 
 `SiteAlertProvider` (implements ConfigBundle's `AlertProviderInterface`) raises a dashboard alert when **no published page carries the `france/legal-notice`, the `france/privacy-policy` or the `france/cookies` legal model** (the privacy policy being owed by every site, server logs alone processing personal data), and when a `home` page exists but is unpublished or deleted — the site then answers 404 on `/` while holding the page that should be there. The legal *models* themselves are UiBundle's (its "Legal models" screen writes the text), but only this bundle knows whether a `Page` carries one and whether it is published, which is why the alert lives here. A site with no `home` page **at all** raises nothing: answering `/` from a route of its own is a supported way to run (see `PageController::home()`), and nagging about it would be a false alert on every such site. Both are gated by `site-role-editor` — an admin who cannot edit a page can do nothing about either, and an alert nobody can act on is noise. Each links straight to what fixes it: the page creation form when no page carries the model at all, that very page's own form when it exists but is unpublished or trashed — legal page and home alike — where the publication switch is.
 
-`SiteGuidedProjectProvider` (implements ConfigBundle's `GuidedProjectProviderInterface`) contributes thirteen replayable exercises to the dashboard's "Guided projects" panel: building a collection, saying its items in another language, creating a page, filling in what a page needs to be found and shared, saying a page in another language, checking a page's health, reworking one already online through duplicate + "publish as replacement", moving a page to the trash and pulling it back out, exporting pages to another site, putting a page in the navigation bar (and writing the baseline under the site's name), saying a menu in another language, and laying out the footer.
+`SiteGuidedProjectProvider` (implements ConfigBundle's `GuidedProjectProviderInterface`) contributes fourteen replayable exercises to the dashboard's "Guided projects" panel: building a collection, saying its items in another language, creating a page, setting up its blocks, showing the guided projects' films on a page, filling in what a page needs to be found and shared, saying a page in another language, checking a page's health, reworking one already online through duplicate + "publish as replacement", moving a page to the trash and pulling it back out, exporting pages to another site, putting a page in the navigation bar (and writing the baseline under the site's name), saying a menu in another language, and laying out the footer.
 
 They are **ordered like the sidebar itself reads** — Collections, Pages, then the advanced "Menus" — so a project sits where the user finds the screen it walks, and two projects sharing a screen follow each other. `order` runs 2010 → 2090 in steps of **10**, halved where a project slips between two of them (2015, 2025…), inside the thousand-block `GuidedProjectProviderInterface` reserves for this bundle (ConfigBundle 1000, SiteBundle 2000, UiBundle 3000, and so on): the step leaves 99 slots to slip a new project where it belongs rather than appending it at the end. Two projects sharing an `order` would not fail — `GuidedProjectBuilder` sorts with `usort` — they would simply fall back on the order their providers happen to be registered in, which is exactly what `order` exists to decide.
 

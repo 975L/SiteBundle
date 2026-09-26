@@ -186,6 +186,10 @@
                 <source>description.guided_project_trash</source>
                 <target>Take a page off the site without losing it, then either put it back or remove it for good</target>
             </trans-unit>
+            <trans-unit id="usxuvdL">
+                <source>description.guided_project_tutorials_page</source>
+                <target>A page of your site presenting the films of your guided projects, each with its steps, reports going through the contact page.</target>
+            </trans-unit>
             <trans-unit id="hx79f8B">
                 <source>description.guided_step_block_add</source>
                 <target>Add a block, or open one the page already holds. The next steps show the page's first block: the settings sit in the same place in yours.</target>
@@ -542,6 +546,46 @@
                 <source>description.guided_step_trash_restore</source>
                 <target>It comes back unpublished, so you decide when it shows on the site again.</target>
             </trans-unit>
+            <trans-unit id="a5JigYy">
+                <source>description.guided_step_tutorials_page_blocks</source>
+                <target>The films all fit in a single block; add others around it if the page has more to say.</target>
+            </trans-unit>
+            <trans-unit id="OWGWo7I">
+                <source>description.guided_step_tutorials_page_kind</source>
+                <target>The collection block shows a list of items as cards.</target>
+            </trans-unit>
+            <trans-unit id="wMIjCIT">
+                <source>description.guided_step_tutorials_page_new</source>
+                <target>A new page, which will hold the films.</target>
+            </trans-unit>
+            <trans-unit id="5kSZ6Bl">
+                <source>description.guided_step_tutorials_page_open</source>
+                <target>The films show on an ordinary page: its address, its title and what surrounds them stay yours.</target>
+            </trans-unit>
+            <trans-unit id="uyQWKyV">
+                <source>description.guided_step_tutorials_page_publish</source>
+                <target>As long as this switch is off, the page is only visible to you, as a preview.</target>
+            </trans-unit>
+            <trans-unit id="8RsU7.A">
+                <source>description.guided_step_tutorials_page_reopen</source>
+                <target>Blocks are added once the page is saved.</target>
+            </trans-unit>
+            <trans-unit id="4dHA5eZ">
+                <source>description.guided_step_tutorials_page_report</source>
+                <target>Each step and each film can be reported as soon as a page of the site holds the “contact” form: it opens with its subject already filled in.</target>
+            </trans-unit>
+            <trans-unit id="otPWBas">
+                <source>description.guided_step_tutorials_page_source</source>
+                <target>Each film becomes a card opening it with its steps; a click on a step takes the film there.</target>
+            </trans-unit>
+            <trans-unit id="wfdzbRF">
+                <source>description.guided_step_tutorials_page_title</source>
+                <target>“Tutorials”, for instance: the page's address follows from it.</target>
+            </trans-unit>
+            <trans-unit id="GNe8Ekz">
+                <source>description.guided_step_tutorials_page_view</source>
+                <target>Check on the site that the films show, each with its card.</target>
+            </trans-unit>
             <trans-unit id="Cmewuhh">
                 <source>description.menu_translation</source>
                 <target>A menu carries its structure once: its items and their order are edited in the language it was written in. Only the labels an editor set by hand are said again here - an item taking its label from the page it points at is translated with that page.</target>
@@ -873,6 +917,10 @@
             <trans-unit id=".dL2TAJ">
                 <source>label.guided_project_trash</source>
                 <target>Delete a page and get it back</target>
+            </trans-unit>
+            <trans-unit id="Yy6dO9z">
+                <source>label.guided_project_tutorials_page</source>
+                <target>Show the guided projects' films</target>
             </trans-unit>
             <trans-unit id="q567t7C">
                 <source>label.guided_step_block_add</source>
@@ -1269,6 +1317,54 @@
             <trans-unit id="A4bO5YW">
                 <source>label.guided_step_trash_restore</source>
                 <target>Put the page back</target>
+            </trans-unit>
+            <trans-unit id="UZZvetx">
+                <source>label.guided_step_tutorials_page_blocks</source>
+                <target>Add a block</target>
+            </trans-unit>
+            <trans-unit id="vRutMu7">
+                <source>label.guided_step_tutorials_page_kind</source>
+                <target>Choose “collection”</target>
+            </trans-unit>
+            <trans-unit id="ihcpMsi">
+                <source>label.guided_step_tutorials_page_new</source>
+                <target>Create a page</target>
+            </trans-unit>
+            <trans-unit id="bwubqN9">
+                <source>label.guided_step_tutorials_page_open</source>
+                <target>Open the pages</target>
+            </trans-unit>
+            <trans-unit id="5cRMGAj">
+                <source>label.guided_step_tutorials_page_publish</source>
+                <target>Publish the page</target>
+            </trans-unit>
+            <trans-unit id="fWm6O3b">
+                <source>label.guided_step_tutorials_page_reopen</source>
+                <target>Reopen it</target>
+            </trans-unit>
+            <trans-unit id="Lbqmc_e">
+                <source>label.guided_step_tutorials_page_report</source>
+                <target>Allow reports</target>
+            </trans-unit>
+            <trans-unit id="1ROI1gv">
+                <source>label.guided_step_tutorials_page_save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="anKjiMs">
+                <source>label.guided_step_tutorials_page_save_again</source>
+                <target>Save again</target>
+            </trans-unit>
+            <trans-unit id="6Cz9._7">
+                <source>label.guided_step_tutorials_page_source</source>
+                <target>Choose the “Tutorials” source</target>
+            </trans-unit>
+            <trans-unit id="efyDOMz">
+                <source>label.guided_step_tutorials_page_title</source>
+                <target>Give it a title</target>
+            </trans-unit>
+            <trans-unit id="KWJrYqG">
+                <source>label.guided_step_tutorials_page_view</source>
+                <target>See the result</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>
@@ -1918,6 +2014,54 @@
                 <source>label.title</source>
                 <target>Title</target>
             </trans-unit>
+            <trans-unit id="H9u7cLf">
+                <source>label.tutorial_close</source>
+                <target>Close</target>
+            </trans-unit>
+            <trans-unit id="gwZbf8E">
+                <source>label.tutorial_narrated</source>
+                <target>narrated</target>
+            </trans-unit>
+            <trans-unit id="cjtnkuC">
+                <source>label.tutorial_report</source>
+                <target>Report</target>
+            </trans-unit>
+            <trans-unit id="Aer_Ts1">
+                <source>label.tutorial_report_problem</source>
+                <target>Report a problem</target>
+            </trans-unit>
+            <trans-unit id="k7ICrU8">
+                <source>label.tutorial_report_subject</source>
+                <target>Tutorial %slug% (%locale%, %date%): %where%</target>
+            </trans-unit>
+            <trans-unit id="bn2qDGf">
+                <source>label.tutorial_report_subject_step</source>
+                <target>step %number% "%label%"</target>
+            </trans-unit>
+            <trans-unit id="MlLnVqj">
+                <source>label.tutorial_report_subject_whole</source>
+                <target>the whole film</target>
+            </trans-unit>
+            <trans-unit id="pGMpl5D">
+                <source>label.tutorial_report_whole_film</source>
+                <target>Report a problem with the whole film</target>
+            </trans-unit>
+            <trans-unit id="GEDQpZS">
+                <source>label.tutorial_subtitled</source>
+                <target>subtitled, no voice</target>
+            </trans-unit>
+            <trans-unit id="KZhTbZ1">
+                <source>label.tutorial_try</source>
+                <target>Try this walkthrough</target>
+            </trans-unit>
+            <trans-unit id="t7AWrov">
+                <source>label.tutorial_walkthrough</source>
+                <target>Walkthrough</target>
+            </trans-unit>
+            <trans-unit id="NfwodB4">
+                <source>label.tutorial_watch_film</source>
+                <target>Watch the film: %label%</target>
+            </trans-unit>
             <trans-unit id="ExAFOiH">
                 <source>label.user</source>
                 <target>User</target>
@@ -2021,6 +2165,14 @@
             <trans-unit id="we221_t">
                 <source>text.too_many_attempts</source>
                 <target>Too many attempts, please try again later.</target>
+            </trans-unit>
+            <trans-unit id="_AJESXP">
+                <source>text.tutorial_report_help</source>
+                <target>Pick the step that does not match what you see. Clicking its name takes the film there.</target>
+            </trans-unit>
+            <trans-unit id=".HCQg7q">
+                <source>text.tutorial_shot_on</source>
+                <target>Shot on %date%</target>
             </trans-unit>
         </body>
     </file>

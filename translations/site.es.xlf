@@ -186,6 +186,10 @@
                 <source>description.guided_project_trash</source>
                 <target>Retirar una página del sitio sin perderla y luego reponerla o borrarla definitivamente</target>
             </trans-unit>
+            <trans-unit id="usxuvdL">
+                <source>description.guided_project_tutorials_page</source>
+                <target>Una página de su sitio que presenta los vídeos de sus proyectos guiados, cada uno con sus pasos, y los avisos llegan por la página de contacto.</target>
+            </trans-unit>
             <trans-unit id="hx79f8B">
                 <source>description.guided_step_block_add</source>
                 <target>Añada un bloque, o abra uno que la página ya contiene. Los pasos siguientes muestran el primer bloque de la página: los ajustes están en el mismo lugar en el suyo.</target>
@@ -542,6 +546,46 @@
                 <source>description.guided_step_trash_restore</source>
                 <target>Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio.</target>
             </trans-unit>
+            <trans-unit id="a5JigYy">
+                <source>description.guided_step_tutorials_page_blocks</source>
+                <target>Todos los vídeos caben en un solo bloque; añada otros alrededor si la página tiene más que decir.</target>
+            </trans-unit>
+            <trans-unit id="OWGWo7I">
+                <source>description.guided_step_tutorials_page_kind</source>
+                <target>El bloque collection muestra una lista de elementos en forma de tarjetas.</target>
+            </trans-unit>
+            <trans-unit id="wMIjCIT">
+                <source>description.guided_step_tutorials_page_new</source>
+                <target>Una página nueva, que acogerá los vídeos.</target>
+            </trans-unit>
+            <trans-unit id="5kSZ6Bl">
+                <source>description.guided_step_tutorials_page_open</source>
+                <target>Los vídeos se muestran en una página normal: su dirección, su título y lo que los rodea siguen siendo suyos.</target>
+            </trans-unit>
+            <trans-unit id="uyQWKyV">
+                <source>description.guided_step_tutorials_page_publish</source>
+                <target>Mientras este interruptor esté apagado, la página solo será visible para usted, en vista previa.</target>
+            </trans-unit>
+            <trans-unit id="8RsU7.A">
+                <source>description.guided_step_tutorials_page_reopen</source>
+                <target>Los bloques se añaden una vez guardada la página.</target>
+            </trans-unit>
+            <trans-unit id="4dHA5eZ">
+                <source>description.guided_step_tutorials_page_report</source>
+                <target>Cada paso y cada vídeo pueden señalarse en cuanto una página del sitio contiene el formulario «contact»: se abre con su asunto ya rellenado.</target>
+            </trans-unit>
+            <trans-unit id="otPWBas">
+                <source>description.guided_step_tutorials_page_source</source>
+                <target>Cada vídeo se convierte en una tarjeta que lo abre con sus pasos; un clic en un paso lleva el vídeo hasta él.</target>
+            </trans-unit>
+            <trans-unit id="wfdzbRF">
+                <source>description.guided_step_tutorials_page_title</source>
+                <target>«Tutoriales», por ejemplo: la dirección de la página se deriva de él.</target>
+            </trans-unit>
+            <trans-unit id="GNe8Ekz">
+                <source>description.guided_step_tutorials_page_view</source>
+                <target>Compruebe en el sitio que los vídeos se muestran, cada uno con su tarjeta.</target>
+            </trans-unit>
             <trans-unit id="Cmewuhh">
                 <source>description.menu_translation</source>
                 <target>Un menú lleva su estructura una sola vez: sus elementos y su orden se editan en el idioma en que fue escrito. Aquí solo se vuelven a decir las etiquetas escritas a mano: un elemento que toma el título de la página a la que apunta se traduce con esa página.</target>
@@ -873,6 +917,10 @@
             <trans-unit id=".dL2TAJ">
                 <source>label.guided_project_trash</source>
                 <target>Eliminar una página y recuperarla</target>
+            </trans-unit>
+            <trans-unit id="Yy6dO9z">
+                <source>label.guided_project_tutorials_page</source>
+                <target>Mostrar los vídeos de los proyectos guiados</target>
             </trans-unit>
             <trans-unit id="q567t7C">
                 <source>label.guided_step_block_add</source>
@@ -1269,6 +1317,54 @@
             <trans-unit id="A4bO5YW">
                 <source>label.guided_step_trash_restore</source>
                 <target>Reponer la página</target>
+            </trans-unit>
+            <trans-unit id="UZZvetx">
+                <source>label.guided_step_tutorials_page_blocks</source>
+                <target>Añadir un bloque</target>
+            </trans-unit>
+            <trans-unit id="vRutMu7">
+                <source>label.guided_step_tutorials_page_kind</source>
+                <target>Elegir «collection»</target>
+            </trans-unit>
+            <trans-unit id="ihcpMsi">
+                <source>label.guided_step_tutorials_page_new</source>
+                <target>Crear una página</target>
+            </trans-unit>
+            <trans-unit id="bwubqN9">
+                <source>label.guided_step_tutorials_page_open</source>
+                <target>Abrir las páginas</target>
+            </trans-unit>
+            <trans-unit id="5cRMGAj">
+                <source>label.guided_step_tutorials_page_publish</source>
+                <target>Publicar la página</target>
+            </trans-unit>
+            <trans-unit id="fWm6O3b">
+                <source>label.guided_step_tutorials_page_reopen</source>
+                <target>Volver a abrirla</target>
+            </trans-unit>
+            <trans-unit id="Lbqmc_e">
+                <source>label.guided_step_tutorials_page_report</source>
+                <target>Permitir los avisos</target>
+            </trans-unit>
+            <trans-unit id="1ROI1gv">
+                <source>label.guided_step_tutorials_page_save</source>
+                <target>Guardar</target>
+            </trans-unit>
+            <trans-unit id="anKjiMs">
+                <source>label.guided_step_tutorials_page_save_again</source>
+                <target>Guardar de nuevo</target>
+            </trans-unit>
+            <trans-unit id="6Cz9._7">
+                <source>label.guided_step_tutorials_page_source</source>
+                <target>Elegir la fuente «Tutoriales»</target>
+            </trans-unit>
+            <trans-unit id="efyDOMz">
+                <source>label.guided_step_tutorials_page_title</source>
+                <target>Darle un título</target>
+            </trans-unit>
+            <trans-unit id="KWJrYqG">
+                <source>label.guided_step_tutorials_page_view</source>
+                <target>Ver el resultado</target>
             </trans-unit>
             <trans-unit id="ioq2qzc">
                 <source>label.health_check_advice_broken_external_links</source>
@@ -1918,6 +2014,54 @@
                 <source>label.title</source>
                 <target>Título</target>
             </trans-unit>
+            <trans-unit id="H9u7cLf">
+                <source>label.tutorial_close</source>
+                <target>Cerrar</target>
+            </trans-unit>
+            <trans-unit id="gwZbf8E">
+                <source>label.tutorial_narrated</source>
+                <target>narrado</target>
+            </trans-unit>
+            <trans-unit id="cjtnkuC">
+                <source>label.tutorial_report</source>
+                <target>Informar</target>
+            </trans-unit>
+            <trans-unit id="Aer_Ts1">
+                <source>label.tutorial_report_problem</source>
+                <target>Informar de un problema</target>
+            </trans-unit>
+            <trans-unit id="k7ICrU8">
+                <source>label.tutorial_report_subject</source>
+                <target>Tutorial %slug% (%locale%, %date%): %where%</target>
+            </trans-unit>
+            <trans-unit id="bn2qDGf">
+                <source>label.tutorial_report_subject_step</source>
+                <target>paso %number% «%label%»</target>
+            </trans-unit>
+            <trans-unit id="MlLnVqj">
+                <source>label.tutorial_report_subject_whole</source>
+                <target>todo el vídeo</target>
+            </trans-unit>
+            <trans-unit id="pGMpl5D">
+                <source>label.tutorial_report_whole_film</source>
+                <target>Informar de un problema en todo el vídeo</target>
+            </trans-unit>
+            <trans-unit id="GEDQpZS">
+                <source>label.tutorial_subtitled</source>
+                <target>subtitulado, sin voz</target>
+            </trans-unit>
+            <trans-unit id="KZhTbZ1">
+                <source>label.tutorial_try</source>
+                <target>Probar este recorrido</target>
+            </trans-unit>
+            <trans-unit id="t7AWrov">
+                <source>label.tutorial_walkthrough</source>
+                <target>Recorrido</target>
+            </trans-unit>
+            <trans-unit id="NfwodB4">
+                <source>label.tutorial_watch_film</source>
+                <target>Ver el vídeo: %label%</target>
+            </trans-unit>
             <trans-unit id="ExAFOiH">
                 <source>label.user</source>
                 <target>Usuario</target>
@@ -2021,6 +2165,14 @@
             <trans-unit id="we221_t">
                 <source>text.too_many_attempts</source>
                 <target>Demasiados intentos, inténtelo de nuevo más tarde.</target>
+            </trans-unit>
+            <trans-unit id="_AJESXP">
+                <source>text.tutorial_report_help</source>
+                <target>Elija el paso que no corresponde a lo que ve. Al hacer clic en su nombre, el vídeo va a ese punto.</target>
+            </trans-unit>
+            <trans-unit id=".HCQg7q">
+                <source>text.tutorial_shot_on</source>
+                <target>Grabado el %date%</target>
             </trans-unit>
         </body>
     </file>

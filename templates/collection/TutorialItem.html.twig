@@ -1,0 +1,86 @@
+{# One film of the "site.collection.tutorials" source (TutorialCollectionSourceProvider), and the dialog it opens. Every link to a film is its page anchor, so a card, "previous / next" and a shared url all open it the same way. A click on one is UiBundle's scrollButtons pushing the anchor, with no hashchange: it says so with "anchor:scroll" #}
+{# The layout sets a sitewide <base href> at the domain root, so a bare "#x" would leave the page: every anchor carries the page's own path #}
+{% set here = app.request.baseUrl ~ app.request.pathInfo %}
+{# The heading the collection block asks for, matched against the offered levels and never interpolated, same rule as the block's own #}
+{% set heading = level|default('') in ['h2', 'h3', 'h4'] ? level : 'h2' %}
+<article class="tutorial" id="{{ tutorial.slug }}" data-controller="tutorial" data-action="anchor:scroll@document->tutorial#route popstate@window->tutorial#route hashchange@window->tutorial#route">
+    <a href="{{ here }}#{{ tutorial.slug }}" class="tutorial-poster" aria-label="{{ 'label.tutorial_watch_film'|trans({'%label%': tutorial.label}, 'site') }}">
+        <img src="{{ tutorial.poster }}" alt="" loading="lazy">
+        <span class="tutorial-number">{{ number }}</span>
+        <span class="tutorial-play"></span>
+    </a>
+    <{{ heading }}><a href="{{ here }}#{{ tutorial.slug }}">{{ tutorial.label }}</a></{{ heading }}>
+    {% if tutorial.description %}
+        <p class="tutorial-description">{{ tutorial.description }}</p>
+    {% endif %}
+
+    {# The date the film was shot, not the one it was narrated or published: a parcours that did not change is not shot again, so an old date says the film still shows the screen as it is #}
+    {% set meta %}
+        <p class="tutorial-meta text-muted">
+            {{ 'text.tutorial_shot_on'|trans({'%date%': tutorial.shotAt|date('d/m/Y')}, 'site') }} · {{ (tutorial.narrated ? 'label.tutorial_narrated' : 'label.tutorial_subtitled')|trans({}, 'site') }}
+        </p>
+    {% endset %}
+    {{ meta }}
+
+    {# showModal() keeps the focus inside and Escape closes it; method="dialog" closes it with no script at all #}
+    <dialog class="tutorial-dialog" aria-labelledby="{{ tutorial.slug }}-title" data-tutorial-target="dialog" data-action="close->tutorial#closed click->tutorial#backdrop">
+        <div class="tutorial-dialog-body">
+            <form method="dialog" class="tutorial-dialog-close">
+                <button type="submit" aria-label="{{ 'label.tutorial_close'|trans({}, 'site') }}">&times;</button>
+            </form>
+
+            {# The subtitles are on from the start on a mute film, which says nothing without them #}
+            <video controls playsinline preload="none" class="img-responsive" poster="{{ tutorial.poster }}" data-tutorial-target="video" data-action="timeupdate->tutorial#follow">
+                <source src="{{ tutorial.video }}" type="video/webm">
+                <track kind="subtitles" src="{{ tutorial.subtitles }}" srclang="{{ tutorial.locale }}" label="{{ tutorial.locale|upper }}" {% if not tutorial.narrated %} default {% endif %}>
+            </video>
+
+            <h2 id="{{ tutorial.slug }}-title">{{ number }}. {{ tutorial.label }}</h2>
+            {% if tutorial.description %}
+                <p>{{ tutorial.description }}</p>
+            {% endif %}
+            {{ meta }}
+
+            {# Where the same parcours can be walked for real, when the app offers such a place (a demonstration's back office): it adds "tryUrl" to the film #}
+            {% if tutorial.tryUrl|default(null) %}
+                <p class="tutorial-try">
+                    <a href="{{ tutorial.tryUrl }}" class="btn btn-primary" target="_blank" rel="nofollow">{{ 'label.tutorial_try'|trans({}, 'site') }}</a>
+                </p>
+            {% endif %}
+
+            {# The steps, each seeking the film to its start - and, on a site holding a contact form, each reportable on its own #}
+            <details class="tutorial-report">
+                <summary>{{ (reportable ? 'label.tutorial_report_problem' : 'label.tutorial_walkthrough')|trans({}, 'site') }}</summary>
+                {% if reportable %}
+                    <p class="text-muted">{{ 'text.tutorial_report_help'|trans({}, 'site') }}</p>
+                {% endif %}
+                <ol>
+                    {% for step in tutorial.steps %}
+                        <li data-tutorial-target="step" data-start="{{ step.start }}">
+                            {% if step.start is not null %}
+                                <button type="button" class="btn btn-link" data-action="tutorial#seek">{{ step.label }}</button>
+                            {% else %}
+                                {{ step.label }}
+                            {% endif %}
+                            {% if reportable %}
+                                <a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: loop.index}) }}" rel="nofollow">{{ 'label.tutorial_report'|trans({}, 'site') }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+                {% if reportable %}
+                    <p><a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: 0}) }}" rel="nofollow">{{ 'label.tutorial_report_whole_film'|trans({}, 'site') }}</a></p>
+                {% endif %}
+            </details>
+
+            <nav class="tutorial-dialog-nav" aria-label="{{ 'label.tutorial_walkthrough'|trans({}, 'site') }}">
+                {% if previous %}
+                    <a href="{{ here }}#{{ previous.slug }}">&larr; {{ number - 1 }}. {{ previous.label }}</a>
+                {% endif %}
+                {% if next %}
+                    <a href="{{ here }}#{{ next.slug }}" class="tutorial-dialog-next">{{ number + 1 }}. {{ next.label }} &rarr;</a>
+                {% endif %}
+            </nav>
+        </div>
+    </dialog>
+</article>

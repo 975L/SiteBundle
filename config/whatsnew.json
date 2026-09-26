@@ -3,6 +3,16 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "The films of your guided projects can be shown on a page of your site: add a \"collection\" block on the \"Tutorials\" source, each film opening with its steps",
+                "fr": "Les films de vos projets guidés peuvent s'afficher sur une page de votre site : ajoutez un block \"collection\" sur la source \"Tutoriels\", chaque film s'ouvrant avec ses étapes",
+                "es": "Los vídeos de sus proyectos guiados pueden mostrarse en una página de su sitio: añada un bloque \"collection\" con la fuente \"Tutoriales\", cada vídeo abriéndose con sus pasos"
+            },
+            {
+                "en": "A new guided project walks you through creating the page that shows these films",
+                "fr": "Un nouveau projet guidé vous accompagne pour créer la page qui affiche ces films",
+                "es": "Un nuevo proyecto guiado le acompaña para crear la página que muestra estos vídeos"
+            },
+            {
                 "en": "Three quick clicks on the \"©\" of your copyright notice take you to the sign-in form again instead of opening the copyright page",
                 "fr": "Trois clics rapides sur le \"©\" de votre mention de copyright mènent de nouveau au formulaire de connexion au lieu d'ouvrir la page copyright",
                 "es": "Tres clics rápidos en el \"©\" de su aviso de copyright vuelven a llevarle al formulario de inicio de sesión en lugar de abrir la página de copyright"

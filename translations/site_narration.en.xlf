@@ -402,6 +402,54 @@
                 <source>narration.guided_step_trash_restore</source>
                 <target>Put the page back. It comes back unpublished: you decide when it shows on the site again.</target>
             </trans-unit>
+            <trans-unit id="4d7k6Ej">
+                <source>narration.guided_step_tutorials_page_blocks</source>
+                <target>Add a block: the films all fit in a single one.</target>
+            </trans-unit>
+            <trans-unit id="XRH6U0b">
+                <source>narration.guided_step_tutorials_page_kind</source>
+                <target>Choose the collection kind, which shows a list as cards.</target>
+            </trans-unit>
+            <trans-unit id="QL6NuYD">
+                <source>narration.guided_step_tutorials_page_new</source>
+                <target>Create a new page to hold the films.</target>
+            </trans-unit>
+            <trans-unit id="jttSJi.">
+                <source>narration.guided_step_tutorials_page_open</source>
+                <target>Open the pages. The films will show on an ordinary page, whose address and title stay yours.</target>
+            </trans-unit>
+            <trans-unit id="I2DlYCC">
+                <source>narration.guided_step_tutorials_page_publish</source>
+                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview.</target>
+            </trans-unit>
+            <trans-unit id="JHaHi5w">
+                <source>narration.guided_step_tutorials_page_reopen</source>
+                <target>Reopen it: blocks are added once the page is saved.</target>
+            </trans-unit>
+            <trans-unit id="NQeEYlG">
+                <source>narration.guided_step_tutorials_page_report</source>
+                <target>Finally, for visitors to report a step or a film, a page of the site must hold the contact form.</target>
+            </trans-unit>
+            <trans-unit id="GJkppbu">
+                <source>narration.guided_step_tutorials_page_save</source>
+                <target>Save.</target>
+            </trans-unit>
+            <trans-unit id="aSXxVGN">
+                <source>narration.guided_step_tutorials_page_save_again</source>
+                <target>Save again.</target>
+            </trans-unit>
+            <trans-unit id="GKOraYc">
+                <source>narration.guided_step_tutorials_page_source</source>
+                <target>In its settings, choose the Tutorials source: each film becomes a card, opening it with its steps.</target>
+            </trans-unit>
+            <trans-unit id="uA4bBds">
+                <source>narration.guided_step_tutorials_page_title</source>
+                <target>Give it a title, “Tutorials” for instance: its address follows from it.</target>
+            </trans-unit>
+            <trans-unit id="DSKy2Wx">
+                <source>narration.guided_step_tutorials_page_view</source>
+                <target>Check on the site that the films show.</target>
+            </trans-unit>
             <trans-unit id="SVUFTiL">
                 <source>narration.menus</source>
                 <target>"Menus" holds one menu per location: navigation bar, footer, e-mail header and e-mail footer. Each location exists only once.</target>

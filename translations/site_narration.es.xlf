@@ -402,6 +402,54 @@
                 <source>narration.guided_step_trash_restore</source>
                 <target>Vuelva a poner la página en su sitio. Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio.</target>
             </trans-unit>
+            <trans-unit id="4d7k6Ej">
+                <source>narration.guided_step_tutorials_page_blocks</source>
+                <target>Añada un bloque: todos los vídeos caben en uno solo.</target>
+            </trans-unit>
+            <trans-unit id="XRH6U0b">
+                <source>narration.guided_step_tutorials_page_kind</source>
+                <target>Elija el tipo collection, que muestra una lista en forma de tarjetas.</target>
+            </trans-unit>
+            <trans-unit id="QL6NuYD">
+                <source>narration.guided_step_tutorials_page_new</source>
+                <target>Cree una página nueva para acoger los vídeos.</target>
+            </trans-unit>
+            <trans-unit id="jttSJi.">
+                <source>narration.guided_step_tutorials_page_open</source>
+                <target>Abra las páginas. Los vídeos se mostrarán en una página normal, cuya dirección y título siguen siendo suyos.</target>
+            </trans-unit>
+            <trans-unit id="I2DlYCC">
+                <source>narration.guided_step_tutorials_page_publish</source>
+                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa.</target>
+            </trans-unit>
+            <trans-unit id="JHaHi5w">
+                <source>narration.guided_step_tutorials_page_reopen</source>
+                <target>Vuelva a abrirla: los bloques se añaden una vez guardada la página.</target>
+            </trans-unit>
+            <trans-unit id="NQeEYlG">
+                <source>narration.guided_step_tutorials_page_report</source>
+                <target>Por último, para que los visitantes puedan señalar un paso o un vídeo, una página del sitio debe contener el formulario de contacto.</target>
+            </trans-unit>
+            <trans-unit id="GJkppbu">
+                <source>narration.guided_step_tutorials_page_save</source>
+                <target>Guarde.</target>
+            </trans-unit>
+            <trans-unit id="aSXxVGN">
+                <source>narration.guided_step_tutorials_page_save_again</source>
+                <target>Guarde de nuevo.</target>
+            </trans-unit>
+            <trans-unit id="GKOraYc">
+                <source>narration.guided_step_tutorials_page_source</source>
+                <target>En sus ajustes, elija la fuente Tutoriales: cada vídeo se convierte en una tarjeta que lo abre con sus pasos.</target>
+            </trans-unit>
+            <trans-unit id="uA4bBds">
+                <source>narration.guided_step_tutorials_page_title</source>
+                <target>Dele un título, «Tutoriales» por ejemplo: su dirección se deriva de él.</target>
+            </trans-unit>
+            <trans-unit id="DSKy2Wx">
+                <source>narration.guided_step_tutorials_page_view</source>
+                <target>Compruebe en el sitio que los vídeos se muestran.</target>
+            </trans-unit>
             <trans-unit id="SVUFTiL">
                 <source>narration.menus</source>
                 <target>«Menús» tiene un menú por ubicación: barra de navegación, pie de página, encabezado y pie de los correos. Cada ubicación existe una sola vez.</target>

@@ -111,8 +111,20 @@ class PageRepository extends ServiceEntityRepository
         return $page;
     }
 
-    // Find the first published page carrying a "form" Block pointing at the given Form name (e.g. "register"/"reset_password_request", picked by name in the admin same as "contact") - used to link a generic/bare route's own cross-references (login form's "forgot password"/"create account") to the real, translated-slug Page instead. Block::$data is JSON, so matching on its "name" key is done in PHP after narrowing to "form"-kind blocks (few per site)
+    // Find the first published page carrying a "form" Block pointing at the given Form name (e.g. "register"/"reset_password_request", picked by name in the admin same as "contact") - used to link a generic/bare route's own cross-references (login form's "forgot password"/"create account") to the real, translated-slug Page instead
     public function findOneByFormBlockName(string $formName): ?Page
+    {
+        return $this->findOneByBlockData('form', 'name', $formName);
+    }
+
+    // Find the first published page carrying a "collection" Block drawing the given source (e.g. "site.collection.tutorials") - what a route knowing only an item links it with, the page being the site's own choice
+    public function findOneByCollectionSource(string $source): ?Page
+    {
+        return $this->findOneByBlockData('collection', 'source', $source);
+    }
+
+    // Block::$data is JSON, so matching on one of its keys is done in PHP after narrowing to that kind's blocks (few per site)
+    private function findOneByBlockData(string $kind, string $key, string $value): ?Page
     {
         $pages = $this->createQueryBuilder('p')
             ->select('p, b')
@@ -120,7 +132,7 @@ class PageRepository extends ServiceEntityRepository
             ->andWhere('b.kind = :kind')
             ->andWhere('p.isPublished = :published')
             ->andWhere('p.isDeleted = :deleted')
-            ->setParameter('kind', 'form')
+            ->setParameter('kind', $kind)
             ->setParameter('published', true)
             ->setParameter('deleted', false)
             ->getQuery()
@@ -129,7 +141,7 @@ class PageRepository extends ServiceEntityRepository
 
         foreach ($pages as $page) {
             foreach ($page->getBlocks() as $block) {
-                if ('form' === $block->getKind() && $formName === ($block->getData()['name'] ?? null)) {
+                if ($kind === $block->getKind() && $value === ($block->getData()[$key] ?? null)) {
                     return $page;
                 }
             }

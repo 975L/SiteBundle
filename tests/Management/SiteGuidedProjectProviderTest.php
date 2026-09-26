@@ -55,15 +55,15 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
-    public function testGetGuidedProjectsReturnsThirteenProjectsContinuingConfigBundlesOrderSequence(): void
+    public function testGetGuidedProjectsReturnsFourteenProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['site-collection', 'site-collection-translation', 'site-page-creation', 'site-block', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
+            ['site-collection', 'site-collection-translation', 'site-page-creation', 'site-block', 'site-tutorials-page', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([2010, 2015, 2020, 2025, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
+        $this->assertSame([2010, 2015, 2020, 2025, 2027, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
@@ -94,6 +94,7 @@ class SiteGuidedProjectProviderTest extends TestCase
             'site-collection-translation' => 'ROLE_EDITOR',
             'site-page-creation' => 'ROLE_EDITOR',
             'site-block' => 'ROLE_EDITOR',
+            'site-tutorials-page' => 'ROLE_EDITOR',
             'site-page-seo' => 'ROLE_EDITOR',
             'site-page-translation' => 'ROLE_EDITOR',
             'site-page-health' => 'ROLE_EDITOR',
@@ -150,7 +151,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['CollectionCrudController', 'CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
+            ['CollectionCrudController', 'CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers)
         );
     }

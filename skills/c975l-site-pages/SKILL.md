@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -10,7 +10,7 @@ description: "Use this skill when working with pages or collections in a Symfony
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `templates/components/Page/Blocks.html.twig`, `config/services.yaml`
+`src/Entity/Page.php`, `src/Entity/CollectionGroup.php`, `src/Entity/CollectionItem.php`, `src/Controller/PageController.php`, `src/Controller/Management/`, `src/Service/CollectionItemSourceProvider.php`, `src/Service/TutorialCatalog.php`, `src/Service/TutorialCollectionSourceProvider.php`, `src/Controller/TutorialController.php`, `src/Service/CollectionItemTranslator.php`, `src/Service/PagePublicUrlResolver.php`, `src/Service/PageTranslator.php`, `src/Twig/PageExtension.php`, `src/Twig/PageTranslationExtension.php`, `src/Twig/CollectionItemContext.php`, `src/Form/Block/`, `templates/blocks/`, `templates/pages/`, `templates/components/Page/Blocks.html.twig`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-menus`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system itself, the media library and the legal models are in `c975l/core-bundle`.
 
@@ -204,6 +204,23 @@ resolving it renders its blocks and their internal links, read in the language o
 turns away or a language it redirects from. `PageController::preview()` deliberately
 skips the gate, a preview being the screen for a page the public gate turns away, and caches nothing.
 
+### Tutorial films
+
+`TutorialCollectionSourceProvider` adds one more source, `site.collection.tutorials`: the films of the
+guided projects, read by `TutorialCatalog` from `public/medias/films/<locale>/films.json` (one entry per
+guided project slug: `version`, `narrated`, `starts`, optional `shotAt`) beside each film's `.webm`, `.vtt`
+and `.jpg`. An entry without `version` is ignored; a locale with no film of its own falls back film by
+film to the site's default locale. The page showing them is an ordinary page holding a `collection` block
+on that source, each card drawn by `@c975LSite/collection/TutorialItem.html.twig` and the `tutorial`
+Stimulus controller.
+
+`TutorialController` adds two routes around that page, found through
+`PageRepository::findOneByCollectionSource()`: `site_tutorial_film` (`/tutorials/film/{slug}`, what
+`TutorialFilmUrlProvider` links a filmed guided project with from the dashboard) and
+`site_tutorial_report` (`/tutorials/{slug}/report/{step}`, the page holding the `contact` form with its
+subject prefilled, step 0 being the whole film). `SiteBackupPathProvider` declares `public/medias/films`
+to ConfigBundle's backup.
+
 ## Content zones
 
 A screen the app's own controller renders (a form, a preview, a list) takes its prose from a Page:
@@ -270,6 +287,8 @@ offered, and nothing goes out while `site-url` is empty. What was posted where i
 - **Do not add a block kind without drawing its silhouette** — the picker then shows it as a bare
   frame, which is what the picker exists to avoid.
 - **Do not cache a preview render.**
+- **Do not let a media purge walk `public/medias/films`** — no row points at the tutorial films, so a
+  purge of unreferenced files would delete them all.
 - **Do not add a locale column to `Page`, nor duplicate a page per language.** The translations live
   beside the row; the structure is edited once.
 - **Do not render a collection item detail before the gate** — a deleted or unpublished page, or a language

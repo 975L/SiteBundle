@@ -38,6 +38,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->collectionTranslationProject(),
             $this->pageCreationProject(),
             $this->blockProject(),
+            $this->tutorialsPageProject(),
             $this->pageSeoProject(),
             $this->pageTranslationProject(),
             $this->pageHealthProject(),
@@ -302,6 +303,92 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_block_view',
                     'narration' => 'narration.guided_step_block_view',
                     'highlight' => '.action-viewOnSite',
+                ],
+            ],
+        ];
+    }
+
+    // The films of the guided projects, shown on a page of the site: an ordinary page holding a collection block on the tutorials source, the contact page taking the reports (see TutorialCollectionSourceProvider)
+    private function tutorialsPageProject(): array
+    {
+        return [
+            'slug' => 'site-tutorials-page',
+            'label' => 'label.guided_project_tutorials_page',
+            'description' => 'description.guided_project_tutorials_page',
+            'translation_domain' => 'site',
+            'order' => 2027,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_tutorials_page_open',
+                    'description' => 'description.guided_step_tutorials_page_open',
+                    'narration' => 'narration.guided_step_tutorials_page_open',
+                    'url' => $this->indexUrl(PageCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_new',
+                    'description' => 'description.guided_step_tutorials_page_new',
+                    'narration' => 'narration.guided_step_tutorials_page_new',
+                    'highlight' => '.action-new',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_title',
+                    'description' => 'description.guided_step_tutorials_page_title',
+                    'narration' => 'narration.guided_step_tutorials_page_title',
+                    'highlight' => '#Page_title',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_save',
+                    'narration' => 'narration.guided_step_tutorials_page_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_reopen',
+                    'description' => 'description.guided_step_tutorials_page_reopen',
+                    'narration' => 'narration.guided_step_tutorials_page_reopen',
+                    'highlight' => '.action-edit',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_blocks',
+                    'description' => 'description.guided_step_tutorials_page_blocks',
+                    'narration' => 'narration.guided_step_tutorials_page_blocks',
+                    'highlight' => self::BLOCK_COLLECTION,
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_kind',
+                    'description' => 'description.guided_step_tutorials_page_kind',
+                    'narration' => 'narration.guided_step_tutorials_page_kind',
+                    'highlight' => '[data-kind-row]',
+                ],
+                [
+                    // The collection block's own settings, its source among them, rendered into the sub-form UiBundle's BlockType draws
+                    'label' => 'label.guided_step_tutorials_page_source',
+                    'description' => 'description.guided_step_tutorials_page_source',
+                    'narration' => 'narration.guided_step_tutorials_page_source',
+                    'highlight' => '.block-data-form',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_publish',
+                    'description' => 'description.guided_step_tutorials_page_publish',
+                    'narration' => 'narration.guided_step_tutorials_page_publish',
+                    'highlight' => '#Page_isPublished',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_save_again',
+                    'narration' => 'narration.guided_step_tutorials_page_save_again',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_tutorials_page_view',
+                    'description' => 'description.guided_step_tutorials_page_view',
+                    'narration' => 'narration.guided_step_tutorials_page_view',
+                    'highlight' => '.action-viewOnSite',
+                ],
+                [
+                    // Nothing to point at: the contact page lives among the others, and the step only says it has to exist
+                    'label' => 'label.guided_step_tutorials_page_report',
+                    'description' => 'description.guided_step_tutorials_page_report',
+                    'narration' => 'narration.guided_step_tutorials_page_report',
                 ],
             ],
         ];
