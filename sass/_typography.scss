@@ -1,12 +1,18 @@
 /* TYPOGRAPHY */
-* {
+// Body font, size and color set once and inherited, never on "*" (a color on every element keeps an icon from taking its parent's); headings below are in rem so they don't ride --font-size-body
+body {
     font-family: var(--font-family-body);
+    font-size: var(--font-size-body);
     color: var(--text);
 }
 
-// The size every text set in the body font is read at - a "text" block's paragraphs, a caption, an article, a legal page, a form. Nothing declared it until now, so the site was read at whatever the browser defaults to, and a design wanting a fuller body copy had nothing to turn. The headings below are in rem for that very reason: they must not ride this value, and neither do UiBundle's own block titles and eyebrows, all in px
-body {
-    font-size: var(--font-size-body);
+// Form controls take the browser's color rather than their parent's, unlike the font modern-normalize already passes down
+button,
+input,
+optgroup,
+select,
+textarea {
+    color: inherit;
 }
 
 h1,

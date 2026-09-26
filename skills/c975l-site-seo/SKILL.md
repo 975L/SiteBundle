@@ -176,7 +176,8 @@ Meant for the end of a deployment: every published page, every url a `SitemapPro
 with a `title` (untitled ones are left out), plus every css/js asset the home page references must answer 200, and it **exits non-zero on the first failure** so a CI job fails instead of
 leaving a broken site online. Assets are read out of the home page's rendered HTML rather than declared
 anywhere — AssetMapper's filenames are hashed, so this is what proves `asset-map:compile` and the
-stylesheet cache warmer both ran, and in the right order.
+stylesheet cache warmer both ran, and in the right order. Requests go ten at a time (`SmokeTestClient::CONCURRENCY`):
+firing every url at once exhausts a shared host's PHP workers, which then answer 503.
 
 A site in maintenance answers 503 on every url by construction, so the command checks nothing and exits
 0. It is deliberately **not** a health-check provider: that one judges quality weekly and persists rows,
@@ -219,5 +220,6 @@ worked on.
   title was translated into (`PageTranslator::translatedLocales()`); the others answer 404.
 - **Do not hand-write an `Organization`/`WebSite` graph in a template.** `site_json_ld()` builds it from
   the back-office, and a second graph on the same page states the entity twice.
+- **Do not fire every smoke-test url at once** — a shared host answers 503 past its PHP workers, failing a healthy deployment.
 - **Do not add a page-level check to the smoke test** — it must stay fast enough to run on every
   deployment.

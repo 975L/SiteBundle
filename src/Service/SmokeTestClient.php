@@ -12,11 +12,14 @@ namespace c975L\SiteBundle\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-// Fires the requests behind c975l:site:smoke-test - a "did the deployment break anything obvious" pass, so it only ever reads the status code and never analyzes content: judging a page's quality is what the HealthCheckProviderInterface implementations do, on their own schedule. Every request is fired before any status is read, letting the transport multiplex them - measured on a 21-page site, 53 urls take ~1.5s concurrently against ~10.7s serially, which is what makes checking every published page affordable inside a deployment
+// Fires the requests behind c975l:site:smoke-test - a "did the deployment break anything obvious" pass, so it only ever reads the status code and never analyzes content: judging a page's quality is what the HealthCheckProviderInterface implementations do, on their own schedule. Requests are fired by batches of CONCURRENCY before any status is read, letting the transport multiplex them - measured on a 21-page site, 53 urls take ~1.5s concurrently against ~10.7s serially, which is what makes checking every published page affordable inside a deployment
 class SmokeTestClient
 {
     // Any href/src pointing at a .css/.js file, cache-busting query string included. AssetMapper's filenames are hashed (app-EiPntxm.css) and so impossible to declare anywhere: reading them back out of the rendered HTML is the only way to check that asset-map:compile and StylesheetCacheWarmer both ran, and ran in the right order. A lightweight regex rather than a full DOM parse, same reasoning as MixedContentClient
     private const string ASSET_PATTERN = '/\b(?:href|src)\s*=\s*["\']([^"\']+\.(?:css|js)(?:\?[^"\']*)?)["\']/i';
+
+    // Requests in flight at once. All of them fired together (130 urls on bundles.975l.com) exhaust the hosting's PHP workers, and Apache then answers 503 dressed in the site's own maintenance.html - a failed smoke test on a healthy deployment. Measured on laurent.975l.com: 80 concurrent requests, 37 of them 503
+    private const int CONCURRENCY = 10;
 
     private const int TIMEOUT = 30;
 
@@ -33,6 +36,17 @@ class SmokeTestClient
 
     // [url => status code], in the order given. 0 means no answer at all (DNS, TLS, connection refused): the caller reports it like any other non-200 rather than letting one dead url abort the whole run
     public function check(array $urls): array
+    {
+        $statuses = [];
+        foreach (array_chunk($urls, self::CONCURRENCY) as $batch) {
+            $statuses += $this->checkBatch($batch);
+        }
+
+        return $statuses;
+    }
+
+    // Fires every url of the batch before reading any status, so the transport multiplexes them
+    private function checkBatch(array $urls): array
     {
         $responses = [];
         foreach ($urls as $url) {

@@ -402,13 +402,18 @@ main:has(+ footer) > :last-child {
 }
 
 /* TYPOGRAPHY */
-* {
+body {
   font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
   color: var(--text);
 }
 
-body {
-  font-size: var(--font-size-body);
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
 }
 
 h1,

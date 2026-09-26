@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.24.2
+
+The smoke test fires its requests ten at a time
+
+- `c975l:site:smoke-test` fires its requests by batches of ten, a shared host answering 503 to all at once (26/09/2026)
+- Body font and color are set on `body` rather than `*`, an icon taking its parent's color again (26/09/2026)
+- Form controls inherit their parent's text color (26/09/2026)
+
 ## v8.24.1
 
 The smoke test also checks an app's own routes, every hour

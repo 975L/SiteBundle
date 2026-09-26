@@ -46,6 +46,20 @@ class SmokeTestClientTest extends TestCase
         );
     }
 
+    public function testCheckKeepsEveryUrlInOrderAcrossBatches(): void
+    {
+        $urls = array_map(static fn (int $i): string => 'https://example.com/page-' . $i, range(1, 25));
+        $client = new SmokeTestClient(new MockHttpClient(static fn (string $method, string $url) => new MockResponse('', [
+            'http_code' => str_ends_with($url, '-17') ? 500 : 200,
+        ])));
+
+        $statuses = $client->check($urls);
+
+        $this->assertSame($urls, array_keys($statuses));
+        $this->assertSame(500, $statuses['https://example.com/page-17']);
+        $this->assertCount(24, array_filter($statuses, static fn (int $status): bool => 200 === $status));
+    }
+
     public function testCheckReturnsAnEmptyArrayWithoutUrls(): void
     {
         $client = new SmokeTestClient(new MockHttpClient([]));
