@@ -1,4 +1,5 @@
 {# Blocks are managed independently from the site header's, via the "email-header" Menu location #}
-{% for block in menu_blocks('email-header') %}
+{# An email has no visitor to show a guests/members only link to, so it leaves them out rather than send them to everyone (see MenuLink.html.twig) #}
+{% for block in menu_blocks('email-header')|filter(b => b.data.visibility|default('all') not in ['guests', 'members']) %}
     {{ render_block(block) }}
 {% endfor %}

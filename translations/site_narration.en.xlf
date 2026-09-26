@@ -270,6 +270,10 @@
                 <source>narration.guided_step_page_menu_target</source>
                 <target>Pick the target page. The link can target a page of the site, one of its anchors, or an outside address.</target>
             </trans-unit>
+            <trans-unit id="CduhpcC">
+                <source>narration.guided_step_page_menu_visibility</source>
+                <target>Choose who sees the link. By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members, for a "My account" link.</target>
+            </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>
                 <target>It is online. The original stays recoverable from the trash as long as you do not delete it permanently.</target>

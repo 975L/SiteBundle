@@ -188,6 +188,24 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_FOOTER), $highlights['site-footer']);
     }
 
+    // A link's "visibility" is chosen on the link itself, so the navbar parcours tells about it right after the target is picked
+    public function testTheMenuProjectShowsWhoSeesALinkRightAfterItsTarget(): void
+    {
+        foreach ($this->createProvider()->getGuidedProjects() as $project) {
+            if ('site-page-menu' === $project['slug']) {
+                $labels = array_column($project['steps'], 'label');
+                $target = array_search('label.guided_step_page_menu_target', $labels, true);
+
+                $this->assertIsInt($target);
+                $this->assertSame('label.guided_step_page_menu_visibility', $labels[$target + 1]);
+
+                return;
+            }
+        }
+
+        $this->fail('The "site-page-menu" project is gone.');
+    }
+
     // "style" is offered on the footer alone (see MenuCrudController::configureFields()), so only the footer parcours may point at it
     public function testOnlyTheFooterProjectHighlightsTheFooterOnlyStyleField(): void
     {

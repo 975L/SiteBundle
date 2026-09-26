@@ -270,6 +270,10 @@
                 <source>narration.guided_step_page_menu_target</source>
                 <target>Elija la página de destino. El enlace puede apuntar a una página del sitio, a uno de sus anclajes o a una dirección externa.</target>
             </trans-unit>
+            <trans-unit id="CduhpcC">
+                <source>narration.guided_step_page_menu_visibility</source>
+                <target>Elija quién ve el enlace. Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada, para un enlace «Mi cuenta».</target>
+            </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>
                 <target>Ya está publicada. El original sigue siendo recuperable desde la papelera mientras no lo elimine definitivamente.</target>

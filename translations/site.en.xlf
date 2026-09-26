@@ -418,6 +418,10 @@
                 <source>description.guided_step_page_menu_target</source>
                 <target>The link can target a page of the site, one of its anchors, or an outside address.</target>
             </trans-unit>
+            <trans-unit id="LgdEHnw">
+                <source>description.guided_step_page_menu_visibility</source>
+                <target>By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members, for a "My account" link.</target>
+            </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
                 <target>The original stays recoverable from the trash as long as you don't delete it permanently.</target>
@@ -577,6 +581,10 @@
             <trans-unit id="Almlvtp">
                 <source>help.menu_link_strong</source>
                 <target>Bolds the label, nothing else - a lighter emphasis than a button, and combinable with it</target>
+            </trans-unit>
+            <trans-unit id="IH.Mxo0">
+                <source>help.menu_link_visibility</source>
+                <target>Hides the link depending on whether the visitor is signed in - e.g. "Sign in" for guests, "My account" for members</target>
             </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
@@ -1130,6 +1138,10 @@
                 <source>label.guided_step_page_menu_target</source>
                 <target>Pick the target page</target>
             </trans-unit>
+            <trans-unit id="He1UgIP">
+                <source>label.guided_step_page_menu_visibility</source>
+                <target>Choose who sees the link</target>
+            </trans-unit>
             <trans-unit id="qPXN0Se">
                 <source>label.guided_step_page_revision_done</source>
                 <target>It is online</target>
@@ -1549,6 +1561,22 @@
             <trans-unit id="6DTbRQd">
                 <source>label.menu_link_strong</source>
                 <target>Bold the label</target>
+            </trans-unit>
+            <trans-unit id="ARpRDJc">
+                <source>label.menu_link_visibility</source>
+                <target>Visible to</target>
+            </trans-unit>
+            <trans-unit id="uIhYy17">
+                <source>label.menu_link_visibility_all</source>
+                <target>Everyone</target>
+            </trans-unit>
+            <trans-unit id="feUMdgC">
+                <source>label.menu_link_visibility_guests</source>
+                <target>Signed-out visitors</target>
+            </trans-unit>
+            <trans-unit id="wf63Z8J">
+                <source>label.menu_link_visibility_members</source>
+                <target>Signed-in members</target>
             </trans-unit>
             <trans-unit id="Bb8KPHq">
                 <source>label.menu_style</source>

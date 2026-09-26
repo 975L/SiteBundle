@@ -418,6 +418,10 @@
                 <source>description.guided_step_page_menu_target</source>
                 <target>El enlace puede apuntar a una página del sitio, a uno de sus anclajes o a una dirección externa.</target>
             </trans-unit>
+            <trans-unit id="LgdEHnw">
+                <source>description.guided_step_page_menu_visibility</source>
+                <target>Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada, para un enlace «Mi cuenta».</target>
+            </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
                 <target>El original sigue siendo recuperable desde la papelera mientras no lo elimine definitivamente.</target>
@@ -577,6 +581,10 @@
             <trans-unit id="Almlvtp">
                 <source>help.menu_link_strong</source>
                 <target>Pone la etiqueta en negrita, sin más cambios - realce más ligero que un botón, y combinable con él</target>
+            </trans-unit>
+            <trans-unit id="IH.Mxo0">
+                <source>help.menu_link_visibility</source>
+                <target>Oculta el enlace según el visitante haya iniciado sesión o no - ej. "Iniciar sesión" para los visitantes, "Mi cuenta" para los miembros</target>
             </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
@@ -1130,6 +1138,10 @@
                 <source>label.guided_step_page_menu_target</source>
                 <target>Elegir la página de destino</target>
             </trans-unit>
+            <trans-unit id="He1UgIP">
+                <source>label.guided_step_page_menu_visibility</source>
+                <target>Elegir quién ve el enlace</target>
+            </trans-unit>
             <trans-unit id="qPXN0Se">
                 <source>label.guided_step_page_revision_done</source>
                 <target>Ya está en línea</target>
@@ -1549,6 +1561,22 @@
             <trans-unit id="6DTbRQd">
                 <source>label.menu_link_strong</source>
                 <target>Poner la etiqueta en negrita</target>
+            </trans-unit>
+            <trans-unit id="ARpRDJc">
+                <source>label.menu_link_visibility</source>
+                <target>Visible para</target>
+            </trans-unit>
+            <trans-unit id="uIhYy17">
+                <source>label.menu_link_visibility_all</source>
+                <target>Todos</target>
+            </trans-unit>
+            <trans-unit id="feUMdgC">
+                <source>label.menu_link_visibility_guests</source>
+                <target>Visitantes sin sesión iniciada</target>
+            </trans-unit>
+            <trans-unit id="wf63Z8J">
+                <source>label.menu_link_visibility_members</source>
+                <target>Miembros con sesión iniciada</target>
             </trans-unit>
             <trans-unit id="Bb8KPHq">
                 <source>label.menu_style</source>

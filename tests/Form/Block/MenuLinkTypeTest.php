@@ -243,4 +243,40 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertTrue($form->has('strong'));
         $this->assertFalse($form->get('strong')->getConfig()->getRequired());
     }
+
+    // The "visibility" field (see MenuLink.html.twig / _menu.scss's .menu-item--guests/--members) offers the three audiences, "all" first
+    public function testVisibilityFieldOffersTheThreeAudiences(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertTrue($form->has('visibility'));
+        $this->assertSame(
+            ['label.menu_link_visibility_all' => 'all', 'label.menu_link_visibility_guests' => 'guests', 'label.menu_link_visibility_members' => 'members'],
+            $form->get('visibility')->getConfig()->getOption('choices')
+        );
+    }
+
+    // A link saved before the option existed, or submitted without it, keeps being shown to everyone
+    public function testVisibilityDefaultsToEveryone(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+        $form->submit(['target' => null]);
+
+        $this->assertSame('all', $form->get('visibility')->getData());
+    }
+
+    // The value picked is stored as is in the block data, read back by the template
+    public function testVisibilityIsStoredInTheBlockData(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+        $form->submit(['visibility' => 'guests']);
+
+        $this->assertSame('guests', $form->getData()['visibility']);
+    }
 }

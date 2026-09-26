@@ -3,6 +3,11 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "A menu link can now be shown to everyone, to signed-out visitors only (a \"Sign in\" link) or to signed-in members only (a \"My account\" link)",
+                "fr": "Un lien de menu peut désormais s'afficher pour tout le monde, pour les visiteurs non connectés seulement (un lien \"Connexion\") ou pour les membres connectés seulement (un lien \"Mon compte\")",
+                "es": "Un enlace de menú puede mostrarse ahora a todos, solo a los visitantes sin sesión iniciada (un enlace \"Iniciar sesión\") o solo a los miembros con sesión iniciada (un enlace \"Mi cuenta\")"
+            },
+            {
                 "en": "The texts around your site's own screens (a form, a preview, a list) can now be written in the back office like any page: each zone reads an unpublished page, and a link on the screen offers to create it when it doesn't exist yet",
                 "fr": "Les textes autour des écrans propres à votre site (un formulaire, un aperçu, une liste) se rédigent désormais dans le back-office comme n'importe quelle page : chaque zone lit une page non publiée, et un lien sur l'écran propose de la créer tant qu'elle n'existe pas",
                 "es": "Los textos alrededor de las pantallas propias de su sitio (un formulario, una vista previa, una lista) se redactan ahora en el back-office como cualquier página: cada zona lee una página no publicada, y un enlace en la pantalla propone crearla mientras no exista"

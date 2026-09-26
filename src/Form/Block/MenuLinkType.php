@@ -21,6 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 // A single flat, alphabetically-sorted "target" select (pages and routes mixed) - decoded at render time by MenuExtension::getMenuLinkUrl()/ getMenuLinkLabel(), using the "page:ID" / "route:NAME" convention
 class MenuLinkType extends AbstractType
 {
+    // Who sees the link, read by MenuLink.html.twig as a marker class the stylesheet hides from the other half (see _menu.scss) - "all" first, so a link saved before the option existed lands on it
+    public const array VISIBILITIES = ['all', 'guests', 'members'];
+
     public function __construct(private readonly LinkTargetChoices $linkTargetChoices)
     {
     }
@@ -54,6 +57,17 @@ class MenuLinkType extends AbstractType
                 'label' => 'label.menu_link_strong',
                 'required' => false,
                 'help' => 'help.menu_link_strong',
+            ])
+            // A "Sign in" link for guests only, an account link for members only - hidden by a class on <body>, so the menu's cached html stays one and the same for everyone
+            ->add('visibility', ChoiceType::class, [
+                'label' => 'label.menu_link_visibility',
+                'required' => true,
+                'choices' => array_combine(
+                    array_map(static fn (string $visibility): string => 'label.menu_link_visibility_' . $visibility, self::VISIBILITIES),
+                    self::VISIBILITIES
+                ),
+                'empty_data' => 'all',
+                'help' => 'help.menu_link_visibility',
             ]);
     }
 

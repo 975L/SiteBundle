@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.24.0
+
+A menu link can be shown to signed-out visitors only, or to signed-in ones only
+
+- A `menu_link` has a `visibility` option: everyone (default), guests only or members only (26/09/2026)
+- The layout adds `is-guest` or `is-member` to the body classes, from the visitor's security state (26/09/2026)
+- An email's header and footer leave a guests or members only link out (26/09/2026)
+- The "site-page-menu" guided project has a step on who sees the link (26/09/2026)
+
 ## v8.23.0
 
 A screen of the app's own shows the blocks of a page edited in the back office

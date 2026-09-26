@@ -51,6 +51,10 @@ stops resolving: no dangling link, ever.
 
 Optional fields: `label` (always overrides the derived one), `primary` (renders it as a filled button,
 meant for a single stand-out item), `strong` (bolds the label alone). The two emphases stack.
+`visibility`: `all` (default), `guests` or `members` — never decided at render, the menu's html being
+cached for everyone: the link carries `.menu-item--guests`/`--members` and the `is-guest`/`is-member`
+class `layout.html.twig` puts on `<body>` hides it (`display: none`). A layout not extending
+`@c975LSite/layout.html.twig` must write that body class itself; an email leaves such a link out.
 
 ### Anchors into a page
 

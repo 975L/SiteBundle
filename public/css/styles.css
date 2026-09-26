@@ -823,6 +823,11 @@ img.menu-logo__on-dark {
   font-weight: bold;
 }
 
+body.is-guest .menu-item--members,
+body.is-member .menu-item--guests {
+  display: none;
+}
+
 .menu-label {
   font-family: var(--font-family-title);
   font-size: 1rem;

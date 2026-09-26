@@ -270,6 +270,10 @@
                 <source>narration.guided_step_page_menu_target</source>
                 <target>Choisissez la page visée. Le lien peut viser une page du site, une de ses ancres, ou une adresse extérieure.</target>
             </trans-unit>
+            <trans-unit id="CduhpcC">
+                <source>narration.guided_step_page_menu_visibility</source>
+                <target>Choisissez qui voit le lien. Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés, pour un lien « Mon compte ».</target>
+            </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>
                 <target>C'est en ligne. L'originale reste récupérable depuis la corbeille tant que vous ne la supprimez pas définitivement.</target>

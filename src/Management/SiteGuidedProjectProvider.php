@@ -707,6 +707,11 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'narration' => 'narration.guided_step_page_menu_target',
                 ],
                 [
+                    'label' => 'label.guided_step_page_menu_visibility',
+                    'description' => 'description.guided_step_page_menu_visibility',
+                    'narration' => 'narration.guided_step_page_menu_visibility',
+                ],
+                [
                     'label' => 'label.guided_step_page_menu_save',
                     'narration' => 'narration.guided_step_page_menu_save',
                     'highlight' => '.action-saveAndReturn',

@@ -295,6 +295,12 @@ img.menu-logo__on-dark {
     font-weight: bold;
 }
 
+// A link meant for one half of the visitors only (see MenuLinkType's "visibility"), hidden through the class the layout sets on <body> from the security state: the menu's html is cached once for everyone, so the choice cannot be made while rendering it. "display: none" takes it away from screen readers too. "body" raises the selector above ".menu .menu-item", which the mobile dropdown redeclares further down
+body.is-guest .menu-item--members,
+body.is-member .menu-item--guests {
+    display: none;
+}
+
 // White stated, not read from --white which dark mode swaps with --black: the mobile dropdown keeps its --primary background in both modes - see the desktop override below, where the navbar's own light background needs dark text instead
 .menu-label {
     font-family: var(--font-family-title);
