@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.21.0
+
+Three clicks on the footer lead to the login form and back to the page
+
+- Three quick clicks on the footer, off its links, lead to the login form and back to the page (26/09/2026)
+- The `edit-shortcut:open` event is cancelable, so a site can redirect it elsewhere (26/09/2026)
+
 ## v8.20.1
 
 Terms of sales are imported whenever PaymentBundle is installed

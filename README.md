@@ -108,7 +108,7 @@ php bin/console assets:install --symlink
 
 ### Register Stimulus controllers
 
-This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, languages, menu-active) and back-office ones in `controllers-admin.js` (sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
+This bundle ships Stimulus controllers, front-end ones in `controllers.js` (basic, edit-shortcut, languages, menu-active) and back-office ones in `controllers-admin.js` (sitemap-fields, publication-switch). They are exposed via AssetMapper under the `@c975l/site-bundle` namespace. Identifiers are kebab-case on purpose: Stimulus derives its `data-<identifier>-*-value` attribute names from the identifier as registered, so a camelCase one silently breaks every binding.
 
 Its `importmap.php` entry is added automatically the first time you `composer update` after installing SiteBundle — see [Contributing importmap entries from other bundles](https://github.com/975L/ConfigBundle#contributing-importmap-entries-from-other-bundles) in ConfigBundle's README, nothing to add by hand.
 
@@ -310,6 +310,10 @@ Managed via `MenuCrudController` (drag-and-drop reordering, same mechanism as [B
 A block disappears from the rendered menu automatically (no dangling link) if its `menu_link` targets a page that's later unpublished/deleted, or a route whose contributing bundle is removed.
 
 Hovering a **footer** item as a `site-role-editor` user shows UiBundle's "Edit" button on it, the same one a `Page`'s blocks carry (see its README's `BlockEditUrlProviderInterface` section) — it opens the footer menu's edit screen with that very item's row already unfolded (`MenuBlockEditUrlProvider`). The `navbar` renders the same blocks but is deliberately left out: it is hovered on every single visit just to navigate, and a button popping over each of its links would be in the way rather than of help.
+
+### Footer: reaching the edit buttons
+
+Three quick clicks or taps on the footer, off its links, lead a visitor who is not signed in to `/login?_target_path=<the page being read>` (`edit-shortcut` controller). Once signed in, by form or OAuth, they are back on that page, where the edit buttons their role allows are shown. Nothing is written in the page but the controller's name, and `/login` is public anyway: the protection stays the firewall's `login_throttling`. The controller dispatches a cancelable `edit-shortcut:open` event carrying the url, so a site can send it elsewhere.
 
 ### Footer: display style
 
