@@ -19,8 +19,8 @@ class SiteMaintenanceTaskProvider implements MaintenanceTaskProviderInterface
     public function getMaintenanceTasks(): array
     {
         return [
-            // Smoke test, nightly and late enough for the backups and the sitemaps to be done. It stays a deployment gate first (see SmokeTestCommand), but the nightly run costs nothing and answers what no health check does: "is a published page down right now". A non-zero exit code sends the RunCommandMessage to the failure transport, so a broken page surfaces as a back-office alert when a failure transport is configured, rather than as a line in a log nobody reads
-            new MaintenanceTask('# #(5-7) * * *', 'c975l:site:smoke-test'),
+            // Smoke test, hourly: a page broken hours after a deployment (a cache pool emptied under /tutoriels) only mailed once a visitor hit it. A non-zero exit code fails the RunCommandMessage, which Messenger logs as critical - hence Monolog's mail - before sending it to the failure transport
+            new MaintenanceTask('# * * * *', 'c975l:site:smoke-test'),
         ];
     }
 }

@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Command;
 
+use c975L\ConfigBundle\Management\SitemapProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Command\SmokeTestCommand;
 use c975L\SiteBundle\Entity\Page;
@@ -170,6 +171,26 @@ class SmokeTestCommandTest extends TestCase
         $this->assertStringContainsString('https://example.com/assets/app.js', $display);
     }
 
+    public function testItChecksTheTitledUrlsOfTheSitemapProvidersOnce(): void
+    {
+        $provider = $this->createStub(SitemapProviderInterface::class);
+        $provider->method('getUrls')->willReturn([
+            ['loc' => 'https://example.com/tutoriels', 'title' => 'Tutoriels'],
+            ['loc' => 'https://example.com/', 'title' => 'Accueil'],
+            ['loc' => 'https://example.com/medias/photo.webp'],
+        ]);
+
+        $smokeTestClient = $this->createMock(SmokeTestClient::class);
+        $smokeTestClient->expects($this->once())
+            ->method('check')
+            ->with(['https://example.com/', 'https://example.com/tutoriels'])
+            ->willReturn(['https://example.com/' => 200, 'https://example.com/tutoriels' => 200]);
+
+        $tester = new CommandTester($this->command(['https://example.com/'], $smokeTestClient, sitemapProviders: [$provider]));
+
+        $this->assertSame(Command::SUCCESS, $tester->execute(['--pages-only' => true]));
+    }
+
     private function tester(array $pageUrls, array $assets, array $checkReturns): CommandTester
     {
         $smokeTestClient = $this->createStub(SmokeTestClient::class);
@@ -180,7 +201,7 @@ class SmokeTestCommandTest extends TestCase
     }
 
     // One published Page per given url, the resolver stub handing them back in that same order (the command resolves each page exactly once, in findAllOrdered()'s order)
-    private function command(array $pageUrls, SmokeTestClient $smokeTestClient, ?ConfigServiceInterface $configService = null): SmokeTestCommand
+    private function command(array $pageUrls, SmokeTestClient $smokeTestClient, ?ConfigServiceInterface $configService = null, array $sitemapProviders = []): SmokeTestCommand
     {
         $pageRepository = $this->createStub(PageRepository::class);
         $pageRepository->method('findAllOrdered')->willReturn(array_map(static fn (): Page => new Page(), $pageUrls));
@@ -195,6 +216,6 @@ class SmokeTestCommandTest extends TestCase
             $configService->method('get')->willReturn('https://example.com');
         }
 
-        return new SmokeTestCommand($pageRepository, $pagePublicUrlResolver, $smokeTestClient, $configService);
+        return new SmokeTestCommand($pageRepository, $pagePublicUrlResolver, $smokeTestClient, $configService, $sitemapProviders);
     }
 }

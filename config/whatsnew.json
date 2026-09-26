@@ -3,6 +3,11 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "Your site now checks every hour that its pages still open, and emails you as soon as one breaks",
+                "fr": "Votre site vérifie désormais toutes les heures que ses pages s'ouvrent toujours, et vous prévient par e-mail dès qu'une page ne répond plus",
+                "es": "Su sitio comprueba ahora cada hora que sus páginas siguen abriéndose, y le avisa por correo en cuanto una deja de responder"
+            },
+            {
                 "en": "A menu link can now be shown to everyone, to signed-out visitors only (a \"Sign in\" link) or to signed-in members only (a \"My account\" link)",
                 "fr": "Un lien de menu peut désormais s'afficher pour tout le monde, pour les visiteurs non connectés seulement (un lien \"Connexion\") ou pour les membres connectés seulement (un lien \"Mon compte\")",
                 "es": "Un enlace de menú puede mostrarse ahora a todos, solo a los visitantes sin sesión iniciada (un enlace \"Iniciar sesión\") o solo a los miembros con sesión iniciada (un enlace \"Mi cuenta\")"

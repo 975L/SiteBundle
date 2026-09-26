@@ -172,15 +172,16 @@ only automated signal here, and it reports one score rather than per-criterion d
 php bin/console c975l:site:smoke-test [-v] [--pages-only]
 ```
 
-Meant for the end of a deployment: every published page plus every css/js asset the home page
-references must answer 200, and it **exits non-zero on the first failure** so a CI job fails instead of
+Meant for the end of a deployment: every published page, every url a `SitemapProviderInterface` declares
+with a `title` (untitled ones are left out), plus every css/js asset the home page references must answer 200, and it **exits non-zero on the first failure** so a CI job fails instead of
 leaving a broken site online. Assets are read out of the home page's rendered HTML rather than declared
 anywhere — AssetMapper's filenames are hashed, so this is what proves `asset-map:compile` and the
 stylesheet cache warmer both ran, and in the right order.
 
 A site in maintenance answers 503 on every url by construction, so the command checks nothing and exits
 0. It is deliberately **not** a health-check provider: that one judges quality weekly and persists rows,
-this one answers "is it broken right now" and has to be able to fail a pipeline.
+this one answers "is it broken right now" and has to be able to fail a pipeline. `SiteMaintenanceTaskProvider` also
+schedules it hourly.
 
 ## Dev profile
 

@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Command;
 
+use c975L\ConfigBundle\Management\SitemapProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
@@ -20,26 +21,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
+// Checks every published page, titled sitemap-provider url and home css/js asset answers 200, exiting non-zero on the first failure so a deployment pipeline fails; deliberately not a health check
 /**
- * Checks that every published page, and every css/js asset the home page references, answers 200.
- * Meant to run at the end of a deployment: it returns a non-zero exit code on the first non-200,
- * so a CI job fails immediately instead of leaving a broken site online unnoticed.
- *
- * Deliberately NOT a HealthCheckProviderInterface implementation: the health check judges a live
- * site's quality on a weekly schedule and persists rows for a dashboard, this answers "is it
- * broken, right now" and must be able to fail a pipeline.
- *
- * Usage:
- *   php bin/console c975l:site:smoke-test
- *   php bin/console c975l:site:smoke-test --pages-only
- *
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2026 975L <contact@975l.com>
  */
 #[AsCommand(
     name: 'c975l:site:smoke-test',
-    description: 'Checks that every published page and every css/js asset it references answers 200 - meant to run right after a deployment'
+    description: 'Checks that every published page, titled sitemap url and css/js asset it references answers 200 - meant to run right after a deployment'
 )]
 class SmokeTestCommand extends Command
 {
@@ -48,6 +39,9 @@ class SmokeTestCommand extends Command
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly SmokeTestClient $smokeTestClient,
         private readonly ConfigServiceInterface $configService,
+        /** @var iterable<SitemapProviderInterface> */
+        #[AutowireIterator('c975l.sitemap_provider')]
+        private readonly iterable $sitemapProviders = [],
     ) {
         parent::__construct();
     }
@@ -83,6 +77,16 @@ class SmokeTestCommand extends Command
                 $pageUrls[] = $url;
             }
         }
+
+        // The titled urls the sitemap providers declare, which are the app's own routes (/tutoriels) no Page row stands for: untitled ones are left out, a gallery declaring every photo would turn a smoke test into a crawl
+        foreach ($this->sitemapProviders as $provider) {
+            foreach ($provider->getUrls() as $url) {
+                if (isset($url['title'])) {
+                    $pageUrls[] = $url['loc'];
+                }
+            }
+        }
+        $pageUrls = array_values(array_unique($pageUrls));
 
         if (!$pageUrls) {
             $io->warning('Aucune page publiée à tester.');

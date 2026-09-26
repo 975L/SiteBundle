@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.24.1
+
+The smoke test also checks an app's own routes, every hour
+
+- `c975l:site:smoke-test` also checks the titled urls the sitemap providers declare, such as an app's own routes (26/09/2026)
+- The smoke test runs hourly instead of nightly (26/09/2026)
+
 ## v8.24.0
 
 A menu link can be shown to signed-out visitors only, or to signed-in ones only

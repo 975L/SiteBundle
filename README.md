@@ -554,7 +554,7 @@ The page's own url is handed to the edit screen as `page_public_path` (published
 php bin/console c975l:site:smoke-test
 ```
 
-Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
+Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus every url a sitemap provider declares with a `title` (an app's own routes no Page row stands for; untitled ones such as gallery photos are left out), plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
 
 A site left in maintenance (`site-maintenance`) answers 503 on every public url by construction, so the command checks nothing and exits 0 rather than reporting a deployment that went fine as broken — run it once the site is back online.
 
@@ -562,7 +562,7 @@ Assets are read out of the home page's rendered HTML rather than declared anywhe
 
 Deliberately **not** a `HealthCheckProviderInterface` implementation (see [Health check](#health-check) below): that one judges a live site's quality on a weekly schedule and persists rows for a dashboard, this one answers "is it broken, right now" and has to be able to fail a pipeline.
 
-The bundle also runs it every night, in a 5am-7am window, through `SiteMaintenanceTaskProvider` — see [Scheduler](#scheduler).
+The bundle also runs it every hour through `SiteMaintenanceTaskProvider`, a failure being logged as critical and so mailed — see [Scheduler](#scheduler).
 
 ---
 
@@ -917,7 +917,7 @@ Link the animations stylesheet to use scroll-triggered CSS animations:
 | `php bin/console c975l:site:create` | Interactive wizard that bootstraps a new site (scaffold, admin user, config, default pages); runs once per repo |
 | `php bin/console c975l:scaffold:install` | Re-runnable: (re)installs every installed c975L bundle's scaffold files into the project (`--path=` to restrict it, `--dry-run` to only list what would change) |
 | `php bin/console c975l:site:pages:import-defaults` | Creates default pages (home, legal notice, privacy policy, CGU, CGV, cookies) if they do not already exist |
-| `php bin/console c975l:site:smoke-test` | Checks every published page, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets, a site in maintenance is skipped entirely) |
+| `php bin/console c975l:site:smoke-test` | Checks every published page, the titled urls of the sitemap providers, and the css/js assets the home page references, answer 200 - non-zero exit code on the first failure (`--pages-only` skips the assets, a site in maintenance is skipped entirely) |
 | `php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>` | Imports a legacy JSON array of items into [`CollectionItem`](#collections) rows for a given collection (`--images-dir`, `--dry-run` options) |
 
 ### Create a new site
@@ -1103,7 +1103,7 @@ The legal pages and `contact` are seeded with a meta description of their own, e
 
 ## Scheduler
 
-This bundle declares one scheduled command, `c975l:site:smoke-test`, nightly in a 5am-7am window through `SiteMaintenanceTaskProvider` (see [Smoke test](#smoke-test)). The rest moved to ConfigBundle alongside the whole Messenger stack: `c975l:config:messenger-cleanup` joined `c975l:sitemaps:create`/`c975l:health-check:run`/`c975l:config:backup`/`c975l:config:backup:digest` there (see [ConfigBundle's Backup section](https://github.com/975L/ConfigBundle#backup) — every satellite bundle needs them whether or not it has SiteBundle installed). The schedule class itself is scaffolded by ConfigBundle and lives in your app, so each project controls its own timing.
+This bundle declares one scheduled command, `c975l:site:smoke-test`, hourly through `SiteMaintenanceTaskProvider` (see [Smoke test](#smoke-test)). The rest moved to ConfigBundle alongside the whole Messenger stack: `c975l:config:messenger-cleanup` joined `c975l:sitemaps:create`/`c975l:health-check:run`/`c975l:config:backup`/`c975l:config:backup:digest` there (see [ConfigBundle's Backup section](https://github.com/975L/ConfigBundle#backup) — every satellite bundle needs them whether or not it has SiteBundle installed). The schedule class itself is scaffolded by ConfigBundle and lives in your app, so each project controls its own timing.
 
 ### 1. Create the schedule class
 
@@ -1136,7 +1136,7 @@ class MaintenanceSchedule implements ScheduleProviderInterface
 
 The `stateful()` call persists the last-run time via Symfony Cache so tasks are not re-run if the worker restarts.
 
-**This file lists no command at all**, and that's the point: each bundle declares the commands it needs run through ConfigBundle's [`MaintenanceTaskProviderInterface`](https://github.com/975L/ConfigBundle#contributing-maintenance-tasks-from-other-bundles) — backups, sitemaps, health checks and the nightly smoke test all come from the bundles that own them. Installing a bundle schedules its tasks, removing it stops them, and neither needs an edit here. Their exact minutes are drawn from this site's own identity ([`ScheduleSpreader`](https://github.com/975L/ConfigBundle#spreading-scheduled-commands-across-installs)), so sites sharing a server don't all dump their database at the same minute; `bin/console debug:scheduler` shows the times this one ended up with.
+**This file lists no command at all**, and that's the point: each bundle declares the commands it needs run through ConfigBundle's [`MaintenanceTaskProviderInterface`](https://github.com/975L/ConfigBundle#contributing-maintenance-tasks-from-other-bundles) — backups, sitemaps, health checks and the hourly smoke test all come from the bundles that own them. Installing a bundle schedules its tasks, removing it stops them, and neither needs an edit here. Their exact minutes are drawn from this site's own identity ([`ScheduleSpreader`](https://github.com/975L/ConfigBundle#spreading-scheduled-commands-across-installs)), so sites sharing a server don't all dump their database at the same minute; `bin/console debug:scheduler` shows the times this one ended up with.
 
 Two things stay yours. A command no bundle knows about is added after the call, spread (inject `ScheduleSpreader` alongside the builder) or on a fixed time with a plain `RecurringMessage::cron()`:
 
