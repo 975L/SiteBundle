@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.24.3
+
+The copyright's "©" is the footer's edit shortcut again
+
+- A copyright menu link writes its "©" off the link, where the edit shortcut catches its clicks (26/09/2026)
+
 ## v8.24.2
 
 The smoke test fires its requests ten at a time

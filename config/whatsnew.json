@@ -3,6 +3,11 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "Three quick clicks on the \"©\" of your copyright notice take you to the sign-in form again instead of opening the copyright page",
+                "fr": "Trois clics rapides sur le \"©\" de votre mention de copyright mènent de nouveau au formulaire de connexion au lieu d'ouvrir la page copyright",
+                "es": "Tres clics rápidos en el \"©\" de su aviso de copyright vuelven a llevarle al formulario de inicio de sesión en lugar de abrir la página de copyright"
+            },
+            {
                 "en": "Icons inside a coloured button take the button's text colour again instead of staying dark",
                 "fr": "Les icônes d'un bouton coloré reprennent la couleur de son texte au lieu de rester sombres",
                 "es": "Los iconos de un botón de color vuelven a tomar el color de su texto en lugar de quedarse oscuros"

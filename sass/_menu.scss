@@ -301,6 +301,12 @@ body.is-member .menu-item--guests {
     display: none;
 }
 
+// The copyright notice's "©" written off its link (see MenuLink.html.twig), kept on the link's line - .menu-link being a flex box, it would otherwise take a line of its own
+.menu-item--copyright {
+    display: flex;
+    align-items: center;
+}
+
 // White stated, not read from --white which dark mode swaps with --black: the mobile dropdown keeps its --primary background in both modes - see the desktop override below, where the navbar's own light background needs dark text instead
 .menu-label {
     font-family: var(--font-family-title);

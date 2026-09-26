@@ -6,9 +6,18 @@
     {# No active state here: the html is cached and shared by every page, menu-active.js marks the item of the page being read #}
     {# Nor any visitor check, for the same reason: a guests/members link is written for everyone with a marker class, which the layout's "is-guest"/"is-member" body class hides (see _menu.scss) #}
     {% set visibilityClass = visibility|default('all') in ['guests', 'members'] ? 'menu-item--' ~ visibility : null %}
-    <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null, visibilityClass]|filter(v => v is not null)|join(' ') }}">
-        <a href="{{ url }}" class="menu-link">
-            <span class="menu-label">{{ resolvedLabel }}</span>
-        </a>
+    {% set isCopyright = label|default('') is empty and resolvedLabel starts with '© ' %}
+    <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null, isCopyright ? 'menu-item--copyright' : null, visibilityClass]|filter(v => v is not null)|join(' ') }}">
+        {# The copyright notice's "©" stays off the link, where three quick clicks lead to the login form (see assets/js/edit-shortcut.js) - inside it, the first click opens the copyright page #}
+        {% if isCopyright %}
+            <span class="menu-label">©</span>
+            <a href="{{ url }}" class="menu-link">
+                <span class="menu-label">{{ resolvedLabel|slice(2) }}</span>
+            </a>
+        {% else %}
+            <a href="{{ url }}" class="menu-link">
+                <span class="menu-label">{{ resolvedLabel }}</span>
+            </a>
+        {% endif %}
     </div>
 {% endif %}

@@ -330,7 +330,7 @@ Hovering a **footer** item as a `site-role-editor` user shows UiBundle's "Edit" 
 
 ### Footer: reaching the edit buttons
 
-Three quick clicks or taps on the footer, off its links, lead a visitor who is not signed in to `/login?_target_path=<the page being read>` (`edit-shortcut` controller). Once signed in, by form or OAuth, they are back on that page, where the edit buttons their role allows are shown. Nothing is written in the page but the controller's name, and `/login` is public anyway: the protection stays the firewall's `login_throttling`. The controller dispatches a cancelable `edit-shortcut:open` event carrying the url, so a site can send it elsewhere.
+Three quick clicks or taps on the footer, off its links, lead a visitor who is not signed in to `/login?_target_path=<the page being read>` (`edit-shortcut` controller). Once signed in, by form or OAuth, they are back on that page, where the edit buttons their role allows are shown. Nothing is written in the page but the controller's name, and `/login` is public anyway: the protection stays the firewall's `login_throttling`. The controller dispatches a cancelable `edit-shortcut:open` event carrying the url, so a site can send it elsewhere. A copyright `menu_link` writes its "©" off the link (`menu-item--copyright`), so the notice's own sign is a place those clicks land.
 
 ### Footer: display style
 

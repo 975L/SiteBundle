@@ -226,6 +226,8 @@ Three quick clicks or taps on the footer, off its links, lead to `/login?_target
 (`edit-shortcut` controller, set on the footer next to `menu-active`), so an editor signs in and lands back
 on the page with its edit buttons. The footer's html stays the same for every visitor; the cancelable
 `edit-shortcut:open` event carries the url, so a site can send it elsewhere.
+A copyright `menu_link` writes its "©" off the link (`menu-item--copyright`), so the notice's own
+sign is a place those clicks land.
 
 ## Do not
 
