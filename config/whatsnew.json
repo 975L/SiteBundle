@@ -3,6 +3,11 @@
         "date": "2026-09-26",
         "description": [
             {
+                "en": "A tutorial film with a voice now says \"with voice-over\" instead of \"narrated\"",
+                "fr": "Un film de tutoriel avec une voix indique désormais \"avec voix off\" au lieu de \"commenté\"",
+                "es": "Un vídeo tutorial con voz indica ahora \"con voz en off\" en lugar de \"narrado\""
+            },
+            {
                 "en": "The films of your guided projects can be shown on a page of your site: add a \"collection\" block on the \"Tutorials\" source, each film opening with its steps",
                 "fr": "Les films de vos projets guidés peuvent s'afficher sur une page de votre site : ajoutez un block \"collection\" sur la source \"Tutoriels\", chaque film s'ouvrant avec ses étapes",
                 "es": "Los vídeos de sus proyectos guiados pueden mostrarse en una página de su sitio: añada un bloque \"collection\" con la fuente \"Tutoriales\", cada vídeo abriéndose con sus pasos"

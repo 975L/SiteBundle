@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.25.1
+
+A narrated tutorial film says it has a voice
+
+- A narrated film reads "avec voix off" instead of "commenté" (26/09/2026)
+
 ## v8.25.0
 
 Tutorial films, shown on a page of the site
