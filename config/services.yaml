@@ -89,3 +89,22 @@ services:
               container: true
               contexts: 'menu'
               slot_context: 'menu_slot'
+
+    # A title in the navbar whose links unfold under it (e.g. an account menu: my items, my account, sign out) - a kind of its own rather than an option of "menu_group", so no menu saved before it changes. It opts into "menu_navbar" alone, the navbar's exclusive context, and builds its slots with the very "menu_slot" the group does, so a link is picked and dragged into it the same way and a dropdown can't hold another container (see BlockRegistry::isAllowedInContext()). Always open on a phone, see assets/js/menu-dropdown.js
+    site.block.menu_dropdown:
+        class: stdClass
+        tags:
+            - name: ui.block
+              kind: menu_dropdown
+              label: "block.menu_dropdown"
+              description: "block.menu_dropdown_description"
+              translation_domain: 'site'
+              form: c975L\SiteBundle\Form\Block\MenuDropdownType
+              translatable: 'label'
+              template: '@c975LSite/blocks/MenuDropdown.html.twig'
+              category: 'label.category_navigation'
+              pickable: true
+              cacheable: true
+              container: true
+              contexts: 'menu_navbar'
+              slot_context: 'menu_slot'

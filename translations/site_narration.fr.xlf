@@ -254,6 +254,10 @@
                 <source>narration.guided_step_page_menu_create</source>
                 <target>Créez le menu s'il manque : un bouton vous est proposé par emplacement pas encore créé. Si la barre de navigation est déjà dans la liste, passez à l'étape suivante.</target>
             </trans-unit>
+            <trans-unit id="9ioOiX1">
+                <source>narration.guided_step_page_menu_dropdown</source>
+                <target>Pour regrouper des liens sous un titre, choisissez le block « Menu déroulant ». Il affiche un titre dans la barre, « Mon compte » par exemple, et ses liens se déplient dessous. Ajoutez-y les liens comme dans le menu.</target>
+            </trans-unit>
             <trans-unit id="ah4TpfP">
                 <source>narration.guided_step_page_menu_edit</source>
                 <target>Ouvrez la barre de navigation. Si vous venez de la créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>

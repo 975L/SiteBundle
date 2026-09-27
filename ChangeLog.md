@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.26.0
+
+A navbar dropdown menu, and a bundle links to its own block
+
+- **New `menu_dropdown` block, offered in the navbar only: a title whose links unfold under it, with a visibility for guests or members** (27/09/2026)
+- Always open on a phone, closed on an outside click or on Escape on a desktop (`menu-dropdown.js`) (27/09/2026)
+- `menu_group` and the menus saved before are left as they were (27/09/2026)
+- The navbar's language menu is drawn as a dropdown (27/09/2026)
+- New "group links under a title" step in the `site-page-menu` guided project (27/09/2026)
+- New `SiteBlockPageUrlProvider`: answers UiBundle's `block_page_url()` with the page carrying a block of that kind, anchor included (27/09/2026)
+- New `PageRepository::findOneByBlockKind()` (27/09/2026)
+- Requires `c975l/core-bundle` ^1.45 (27/09/2026)
+
 ## v8.25.1
 
 A narrated tutorial film says it has a voice

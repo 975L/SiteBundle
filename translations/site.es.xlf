@@ -62,6 +62,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Carrusel que destaca una selección de artículos</target>
             </trans-unit>
+            <trans-unit id="L6JMx5c">
+                <source>block.menu_dropdown</source>
+                <target>Menú desplegable</target>
+            </trans-unit>
+            <trans-unit id="RPW_Whk">
+                <source>block.menu_dropdown_description</source>
+                <target>Un título en la barra de navegación bajo el que se despliegan enlaces (p. ej. «Mi cuenta»: mis elementos, mi cuenta, cerrar sesión) - siempre abierto en móvil</target>
+            </trans-unit>
             <trans-unit id="32ypfjD">
                 <source>block.menu_group</source>
                 <target>Grupo de menú</target>
@@ -410,6 +418,10 @@
                 <source>description.guided_step_page_menu_create</source>
                 <target>Un botón por cada ubicación aún no creada. Si la barra de navegación ya está en la lista, pase al paso siguiente.</target>
             </trans-unit>
+            <trans-unit id="xxeTGY_">
+                <source>description.guided_step_page_menu_dropdown</source>
+                <target>El block «Menú desplegable» muestra un título en la barra, «Mi cuenta» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
+            </trans-unit>
             <trans-unit id=".hlSfo_">
                 <source>description.guided_step_page_menu_edit</source>
                 <target>Si acaba de crearlo, ya está ahí. Si no, es la fila cuya ubicación es «Barra de navegación».</target>
@@ -613,6 +625,14 @@
             <trans-unit id="IAF7ZBQ">
                 <source>flash.page_to_replace_not_found</source>
                 <target>No se encontró la página a reemplazar (ya eliminada o renombrada): no se publicó nada.</target>
+            </trans-unit>
+            <trans-unit id="of9fBdv">
+                <source>help.menu_dropdown_label</source>
+                <target>Lo que muestra la barra de navegación, desplegándose debajo los enlaces del menú</target>
+            </trans-unit>
+            <trans-unit id="wGNl2Ev">
+                <source>help.menu_dropdown_visibility</source>
+                <target>Oculta todo el menú según si el visitante ha iniciado sesión o no - p. ej. un menú «Mi cuenta» para los miembros</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1170,6 +1190,10 @@
                 <source>label.guided_step_page_menu_create</source>
                 <target>Crear el menú si falta</target>
             </trans-unit>
+            <trans-unit id="aH4bcDR">
+                <source>label.guided_step_page_menu_dropdown</source>
+                <target>Agrupar enlaces bajo un título</target>
+            </trans-unit>
             <trans-unit id="SR9HxrC">
                 <source>label.guided_step_page_menu_edit</source>
                 <target>Abrir la barra de navegación</target>
@@ -1641,6 +1665,10 @@
             <trans-unit id="lvuwXKG">
                 <source>label.menu</source>
                 <target>Menú</target>
+            </trans-unit>
+            <trans-unit id="uyfOh9Y">
+                <source>label.menu_dropdown_label</source>
+                <target>Título</target>
             </trans-unit>
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>

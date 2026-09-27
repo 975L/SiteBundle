@@ -1,21 +1,46 @@
-{# <twig:c975LSite:General:Languages page="{{ page }}" /> #}
+{# <twig:c975LSite:General:Languages page="{{ page }}" [dropdown] /> - "dropdown" draws it as the navbar's dropdown menu, the select otherwise #}
 {# The languages this very page can be read in where there is a Page behind the screen - offering one nobody translated leads to a 404 (see PageTranslationExtension::getLanguages) - and anywhere else the ones the screen itself answers in, a shop listing or a product sheet being the owning bundle's own interface (see ConfigBundle's LocalizedUrlGenerator::screenLanguages) #}
 {% set languages = page is defined and page is not null ? page_languages(page) : screen_languages() %}
 
 {% if languages is not empty %}
-    {# A list of links took a line of its own the moment a site declared a third language; one field says as many as it likes. Every url of the map is the same path carrying "?_locale=xx" - the query LocaleListener reads to keep the choice for the rest of the visit - so one GET form says all of them, the select naming the language and the path being the action #}
-    <form class="menu-languages" method="get" action="{{ (languages|first)|split('?')|first }}" data-controller="languages" data-action="change->languages#submit">
-        {# What the visitor is already reading under - a page number, a filter, a sort order: a GET submission drops the action's own query string, so it rides along as fields. An array value is left out, the language menu having no business rebuilding a multiple-choice filter #}
-        {% for name, value in app.request.query.all|filter((value, name) => name != '_locale' and value is not iterable) %}
-            <input type="hidden" name="{{ name }}" value="{{ value }}">
-        {% endfor %}
-        {# Labelled on the field itself rather than through a <label for="...">: the component is rendered twice on the same screen, once per bar, and an id would be there twice with it #}
-        <select class="menu-languages-select" name="_locale" aria-label="{{ 'menu.languages'|trans({}, 'site') }}">
-            {% for locale in languages|keys %}
-                <option value="{{ locale }}" lang="{{ locale }}"{{ locale == app.request.locale ? ' selected' : '' }}>{{ locale|language_name }}</option>
+    {# The action and what the visitor is already reading under - a page number, a filter, a sort order: a GET submission drops the action's own query string, so it rides along as fields. An array value is left out, the language menu having no business rebuilding a multiple-choice filter #}
+    {% set action = (languages|first)|split('?')|first %}
+    {% set carried = app.request.query.all|filter((value, name) => name != '_locale' and value is not iterable) %}
+    {% if dropdown|default(false) %}
+        {# The navbar's own look (see blocks/MenuDropdown.html.twig and menu-dropdown.js): the language being read as the title, the others unfolding under it. Still a GET form and no link at all - one submit button per language, nothing a crawler follows #}
+        <div class="menu-item menu-dropdown menu-languages-dropdown" data-controller="menu-dropdown">
+            <details class="menu-dropdown__details" data-menu-dropdown-target="details">
+                <summary class="menu-dropdown__summary" aria-label="{{ 'menu.languages'|trans({}, 'site') }} : {{ app.request.locale|language_name }}">
+                    <span class="menu-label">{{ app.request.locale|language_name }}</span>
+                </summary>
+                <form class="menu-dropdown__items" method="get" action="{{ action }}">
+                    {% for name, value in carried %}
+                        <input type="hidden" name="{{ name }}" value="{{ value }}">
+                    {% endfor %}
+                    {% for locale in languages|keys %}
+                        <div class="menu-item">
+                            <button type="submit" class="menu-link" name="_locale" value="{{ locale }}" lang="{{ locale }}"{{ locale == app.request.locale ? ' aria-current="true"' : '' }}>
+                                <span class="menu-label">{{ locale|language_name }}</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </form>
+            </details>
+        </div>
+    {% else %}
+        {# A list of links took a line of its own the moment a site declared a third language; one field says as many as it likes. Every url of the map is the same path carrying "?_locale=xx" - the query LocaleListener reads to keep the choice for the rest of the visit - so one GET form says all of them, the select naming the language and the path being the action #}
+        <form class="menu-languages" method="get" action="{{ action }}" data-controller="languages" data-action="change->languages#submit">
+            {% for name, value in carried %}
+                <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
-        </select>
-        {# What sends the choice where javascript does not run; where it does, the controller takes it away and the field submits on its own #}
-        <button class="menu-languages-submit" type="submit" data-languages-target="submit">{{ 'menu.languages_submit'|trans({}, 'site') }}</button>
-    </form>
+            {# Labelled on the field itself rather than through a <label for="...">: the component is rendered twice on the same screen, once per bar, and an id would be there twice with it #}
+            <select class="menu-languages-select" name="_locale" aria-label="{{ 'menu.languages'|trans({}, 'site') }}">
+                {% for locale in languages|keys %}
+                    <option value="{{ locale }}" lang="{{ locale }}"{{ locale == app.request.locale ? ' selected' : '' }}>{{ locale|language_name }}</option>
+                {% endfor %}
+            </select>
+            {# What sends the choice where javascript does not run; where it does, the controller takes it away and the field submits on its own #}
+            <button class="menu-languages-submit" type="submit" data-languages-target="submit">{{ 'menu.languages_submit'|trans({}, 'site') }}</button>
+        </form>
+    {% endif %}
 {% endif %}

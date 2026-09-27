@@ -198,7 +198,8 @@ img.menu-logo__on-dark {
 }
 
 .menu.is-scrolled .menu-toggle-icon,
-.menu.is-scrolled .menu-link {
+.menu.is-scrolled .menu-link,
+.menu.is-scrolled .menu-dropdown__summary {
     color: var(--navbar-text-scrolled);
 }
 
@@ -242,7 +243,8 @@ img.menu-logo__on-dark {
     }
 }
 
-.menu-link {
+.menu-link,
+.menu-dropdown__summary {
     display: flex;
     align-items: center;
     padding: 0.5rem 1rem;
@@ -259,7 +261,9 @@ img.menu-logo__on-dark {
 // .menu-label sets its own color, so the hover has to target the label rather than the link.
 // Scoped to ".menu" like the item above: unscoped it weighs (0,3,0) against the (0,2,2) of the footer's own "footer a:hover .menu-label", so it beat that rule in the footer and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
 .menu .menu-link:hover .menu-label,
-.menu .menu-link:focus .menu-label {
+.menu .menu-link:focus .menu-label,
+.menu .menu-dropdown__summary:hover .menu-label,
+.menu .menu-dropdown__summary:focus .menu-label {
     color: var(--navbar-active-color);
 }
 
@@ -484,4 +488,85 @@ body.is-member .menu-item--guests {
 // The fallback bar, a centered column with no items row to sit in: the languages take a line of their own under the brand
 .nav-simple .menu-languages {
     justify-content: center;
+}
+
+// The "menu_dropdown" block (see blocks/MenuDropdown.html.twig): on a phone a heading among the burger's links, kept open by menu-dropdown.js, its links set in under it. Its <summary> is drawn as a "menu-link" above without carrying the class, which UiBundle's menu.js would close the burger on
+.menu-dropdown__summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.menu-dropdown__summary::-webkit-details-marker {
+    display: none;
+}
+
+.menu .menu-dropdown__summary .menu-label {
+    font-size: 0.875rem;
+    opacity: 0.75;
+}
+
+.menu .menu-dropdown__items .menu-link {
+    padding-left: 2rem;
+}
+
+// On a desktop a title with its caret, the links hanging under it on the navbar's own background, so they read in the navbar's own colors
+@media screen and (min-width: 768px) {
+    .menu .menu-dropdown {
+        position: relative;
+    }
+
+    .menu .menu-dropdown__summary .menu-label {
+        font-size: 1rem;
+        opacity: 1;
+    }
+
+    .menu .menu-dropdown__summary::after {
+        content: #{"\"\\25BE\""};
+        margin-left: 0.35em;
+        color: var(--navbar-text);
+    }
+
+    .menu.is-scrolled .menu-dropdown__summary::after {
+        color: var(--navbar-text-scrolled);
+    }
+
+    .menu .menu-dropdown__items {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 1001;
+        display: flex;
+        flex-direction: column;
+        min-width: 12rem;
+        background-color: var(--navbar-background);
+        border-radius: var(--radius-btn);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu.is-scrolled .menu-dropdown__items {
+        background-color: var(--navbar-background-scrolled);
+    }
+
+    .menu .menu-dropdown__items .menu-link {
+        padding-left: 1rem;
+    }
+}
+
+// The languages drawn as a dropdown (see components/General/Languages.html.twig): the GET form freed from UiBundle's centered form width, each language a submit button reset to read as the links around it, the language being read in bold
+form.menu-dropdown__items {
+    width: auto;
+    margin: 0;
+}
+
+.menu-dropdown__items button.menu-link {
+    width: 100%;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+}
+
+.menu-dropdown__items [aria-current] .menu-label {
+    font-weight: bold;
 }

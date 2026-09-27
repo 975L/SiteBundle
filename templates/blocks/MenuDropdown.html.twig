@@ -1,0 +1,12 @@
+{# A title in the navbar whose links unfold under it - a native <details>, so it opens with no javascript at all; menu-dropdown.js closes it on a click elsewhere or on Escape, and keeps it open on a phone, where the burger already hides the links and a second tap would only be in the way. The <summary> is not a "menu-link": UiBundle's menu.js closes the burger on a click on any of those, _menu.scss drawing it as one instead. "slots" is the nested-Block relation, read straight off "block" as UiBundle's BlockGroup does. The visibility is a marker class, as on a link, the menu's html being cached once for everyone (see MenuLink.html.twig) #}
+{% set visibilityClass = visibility|default('all') in ['guests', 'members'] ? ' menu-item--' ~ visibility : '' %}
+<div class="menu-item menu-dropdown{{ visibilityClass }}" data-controller="menu-dropdown">
+    <details class="menu-dropdown__details" data-menu-dropdown-target="details">
+        <summary class="menu-dropdown__summary">
+            <span class="menu-label">{{ label }}</span>
+        </summary>
+        <div class="menu-dropdown__items">
+            {% for slot in block.slots %}{{ render_block(slot) }}{% endfor %}
+        </div>
+    </details>
+</div>

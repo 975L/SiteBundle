@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -89,8 +89,9 @@ single page. A template says which `Page` the menu rewrites the url of by settin
 on a collection item's detail view and in preview. **With no `Page` behind the screen** — a shop listing, a
 product sheet, a campaign, a basket — the menu falls back on `screen_languages()` (ConfigBundle's
 `LocalizedUrlGenerator::screenLanguages()`), the languages that screen itself answers in, and draws nothing
-where it answers in one language alone. Restyled through
-`.menu-languages`, `.menu-language-link` and `.menu-language-current`.
+where it answers in one language alone. In the navbar's items it is drawn as a dropdown (`dropdown` prop,
+same markup as `menu_dropdown`, one submit button per language), elsewhere as a `<select>`. Restyled
+through `.menu-languages` and `.menu-languages-dropdown`.
 
 ### Exposing another bundle's route
 
@@ -120,6 +121,17 @@ whole line): a theme laying its footer out in columns gives it a shareable basis
 and picks *Inline*, or picks *Columns* (below) and lets the grid draw them, and the *Block* style resets
 it to `0 0 auto` — a basis sits on the main axis, so a group's width becomes its height once the footer
 stacks.
+
+## menu_dropdown
+
+The one container a `navbar` offers: a title whose links unfold under it (an account menu). Its own
+kind, opted into `menu_navbar` alone, its slots built with `menu_slot` like `menu_group`'s — so links
+drag into it the same way and it never holds another container. `label` is required and
+translatable, `visibility` is a link's own (`all`/`guests`/`members`) applied to the whole of it.
+
+A native `<details>`, working with no javascript; `menu-dropdown.js` closes it on an outside click or
+Escape on a desktop and keeps it open below 768px, where it reads as a heading inside the burger. Do
+not turn a `menu_group` into a dropdown: existing menus rely on the group staying as it is.
 
 ## Footer display style
 
@@ -235,8 +247,9 @@ sign is a place those clicks land.
   `LinkableRouteProviderInterface`, which lives in ConfigBundle for exactly that reason.
 - **Do not store a page's slug in a menu link.** The id is what survives a rename.
 - **Do not offer `block_group` in a menu.** Use `menu_group`.
-- **Do not put anything but links in a navbar** — the context forbids it, and the picker will not
-  offer it.
+- **Do not put anything but links and `menu_dropdown` in a navbar** — the context forbids it, and the
+  picker will not offer it.
+- **Do not put `menu-link` on a dropdown's `<summary>`.** UiBundle's `menu.js` closes the burger on it.
 - **Do not use a `menu_link` in an email menu while `site-url` is empty.** Nothing makes it absolute then.
 - **Do not write `flex-direction` for the footer layout.** Retune the two `--footer-items-*` tokens.
 - **Do not set the navbar position with a `style` attribute.** The nonce drops it.

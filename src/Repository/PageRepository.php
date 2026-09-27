@@ -123,10 +123,31 @@ class PageRepository extends ServiceEntityRepository
         return $this->findOneByBlockData('collection', 'source', $source);
     }
 
+    // Find the first published page carrying a Block of the given kind (e.g. "purchasecredits_packs") - what a bundle links its own block with, the page being the site's choice
+    public function findOneByBlockKind(string $kind): ?Page
+    {
+        return $this->publishedWithBlockKind($kind)[0] ?? null;
+    }
+
     // Block::$data is JSON, so matching on one of its keys is done in PHP after narrowing to that kind's blocks (few per site)
     private function findOneByBlockData(string $kind, string $key, string $value): ?Page
     {
-        $pages = $this->createQueryBuilder('p')
+        foreach ($this->publishedWithBlockKind($kind) as $page) {
+            foreach ($page->getBlocks() as $block) {
+                if ($kind === $block->getKind() && $value === ($block->getData()[$key] ?? null)) {
+                    return $page;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // The published pages carrying a block of that kind, with those blocks
+    /** @return list<Page> */
+    private function publishedWithBlockKind(string $kind): array
+    {
+        return $this->createQueryBuilder('p')
             ->select('p, b')
             ->innerJoin('p.blocks', 'b')
             ->andWhere('b.kind = :kind')
@@ -138,16 +159,6 @@ class PageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
-
-        foreach ($pages as $page) {
-            foreach ($page->getBlocks() as $block) {
-                if ($kind === $block->getKind() && $value === ($block->getData()[$key] ?? null)) {
-                    return $page;
-                }
-            }
-        }
-
-        return null;
     }
 
     // Find pages owning any of the given blocks (used by SiteMediaUsageProvider to resolve a Block's owning Page)

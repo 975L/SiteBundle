@@ -254,6 +254,10 @@
                 <source>narration.guided_step_page_menu_create</source>
                 <target>Cree el menú si falta: se le propone un botón por cada ubicación aún no creada. Si la barra de navegación ya está en la lista, pase al paso siguiente.</target>
             </trans-unit>
+            <trans-unit id="9ioOiX1">
+                <source>narration.guided_step_page_menu_dropdown</source>
+                <target>Para agrupar enlaces bajo un título, elija el block «Menú desplegable». Muestra un título en la barra, «Mi cuenta» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
+            </trans-unit>
             <trans-unit id="ah4TpfP">
                 <source>narration.guided_step_page_menu_edit</source>
                 <target>Abra la barra de navegación. Si acaba de crearla, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>

@@ -62,6 +62,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Slideshow highlighting a selection of articles</target>
             </trans-unit>
+            <trans-unit id="L6JMx5c">
+                <source>block.menu_dropdown</source>
+                <target>Dropdown menu</target>
+            </trans-unit>
+            <trans-unit id="RPW_Whk">
+                <source>block.menu_dropdown_description</source>
+                <target>A title in the navbar with links unfolding under it (e.g. "My account": my items, my account, sign out) - always open on mobile</target>
+            </trans-unit>
             <trans-unit id="32ypfjD">
                 <source>block.menu_group</source>
                 <target>Menu group</target>
@@ -410,6 +418,10 @@
                 <source>description.guided_step_page_menu_create</source>
                 <target>One button per location not created yet. If the navigation bar is already in the list, move on to the next step.</target>
             </trans-unit>
+            <trans-unit id="xxeTGY_">
+                <source>description.guided_step_page_menu_dropdown</source>
+                <target>The "Dropdown menu" block shows a title in the bar, "My account" for instance, and its links unfold under it. Add the links to it as you do in the menu.</target>
+            </trans-unit>
             <trans-unit id=".hlSfo_">
                 <source>description.guided_step_page_menu_edit</source>
                 <target>You are already there if you have just created it. Otherwise, that is the row whose location reads “Navigation bar”.</target>
@@ -613,6 +625,14 @@
             <trans-unit id="IAF7ZBQ">
                 <source>flash.page_to_replace_not_found</source>
                 <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
+            </trans-unit>
+            <trans-unit id="of9fBdv">
+                <source>help.menu_dropdown_label</source>
+                <target>What the navbar shows, the menu's links unfolding under it</target>
+            </trans-unit>
+            <trans-unit id="wGNl2Ev">
+                <source>help.menu_dropdown_visibility</source>
+                <target>Hides the whole menu depending on whether the visitor is signed in - e.g. a "My account" menu for members</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1170,6 +1190,10 @@
                 <source>label.guided_step_page_menu_create</source>
                 <target>Create the menu if it is missing</target>
             </trans-unit>
+            <trans-unit id="aH4bcDR">
+                <source>label.guided_step_page_menu_dropdown</source>
+                <target>Group links under a title</target>
+            </trans-unit>
             <trans-unit id="SR9HxrC">
                 <source>label.guided_step_page_menu_edit</source>
                 <target>Open the navigation bar</target>
@@ -1641,6 +1665,10 @@
             <trans-unit id="lvuwXKG">
                 <source>label.menu</source>
                 <target>Menu</target>
+            </trans-unit>
+            <trans-unit id="uyfOh9Y">
+                <source>label.menu_dropdown_label</source>
+                <target>Title</target>
             </trans-unit>
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>

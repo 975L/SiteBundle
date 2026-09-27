@@ -62,6 +62,14 @@
                 <source>block.articles_slider_description</source>
                 <target>Diaporama mettant en avant une sélection d'articles</target>
             </trans-unit>
+            <trans-unit id="L6JMx5c">
+                <source>block.menu_dropdown</source>
+                <target>Menu déroulant</target>
+            </trans-unit>
+            <trans-unit id="RPW_Whk">
+                <source>block.menu_dropdown_description</source>
+                <target>Un titre dans le navbar sous lequel se déroulent des liens (ex. « Mon compte » : mes éléments, mon compte, se déconnecter) - toujours ouvert sur mobile</target>
+            </trans-unit>
             <trans-unit id="32ypfjD">
                 <source>block.menu_group</source>
                 <target>Groupe de menu</target>
@@ -410,6 +418,10 @@
                 <source>description.guided_step_page_menu_create</source>
                 <target>Un bouton par emplacement pas encore créé. Si la barre de navigation est déjà dans la liste, passez à l'étape suivante.</target>
             </trans-unit>
+            <trans-unit id="xxeTGY_">
+                <source>description.guided_step_page_menu_dropdown</source>
+                <target>Le block « Menu déroulant » affiche un titre dans la barre, « Mon compte » par exemple, et ses liens se déplient dessous. Ajoutez-y les liens comme dans le menu.</target>
+            </trans-unit>
             <trans-unit id=".hlSfo_">
                 <source>description.guided_step_page_menu_edit</source>
                 <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « Barre de navigation ».</target>
@@ -613,6 +625,14 @@
             <trans-unit id="IAF7ZBQ">
                 <source>flash.page_to_replace_not_found</source>
                 <target>La page à remplacer est introuvable (déjà supprimée ou renommée) : rien n'a été publié.</target>
+            </trans-unit>
+            <trans-unit id="of9fBdv">
+                <source>help.menu_dropdown_label</source>
+                <target>Ce que le navbar affiche, les liens du menu se déroulant dessous</target>
+            </trans-unit>
+            <trans-unit id="wGNl2Ev">
+                <source>help.menu_dropdown_visibility</source>
+                <target>Masque tout le menu selon que le visiteur est connecté ou non - ex. un menu « Mon compte » pour les membres</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1170,6 +1190,10 @@
                 <source>label.guided_step_page_menu_create</source>
                 <target>Créer le menu s'il manque</target>
             </trans-unit>
+            <trans-unit id="aH4bcDR">
+                <source>label.guided_step_page_menu_dropdown</source>
+                <target>Regrouper des liens sous un titre</target>
+            </trans-unit>
             <trans-unit id="SR9HxrC">
                 <source>label.guided_step_page_menu_edit</source>
                 <target>Ouvrir la barre de navigation</target>
@@ -1641,6 +1665,10 @@
             <trans-unit id="lvuwXKG">
                 <source>label.menu</source>
                 <target>Menu</target>
+            </trans-unit>
+            <trans-unit id="uyfOh9Y">
+                <source>label.menu_dropdown_label</source>
+                <target>Titre</target>
             </trans-unit>
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>

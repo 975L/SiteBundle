@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-27",
+        "description": [
+            {
+                "en": "Your navbar can group links under a title that unfolds them, \"My account\" for instance: add a \"Dropdown menu\" block and drag your links into it",
+                "fr": "Votre barre de navigation peut regrouper des liens sous un titre qui les déplie, « Mon compte » par exemple : ajoutez un block « Menu déroulant » et glissez-y vos liens",
+                "es": "Su barra de navegación puede agrupar enlaces bajo un título que los despliega, «Mi cuenta» por ejemplo: añada un bloque «Menú desplegable» y arrastre sus enlaces dentro"
+            },
+            {
+                "en": "The language menu of the navbar now unfolds like the other menus",
+                "fr": "Le menu des langues de la barre de navigation se déplie désormais comme les autres menus",
+                "es": "El menú de idiomas de la barra de navegación se despliega ahora como los demás menús"
+            },
+            {
+                "en": "The guided project on the navigation menu now shows how to group links under a title",
+                "fr": "Le projet guidé sur le menu de navigation montre désormais comment regrouper des liens sous un titre",
+                "es": "El proyecto guiado sobre el menú de navegación muestra ahora cómo agrupar enlaces bajo un título"
+            }
+        ]
+    },
+    {
         "date": "2026-09-26",
         "description": [
             {

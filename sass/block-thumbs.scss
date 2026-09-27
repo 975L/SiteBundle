@@ -97,3 +97,19 @@
         display: none;
     }
 }
+
+/* A title with the entries it unfolds, one under the other */
+.ui-block-thumb--menu_dropdown {
+    justify-content: flex-start;
+
+    .ui-block-thumb__title {
+        width: 45%;
+        height: .375rem;
+    }
+
+    .ui-block-thumb__line {
+        width: 60%;
+        height: .25rem;
+        margin-left: 15%;
+    }
+}

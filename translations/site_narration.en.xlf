@@ -254,6 +254,10 @@
                 <source>narration.guided_step_page_menu_create</source>
                 <target>Create the menu if it is missing: one button is offered per location not created yet. If the navigation bar is already in the list, move on to the next step.</target>
             </trans-unit>
+            <trans-unit id="9ioOiX1">
+                <source>narration.guided_step_page_menu_dropdown</source>
+                <target>To group links under a title, choose the "Dropdown menu" block. It shows a title in the bar, "My account" for instance, and its links unfold under it. Add the links to it as you do in the menu.</target>
+            </trans-unit>
             <trans-unit id="ah4TpfP">
                 <source>narration.guided_step_page_menu_edit</source>
                 <target>Open the navigation bar. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>

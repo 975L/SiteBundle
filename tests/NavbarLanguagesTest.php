@@ -87,6 +87,27 @@ class NavbarLanguagesTest extends TestCase
         $this->assertStringContainsString('<option value="fr" lang="fr" selected>FR</option>', $rendered);
     }
 
+    // In the navbar the languages are a dropdown like a "menu_dropdown" block: the language being read as its title, each language a submit button of the same GET form - still no link, and what the visitor reads under still riding along
+    public function testTheDropdownSubmitsEachLanguageWithoutALink(): void
+    {
+        $rendered = $this->renderLanguages(['page' => 'a-page', 'dropdown' => true], ['fr' => '/a?_locale=fr', 'en' => '/a?_locale=en'], [], ['page' => 2]);
+
+        $this->assertStringContainsString('data-controller="menu-dropdown"', $rendered);
+        $this->assertStringContainsString('<span class="menu-label">FR</span>', $rendered);
+        $this->assertStringContainsString('action="/a"', $rendered);
+        $this->assertStringContainsString('name="_locale" value="en" lang="en"', $rendered);
+        $this->assertStringContainsString('value="fr" lang="fr" aria-current="true"', $rendered);
+        $this->assertStringContainsString('<input type="hidden" name="page" value="2">', $rendered);
+        $this->assertStringNotContainsString('<a ', $rendered);
+        $this->assertStringNotContainsString('<select', $rendered);
+    }
+
+    // The fallback bar keeps the select
+    public function testTheNavbarAsksForTheDropdownOnTheMenuBarAlone(): void
+    {
+        $this->assertSame(1, substr_count($this->template('components/General/Navbar.html.twig'), ':dropdown="true"'));
+    }
+
     // Nothing to follow at all: a crawler used to be handed one query-string variant per language of a page the sitemap already declares once per language, and told not to follow them
     public function testTheMenuHoldsNoLinkAtAll(): void
     {
