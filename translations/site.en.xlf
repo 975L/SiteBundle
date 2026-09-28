@@ -220,7 +220,7 @@
             </trans-unit>
             <trans-unit id="o0zeSR4">
                 <source>description.guided_step_block_view</source>
-                <target>Check on the site how the block renders with its options.</target>
+                <target>Check on the site how the block renders with its options. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -252,7 +252,7 @@
             </trans-unit>
             <trans-unit id="FjMe48o">
                 <source>description.guided_step_collection_translation_action</source>
-                <target>On the item's row. The button only shows where the site declares more than one language: otherwise there is nothing to open.</target>
+                <target>On the item's row. The button only shows where the site declares more than one language: otherwise there is nothing to open. The highlighted button is the first row's: click the one on your item's row.</target>
             </trans-unit>
             <trans-unit id="WPgj3Nv">
                 <source>description.guided_step_collection_translation_check</source>
@@ -318,13 +318,17 @@
                 <source>description.guided_step_footer_open</source>
                 <target>One menu per location on the site, from the navigation bar to the e-mail footer: each is created once.</target>
             </trans-unit>
+            <trans-unit id="DA2Cl33">
+                <source>description.guided_step_footer_shortcuts</source>
+                <target>On the site, three quick clicks on the footer, off its links - on the copyright's "©" for instance - lead to the login form, then back to the page, where the edit buttons show.</target>
+            </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
                 <target>Side by side, one below the other, or in columns. Left empty, the site's theme file decides.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
-                <target>The button only shows where the site declares more than one language.</target>
+                <target>The button only shows where the site declares more than one language. The highlighted button is the first row's: click the one on your menu's row.</target>
             </trans-unit>
             <trans-unit id="0CVNo.U">
                 <source>description.guided_step_menu_translation_locale</source>
@@ -496,7 +500,7 @@
             </trans-unit>
             <trans-unit id="2i_xxw5">
                 <source>description.guided_step_page_translation_action</source>
-                <target>The button only shows where the site declares more than one language: otherwise there is nothing to open.</target>
+                <target>The button only shows where the site declares more than one language: otherwise there is nothing to open. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="HNEB.MS">
                 <source>description.guided_step_page_translation_blocks</source>
@@ -540,11 +544,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>Nothing is erased: the page leaves the site and its menus, and waits in the trash.</target>
+                <target>Nothing is erased: the page leaves the site and its menus, and waits in the trash. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>This one cannot be undone, and takes the page's blocks along - it asks you to confirm.</target>
+                <target>This one cannot be undone, and takes the page's blocks along - it asks you to confirm. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>
@@ -556,7 +560,7 @@
             </trans-unit>
             <trans-unit id="YPAShtT">
                 <source>description.guided_step_trash_restore</source>
-                <target>It comes back unpublished, so you decide when it shows on the site again.</target>
+                <target>It comes back unpublished, so you decide when it shows on the site again. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="a5JigYy">
                 <source>description.guided_step_tutorials_page_blocks</source>
@@ -580,7 +584,7 @@
             </trans-unit>
             <trans-unit id="8RsU7.A">
                 <source>description.guided_step_tutorials_page_reopen</source>
-                <target>Blocks are added once the page is saved.</target>
+                <target>Blocks are added once the page is saved. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="4dHA5eZ">
                 <source>description.guided_step_tutorials_page_report</source>
@@ -588,7 +592,7 @@
             </trans-unit>
             <trans-unit id="otPWBas">
                 <source>description.guided_step_tutorials_page_source</source>
-                <target>Each film becomes a card opening it with its steps; a click on a step takes the film there.</target>
+                <target>Each film becomes a card opening it with its steps; a click on a step takes the film there. The films are the ones dropped in public/medias/films/&lt;language&gt;/: without a film, the page stays empty.</target>
             </trans-unit>
             <trans-unit id="wfdzbRF">
                 <source>description.guided_step_tutorials_page_title</source>
@@ -596,7 +600,7 @@
             </trans-unit>
             <trans-unit id="GNe8Ekz">
                 <source>description.guided_step_tutorials_page_view</source>
-                <target>Check on the site that the films show, each with its card.</target>
+                <target>Check on the site that the films show, each with its card. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="Cmewuhh">
                 <source>description.menu_translation</source>
@@ -1081,6 +1085,10 @@
             <trans-unit id="BElmr7I">
                 <source>label.guided_step_footer_save</source>
                 <target>Save the footer</target>
+            </trans-unit>
+            <trans-unit id="hLIx6RD">
+                <source>label.guided_step_footer_shortcuts</source>
+                <target>Come back from the site</target>
             </trans-unit>
             <trans-unit id="m0CcfXV">
                 <source>label.guided_step_footer_style</source>

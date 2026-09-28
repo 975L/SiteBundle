@@ -220,7 +220,7 @@
             </trans-unit>
             <trans-unit id="o0zeSR4">
                 <source>description.guided_step_block_view</source>
-                <target>Vérifiez sur le site le rendu du block avec ses options.</target>
+                <target>Vérifiez sur le site le rendu du block avec ses options. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -252,7 +252,7 @@
             </trans-unit>
             <trans-unit id="FjMe48o">
                 <source>description.guided_step_collection_translation_action</source>
-                <target>Sur la ligne de l'élément. Le bouton n'apparaît que si le site déclare plus d'une langue : sinon, il n'y a rien à ouvrir.</target>
+                <target>Sur la ligne de l'élément. Le bouton n'apparaît que si le site déclare plus d'une langue : sinon, il n'y a rien à ouvrir. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre élément.</target>
             </trans-unit>
             <trans-unit id="WPgj3Nv">
                 <source>description.guided_step_collection_translation_check</source>
@@ -318,13 +318,17 @@
                 <source>description.guided_step_footer_open</source>
                 <target>Un menu par emplacement du site, de la barre de navigation au pied des e-mails : chacun se crée une seule fois.</target>
             </trans-unit>
+            <trans-unit id="DA2Cl33">
+                <source>description.guided_step_footer_shortcuts</source>
+                <target>Sur le site, trois clics rapides sur le pied de page, hors de ses liens - sur le « © » du copyright par exemple - mènent à la connexion, puis ramènent à la page, où s'affichent les boutons de modification.</target>
+            </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
                 <target>Les uns à côté des autres, les uns sous les autres, ou en colonnes. Laissé vide, c'est le fichier de thème du site qui décide.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
-                <target>Le bouton n'apparaît que si le site déclare plus d'une langue.</target>
+                <target>Le bouton n'apparaît que si le site déclare plus d'une langue. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre menu.</target>
             </trans-unit>
             <trans-unit id="0CVNo.U">
                 <source>description.guided_step_menu_translation_locale</source>
@@ -496,7 +500,7 @@
             </trans-unit>
             <trans-unit id="2i_xxw5">
                 <source>description.guided_step_page_translation_action</source>
-                <target>Le bouton n'apparaît que si le site déclare plus d'une langue : sinon, il n'y a rien à ouvrir.</target>
+                <target>Le bouton n'apparaît que si le site déclare plus d'une langue : sinon, il n'y a rien à ouvrir. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="HNEB.MS">
                 <source>description.guided_step_page_translation_blocks</source>
@@ -540,11 +544,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>Rien n'est effacé : la page quitte le site et ses menus, et attend dans la corbeille.</target>
+                <target>Rien n'est effacé : la page quitte le site et ses menus, et attend dans la corbeille. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>Celle-là ne se rattrape pas et emporte les blocks de la page - une confirmation vous est demandée.</target>
+                <target>Celle-là ne se rattrape pas et emporte les blocks de la page - une confirmation vous est demandée. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>
@@ -556,7 +560,7 @@
             </trans-unit>
             <trans-unit id="YPAShtT">
                 <source>description.guided_step_trash_restore</source>
-                <target>Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site.</target>
+                <target>Elle revient non publiée : c'est vous qui décidez quand elle réapparaît sur le site. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="a5JigYy">
                 <source>description.guided_step_tutorials_page_blocks</source>
@@ -580,7 +584,7 @@
             </trans-unit>
             <trans-unit id="8RsU7.A">
                 <source>description.guided_step_tutorials_page_reopen</source>
-                <target>Les blocks s'ajoutent une fois la page enregistrée.</target>
+                <target>Les blocks s'ajoutent une fois la page enregistrée. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="4dHA5eZ">
                 <source>description.guided_step_tutorials_page_report</source>
@@ -588,7 +592,7 @@
             </trans-unit>
             <trans-unit id="otPWBas">
                 <source>description.guided_step_tutorials_page_source</source>
-                <target>Chaque film devient une carte, qui l'ouvre avec ses étapes ; un clic sur une étape y mène le film.</target>
+                <target>Chaque film devient une carte, qui l'ouvre avec ses étapes ; un clic sur une étape y mène le film. Les films sont ceux déposés dans public/medias/films/&lt;langue&gt;/ : sans film, la page reste vide.</target>
             </trans-unit>
             <trans-unit id="wfdzbRF">
                 <source>description.guided_step_tutorials_page_title</source>
@@ -596,7 +600,7 @@
             </trans-unit>
             <trans-unit id="GNe8Ekz">
                 <source>description.guided_step_tutorials_page_view</source>
-                <target>Vérifiez sur le site que les films s'affichent, chacun avec sa carte.</target>
+                <target>Vérifiez sur le site que les films s'affichent, chacun avec sa carte. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
             </trans-unit>
             <trans-unit id="Cmewuhh">
                 <source>description.menu_translation</source>
@@ -1081,6 +1085,10 @@
             <trans-unit id="BElmr7I">
                 <source>label.guided_step_footer_save</source>
                 <target>Enregistrer le pied de page</target>
+            </trans-unit>
+            <trans-unit id="hLIx6RD">
+                <source>label.guided_step_footer_shortcuts</source>
+                <target>Revenir depuis le site</target>
             </trans-unit>
             <trans-unit id="m0CcfXV">
                 <source>label.guided_step_footer_style</source>

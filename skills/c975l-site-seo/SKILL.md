@@ -1,6 +1,6 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_config.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, PageHealthCheckTargets, PageLinkLocalizer, InternalLinkLocalizerInterface, llms.txt, site_json_ld, SiteSnippetBuilder, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_config.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, PagePublicUrlResolver, PageHealthCheckTargets, PageLinkLocalizer, InternalLinkLocalizerInterface, llms.txt, site_json_ld, SiteSnippetBuilder, JsonLdBuilder, publisherId, VideoObject, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
@@ -104,7 +104,8 @@ under `logo`, and `site-author` as its `founder` when that name is not the site'
 Nothing is emitted at all while `site-name` or `site-url` is empty: the first identifies the entity, the
 second builds both `@id`. The `WebSite` node names the language the page is being served in, its
 description being the home page's own summary read in that same language. The `sameAs` list comes from
-whichever bundle owns each profile (`SameAsProviderInterface`).
+whichever bundle owns each profile (`SameAsProviderInterface`). The graph is encoded by UiBundle's
+`JsonLdBuilder`, and the publisher's `@id` is its `publisherId()`, shared with the `contact` block.
 
 ## Open Graph image
 

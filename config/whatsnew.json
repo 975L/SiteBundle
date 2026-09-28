@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-09-28",
+        "description": [
+            {
+                "en": "Your tutorial films can now show up in search engines' video results",
+                "fr": "Vos films de tutoriel peuvent désormais apparaître dans les résultats vidéo des moteurs de recherche",
+                "es": "Sus vídeos tutoriales pueden aparecer ahora en los resultados de vídeo de los buscadores"
+            },
+            {
+                "en": "The guided project on the footer now shows how to come back to editing from the site itself",
+                "fr": "Le projet guidé sur le pied de page montre désormais comment revenir modifier le site depuis le site lui-même",
+                "es": "El proyecto guiado sobre el pie de página muestra ahora cómo volver a editar desde el propio sitio"
+            },
+            {
+                "en": "Guided projects now tell you to click the button on your own row, not the highlighted first one",
+                "fr": "Les projets guidés précisent désormais de cliquer le bouton de votre propre ligne, et non celui de la première ligne mis en évidence",
+                "es": "Los proyectos guiados indican ahora que pulse el botón de su propia fila, y no el de la primera fila resaltado"
+            }
+        ]
+    },
+    {
         "date": "2026-09-27",
         "description": [
             {

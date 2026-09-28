@@ -146,6 +146,10 @@
                 <source>narration.guided_step_footer_save</source>
                 <target>Guarde el pie de página.</target>
             </trans-unit>
+            <trans-unit id="msmKVXr">
+                <source>narration.guided_step_footer_shortcuts</source>
+                <target>Para editar el sitio desde el propio sitio, haga tres clics rápidos en el pie de página, fuera de sus enlaces, en el signo del copyright por ejemplo: se le pide iniciar sesión y vuelve a la página, con sus botones de edición.</target>
+            </trans-unit>
             <trans-unit id="9BaGnGr">
                 <source>narration.guided_step_footer_style</source>
                 <target>Elija la disposición de las líneas: unas al lado de otras, unas debajo de otras, o en columnas. Si se deja vacío, decide el archivo de tema del sitio.</target>

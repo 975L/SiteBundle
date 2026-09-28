@@ -220,7 +220,7 @@
             </trans-unit>
             <trans-unit id="o0zeSR4">
                 <source>description.guided_step_block_view</source>
-                <target>Compruebe en el sitio cómo se muestra el bloque con sus opciones.</target>
+                <target>Compruebe en el sitio cómo se muestra el bloque con sus opciones. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="QO2ehIE">
                 <source>description.guided_step_collection_add_item</source>
@@ -252,7 +252,7 @@
             </trans-unit>
             <trans-unit id="FjMe48o">
                 <source>description.guided_step_collection_translation_action</source>
-                <target>En la fila del elemento. El botón solo aparece si el sitio declara más de un idioma: si no, no hay nada que abrir.</target>
+                <target>En la fila del elemento. El botón solo aparece si el sitio declara más de un idioma: si no, no hay nada que abrir. El botón resaltado es el de la primera fila: pulse el de la fila de su elemento.</target>
             </trans-unit>
             <trans-unit id="WPgj3Nv">
                 <source>description.guided_step_collection_translation_check</source>
@@ -318,13 +318,17 @@
                 <source>description.guided_step_footer_open</source>
                 <target>Un menú por ubicación del sitio, de la barra de navegación al pie de los correos: cada uno se crea una sola vez.</target>
             </trans-unit>
+            <trans-unit id="DA2Cl33">
+                <source>description.guided_step_footer_shortcuts</source>
+                <target>En el sitio, tres clics rápidos en el pie de página, fuera de sus enlaces - en el «©» del copyright por ejemplo - llevan al inicio de sesión y luego de vuelta a la página, donde aparecen los botones de edición.</target>
+            </trans-unit>
             <trans-unit id="ikDcfg4">
                 <source>description.guided_step_footer_style</source>
                 <target>Uno al lado del otro, uno debajo del otro, o en columnas. Si se deja vacío, decide el archivo de tema del sitio.</target>
             </trans-unit>
             <trans-unit id="bX5tvhC">
                 <source>description.guided_step_menu_translation_action</source>
-                <target>El botón solo aparece si el sitio declara más de un idioma.</target>
+                <target>El botón solo aparece si el sitio declara más de un idioma. El botón resaltado es el de la primera fila: pulse el de la fila de su menú.</target>
             </trans-unit>
             <trans-unit id="0CVNo.U">
                 <source>description.guided_step_menu_translation_locale</source>
@@ -496,7 +500,7 @@
             </trans-unit>
             <trans-unit id="2i_xxw5">
                 <source>description.guided_step_page_translation_action</source>
-                <target>El botón solo aparece si el sitio declara más de un idioma: si no, no hay nada que abrir.</target>
+                <target>El botón solo aparece si el sitio declara más de un idioma: si no, no hay nada que abrir. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="HNEB.MS">
                 <source>description.guided_step_page_translation_blocks</source>
@@ -540,11 +544,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>No se borra nada: la página abandona el sitio y sus menús, y espera en la papelera.</target>
+                <target>No se borra nada: la página abandona el sitio y sus menús, y espera en la papelera. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>Esta no tiene vuelta atrás y se lleva los blocks de la página: se le pide una confirmación.</target>
+                <target>Esta no tiene vuelta atrás y se lleva los blocks de la página: se le pide una confirmación. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>
@@ -556,7 +560,7 @@
             </trans-unit>
             <trans-unit id="YPAShtT">
                 <source>description.guided_step_trash_restore</source>
-                <target>Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio.</target>
+                <target>Vuelve sin publicar: usted decide cuándo aparece de nuevo en el sitio. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="a5JigYy">
                 <source>description.guided_step_tutorials_page_blocks</source>
@@ -580,7 +584,7 @@
             </trans-unit>
             <trans-unit id="8RsU7.A">
                 <source>description.guided_step_tutorials_page_reopen</source>
-                <target>Los bloques se añaden una vez guardada la página.</target>
+                <target>Los bloques se añaden una vez guardada la página. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="4dHA5eZ">
                 <source>description.guided_step_tutorials_page_report</source>
@@ -588,7 +592,7 @@
             </trans-unit>
             <trans-unit id="otPWBas">
                 <source>description.guided_step_tutorials_page_source</source>
-                <target>Cada vídeo se convierte en una tarjeta que lo abre con sus pasos; un clic en un paso lleva el vídeo hasta él.</target>
+                <target>Cada vídeo se convierte en una tarjeta que lo abre con sus pasos; un clic en un paso lleva el vídeo hasta él. Los vídeos son los depositados en public/medias/films/&lt;idioma&gt;/: sin vídeo, la página queda vacía.</target>
             </trans-unit>
             <trans-unit id="wfdzbRF">
                 <source>description.guided_step_tutorials_page_title</source>
@@ -596,7 +600,7 @@
             </trans-unit>
             <trans-unit id="GNe8Ekz">
                 <source>description.guided_step_tutorials_page_view</source>
-                <target>Compruebe en el sitio que los vídeos se muestran, cada uno con su tarjeta.</target>
+                <target>Compruebe en el sitio que los vídeos se muestran, cada uno con su tarjeta. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="Cmewuhh">
                 <source>description.menu_translation</source>
@@ -1081,6 +1085,10 @@
             <trans-unit id="BElmr7I">
                 <source>label.guided_step_footer_save</source>
                 <target>Guardar el pie de página</target>
+            </trans-unit>
+            <trans-unit id="hLIx6RD">
+                <source>label.guided_step_footer_shortcuts</source>
+                <target>Volver desde el sitio</target>
             </trans-unit>
             <trans-unit id="m0CcfXV">
                 <source>label.guided_step_footer_style</source>

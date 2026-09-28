@@ -802,6 +802,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_dropdown',
                     'description' => 'description.guided_step_page_menu_dropdown',
                     'narration' => 'narration.guided_step_page_menu_dropdown',
+                    'highlight' => '[data-kind-row]',
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_save',
@@ -934,6 +935,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_footer_check',
                     'description' => 'description.guided_step_footer_check',
                     'narration' => 'narration.guided_step_footer_check',
+                ],
+                [
+                    'label' => 'label.guided_step_footer_shortcuts',
+                    'description' => 'description.guided_step_footer_shortcuts',
+                    'narration' => 'narration.guided_step_footer_shortcuts',
+                    // Both shortcuts live on the public site, out of the back-office the tour runs in, so there is nothing to highlight
                 ],
             ],
         ];

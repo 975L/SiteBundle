@@ -327,7 +327,8 @@ To show them, create a page and add a **`collection` block** on the **"Tutorials
 
 - `/tutorials/film/{slug}` leads to a film on that page: a guided project filmed on the site links its film there from the dashboard (ConfigBundle's `TutorialFilmUrlProviderInterface`), the others keeping the c975L ecosystem's films;
 - each step, and the whole film, can be reported when the site has a page holding the `contact` form: `/tutorials/{slug}/report/{step}` opens it with its subject filled in;
-- `public/medias/films` is declared to ConfigBundle's backup. It is not a media any row points at: a media purge of your own must leave it alone.
+- `public/medias/films` is declared to ConfigBundle's backup. It is not a media any row points at: a media purge of your own must leave it alone;
+- each card carries its film's `schema.org` `VideoObject`, dated by `shotAt`, what a search engine's video results are drawn from.
 
 An app grouping its films otherwise (by bundle, by theme) draws them with the same card through `TutorialCollectionSourceProvider::items()`, and may add a `tryUrl` to a film to offer a place to walk the parcours for real.
 
@@ -489,6 +490,8 @@ What is translatable is declared by the block kind itself, through the `translat
 
 A language screen also carries what a language cannot change on its own — the slug, whether the page is published and indexed, its change frequency and priority, its sharing image — in a group painted apart (`.fieldset-all-languages`) and **mapped on every screen**: written from the English one, those fields are written for every language at once. The rest of the screen, from the title down, belongs to the language on it, its own health check tab included.
 
+The whole site can also be translated in one go, with UiBundle's `c975l:translate:content` (see its readme): `SiteTextProvider` hands it each page's own two texts and its blocks, the menus and the collection items' cards.
+
 An editor can also start from the site rather than from the index: UiBundle's "edit this block" hover button opens the screen of the language the page is being read in (`SiteBlockEditUrlProvider`), so correcting the English page never lands on the French text.
 
 ### Choosing a language
@@ -533,7 +536,7 @@ The home page carries a `schema.org` graph naming the site's publisher and the s
 
 What the site says it is comes from `site-schema-type` (`choice`: `Organization` (default), `Person`, `ProfessionalService`, `LocalBusiness`) — a publishing house is an `Organization`, a personal site or a CV is the `Person` it is about, an agency selling a service a `ProfessionalService`, and a business with an address a `LocalBusiness`. They are not interchangeable: publishing an agency as a `Person` is the kind of claim a search engine builds a knowledge panel on. A `Person` takes `site-author` as its own name and the logo under `image`; every other type takes `site-name`, the logo under `logo`, and `site-author` as its `founder` when that name isn't the site's own.
 
-The graph is emitted only where there is something to publish: no `site-name` or no `site-url`, and nothing is written at all. It names the language the page is being served in, its description being the home page's own summary read in that same language. The `sameAs` list is contributed by whichever bundle owns each profile (UiBundle's `SameAsProviderInterface`).
+The graph is emitted only where there is something to publish: no `site-name` or no `site-url`, and nothing is written at all. It names the language the page is being served in, its description being the home page's own summary read in that same language. The `sameAs` list is contributed by whichever bundle owns each profile (UiBundle's `SameAsProviderInterface`). The publisher's `@id` is UiBundle's `JsonLdBuilder::publisherId()`, the one its `contact` block takes too, so both describe the same entity.
 
 The `site_json_ld(logoUrl, description)` Twig function is what `pages/page.html.twig` prints it with, the logo resolved template-side because only a template turns a `Media` into an absolute url.
 

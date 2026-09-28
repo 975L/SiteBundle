@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -212,7 +212,7 @@ guided project slug: `version`, `narrated`, `starts`, optional `shotAt`) beside 
 and `.jpg`. An entry without `version` is ignored; a locale with no film of its own falls back film by
 film to the site's default locale. The page showing them is an ordinary page holding a `collection` block
 on that source, each card drawn by `@c975LSite/collection/TutorialItem.html.twig` and the `tutorial`
-Stimulus controller.
+Stimulus controller, the template also printing the film's `VideoObject` JSON-LD (dated by `shotAt`).
 
 `TutorialController` adds two routes around that page, found through
 `PageRepository::findOneByCollectionSource()`: `site_tutorial_film` (`/tutorials/film/{slug}`, what
@@ -238,6 +238,7 @@ on the index.
 php bin/console c975l:site:pages:import-defaults        # home + the legal pages, if absent
 php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>
 php bin/console c975l:site:create                       # one-shot wizard bootstrapping a new site
+php bin/console c975l:translate:content --locale=en --dry-run  # UiBundle's; SiteTextProvider hands it the pages, menus and collection items
 ```
 
 ## Twig functions

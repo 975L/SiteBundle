@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Service;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\UiBundle\Registry\SameAsRegistry;
+use c975L\UiBundle\Service\JsonLdBuilder;
 
 // Builds the schema.org graph the home page publishes: who publishes the site (Organization) and what the site itself is (WebSite).
 // Every bundle already describes its own entities - a book, a product, a photo - and none of them says who stands behind them. This is that missing node, and it is what the "sameAs" profiles hang from: it ties the site, its social accounts and its catalog into a single entity rather than a scattering of unrelated pages.
@@ -26,6 +27,7 @@ class SiteSnippetBuilder
         private readonly ConfigServiceInterface $configService,
         private readonly SiteLocales $siteLocales,
         private readonly SameAsRegistry $sameAsRegistry,
+        private readonly JsonLdBuilder $jsonLdBuilder = new JsonLdBuilder(),
     ) {
     }
 
@@ -111,23 +113,16 @@ class SiteSnippetBuilder
         ]);
     }
 
-    // The publisher's own "@id", built in one place so the WebSite node can never name one the graph does not carry
+    // The publisher's own "@id", the one a contact block describing the same business takes too (see UiBundle's JsonLdBuilder)
     private static function publisherId(string $url, string $type): string
     {
-        return $url . '/#' . ('Person' === $type ? 'person' : 'organization');
+        return JsonLdBuilder::publisherId($url, 'Person' === $type);
     }
 
     // The same graph, encoded for a <script type="application/ld+json">; empty string when there is nothing to publish
     public function buildJson(?string $logoUrl = null, ?string $description = null, ?string $locale = null): string
     {
-        $snippet = $this->build($logoUrl, $description, $locale);
-
-        if ([] === $snippet) {
-            return '';
-        }
-
-        // JSON_HEX_TAG keeps a "</script>" typed into a field from closing the tag, JSON_INVALID_UTF8_SUBSTITUTE keeps a stray byte from emptying the whole graph
-        return json_encode($snippet, \JSON_HEX_TAG | \JSON_HEX_AMP | \JSON_HEX_APOS | \JSON_HEX_QUOT | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE | \JSON_INVALID_UTF8_SUBSTITUTE);
+        return $this->jsonLdBuilder->encode($this->build($logoUrl, $description, $locale));
     }
 
     /**

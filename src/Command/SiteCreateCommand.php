@@ -105,6 +105,7 @@ class SiteCreateCommand extends Command
         }
         $this->ensureUserChecker($io);
         $this->ensureLoginThrottling($io);
+        $this->ensureLoginEntryPoint($io);
         $this->ensureManagementAccessControl($io);
 
         $io->section('2/7 — Configuration par défaut');
@@ -192,75 +193,59 @@ class SiteCreateCommand extends Command
         return false;
     }
 
-    // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is false, see README "Account activation") onto the "main" firewall. Edits the file as plain text rather than through the Yaml component, so existing comments/formatting survive.
+    // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is false, see README "Account activation") onto the "main" firewall
     private function ensureUserChecker(SymfonyStyle $io): void
     {
+        $this->addToMainFirewall($io, 'user_checker', 'user_checker: App\\Security\\UserChecker', 'user_checker enregistré');
+    }
+
+    // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP, no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter package
+    private function ensureLoginThrottling(SymfonyStyle $io): void
+    {
+        $this->addToMainFirewall($io, 'login_throttling', 'login_throttling: { max_attempts: 5 }', 'login_throttling enregistré (nécessite composer require symfony/rate-limiter)');
+    }
+
+    // Wires c975l/config-bundle's LoginEntryPoint onto the "main" firewall, so an anonymous visitor asking for "/en/..." reaches the login form in English
+    private function ensureLoginEntryPoint(SymfonyStyle $io): void
+    {
+        $this->addToMainFirewall($io, 'entry_point', 'entry_point: c975L\\ConfigBundle\\Security\\LoginEntryPoint', 'entry_point enregistré');
+    }
+
+    // Adds a line under the "main" firewall unless its key is already in the file. Edits the file as plain text rather than through the Yaml component, so existing comments/formatting survive
+    private function addToMainFirewall(SymfonyStyle $io, string $key, string $added, string $done): void
+    {
         $path = $this->projectDir . '/config/packages/security.yaml';
+        $manual = sprintf('ajoute "%s" au firewall "main" toi-même.', $added);
         if (!is_file($path)) {
-            $io->text('  ⚠ config/packages/security.yaml introuvable, ajoute "user_checker: App\\Security\\UserChecker" au firewall "main" toi-même.');
+            $io->text('  ⚠ config/packages/security.yaml introuvable, ' . $manual);
 
             return;
         }
 
         $content = file_get_contents($path);
-        if (str_contains($content, 'user_checker:')) {
+        if (str_contains($content, $key . ':')) {
             return;
         }
 
-        $lines = explode("\n", $content);
-        foreach ($lines as $i => $line) {
+        $fileLines = explode("\n", $content);
+        foreach ($fileLines as $i => $line) {
             if (!preg_match('/^(\s*)main:\s*$/', $line, $m)) {
                 continue;
             }
 
             // Matches the indentation of "main:"'s existing children, rather than assuming 4 spaces
-            $childIndent = preg_match('/^(\s*)\S/', $lines[$i + 1] ?? '', $ci) ? $ci[1] : $m[1] . '    ';
-            array_splice($lines, $i + 1, 0, [$childIndent . 'user_checker: App\\Security\\UserChecker']);
-            file_put_contents($path, implode("\n", $lines));
-            $io->text('  ✓ user_checker enregistré sur le firewall "main" dans security.yaml');
+            $childIndent = preg_match('/^(\s*)\S/', $fileLines[$i + 1] ?? '', $ci) ? $ci[1] : $m[1] . '    ';
+            array_splice($fileLines, $i + 1, 0, [$childIndent . $added]);
+            file_put_contents($path, implode("\n", $fileLines));
+            $io->text('  ✓ ' . $done . ' sur le firewall "main" dans security.yaml');
 
             return;
         }
 
-        $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "user_checker: App\\Security\\UserChecker" toi-même.');
+        $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ' . $manual);
     }
 
-    // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP, no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter package. Same plain-text edit approach as ensureUserChecker(), for the same reason.
-    private function ensureLoginThrottling(SymfonyStyle $io): void
-    {
-        $path = $this->projectDir . '/config/packages/security.yaml';
-        if (!is_file($path)) {
-            $io->text('  ⚠ config/packages/security.yaml introuvable, ajoute "login_throttling: { max_attempts: 5 }" au firewall "main" toi-même.');
-
-            return;
-        }
-
-        $content = file_get_contents($path);
-        if (str_contains($content, 'login_throttling:')) {
-            return;
-        }
-
-        $lines = explode("\n", $content);
-        foreach ($lines as $i => $line) {
-            if (!preg_match('/^(\s*)main:\s*$/', $line, $m)) {
-                continue;
-            }
-
-            $childIndent = preg_match('/^(\s*)\S/', $lines[$i + 1] ?? '', $ci) ? $ci[1] : $m[1] . '    ';
-            array_splice($lines, $i + 1, 0, [
-                $childIndent . 'login_throttling:',
-                $childIndent . '    max_attempts: 5',
-            ]);
-            file_put_contents($path, implode("\n", $lines));
-            $io->text('  ✓ login_throttling enregistré sur le firewall "main" dans security.yaml (nécessite composer require symfony/rate-limiter)');
-
-            return;
-        }
-
-        $io->text('  ⚠ Firewall "main" introuvable dans security.yaml, ajoute "login_throttling: { max_attempts: 5 }" toi-même.');
-    }
-
-    // Declares /management as off-limits to anonymous visitors, which sends them to the login form instead of a bare 403. On the skeleton's "lazy: true" firewall it also makes the token resolve up front, without which c975l/config-bundle's dashboard runs before the firewall has restored it. IS_AUTHENTICATED_FULLY rather than an admin role: which role grants the back-office is site-role-admin, editable from the dashboard, so the controllers check it themselves. Same plain-text edit approach as ensureUserChecker(), for the same reason.
+    // Declares /management as off-limits to anonymous visitors, which sends them to the login form instead of a bare 403. On the skeleton's "lazy: true" firewall it also makes the token resolve up front, without which c975l/config-bundle's dashboard runs before the firewall has restored it. IS_AUTHENTICATED_FULLY rather than an admin role: which role grants the back-office is site-role-admin, editable from the dashboard, so the controllers check it themselves. Same plain-text edit approach as addToMainFirewall(), for the same reason.
     private function ensureManagementAccessControl(SymfonyStyle $io): void
     {
         $path = $this->projectDir . '/config/packages/security.yaml';

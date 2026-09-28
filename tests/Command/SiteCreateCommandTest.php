@@ -158,7 +158,7 @@ class SiteCreateCommandTest extends TestCase
     {
         $path = $this->writeSecurityYaml("security:\n    access_control:\n");
 
-        $display = $this->callEnsureManagementAccessControl();
+        $display = $this->callSecurityStep('ensureManagementAccessControl');
 
         $this->assertStringContainsString('        - { path: ^/management, roles: IS_AUTHENTICATED_FULLY }', file_get_contents($path));
         $this->assertStringContainsString('access_control', $display);
@@ -169,7 +169,7 @@ class SiteCreateCommandTest extends TestCase
     {
         $path = $this->writeSecurityYaml("security:\n    access_control:\n      - { path: ^/gestion, roles: ROLE_ADMIN }\n");
 
-        $this->callEnsureManagementAccessControl();
+        $this->callSecurityStep('ensureManagementAccessControl');
 
         $this->assertStringContainsString("\n      - { path: ^/management, roles: IS_AUTHENTICATED_FULLY }", file_get_contents($path));
     }
@@ -180,7 +180,7 @@ class SiteCreateCommandTest extends TestCase
         $yaml = "security:\n    access_control:\n        - { path: ^/management, roles: ROLE_ADMIN }\n";
         $path = $this->writeSecurityYaml($yaml);
 
-        $this->callEnsureManagementAccessControl();
+        $this->callSecurityStep('ensureManagementAccessControl');
 
         $this->assertSame($yaml, file_get_contents($path));
     }
@@ -190,10 +190,41 @@ class SiteCreateCommandTest extends TestCase
     {
         $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
 
-        $display = $this->callEnsureManagementAccessControl();
+        $display = $this->callSecurityStep('ensureManagementAccessControl');
 
         $this->assertStringNotContainsString('^/management', file_get_contents($path));
         $this->assertStringContainsString('⚠', $display);
+    }
+
+    // The login form in the language of the page asked for: the entry point lands under "main", at its children's indentation
+    public function testEnsureLoginEntryPointAddsItUnderTheMainFirewall(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
+
+        $this->callSecurityStep('ensureLoginEntryPoint');
+
+        $this->assertStringContainsString("        main:\n            entry_point: c975L\\ConfigBundle\\Security\\LoginEntryPoint\n            lazy: true", file_get_contents($path));
+    }
+
+    // A site already declaring its own entry point keeps it
+    public function testEnsureLoginEntryPointLeavesAnExistingOneAlone(): void
+    {
+        $yaml = "security:\n    firewalls:\n        main:\n            entry_point: App\\Security\\Mine\n";
+        $path = $this->writeSecurityYaml($yaml);
+
+        $this->callSecurityStep('ensureLoginEntryPoint');
+
+        $this->assertSame($yaml, file_get_contents($path));
+    }
+
+    // The throttling line is flow YAML, so the same line stays valid when printed as the manual fallback
+    public function testEnsureLoginThrottlingWritesAFlowMapping(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
+
+        $this->callSecurityStep('ensureLoginThrottling');
+
+        $this->assertStringContainsString("            login_throttling: { max_attempts: 5 }\n            lazy: true", file_get_contents($path));
     }
 
     // Config left over from an earlier run, encrypted with a key that no longer exists: the wizard names the slugs instead of letting step 4/7 die on a bare "Decryption failed" from inside the vault
@@ -283,12 +314,12 @@ class SiteCreateCommandTest extends TestCase
         return $path;
     }
 
-    // Private and only reached mid-command, so it is driven directly rather than through CommandTester
-    private function callEnsureManagementAccessControl(): string
+    // Private and only reached mid-command, so each security.yaml step is driven directly rather than through CommandTester
+    private function callSecurityStep(string $method): string
     {
         $command = $this->createCommand();
         $output = new BufferedOutput();
-        new \ReflectionMethod($command, 'ensureManagementAccessControl')
+        new \ReflectionMethod($command, $method)
             ->invoke($command, new SymfonyStyle(new ArrayInput([]), $output));
 
         return $output->fetch();

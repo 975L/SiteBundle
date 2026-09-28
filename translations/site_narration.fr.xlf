@@ -146,6 +146,10 @@
                 <source>narration.guided_step_footer_save</source>
                 <target>Enregistrez le pied de page.</target>
             </trans-unit>
+            <trans-unit id="msmKVXr">
+                <source>narration.guided_step_footer_shortcuts</source>
+                <target>Pour modifier le site depuis le site lui-même, cliquez trois fois rapidement sur le pied de page, hors de ses liens, le signe du copyright par exemple : la connexion vous est demandée, puis vous revenez sur la page, avec ses boutons de modification.</target>
+            </trans-unit>
             <trans-unit id="9BaGnGr">
                 <source>narration.guided_step_footer_style</source>
                 <target>Choisissez la disposition des lignes : les unes à côté des autres, les unes sous les autres, ou en colonnes. Laissé vide, c'est le fichier de thème du site qui décide.</target>

@@ -1,5 +1,20 @@
 # Changelog
 
+## v8.27.0
+
+The whole site handed to the translate command, films as VideoObject
+
+- New `SiteTextProvider`: hands UiBundle's `c975l:translate:content` the pages, their blocks, the menus and the collection items (28/09/2026)
+- `SiteSnippetBuilder` encodes through UiBundle's `JsonLdBuilder` (28/09/2026)
+- The publisher's `@id` is built by `JsonLdBuilder::publisherId()`, shared with the contact block (28/09/2026)
+- Each tutorial film is published as a `VideoObject`, dated by the day it was shot (28/09/2026)
+- `c975l:site:create` sets ConfigBundle's `LoginEntryPoint` on the `main` firewall, so the login form opens in the language of the page asked for (28/09/2026)
+- Requires `c975l/core-bundle` ^1.47 (28/09/2026)
+- New "come back from the site" step in the `site-footer` guided project (28/09/2026)
+- Guided steps pointing at a list's first row say to click the one on your own row (28/09/2026)
+- The `site-tutorials-page` guided project says where the films come from (28/09/2026)
+- The dropdown step of `site-page-menu` highlights the block kind picker (28/09/2026)
+
 ## v8.26.0
 
 A navbar dropdown menu, and a bundle links to its own block
