@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.27.1
+
+A rich text's page links read in one query
+
+- `PageLinkLocalizer` reads every page a rich text links to in a single query (29/09/2026)
+
 ## v8.27.0
 
 The whole site handed to the translate command, films as VideoObject

@@ -82,7 +82,8 @@ class PageLinkLocalizerTest extends TestCase
     public function testThePageBehindASlugIsLookedUpOnceForAWholeText(): void
     {
         $repository = $this->createMock(PageRepository::class);
-        $repository->expects($this->once())->method('findOneBy')->willReturn(new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers'));
+        $repository->expects($this->once())->method('findBy')->willReturn([new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers')]);
+        $repository->expects($this->never())->method('findOneBy');
 
         $text = '<a href="/pages/nos-ateliers">un</a> <a href="/pages/nos-ateliers">deux</a>';
 
@@ -96,11 +97,28 @@ class PageLinkLocalizerTest extends TestCase
     public function testASlugNamingNoPageIsSearchedForOnce(): void
     {
         $repository = $this->createMock(PageRepository::class);
-        $repository->expects($this->once())->method('findOneBy')->willReturn(null);
+        $repository->expects($this->once())->method('findBy')->willReturn([]);
+        $repository->expects($this->never())->method('findOneBy');
 
         $text = '<a href="/pages/inconnue">un</a> <a href="/pages/inconnue">deux</a>';
 
         $this->assertSame($text, $this->localizer('en', repository: $repository)->localize($text));
+    }
+
+    // Every page a text links to costs one query together, a FAQ linking four pages no longer paying four
+    public function testThePagesOfDifferentSlugsAreReadInOneQuery(): void
+    {
+        $repository = $this->createMock(PageRepository::class);
+        $repository->expects($this->once())->method('findBy')->with(['slug' => ['tarifs', 'contact']])->willReturn([
+            new Page()->setTitle('Tarifs')->setSlug('tarifs'),
+            new Page()->setTitle('Contact')->setSlug('contact'),
+        ]);
+        $repository->expects($this->never())->method('findOneBy');
+
+        $this->assertSame(
+            '<a href="/en/pages/tarifs">un</a> <a href="/en/pages/contact#form">deux</a>',
+            $this->localizer('en', repository: $repository)->localize('<a href="/pages/tarifs">un</a> <a href="/pages/contact#form">deux</a>')
+        );
     }
 
     // A target picked in a block's link field is the value a menu link stores, read back the same way - in the writing language too, where nothing else here is rewritten
@@ -145,6 +163,7 @@ class PageLinkLocalizerTest extends TestCase
             $page = new Page()->setTitle('Nos ateliers')->setSlug($slug);
             $repository = $this->createStub(PageRepository::class);
             $repository->method('findOneBy')->willReturn($page);
+            $repository->method('findBy')->willReturn([$page]);
         }
 
         // Written in French and in English, and in nothing else

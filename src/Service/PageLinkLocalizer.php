@@ -49,6 +49,10 @@ class PageLinkLocalizer implements InternalLinkLocalizerInterface
 
         // A whole rich text: only what an href holds is a link, the same words elsewhere in the prose being prose
         if (str_contains($value, 'href="')) {
+            if (null !== $locale) {
+                $this->preloadPages($value);
+            }
+
             return (string) preg_replace_callback(
                 '#href="([^"]*)"#',
                 fn (array $matches): string => sprintf('href="%s"', 1 === preg_match(self::TARGET, $matches[1])
@@ -59,6 +63,24 @@ class PageLinkLocalizer implements InternalLinkLocalizerInterface
         }
 
         return 1 === preg_match(self::TARGET, $value) ? $this->targetUrl($value) : $this->localizePath($value, $locale);
+    }
+
+    // The pages every link of a rich text names, read in one query rather than one per slug, a slug naming none remembered as such
+    private function preloadPages(string $text): void
+    {
+        preg_match_all('#href="/pages/([a-zA-Z0-9_-]+)#', $text, $matches);
+        $slugs = array_values(array_diff(array_unique($matches[1]), array_keys($this->pages)));
+        if ([] === $slugs) {
+            return;
+        }
+
+        foreach ($this->pageRepository->findBy(['slug' => $slugs]) as $page) {
+            $this->pages[(string) $page->getSlug()] = $page;
+        }
+
+        foreach ($slugs as $slug) {
+            $this->pages[$slug] ??= false;
+        }
     }
 
     // Decoded by the menus' own reading, which already writes it in the language being read: an unpublished or deleted page gives an empty url, as it does to a menu item
