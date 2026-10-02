@@ -20,6 +20,11 @@
 {# Whether the visitor is signed in, for the menu links shown to one half only (see MenuLink.html.twig and _menu.scss): on the body rather than in the menu, whose html is cached and shared by everyone, and rather than on <html>, which Turbo keeps across a navigation where it swaps the body. Appended, same as above #}
 {% set bodyClasses = bodyClasses|default('') ~ (app.user ? 'is-member ' : 'is-guest ') %}
 
+{# Whoever may enter the back office, for the link a members' dropdown carries (see MenuDropdown.html.twig): the same cached html, the same body class answer #}
+{% if is_granted('C975L_ACCESS_BACK_OFFICE') %}
+    {% set bodyClasses = bodyClasses ~ 'has-back-office ' %}
+{% endif %}
+
 {# This bundle's own Stimulus controller, added next to the ones the parent and any app layout declare #}
 {% set bodyControllers = (bodyControllers|default('') ~ ' basic')|trim %}
 

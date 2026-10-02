@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-10-02",
+        "description": [
+            {
+                "en": "Signed-in members now always find a \"My space\" menu in the navbar, with their account, the back office and the sign-out link",
+                "fr": "Les membres connectés trouvent désormais toujours un menu « Mon espace » dans la barre de navigation, avec leur compte, la gestion et la déconnexion",
+                "es": "Los miembros con sesión iniciada encuentran ahora siempre un menú «Mi espacio» en la barra de navegación, con su cuenta, la gestión y el cierre de sesión"
+            },
+            {
+                "en": "A dropdown menu you keep for members replaces it and receives the \"Management\" link by itself",
+                "fr": "Un menu déroulant que vous réservez aux membres le remplace et reçoit tout seul le lien « Gestion »",
+                "es": "Un menú desplegable que reserve a los miembros lo sustituye y recibe por sí solo el enlace «Gestión»"
+            }
+        ]
+    },
+    {
         "date": "2026-09-28",
         "description": [
             {

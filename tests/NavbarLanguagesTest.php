@@ -105,7 +105,7 @@ class NavbarLanguagesTest extends TestCase
     // The fallback bar keeps the select
     public function testTheNavbarAsksForTheDropdownOnTheMenuBarAlone(): void
     {
-        $this->assertSame(1, substr_count($this->template('components/General/Navbar.html.twig'), ':dropdown="true"'));
+        $this->assertSame(1, substr_count($this->template('components/General/Navbar.html.twig'), 'General:Languages page="{{ page|default(null) }}" :dropdown="true"'));
     }
 
     // Nothing to follow at all: a crawler used to be handed one query-string variant per language of a page the sitemap already declares once per language, and told not to follow them

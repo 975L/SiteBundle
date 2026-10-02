@@ -7,6 +7,14 @@
         </summary>
         <div class="menu-dropdown__items">
             {% for slot in block.slots %}{{ render_block(slot) }}{% endfor %}
+            {# The back-office link of a members' dropdown, written for everyone and shown by the layout's "has-back-office" body class, this html being cached once for all (see _menu.scss) #}
+            {% if visibility|default('all') == 'members' %}
+                <div class="menu-item menu-item--back-office">
+                    <a href="{{ path('management') }}" class="menu-link">
+                        <span class="menu-label">{{ 'label.management'|trans({}, 'site') }}</span>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </details>
 </div>

@@ -1,0 +1,33 @@
+{# <twig:c975LSite:General:AccountMenu [dropdown] /> - the signed-in visitor's own links, for a site whose navbar carries no "members" dropdown of its own (see Navbar.html.twig). Rendered on every request, outside the cached menu, so the security state is read here rather than through a body class; "dropdown" draws it as the navbar's dropdown menu, a row of links otherwise #}
+{% if app.user %}
+    {% set links = [
+        {url: path('config_account'), label: 'label.my_account'|trans({}, 'config')},
+        is_granted('C975L_ACCESS_BACK_OFFICE') ? {url: path('management'), label: 'label.management'|trans({}, 'site')} : null,
+        {url: logout_path(), label: 'label.logout'|trans({}, 'site'), rel: 'nofollow'},
+    ]|filter(link => link is not null) %}
+    {% if dropdown|default(false) %}
+        {# The look of a "menu_dropdown" block (see blocks/MenuDropdown.html.twig), the same controller closing it #}
+        <div class="menu-item menu-dropdown" data-controller="menu-dropdown">
+            <details class="menu-dropdown__details" data-menu-dropdown-target="details">
+                <summary class="menu-dropdown__summary">
+                    <span class="menu-label">{{ 'label.my_space'|trans({}, 'site') }}</span>
+                </summary>
+                <div class="menu-dropdown__items">
+                    {% for link in links %}
+                        <div class="menu-item">
+                            <a href="{{ link.url }}" class="menu-link"{% if link.rel is defined %} rel="{{ link.rel }}"{% endif %}>
+                                <span class="menu-label">{{ link.label }}</span>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </details>
+        </div>
+    {% else %}
+        <div class="nav-simple-account">
+            {% for link in links %}
+                <a href="{{ link.url }}"{% if link.rel is defined %} rel="{{ link.rel }}"{% endif %}>{{ link.label }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endif %}

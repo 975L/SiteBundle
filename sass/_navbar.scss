@@ -40,3 +40,10 @@
     font-family: var(--font-family-title);
     color: var(--navbar-site-name-color);
 }
+
+// The signed-in visitor's links on the fallback bar (see AccountMenu.html.twig), a centered row under the brand
+.nav-simple-account {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

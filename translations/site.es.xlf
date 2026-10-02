@@ -424,7 +424,7 @@
             </trans-unit>
             <trans-unit id="xxeTGY_">
                 <source>description.guided_step_page_menu_dropdown</source>
-                <target>El block «Menú desplegable» muestra un título en la barra, «Mi cuenta» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
+                <target>El block «Menú desplegable» muestra un título en la barra, «Nuestros servicios» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
             </trans-unit>
             <trans-unit id=".hlSfo_">
                 <source>description.guided_step_page_menu_edit</source>
@@ -440,7 +440,7 @@
             </trans-unit>
             <trans-unit id="LgdEHnw">
                 <source>description.guided_step_page_menu_visibility</source>
-                <target>Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada, para un enlace «Mi cuenta».</target>
+                <target>Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada. La barra ya ofrece a los miembros un menú «Mi espacio»: un menú desplegable reservado a los miembros lo sustituye y recibe el enlace «Gestión».</target>
             </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
@@ -1757,6 +1757,10 @@
             <trans-unit id="HVYyEc3">
                 <source>label.monthly</source>
                 <target>Cada mes</target>
+            </trans-unit>
+            <trans-unit id="5Cf0a.8">
+                <source>label.my_space</source>
+                <target>Mi espacio</target>
             </trans-unit>
             <trans-unit id="p8HNnIW">
                 <source>label.navbar</source>

@@ -413,9 +413,15 @@ In the navbar, the button's label reads `--navbar-btn-color`, its rule restated 
 
 ### Navbar: dropdown menu
 
-The `navbar` takes links and nothing else, except a **`menu_dropdown`**: a title (translatable, like a link's label) whose links unfold under it — "My account" over the member's own pages and the sign-out link, for instance. Its links are dragged into it like into a `menu_group`, both building their slots with the `menu_slot` context, so a dropdown holds links and never another container. Its **visibility** is a link's own (`all`, `guests`, `members`), applied to the whole dropdown through the same marker class, the menu's html being cached once for everyone.
+The `navbar` takes links and nothing else, except a **`menu_dropdown`**: a title (translatable, like a link's label) whose links unfold under it — "Our services" over a few pages, for instance (a members' one takes the place of the built-in account menu, see [Navbar: account menu](#navbar-account-menu)). Its links are dragged into it like into a `menu_group`, both building their slots with the `menu_slot` context, so a dropdown holds links and never another container. Its **visibility** is a link's own (`all`, `guests`, `members`), applied to the whole dropdown through the same marker class, the menu's html being cached once for everyone.
 
 It is a native `<details>`: it opens and closes with no javascript at all. `menu-dropdown.js` adds what a menu is expected to do on a desktop — closed on a click elsewhere or on Escape, the focus going back to its title — and, below the navbar's 768px breakpoint, keeps it open: the burger already hides the links, so the title reads as a heading among them rather than as a second tap. On a desktop the links hang under the title on `--navbar-background` (`--navbar-background-scrolled` once scrolled), in the navbar's own colors.
+
+### Navbar: account menu
+
+A signed-in visitor always finds their own links in the bar. A navbar holding no `menu_dropdown` whose visibility is `members` draws the built-in **"My space"** dropdown (`AccountMenu` component, `label.my_space`): *My account*, *Management* for whoever passes the `C975L_ACCESS_BACK_OFFICE` voter, and *Sign out* (`rel="nofollow"`). The fallback bar draws the same links as a row (`.nav-simple-account`). Rendered on every request, outside the cached menu, it writes nothing for a guest.
+
+A site that built its own members' dropdown keeps it, and the built-in one steps aside — unless that dropdown is hidden, which counts as absent. Its own dropdown then receives the *Management* link, written for everyone in the cached html and shown only under the `has-back-office` body class `layout.html.twig` sets for the same voter (`.menu-item--back-office`, `sass/_menu.scss`).
 
 ### Navbar: logo, site name, tagline
 

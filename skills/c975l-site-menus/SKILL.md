@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/AccountMenu.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -133,6 +133,15 @@ A native `<details>`, working with no javascript; `menu-dropdown.js` closes it o
 Escape on a desktop and keeps it open below 768px, where it reads as a heading inside the burger. Do
 not turn a `menu_group` into a dropdown: existing menus rely on the group staying as it is.
 
+## Account menu
+
+A signed-in visitor always gets their links. With no visible `menu_dropdown` of visibility `members`
+in the navbar, `Navbar.html.twig` draws `<twig:c975LSite:General:AccountMenu :dropdown="true" />`
+("My space": account, back office for the `C975L_ACCESS_BACK_OFFICE` voter, sign out); the fallback
+bar draws it as a row (`.nav-simple-account`). It is rendered live, outside the cached menu. A site's
+own members' dropdown replaces it (a hidden one counts as absent) and receives the back-office link,
+written for everyone and shown by the `has-back-office` body class `layout.html.twig` sets.
+
 ## Footer display style
 
 The footer's edit screen carries a **Display style** select (`Menu::$style`): the site theme's own
@@ -250,6 +259,7 @@ sign is a place those clicks land.
 - **Do not put anything but links and `menu_dropdown` in a navbar** — the context forbids it, and the
   picker will not offer it.
 - **Do not put `menu-link` on a dropdown's `<summary>`.** UiBundle's `menu.js` closes the burger on it.
+- **Do not test `is_granted` inside a menu block template.** Its html is cached for everyone; use a body class.
 - **Do not use a `menu_link` in an email menu while `site-url` is empty.** Nothing makes it absolute then.
 - **Do not write `flex-direction` for the footer layout.** Retune the two `--footer-items-*` tokens.
 - **Do not set the navbar position with a `style` attribute.** The nonce drops it.

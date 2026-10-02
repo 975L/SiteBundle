@@ -44,6 +44,7 @@ class NavbarMenuDropdownTest extends TestCase
         return [
             'block' => ['blocks/MenuDropdown.html.twig'],
             'languages' => ['components/General/Languages.html.twig'],
+            'account' => ['components/General/AccountMenu.html.twig'],
         ];
     }
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.28.0
+
+A signed-in visitor always finds their account links in the navbar
+
+- New `AccountMenu` component: a built-in "My space" dropdown for a navbar holding no members' dropdown (02/10/2026)
+- The fallback bar shows the signed-in visitor's links as a row (02/10/2026)
+- A members' `menu_dropdown` receives the back-office link, shown through the new `has-back-office` body class (02/10/2026)
+- Guided steps on dropdown menus and link visibility describe the built-in "My space" menu (02/10/2026)
+
 ## v8.27.1
 
 A rich text's page links read in one query

@@ -839,6 +839,10 @@ body.is-member .menu-item--guests {
   display: none;
 }
 
+body:not(.has-back-office) .menu-item--back-office {
+  display: none;
+}
+
 .menu-item--copyright {
   display: flex;
   align-items: center;
@@ -1088,6 +1092,12 @@ form.menu-dropdown__items {
   margin: 0.5rem 0;
   font-family: var(--font-family-title);
   color: var(--navbar-site-name-color);
+}
+
+.nav-simple-account {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
 a,

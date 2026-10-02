@@ -424,7 +424,7 @@
             </trans-unit>
             <trans-unit id="xxeTGY_">
                 <source>description.guided_step_page_menu_dropdown</source>
-                <target>The "Dropdown menu" block shows a title in the bar, "My account" for instance, and its links unfold under it. Add the links to it as you do in the menu.</target>
+                <target>The "Dropdown menu" block shows a title in the bar, "Our services" for instance, and its links unfold under it. Add the links to it as you do in the menu.</target>
             </trans-unit>
             <trans-unit id=".hlSfo_">
                 <source>description.guided_step_page_menu_edit</source>
@@ -440,7 +440,7 @@
             </trans-unit>
             <trans-unit id="LgdEHnw">
                 <source>description.guided_step_page_menu_visibility</source>
-                <target>By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members, for a "My account" link.</target>
+                <target>By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members. The bar already offers members a "My space" menu: a dropdown menu kept for members replaces it and receives the "Management" link.</target>
             </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
@@ -1757,6 +1757,10 @@
             <trans-unit id="HVYyEc3">
                 <source>label.monthly</source>
                 <target>Monthly</target>
+            </trans-unit>
+            <trans-unit id="5Cf0a.8">
+                <source>label.my_space</source>
+                <target>My space</target>
             </trans-unit>
             <trans-unit id="p8HNnIW">
                 <source>label.navbar</source>

@@ -260,7 +260,7 @@
             </trans-unit>
             <trans-unit id="9ioOiX1">
                 <source>narration.guided_step_page_menu_dropdown</source>
-                <target>Para agrupar enlaces bajo un título, elija el block «Menú desplegable». Muestra un título en la barra, «Mi cuenta» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
+                <target>Para agrupar enlaces bajo un título, elija el block «Menú desplegable». Muestra un título en la barra, «Nuestros servicios» por ejemplo, y sus enlaces se despliegan debajo. Añádale los enlaces como en el menú.</target>
             </trans-unit>
             <trans-unit id="ah4TpfP">
                 <source>narration.guided_step_page_menu_edit</source>
@@ -280,7 +280,7 @@
             </trans-unit>
             <trans-unit id="CduhpcC">
                 <source>narration.guided_step_page_menu_visibility</source>
-                <target>Elija quién ve el enlace. Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada, para un enlace «Mi cuenta».</target>
+                <target>Elija quién ve el enlace. Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada. La barra ya ofrece a los miembros un menú «Mi espacio»: un menú desplegable reservado a los miembros lo sustituye y recibe el enlace «Gestión».</target>
             </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>

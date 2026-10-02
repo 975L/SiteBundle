@@ -14,6 +14,9 @@
 {# "static" and "relative" sit identically in the flow, but only the latter is a containing block for the mobile dropdown hanging off the bar #}
 {% set navbarPosition = navbarPosition == 'static' ? 'relative' : navbarPosition %}
 
+{# A site that built its own "members" dropdown keeps it, MenuDropdown.html.twig adding the back-office link to it; any other gets the built-in one. A hidden one counts as absent, Blocks.html.twig never drawing it #}
+{% set hasMembersDropdown = menu_blocks('navbar')|filter(block => block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members') is not empty %}
+
 {% if menu_blocks('navbar') is not empty %}
     {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
     <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}{{ navbarPosition ? ' menu-position-' ~ navbarPosition : '' }}" data-controller="menu menu-active">
@@ -63,6 +66,9 @@
 
         <div class="menu-items" data-menu-target="items">
             <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
+            {% if not hasMembersDropdown %}
+                <twig:c975LSite:General:AccountMenu :dropdown="true" />
+            {% endif %}
             <twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--desktop" />
 {# Inside the items and not beside them: on a phone the bar collapses into that dropdown, and a language menu left outside it would sit alone next to the burger. Drawn as a dropdown, the way a "menu_dropdown" block of the same bar is #}
             <twig:c975LSite:General:Languages page="{{ page|default(null) }}" :dropdown="true" />
@@ -89,6 +95,8 @@
         {% endif %}
 
         <twig:c975LUi:AiSearch:Trigger />
+
+        <twig:c975LSite:General:AccountMenu />
 
 {# The bar a site with no menu blocks gets, which is still a site a visitor has to be able to read in their own language #}
         <twig:c975LSite:General:Languages page="{{ page|default(null) }}" />

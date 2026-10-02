@@ -260,7 +260,7 @@
             </trans-unit>
             <trans-unit id="9ioOiX1">
                 <source>narration.guided_step_page_menu_dropdown</source>
-                <target>Pour regrouper des liens sous un titre, choisissez le block « Menu déroulant ». Il affiche un titre dans la barre, « Mon compte » par exemple, et ses liens se déplient dessous. Ajoutez-y les liens comme dans le menu.</target>
+                <target>Pour regrouper des liens sous un titre, choisissez le block « Menu déroulant ». Il affiche un titre dans la barre, « Nos services » par exemple, et ses liens se déplient dessous. Ajoutez-y les liens comme dans le menu.</target>
             </trans-unit>
             <trans-unit id="ah4TpfP">
                 <source>narration.guided_step_page_menu_edit</source>
@@ -280,7 +280,7 @@
             </trans-unit>
             <trans-unit id="CduhpcC">
                 <source>narration.guided_step_page_menu_visibility</source>
-                <target>Choisissez qui voit le lien. Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés, pour un lien « Mon compte ».</target>
+                <target>Choisissez qui voit le lien. Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés. La barre propose déjà aux membres un menu « Mon espace » : un menu déroulant réservé aux membres le remplace et reçoit le lien « Gestion ».</target>
             </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>

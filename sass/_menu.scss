@@ -305,6 +305,11 @@ body.is-member .menu-item--guests {
     display: none;
 }
 
+// The back-office link of a members' dropdown (see MenuDropdown.html.twig), hidden the same way unless the layout says the visitor may enter the back office
+body:not(.has-back-office) .menu-item--back-office {
+    display: none;
+}
+
 // The copyright notice's "©" written off its link (see MenuLink.html.twig), kept on the link's line - .menu-link being a flex box, it would otherwise take a line of its own
 .menu-item--copyright {
     display: flex;
