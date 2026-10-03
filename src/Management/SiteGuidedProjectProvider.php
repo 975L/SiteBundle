@@ -48,6 +48,7 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
             $this->pageMenuProject(),
             $this->menuTranslationProject(),
             $this->footerProject(),
+            $this->emailMenusProject(),
         ];
     }
 
@@ -632,6 +633,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => self::BLOCK_COLLECTION,
                 ],
                 [
+                    'label' => 'label.guided_step_page_revision_save',
+                    'narration' => 'narration.guided_step_page_revision_save',
+                    // The preview shows the copy as saved, and the replacement is a link leaving the form: saving without leaving is what keeps both of them on the rework
+                    'highlight' => '.action-saveAndContinue',
+                ],
+                [
                     'label' => 'label.guided_step_page_revision_preview',
                     'description' => 'description.guided_step_page_revision_preview',
                     'narration' => 'narration.guided_step_page_revision_preview',
@@ -780,7 +787,8 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_edit',
                     'description' => 'description.guided_step_page_menu_edit',
                     'narration' => 'narration.guided_step_page_menu_edit',
-                    'highlight' => '.action-edit',
+                    // The row marker menu_crud_index.html.twig writes, the index carrying no default sort: ".action-edit" alone would take the first row, whichever menu was created first
+                    'highlight' => sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_NAVBAR),
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_add_link',
@@ -818,13 +826,25 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'label' => 'label.guided_step_page_menu_brand',
                     'description' => 'description.guided_step_page_menu_brand',
                     'narration' => 'narration.guided_step_page_menu_brand',
-                    // Back on the same screen, for the location under the site's name: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting. No highlight, unlike the navigation bar step above, the create button existing only for a location not created yet and a site carrying a brand line already holding the menu
+                    // Back on the same screen, for the location under the site's name: what a site says under its own name is blocks of this menu, and used to be the "site-tagline" setting. Same button as the navbar step above - nothing is highlighted on a site already holding the row, which is what the step's description says
+                    'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR_BRAND),
+                ],
+                [
+                    'label' => 'label.guided_step_page_menu_brand_edit',
+                    'description' => 'description.guided_step_page_menu_brand_edit',
+                    'narration' => 'narration.guided_step_page_menu_brand_edit',
+                    'highlight' => sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_NAVBAR_BRAND),
                 ],
                 [
                     'label' => 'label.guided_step_page_menu_brand_write',
                     'description' => 'description.guided_step_page_menu_brand_write',
                     'narration' => 'narration.guided_step_page_menu_brand_write',
                     'highlight' => self::BLOCK_COLLECTION,
+                ],
+                [
+                    'label' => 'label.guided_step_page_menu_brand_save',
+                    'narration' => 'narration.guided_step_page_menu_brand_save',
+                    'highlight' => '.action-saveAndReturn',
                 ],
             ],
         ];
@@ -941,6 +961,80 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_footer_shortcuts',
                     'narration' => 'narration.guided_step_footer_shortcuts',
                     // Both shortcuts live on the public site, out of the back-office the tour runs in, so there is nothing to highlight
+                ],
+            ],
+        ];
+    }
+
+    // Every e-mail the site sends carries a header and a footer of its own, built like the site's menus but apart from them
+    private function emailMenusProject(): array
+    {
+        return [
+            'slug' => 'site-email-menus',
+            'label' => 'label.guided_project_email_menus',
+            'description' => 'description.guided_project_email_menus',
+            'translation_domain' => 'site',
+            'order' => 2095,
+            'role' => $this->configService->get('site-role-editor'),
+            'steps' => [
+                [
+                    'label' => 'label.guided_step_email_menus_open',
+                    'description' => 'description.guided_step_email_menus_open',
+                    'narration' => 'narration.guided_step_email_menus_open',
+                    'url' => $this->indexUrl(MenuCrudController::class),
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_header_create',
+                    'description' => 'description.guided_step_email_menus_header_create',
+                    'narration' => 'narration.guided_step_email_menus_header_create',
+                    // Same button as the navbar and footer steps, for the e-mail header's own location - nothing is highlighted on a site already holding the row
+                    'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_EMAIL_HEADER),
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_header_edit',
+                    'description' => 'description.guided_step_email_menus_header_edit',
+                    'narration' => 'narration.guided_step_email_menus_header_edit',
+                    'highlight' => sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_EMAIL_HEADER),
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_header_items',
+                    'description' => 'description.guided_step_email_menus_header_items',
+                    'narration' => 'narration.guided_step_email_menus_header_items',
+                    'highlight' => self::BLOCK_COLLECTION,
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_header_save',
+                    'narration' => 'narration.guided_step_email_menus_header_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_footer_create',
+                    'description' => 'description.guided_step_email_menus_footer_create',
+                    'narration' => 'narration.guided_step_email_menus_footer_create',
+                    'highlight' => sprintf('button[name="location"][value="%s"]', Menu::LOCATION_EMAIL_FOOTER),
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_footer_edit',
+                    'description' => 'description.guided_step_email_menus_footer_edit',
+                    'narration' => 'narration.guided_step_email_menus_footer_edit',
+                    'highlight' => sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_EMAIL_FOOTER),
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_footer_items',
+                    'description' => 'description.guided_step_email_menus_footer_items',
+                    'narration' => 'narration.guided_step_email_menus_footer_items',
+                    'highlight' => self::BLOCK_COLLECTION,
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_footer_save',
+                    'narration' => 'narration.guided_step_email_menus_footer_save',
+                    'highlight' => '.action-saveAndReturn',
+                ],
+                [
+                    'label' => 'label.guided_step_email_menus_legal',
+                    'description' => 'description.guided_step_email_menus_legal',
+                    'narration' => 'narration.guided_step_email_menus_legal',
+                    // What the law asks of an e-mail footer is printed by emails/fullLayout.html.twig from the settings, under this menu - there is nothing on this screen to highlight
                 ],
             ],
         ];

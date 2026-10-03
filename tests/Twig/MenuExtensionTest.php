@@ -11,7 +11,6 @@
 namespace c975L\SiteBundle\Tests\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\ConfigBundle\Twig\CopyrightExtension;
@@ -99,17 +98,6 @@ class MenuExtensionTest extends TestCase
         return $router;
     }
 
-    // "site-menu-link-copyright-auto" answers $copyrightAuto, every other slug null
-    private function createConfigService(bool $copyrightAuto = true): ConfigServiceInterface
-    {
-        $configService = $this->createStub(ConfigServiceInterface::class);
-        $configService->method('get')->willReturnCallback(
-            static fn (string $slug): mixed => 'site-menu-link-copyright-auto' === $slug ? $copyrightAuto : null
-        );
-
-        return $configService;
-    }
-
     // getLegalPageSlugsByModel() answers a single "france/copyright" => $copyrightSlug entry, or none at all when $copyrightSlug is null
     private function createDefaultPagesImporter(?string $copyrightSlug = null): DefaultPagesImporter
     {
@@ -134,7 +122,6 @@ class MenuExtensionTest extends TestCase
         array $pagesById = [],
         ?MenuRepository $menuRepository = null,
         ?TagAwareCacheInterface $cache = null,
-        ?ConfigServiceInterface $configService = null,
         ?DefaultPagesImporter $defaultPagesImporter = null,
         ?CopyrightExtension $copyrightExtension = null,
         ?UrlGeneratorInterface $router = null,
@@ -145,7 +132,6 @@ class MenuExtensionTest extends TestCase
         $collaborators = array_filter([
             'menuRepository' => $menuRepository,
             'cache' => $cache,
-            'configService' => $configService,
             'defaultPagesImporter' => $defaultPagesImporter,
             'copyrightExtension' => $copyrightExtension,
             'router' => $router,
@@ -159,7 +145,6 @@ class MenuExtensionTest extends TestCase
             $registry,
             $collaborators['router'],
             $collaborators['cache'],
-            $collaborators['configService'],
             $collaborators['defaultPagesImporter'],
             $collaborators['copyrightExtension'],
             new BlockAnchorCollector(),
@@ -185,7 +170,6 @@ class MenuExtensionTest extends TestCase
         return [
             'menuRepository' => $this->createMenuRepository(),
             'cache' => $this->createCache(),
-            'configService' => $this->createConfigService(),
             'defaultPagesImporter' => $this->createDefaultPagesImporter(),
             'copyrightExtension' => $this->createCopyrightExtension(),
             'router' => $this->createRouter(),
@@ -278,7 +262,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -367,7 +350,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -408,7 +390,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -439,7 +420,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -645,18 +625,17 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('© 2020 - 2026', $extension->getMenuLinkLabel('page:42'));
     }
 
-    // "site-menu-link-copyright-auto" disabled: even the Copyright page itself falls back to its own title
-    public function testGetMenuLinkLabelReturnsPageTitleWhenCopyrightAutoConfigIsDisabled(): void
+    // Only the site's own Copyright page doubles as the notice: another legal page keeps its own title
+    public function testGetMenuLinkLabelReturnsPageTitleForAnotherLegalPage(): void
     {
-        $page = new Page()->setTitle('Copyright')->setSlug('copyright');
+        $page = new Page()->setTitle('Legal notice')->setSlug('legal-notice');
         $extension = $this->createExtension(
             $this->createRegistry([]),
             ['42' => $page],
-            configService: $this->createConfigService(false),
             defaultPagesImporter: $this->createDefaultPagesImporter('copyright'),
         );
 
-        $this->assertSame('Copyright', $extension->getMenuLinkLabel('page:42'));
+        $this->assertSame('Legal notice', $extension->getMenuLinkLabel('page:42'));
     }
 
     // An anchored target on the Copyright page still labels that specific section, not the computed copyright - only the page's own "whole page" link doubles as the copyright notice
@@ -819,7 +798,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(),
             $this->createDefaultPagesImporter(),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -829,11 +807,12 @@ class MenuExtensionTest extends TestCase
         )->getMenuBlocks(Menu::LOCATION_NAVBAR);
     }
 
-    // The setting off, the footer asks this of every link on every page - no page has to be read to say no
-    public function testIsMenuLinkCopyrightReadsNoPageWhenTheSettingIsOff(): void
+    // The footer asks this of every link on every page - an anchored target is told apart without reading any page
+    public function testIsMenuLinkCopyrightReadsNoPageForAnAnchoredTarget(): void
     {
         $pageRepository = $this->createMock(PageRepository::class);
         $pageRepository->expects($this->never())->method('find');
+        $pageRepository->expects($this->never())->method('findOneBy');
 
         $extension = new MenuExtension(
             $this->createMenuRepository(),
@@ -841,7 +820,6 @@ class MenuExtensionTest extends TestCase
             $this->createRegistry([]),
             $this->createRouter(),
             $this->createCache(),
-            $this->createConfigService(false),
             $this->createDefaultPagesImporter('copyright'),
             $this->createCopyrightExtension(),
             new BlockAnchorCollector(),
@@ -850,7 +828,7 @@ class MenuExtensionTest extends TestCase
             $this->createLocalizedUrlGenerator($this->createRouter(), new RequestStack()),
         );
 
-        $this->assertFalse($extension->isMenuLinkCopyright('page:42'));
+        $this->assertFalse($extension->isMenuLinkCopyright('page:42#notice-7'));
     }
 
     // A page link goes stale with any block saved (a section label) or any page saved or translated (its slug, publication, title)
@@ -861,13 +839,12 @@ class MenuExtensionTest extends TestCase
         $this->assertSame(['menus_all', PageTranslator::LOCALES_CACHE_TAG], $extension->getMenuLinkCacheTags('page:42', null));
     }
 
-    // The computed notice holds the year, and the setting deciding it is read at render - whatever that setting says now
+    // The computed notice holds the year, so a copyright link without a label of its own is rendered live - one given its own label is cached like any other
     public function testALinkLeftToTheCopyrightNoticeIsRenderedLive(): void
     {
         $extension = $this->createExtension(
             $this->createRegistry([]),
             ['42' => new Page()->setSlug('copyright')],
-            configService: $this->createConfigService(false),
             defaultPagesImporter: $this->createDefaultPagesImporter('copyright'),
         );
 

@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, site-menu-link-copyright-auto, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -78,7 +78,9 @@ not per page. An item **deriving** its label from the page it points at carries 
 is translated with that page, and `menu_link_label()` reads the page's translated title. `menu_link_url()`
 likewise generates the localised routes while a page is read in another language, so the first click
 does not send the visitor back into the writing language. Both actions show only where the site
-declares more than one language.
+declares more than one language. Where UiBundle's AI rephrasing is on (`ai_rephrase_enabled()`), each
+label field of that screen carries its toolbar, pinned to the screen's language
+(`TranslationFormContext::set()`) and handed the original text, the field itself starting empty.
 
 The bar also carries the **language menu** itself (`General:Languages`, rendered inside the items so it
 follows the mobile dropdown, and on the fallback bar too). It offers only the languages the page being
@@ -232,7 +234,7 @@ hidden on a fixed navbar.
 
 The "© firstYear - currentYear[ : siteName]" line is ConfigBundle's `site_copyright()` Twig function.
 A `menu_link` targeting the site's own Copyright page shows that live-computed text as its label
-instead of the page title, gated by `site-menu-link-copyright-auto` (bool, default true).
+instead of the page title, unless the link is given a `label` of its own in the menu, which then wins.
 
 ## Twig functions
 

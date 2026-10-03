@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.29.0
+
+A guided project for the e-mails' header and footer
+
+- [BC-Break] `site-menu-link-copyright-auto` setting removed: a Copyright link's own label overrides the notice (03/10/2026)
+- `MenuExtension` no longer takes a `ConfigServiceInterface` (03/10/2026)
+- The menu translation screen offers the AI toolbar under each label, pinned to its language (03/10/2026)
+- New `site-email-menus` guided project (03/10/2026)
+- Page revision guided project saves before previewing (03/10/2026)
+- Menu guided project opens and saves the baseline row, and targets the navbar row's edit button (03/10/2026)
+
 ## v8.28.0
 
 A signed-in visitor always finds their account links in the navbar

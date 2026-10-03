@@ -18,6 +18,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\ContentTranslator;
+use c975L\UiBundle\Service\TranslationFormContext;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -34,6 +35,8 @@ use Twig\Environment;
 class TranslationControllerTest extends TestCase
 {
     private ContentTranslator & MockObject $contentTranslator;
+
+    private TranslationFormContext $translationFormContext;
 
     // A menu holds no text of its own: only its items' own labels, and only those an editor set by hand
     private function createMenu(): Menu
@@ -95,6 +98,7 @@ class TranslationControllerTest extends TestCase
             $blockRegistry,
             $configService,
             $translator,
+            $this->translationFormContext = new TranslationFormContext(),
         );
         $controller->setContainer($this->createContainer($request));
 
@@ -148,6 +152,26 @@ class TranslationControllerTest extends TestCase
         $this->assertSame(
             ['rows' => ['block_56_label']],
             json_decode((string) $response->getContent(), true, 512, JSON_THROW_ON_ERROR),
+        );
+    }
+
+    #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
+    // The screen writes one language, which is what makes Donovan's toolbar under each field a single "translate into" button
+    public function testTheScreenPinsTheLanguageItWrites(): void
+    {
+        $request = $this->createRequest();
+
+        $this->createController($request)->menu($request, 7, 'en');
+
+        $this->assertSame('en', $this->translationFormContext->get());
+    }
+
+    // Each field offers Donovan's toolbar, handed the original since the field itself starts empty
+    public function testEachFieldOffersDonovanWithTheOriginalAsSource(): void
+    {
+        $this->assertMatchesRegularExpression(
+            "/{% for row in rows %}.*?_ai_rephrase\.html\.twig', {field_id: row\.name, source: row\.reference}.*?{% endfor %}/s",
+            (string) file_get_contents(\dirname(__DIR__, 3) . '/templates/management/translation.html.twig')
         );
     }
 

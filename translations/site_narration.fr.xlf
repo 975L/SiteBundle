@@ -118,6 +118,46 @@
                 <source>narration.guided_step_content_export_select</source>
                 <target>Cochez les pages à emporter. Cette case les coche toutes, mais vous pouvez aussi les prendre une par une. Le bouton d'export n'apparaît qu'une fois une case cochée.</target>
             </trans-unit>
+            <trans-unit id="NYlUWnW">
+                <source>narration.guided_step_email_menus_footer_create</source>
+                <target>De retour sur les menus, créez le pied des e-mails s'il manque. S'il est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="jU3_kNE">
+                <source>narration.guided_step_email_menus_footer_edit</source>
+                <target>Ouvrez le pied des e-mails. Si vous venez de le créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>
+            </trans-unit>
+            <trans-unit id="YYJhKDR">
+                <source>narration.guided_step_email_menus_footer_items</source>
+                <target>Ajoutez-y ses liens. Ils forment une rangée discrète, centrée, en petit : vos pages utiles, un lien de contact.</target>
+            </trans-unit>
+            <trans-unit id="wjyoO8z">
+                <source>narration.guided_step_email_menus_footer_save</source>
+                <target>Enregistrez le pied des e-mails.</target>
+            </trans-unit>
+            <trans-unit id="wgRADvh">
+                <source>narration.guided_step_email_menus_header_create</source>
+                <target>Créez l'en-tête des e-mails s'il manque : un bouton vous est proposé par emplacement pas encore créé. S'il est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="ek9hadE">
+                <source>narration.guided_step_email_menus_header_edit</source>
+                <target>Ouvrez l'en-tête des e-mails. Si vous venez de le créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>
+            </trans-unit>
+            <trans-unit id="izEi0O4">
+                <source>narration.guided_step_email_menus_header_items</source>
+                <target>Ajoutez-y ses éléments, des blocks comme sur une page : un logo, un lien vers le site. Un lien réservé aux visiteurs connectés, ou à ceux qui ne le sont pas, n'y apparaît pas : un e-mail n'a pas de visiteur.</target>
+            </trans-unit>
+            <trans-unit id="AfvD4dE">
+                <source>narration.guided_step_email_menus_header_save</source>
+                <target>Enregistrez l'en-tête.</target>
+            </trans-unit>
+            <trans-unit id="G9voRQh">
+                <source>narration.guided_step_email_menus_legal</source>
+                <target>Et sous votre pied, chaque e-mail nomme l'éditeur du site et renvoie à sa politique de confidentialité, repris des réglages : vous n'avez pas à les écrire. Vos liens, eux, mènent au site si son adresse est renseignée dans les réglages.</target>
+            </trans-unit>
+            <trans-unit id="RaZiM0z">
+                <source>narration.guided_step_email_menus_open</source>
+                <target>Le panneau vous emmène sur les menus. L'en-tête et le pied des e-mails en sont deux à part : ce que vous y mettez ne touche pas le site, et inversement.</target>
+            </trans-unit>
             <trans-unit id=".N9y61w">
                 <source>narration.guided_step_footer_check</source>
                 <target>Vérifiez sur le site : ouvrez-le dans un autre onglet, le pied de page porte vos lignes, dans l'ordre que vous leur avez donné.</target>
@@ -246,6 +286,14 @@
                 <source>narration.guided_step_page_menu_brand</source>
                 <target>Revenez sur les menus : l'emplacement « Sous le nom du site » porte ce que le site dit sous son propre nom, sa baseline. Créez-le s'il n'existe pas encore.</target>
             </trans-unit>
+            <trans-unit id="Lj7Xfxd">
+                <source>narration.guided_step_page_menu_brand_edit</source>
+                <target>Ouvrez l'emplacement « Sous le nom du site ». Si vous venez de le créer, vous y êtes déjà ; sinon, c'est la ligne dont l'emplacement porte ce nom.</target>
+            </trans-unit>
+            <trans-unit id=".94mI95">
+                <source>narration.guided_step_page_menu_brand_save</source>
+                <target>Enregistrez la baseline.</target>
+            </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
                 <target>Écrivez-la comme un block, donc traduite comme le reste du site — là où la baseline était un réglage qui parlait une seule langue à tout le monde.</target>
@@ -305,6 +353,10 @@
             <trans-unit id="0ao3tKG">
                 <source>narration.guided_step_page_revision_rework</source>
                 <target>Retravaillez la copie autant qu'il faut : vos visiteurs continuent de voir l'originale pendant ce temps.</target>
+            </trans-unit>
+            <trans-unit id="JumiKaq">
+                <source>narration.guided_step_page_revision_save</source>
+                <target>Enregistrez sans quitter la page : l'aperçu montre la copie telle qu'elle est enregistrée.</target>
             </trans-unit>
             <trans-unit id="LrcEh8a">
                 <source>narration.guided_step_page_seo_check</source>

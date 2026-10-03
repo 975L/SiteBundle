@@ -10,10 +10,6 @@
                 <source>description.healthcheck_pagespeed_api_key</source>
                 <target>Facultatif - relève le quota de Google PageSpeed Insights pour la commande c975l:health-check:run. À obtenir sur https://developers.google.com/speed/docs/insights/v5/get-started</target>
             </trans-unit>
-            <trans-unit id="oVvC_MZ">
-                <source>description.site_menu_link_copyright_auto</source>
-                <target>Afficher le copyright calculé (© année) comme libellé du lien vers la page "Copyright", au lieu de son titre</target>
-            </trans-unit>
             <trans-unit id="Mnh5Cya">
                 <source>description.site_navbar_position</source>
                 <target>Position CSS de la navbar : relative (défaut), sticky, fixed, static...</target>
@@ -37,10 +33,6 @@
             <trans-unit id="wkcUWqy">
                 <source>label.healthcheck_pagespeed_api_key</source>
                 <target>Clé API PageSpeed Insights</target>
-            </trans-unit>
-            <trans-unit id="vnrrGUG">
-                <source>label.site_menu_link_copyright_auto</source>
-                <target>Copyright automatique sur le lien de menu vers la page "Copyright"</target>
             </trans-unit>
             <trans-unit id="xYIFis1">
                 <source>label.site_navbar_position</source>

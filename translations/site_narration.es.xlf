@@ -118,6 +118,46 @@
                 <source>narration.guided_step_content_export_select</source>
                 <target>Marque las páginas que quiera llevarse. Esta casilla las marca todas, pero también puede marcarlas una a una. El botón de exportación solo aparece cuando hay una marcada.</target>
             </trans-unit>
+            <trans-unit id="NYlUWnW">
+                <source>narration.guided_step_email_menus_footer_create</source>
+                <target>De vuelta en los menús, cree el pie de los correos si falta. Si ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="jU3_kNE">
+                <source>narration.guided_step_email_menus_footer_edit</source>
+                <target>Abra el pie de los correos. Si acaba de crearlo, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>
+            </trans-unit>
+            <trans-unit id="YYJhKDR">
+                <source>narration.guided_step_email_menus_footer_items</source>
+                <target>Añada sus enlaces. Forman una fila discreta, centrada y en pequeño: sus páginas útiles, un enlace de contacto.</target>
+            </trans-unit>
+            <trans-unit id="wjyoO8z">
+                <source>narration.guided_step_email_menus_footer_save</source>
+                <target>Guarde el pie de los correos.</target>
+            </trans-unit>
+            <trans-unit id="wgRADvh">
+                <source>narration.guided_step_email_menus_header_create</source>
+                <target>Cree el encabezado de los correos si falta: se le propone un botón por cada ubicación aún no creada. Si ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="ek9hadE">
+                <source>narration.guided_step_email_menus_header_edit</source>
+                <target>Abra el encabezado de los correos. Si acaba de crearlo, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>
+            </trans-unit>
+            <trans-unit id="izEi0O4">
+                <source>narration.guided_step_email_menus_header_items</source>
+                <target>Añada sus elementos, bloques como en una página: un logotipo, un enlace al sitio. Un enlace reservado a los visitantes conectados, o a los que no lo están, no aparece: un correo no tiene visitante.</target>
+            </trans-unit>
+            <trans-unit id="AfvD4dE">
+                <source>narration.guided_step_email_menus_header_save</source>
+                <target>Guarde el encabezado.</target>
+            </trans-unit>
+            <trans-unit id="G9voRQh">
+                <source>narration.guided_step_email_menus_legal</source>
+                <target>Y bajo su pie, cada correo nombra al editor del sitio y enlaza a su política de privacidad, tomados de los ajustes: no tiene que escribirlos. Sus enlaces llevan al sitio siempre que su dirección esté indicada en los ajustes.</target>
+            </trans-unit>
+            <trans-unit id="RaZiM0z">
+                <source>narration.guided_step_email_menus_open</source>
+                <target>El panel le lleva a los menús. El encabezado y el pie de los correos son dos de ellos, aparte: lo que ponga en ellos no toca el sitio, y viceversa.</target>
+            </trans-unit>
             <trans-unit id=".N9y61w">
                 <source>narration.guided_step_footer_check</source>
                 <target>Compruébelo en el sitio: ábralo en otra pestaña, el pie de página lleva sus líneas, en el orden que les ha dado.</target>
@@ -246,6 +286,14 @@
                 <source>narration.guided_step_page_menu_brand</source>
                 <target>Vuelva a los menús: la ubicación «Bajo el nombre del sitio» lleva lo que el sitio dice bajo su propio nombre, su lema. Créela si aún no existe.</target>
             </trans-unit>
+            <trans-unit id="Lj7Xfxd">
+                <source>narration.guided_step_page_menu_brand_edit</source>
+                <target>Abra la ubicación «Bajo el nombre del sitio». Si acaba de crearla, ya está ahí; si no, es la fila cuya ubicación lleva ese nombre.</target>
+            </trans-unit>
+            <trans-unit id=".94mI95">
+                <source>narration.guided_step_page_menu_brand_save</source>
+                <target>Guarde el lema.</target>
+            </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
                 <target>Escríbalo como un bloque, y por tanto traducido como el resto del sitio, mientras que el lema era un ajuste que hablaba un solo idioma a todos.</target>
@@ -305,6 +353,10 @@
             <trans-unit id="0ao3tKG">
                 <source>narration.guided_step_page_revision_rework</source>
                 <target>Retrabaje la copia todo lo que haga falta: mientras tanto, sus visitantes siguen viendo el original.</target>
+            </trans-unit>
+            <trans-unit id="JumiKaq">
+                <source>narration.guided_step_page_revision_save</source>
+                <target>Guarde sin salir de la página: la vista previa muestra la copia tal como está guardada.</target>
             </trans-unit>
             <trans-unit id="LrcEh8a">
                 <source>narration.guided_step_page_seo_check</source>

@@ -158,6 +158,10 @@
                 <source>description.guided_project_content_export</source>
                 <target>Emporter des pages dans un zip, avec leurs blocks, leurs images et leurs traductions, pour les charger dans un autre site ou les garder hors du serveur</target>
             </trans-unit>
+            <trans-unit id="p7fr9hn">
+                <source>description.guided_project_email_menus</source>
+                <target>Mettre en forme ce que chaque e-mail envoyé par le site montre en haut et en bas, à part des menus du site</target>
+            </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
                 <target>Mettre en forme le pied de page de toutes les pages : ses liens, ses liens sociaux, répartis sur les lignes que vous voulez</target>
@@ -294,6 +298,38 @@
                 <source>description.guided_step_content_export_select</source>
                 <target>Cette case les coche toutes ; vous pouvez aussi les cocher une par une. Le bouton d'export n'apparaît qu'une fois une case cochée.</target>
             </trans-unit>
+            <trans-unit id="Cldg3pr">
+                <source>description.guided_step_email_menus_footer_create</source>
+                <target>De retour sur les menus, même bouton pour le pied des e-mails. S'il est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="k6IdFfY">
+                <source>description.guided_step_email_menus_footer_edit</source>
+                <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « Pied de page email ».</target>
+            </trans-unit>
+            <trans-unit id="2.D2KqT">
+                <source>description.guided_step_email_menus_footer_items</source>
+                <target>Une rangée discrète de liens, centrée, en petit : vos pages utiles, un lien de contact.</target>
+            </trans-unit>
+            <trans-unit id="Md91kp1">
+                <source>description.guided_step_email_menus_header_create</source>
+                <target>Un bouton par emplacement pas encore créé. Si l'en-tête des e-mails est déjà dans la liste, passez à l'étape suivante.</target>
+            </trans-unit>
+            <trans-unit id="fVW.RC_">
+                <source>description.guided_step_email_menus_header_edit</source>
+                <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « En-tête email ».</target>
+            </trans-unit>
+            <trans-unit id="IMus9xb">
+                <source>description.guided_step_email_menus_header_items</source>
+                <target>Des blocks, comme sur une page : un logo, un lien vers le site. Un lien réservé aux visiteurs connectés, ou à ceux qui ne le sont pas, n'y apparaît pas : un e-mail n'a pas de visiteur.</target>
+            </trans-unit>
+            <trans-unit id="WYMLQdC">
+                <source>description.guided_step_email_menus_legal</source>
+                <target>Sous votre pied, chaque e-mail nomme l'éditeur du site et renvoie à sa politique de confidentialité, repris des réglages : vous n'avez pas à les écrire. Vos liens mènent au site si son adresse est renseignée dans les réglages.</target>
+            </trans-unit>
+            <trans-unit id="Yds3BBY">
+                <source>description.guided_step_email_menus_open</source>
+                <target>L'en-tête et le pied des e-mails sont deux menus à part : ce que vous y mettez ne touche pas le site, et inversement.</target>
+            </trans-unit>
             <trans-unit id="Crku_2z">
                 <source>description.guided_step_footer_check</source>
                 <target>Ouvrez le site dans un autre onglet : le pied de page porte vos lignes, dans l'ordre que vous leur avez donné.</target>
@@ -409,6 +445,10 @@
             <trans-unit id="i0tTiPz">
                 <source>description.guided_step_page_menu_brand</source>
                 <target>De retour sur les menus : l'emplacement « Sous le nom du site » porte ce que le site dit sous son propre nom. Rien n'est surligné s'il existe déjà.</target>
+            </trans-unit>
+            <trans-unit id="_44YT0Z">
+                <source>description.guided_step_page_menu_brand_edit</source>
+                <target>Si vous venez de le créer, vous y êtes déjà. Sinon, c'est la ligne dont l'emplacement est « Sous le nom du site ».</target>
             </trans-unit>
             <trans-unit id="7bcgCUX">
                 <source>description.guided_step_page_menu_brand_write</source>
@@ -906,6 +946,10 @@
                 <source>label.guided_project_content_export</source>
                 <target>Exporter des pages vers un autre site</target>
             </trans-unit>
+            <trans-unit id="HgIlOEk">
+                <source>label.guided_project_email_menus</source>
+                <target>Composer l'en-tête et le pied des e-mails</target>
+            </trans-unit>
             <trans-unit id="XQDxvTJ">
                 <source>label.guided_project_footer</source>
                 <target>Composer le pied de page</target>
@@ -1058,6 +1102,46 @@
                 <source>label.guided_step_content_export_select</source>
                 <target>Cocher les pages à emporter</target>
             </trans-unit>
+            <trans-unit id="jov85ge">
+                <source>label.guided_step_email_menus_footer_create</source>
+                <target>Créer le pied des e-mails s'il manque</target>
+            </trans-unit>
+            <trans-unit id="eTjbj89">
+                <source>label.guided_step_email_menus_footer_edit</source>
+                <target>Ouvrir le pied des e-mails</target>
+            </trans-unit>
+            <trans-unit id="222.vlU">
+                <source>label.guided_step_email_menus_footer_items</source>
+                <target>Ajouter les liens du pied</target>
+            </trans-unit>
+            <trans-unit id="N8FFGd8">
+                <source>label.guided_step_email_menus_footer_save</source>
+                <target>Enregistrer le pied des e-mails</target>
+            </trans-unit>
+            <trans-unit id="s_Yxute">
+                <source>label.guided_step_email_menus_header_create</source>
+                <target>Créer l'en-tête des e-mails s'il manque</target>
+            </trans-unit>
+            <trans-unit id="4cbBkKy">
+                <source>label.guided_step_email_menus_header_edit</source>
+                <target>Ouvrir l'en-tête des e-mails</target>
+            </trans-unit>
+            <trans-unit id="MxzNaVS">
+                <source>label.guided_step_email_menus_header_items</source>
+                <target>Ajouter les éléments de l'en-tête</target>
+            </trans-unit>
+            <trans-unit id="3_8QHZB">
+                <source>label.guided_step_email_menus_header_save</source>
+                <target>Enregistrer l'en-tête</target>
+            </trans-unit>
+            <trans-unit id="UG9c_cH">
+                <source>label.guided_step_email_menus_legal</source>
+                <target>Ce qui s'ajoute tout seul</target>
+            </trans-unit>
+            <trans-unit id="bgV0aFk">
+                <source>label.guided_step_email_menus_open</source>
+                <target>Ouvrir les menus</target>
+            </trans-unit>
             <trans-unit id="DXo980X">
                 <source>label.guided_step_footer_check</source>
                 <target>Vérifier sur le site</target>
@@ -1186,6 +1270,14 @@
                 <source>label.guided_step_page_menu_brand</source>
                 <target>Ajouter la baseline sous le nom du site</target>
             </trans-unit>
+            <trans-unit id="F6jkvLn">
+                <source>label.guided_step_page_menu_brand_edit</source>
+                <target>Ouvrir la ligne « Sous le nom du site »</target>
+            </trans-unit>
+            <trans-unit id="eCNQa1t">
+                <source>label.guided_step_page_menu_brand_save</source>
+                <target>Enregistrer la baseline</target>
+            </trans-unit>
             <trans-unit id="RFGEX.0">
                 <source>label.guided_step_page_menu_brand_write</source>
                 <target>L'écrire comme un block</target>
@@ -1245,6 +1337,10 @@
             <trans-unit id="is2PIcW">
                 <source>label.guided_step_page_revision_rework</source>
                 <target>Retravailler la copie</target>
+            </trans-unit>
+            <trans-unit id="c.7lmfz">
+                <source>label.guided_step_page_revision_save</source>
+                <target>Enregistrer sans quitter la page</target>
             </trans-unit>
             <trans-unit id="B0RNOF3">
                 <source>label.guided_step_page_seo_check</source>

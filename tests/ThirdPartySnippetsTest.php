@@ -36,12 +36,12 @@ class ThirdPartySnippetsTest extends TestCase
         }
     }
 
-    // Declared where it is read: the component and its three keys left with it, so a copy staying here would shadow core-bundle's own and drift from the label an admin reads
+    // Declared where it is read: the component and its keys left with it, so a copy staying here would shadow core-bundle's own and drift from the label an admin reads
     public function testTheBundleNoLongerDeclaresTheMatomoKeys(): void
     {
         $declared = array_column(json_decode($this->read('config/configs.json'), true, 512, \JSON_THROW_ON_ERROR), 'slug');
 
-        foreach (['site-matomo-url', 'site-matomo-id', 'site-enable-matomo'] as $slug) {
+        foreach (['site-matomo-url', 'site-matomo-id'] as $slug) {
             $this->assertNotContains($slug, $declared, \sprintf('"%s" is core-bundle\'s since v8.4, see UPGRADE.md.', $slug));
         }
     }

@@ -11,7 +11,6 @@
 namespace c975L\SiteBundle\Twig;
 
 use c975L\ConfigBundle\Management\LinkableRouteRegistry;
-use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\LocalizedUrlGenerator;
 use c975L\ConfigBundle\Twig\CopyrightExtension;
 use c975L\SiteBundle\Entity\Menu;
@@ -56,7 +55,6 @@ class MenuExtension
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly UrlGeneratorInterface $router,
         private readonly TagAwareCacheInterface $cache,
-        private readonly ConfigServiceInterface $configService,
         private readonly DefaultPagesImporter $defaultPagesImporter,
         private readonly CopyrightExtension $copyrightExtension,
         private readonly BlockAnchorCollector $anchorCollector,
@@ -189,7 +187,7 @@ class MenuExtension
             return '';
         }
 
-        // No fragment (whole-page target) and this is the site's own "Copyright" legal page: shows the live computed copyright instead of the page's own title, so a footer's "Copyright" link doubles as the copyright notice instead of showing both side by side (see "site-menu-link-copyright-auto")
+        // No fragment (whole-page target) and this is the site's own "Copyright" legal page: shows the live computed copyright instead of the page's own title, so a footer's "Copyright" link doubles as the copyright notice instead of showing both side by side - a label given to the link in the menu still wins (see MenuLink.html.twig)
         if (null === $parsed['fragment'] && $this->isCopyrightPage($page)) {
             return $this->copyrightExtension->getCopyright(false);
         }
@@ -214,9 +212,9 @@ class MenuExtension
             return false;
         }
 
-        // The setting first, then the copyright page's id, cached: Footer.html.twig asks this of every item on every page, and comparing ids reads no page at all
+        // The copyright page's id, cached: Footer.html.twig asks this of every item on every page, and comparing ids reads no page at all
         $parsed = self::parseTarget($target);
-        if ('page' !== $parsed['type'] || null !== $parsed['fragment'] || !$this->configService->get('site-menu-link-copyright-auto')) {
+        if ('page' !== $parsed['type'] || null !== $parsed['fragment']) {
             return false;
         }
 
@@ -240,14 +238,13 @@ class MenuExtension
         return 0 === $id ? null : $id;
     }
 
-    // Whether $page is the site's own "Copyright" legal page (see DefaultPagesImporter's "france/copyright" model), gated by the "site-menu-link-copyright-auto" config
+    // Whether $page is the site's own "Copyright" legal page (see DefaultPagesImporter's "france/copyright" model)
     private function isCopyrightPage(Page $page): bool
     {
-        return (bool) $this->configService->get('site-menu-link-copyright-auto')
-            && $page->getSlug() === ($this->defaultPagesImporter->getLegalPageSlugsByModel()['france/copyright'] ?? null);
+        return $page->getSlug() === ($this->defaultPagesImporter->getLegalPageSlugsByModel()['france/copyright'] ?? null);
     }
 
-    // The tags a "menu_link" block is cached under, or null to render it live (see MenuBlockCacheTagProvider). "menus_all" is emptied by any block saved, which covers a section label read off another page's blocks; the page's own languages tag by any page saved or translated, which covers its slug, its publication and its title. Live: a request read out of its route's language (see isLocaleOutOfItsRoute()), a link to the copyright page whose label is left to the page (the computed notice holds the year, and the setting deciding it is read at render), and a route standing for a database row whose provider cannot say when it changes
+    // The tags a "menu_link" block is cached under, or null to render it live (see MenuBlockCacheTagProvider). "menus_all" is emptied by any block saved, which covers a section label read off another page's blocks; the page's own languages tag by any page saved or translated, which covers its slug, its publication and its title. Live: a request read out of its route's language (see isLocaleOutOfItsRoute()), a link to the copyright page whose label is left to the page (the computed notice holds the year), and a route standing for a database row whose provider cannot say when it changes
     /** @return string[]|null */
     public function getMenuLinkCacheTags(?string $target, ?string $label): ?array
     {
@@ -287,7 +284,7 @@ class MenuExtension
         return null === $tags ? null : ['menus_all', ...$tags];
     }
 
-    // A whole-page link to the copyright page with no label of its own, whatever "site-menu-link-copyright-auto" says now
+    // A whole-page link to the copyright page with no label of its own
     private function isLeftToTheCopyrightNotice(array $parsed, ?string $label): bool
     {
         if (null !== $parsed['fragment'] || '' !== (string) $label) {

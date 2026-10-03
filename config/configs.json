@@ -40,17 +40,6 @@
         "description": "description.site_preconnect"
     },
     {
-        "label": "label.site_menu_link_copyright_auto",
-        "slug": "site-menu-link-copyright-auto",
-        "sensitive": false,
-        "restricted": false,
-        "value": "true",
-        "kind": "bool",
-        "group": "site",
-        "severity": null,
-        "description": "description.site_menu_link_copyright_auto"
-    },
-    {
         "label": "label.site_schema_type",
         "slug": "site-schema-type",
         "sensitive": false,

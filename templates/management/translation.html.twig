@@ -32,6 +32,10 @@
                 {% else %}
                     <textarea class="form-control" id="{{ row.name }}" name="values[{{ row.name }}]" rows="2">{{ written[row.name] }}</textarea>
                 {% endif %}
+                {# Translate only, the language being pinned by the controller: the field starts empty, so the original is handed over as the text to send #}
+                {% if ai_rephrase_enabled() %}
+                    {{ include('@c975LUi/form/_ai_rephrase.html.twig', {field_id: row.name, source: row.reference}) }}
+                {% endif %}
                 {# The original text, beside the field and never inside it: a prefilled field would be saved as is, and the page would look translated without being so #}
                 {% set reference = row.reference|striptags %}
                 <div class="form-text">{{ reference|slice(0, 300) }}{{ reference|length > 300 ? '…' }}</div>

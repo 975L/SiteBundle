@@ -118,6 +118,46 @@
                 <source>narration.guided_step_content_export_select</source>
                 <target>Check the pages to take. This box checks them all, but you can also take them one by one. The export button only shows once a box is checked.</target>
             </trans-unit>
+            <trans-unit id="NYlUWnW">
+                <source>narration.guided_step_email_menus_footer_create</source>
+                <target>Back on the menus, create the e-mail footer if it is missing. If it is already in the list, move on to the next step.</target>
+            </trans-unit>
+            <trans-unit id="jU3_kNE">
+                <source>narration.guided_step_email_menus_footer_edit</source>
+                <target>Open the e-mail footer. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>
+            </trans-unit>
+            <trans-unit id="YYJhKDR">
+                <source>narration.guided_step_email_menus_footer_items</source>
+                <target>Add its links. They make one discreet row, centered and small: your useful pages, a contact link.</target>
+            </trans-unit>
+            <trans-unit id="wjyoO8z">
+                <source>narration.guided_step_email_menus_footer_save</source>
+                <target>Save the e-mail footer.</target>
+            </trans-unit>
+            <trans-unit id="wgRADvh">
+                <source>narration.guided_step_email_menus_header_create</source>
+                <target>Create the e-mail header if it is missing: one button is offered per location not created yet. If it is already in the list, move on to the next step.</target>
+            </trans-unit>
+            <trans-unit id="ek9hadE">
+                <source>narration.guided_step_email_menus_header_edit</source>
+                <target>Open the e-mail header. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>
+            </trans-unit>
+            <trans-unit id="izEi0O4">
+                <source>narration.guided_step_email_menus_header_items</source>
+                <target>Add its items, blocks as on a page: a logo, a link to the site. A link meant for signed-in visitors only, or for signed-out ones only, does not show there: an e-mail has no visitor.</target>
+            </trans-unit>
+            <trans-unit id="AfvD4dE">
+                <source>narration.guided_step_email_menus_header_save</source>
+                <target>Save the header.</target>
+            </trans-unit>
+            <trans-unit id="G9voRQh">
+                <source>narration.guided_step_email_menus_legal</source>
+                <target>And under your footer, every e-mail names the site's publisher and links to its privacy policy, taken from the settings: you do not have to write them. Your links reach the site as long as its address is filled in the settings.</target>
+            </trans-unit>
+            <trans-unit id="RaZiM0z">
+                <source>narration.guided_step_email_menus_open</source>
+                <target>The panel takes you to the menus. The e-mail header and footer are two of them, apart: what you put there leaves the site untouched, and the other way round.</target>
+            </trans-unit>
             <trans-unit id=".N9y61w">
                 <source>narration.guided_step_footer_check</source>
                 <target>Check on the site: open it in another tab, the footer carries your lines, in the order you gave them.</target>
@@ -246,6 +286,14 @@
                 <source>narration.guided_step_page_menu_brand</source>
                 <target>Come back to the menus: the "Under the site name" location carries what the site says under its own name, its baseline. Create it if it does not exist yet.</target>
             </trans-unit>
+            <trans-unit id="Lj7Xfxd">
+                <source>narration.guided_step_page_menu_brand_edit</source>
+                <target>Open the “Under the site name” location. If you have just created it you are already there; otherwise, that is the row whose location reads so.</target>
+            </trans-unit>
+            <trans-unit id=".94mI95">
+                <source>narration.guided_step_page_menu_brand_save</source>
+                <target>Save the baseline.</target>
+            </trans-unit>
             <trans-unit id="e_Rrc63">
                 <source>narration.guided_step_page_menu_brand_write</source>
                 <target>Write it as a block, so translated like the rest of the site, where the baseline used to be a setting speaking one language to everyone.</target>
@@ -305,6 +353,10 @@
             <trans-unit id="0ao3tKG">
                 <source>narration.guided_step_page_revision_rework</source>
                 <target>Rework the copy as much as you need: your visitors keep seeing the original meanwhile.</target>
+            </trans-unit>
+            <trans-unit id="JumiKaq">
+                <source>narration.guided_step_page_revision_save</source>
+                <target>Save without leaving the page: the preview shows the copy as it is saved.</target>
             </trans-unit>
             <trans-unit id="LrcEh8a">
                 <source>narration.guided_step_page_seo_check</source>

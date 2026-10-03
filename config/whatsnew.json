@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-10-03",
+        "description": [
+            {
+                "en": "A new guided project shows how to build the header and footer of the e-mails your site sends",
+                "fr": "Un nouveau projet guidé montre comment composer l'en-tête et le pied des e-mails envoyés par votre site",
+                "es": "Un nuevo proyecto guiado muestra cómo componer el encabezado y el pie de los correos que envía su sitio"
+            },
+            {
+                "en": "The menu translation screen can now translate each label for you",
+                "fr": "L'écran de traduction des menus peut désormais traduire chaque libellé pour vous",
+                "es": "La pantalla de traducción de los menús puede ahora traducir cada etiqueta por usted"
+            },
+            {
+                "en": "A link to your Copyright page shows the \"© year\" notice unless you give it a label of your own",
+                "fr": "Un lien vers votre page Copyright affiche la mention « © année », sauf si vous lui donnez un libellé à vous",
+                "es": "Un enlace a su página de Copyright muestra el aviso «© año», salvo si le da una etiqueta propia"
+            }
+        ]
+    },
+    {
         "date": "2026-10-02",
         "description": [
             {

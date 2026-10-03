@@ -55,15 +55,15 @@ class SiteGuidedProjectProviderTest extends TestCase
     }
 
     // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
-    public function testGetGuidedProjectsReturnsFourteenProjectsContinuingConfigBundlesOrderSequence(): void
+    public function testGetGuidedProjectsReturnsFifteenProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
 
         $this->assertSame(
-            ['site-collection', 'site-collection-translation', 'site-page-creation', 'site-block', 'site-tutorials-page', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer'],
+            ['site-collection', 'site-collection-translation', 'site-page-creation', 'site-block', 'site-tutorials-page', 'site-page-seo', 'site-page-translation', 'site-page-health', 'site-page-revision', 'site-trash', 'site-content-export', 'site-page-menu', 'site-menu-translation', 'site-footer', 'site-email-menus'],
             array_column($projects, 'slug')
         );
-        $this->assertSame([2010, 2015, 2020, 2025, 2027, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090], array_column($projects, 'order'));
+        $this->assertSame([2010, 2015, 2020, 2025, 2027, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090, 2095], array_column($projects, 'order'));
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it
@@ -104,6 +104,7 @@ class SiteGuidedProjectProviderTest extends TestCase
             'site-page-menu' => 'ROLE_EDITOR',
             'site-menu-translation' => 'ROLE_EDITOR',
             'site-footer' => 'ROLE_EDITOR',
+            'site-email-menus' => 'ROLE_EDITOR',
         ];
 
         foreach ($this->createProvider()->getGuidedProjects() as $project) {
@@ -151,7 +152,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->createProvider($controllers)->getGuidedProjects();
 
         $this->assertSame(
-            ['CollectionCrudController', 'CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
+            ['CollectionCrudController', 'CollectionCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'PageCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController', 'MenuCrudController'],
             array_map(static fn (string $fqcn): string => basename(str_replace('\\', '/', $fqcn)), $controllers)
         );
     }
@@ -177,7 +178,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
     }
 
-    // The two menu projects walk the very same screen, told apart by the location they create - a footer parcours opening the navbar would silently teach the wrong menu
+    // The menu projects walk the very same screen, told apart by the location they create - a footer parcours opening the navbar would silently teach the wrong menu
     public function testEachMenuProjectHighlightsItsOwnLocationButton(): void
     {
         $highlights = [];
@@ -187,6 +188,9 @@ class SiteGuidedProjectProviderTest extends TestCase
 
         $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR), $highlights['site-page-menu']);
         $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_FOOTER), $highlights['site-footer']);
+        $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_NAVBAR_BRAND), $highlights['site-page-menu']);
+        $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_EMAIL_HEADER), $highlights['site-email-menus']);
+        $this->assertContains(sprintf('button[name="location"][value="%s"]', Menu::LOCATION_EMAIL_FOOTER), $highlights['site-email-menus']);
     }
 
     // A link's "visibility" is chosen on the link itself, so the navbar parcours tells about it right after the target is picked
@@ -337,13 +341,17 @@ class SiteGuidedProjectProviderTest extends TestCase
         $this->assertStringContainsString('[data-site-content-locales]', $this->highlightsOf('site-menu-translation'));
     }
 
-    // The menu index rows carry no id of their own: the location marker its template writes is the only thing telling the footer's edit button from the navbar's
-    public function testTheFooterEditStepPointsAtTheRowMarkerTheIndexTemplateWrites(): void
+    // The menu index rows carry no id of their own: the location marker its template writes is the only thing telling one menu's edit button from another's, the index carrying no default sort
+    public function testTheMenuEditStepsPointAtTheRowMarkerTheIndexTemplateWrites(): void
     {
         $template = (string) file_get_contents(\dirname(__DIR__, 2) . '/templates/management/menu_crud_index.html.twig');
 
         $this->assertStringContainsString('data-menu-location=', $template, 'The menu index no longer marks its rows, so there is no selector left to point at');
         $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_FOOTER), $this->highlightsOf('site-footer'));
+        $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_NAVBAR), $this->highlightsOf('site-page-menu'));
+        $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_NAVBAR_BRAND), $this->highlightsOf('site-page-menu'));
+        $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_EMAIL_HEADER), $this->highlightsOf('site-email-menus'));
+        $this->assertStringContainsString(sprintf('[data-menu-location="%s"] .action-edit', Menu::LOCATION_EMAIL_FOOTER), $this->highlightsOf('site-email-menus'));
     }
 
     // The menu translation screen is no EasyAdmin form, and the layout carries other forms: its save button is pointed at through the marker the template writes
@@ -379,7 +387,7 @@ class SiteGuidedProjectProviderTest extends TestCase
             $this->assertStringContainsString('blockMoveRowAttrBuilder->build(', $this->controllerSource($controller), sprintf('%s no longer marks its blocks collection, so the row carries no selector to point at', $controller));
         }
 
-        foreach (['site-page-creation', 'site-block', 'site-page-revision', 'site-page-menu', 'site-footer'] as $slug) {
+        foreach (['site-page-creation', 'site-block', 'site-page-revision', 'site-page-menu', 'site-footer', 'site-email-menus'] as $slug) {
             $this->assertStringContainsString(sprintf('[data-ui-sort-group="%s"]', BlockMoveRowAttrBuilder::GROUP), $this->highlightsOf($slug));
         }
     }

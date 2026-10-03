@@ -16,6 +16,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\ContentTranslator;
+use c975L\UiBundle\Service\TranslationFormContext;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +35,7 @@ class TranslationController extends AbstractController
         private readonly BlockRegistry $blockRegistry,
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
+        private readonly TranslationFormContext $translationFormContext,
     ) {
     }
 
@@ -87,6 +89,9 @@ class TranslationController extends AbstractController
         if ($request->isMethod('POST')) {
             return $this->save($request, $locale, $rows, $subject);
         }
+
+        // The one language this screen writes, which turns Donovan's toolbar under each field into a single "translate into" button
+        $this->translationFormContext->set($locale);
 
         return $this->render('@c975LSite/management/translation.html.twig', [
             'subject' => $subject,

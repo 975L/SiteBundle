@@ -158,6 +158,10 @@
                 <source>description.guided_project_content_export</source>
                 <target>Llevarse páginas en un zip, con sus blocks, sus imágenes y sus traducciones, para cargarlas en otro sitio o guardarlas fuera del servidor</target>
             </trans-unit>
+            <trans-unit id="p7fr9hn">
+                <source>description.guided_project_email_menus</source>
+                <target>Dar forma a lo que cada correo enviado por el sitio muestra arriba y abajo, aparte de los menús del sitio</target>
+            </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
                 <target>Dar forma al pie de página de todas las páginas: sus enlaces, sus enlaces sociales, repartidos en las líneas que quiera</target>
@@ -294,6 +298,38 @@
                 <source>description.guided_step_content_export_select</source>
                 <target>Esta casilla las marca todas; también puede marcarlas una a una. El botón de exportación solo aparece cuando hay una marcada.</target>
             </trans-unit>
+            <trans-unit id="Cldg3pr">
+                <source>description.guided_step_email_menus_footer_create</source>
+                <target>De vuelta en los menús, el mismo botón para el pie de los correos. Si ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="k6IdFfY">
+                <source>description.guided_step_email_menus_footer_edit</source>
+                <target>Si acaba de crearlo, ya está ahí. Si no, es la fila cuya ubicación es «Pie de página del email».</target>
+            </trans-unit>
+            <trans-unit id="2.D2KqT">
+                <source>description.guided_step_email_menus_footer_items</source>
+                <target>Una fila discreta de enlaces, centrada y en pequeño: sus páginas útiles, un enlace de contacto.</target>
+            </trans-unit>
+            <trans-unit id="Md91kp1">
+                <source>description.guided_step_email_menus_header_create</source>
+                <target>Un botón por cada ubicación aún no creada. Si el encabezado de los correos ya está en la lista, pase al paso siguiente.</target>
+            </trans-unit>
+            <trans-unit id="fVW.RC_">
+                <source>description.guided_step_email_menus_header_edit</source>
+                <target>Si acaba de crearlo, ya está ahí. Si no, es la fila cuya ubicación es «Encabezado del email».</target>
+            </trans-unit>
+            <trans-unit id="IMus9xb">
+                <source>description.guided_step_email_menus_header_items</source>
+                <target>Bloques, como en una página: un logotipo, un enlace al sitio. Un enlace reservado a los visitantes conectados, o a los que no lo están, no aparece: un correo no tiene visitante.</target>
+            </trans-unit>
+            <trans-unit id="WYMLQdC">
+                <source>description.guided_step_email_menus_legal</source>
+                <target>Bajo su pie, cada correo nombra al editor del sitio y enlaza a su política de privacidad, tomados de los ajustes: no tiene que escribirlos. Sus enlaces llevan al sitio siempre que su dirección esté indicada en los ajustes.</target>
+            </trans-unit>
+            <trans-unit id="Yds3BBY">
+                <source>description.guided_step_email_menus_open</source>
+                <target>El encabezado y el pie de los correos son dos menús aparte: lo que ponga en ellos no toca el sitio, y viceversa.</target>
+            </trans-unit>
             <trans-unit id="Crku_2z">
                 <source>description.guided_step_footer_check</source>
                 <target>Abra el sitio en otra pestaña: el pie de página lleva sus líneas, en el orden que les ha dado.</target>
@@ -409,6 +445,10 @@
             <trans-unit id="i0tTiPz">
                 <source>description.guided_step_page_menu_brand</source>
                 <target>De vuelta en los menús: la ubicación «Bajo el nombre del sitio» lleva lo que el sitio dice bajo su propio nombre. No se resalta nada si ya existe.</target>
+            </trans-unit>
+            <trans-unit id="_44YT0Z">
+                <source>description.guided_step_page_menu_brand_edit</source>
+                <target>Si acaba de crearla, ya está ahí. Si no, es la fila cuya ubicación es «Bajo el nombre del sitio».</target>
             </trans-unit>
             <trans-unit id="7bcgCUX">
                 <source>description.guided_step_page_menu_brand_write</source>
@@ -906,6 +946,10 @@
                 <source>label.guided_project_content_export</source>
                 <target>Exportar páginas a otro sitio</target>
             </trans-unit>
+            <trans-unit id="HgIlOEk">
+                <source>label.guided_project_email_menus</source>
+                <target>Componer el encabezado y el pie de los correos</target>
+            </trans-unit>
             <trans-unit id="XQDxvTJ">
                 <source>label.guided_project_footer</source>
                 <target>Componer el pie de página</target>
@@ -1058,6 +1102,46 @@
                 <source>label.guided_step_content_export_select</source>
                 <target>Marcar las páginas que llevarse</target>
             </trans-unit>
+            <trans-unit id="jov85ge">
+                <source>label.guided_step_email_menus_footer_create</source>
+                <target>Crear el pie de los correos si falta</target>
+            </trans-unit>
+            <trans-unit id="eTjbj89">
+                <source>label.guided_step_email_menus_footer_edit</source>
+                <target>Abrir el pie de los correos</target>
+            </trans-unit>
+            <trans-unit id="222.vlU">
+                <source>label.guided_step_email_menus_footer_items</source>
+                <target>Añadir los enlaces del pie</target>
+            </trans-unit>
+            <trans-unit id="N8FFGd8">
+                <source>label.guided_step_email_menus_footer_save</source>
+                <target>Guardar el pie de los correos</target>
+            </trans-unit>
+            <trans-unit id="s_Yxute">
+                <source>label.guided_step_email_menus_header_create</source>
+                <target>Crear el encabezado de los correos si falta</target>
+            </trans-unit>
+            <trans-unit id="4cbBkKy">
+                <source>label.guided_step_email_menus_header_edit</source>
+                <target>Abrir el encabezado de los correos</target>
+            </trans-unit>
+            <trans-unit id="MxzNaVS">
+                <source>label.guided_step_email_menus_header_items</source>
+                <target>Añadir los elementos del encabezado</target>
+            </trans-unit>
+            <trans-unit id="3_8QHZB">
+                <source>label.guided_step_email_menus_header_save</source>
+                <target>Guardar el encabezado</target>
+            </trans-unit>
+            <trans-unit id="UG9c_cH">
+                <source>label.guided_step_email_menus_legal</source>
+                <target>Lo que se añade solo</target>
+            </trans-unit>
+            <trans-unit id="bgV0aFk">
+                <source>label.guided_step_email_menus_open</source>
+                <target>Abrir los menús</target>
+            </trans-unit>
             <trans-unit id="DXo980X">
                 <source>label.guided_step_footer_check</source>
                 <target>Comprobar en el sitio</target>
@@ -1186,6 +1270,14 @@
                 <source>label.guided_step_page_menu_brand</source>
                 <target>Añadir el lema bajo el nombre del sitio</target>
             </trans-unit>
+            <trans-unit id="F6jkvLn">
+                <source>label.guided_step_page_menu_brand_edit</source>
+                <target>Abrir la fila «Bajo el nombre del sitio»</target>
+            </trans-unit>
+            <trans-unit id="eCNQa1t">
+                <source>label.guided_step_page_menu_brand_save</source>
+                <target>Guardar el lema</target>
+            </trans-unit>
             <trans-unit id="RFGEX.0">
                 <source>label.guided_step_page_menu_brand_write</source>
                 <target>Escribirlo como un bloque</target>
@@ -1245,6 +1337,10 @@
             <trans-unit id="is2PIcW">
                 <source>label.guided_step_page_revision_rework</source>
                 <target>Retrabajar la copia</target>
+            </trans-unit>
+            <trans-unit id="c.7lmfz">
+                <source>label.guided_step_page_revision_save</source>
+                <target>Guardar sin salir de la página</target>
             </trans-unit>
             <trans-unit id="B0RNOF3">
                 <source>label.guided_step_page_seo_check</source>

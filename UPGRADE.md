@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+**The `site-menu-link-copyright-auto` setting is removed.** A `menu_link` to the site's Copyright page
+always shows the computed "© year" notice, unless the link is given a `label` of its own in the menu,
+which then wins. A site that had turned the setting off and wants the page's title back types that
+title as the link's label. An app keeping its own copy of `config/configs.json` can drop the entry.
+
 **`site_page` gains a `version` column** (`INT DEFAULT 1 NOT NULL`), Doctrine's optimistic lock: run
 `doctrine:migrations:diff` then `doctrine:migrations:migrate`. A page saved from a tab opened before
 another save of the same page is now refused, with the editor's input kept on screen.
@@ -49,7 +54,9 @@ opt-out link in its cookies model, and a key belongs to the bundle reading it. S
 The component carries its own `site-enable-matomo` guard now, so a layout renders it
 unconditionally: **a template of yours calling `<twig:c975LSite:General:Matomo/>` breaks** — rename
 the tag, and drop the `{% if config('site-enable-matomo') %}` around it. This bundle's own footer
-and layout are already updated, and a site rendering neither by hand has nothing to do.
+and layout are already updated, and a site rendering neither by hand has nothing to do. (UiBundle
+has since dropped `site-enable-matomo`: Matomo runs as soon as `site-matomo-url` and `site-matomo-id`
+are filled, see its UPGRADE.md.)
 
 **`MenuExtension` no longer takes a `TranslatorInterface`.** A contributed menu target is now labelled by
 ConfigBundle's `LinkableRouteRegistry::label()`, which leaves the extension with nothing to translate of
