@@ -208,7 +208,7 @@ skips the gate, a preview being the screen for a page the public gate turns away
 
 `TutorialCollectionSourceProvider` adds one more source, `site.collection.tutorials`: the films of the
 guided projects, read by `TutorialCatalog` from `public/medias/films/<locale>/films.json` (one entry per
-guided project slug: `version`, `narrated`, `starts`, optional `shotAt`) beside each film's `.webm`, `.vtt`
+guided project slug: `version`, `narrated`, `starts`, optional `shotAt` and `shotOn`) beside each film's `.webm`, `.vtt`
 and `.jpg`. An entry without `version` is ignored; a locale with no film of its own falls back film by
 film to the site's default locale. The page showing them is an ordinary page holding a `collection` block
 on that source, each card drawn by `@c975LSite/collection/TutorialItem.html.twig` and the `tutorial`

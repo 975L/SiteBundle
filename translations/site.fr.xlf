@@ -2310,6 +2310,10 @@
                 <source>text.tutorial_shot_on</source>
                 <target>Tourné le %date%</target>
             </trans-unit>
+            <trans-unit id=".J7f3Q7">
+                <source>text.tutorial_shot_on_version</source>
+                <target>Tourné le %date% sur %version%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.29.1
+
+A tutorial film says the version it was shot on
+
+- Tutorial cards print the optional `shotOn` version beside the shooting date (03/10/2026)
+- Menus screen moved out of the "Advanced" submenu (03/10/2026)
+
 ## v8.29.0
 
 A guided project for the e-mails' header and footer

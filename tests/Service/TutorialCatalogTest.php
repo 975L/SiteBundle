@@ -25,7 +25,7 @@ class TutorialCatalogTest extends TestCase
         mkdir($this->public . '/medias/films/fr', 0o775, true);
         file_put_contents($this->public . '/medias/films/fr/films.json', json_encode([
             'site-page-creation' => ['narrated' => true, 'version' => 1758000000, 'starts' => [7.4, 16.4]],
-            'config-settings' => ['narrated' => false, 'version' => 1758000000, 'shotAt' => 1757000000, 'starts' => [5.0]],
+            'config-settings' => ['narrated' => false, 'version' => 1758000000, 'shotAt' => 1757000000, 'shotOn' => 'CoreBundle v1.50.0', 'starts' => [5.0]],
             'ui-media' => ['narrated' => false, 'version' => 1758000000, 'starts' => [3.0]],
         ]));
     }
@@ -66,6 +66,13 @@ class TutorialCatalogTest extends TestCase
         $this->assertSame(1758000000, $this->catalog()->find('ui-media', 'fr')['shotAt']);
     }
 
+    // A film says the version it was shot on, nothing for one published before the camera wrote it
+    public function testAFilmCarriesTheVersionItWasShotOn(): void
+    {
+        $this->assertSame('CoreBundle v1.50.0', $this->catalog()->find('config-settings', 'fr')['shotOn']);
+        $this->assertNull($this->catalog()->find('ui-media', 'fr')['shotOn']);
+    }
+
     // Each step gets the second it starts at, unless the film counts a different number of steps than the project, then none does
     public function testStepsAreTimedOnlyWhenTheFilmMatchesTheProject(): void
     {
@@ -98,7 +105,7 @@ class TutorialCatalogTest extends TestCase
     public function testABrokenManifestIsNormalized(): void
     {
         file_put_contents($this->public . '/medias/films/fr/films.json', json_encode([
-            'site-page-creation' => ['version' => 1758000000],
+            'site-page-creation' => ['version' => 1758000000, 'shotOn' => ['x']],
             'ui-media' => ['narrated' => true, 'starts' => [3.0]],
             'config-settings' => 'broken',
         ]));
@@ -107,6 +114,7 @@ class TutorialCatalogTest extends TestCase
         $this->assertSame(['site-page-creation'], array_column($tutorials, 'slug'));
         $this->assertFalse($tutorials[0]['narrated']);
         $this->assertSame([null, null], array_column($tutorials[0]['steps'], 'start'));
+        $this->assertNull($tutorials[0]['shotOn']);
         $this->assertFalse($this->catalog()->isFilmed('ui-media', 'fr'));
 
         file_put_contents($this->public . '/medias/films/fr/films.json', '"broken"');

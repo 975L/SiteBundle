@@ -61,6 +61,7 @@ class TutorialCatalog
                 'narrated' => $film['narrated'],
                 'version' => $film['version'],
                 'shotAt' => $film['shotAt'] ?? $film['version'],
+                'shotOn' => $film['shotOn'] ?? null,
                 'video' => $base . '.webm' . $version,
                 'subtitles' => $base . '.vtt' . $version,
                 'poster' => $base . '.jpg' . $version,
@@ -103,7 +104,7 @@ class TutorialCatalog
     }
 
     // The films published for one locale, none when it has no folder yet. An entry without a version is dropped and the others get their defaults, so a hand-edited manifest never breaks the page
-    /** @return array<string, array{narrated: bool, version: int, shotAt?: int, starts: list<float>}> */
+    /** @return array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}> */
     private function manifest(string $locale): array
     {
         if (!isset($this->manifests[$locale])) {
@@ -113,6 +114,7 @@ class TutorialCatalog
             $this->manifests[$locale] = array_map(static fn (array $film): array => [
                 ...$film,
                 'narrated' => (bool) ($film['narrated'] ?? false),
+                'shotOn' => \is_string($film['shotOn'] ?? null) && '' !== $film['shotOn'] ? $film['shotOn'] : null,
                 'starts' => array_values((array) ($film['starts'] ?? [])),
             ], $films);
         }

@@ -68,16 +68,14 @@ class MenuProviderTest extends TestCase
         }
     }
 
-    // Day-to-day content items stay at the top level; setup-once/occasional-use screens are tucked into MenuBuilder's collapsed "Advanced" submenu (see MenuProviderInterface::getMenus())
-    public function testAdvancedTierIsSetOnlyOnSetupOnceScreens(): void
+    // Every screen is day-to-day content work, so none is tucked into MenuBuilder's collapsed "Advanced" submenu (see MenuProviderInterface::getMenus())
+    public function testEveryScreenStaysEssential(): void
     {
         $menus = $this->createProvider()->getMenus();
 
-        foreach (['page', 'collection'] as $essential) {
+        foreach (['page', 'menu', 'collection'] as $essential) {
             $this->assertArrayNotHasKey('tier', $menus[$essential], $essential . ' should stay essential');
         }
-
-        $this->assertSame('advanced', $menus['menu']['tier'], 'menu should be advanced');
     }
 
     // No non-CRUD screen of its own any more: the "Legal models" one moved to UiBundle along with the models

@@ -14,10 +14,10 @@
         <p class="tutorial-description">{{ tutorial.description }}</p>
     {% endif %}
 
-    {# The date the film was shot, not the one it was narrated or published: a parcours that did not change is not shot again, so an old date says the film still shows the screen as it is #}
+    {# The date the film was shot, not the one it was narrated or published: a parcours that did not change is not shot again, so an old date says the film still shows the screen as it is, and the version it was shot on says the same #}
     {% set meta %}
         <p class="tutorial-meta text-muted">
-            {{ 'text.tutorial_shot_on'|trans({'%date%': tutorial.shotAt|date('d/m/Y')}, 'site') }} · {{ (tutorial.narrated ? 'label.tutorial_narrated' : 'label.tutorial_subtitled')|trans({}, 'site') }}
+            {{ tutorial.shotOn ? 'text.tutorial_shot_on_version'|trans({'%date%': tutorial.shotAt|date('d/m/Y'), '%version%': tutorial.shotOn}, 'site') : 'text.tutorial_shot_on'|trans({'%date%': tutorial.shotAt|date('d/m/Y')}, 'site') }} · {{ (tutorial.narrated ? 'label.tutorial_narrated' : 'label.tutorial_subtitled')|trans({}, 'site') }}
         </p>
     {% endset %}
     {{ meta }}

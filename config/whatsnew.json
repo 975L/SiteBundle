@@ -16,6 +16,16 @@
                 "en": "A link to your Copyright page shows the \"© year\" notice unless you give it a label of your own",
                 "fr": "Un lien vers votre page Copyright affiche la mention « © année », sauf si vous lui donnez un libellé à vous",
                 "es": "Un enlace a su página de Copyright muestra el aviso «© año», salvo si le da una etiqueta propia"
+            },
+            {
+                "en": "Each tutorial film now says which version of the site it was filmed on, so you know it still shows your screens as they are",
+                "fr": "Chaque film tutoriel indique désormais sur quelle version du site il a été tourné, pour savoir qu'il montre vos écrans tels qu'ils sont",
+                "es": "Cada película tutorial indica ahora en qué versión del sitio se grabó, para saber que muestra sus pantallas tal como son"
+            },
+            {
+                "en": "Menus now sit directly in the back-office sidebar instead of under \"Advanced\"",
+                "fr": "Les menus sont désormais directement dans la barre latérale de la gestion, et non plus sous « Avancé »",
+                "es": "Los menús están ahora directamente en la barra lateral de la gestión, y ya no en «Avanzado»"
             }
         ]
     },

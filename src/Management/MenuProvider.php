@@ -52,7 +52,6 @@ class MenuProvider implements MenuProviderInterface
                 'narration' => 'narration.menus',
                 'translation_domain' => 'site',
                 'icon' => 'fas fa-bars',
-                'tier' => 'advanced',
                 // The bar MenuCrudController sets on its own index - where a published page is put is the same hand's work
                 'role' => $this->configService->get('site-role-editor'),
                 'description' => 'label.info_menu',
