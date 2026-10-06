@@ -3,9 +3,9 @@
         "date": "2026-10-06",
         "description": [
             {
-                "en": "Tutorial films meant for your team alone now play right on the guided projects' page, for the people allowed to follow them",
-                "fr": "Les films tutoriels réservés à votre équipe se lisent désormais directement sur la page des projets guidés, pour les personnes autorisées à les suivre",
-                "es": "Las películas tutoriales reservadas a su equipo se reproducen ahora directamente en la página de los proyectos guiados, para las personas autorizadas a seguirlos"
+                "en": "Tutorial films meant for your team alone now have a page of their own in the back office, laid out like your public tutorials page",
+                "fr": "Les films tutoriels réservés à votre équipe ont désormais leur propre page dans le back-office, présentée comme votre page publique de tutoriels",
+                "es": "Las películas tutoriales reservadas a su equipo tienen ahora su propia página en el back-office, presentada como su página pública de tutoriales"
             },
             {
                 "en": "Drop-down menus in the navigation bar keep neat rounded corners, whatever the shape of your buttons",

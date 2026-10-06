@@ -41,22 +41,44 @@ class TutorialCatalog
     /** @return list<array<string, mixed>> */
     public function all(string $locale): array
     {
-        // Film by film rather than page by page: a language with a handful of its own films still shows the others in the site's language, subtitled
-        $manifests = [];
-        foreach (array_unique([$locale, $this->defaultLocale]) as $candidate) {
-            $manifests[$candidate] = $this->manifest($candidate);
-        }
+        return $this->tutorials(
+            $this->guidedProjectBuilder->getAllProjects(),
+            $locale,
+            $this->publicDirectory,
+            static fn (string $slug, string $filmLocale, string $extension, int $version): string => sprintf('/%s/%s/%s.%s?v=%d', self::DIRECTORY, $filmLocale, $slug, $extension, $version),
+        );
+    }
+
+    // The films only the back office shows, as all() lists the public ones - their files served from wherever $fileUrl says (see TutorialFilmController), and only those of the parcours the reader may follow, getProjects() answering for their roles like the route serving them does
+    /**
+     * @param \Closure(string $slug, string $locale, string $extension, int $version): string $fileUrl
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function allPrivate(string $locale, \Closure $fileUrl): array
+    {
+        return $this->tutorials($this->guidedProjectBuilder->getProjects(), $locale, $this->privateDirectory, $fileUrl);
+    }
+
+    // The projects crossed with the manifests of one folder. Film by film rather than page by page: a language with a handful of its own films still shows the others in the site's language, subtitled
+    /**
+     * @param list<array<string, mixed>> $projects
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function tutorials(array $projects, string $locale, string $directory, \Closure $fileUrl): array
+    {
+        $manifests = $this->manifests($locale, $directory);
 
         $tutorials = [];
-        foreach ($this->guidedProjectBuilder->getAllProjects() as $project) {
+        foreach ($projects as $project) {
             $filmLocale = array_find_key($manifests, static fn (array $films): bool => isset($films[$project['slug']]));
             if (null === $filmLocale) {
                 continue;
             }
 
             $film = $manifests[$filmLocale][$project['slug']];
-            $base = sprintf('/%s/%s/%s', self::DIRECTORY, $filmLocale, $project['slug']);
-            $version = '?v=' . $film['version'];
+            $url = static fn (string $extension): string => $fileUrl($project['slug'], $filmLocale, $extension, (int) $film['version']);
             $tutorials[] = [
                 'slug' => $project['slug'],
                 'label' => $project['label'],
@@ -65,9 +87,9 @@ class TutorialCatalog
                 'version' => $film['version'],
                 'shotAt' => $film['shotAt'] ?? $film['version'],
                 'shotOn' => $film['shotOn'] ?? null,
-                'video' => $base . '.webm' . $version,
-                'subtitles' => $base . '.vtt' . $version,
-                'poster' => $base . '.jpg' . $version,
+                'video' => $url('webm'),
+                'subtitles' => $url('vtt'),
+                'poster' => $url('jpg'),
                 'locale' => $filmLocale,
                 'steps' => $this->steps($project['steps'], $film['starts']),
             ];
@@ -79,21 +101,28 @@ class TutorialCatalog
     // Whether a project has a film in that language or in the site's, read off the manifests alone - what ConfigBundle's own project list asks while it is being built, and so without asking it back for its projects
     public function isFilmed(string $slug, string $locale): bool
     {
-        return isset($this->manifest($locale)[$slug]) || isset($this->manifest($this->defaultLocale)[$slug]);
+        return array_any($this->manifests($locale, $this->publicDirectory), static fn (array $films): bool => isset($films[$slug]));
+    }
+
+    // Whether a project has a public film in that very language, the site's not standing in for it - what outranks a film only the back office shows found in the site's language (see TutorialFilmUrlProvider)
+    public function isFilmedIn(string $slug, string $locale): bool
+    {
+        return isset($this->manifest($locale, $this->publicDirectory)[$slug]);
     }
 
     // The film only the back office shows of a project, read off private/medias/films alone - its locale (the one asked for, the site's otherwise), version and whether it speaks, null when it has none. Without asking GuidedProjectBuilder back for its projects, since it is asked while they are being built
     /** @return ?array{locale: string, version: int, narrated: bool} */
     public function findPrivate(string $slug, string $locale): ?array
     {
-        foreach (array_unique([$locale, $this->defaultLocale]) as $candidate) {
-            $film = $this->manifest($candidate, $this->privateDirectory)[$slug] ?? null;
-            if (null !== $film) {
-                return ['locale' => $candidate, 'version' => (int) $film['version'], 'narrated' => $film['narrated']];
-            }
+        $manifests = $this->manifests($locale, $this->privateDirectory);
+        $candidate = array_find_key($manifests, static fn (array $films): bool => isset($films[$slug]));
+        if (null === $candidate) {
+            return null;
         }
 
-        return null;
+        $film = $manifests[$candidate][$slug];
+
+        return ['locale' => $candidate, 'version' => (int) $film['version'], 'narrated' => $film['narrated']];
     }
 
     // Where one file of a film only the back office shows lies on disk ("webm", "vtt" or "jpg")
@@ -126,12 +155,22 @@ class TutorialCatalog
         ], $steps, array_keys($steps));
     }
 
-    // The films left for one locale in the given folder (public/ unless said otherwise), none when it has no folder yet. An entry without a version is dropped and the others get their defaults, so a hand-edited manifest never breaks the page
-    /** @return array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}> */
-    private function manifest(string $locale, ?string $directory = null): array
+    // The manifests a reader in that language is served from, keyed by their locale: theirs first, then the site's - the one fallback rule every lookup goes through
+    /** @return array<string, array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}>> */
+    private function manifests(string $locale, string $directory): array
     {
-        $directory ??= $this->publicDirectory;
+        $manifests = [];
+        foreach (array_unique([$locale, $this->defaultLocale]) as $candidate) {
+            $manifests[$candidate] = $this->manifest($candidate, $directory);
+        }
 
+        return $manifests;
+    }
+
+    // The films left for one locale in the given folder, none when it has no folder yet. An entry without a version is dropped and the others get their defaults, so a hand-edited manifest never breaks the page
+    /** @return array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}> */
+    private function manifest(string $locale, string $directory): array
+    {
         return $this->manifests[$directory][$locale] ??= $this->readManifest(sprintf('%s/%s/%s/%s', $directory, self::DIRECTORY, $locale, self::MANIFEST));
     }
 

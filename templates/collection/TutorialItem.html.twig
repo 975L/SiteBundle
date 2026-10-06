@@ -22,19 +22,21 @@
     {% endset %}
     {{ meta }}
 
-    {# The film as the VideoObject a video result is drawn from: named, with its poster, dated by the day it was shot - the date the card prints, the only one the manifest keeps #}
-    {% set videoJsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'VideoObject',
-        'name': tutorial.label,
-        'description': tutorial.description|default(tutorial.label),
-        'thumbnailUrl': absolute_url(tutorial.poster),
-        'uploadDate': tutorial.shotAt|date('c'),
-        'contentUrl': absolute_url(tutorial.video),
-        'url': absolute_url(here) ~ '#' ~ tutorial.slug,
-        'inLanguage': tutorial.locale,
-    } %}
-    <script type="application/ld+json">{{ json_ld(videoJsonLd) }}</script>
+    {# The film as the VideoObject a video result is drawn from: named, with its poster, dated by the day it was shot - the date the card prints, the only one the manifest keeps. None for a film only the back office shows #}
+    {% if public|default(true) %}
+        {% set videoJsonLd = {
+            '@context': 'https://schema.org',
+            '@type': 'VideoObject',
+            'name': tutorial.label,
+            'description': tutorial.description|default(tutorial.label),
+            'thumbnailUrl': absolute_url(tutorial.poster),
+            'uploadDate': tutorial.shotAt|date('c'),
+            'contentUrl': absolute_url(tutorial.video),
+            'url': absolute_url(here) ~ '#' ~ tutorial.slug,
+            'inLanguage': tutorial.locale,
+        } %}
+        <script type="application/ld+json">{{ json_ld(videoJsonLd) }}</script>
+    {% endif %}
 
     {# showModal() keeps the focus inside and Escape closes it; method="dialog" closes it with no script at all #}
     <dialog class="tutorial-dialog" aria-labelledby="{{ tutorial.slug }}-title" data-tutorial-target="dialog" data-action="close->tutorial#closed click->tutorial#backdrop">

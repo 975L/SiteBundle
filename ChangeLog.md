@@ -1,5 +1,18 @@
 # Changelog
 
+## v8.31.0
+
+Films only the back office shows get a page of their own
+
+- `/management/tutorial-films` shows the back office's films with the cards and dialog of the public tutorials page, only those of the parcours the reader may follow (06/10/2026)
+- `TutorialFilmUrlProvider::getFilmUrl()` links a private film to its card there; `getFilmPlayer()` removed, requires `c975l/core-bundle` ^1.57 (06/10/2026)
+- A private film is linked only for a reader allowed to watch it, else the public film or the ecosystem's (06/10/2026)
+- A public film in the reader's language outranks a private one found in the site's language (06/10/2026)
+- `TutorialCatalog::allPrivate()` lists the private films, `TutorialCollectionSourceProvider::items()` takes `public: false` to leave out the report links and the JSON-LD (06/10/2026)
+- `TutorialCatalog::isFilmedIn()` added, one locale fallback rule for every lookup (06/10/2026)
+- [BC-Break] `TutorialFilmController::ROUTE` removed, film routes named after the dashboard through EasyAdmin's `AdminRouteGenerator` (06/10/2026)
+- `management-tutorials.min.css` linked by the films' page only, `tutorial` controller loaded in the back office (06/10/2026)
+
 ## v8.30.2
 
 Scaffolded access test fills route placeholders their requirements accept

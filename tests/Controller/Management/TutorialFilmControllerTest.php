@@ -12,12 +12,18 @@ namespace c975L\SiteBundle\Tests\Controller\Management;
 
 use c975L\ConfigBundle\Management\GuidedProjectBuilder;
 use c975L\SiteBundle\Controller\Management\TutorialFilmController;
+use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\TutorialCatalog;
+use c975L\SiteBundle\Service\TutorialCollectionSourceProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Twig\Environment;
 
 class TutorialFilmControllerTest extends TestCase
 {
@@ -29,7 +35,7 @@ class TutorialFilmControllerTest extends TestCase
     {
         $this->private = sys_get_temp_dir() . '/tutorial-film-' . uniqid();
         mkdir($this->private . '/medias/films/fr', 0o775, true);
-        file_put_contents($this->private . '/medias/films/fr/films.json', json_encode(['back-office' => ['version' => 1759000000]]));
+        file_put_contents($this->private . '/medias/films/fr/films.json', json_encode(['back-office' => ['version' => 1759000000, 'starts' => [2.0]]]));
         file_put_contents($this->private . '/medias/films/fr/back-office.webm', 'webm');
     }
 
@@ -38,16 +44,69 @@ class TutorialFilmControllerTest extends TestCase
         new Filesystem()->remove($this->private);
     }
 
-    // $granted stands for what GuidedProjectBuilder::isGranted() answers for the film's project, $backOffice for the back office's own gate
+    // $granted stands for what GuidedProjectBuilder::isGranted() answers for the film's project, and for whether getProjects() lists it - $backOffice for the back office's own gate. The page's view comes back as its template and parameters, to be asserted on
     private function controller(bool $granted = true, bool $backOffice = true): TutorialFilmController
     {
         $builder = $this->createStub(GuidedProjectBuilder::class);
         $builder->method('isGranted')->willReturn($granted);
+        $builder->method('getProjects')->willReturn($granted ? [['slug' => 'back-office', 'label' => 'Ajouter un résistant', 'description' => '', 'steps' => [['label' => 'Ouvrir']]]] : []);
 
-        $controller = new TutorialFilmController($builder, new TutorialCatalog($builder, sys_get_temp_dir(), 'fr', $this->private));
-        $controller->setContainer($this->createContainer(['security.authorization_checker' => $this->createAuthorizationChecker($backOffice)]));
+        $catalog = new TutorialCatalog($builder, sys_get_temp_dir(), 'fr', $this->private);
+        $collectionSource = new TutorialCollectionSourceProvider($catalog, $this->createStub(PageRepository::class), new RequestStack(), 'fr');
+
+        $router = $this->createStub(UrlGeneratorInterface::class);
+        $router->method('generate')->willReturnCallback(static fn (string $route, array $parameters = []): string => [] === $parameters ? '/' . $route : sprintf('/%s/%s.%s?v=%d', $route, $parameters['slug'], $parameters['extension'], $parameters['v']));
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturnCallback(static fn (string $view, array $parameters = []): string => json_encode([$view, $parameters['itemTemplate'], array_map(static fn ($item): array => $item->data, $parameters['items']), $parameters['guidedProjectsUrl']]));
+
+        // Route names as a dashboard called "admin" gives them, so none is written "management_..."
+        $adminRouteGenerator = $this->createStub(AdminRouteGeneratorInterface::class);
+        $adminRouteGenerator->method('findRouteName')->willReturnCallback(static fn (?string $dashboard, string $controller, string $action): string => TutorialFilmController::class === $controller ? 'admin_tutorial_' . $action : 'admin_guided_projects_' . $action);
+
+        $controller = new TutorialFilmController($builder, $catalog, $collectionSource, $adminRouteGenerator);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker($backOffice),
+            'router' => $router,
+            'twig' => $twig,
+        ]));
 
         return $controller;
+    }
+
+    // The page draws the reader's films with the public page's card, their files served by the route checking the project's role, with neither report link nor VideoObject - routes named after whatever the dashboard is called
+    public function testThePageListsTheFilmsOfTheReaderProjects(): void
+    {
+        [$view, $itemTemplate, $items, $guidedProjectsUrl] = json_decode((string) $this->controller()->index(new Request())->getContent(), true);
+
+        $this->assertSame('@c975LSite/management/tutorial_films.html.twig', $view);
+        $this->assertSame(TutorialCollectionSourceProvider::ITEM_TEMPLATE, $itemTemplate);
+        $this->assertSame(['back-office'], array_column(array_column($items, 'tutorial'), 'slug'));
+        $this->assertSame('/admin_tutorial_film/back-office.webm?v=1759000000', $items[0]['tutorial']['video']);
+        $this->assertSame('/admin_guided_projects_index', $guidedProjectsUrl);
+        $this->assertFalse($items[0]['reportable']);
+        $this->assertFalse($items[0]['public']);
+    }
+
+    // The page links its own sheet, which has to be compiled (see sass/management-tutorials.scss)
+    public function testThePageSheetIsShipped(): void
+    {
+        $this->assertFileExists(\dirname(__DIR__, 3) . '/public/css/management-tutorials.min.css', 'The back office tutorials sass has not been compiled.');
+    }
+
+    // A film whose project the reader may not follow stays off the page, as its files stay out of reach
+    public function testThePageLeavesOutTheProjectsOutOfReach(): void
+    {
+        [, , $items] = json_decode((string) $this->controller(false)->index(new Request())->getContent(), true);
+
+        $this->assertSame([], $items);
+    }
+
+    // The back office's own gate keeps the page too
+    public function testNobodyOutsideTheBackOfficeSeesThePage(): void
+    {
+        $this->expectException(AccessDeniedException::class);
+
+        $this->controller(true, false)->index(new Request());
     }
 
     // The film is read off private/ and served with its own content type, revalidated on each reading

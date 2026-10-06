@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, management_tutorial_film, getFilmPlayer, findPrivate, private films."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, tutorial_film, tutorial_films, findRouteName, allPrivate, findPrivate, private films."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -222,12 +222,21 @@ subject prefilled, step 0 being the whole film). `SiteBackupPathProvider` declar
 to ConfigBundle's backup.
 
 Films only the back office shows go to `private/medias/films/<locale>/` instead (same layout, all three
-files expected), read by `TutorialCatalog::findPrivate()`. `TutorialFilmUrlProvider::getFilmPlayer()`
-hands them to the guided projects' page, played in place from `management_tutorial_film`
-(`/management/tutorial-film/{locale}/{slug}.{webm|vtt|jpg}`, `TutorialFilmController`): served to whoever
-passes `GuidedProjectBuilder::isGranted()` for the project, revalidated on each reading, a 404 otherwise
-or when the locale in the url has no film of its own. A dashboard route not named `management` leaves
-`getFilmPlayer()` null. `private/medias/films` is backed up too.
+files expected), read by `TutorialCatalog::findPrivate()` and listed by `TutorialCatalog::allPrivate()`
+for the parcours the reader may follow. The `tutorial_films` admin route (`/management/tutorial-films`,
+`TutorialFilmController::index()`) shows them with the very card and dialog of the public page
+(`items(..., public: false)`: no report link, no JSON-LD), styled by `management-tutorials.min.css` (linked
+by the page's own template, not by `StylesheetProvider`) and the `tutorial` controller registered in
+`controllers-admin.js`; `TutorialFilmUrlProvider::getFilmUrl()` links a private film to its anchor there -
+only for a reader passing the back office's gate and `GuidedProjectBuilder::isGranted()`, and unless the
+film was found in the site's language while a public one speaks the reader's. Their files come from the
+`tutorial_film` admin route (`/management/tutorial-film/{locale}/{slug}.{webm|vtt|jpg}`): served to
+whoever passes `GuidedProjectBuilder::isGranted()` for the project, revalidated on each reading, a 404
+otherwise or when the locale in the url has no film of its own. Both are named after the dashboard
+carrying them, asked of EasyAdmin's `AdminRouteGenerator::findRouteName()` (aliased to its interface in
+`services.yaml`), never written `management_...`; no dashboard carrying the page, or a reader it would not
+show the film to, leaves the project on the public film or the ecosystem's link. `private/medias/films` is
+backed up too.
 
 ## Content zones
 

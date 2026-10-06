@@ -1,0 +1,22 @@
+/*
+ * (c) 2026: 975L <contact@975l.com>
+ * (c) 2026: Laurent Marquet <laurent.marquet@laposte.net>
+ *
+ * This source file is subject to the MIT license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+// The back office's own films (templates/management/tutorial_films.html.twig): the public page's cards and dialog, on a grid of their own since the collection block's lives in the front stylesheet
+@use '_tutorials.scss';
+
+.tutorial-films {
+    // The site's theme tokens the cards and dialog read are not set in the back office: EasyAdmin's own stand in, its dark mode included
+    --background: var(--body-bg);
+    --text: var(--text-color);
+    --surface-alt: var(--gray-100);
+    --primary: var(--color-primary);
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+    gap: 24px;
+}

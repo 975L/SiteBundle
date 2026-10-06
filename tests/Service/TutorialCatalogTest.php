@@ -53,6 +53,11 @@ class TutorialCatalogTest extends TestCase
             ['slug' => 'ui-media', 'label' => 'Téléverser une image', 'description' => '', 'steps' => [$step('Téléverser')]],
             ['slug' => 'site-trash', 'label' => 'Vider la corbeille', 'description' => '', 'steps' => [$step('Vider')]],
         ]);
+        // The reader's own projects: the parcours whose role they lack are left out
+        $builder->method('getProjects')->willReturn([
+            ['slug' => 'app-resistant-creation', 'label' => 'Ajouter un résistant', 'description' => '', 'steps' => [$step('Ouvrir')]],
+            ['slug' => 'site-page-creation', 'label' => 'Créer une page', 'description' => '', 'steps' => [$step('Ouvrir'), $step('Enregistrer')]],
+        ]);
 
         return new TutorialCatalog($builder, $this->public, 'fr', $this->private);
     }
@@ -109,6 +114,14 @@ class TutorialCatalogTest extends TestCase
         $this->assertFalse($this->catalog()->isFilmed('site-trash', 'fr'));
     }
 
+    // A film in that very language is told apart from one the site's language stands in for
+    public function testIsFilmedInReadsOnlyThatLanguage(): void
+    {
+        $this->assertTrue($this->catalog()->isFilmedIn('ui-media', 'fr'));
+        $this->assertFalse($this->catalog()->isFilmedIn('ui-media', 'en'));
+        $this->assertFalse($this->catalog()->isFilmedIn('app-resistant-creation', 'fr'));
+    }
+
     // A hand-edited manifest never breaks the page: an entry without a version is dropped, the others get their defaults, and a manifest that is no object shows nothing
     public function testABrokenManifestIsNormalized(): void
     {
@@ -147,5 +160,16 @@ class TutorialCatalogTest extends TestCase
         $this->assertNull($catalog->findPrivate('site-page-creation', 'fr'));
         $this->assertFalse($catalog->isFilmed('app-resistant-creation', 'fr'));
         $this->assertSame($this->private . '/medias/films/fr/app-resistant-creation.webm', $catalog->privateFile('app-resistant-creation', 'fr', 'webm'));
+    }
+
+    // The back office lists its own films as the public page lists the others, from private/ alone, their files at the url it is given
+    public function testThePrivateFilmsAreListedFromTheirOwnFolder(): void
+    {
+        $tutorials = $this->catalog()->allPrivate('fr', static fn (string $slug, string $locale, string $extension, int $version): string => sprintf('/management/tutorial-film/%s/%s.%s?v=%d', $locale, $slug, $extension, $version));
+
+        $this->assertSame(['app-resistant-creation'], array_column($tutorials, 'slug'));
+        $this->assertSame('/management/tutorial-film/fr/app-resistant-creation.webm?v=1759000000', $tutorials[0]['video']);
+        $this->assertSame('/management/tutorial-film/fr/app-resistant-creation.jpg?v=1759000000', $tutorials[0]['poster']);
+        $this->assertSame([['label' => 'Ouvrir', 'start' => 4.0]], $tutorials[0]['steps']);
     }
 }

@@ -39,7 +39,7 @@ class ScaffoldThemeTest extends TestCase
         '--slider-freeflow-vw',
     ];
 
-    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike. Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all. Same for "--slider-freeflow-item", "--contact-details-gutter" and "--calculator-gutter", declared on ".slider-freeflow", ".contact-details" and ".calculator" themselves, where the local declaration beats anything inherited from :root. Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
+    // Read, but never off :root either: the "--c975l-" pair is what the backoffice compiles into site-theme.css, the "--bs-" ones belong to EasyAdmin, as do "--body-bg", "--text-color", "--gray-100" and "--color-primary" the back office's films page reads (see sass/management-tutorials.scss), and the "--flex-columns-" ones are set on the row and on each column's own span modifier - one value in :root would size every column alike. Same for "--flip-card-ratio", named by each ".flip-card-ratio-*" modifier, a value in :root shaping every flip card alike including the "free" one that declares no class at all. Same for "--slider-freeflow-item", "--contact-details-gutter" and "--calculator-gutter", declared on ".slider-freeflow", ".contact-details" and ".calculator" themselves, where the local declaration beats anything inherited from :root. Same for "--bottom-bar-height", an optional token another bundle sets on the body when it fixes a bar at the bottom of the viewport - a value in :root would raise the scroll buttons on every site, bar or not
     private const array NOT_THEMABLE = [
         '--bottom-bar-height',
         '--c975l-button-color',
@@ -71,6 +71,10 @@ class ScaffoldThemeTest extends TestCase
         '--bs-tertiary-bg',
         '--bs-warning-bg-subtle',
         '--bs-warning-border-subtle',
+        '--body-bg',
+        '--text-color',
+        '--gray-100',
+        '--color-primary',
         '--calculator-gutter',
         '--contact-details-gutter',
         '--flex-columns-gap',

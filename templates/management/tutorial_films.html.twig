@@ -1,0 +1,24 @@
+{# The films only the back office shows, as the public tutorials page shows the others: the same card and dialog (see TutorialFilmController::index()), laid out by a grid of their own since the collection block's is not loaded here (see sass/management-tutorials.scss) #}
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/c975lsite/css/management-tutorials.min.css') }}">
+{% endblock head_stylesheets %}
+
+{% block main %}
+    <h1>{{ 'label.tutorial_films'|trans({}, 'site') }}</h1>
+    {% if guidedProjectsUrl %}
+        <p><a href="{{ guidedProjectsUrl }}">{{ 'label.guided_projects'|trans({}, 'config') }}</a></p>
+    {% endif %}
+
+    {% if items is empty %}
+        <p class="text-muted">{{ 'text.tutorial_films_none'|trans({}, 'site') }}</p>
+    {% else %}
+        <div class="tutorial-films">
+            {% for item in items %}
+                {{ include(itemTemplate, item.data|merge({level: 'h2'})) }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock main %}

@@ -2154,6 +2154,10 @@
                 <source>label.tutorial_close</source>
                 <target>Close</target>
             </trans-unit>
+            <trans-unit id="5wNcUgn">
+                <source>label.tutorial_films</source>
+                <target>Guided projects' films</target>
+            </trans-unit>
             <trans-unit id="gwZbf8E">
                 <source>label.tutorial_narrated</source>
                 <target>with voice-over</target>
@@ -2301,6 +2305,10 @@
             <trans-unit id="we221_t">
                 <source>text.too_many_attempts</source>
                 <target>Too many attempts, please try again later.</target>
+            </trans-unit>
+            <trans-unit id="2M5ymSs">
+                <source>text.tutorial_films_none</source>
+                <target>No film has been published yet for your guided projects.</target>
             </trans-unit>
             <trans-unit id="_AJESXP">
                 <source>text.tutorial_report_help</source>

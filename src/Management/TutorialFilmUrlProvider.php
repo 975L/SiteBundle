@@ -10,17 +10,20 @@
 
 namespace c975L\SiteBundle\Management;
 
+use c975L\ConfigBundle\Management\GuidedProjectBuilder;
 use c975L\ConfigBundle\Management\TutorialFilmUrlProviderInterface;
+use c975L\ConfigBundle\Security\Voter\BackOfficeAccessVoter;
 use c975L\SiteBundle\Controller\Management\TutorialFilmController;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\TutorialCatalog;
 use c975L\SiteBundle\Service\TutorialCollectionSourceProvider;
+use EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// Sends a guided project's "Watch the film" link to this site's own film, when the site publishes one and has a page showing them - the others keep the ecosystem's (see TutorialFilmUrlProviderInterface). A film only the back office shows is played in place instead (see getFilmPlayer())
+// Sends a guided project's "Watch the film" link to this site's own film: the back office's page of its own films for one only the back office shows, the public page showing them for the others when the site has one - the rest keep the ecosystem's (see TutorialFilmUrlProviderInterface)
 class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
 {
     // Whether a page holds the tutorials, asked once for the whole project list
@@ -31,6 +34,9 @@ class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
         private readonly PageRepository $pageRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RequestStack $requestStack,
+        private readonly GuidedProjectBuilder $guidedProjectBuilder,
+        private readonly Security $security,
+        private readonly AdminRouteGeneratorInterface $adminRouteGenerator,
         #[Autowire(param: 'kernel.default_locale')]
         private readonly string $defaultLocale,
     ) {
@@ -38,7 +44,18 @@ class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
 
     public function getFilmUrl(string $slug): ?string
     {
-        if (!$this->catalog->isFilmed($slug, $this->requestStack->getCurrentRequest()?->getLocale() ?? $this->defaultLocale)) {
+        $locale = $this->requestStack->getCurrentRequest()?->getLocale() ?? $this->defaultLocale;
+
+        // A film only the back office shows comes first, unless it was found in the site's language and a public one speaks the reader's
+        $private = $this->catalog->findPrivate($slug, $locale);
+        if (null !== $private && ($locale === $private['locale'] || !$this->catalog->isFilmedIn($slug, $locale))) {
+            $url = $this->privateFilmUrl($slug);
+            if (null !== $url) {
+                return $url;
+            }
+        }
+
+        if (!$this->catalog->isFilmed($slug, $locale)) {
             return null;
         }
 
@@ -47,20 +64,15 @@ class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
         return $this->hasPage ? $this->urlGenerator->generate('site_tutorial_film', ['slug' => $slug]) : null;
     }
 
-    // A film left in private/medias/films, served by TutorialFilmController to whoever holds its project's role. Its url names the locale and the version, which changes with each shot. An app whose dashboard route is not "management" has no such route: the film falls back to its link rather than breaking the projects' page
-    public function getFilmPlayer(string $slug): ?array
+    // The film's card on the back office's page, its anchor opening the dialog - only to a reader the page lets in and whose roles open the parcours, as the route serving its files asks (see TutorialFilmController::film()): an AI assistant answering a visitor reads every project (GuidedProjectBuilder::getAllProjects()). Null otherwise, or when no dashboard carries the page (the first dashboard asked, the ecosystem having one), the project then keeping the next link
+    private function privateFilmUrl(string $slug): ?string
     {
-        $film = $this->catalog->findPrivate($slug, $this->requestStack->getCurrentRequest()?->getLocale() ?? $this->defaultLocale);
-        if (null === $film) {
+        if (!$this->security->isGranted(BackOfficeAccessVoter::ACCESS) || !$this->guidedProjectBuilder->isGranted($slug)) {
             return null;
         }
 
-        $url = fn (string $extension): string => $this->urlGenerator->generate(TutorialFilmController::ROUTE, ['locale' => $film['locale'], 'slug' => $slug, 'extension' => $extension, 'v' => $film['version']]);
+        $route = $this->adminRouteGenerator->findRouteName(crudControllerFqcn: TutorialFilmController::class, actionName: 'index');
 
-        try {
-            return ['video' => $url('webm'), 'subtitles' => $url('vtt'), 'poster' => $url('jpg'), 'locale' => $film['locale'], 'narrated' => $film['narrated']];
-        } catch (RouteNotFoundException) {
-            return null;
-        }
+        return null === $route ? null : $this->urlGenerator->generate($route) . '#' . $slug;
     }
 }

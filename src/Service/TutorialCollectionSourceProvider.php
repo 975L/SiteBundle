@@ -47,18 +47,18 @@ class TutorialCollectionSourceProvider implements CollectionSourceProviderInterf
         ];
     }
 
-    // The films as items, numbered in parcours order, each knowing the one before and after for its dialog's own navigation. Public so an app grouping its films differently (by bundle, by theme) draws them with the very same card
+    // The films as items, numbered in parcours order, each knowing the one before and after for its dialog's own navigation. Public so an app grouping its films differently (by bundle, by theme) draws them with the very same card, and so does the back office for its own films - which says $public false: no report link to a public form, no VideoObject for a page no search engine reads
     /**
      * @param list<array<string, mixed>> $tutorials
      *
      * @return list<CollectionItem>
      */
-    public function items(array $tutorials, ?int $limit = null): array
+    public function items(array $tutorials, ?int $limit = null, bool $public = true): array
     {
         $tutorials = null === $limit ? $tutorials : \array_slice($tutorials, 0, $limit);
 
         // A report link leads to the contact form: none is drawn on a site that has no page holding it
-        $reportable = null !== $this->pageRepository->findOneByFormBlockName(self::CONTACT_FORM);
+        $reportable = $public && null !== $this->pageRepository->findOneByFormBlockName(self::CONTACT_FORM);
 
         $items = [];
         foreach ($tutorials as $index => $tutorial) {
@@ -72,6 +72,7 @@ class TutorialCollectionSourceProvider implements CollectionSourceProviderInterf
                     'previous' => $tutorials[$index - 1] ?? null,
                     'next' => $tutorials[$index + 1] ?? null,
                     'reportable' => $reportable,
+                    'public' => $public,
                 ],
             );
         }

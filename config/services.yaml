@@ -14,6 +14,9 @@ services:
     # VichUploaderBundle only registers its concrete UploaderHelper as a service, no alias for its own interface - CollectionItemSourceProvider autowires against the interface for testability
     Vich\UploaderBundle\Templating\Helper\UploaderHelperInterface: '@Vich\UploaderBundle\Templating\Helper\UploaderHelper'
 
+    # Same for EasyAdmin's AdminRouteGenerator, final and unaliased - the films' page and TutorialFilmUrlProvider ask it the route names the dashboard gave them
+    EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface: '@EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator'
+
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 100 }
