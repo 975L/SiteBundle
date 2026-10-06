@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.30.1
+
+Requires the core bundle that actually exists
+
+- Requires `c975l/core-bundle` ^1.55 instead of the never released ^1.56, which left Composer on v8.29.1 without `getFilmPlayer()` (06/10/2026)
+
 ## v8.30.0
 
 Tutorial films only the back office shows
