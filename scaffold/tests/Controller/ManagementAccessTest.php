@@ -29,7 +29,7 @@ class ManagementAccessTest extends WebTestCase
             }
 
             $method = $route->getMethods()[0] ?? 'GET';
-            $url = preg_replace('#\{[^}]+\}#', '1', $route->getPath());
+            $url = preg_replace_callback('#\{([^}]+)\}#', fn (array $matches): string => $this->sampleValue($route->getRequirement($matches[1])), $route->getPath());
 
             $this->client->request($method, $url);
             $response = $this->client->getResponse();
@@ -39,6 +39,18 @@ class ManagementAccessTest extends WebTestCase
         }
 
         $this->assertEmpty($failures, implode("\n", $failures));
+    }
+
+    // A placeholder value the route's requirement accepts, else routing answers 404 before the firewall: 1 for ids, the first alternative (webm|vtt|jpg) or a locale
+    private function sampleValue(?string $requirement): string
+    {
+        foreach (['1', explode('|', (string) $requirement)[0], 'en'] as $candidate) {
+            if (null === $requirement || 1 === preg_match('#^(?:' . $requirement . ')$#', $candidate)) {
+                return $candidate;
+            }
+        }
+
+        return '1';
     }
 
     // Signed in is not enough: access_control asks the back-office voter, which a plain member does not answer

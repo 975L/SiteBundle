@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.30.2
+
+Scaffolded access test fills route placeholders their requirements accept
+
+- Scaffolded `ManagementAccessTest` fills each route placeholder with a value its requirement accepts (06/10/2026)
+
 ## v8.30.1
 
 Requires the core bundle that actually exists
