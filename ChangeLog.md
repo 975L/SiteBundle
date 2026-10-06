@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.30.0
+
+Tutorial films only the back office shows
+
+- Films left in `private/medias/films` are played in place on the guided projects' page (06/10/2026)
+- New `management_tutorial_film` route serving them to whoever holds the project's role (06/10/2026)
+- `private/medias/films` declared to the backup (06/10/2026)
+- Requires `c975l/core-bundle` ^1.56 (06/10/2026)
+- Navbar dropdown rounded like a card, not a button (06/10/2026)
+
 ## v8.29.1
 
 A tutorial film says the version it was shot on

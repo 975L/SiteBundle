@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-10-06",
+        "description": [
+            {
+                "en": "Tutorial films meant for your team alone now play right on the guided projects' page, for the people allowed to follow them",
+                "fr": "Les films tutoriels réservés à votre équipe se lisent désormais directement sur la page des projets guidés, pour les personnes autorisées à les suivre",
+                "es": "Las películas tutoriales reservadas a su equipo se reproducen ahora directamente en la página de los proyectos guiados, para las personas autorizadas a seguirlos"
+            },
+            {
+                "en": "Drop-down menus in the navigation bar keep neat rounded corners, whatever the shape of your buttons",
+                "fr": "Les menus déroulants de la barre de navigation gardent des coins arrondis nets, quelle que soit la forme de vos boutons",
+                "es": "Los menús desplegables de la barra de navegación conservan esquinas redondeadas nítidas, sea cual sea la forma de sus botones"
+            }
+        ]
+    },
+    {
         "date": "2026-10-03",
         "description": [
             {

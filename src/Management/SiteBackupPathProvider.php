@@ -22,6 +22,8 @@ class SiteBackupPathProvider implements BackupPathProviderInterface
         return [
             // Mirrored rather than archived: a film shot again replaces the one before, and bzip2 gains nothing on a webm
             new BackupPath('public/' . TutorialCatalog::DIRECTORY, BackupPath::MODE_MIRROR),
+            // Those only the back office shows, out of the web server's reach (see TutorialFilmController)
+            new BackupPath('private/' . TutorialCatalog::DIRECTORY, BackupPath::MODE_MIRROR),
         ];
     }
 }

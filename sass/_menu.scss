@@ -543,9 +543,12 @@ body:not(.has-back-office) .menu-item--back-office {
         display: flex;
         flex-direction: column;
         min-width: 12rem;
+        padding: 0.25rem 0;
         background-color: var(--navbar-background);
-        border-radius: var(--radius-btn);
+        // A card's corners, not a button's: a site rounding its buttons into pills (--radius-btn: 999px) turned the open menu into a pebble
+        border-radius: var(--radius-card);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
     .menu.is-scrolled .menu-dropdown__items {

@@ -11,14 +11,16 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\TutorialFilmUrlProviderInterface;
+use c975L\SiteBundle\Controller\Management\TutorialFilmController;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\TutorialCatalog;
 use c975L\SiteBundle\Service\TutorialCollectionSourceProvider;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-// Sends a guided project's "Watch the film" link to this site's own film, when the site publishes one and has a page showing them - the others keep the ecosystem's (see TutorialFilmUrlProviderInterface)
+// Sends a guided project's "Watch the film" link to this site's own film, when the site publishes one and has a page showing them - the others keep the ecosystem's (see TutorialFilmUrlProviderInterface). A film only the back office shows is played in place instead (see getFilmPlayer())
 class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
 {
     // Whether a page holds the tutorials, asked once for the whole project list
@@ -43,5 +45,22 @@ class TutorialFilmUrlProvider implements TutorialFilmUrlProviderInterface
         $this->hasPage ??= null !== $this->pageRepository->findOneByCollectionSource(TutorialCollectionSourceProvider::SOURCE);
 
         return $this->hasPage ? $this->urlGenerator->generate('site_tutorial_film', ['slug' => $slug]) : null;
+    }
+
+    // A film left in private/medias/films, served by TutorialFilmController to whoever holds its project's role. Its url names the locale and the version, which changes with each shot. An app whose dashboard route is not "management" has no such route: the film falls back to its link rather than breaking the projects' page
+    public function getFilmPlayer(string $slug): ?array
+    {
+        $film = $this->catalog->findPrivate($slug, $this->requestStack->getCurrentRequest()?->getLocale() ?? $this->defaultLocale);
+        if (null === $film) {
+            return null;
+        }
+
+        $url = fn (string $extension): string => $this->urlGenerator->generate(TutorialFilmController::ROUTE, ['locale' => $film['locale'], 'slug' => $slug, 'extension' => $extension, 'v' => $film['version']]);
+
+        try {
+            return ['video' => $url('webm'), 'subtitles' => $url('vtt'), 'poster' => $url('jpg'), 'locale' => $film['locale'], 'narrated' => $film['narrated']];
+        } catch (RouteNotFoundException) {
+            return null;
+        }
     }
 }

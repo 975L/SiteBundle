@@ -330,6 +330,8 @@ To show them, create a page and add a **`collection` block** on the **"Tutorials
 - `public/medias/films` is declared to ConfigBundle's backup. It is not a media any row points at: a media purge of your own must leave it alone;
 - each card carries its film's `schema.org` `VideoObject`, dated by `shotAt`, what a search engine's video results are drawn from.
 
+**Films only the back office shows.** A site whose films walk a back office nobody else is meant to see leaves them in `private/medias/films/<locale>/` instead, same layout and manifest, out of the web server's reach. They are on no public page: the guided projects' page of the back office plays each one in place, served by `management_tutorial_film` (`/management/tutorial-film/{locale}/{slug}.{webm|vtt|jpg}`) to whoever holds the role of its guided project - `GuidedProjectBuilder::isGranted()` answering for it, a 404 for anyone else - and revalidated on each reading, so an account losing that role loses the film too. All three files are expected, as for the public films: a missing `.vtt` or `.jpg` is a 404 the player runs into. `private/medias/films` is declared to the backup too.
+
 An app grouping its films otherwise (by bundle, by theme) draws them with the same card through `TutorialCollectionSourceProvider::items()`, and may add a `tryUrl` to a film to offer a place to walk the parcours for real.
 
 ## Menus

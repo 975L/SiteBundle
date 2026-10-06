@@ -13,16 +13,16 @@ namespace c975L\SiteBundle\Service;
 use c975L\ConfigBundle\Management\GuidedProjectBuilder;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-// The films of the back office's guided projects this site publishes: every guided project the installed bundles and the app offer, crossed with the manifest left in public/medias/films/<locale>/. Whatever shoots the films only has to leave that folder as README's "Tutorial films" describes it
+// The films of the back office's guided projects this site publishes: every guided project the installed bundles and the app offer, crossed with the manifest left in public/medias/films/<locale>/ - or in private/medias/films/<locale>/ for films only the back office shows (see findPrivate()). Whatever shoots the films only has to leave that folder as README's "Tutorial films" describes it
 class TutorialCatalog
 {
-    // Under public/medias with the uploads, backed up and copied between servers like them (see SiteBackupPathProvider)
+    // Under public/medias with the uploads - or private/medias for the films only the back office shows -, backed up and copied between servers like them (see SiteBackupPathProvider)
     public const string DIRECTORY = 'medias/films';
 
     public const string MANIFEST = 'films.json';
 
-    // The manifests already read, by locale: a dashboard asks whether each of its projects is filmed (see TutorialFilmUrlProvider)
-    /** @var array<string, array<string, array<string, mixed>>> */
+    // The manifests already read, by folder and locale: a dashboard asks whether each of its projects is filmed (see TutorialFilmUrlProvider)
+    /** @var array<string, array<string, array<string, array<string, mixed>>>> */
     private array $manifests = [];
 
     public function __construct(
@@ -31,6 +31,9 @@ class TutorialCatalog
         private readonly string $publicDirectory,
         #[Autowire(param: 'kernel.default_locale')]
         private readonly string $defaultLocale,
+        // Out of the web server's reach, for the films of a back office nobody else is meant to see (see TutorialFilmController)
+        #[Autowire('%kernel.project_dir%/private')]
+        private readonly string $privateDirectory,
     ) {
     }
 
@@ -79,6 +82,26 @@ class TutorialCatalog
         return isset($this->manifest($locale)[$slug]) || isset($this->manifest($this->defaultLocale)[$slug]);
     }
 
+    // The film only the back office shows of a project, read off private/medias/films alone - its locale (the one asked for, the site's otherwise), version and whether it speaks, null when it has none. Without asking GuidedProjectBuilder back for its projects, since it is asked while they are being built
+    /** @return ?array{locale: string, version: int, narrated: bool} */
+    public function findPrivate(string $slug, string $locale): ?array
+    {
+        foreach (array_unique([$locale, $this->defaultLocale]) as $candidate) {
+            $film = $this->manifest($candidate, $this->privateDirectory)[$slug] ?? null;
+            if (null !== $film) {
+                return ['locale' => $candidate, 'version' => (int) $film['version'], 'narrated' => $film['narrated']];
+            }
+        }
+
+        return null;
+    }
+
+    // Where one file of a film only the back office shows lies on disk ("webm", "vtt" or "jpg")
+    public function privateFile(string $slug, string $locale, string $extension): string
+    {
+        return sprintf('%s/%s/%s/%s.%s', $this->privateDirectory, self::DIRECTORY, $locale, $slug, $extension);
+    }
+
     // One filmed project by its slug, null when no film or no project answers to it
     /** @return ?array<string, mixed> */
     public function find(string $slug, string $locale): ?array
@@ -103,22 +126,27 @@ class TutorialCatalog
         ], $steps, array_keys($steps));
     }
 
-    // The films published for one locale, none when it has no folder yet. An entry without a version is dropped and the others get their defaults, so a hand-edited manifest never breaks the page
+    // The films left for one locale in the given folder (public/ unless said otherwise), none when it has no folder yet. An entry without a version is dropped and the others get their defaults, so a hand-edited manifest never breaks the page
     /** @return array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}> */
-    private function manifest(string $locale): array
+    private function manifest(string $locale, ?string $directory = null): array
     {
-        if (!isset($this->manifests[$locale])) {
-            $file = sprintf('%s/%s/%s/%s', $this->publicDirectory, self::DIRECTORY, $locale, self::MANIFEST);
-            $decoded = is_file($file) ? json_decode((string) file_get_contents($file), true) : [];
-            $films = array_filter(\is_array($decoded) ? $decoded : [], static fn (mixed $film): bool => \is_array($film) && isset($film['version']));
-            $this->manifests[$locale] = array_map(static fn (array $film): array => [
-                ...$film,
-                'narrated' => (bool) ($film['narrated'] ?? false),
-                'shotOn' => \is_string($film['shotOn'] ?? null) && '' !== $film['shotOn'] ? $film['shotOn'] : null,
-                'starts' => array_values((array) ($film['starts'] ?? [])),
-            ], $films);
-        }
+        $directory ??= $this->publicDirectory;
 
-        return $this->manifests[$locale];
+        return $this->manifests[$directory][$locale] ??= $this->readManifest(sprintf('%s/%s/%s/%s', $directory, self::DIRECTORY, $locale, self::MANIFEST));
+    }
+
+    // One manifest file, decoded and normalized
+    /** @return array<string, array{narrated: bool, version: int, shotAt?: int, shotOn: ?string, starts: list<float>}> */
+    private function readManifest(string $file): array
+    {
+        $decoded = is_file($file) ? json_decode((string) file_get_contents($file), true) : [];
+        $films = array_filter(\is_array($decoded) ? $decoded : [], static fn (mixed $film): bool => \is_array($film) && isset($film['version']));
+
+        return array_map(static fn (array $film): array => [
+            ...$film,
+            'narrated' => (bool) ($film['narrated'] ?? false),
+            'shotOn' => \is_string($film['shotOn'] ?? null) && '' !== $film['shotOn'] ? $film['shotOn'] : null,
+            'starts' => array_values((array) ($film['starts'] ?? [])),
+        ], $films);
     }
 }

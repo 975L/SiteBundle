@@ -1032,9 +1032,11 @@ body:not(.has-back-office) .menu-item--back-office {
     display: flex;
     flex-direction: column;
     min-width: 12rem;
+    padding: 0.25rem 0;
     background-color: var(--navbar-background);
-    border-radius: var(--radius-btn);
+    border-radius: var(--radius-card);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
   }
   .menu.is-scrolled .menu-dropdown__items {
     background-color: var(--navbar-background-scrolled);

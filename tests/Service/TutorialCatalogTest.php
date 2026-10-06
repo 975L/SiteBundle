@@ -19,6 +19,8 @@ class TutorialCatalogTest extends TestCase
 {
     private string $public;
 
+    private string $private;
+
     protected function setUp(): void
     {
         $this->public = sys_get_temp_dir() . '/tutorial-catalog-' . uniqid();
@@ -28,11 +30,17 @@ class TutorialCatalogTest extends TestCase
             'config-settings' => ['narrated' => false, 'version' => 1758000000, 'shotAt' => 1757000000, 'shotOn' => 'CoreBundle v1.50.0', 'starts' => [5.0]],
             'ui-media' => ['narrated' => false, 'version' => 1758000000, 'starts' => [3.0]],
         ]));
+
+        $this->private = $this->public . '-private';
+        mkdir($this->private . '/medias/films/fr', 0o775, true);
+        file_put_contents($this->private . '/medias/films/fr/films.json', json_encode([
+            'app-resistant-creation' => ['narrated' => true, 'version' => 1759000000, 'starts' => [4.0]],
+        ]));
     }
 
     protected function tearDown(): void
     {
-        new Filesystem()->remove($this->public);
+        new Filesystem()->remove([$this->public, $this->private]);
     }
 
     private function catalog(): TutorialCatalog
@@ -46,7 +54,7 @@ class TutorialCatalogTest extends TestCase
             ['slug' => 'site-trash', 'label' => 'Vider la corbeille', 'description' => '', 'steps' => [$step('Vider')]],
         ]);
 
-        return new TutorialCatalog($builder, $this->public, 'fr');
+        return new TutorialCatalog($builder, $this->public, 'fr', $this->private);
     }
 
     // A project without a film stays off the list, the others keep the guided sequence's order, served from public/medias/films
@@ -128,5 +136,16 @@ class TutorialCatalogTest extends TestCase
 
         $this->assertSame([], $this->catalog()->all('fr'));
         $this->assertNull($this->catalog()->find('site-trash', 'fr'));
+    }
+
+    // A film only the back office shows is found in private/ alone, the site's language standing in for another one, and stays off the public list
+    public function testAPrivateFilmIsFoundApartFromThePublicOnes(): void
+    {
+        $catalog = $this->catalog();
+
+        $this->assertSame(['locale' => 'fr', 'version' => 1759000000, 'narrated' => true], $catalog->findPrivate('app-resistant-creation', 'en'));
+        $this->assertNull($catalog->findPrivate('site-page-creation', 'fr'));
+        $this->assertFalse($catalog->isFilmed('app-resistant-creation', 'fr'));
+        $this->assertSame($this->private . '/medias/films/fr/app-resistant-creation.webm', $catalog->privateFile('app-resistant-creation', 'fr', 'webm'));
     }
 }
