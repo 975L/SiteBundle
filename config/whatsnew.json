@@ -36,6 +36,16 @@
                 "en": "The site health check no longer reports a page as broken when it simply could not be reached for the mixed content check",
                 "fr": "Le bilan de santé du site ne signale plus une page comme en erreur quand elle n'a simplement pas pu être jointe pour le contrôle du contenu mixte",
                 "es": "El chequeo de salud del sitio ya no marca una página como errónea cuando simplemente no se pudo acceder a ella para el control de contenido mixto"
+            },
+            {
+                "en": "The footer and the phone menu now stay readable whatever the site's main color, light or dark",
+                "fr": "Le pied de page et le menu sur téléphone restent lisibles quelle que soit la couleur principale du site, claire ou foncée",
+                "es": "El pie de página y el menú en el teléfono siguen legibles sea cual sea el color principal del sitio, claro u oscuro"
+            },
+            {
+                "en": "The films of the guided projects now have their own link in the back office's advanced menu",
+                "fr": "Les films des projets guidés ont maintenant leur propre lien dans le menu avancé du back-office",
+                "es": "Las películas de los proyectos guiados tienen ahora su propio enlace en el menú avanzado del back-office"
             }
         ]
     },

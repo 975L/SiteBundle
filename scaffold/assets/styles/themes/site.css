@@ -39,7 +39,8 @@
     /* --navbar-height: calc(var(--navbar-content-height) + 2 * var(--navbar-padding-y)); */
 
     /* --footer-background: var(--primary); */
-    /* --footer-text: #fff; */
+    /* The ink the backoffice derives from its primary color; a theme stating its own --primary here states --button-color with it */
+    /* --footer-text: var(--button-color); */
     /* --footer-text-hover: var(--footer-text); */
     /* The layout the footer menu ships with - the backoffice's own "Display style" select overrides all three from the menu edit screen, its default being whatever they are left at here. Its third choice, "Columns", writes a grid of its own instead and reads the two track lists below */
     /* What a "menu_group" of the footer takes of its row - a whole line by default, so a footer stacks its social

@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Management\MenuProviderInterface;
+use c975L\ConfigBundle\Security\Voter\BackOfficeAccessVoter;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
@@ -69,9 +70,22 @@ class MenuProvider implements MenuProviderInterface
         ];
     }
 
-    // None of its own: the "Legal models" screen this used to declare moved to UiBundle along with the models themselves, so a site running Ui without page management still reaches it
+    // The guided projects' films, otherwise only reached through a project's "Watch the film" - the "Legal models" screen this used to declare moved to UiBundle along with the models themselves
     public function getLinks(): array
     {
-        return [];
+        return [
+            'tutorial_films' => [
+                'name' => 'management_tutorial_films',
+                'label' => 'label.tutorial_films',
+                'narration' => 'narration.tutorial_films',
+                'translation_domain' => 'site',
+                'icon' => 'fas fa-film',
+                // Same gate as TutorialFilmController::index()
+                'role' => BackOfficeAccessVoter::ACCESS,
+                // Watched once or twice while learning the back office, then left alone
+                'tier' => 'advanced',
+                'description' => 'label.info_tutorial_films',
+            ],
+        ];
     }
 }

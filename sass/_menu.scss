@@ -236,10 +236,10 @@ img.menu-logo__on-dark {
 
 // Scoped to ".menu", the class only the navbar's own <nav> carries (see templates/components/General/Navbar.html.twig): the footer builds its rows out of the very same "menu-item"/"menu-link"/"menu-label" blocks, so anything left unscoped here paints the footer too - with the navbar's own tokens, which the footer has its own pair of. The rule below is the mobile dropdown's separator and its active wash, neither of which a footer wants
 .menu .menu-item {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid color-mix(in srgb, var(--button-color) 20%, transparent);
 
     &.active {
-        background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+        background-color: color-mix(in srgb, var(--button-color) 15%, transparent);
     }
 }
 
@@ -258,13 +258,18 @@ img.menu-logo__on-dark {
     }
 }
 
-// .menu-label sets its own color, so the hover has to target the label rather than the link.
-// Scoped to ".menu" like the item above: unscoped it weighs (0,3,0) against the (0,2,2) of the footer's own "footer a:hover .menu-label", so it beat that rule in the footer and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
-.menu .menu-link:hover .menu-label,
-.menu .menu-link:focus .menu-label,
-.menu .menu-dropdown__summary:hover .menu-label,
-.menu .menu-dropdown__summary:focus .menu-label {
-    color: var(--navbar-active-color);
+// The mobile dropdown's own ink, the same as .menu-label's below, so an icon or a caret drawn in currentColor reads on its --primary background - outweighing ".menu.is-scrolled .menu-link" above, the dropdown keeping that background once the page is scrolled
+.menu .menu-items .menu-link,
+.menu .menu-items .menu-dropdown__summary {
+    color: var(--button-color);
+}
+
+// A hovered or focused line of the mobile dropdown is washed toward its ink: --navbar-active-color, which the desktop bar gives the label below, is --primary itself in light mode and vanished on the dropdown's background
+.menu .menu-link:hover,
+.menu .menu-link:focus,
+.menu .menu-dropdown__summary:hover,
+.menu .menu-dropdown__summary:focus {
+    background-color: color-mix(in srgb, var(--button-color) 15%, transparent);
 }
 
 .menu-icon {
@@ -287,6 +292,11 @@ img.menu-logo__on-dark {
 
 .menu-item--primary .menu-label {
     color: var(--navbar-btn-color);
+}
+
+// Ringed in the mobile dropdown, whose --primary background swallows the pill's own fill
+.menu .menu-item--primary .menu-link {
+    box-shadow: inset 0 0 0 2px var(--button-color);
 }
 
 .menu-item--primary .menu-link:hover .menu-label,
@@ -316,11 +326,11 @@ body:not(.has-back-office) .menu-item--back-office {
     align-items: center;
 }
 
-// White stated, not read from --white which dark mode swaps with --black: the mobile dropdown keeps its --primary background in both modes - see the desktop override below, where the navbar's own light background needs dark text instead
+// The ink UiBundle derives from --primary (white on a dark one, black on a light one), not --white which dark mode swaps with --black: the mobile dropdown keeps its --primary background in both modes - see the desktop override below, where the navbar's own light background needs dark text instead
 .menu-label {
     font-family: var(--font-family-title);
     font-size: 1rem;
-    color: #fff;
+    color: var(--button-color);
 }
 
 // The site search's magnifier (UiBundle's AiSearch:Trigger): beside the burger on a phone, at the end of the links on a desktop - one of the two twins shown at a time, scoped under .menu to outweigh UiBundle's own display whatever order the sheets load in
@@ -377,6 +387,41 @@ body:not(.has-back-office) .menu-item--back-office {
     .menu .menu-items .blocks {
         flex-wrap: wrap;
         justify-content: flex-end;
+    }
+
+    .menu .menu-items .menu-link,
+    .menu .menu-items .menu-dropdown__summary {
+        color: var(--navbar-text);
+    }
+
+    .menu.is-scrolled .menu-items .menu-link,
+    .menu.is-scrolled .menu-items .menu-dropdown__summary {
+        color: var(--navbar-text-scrolled);
+    }
+
+    // The bar keeps its own background: no wash, the hover reads on the label instead - restated for the pill, whose own hover fill the reset would take away
+    .menu .menu-link:hover,
+    .menu .menu-link:focus,
+    .menu .menu-dropdown__summary:hover,
+    .menu .menu-dropdown__summary:focus {
+        background-color: transparent;
+    }
+
+    .menu .menu-item--primary .menu-link {
+        box-shadow: none;
+
+        &:hover,
+        &:focus {
+            background-color: var(--navbar-btn-background-hover);
+        }
+    }
+
+    // .menu-label sets its own color, so the hover has to target the label rather than the link. Scoped to ".menu" like the item above: unscoped it weighs (0,3,0) against the (0,2,2) of the footer's own "footer a:hover .menu-label", so it beat that rule in the footer and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
+    .menu .menu-link:hover .menu-label,
+    .menu .menu-link:focus .menu-label,
+    .menu .menu-dropdown__summary:hover .menu-label,
+    .menu .menu-dropdown__summary:focus .menu-label {
+        color: var(--navbar-active-color);
     }
 
     .menu .menu-label {
@@ -458,15 +503,15 @@ body:not(.has-back-office) .menu-item--back-office {
     background-color: var(--background);
 }
 
-// Inside the navbar's mobile dropdown, whose --primary background stays the same in both modes - same statement and same reason as .menu-label above, undone at the desktop breakpoint where the bar keeps its own background
+// Inside the navbar's mobile dropdown, whose --primary background stays the same in both modes - same ink and same reason as .menu-label above, undone at the desktop breakpoint where the bar keeps its own background
 .menu .menu-languages-select,
 .menu .menu-languages-submit {
-    color: #fff;
+    color: var(--button-color);
 }
 
 // The separator every line of the mobile dropdown carries, and the room the languages need when they follow the menu's own items
 .menu .menu-languages {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid color-mix(in srgb, var(--button-color) 20%, transparent);
 }
 
 @media screen and (min-width: 768px) {

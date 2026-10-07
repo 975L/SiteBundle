@@ -13,7 +13,7 @@ namespace c975L\SiteBundle\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-// --primary is a deep brand blue reading at 1.43:1 on the #121212 page, under the 3:1 even large text asks for. It is left alone as a surface (buttons, flats, the footer band, where the white --button-color needs it dark), so the ink read against the page is lightened instead - and in both dark branches, a site fixed to dark by its admin and one following the visitor's OS being the same page to read
+// --primary is a deep brand blue reading at 1.43:1 on the #121212 page, under the 3:1 even large text asks for. It is left alone as a surface (buttons, flats, the footer band, where --button-color is derived from it), so the ink read against the page is lightened instead - and in both dark branches, a site fixed to dark by its admin and one following the visitor's OS being the same page to read
 class DarkThemeTextTokensTest extends TestCase
 {
     // Every token painting text off the brand goes through --primary-ink (UiBundle's sass/_tokens.scss), so this file lightens that one and they all follow
@@ -62,14 +62,15 @@ class DarkThemeTextTokensTest extends TestCase
         }
     }
 
-    // The other side of that rule: ink on a ground staying --primary in both modes is a stated white, never var(--white), which dark mode swaps with --black and left the footer and the mobile dropdown's labels near-black on their own hue
+    // The other side of that rule: ink on a ground staying --primary in both modes is the one UiBundle derives from that colour (--button-color, white on a dark primary and black on a light one), never var(--white), which dark mode swaps with --black and left the footer and the mobile dropdown's labels near-black on their own hue
     #[DataProvider('stylesheetProvider')]
-    public function testInkOnAColoredBandIsAStatedWhite(string $file): void
+    public function testInkOnAColoredBandIsTheDerivedButtonInk(string $file): void
     {
         $css = (string) preg_replace('/\s+/', '', $this->stylesheet($file));
 
-        $this->assertStringContainsString('--footer-text:#fff', $css, sprintf('"%s" has the footer band read a swappable token, which dark mode turns near-black on --primary.', $file));
-        $this->assertMatchesRegularExpression('/\.menu-label\{[^}]*color:#fff/', $css, sprintf('"%s" has the mobile dropdown\'s labels read a swappable token, which dark mode turns near-black on --primary.', $file));
+        $this->assertStringContainsString('--footer-text:var(--button-color)', $css, sprintf('"%s" has the footer band read another ink than the one derived from --primary.', $file));
+        $this->assertMatchesRegularExpression('/\.menu-label\{[^}]*color:var\(--button-color\)/', $css, sprintf('"%s" has the mobile dropdown\'s labels read another ink than the one derived from --primary.', $file));
+        $this->assertMatchesRegularExpression('/\.menu\.menu-languages-select,\.menu\.menu-languages-submit\{[^}]*color:var\(--button-color\)/', $css, sprintf('"%s" has the mobile dropdown\'s language switcher read another ink than the one derived from --primary.', $file));
     }
 
     // The other way to survive dark mode: a token mixed out of --text and --background follows the palette wherever it is repainted, so it is declared once and restated in neither branch - a second declaration would freeze it back to a fixed grey

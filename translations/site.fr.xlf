@@ -164,7 +164,7 @@
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
-                <target>Mettre en forme le pied de page de toutes les pages : ses liens, ses liens sociaux, répartis sur les lignes que vous voulez</target>
+                <target>Mettre en forme le pied de page de toutes les pages : ses liens, ses liens sociaux, répartis sur les lignes que vous voulez. Dans l'application installée, ces liens apparaissent aussi dans le menu « À propos » de la barre de navigation</target>
             </trans-unit>
             <trans-unit id="AfNoLl.">
                 <source>description.guided_project_menu_translation</source>
@@ -436,7 +436,7 @@
             </trans-unit>
             <trans-unit id="Fk.cUv.">
                 <source>description.guided_step_page_health_table</source>
-                <target>Une ligne par contrôle — un résumé manquant, une image sans texte alternatif, du html invalide — chacune avec le conseil qui nomme le champ à remplir.</target>
+                <target>Une ligne par contrôle — un résumé manquant, une image sans texte alternatif, du html invalide — chacune avec le conseil qui nomme le champ à remplir. Une page jamais contrôlée n'a pas encore de tableau : cliquez d'abord sur « Lancer le bilan de santé » dans la page Bilan de santé du tableau de bord.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -1701,6 +1701,10 @@
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>
                 <target>Liste de toutes les pages du site. Vous pouvez créer, modifier, dupliquer, publier, prévisualiser, mettre à la corbeille ou supprimer définitivement une page ; une page supprimée n'est récupérable que depuis la corbeille tant qu'elle n'est pas effacée définitivement.</target>
+            </trans-unit>
+            <trans-unit id="adUxXLL">
+                <source>label.info_tutorial_films</source>
+                <target>Les films des projets guidés que vous pouvez suivre, chacun aussi ouvert par le bouton « Voir le film » de son projet.</target>
             </trans-unit>
             <trans-unit id="p2lI9Fi">
                 <source>label.is_deleted</source>

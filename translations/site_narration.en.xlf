@@ -518,6 +518,10 @@
                 <source>narration.pages</source>
                 <target>"Pages" lists every page of the site, published or not. This is where they are created, duplicated, published and moved to the trash.</target>
             </trans-unit>
+            <trans-unit id="BpzfNa5">
+                <source>narration.tutorial_films</source>
+                <target>"Guided projects' films" gathers the films of the guided projects you may follow, to watch them without opening each project.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

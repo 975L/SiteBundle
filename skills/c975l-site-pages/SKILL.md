@@ -224,7 +224,7 @@ to ConfigBundle's backup.
 Films only the back office shows go to `private/medias/films/<locale>/` instead (same layout, all three
 files expected), read by `TutorialCatalog::findPrivate()` and listed by `TutorialCatalog::allPrivate()`
 for the parcours the reader may follow. The `tutorial_films` admin route (`/management/tutorial-films`,
-`TutorialFilmController::index()`) shows them with the very card and dialog of the public page
+`TutorialFilmController::index()`, linked by `MenuProvider::getLinks()` in the dashboard's "Advanced" submenu) shows them with the very card and dialog of the public page
 (`items(..., public: false)`: no report link, no JSON-LD), styled by `management-tutorials.min.css` (linked
 by the page's own template, not by `StylesheetProvider`) and the `tutorial` controller registered in
 `controllers-admin.js`; `TutorialFilmUrlProvider::getFilmUrl()` links a private film to its anchor there -

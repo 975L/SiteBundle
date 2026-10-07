@@ -518,6 +518,10 @@
                 <source>narration.pages</source>
                 <target>« Pages » liste toutes les pages du site, publiées ou non. C'est de là qu'on les crée, qu'on les duplique, qu'on les publie et qu'on les met à la corbeille.</target>
             </trans-unit>
+            <trans-unit id="BpzfNa5">
+                <source>narration.tutorial_films</source>
+                <target>« Films des projets guidés » réunit les films des projets guidés que vous pouvez suivre, pour les regarder sans ouvrir chaque projet.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

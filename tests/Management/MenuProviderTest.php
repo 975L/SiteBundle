@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Management;
 
+use c975L\ConfigBundle\Security\Voter\BackOfficeAccessVoter;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\CollectionCrudController;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
@@ -78,10 +79,16 @@ class MenuProviderTest extends TestCase
         }
     }
 
-    // No non-CRUD screen of its own any more: the "Legal models" one moved to UiBundle along with the models
-    public function testGetLinksContributesNothing(): void
+    // The films screen alone, tucked into the "Advanced" submenu under the same gate as its controller, its description being the screen's own explanatory text
+    public function testGetLinksContributesTheFilmsScreen(): void
     {
-        $this->assertSame([], $this->createProvider()->getLinks());
+        $links = $this->createProvider()->getLinks();
+
+        $this->assertSame(['tutorial_films'], array_keys($links));
+        $this->assertSame('management_tutorial_films', $links['tutorial_films']['name']);
+        $this->assertSame(BackOfficeAccessVoter::ACCESS, $links['tutorial_films']['role']);
+        $this->assertSame('advanced', $links['tutorial_films']['tier']);
+        $this->assertSame('label.info_tutorial_films', $links['tutorial_films']['description']);
     }
 
     // Every entry's 'description' reuses the exact same key as its own crud/index+crud/edit override template's explanatory text (see eg. page_crud_index.html.twig) - one text, not a separate onboarding-only string

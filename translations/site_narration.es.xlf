@@ -518,6 +518,10 @@
                 <source>narration.pages</source>
                 <target>«Páginas» lista todas las páginas del sitio, publicadas o no. Es desde ahí donde se crean, se duplican, se publican y se envían a la papelera.</target>
             </trans-unit>
+            <trans-unit id="BpzfNa5">
+                <source>narration.tutorial_films</source>
+                <target>«Películas de los proyectos guiados» reúne las películas de los proyectos guiados que puede seguir, para verlas sin abrir cada proyecto.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -164,7 +164,7 @@
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
-                <target>Dar forma al pie de página de todas las páginas: sus enlaces, sus enlaces sociales, repartidos en las líneas que quiera</target>
+                <target>Dar forma al pie de página de todas las páginas: sus enlaces, sus enlaces sociales, repartidos en las líneas que quiera. En la aplicación instalada, estos enlaces aparecen también en el menú «Acerca de» de la barra de navegación</target>
             </trans-unit>
             <trans-unit id="AfNoLl.">
                 <source>description.guided_project_menu_translation</source>
@@ -436,7 +436,7 @@
             </trans-unit>
             <trans-unit id="Fk.cUv.">
                 <source>description.guided_step_page_health_table</source>
-                <target>Una fila por control —un resumen que falta, una imagen sin texto alternativo, html inválido— cada una con el consejo que nombra el campo que hay que rellenar.</target>
+                <target>Una fila por control —un resumen que falta, una imagen sin texto alternativo, html inválido— cada una con el consejo que nombra el campo que hay que rellenar. Una página nunca controlada aún no tiene tabla: haga clic primero en «Ejecutar el chequeo de salud ahora» en la página Estado de salud del panel.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -772,7 +772,7 @@
             </trans-unit>
             <trans-unit id="5HKrWnE">
                 <source>label.collection_item_slug_help</source>
-                <target>Identifica el elemento en su propia colección, usado en su URL de detalle si el bloque "Collection" define una - único solo por colección.</target>
+                <target>Identifica el elemento en su propia colección, usado en su URL de detalle si el bloque «Colección» define una - único solo por colección.</target>
             </trans-unit>
             <trans-unit id=".QE11YL">
                 <source>label.collection_items</source>
@@ -796,7 +796,7 @@
             </trans-unit>
             <trans-unit id="2TuVIUM">
                 <source>label.collection_slug_help</source>
-                <target>Identificador técnico de la colección, generado a partir de su nombre - es el que aparece en la lista de fuentes del bloque «Collection» de una página, para mostrar su contenido.</target>
+                <target>Identificador técnico de la colección, generado a partir de su nombre - es el que aparece en la lista de fuentes del bloque «Colección» de una página, para mostrar su contenido.</target>
             </trans-unit>
             <trans-unit id="67KQhUC">
                 <source>label.collections</source>
@@ -1688,11 +1688,11 @@
             </trans-unit>
             <trans-unit id="TR5bI5b">
                 <source>label.info_collection_item_list</source>
-                <target>Elementos título/descripción/imagen/enlace de esta colección, mostrados por su bloque «Collection» en una página. Arrastre para reordenar, o cree/modifique/elimine un elemento desde esta lista.</target>
+                <target>Elementos título/descripción/imagen/enlace de esta colección, mostrados por su bloque «Colección» en una página. Arrastre para reordenar, o cree/modifique/elimine un elemento desde esta lista.</target>
             </trans-unit>
             <trans-unit id="TatvdGm">
                 <source>label.info_collections</source>
-                <target>Cree una colección y luego haga clic en «Elementos» para añadirle contenido. Una vez creada, la colección estará disponible como fuente en el bloque «Collection» de cualquier página.</target>
+                <target>Cree una colección y luego haga clic en «Elementos» para añadirle contenido. Una vez creada, la colección estará disponible como fuente en el bloque «Colección» de cualquier página.</target>
             </trans-unit>
             <trans-unit id="6ENBv5f">
                 <source>label.info_menu</source>
@@ -1701,6 +1701,10 @@
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>
                 <target>Lista de todas las páginas del sitio. Puede crear, modificar, duplicar, publicar, previsualizar, enviar a la papelera o eliminar definitivamente una página; una página eliminada solo puede recuperarse desde la papelera mientras no se elimine definitivamente.</target>
+            </trans-unit>
+            <trans-unit id="adUxXLL">
+                <source>label.info_tutorial_films</source>
+                <target>Las películas de los proyectos guiados que puede seguir, cada una también abierta por el botón «Ver el vídeo» de su proyecto.</target>
             </trans-unit>
             <trans-unit id="p2lI9Fi">
                 <source>label.is_deleted</source>

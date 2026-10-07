@@ -164,7 +164,7 @@
             </trans-unit>
             <trans-unit id="f6.RLP4">
                 <source>description.guided_project_footer</source>
-                <target>Lay out the footer of every page: its links, its social links, spread over the lines you want</target>
+                <target>Lay out the footer of every page: its links, its social links, spread over the lines you want. In the installed app, these links also appear in the navbar's "About" menu</target>
             </trans-unit>
             <trans-unit id="AfNoLl.">
                 <source>description.guided_project_menu_translation</source>
@@ -436,7 +436,7 @@
             </trans-unit>
             <trans-unit id="Fk.cUv.">
                 <source>description.guided_step_page_health_table</source>
-                <target>One row per check - a missing summary, an image with no alternative text, invalid html - each carrying the advice that names the field to fill.</target>
+                <target>One row per check - a missing summary, an image with no alternative text, invalid html - each carrying the advice that names the field to fill. A page never checked yet shows no table: click "Run health check now" on the dashboard's Health check page first.</target>
             </trans-unit>
             <trans-unit id="vqEaHFx">
                 <source>description.guided_step_page_menu_add_link</source>
@@ -1701,6 +1701,10 @@
             <trans-unit id="0ov1m.g">
                 <source>label.info_page</source>
                 <target>List of all the site's pages. You can create, edit, duplicate, publish, preview, move to trash or permanently delete a page; a deleted page can only be recovered from the trash until it's permanently deleted.</target>
+            </trans-unit>
+            <trans-unit id="adUxXLL">
+                <source>label.info_tutorial_films</source>
+                <target>The films of the guided projects you may follow, each one also opened by its project's "Watch the film" button.</target>
             </trans-unit>
             <trans-unit id="p2lI9Fi">
                 <source>label.is_deleted</source>

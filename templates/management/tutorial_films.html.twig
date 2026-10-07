@@ -8,6 +8,7 @@
 
 {% block main %}
     <h1>{{ 'label.tutorial_films'|trans({}, 'site') }}</h1>
+    <p class="text-muted">{{ 'label.info_tutorial_films'|trans({}, 'site') }}</p>
     {% if guidedProjectsUrl %}
         <p><a href="{{ guidedProjectsUrl }}">{{ 'label.guided_projects'|trans({}, 'config') }}</a></p>
     {% endif %}

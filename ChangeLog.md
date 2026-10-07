@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.31.6
+
+Readable ink on a light primary
+
+- The footer band and the mobile dropdown write with the ink derived from the primary instead of a stated white (07/10/2026)
+- The mobile dropdown's links, separators, active line and primary pill follow that ink (07/10/2026)
+- A hovered or focused line of the mobile dropdown is washed instead of turning invisible (07/10/2026)
+- `DarkThemeTextTokensTest` and the scaffolded theme follow (07/10/2026)
+- The back office's films page is linked from the "Advanced" submenu (07/10/2026)
+- Added the `label.info_tutorial_films` and `narration.tutorial_films` translations (07/10/2026)
+- The guided page health step says how to run a first check (07/10/2026)
+- The guided footer project mentions the installed app's "About" menu (07/10/2026)
+- The es translations name the "Colección" block as the block picker does (07/10/2026)
+
 ## v8.31.5
 
 PageSpeed no longer scores a maintenance page
