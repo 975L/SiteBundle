@@ -26,7 +26,7 @@ class PageSpeedInsightsClientTest extends TestCase
         return $configService;
     }
 
-    private function pageSpeedResponse(array $scores, array $consoleErrorItems = []): string
+    private function pageSpeedResponse(array $scores, array $consoleErrorItems = [], ?int $crawlableScore = null): string
     {
         $categories = [];
         foreach ($scores as $category => $score) {
@@ -40,6 +40,7 @@ class PageSpeedInsightsClientTest extends TestCase
                     'errors-in-console' => [
                         'details' => ['items' => $consoleErrorItems],
                     ],
+                    'is-crawlable' => ['score' => $crawlableScore],
                 ],
             ],
         ]);
@@ -67,6 +68,20 @@ class PageSpeedInsightsClientTest extends TestCase
             $analysis['scores']
         );
         $this->assertSame([], $analysis['consoleErrors']);
+    }
+
+    // Lighthouse's "is-crawlable" audit failing is what tells a page asking not to be indexed
+    public function testAnalyzeReportsAPageBlockedFromIndexing(): void
+    {
+        $scores = ['performance' => 0.9, 'accessibility' => 0.9, 'best-practices' => 0.9, 'seo' => 0.69];
+        $client = fn (?int $crawlable) => new PageSpeedInsightsClient(
+            new MockHttpClient(fn () => new MockResponse($this->pageSpeedResponse($scores, [], $crawlable), ['http_code' => 200])),
+            $this->createConfigService('some-key'),
+        );
+
+        $this->assertTrue($client(0)->analyze('https://example.com/pages/login')['noindex']);
+        $this->assertFalse($client(1)->analyze('https://example.com/pages/login')['noindex']);
+        $this->assertFalse($client(null)->analyze('https://example.com/pages/login')['noindex']);
     }
 
     public function testAnalyzeExtractsConsoleErrorDescriptions(): void

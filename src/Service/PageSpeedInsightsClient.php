@@ -45,10 +45,13 @@ class PageSpeedInsightsClient
     public function read(ResponseInterface $response): array
     {
         $data = $this->getData($response, (bool) $this->configService->get('healthcheck-pagespeed-api-key'));
+        $crawlable = $data['lighthouseResult']['audits']['is-crawlable']['score'] ?? null;
 
         return [
             'scores' => self::parseScores($data),
             'consoleErrors' => self::parseConsoleErrors($data),
+            // Lighthouse's own "is-crawlable" audit failing: the page asks not to be indexed, which costs its SEO gauge most of its points
+            'noindex' => null !== $crawlable && 0.0 === (float) $crawlable,
             'raw' => $data['lighthouseResult']['categories'] ?? [],
         ];
     }

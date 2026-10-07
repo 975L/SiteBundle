@@ -1654,6 +1654,10 @@
                 <source>label.health_check_w3c_html_call_failed</source>
                 <target>Fallo en la validación HTML W3C: %message%</target>
             </trans-unit>
+            <trans-unit id="iOcmQFR">
+                <source>label.health_check_w3c_rate_limited</source>
+                <target>Validador W3C saturado (HTTP 429) - página no comprobada, lo será en la próxima pasada</target>
+            </trans-unit>
             <trans-unit id=".S35vbK">
                 <source>label.home_page</source>
                 <target>Página de inicio</target>

@@ -110,13 +110,17 @@ class SitePageHealthCheckProvider implements HealthCheckExhaustiveInterface
 
         $scores = $analysis['scores'];
         $consoleErrors = $analysis['consoleErrors'];
+        $noindex = $analysis['noindex'] ?? false;
+
+        // A page kept out of the index on purpose (an account form, a password reset) is not judged on its SEO gauge: the noindex it declares is what lowers it
+        $judgedScores = $noindex ? array_diff_key($scores, ['seo' => true]) : $scores;
 
         return [
             'url' => $url,
             'label' => $label,
-            'status' => $this->pageStatus($scores, $consoleErrors),
+            'status' => $this->pageStatus($judgedScores, $consoleErrors),
             'summary' => $this->pageSummary($scores, $consoleErrors),
-            'details' => ['scores' => $scores, 'consoleErrors' => $consoleErrors],
+            'details' => ['scores' => $scores, 'consoleErrors' => $consoleErrors, 'noindex' => $noindex],
             'editUrl' => $editUrl,
         ];
     }

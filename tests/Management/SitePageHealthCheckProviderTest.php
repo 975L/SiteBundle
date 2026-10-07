@@ -243,6 +243,28 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertSame(HealthCheckResult::STATUS_WARNING, $provider->runChecks()[0]['status']);
     }
 
+    // A page kept out of the index on purpose loses its SEO points to that very choice, which is nothing to fix
+    public function testRunChecksIgnoresTheSeoScoreOfAPageBlockedFromIndexing(): void
+    {
+        $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
+            'scores' => ['performance' => 95, 'accessibility' => 100, 'best-practices' => 100, 'seo' => 69],
+            'consoleErrors' => [],
+            'noindex' => true,
+        ]);
+
+        $provider = $this->createProvider(
+            $this->createPageRepository([$this->createPage('home', 'Home')]),
+            $pageSpeedInsightsClient,
+            $this->createConfigService('https://example.com'),
+        );
+
+        $result = $provider->runChecks()[0];
+
+        $this->assertSame(HealthCheckResult::STATUS_OK, $result['status']);
+        $this->assertTrue($result['details']['noindex']);
+    }
+
     public function testRunChecksStatusIsErrorWhenAScoreIsBelowFifty(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);

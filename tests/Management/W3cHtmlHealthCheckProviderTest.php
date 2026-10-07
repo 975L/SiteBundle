@@ -226,6 +226,45 @@ class W3cHtmlHealthCheckProviderTest extends TestCase
         $this->assertSame(['error' => 'Timeout'], $result['details']);
     }
 
+    // The W3C turning the call down says nothing of the page, so the row is skipped rather than ranked a warning
+    public function testRunChecksReturnsASkippedRowWhenTheValidatorIsRateLimited(): void
+    {
+        $response = $this->createStub(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(429);
+
+        $client = $this->createMock(W3cValidatorClient::class);
+        $client->method('requestHtml')->willReturn($response);
+        $client->expects($this->never())->method('readHtml');
+
+        $result = $this->createProvider([$this->createPage('home')], $client)->runChecks()[0];
+
+        $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $result['status']);
+        $this->assertSame('label.health_check_w3c_rate_limited', $result['summary']);
+    }
+
+    // At most four validations in flight: the fifth page is only requested once the first four are read
+    public function testRunChecksValidatesInBatchesOfFour(): void
+    {
+        $events = [];
+        $client = $this->createStub(W3cValidatorClient::class);
+        $client->method('requestHtml')->willReturnCallback(function () use (&$events) {
+            $events[] = 'request';
+
+            return $this->stubResponse();
+        });
+        $client->method('readHtml')->willReturnCallback(function () use (&$events) {
+            $events[] = 'read';
+
+            return ['errors' => [], 'warnings' => []];
+        });
+
+        $pages = array_map($this->createPage(...), ['home', 'a', 'b', 'c', 'd']);
+        $results = $this->createProvider($pages, $client)->runChecks();
+
+        $this->assertCount(5, $results);
+        $this->assertSame([...array_fill(0, 4, 'request'), ...array_fill(0, 4, 'read'), 'request', 'read'], $events);
+    }
+
     public function testRunChecksIncludesThePageEditUrl(): void
     {
         $provider = $this->createProvider([$this->createPage('home')], $this->createClient(['errors' => [], 'warnings' => []]));

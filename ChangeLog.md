@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.31.1
+
+Health check warnings that were not the site's doing
+
+- W3C validations now run four at a time instead of all at once (07/10/2026)
+- A W3C validation turned down with a 429 is now a skipped row rather than a warning (07/10/2026)
+- Added the `label.health_check_w3c_rate_limited` translation (07/10/2026)
+- `PageSpeedInsightsClient` now reports a page blocked from indexing, from Lighthouse's `is-crawlable` audit (07/10/2026)
+- A page blocked from indexing is no longer judged on its PageSpeed SEO gauge (07/10/2026)
+- Added the matching cases to `W3cHtmlHealthCheckProviderTest`, `PageSpeedInsightsClientTest` and `SitePageHealthCheckProviderTest` (07/10/2026)
+
 ## v8.31.0
 
 Films only the back office shows get a page of their own

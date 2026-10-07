@@ -21,6 +21,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Shared by W3cHtmlHealthCheckProvider/W3cCssHealthCheckProvider - HTML and CSS validation used to be a single "w3c" row/kind combining both, hard to scan at a glance (eg. "51 CSS warnings" buried in one long summary alongside HTML's own counts); each is now its own kind/row, this holds everything but which W3cValidatorClient method to call and which translations to use
 abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckExhaustiveInterface
 {
+    // How many validations run at once: every page fired together had the W3C answer "429 Too Many Requests" to most of them, a site's whole report turning orange for nothing its pages did
+    private const int MAX_CONCURRENT = 4;
+
+    private const int TOO_MANY_REQUESTS = 429;
+
     public function __construct(
         protected readonly W3cValidatorClient $w3cValidatorClient,
         protected readonly PageHealthCheckTargets $targets,
@@ -42,7 +47,7 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
     {
         // Every validator request is fired before any response is read, letting the HttpClient transport run them concurrently instead of paying each page's up-to-60s timeout serially (see W3cValidatorClient::requestHtml()/requestCss() + readHtml()/readCss()). Rows are keyed by the page's own position (not appended as each branch resolves) and ksort()ed back at the end, so a not-found page in the middle of the list doesn't shuffle every row after it to the bottom
         $results = [];
-        $pending = [];
+        $toValidate = [];
         // One validation per page and per language it was written in: read in another language a page is other html, so it earns a row of its own (see PageHealthCheckTargets)
         foreach ($this->targets->all() as $index => $target) {
             ['url' => $url, 'label' => $label, 'editUrl' => $editUrl] = $target;
@@ -52,11 +57,19 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
                 continue;
             }
 
-            $pending[$index] = [$url, $label, $editUrl, $this->request($url)];
+            $toValidate[$index] = [$url, $label, $editUrl];
         }
 
-        foreach ($pending as $index => [$url, $label, $editUrl, $response]) {
-            $results[$index] = $this->checkPage($url, $label, $editUrl, $response);
+        // A batch's requests all fired before any of them is read, the next batch only once these are answered - concurrent enough to stay fast, few enough for the W3C to keep answering
+        foreach (array_chunk($toValidate, self::MAX_CONCURRENT, true) as $batch) {
+            $pending = [];
+            foreach ($batch as $index => [$url, $label, $editUrl]) {
+                $pending[$index] = [$url, $label, $editUrl, $this->request($url)];
+            }
+
+            foreach ($pending as $index => [$url, $label, $editUrl, $response]) {
+                $results[$index] = $this->checkPage($url, $label, $editUrl, $response);
+            }
         }
 
         ksort($results);
@@ -76,9 +89,26 @@ abstract class AbstractW3cValidationHealthCheckProvider implements HealthCheckEx
         ];
     }
 
+    private function rateLimitedRow(string $url, ?string $label, ?string $editUrl): array
+    {
+        return [
+            'url' => $url,
+            'label' => $label,
+            'status' => HealthCheckResult::STATUS_SKIPPED,
+            'summary' => $this->translator->trans('label.health_check_w3c_rate_limited', [], 'site'),
+            'details' => [],
+            'editUrl' => $editUrl,
+        ];
+    }
+
     private function checkPage(string $url, ?string $label, ?string $editUrl, ResponseInterface $response): array
     {
         try {
+            // The W3C turning the call down says nothing of the page: skipped, so the next run validates it rather than the row reading as a defect
+            if (self::TOO_MANY_REQUESTS === $response->getStatusCode()) {
+                return $this->rateLimitedRow($url, $label, $editUrl);
+            }
+
             $result = $this->read($response);
         } catch (\Throwable $e) {
             return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, $this->callFailedTranslationId(), $e->getMessage(), $editUrl);

@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-10-07",
+        "description": [
+            {
+                "en": "The site health check no longer warns you about pages it could not get validated in time, it simply checks them again on the next run",
+                "fr": "Le bilan de santé du site ne vous alerte plus pour des pages qu'il n'a pas pu faire valider à temps : il les vérifie simplement au passage suivant",
+                "es": "El chequeo de salud del sitio ya no le avisa por páginas que no pudo validar a tiempo: simplemente las comprueba en la siguiente pasada"
+            },
+            {
+                "en": "Pages you keep out of search engines on purpose, such as account pages, are no longer marked down on their search score",
+                "fr": "Les pages que vous tenez volontairement à l'écart des moteurs de recherche, comme celles du compte, ne sont plus pénalisées sur leur score de référencement",
+                "es": "Las páginas que mantiene a propósito fuera de los buscadores, como las de la cuenta, ya no se penalizan en su puntuación de posicionamiento"
+            }
+        ]
+    },
+    {
         "date": "2026-10-06",
         "description": [
             {

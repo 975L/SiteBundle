@@ -1654,6 +1654,10 @@
                 <source>label.health_check_w3c_html_call_failed</source>
                 <target>W3C HTML validation failed: %message%</target>
             </trans-unit>
+            <trans-unit id="iOcmQFR">
+                <source>label.health_check_w3c_rate_limited</source>
+                <target>W3C validator busy (HTTP 429) - page not checked, it will be on the next run</target>
+            </trans-unit>
             <trans-unit id=".S35vbK">
                 <source>label.home_page</source>
                 <target>Home page</target>
