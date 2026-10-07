@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.31.2
+
+Legal pages carry the same description on every site
+
+- `c975l:site:pages:import-defaults` now realigns a legal page's description on the bundle's own, even once filled in, in every language the site is written in (07/10/2026)
+- A description typed on any other page is still never overwritten (07/10/2026)
+- Added the matching cases to `DefaultPagesImporterTest` (07/10/2026)
+
 ## v8.31.1
 
 Health check warnings that were not the site's doing

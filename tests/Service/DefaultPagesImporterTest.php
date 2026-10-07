@@ -363,16 +363,50 @@ class DefaultPagesImporterTest extends TestCase
         $this->assertNotContains('home', $result['summarised']);
     }
 
-    // A description an admin typed is never overwritten, however many times the command is re-run
+    // A description an admin typed on a page of their own is never overwritten, however many times the command is re-run
     public function testImportNeverOverwritesADescriptionAlreadySet(): void
     {
         $persisted = [];
-        $repository = $this->createPageRepository(['cookies'], 'Le texte que Laurent a écrit lui-même');
+        $repository = $this->createPageRepository(['contact'], 'Le texte que Laurent a écrit lui-même');
         $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
 
         $result = $importer->import();
 
-        $this->assertNotContains('cookies', $result['summarised']);
+        $this->assertNotContains('contact', $result['summarised']);
+    }
+
+    // A legal page renders a model, so its description is the model's own and the same on every site, even once filled in
+    public function testImportRealignsTheDescriptionOfALegalPage(): void
+    {
+        $persisted = [];
+        $repository = $this->createPageRepository(['mentions-legales'], 'Mentions légales');
+        $importer = $this->createImporter($repository, $this->createEntityManager($persisted));
+
+        $result = $importer->import();
+
+        $this->assertContains('mentions-legales', $result['summarised']);
+    }
+
+    // The same in the site's other languages: only the description of an already translated legal page is rewritten, its translated title staying as it is
+    public function testImportRealignsTheTranslatedDescriptionOfALegalPage(): void
+    {
+        $page = new Page()->setSlug('mentions-legales')->setTitle('Mentions légales')->setSummarySocialNetwork('Mentions légales');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 7);
+        $repository = $this->createStub(PageRepository::class);
+        $repository->method('findOneBy')->willReturnCallback(static fn (array $criteria): ?Page => 'mentions-legales' === $criteria['slug'] ? $page : null);
+
+        $stored = [];
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('getTranslatableLocales')->willReturn(['en']);
+        $contentTranslator->method('values')->willReturn(['title' => 'Legal', 'summarySocialNetwork' => 'Legal']);
+        $contentTranslator->method('store')->willReturnCallback(static function (string $ownerType, int $ownerId, string $locale, array $values) use (&$stored): void {
+            $stored[] = $values;
+        });
+
+        $persisted = [];
+        $this->createImporter($repository, $this->createEntityManager($persisted), 'fr', ['fr', 'en'], contentTranslator: $contentTranslator)->import();
+
+        $this->assertSame([['summarySocialNetwork' => 'Legal notice for this website: publisher, publication director, hosting provider and contact details, as required by applicable regulations.']], $stored);
     }
 
     // Whitespace is not a description an admin meant to keep, so it gets filled in like an empty one

@@ -11,6 +11,11 @@
                 "en": "Pages you keep out of search engines on purpose, such as account pages, are no longer marked down on their search score",
                 "fr": "Les pages que vous tenez volontairement à l'écart des moteurs de recherche, comme celles du compte, ne sont plus pénalisées sur leur score de référencement",
                 "es": "Las páginas que mantiene a propósito fuera de los buscadores, como las de la cuenta, ya no se penalizan en su puntuación de posicionamiento"
+            },
+            {
+                "en": "Your legal pages now keep an up-to-date description for search engines and social networks, in every language of your site",
+                "fr": "Vos pages légales gardent désormais une description à jour pour les moteurs de recherche et les réseaux sociaux, dans toutes les langues de votre site",
+                "es": "Sus páginas legales conservan ahora una descripción actualizada para los buscadores y las redes sociales, en todos los idiomas de su sitio"
             }
         ]
     },

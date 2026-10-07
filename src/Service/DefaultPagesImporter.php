@@ -162,10 +162,15 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         return array_key_first($definitions);
     }
 
-    // Fills in the meta/og description of a page that already existed, and says whether it did. Only ever writes into an empty field: a description an admin typed - or deliberately emptied back to nothing else than whitespace - is never overwritten, however many times the command is re-run. Pages are matched on their slug alone by the caller, so one renamed in the back-office simply matches no definition and is left alone
+    // Fills in the meta/og description of a page that already existed, and says whether it did. Outside the legal pages it only ever writes into an empty or whitespace-only field, a description an admin typed never being overwritten. Pages are matched on their slug alone by the caller, so one renamed in the back-office simply matches no definition and is left alone
     private function backfillSummary(Page $page, array $def): bool
     {
-        if (!isset($def['summary']) || '' !== trim((string) $page->getSummarySocialNetwork())) {
+        if (!isset($def['summary']) || $def['summary'] === $page->getSummarySocialNetwork()) {
+            return false;
+        }
+
+        // A legal page renders a model rather than anything an admin wrote, so its description is the model's own and is the same on every site: realigned even when filled in
+        if (!isset($def['model']) && '' !== trim((string) $page->getSummarySocialNetwork())) {
             return false;
         }
 
@@ -223,7 +228,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         return ['created'];
     }
 
-    // What each default page says in the site's other languages, read off the English and Spanish sets it was seeded from and matched on what each page is rather than on a slug every language spells its own way. Written only where that language says nothing yet, a translation an admin typed staying theirs
+    // What each default page says in the site's other languages, read off the English and Spanish sets it was seeded from and matched on what each page is rather than on a slug every language spells its own way. Written only where that language says nothing yet, a legal page's description aside, a translation an admin typed staying theirs
     /** @param array<string, list<array<string, mixed>>> $definitions */
     private function translateSeededPages(array $definitions): void
     {
@@ -239,15 +244,32 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
             foreach ($seeded as [$page, $def]) {
                 $translated = $byKey[$this->definitionKey($def)] ?? null;
                 $id = $page->getId();
-                if (null === $translated || null === $id || [] !== $this->contentTranslator->values(PageTranslator::OWNER, $id, $locale)) {
-                    continue;
-                }
-
-                $values = $this->untouchedTranslations($page, $def, $translated);
-                if ([] !== $values) {
-                    $this->contentTranslator->store(PageTranslator::OWNER, $id, $locale, $values);
+                if (null !== $translated && null !== $id) {
+                    $this->translateSeededPage($page, $id, $locale, $def, $translated);
                 }
             }
+        }
+    }
+
+    // Writes one seeded page's texts in one language, or, for a legal page already translated, realigns its description alone as backfillSummary() does, a title an admin translated staying theirs
+    /**
+     * @param array<string, mixed> $def
+     * @param array<string, mixed> $translated
+     */
+    private function translateSeededPage(Page $page, int $id, string $locale, array $def, array $translated): void
+    {
+        $existing = $this->contentTranslator->values(PageTranslator::OWNER, $id, $locale);
+        if ([] !== $existing) {
+            if (isset($def['model'], $translated['summary']) && ($existing['summarySocialNetwork'] ?? null) !== $translated['summary']) {
+                $this->contentTranslator->store(PageTranslator::OWNER, $id, $locale, ['summarySocialNetwork' => $translated['summary']]);
+            }
+
+            return;
+        }
+
+        $values = $this->untouchedTranslations($page, $def, $translated);
+        if ([] !== $values) {
+            $this->contentTranslator->store(PageTranslator::OWNER, $id, $locale, $values);
         }
     }
 

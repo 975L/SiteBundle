@@ -1144,7 +1144,7 @@ The last three each carry a generic `form` Block pointing at their matching `c97
 
 `home` is always the same slug across locales — `PageController` looks it up literally, so only one homepage can ever exist. All pages are created as **unpublished** — review and publish them individually from the admin. Pages whose slug already exists are silently skipped, so re-running the command after adding a new `enabled_locales` entry only creates the missing locale's pages.
 
-The legal pages and `contact` are seeded with a meta description of their own, each within the 50-160 character window `content-quality` checks, so a fresh site doesn't start with a health check warning on the pages it just created. `home` and the account pages get none: a home page's description belongs to the site, not to a default. The seeded form fields carry no placeholder either — a field shows its label alone until an admin types one in.
+The legal pages and `contact` are seeded with a meta description of their own, each within the 50-160 character window `content-quality` checks, so a fresh site doesn't start with a health check warning on the pages it just created. Re-running the command fills in a description left empty, and realigns a legal page's on the bundle's own in every enabled language even once filled in, since it describes the model rather than anything an admin wrote; a description typed on any other page is never overwritten. `home` and the account pages get none: a home page's description belongs to the site, not to a default. The seeded form fields carry no placeholder either — a field shows its label alone until an admin types one in.
 
 ---
 

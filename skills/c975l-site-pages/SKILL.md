@@ -252,7 +252,7 @@ on the index.
 ## Commands
 
 ```bash
-php bin/console c975l:site:pages:import-defaults        # home + the legal pages, if absent
+php bin/console c975l:site:pages:import-defaults        # home + the legal pages if absent, legal descriptions realigned
 php bin/console c975l:site:collection-item:import --group=<group> --json-file=<path>
 php bin/console c975l:site:create                       # one-shot wizard bootstrapping a new site
 php bin/console c975l:translate:content --locale=en --dry-run  # UiBundle's; SiteTextProvider hands it the pages, menus and collection items
