@@ -52,6 +52,7 @@ class PageSpeedInsightsClient
             'consoleErrors' => self::parseConsoleErrors($data),
             // Lighthouse's own "is-crawlable" audit failing: the page asks not to be indexed, which costs its SEO gauge most of its points
             'noindex' => null !== $crawlable && 0.0 === (float) $crawlable,
+            'pageStatus' => self::parsePageStatus($data),
             'raw' => $data['lighthouseResult']['categories'] ?? [],
         ];
     }
@@ -127,6 +128,18 @@ class PageSpeedInsightsClient
         }
 
         return $scores;
+    }
+
+    // The HTTP status Lighthouse met loading the page, which it only tells in a run warning ("... (Status code: 503)"): an analysis of an error page - a deployment's maintenance page among them - scores that page and not the one asked for. Null when nothing was said, the page then having loaded
+    private static function parsePageStatus(array $data): ?int
+    {
+        foreach ($data['lighthouseResult']['runWarnings'] ?? [] as $warning) {
+            if (\is_string($warning) && preg_match('/\(Status code: (\d{3})\)/', $warning, $matches)) {
+                return (int) $matches[1];
+            }
+        }
+
+        return null;
     }
 
     private static function parseConsoleErrors(array $data): array

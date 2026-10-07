@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.31.5
+
+PageSpeed no longer scores a maintenance page
+
+- `PageSpeedInsightsClient` reports the HTTP status Lighthouse met loading the page (07/10/2026)
+- A page measured while it answered an error (a deployment's 503) is skipped rather than scored (07/10/2026)
+- Added the `label.health_check_pagespeed_page_unavailable` translation (07/10/2026)
+- Added the cases to `PageSpeedInsightsClientTest` and `SitePageHealthCheckProviderTest` (07/10/2026)
+- The `c975l-site-seo` skill notes the error pages skipped by `pagespeed` (07/10/2026)
+
 ## v8.31.4
 
 Health checks leave out the pages kept for members

@@ -108,6 +108,19 @@ class SitePageHealthCheckProvider implements HealthCheckExhaustiveInterface
             return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, 'label.health_check_pagespeed_call_failed', $e->getMessage(), $editUrl);
         }
 
+        // Lighthouse met an error page (a deployment's maintenance window answers 503): its scores are that page's, so the row is skipped and measured again on the next run
+        $pageStatus = $analysis['pageStatus'] ?? null;
+        if (null !== $pageStatus && $pageStatus >= 400) {
+            return [
+                'url' => $url,
+                'label' => $label,
+                'status' => HealthCheckResult::STATUS_SKIPPED,
+                'summary' => $this->translator->trans('label.health_check_pagespeed_page_unavailable', ['%status%' => $pageStatus], 'site'),
+                'details' => ['pageStatus' => $pageStatus],
+                'editUrl' => $editUrl,
+            ];
+        }
+
         $scores = $analysis['scores'];
         $consoleErrors = $analysis['consoleErrors'];
         $noindex = $analysis['noindex'] ?? false;

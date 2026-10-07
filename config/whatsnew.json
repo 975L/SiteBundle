@@ -3,6 +3,11 @@
         "date": "2026-10-07",
         "description": [
             {
+                "en": "The site speed check no longer gives a page bad marks because it was measured during an update of the site, it simply measures it again next time",
+                "fr": "Le contrôle de vitesse du site ne note plus mal une page mesurée pendant une mise à jour du site : il la mesure simplement de nouveau la fois suivante",
+                "es": "El control de velocidad del sitio ya no califica mal una página medida durante una actualización del sitio: simplemente la vuelve a medir la próxima vez"
+            },
+            {
                 "en": "The site health check no longer warns you about pages it could not get validated in time, it simply checks them again on the next run",
                 "fr": "Le bilan de santé du site ne vous alerte plus pour des pages qu'il n'a pas pu faire valider à temps : il les vérifie simplement au passage suivant",
                 "es": "El chequeo de salud del sitio ya no le avisa por páginas que no pudo validar a tiempo: simplemente las comprueba en la siguiente pasada"

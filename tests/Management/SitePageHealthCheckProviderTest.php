@@ -265,6 +265,29 @@ class SitePageHealthCheckProviderTest extends TestCase
         $this->assertTrue($result['details']['noindex']);
     }
 
+    // Scores measured on an error page are that page's: skipped, to be measured again on the next run
+    public function testRunChecksSkipsAPageMeasuredWhileItAnsweredAnError(): void
+    {
+        $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);
+        $pageSpeedInsightsClient->method('analyze')->willReturn([
+            'scores' => ['performance' => 100, 'accessibility' => 94, 'best-practices' => 100, 'seo' => 100],
+            'consoleErrors' => [],
+            'noindex' => false,
+            'pageStatus' => 503,
+        ]);
+
+        $provider = $this->createProvider(
+            $this->createPageRepository([$this->createPage('home', 'Home')]),
+            $pageSpeedInsightsClient,
+            $this->createConfigService('https://example.com'),
+        );
+
+        $result = $provider->runChecks()[0];
+
+        $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $result['status']);
+        $this->assertSame(503, $result['details']['pageStatus']);
+    }
+
     public function testRunChecksStatusIsErrorWhenAScoreIsBelowFifty(): void
     {
         $pageSpeedInsightsClient = $this->createStub(PageSpeedInsightsClient::class);

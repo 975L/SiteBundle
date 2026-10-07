@@ -84,6 +84,19 @@ class PageSpeedInsightsClientTest extends TestCase
         $this->assertFalse($client(null)->analyze('https://example.com/pages/login')['noindex']);
     }
 
+    // Lighthouse tells the status it met only in a run warning, and a maintenance page answers 503
+    public function testAnalyzeReportsTheStatusOfAnErrorPage(): void
+    {
+        $body = json_decode($this->pageSpeedResponse(['performance' => 1.0]), true);
+        $body['lighthouseResult']['runWarnings'] = ['Lighthouse was unable to reliably load the page you requested. (Status code: 503)'];
+        $client = new PageSpeedInsightsClient(
+            new MockHttpClient(fn () => new MockResponse(json_encode($body), ['http_code' => 200])),
+            $this->createConfigService('some-key'),
+        );
+
+        $this->assertSame(503, $client->analyze('https://example.com/')['pageStatus']);
+    }
+
     public function testAnalyzeExtractsConsoleErrorDescriptions(): void
     {
         $httpClient = new MockHttpClient(

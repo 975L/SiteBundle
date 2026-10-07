@@ -1626,6 +1626,10 @@
                 <source>label.health_check_pagespeed_call_failed</source>
                 <target>Échec de l'appel à PageSpeed Insights : %message%</target>
             </trans-unit>
+            <trans-unit id="ISNTlJW">
+                <source>label.health_check_pagespeed_page_unavailable</source>
+                <target>La page répondait HTTP %status% pendant l'analyse : mesure ignorée</target>
+            </trans-unit>
             <trans-unit id="vsnyc60">
                 <source>label.health_check_panel_empty</source>
                 <target>Aucun résultat de bilan de santé pour cette page pour l'instant.</target>

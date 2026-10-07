@@ -133,7 +133,7 @@ chains, deployment, declared urls) are ConfigBundle's.
 
 | `getKind()` | Checks | API key |
 | --- | --- | --- |
-| `pagespeed` | Lighthouse performance / accessibility / best-practices / SEO + console errors | optional `healthcheck-pagespeed-api-key`, the anonymous quota being shared worldwide; a page blocked from indexing is not judged on its SEO score |
+| `pagespeed` | Lighthouse performance / accessibility / best-practices / SEO + console errors | optional `healthcheck-pagespeed-api-key`, the anonymous quota being shared worldwide; a page blocked from indexing is not judged on its SEO score; a page answering an error during the run (a deployment's 503) is skipped, not scored |
 | `w3c-html` | markup, via the W3C Nu checker; both W3C kinds validate four pages at a time and skip a page the validator answers `429` | none |
 | `w3c-css` | stylesheets; the warnings **and the errors** the validator's CSS3 profile predates are counted apart as *benign*, a type verdict being excused only on the stylesheet the validator said it did not resolve the variables of | none |
 | `content-quality` | noindex contradictions, title and description length, `<h1>`, share tags, image `alt`, broken links | none |
