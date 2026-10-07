@@ -1102,6 +1102,11 @@ form.menu-dropdown__items {
   gap: 1rem;
 }
 
+@media not all and (display-mode: standalone) {
+  .menu .menu-item.menu-app-only {
+    display: none;
+  }
+}
 a,
 h1 a {
   text-decoration: none;

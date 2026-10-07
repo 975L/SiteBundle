@@ -159,7 +159,7 @@ class MixedContentHealthCheckProviderTest extends TestCase
         $this->assertSame(HealthCheckResult::STATUS_SKIPPED, $result['status']);
     }
 
-    public function testRunChecksReturnsAnErrorRowWhenTheCallFails(): void
+    public function testRunChecksReturnsAWarningRowWhenTheCallFails(): void
     {
         $client = $this->createStub(MixedContentClient::class);
         $client->method('findInsecureResources')->willThrowException(new \RuntimeException('Timeout'));
@@ -167,7 +167,7 @@ class MixedContentHealthCheckProviderTest extends TestCase
         $provider = $this->createProvider([$this->createPage('home')], $client);
 
         $result = $provider->runChecks()[0];
-        $this->assertSame(HealthCheckResult::STATUS_ERROR, $result['status']);
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $result['status']);
         $this->assertSame(['error' => 'Timeout'], $result['details']);
     }
 

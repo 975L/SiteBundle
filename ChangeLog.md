@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.31.3
+
+The installed app keeps the footer's links in its navbar
+
+- The navbar carries an "About" dropdown with the footer's blocks, shown in the installed app only (07/10/2026)
+- Added the `label.about` translation (07/10/2026)
+- `MixedContentClient` now sends the health check's own User-Agent (07/10/2026)
+- A failed mixed-content call is now a warning row rather than an error (07/10/2026)
+- The first tutorial poster is fetched eagerly with high priority, the next ones lazily (07/10/2026)
+- Added the matching cases to `MixedContentClientTest` and `MixedContentHealthCheckProviderTest` (07/10/2026)
+
 ## v8.31.2
 
 Legal pages carry the same description on every site

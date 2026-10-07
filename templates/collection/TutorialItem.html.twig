@@ -5,7 +5,8 @@
 {% set heading = level|default('') in ['h2', 'h3', 'h4'] ? level : 'h2' %}
 <article class="tutorial" id="{{ tutorial.slug }}" data-controller="tutorial" data-action="anchor:scroll@document->tutorial#route popstate@window->tutorial#route hashchange@window->tutorial#route">
     <a href="{{ here }}#{{ tutorial.slug }}" class="tutorial-poster" aria-label="{{ 'label.tutorial_watch_film'|trans({'%label%': tutorial.label}, 'site') }}">
-        <img src="{{ tutorial.poster }}" alt="" loading="lazy">
+        {# The first film's poster tops the page and is its LCP element: fetched first, the next ones lazily #}
+        <img src="{{ tutorial.poster }}" alt=""{% if number == 1 %} loading="eager" fetchpriority="high"{% else %} loading="lazy"{% endif %}>
         <span class="tutorial-number">{{ number }}</span>
         <span class="tutorial-play"></span>
     </a>

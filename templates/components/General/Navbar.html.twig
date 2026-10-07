@@ -69,6 +69,20 @@
             {% if not hasMembersDropdown %}
                 <twig:c975LSite:General:AccountMenu :dropdown="true" />
             {% endif %}
+{# The footer's links, legal pages first among them, for the installed app only: it sheds the footer (see UiBundle's _pwa.scss), and a store asks for its privacy policy to stay within reach #}
+            {% set footerBlocks = pwa_enabled() ? menu_blocks('footer') : [] %}
+            {% if footerBlocks is not empty %}
+                <div class="menu-item menu-dropdown menu-app-only" data-controller="menu-dropdown">
+                    <details class="menu-dropdown__details" data-menu-dropdown-target="details">
+                        <summary class="menu-dropdown__summary">
+                            <span class="menu-label">{{ 'label.about'|trans({}, 'site') }}</span>
+                        </summary>
+                        <div class="menu-dropdown__items">
+                            <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
+                        </div>
+                    </details>
+                </div>
+            {% endif %}
             <twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--desktop" />
 {# Inside the items and not beside them: on a phone the bar collapses into that dropdown, and a language menu left outside it would sit alone next to the burger. Drawn as a dropdown, the way a "menu_dropdown" block of the same bar is #}
             <twig:c975LSite:General:Languages page="{{ page|default(null) }}" :dropdown="true" />

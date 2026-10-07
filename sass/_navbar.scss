@@ -47,3 +47,10 @@
     justify-content: center;
     gap: 1rem;
 }
+
+// The entries meant for the installed app alone, out of the site's own bar on any screen - ".menu-item" raises the selector above ".menu .menu-item"
+@media not all and (display-mode: standalone) {
+    .menu .menu-item.menu-app-only {
+        display: none;
+    }
+}

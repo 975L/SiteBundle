@@ -694,6 +694,10 @@
                 <source>help.menu_link_visibility</source>
                 <target>Hides the link depending on whether the visitor is signed in - e.g. "Sign in" for guests, "My account" for members</target>
             </trans-unit>
+            <trans-unit id="iR_id8.">
+                <source>label.about</source>
+                <target>About</target>
+            </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
                 <target><![CDATA[I agree with <a href="%tosUrl%" target="_blank">Terms of sales (TOS)</a>]]></target>

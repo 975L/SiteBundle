@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Tests\Service;
 
+use c975L\ConfigBundle\Service\HealthCheck;
 use c975L\SiteBundle\Service\MixedContentClient;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -73,5 +74,19 @@ class MixedContentClientTest extends TestCase
         $client = new MixedContentClient(new MockHttpClient(fn () => new MockResponse($html)));
 
         $this->assertSame([], $client->findInsecureResources('https://example.com/pages/home/'));
+    }
+
+    public function testFindInsecureResourcesSendsTheHealthCheckUserAgent(): void
+    {
+        $sentHeaders = [];
+        $client = new MixedContentClient(new MockHttpClient(function (string $method, string $url, array $options) use (&$sentHeaders) {
+            $sentHeaders = $options['headers'];
+
+            return new MockResponse('<html></html>');
+        }));
+
+        $client->findInsecureResources('https://example.com/pages/home/');
+
+        $this->assertContains('User-Agent: ' . HealthCheck::USER_AGENT, $sentHeaders);
     }
 }

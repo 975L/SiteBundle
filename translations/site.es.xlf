@@ -694,6 +694,10 @@
                 <source>help.menu_link_visibility</source>
                 <target>Oculta el enlace según el visitante haya iniciado sesión o no - ej. "Iniciar sesión" para los visitantes, "Mi cuenta" para los miembros</target>
             </trans-unit>
+            <trans-unit id="iR_id8.">
+                <source>label.about</source>
+                <target>Acerca de</target>
+            </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
                 <target><![CDATA[Acepto los <a href="%tosUrl%" target="_blank">Términos de venta (TDV)</a>]]></target>

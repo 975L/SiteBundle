@@ -694,6 +694,10 @@
                 <source>help.menu_link_visibility</source>
                 <target>Masque le lien selon que le visiteur est connecté ou non - ex. "Connexion" pour les visiteurs, "Mon compte" pour les membres</target>
             </trans-unit>
+            <trans-unit id="iR_id8.">
+                <source>label.about</source>
+                <target>À propos</target>
+            </trans-unit>
             <trans-unit id="i1lkhfp">
                 <source>label.accept_tos</source>
                 <target><![CDATA[J'accepte les <a href="%tosUrl%" target="_blank">Conditions générales de vente (CGV)</a>]]></target>

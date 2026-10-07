@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Service;
 
+use c975L\ConfigBundle\Service\HealthCheck;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 // Scans a page's rendered HTML for resources fetched over plain http:// - exactly what a browser's own "mixed content" warning flags on an https:// page. A lightweight regex over the handful of resource-bearing attributes that matter, not a full DOM parse - no extra dependency needed for this. Never matches <a href>: a plain hyperlink isn't fetched by the browser, so it's never "mixed content"
@@ -26,7 +27,8 @@ class MixedContentClient
     // Distinct http:// resource urls found in the page's own markup
     public function findInsecureResources(string $url): array
     {
-        $html = $this->httpClient->request('GET', $url, ['timeout' => 30])->getContent();
+        // Sent under the probes' own agent, which RateLimitListener lets through: without it, a site checking its own pages in a burst refused them with a 429 and reported each one as an error
+        $html = $this->httpClient->request('GET', $url, ['timeout' => 30, 'headers' => ['User-Agent' => HealthCheck::USER_AGENT]])->getContent();
 
         $found = [];
         if (preg_match_all(self::RESOURCE_TAG_PATTERN, $html, $matches)) {

@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Management;
 
 use c975L\ConfigBundle\Entity\HealthCheckResult;
+use c975L\ConfigBundle\Management\HealthCheckErrorRow;
 use c975L\ConfigBundle\Management\HealthCheckExhaustiveInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\UrlStatusChecker;
@@ -66,14 +67,8 @@ class MixedContentHealthCheckProvider implements HealthCheckExhaustiveInterface
         try {
             $insecure = $this->mixedContentClient->findInsecureResources($url);
         } catch (\Throwable $e) {
-            return [
-                'url' => $url,
-                'label' => $label,
-                'status' => HealthCheckResult::STATUS_ERROR,
-                'summary' => $this->translator->trans('label.health_check_mixed_content_call_failed', ['%message%' => $e->getMessage()], 'site'),
-                'details' => ['error' => $e->getMessage()],
-                'editUrl' => $editUrl,
-            ];
+            // A call that failed says nothing of the page: a warning like every other check's, never an error mailed out
+            return HealthCheckErrorRow::build($this->translator, 'site', $url, $label, 'label.health_check_mixed_content_call_failed', $e->getMessage(), $editUrl);
         }
 
         return [

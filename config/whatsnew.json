@@ -16,6 +16,16 @@
                 "en": "Your legal pages now keep an up-to-date description for search engines and social networks, in every language of your site",
                 "fr": "Vos pages légales gardent désormais une description à jour pour les moteurs de recherche et les réseaux sociaux, dans toutes les langues de votre site",
                 "es": "Sus páginas legales conservan ahora una descripción actualizada para los buscadores y las redes sociales, en todos los idiomas de su sitio"
+            },
+            {
+                "en": "Once your site is installed as an app, its footer links, legal pages included, stay within reach under an \"About\" menu at the top",
+                "fr": "Une fois votre site installé comme application, les liens de son pied de page, pages légales comprises, restent accessibles depuis un menu « À propos » en haut",
+                "es": "Una vez instalado su sitio como aplicación, los enlaces de su pie de página, páginas legales incluidas, siguen a mano en un menú «Acerca de» arriba"
+            },
+            {
+                "en": "The site health check no longer reports a page as broken when it simply could not be reached for the mixed content check",
+                "fr": "Le bilan de santé du site ne signale plus une page comme en erreur quand elle n'a simplement pas pu être jointe pour le contrôle du contenu mixte",
+                "es": "El chequeo de salud del sitio ya no marca una página como errónea cuando simplemente no se pudo acceder a ella para el control de contenido mixto"
             }
         ]
     },
