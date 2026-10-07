@@ -19,6 +19,8 @@ use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\AccessMapInterface;
 
 class PageHealthCheckTargetsTest extends TestCase
 {
@@ -86,8 +88,30 @@ class PageHealthCheckTargetsTest extends TestCase
         $this->targets(['fr'], translator: $translator)->all();
     }
 
+    // A page the firewall keeps for members is no target: the checks would only ever see the login form, or the redirect to it
+    public function testAPageKeptForMembersIsNoTarget(): void
+    {
+        $this->assertSame([], $this->targets(['fr'], accessMap: $this->accessMap(['ROLE_USER']))->all());
+    }
+
+    // One open to anyone stays one, whether a rule says so or none matches it
+    public function testAPublicPageStaysATarget(): void
+    {
+        $this->assertCount(1, $this->targets(['fr'], accessMap: $this->accessMap(['PUBLIC_ACCESS']))->all());
+        $this->assertCount(1, $this->targets(['fr'], accessMap: $this->accessMap(null))->all());
+    }
+
+    // The access map answering these attributes for any url, the way the firewall's access_control does
+    private function accessMap(?array $attributes): AccessMapInterface
+    {
+        $accessMap = $this->createStub(AccessMapInterface::class);
+        $accessMap->method('getPatterns')->willReturnCallback(static fn (Request $request): array => [$attributes, null]);
+
+        return $accessMap;
+    }
+
     /** @param list<string> $translatedLocales */
-    private function targets(array $translatedLocales, ?string $siteUrl = 'https://example.com', ?PageTranslator $translator = null): PageHealthCheckTargets
+    private function targets(array $translatedLocales, ?string $siteUrl = 'https://example.com', ?PageTranslator $translator = null, ?AccessMapInterface $accessMap = null): PageHealthCheckTargets
     {
         $page = new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers');
         new \ReflectionProperty(Page::class, 'id')->setValue($page, 1);
@@ -117,6 +141,7 @@ class PageHealthCheckTargetsTest extends TestCase
             $editUrlResolver,
             $translator,
             $this->createSiteLocales(),
+            $accessMap,
         );
     }
 }

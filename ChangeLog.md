@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.31.4
+
+Health checks leave out the pages kept for members
+
+- `PageHealthCheckTargets` leaves out the pages the firewall's access_control keeps for members (07/10/2026)
+- Added the members' page cases to `PageHealthCheckTargetsTest` (07/10/2026)
+- The `c975l-site-seo` skill notes the members' pages left out (07/10/2026)
+
 ## v8.31.3
 
 The installed app keeps the footer's links in its navbar

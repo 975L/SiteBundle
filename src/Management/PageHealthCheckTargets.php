@@ -16,7 +16,10 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Locales;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
+use Symfony\Component\Security\Http\AccessMapInterface;
 
 // What every page-level health check walks: one row per page and per language it was written in, rather than one row per page. A page read at "/en/pages/nos-ateliers" is another page to a crawler, a validator and a performance report - another title, another prose, another set of links - and a single row could only ever report one of them. Held here rather than repeated in each provider: the url, the label and the link back to the right language screen are the same three things whichever check is running
 class PageHealthCheckTargets
@@ -27,6 +30,7 @@ class PageHealthCheckTargets
         private readonly PageEditUrlResolver $pageEditUrlResolver,
         private readonly PageTranslator $pageTranslator,
         private readonly SiteLocales $siteLocales,
+        private readonly ?AccessMapInterface $accessMap = null,
     ) {
     }
 
@@ -47,6 +51,10 @@ class PageHealthCheckTargets
             }
 
             foreach ($urls as $locale => $url) {
+                if (!$this->isPublic($url)) {
+                    continue;
+                }
+
                 $targets[] = [
                     'url' => $url,
                     'label' => $this->label($page, $locale),
@@ -58,6 +66,14 @@ class PageHealthCheckTargets
         }
 
         return $targets;
+    }
+
+    // Whether an anonymous visitor may read the url, as the firewall's access_control says. A page a rule keeps for members answers the checks with the login form or a redirect to it - judging that form under the page's name reported a missing description and a redirect on every private page of a members' site, about a page no check can ever see
+    private function isPublic(string $url): bool
+    {
+        $attributes = $this->accessMap?->getPatterns(Request::create($url))[0] ?? null;
+
+        return null === $attributes || [] === array_diff($attributes, [AuthenticatedVoter::PUBLIC_ACCESS]);
     }
 
     // The page's own title in the language the row is about, named in that language's own words where it is not the one the site is written in - "Nos ateliers" and "Our workshops (English)" being two rows of the same dashboard, told apart at a glance. Public, so the dev-profile paths - which walk the languages themselves, having no use for "site-url" - name their rows the same way

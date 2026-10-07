@@ -17,6 +17,11 @@ services:
     # Same for EasyAdmin's AdminRouteGenerator, final and unaliased - the films' page and TutorialFilmUrlProvider ask it the route names the dashboard gave them
     EasyCorp\Bundle\EasyAdminBundle\Contracts\Router\AdminRouteGeneratorInterface: '@EasyCorp\Bundle\EasyAdminBundle\Router\AdminRouteGenerator'
 
+    # The firewall's access_control, which SecurityBundle registers without an alias for its interface - the health check targets leave out the pages it keeps for members
+    c975L\SiteBundle\Management\PageHealthCheckTargets:
+        arguments:
+            $accessMap: '@?security.access_map'
+
     c975L\SiteBundle\Service\StylesheetProvider:
         tags:
             - { name: 'ui.stylesheet', priority: 100 }

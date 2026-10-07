@@ -8,6 +8,11 @@
                 "es": "El chequeo de salud del sitio ya no le avisa por páginas que no pudo validar a tiempo: simplemente las comprueba en la siguiente pasada"
             },
             {
+                "en": "The site health check no longer reports on pages reserved for members, which it could only ever see as the login form",
+                "fr": "Le bilan de santé du site ne signale plus rien sur les pages réservées aux membres, dont il ne voyait jamais que le formulaire de connexion",
+                "es": "El chequeo de salud del sitio ya no informa sobre las páginas reservadas a los miembros, de las que solo veía el formulario de inicio de sesión"
+            },
+            {
                 "en": "Pages you keep out of search engines on purpose, such as account pages, are no longer marked down on their search score",
                 "fr": "Les pages que vous tenez volontairement à l'écart des moteurs de recherche, comme celles du compte, ne sont plus pénalisées sur leur score de référencement",
                 "es": "Las páginas que mantiene a propósito fuera de los buscadores, como las de la cuenta, ya no se penalizan en su puntuación de posicionamiento"
