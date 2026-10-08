@@ -19,7 +19,7 @@ use c975L\SiteBundle\Entity\Menu;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
 
-// This bundle's guided projects, running the 2000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They are ordered like the sidebar itself reads (Collections, Pages, then Menus), so a project sits where the user finds the screen it walks, and the projects sharing a screen follow each other in the order a page lives: created, made findable, checked, then reworked. Only the opening step of each project carries an url: from there the parcours walks the screen the user is on, each step highlighting the button or the field they are meant to use next - a button they click themselves, which brings the panel back on the very step that pointed at it (see guided-project.js resume())
+// This bundle's guided projects, running the 2000 block GuidedProjectProviderInterface reserves them - the same docblock stating every other bundle's, so a range is read there rather than recopied here. They are ordered by the task a site lives through (Collections, Pages, then Menus), not by the sidebar, and the projects sharing a screen follow each other in the order a page lives: created, made findable, checked, then reworked. Only the opening step of each project carries an url: from there the parcours walks the screen the user is on, each step highlighting the button or the field they are meant to use next - a button they click themselves, which brings the panel back on the very step that pointed at it (see guided-project.js resume())
 class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
 {
     // The page's or menu's own blocks collection: a container's "slots" collection carries the same sorting group, and would be the one found first on an entity not saved yet, whose own collection is left unmarked
@@ -97,6 +97,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_collection_add_item',
                     'narration' => 'narration.guided_step_collection_add_item',
                     'highlight' => '.action-new',
+                ],
+                [
+                    'label' => 'label.guided_step_collection_item_title',
+                    'description' => 'description.guided_step_collection_item_title',
+                    'narration' => 'narration.guided_step_collection_item_title',
+                    'highlight' => '#CollectionItem_title',
                 ],
                 [
                     'label' => 'label.guided_step_collection_item_save',
@@ -235,6 +241,12 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'description' => 'description.guided_step_page_creation_publish',
                     'narration' => 'narration.guided_step_page_creation_publish',
                     'highlight' => '#Page_isPublished',
+                ],
+                [
+                    'label' => 'label.guided_step_page_creation_members',
+                    'description' => 'description.guided_step_page_creation_members',
+                    'narration' => 'narration.guided_step_page_creation_members',
+                    'highlight' => '#Page_isMembersOnly',
                 ],
                 [
                     'label' => 'label.guided_step_page_creation_save_again',
@@ -425,19 +437,6 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '#Page_slug',
                 ],
                 [
-                    'label' => 'label.guided_step_page_seo_summary',
-                    'description' => 'description.guided_step_page_seo_summary',
-                    'narration' => 'narration.guided_step_page_seo_summary',
-                    'highlight' => '#Page_summarySocialNetwork',
-                ],
-                [
-                    'label' => 'label.guided_step_page_seo_image',
-                    'description' => 'description.guided_step_page_seo_image',
-                    'narration' => 'narration.guided_step_page_seo_image',
-                    // The wrapping div OgImageType renders as a compound type, the upload sitting inside it
-                    'highlight' => '#Page_ogImage',
-                ],
-                [
                     'label' => 'label.guided_step_page_seo_indexable',
                     'description' => 'description.guided_step_page_seo_indexable',
                     'narration' => 'narration.guided_step_page_seo_indexable',
@@ -449,6 +448,19 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'narration' => 'narration.guided_step_page_seo_frequency',
                     // The step names the priority right below it rather than taking a ninth step of its own: the two are read together, and are the only sitemap hints
                     'highlight' => '#Page_changeFrequency',
+                ],
+                [
+                    'label' => 'label.guided_step_page_seo_image',
+                    'description' => 'description.guided_step_page_seo_image',
+                    'narration' => 'narration.guided_step_page_seo_image',
+                    // The wrapping div OgImageType renders as a compound type, the upload sitting inside it
+                    'highlight' => '#Page_ogImage',
+                ],
+                [
+                    'label' => 'label.guided_step_page_seo_summary',
+                    'description' => 'description.guided_step_page_seo_summary',
+                    'narration' => 'narration.guided_step_page_seo_summary',
+                    'highlight' => '#Page_summarySocialNetwork',
                 ],
                 [
                     'label' => 'label.guided_step_page_seo_save',

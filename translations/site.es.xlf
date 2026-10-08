@@ -238,6 +238,10 @@
                 <source>description.guided_step_collection_item_save</source>
                 <target>Vuelve a la lista de elementos de la colección.</target>
             </trans-unit>
+            <trans-unit id="DCpQpEZ">
+                <source>description.guided_step_collection_item_title</source>
+                <target>Es el nombre que la tarjeta muestra primero. El texto, la imagen y el enlace se completan justo debajo.</target>
+            </trans-unit>
             <trans-unit id="XYbqA8D">
                 <source>description.guided_step_collection_items</source>
                 <target>La colección es un contenedor: son sus elementos los que llevan el contenido.</target>
@@ -382,6 +386,10 @@
                 <source>description.guided_step_page_creation_blocks</source>
                 <target>El contenido de una página está hecho de bloques: texto, imagen, galería, formulario… Añada uno y complételo.</target>
             </trans-unit>
+            <trans-unit id="RqVhLXQ">
+                <source>description.guided_step_page_creation_members</source>
+                <target>Marcada, solo una persona conectada puede leer la página, que sale del sitemap mientras siga reservada. Déjela sin marcar para una página pública.</target>
+            </trans-unit>
             <trans-unit id="ot0jQxm">
                 <source>description.guided_step_page_creation_new</source>
                 <target>El botón situado encima de la lista abre el formulario de creación.</target>
@@ -392,7 +400,7 @@
             </trans-unit>
             <trans-unit id="RGI0ZHq">
                 <source>description.guided_step_page_creation_publish</source>
-                <target>Mientras este interruptor esté apagado, la página solo será visible para usted, en vista previa. Para reservarla a los miembros conectados, marque la casilla justo debajo.</target>
+                <target>Mientras este interruptor esté apagado, la página solo será visible para usted, en vista previa.</target>
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
@@ -512,7 +520,7 @@
             </trans-unit>
             <trans-unit id="bfIpkLz">
                 <source>description.guided_step_page_seo_edit</source>
-                <target>Todos estos campos están en la pestaña «Datos», debajo del título. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
+                <target>Todos estos campos están en la pestaña «Datos». El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
             </trans-unit>
             <trans-unit id="Ve53OEd">
                 <source>description.guided_step_page_seo_frequency</source>
@@ -532,7 +540,7 @@
             </trans-unit>
             <trans-unit id="QSCJqVU">
                 <source>description.guided_step_page_seo_slug</source>
-                <target>El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Cambiarlo en una página ya publicada rompe todos los enlaces que apuntaban a ella: abra el candado solo si declara también una redirección en los ajustes.</target>
+                <target>El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Cambiarlo en una página ya publicada crea por sí mismo una redirección desde la dirección anterior: los enlaces existentes siguen funcionando.</target>
             </trans-unit>
             <trans-unit id="dS6xslk">
                 <source>description.guided_step_page_seo_summary</source>
@@ -1034,6 +1042,10 @@
                 <source>label.guided_step_collection_item_save</source>
                 <target>Guardar el elemento</target>
             </trans-unit>
+            <trans-unit id="S6Oh_26">
+                <source>label.guided_step_collection_item_title</source>
+                <target>Darle un título</target>
+            </trans-unit>
             <trans-unit id="A9QBctX">
                 <source>label.guided_step_collection_items</source>
                 <target>Abrir sus elementos</target>
@@ -1205,6 +1217,10 @@
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
                 <target>Añadir un bloque</target>
+            </trans-unit>
+            <trans-unit id="9G8ZHjn">
+                <source>label.guided_step_page_creation_members</source>
+                <target>Reservarla a los miembros</target>
             </trans-unit>
             <trans-unit id="qKcJkhs">
                 <source>label.guided_step_page_creation_new</source>
@@ -2034,6 +2050,94 @@
                 <source>label.site_sample_collection_name</source>
                 <target>Nuestros trabajos</target>
             </trans-unit>
+            <trans-unit id="oPPgiZC">
+                <source>label.site_sample_history_cta_label</source>
+                <target>Ver nuestros servicios</target>
+            </trans-unit>
+            <trans-unit id="oIhaco8">
+                <source>label.site_sample_history_cta_text</source>
+                <target>Sitio a medida, CMS o desarrollo Symfony: vea lo que hacemos.</target>
+            </trans-unit>
+            <trans-unit id="eBkNCIr">
+                <source>label.site_sample_history_cta_title</source>
+                <target>¿Tiene un proyecto en mente?</target>
+            </trans-unit>
+            <trans-unit id="l5r8x4d">
+                <source>label.site_sample_history_date_agency_text</source>
+                <target>Creación de 975L y de los primeros bundles Symfony.</target>
+            </trans-unit>
+            <trans-unit id="DLyHphl">
+                <source>label.site_sample_history_date_agency_title</source>
+                <target>2018</target>
+            </trans-unit>
+            <trans-unit id="RR6e7hc">
+                <source>label.site_sample_history_date_bundles_text</source>
+                <target>Los bundles se reúnen, con esta demostración.</target>
+            </trans-unit>
+            <trans-unit id="BkSNqEx">
+                <source>label.site_sample_history_date_bundles_title</source>
+                <target>2026</target>
+            </trans-unit>
+            <trans-unit id="a0ifQW0">
+                <source>label.site_sample_history_date_itu_text</source>
+                <target>Laurent implanta el CMS del Sector de Radiocomunicaciones de la UIT, en seis idiomas.</target>
+            </trans-unit>
+            <trans-unit id="OxZt3S7">
+                <source>label.site_sample_history_date_itu_title</source>
+                <target>2005</target>
+            </trans-unit>
+            <trans-unit id="Th23iwZ">
+                <source>label.site_sample_history_date_today_text</source>
+                <target>Una quincena de sitios en línea, todos con los mismos bundles.</target>
+            </trans-unit>
+            <trans-unit id="J0lirWT">
+                <source>label.site_sample_history_date_today_title</source>
+                <target>Hoy</target>
+            </trans-unit>
+            <trans-unit id="m1IE5ib">
+                <source>label.site_sample_history_figure_languages_text</source>
+                <target>cada contenido se traduce</target>
+            </trans-unit>
+            <trans-unit id="FYTsKsW">
+                <source>label.site_sample_history_figure_languages_title</source>
+                <target>Multilingüe</target>
+            </trans-unit>
+            <trans-unit id="YVzFAlf">
+                <source>label.site_sample_history_figure_open_source_text</source>
+                <target>bundles publicados en GitHub</target>
+            </trans-unit>
+            <trans-unit id="Ja0iye7">
+                <source>label.site_sample_history_figure_open_source_title</source>
+                <target>Código abierto</target>
+            </trans-unit>
+            <trans-unit id="I5gWT1t">
+                <source>label.site_sample_history_figure_sites_text</source>
+                <target>en línea con los bundles</target>
+            </trans-unit>
+            <trans-unit id="IzoveWi">
+                <source>label.site_sample_history_figure_sites_title</source>
+                <target>15 sitios</target>
+            </trans-unit>
+            <trans-unit id="1ntGz3g">
+                <source>label.site_sample_history_figure_year_text</source>
+                <target>de experiencia web</target>
+            </trans-unit>
+            <trans-unit id="cY0SoL0">
+                <source>label.site_sample_history_figure_year_title</source>
+                <target>20 años</target>
+            </trans-unit>
+            <trans-unit id="URxxejR">
+                <source>label.site_sample_history_timeline_eyebrow</source>
+                <target>Algunas fechas</target>
+            </trans-unit>
+            <trans-unit id="TcRhUg5">
+                <source>label.site_sample_history_timeline_title</source>
+                <target>De un CMS multilingüe a los bundles c975L</target>
+            </trans-unit>
+            <trans-unit id="nl8vVdM">
+                <source>label.site_sample_home_alert</source>
+                <target>Demostración compartida: lo que usted modifica, los demás visitantes lo ven, hasta el próximo reinicio.</target>
+            </trans-unit>
             <trans-unit id="UXG9rFi">
                 <source>label.site_sample_home_cta_label</source>
                 <target>Ver nuestras realizaciones</target>
@@ -2054,6 +2158,14 @@
                 <source>label.site_sample_home_faq_code_question</source>
                 <target>¿Hay que saber programar?</target>
             </trans-unit>
+            <trans-unit id="WghJ0zO">
+                <source>label.site_sample_home_faq_install_answer</source>
+                <target>Sí: se instalan con Composer en una aplicación Symfony.</target>
+            </trans-unit>
+            <trans-unit id="QNjLmx8">
+                <source>label.site_sample_home_faq_install_question</source>
+                <target>¿Puedo instalar estos bundles en mi sitio?</target>
+            </trans-unit>
             <trans-unit id="CZm_zGL">
                 <source>label.site_sample_home_faq_license_answer</source>
                 <target>La licencia MIT: libres, gratuitos y modificables.</target>
@@ -2062,25 +2174,17 @@
                 <source>label.site_sample_home_faq_license_question</source>
                 <target>¿Con qué licencia se distribuyen los bundles?</target>
             </trans-unit>
-            <trans-unit id="FVBeNIg">
-                <source>label.site_sample_home_faq_reset_answer</source>
-                <target>No: la demostración se reinicia con regularidad y vuelve a este mismo contenido.</target>
-            </trans-unit>
-            <trans-unit id="rFZPQVV">
-                <source>label.site_sample_home_faq_reset_question</source>
-                <target>¿Se conservan mis cambios?</target>
-            </trans-unit>
-            <trans-unit id="3kYk2nX">
-                <source>label.site_sample_home_faq_shared_answer</source>
-                <target>Sí: la demostración se comparte entre todos sus visitantes.</target>
-            </trans-unit>
-            <trans-unit id="OHMNEZw">
-                <source>label.site_sample_home_faq_shared_question</source>
-                <target>¿Ven los demás visitantes mis cambios?</target>
-            </trans-unit>
             <trans-unit id="i.z3k4R">
                 <source>label.site_sample_home_faq_title</source>
                 <target>Preguntas frecuentes</target>
+            </trans-unit>
+            <trans-unit id="q1W8lTd">
+                <source>label.site_sample_home_faq_translate_answer</source>
+                <target>Sí: cada página, menú y bloque se traduce desde el back-office.</target>
+            </trans-unit>
+            <trans-unit id="UhdxsbZ">
+                <source>label.site_sample_home_faq_translate_question</source>
+                <target>¿Se pueden traducir los contenidos?</target>
             </trans-unit>
             <trans-unit id="UhP1ytg">
                 <source>label.site_sample_home_feature_bin_text</source>
@@ -2228,11 +2332,11 @@
             </trans-unit>
             <trans-unit id="sd_HyXd">
                 <source>label.site_sample_page_history_body</source>
-                <target>Hoy somos seis, y esa idea no ha cambiado. Lo que sale de aquí está hecho para durar más que nosotros.</target>
+                <target>Todos los sitios que entregamos se basan en nuestros propios bundles, libres y publicados en GitHub: lo que se mejora para uno beneficia a todos los demás.</target>
             </trans-unit>
             <trans-unit id="wE8uhw6">
                 <source>label.site_sample_page_history_lead</source>
-                <target>El taller abrió en 2014 en una antigua carpintería, con dos bancos y la idea de que un mueble bien hecho se repara en vez de sustituirse.</target>
+                <target>975L es una agencia web independiente, creada en 2018 por Laurent Marquet, desarrollador PHP y Symfony.</target>
             </trans-unit>
             <trans-unit id="OLHmE2r">
                 <source>label.site_sample_page_history_title</source>
@@ -2244,47 +2348,131 @@
             </trans-unit>
             <trans-unit id="5_Rfe.A">
                 <source>label.site_sample_page_home_subtitle</source>
-                <target>Un sitio completo, construido con los bundles c975L, cuyo back-office está a su disposición.</target>
+                <target>Esta demostración está construida con los bundles c975L: usted tiene las llaves de su back-office.</target>
             </trans-unit>
             <trans-unit id="kAKeEqY">
                 <source>label.site_sample_page_home_title</source>
                 <target>Un sitio completo, bloque a bloque</target>
             </trans-unit>
-            <trans-unit id="ZBYST9H">
-                <source>label.site_sample_page_services_body</source>
-                <target>Cada proyecto empieza con una conversación: qué vende, a quién y qué debe hacer el sitio por usted. Lo demás se deduce de ahí.</target>
-            </trans-unit>
             <trans-unit id="FMlEreK">
                 <source>label.site_sample_page_services_lead</source>
-                <target>Acompañamos a artesanos y equipos pequeños que quieren un sitio claro, rápido y que puedan mantener ellos mismos.</target>
+                <target>975L diseña y desarrolla sitios web a medida con Symfony, sobre sus propios bundles: después usted gestiona su contenido.</target>
             </trans-unit>
             <trans-unit id="JRJ3j9d">
                 <source>label.site_sample_page_services_title</source>
                 <target>Nuestros servicios</target>
             </trans-unit>
-            <trans-unit id="xHxyvd5">
-                <source>label.site_sample_project_renovation_description</source>
-                <target>Un escaparate devuelto a su estado original, carpintería incluida, sin perder nada de la comodidad actual.</target>
+            <trans-unit id="A79wx0r">
+                <source>label.site_sample_project_papa_calin_description</source>
+                <target>Cuentos para niños, para leer y ver.</target>
             </trans-unit>
-            <trans-unit id="BaMXBvj">
-                <source>label.site_sample_project_renovation_title</source>
-                <target>Restauración de fachada</target>
+            <trans-unit id="qiHMSqE">
+                <source>label.site_sample_project_papa_calin_title</source>
+                <target>Papa Câlin</target>
             </trans-unit>
-            <trans-unit id="OxYUFPX">
-                <source>label.site_sample_project_signage_description</source>
-                <target>Rótulos y paneles dibujados para el lugar, fabricados en el taller y colocados por nosotros.</target>
+            <trans-unit id="f6MK6y4">
+                <source>label.site_sample_project_resistance_description</source>
+                <target>La Resistencia en Alta Saboya durante la Segunda Guerra Mundial.</target>
             </trans-unit>
-            <trans-unit id="23q.uFR">
-                <source>label.site_sample_project_signage_title</source>
-                <target>Rotulación a medida</target>
+            <trans-unit id="c.8ySFW">
+                <source>label.site_sample_project_resistance_title</source>
+                <target>Résistance Haute-Savoie</target>
             </trans-unit>
-            <trans-unit id="psbA8_H">
-                <source>label.site_sample_project_workshop_description</source>
-                <target>Un espacio de trabajo repensado de arriba abajo, del plano de distribución a la última encimera.</target>
+            <trans-unit id="zBnBRNU">
+                <source>label.site_sample_project_run_as_description</source>
+                <target>Un servicio para acortar direcciones web.</target>
             </trans-unit>
-            <trans-unit id="f0J4zqJ">
-                <source>label.site_sample_project_workshop_title</source>
-                <target>Reforma de taller</target>
+            <trans-unit id="59aP5o0">
+                <source>label.site_sample_project_run_as_title</source>
+                <target>run.as</target>
+            </trans-unit>
+            <trans-unit id="UUlEYCA">
+                <source>label.site_sample_services_cms_text</source>
+                <target>Usted gestiona páginas, menús y medios en el día a día, sin depender de nosotros.</target>
+            </trans-unit>
+            <trans-unit id="mtdvFcP">
+                <source>label.site_sample_services_cms_title</source>
+                <target>Nuestro CMS propio</target>
+            </trans-unit>
+            <trans-unit id="_ER546z">
+                <source>label.site_sample_services_cta_label</source>
+                <target>Descubrir nuestra historia</target>
+            </trans-unit>
+            <trans-unit id="3E.Xwuv">
+                <source>label.site_sample_services_cta_text</source>
+                <target>Una agencia web independiente, y bundles libres que todos pueden usar.</target>
+            </trans-unit>
+            <trans-unit id="f1DVUEM">
+                <source>label.site_sample_services_cta_title</source>
+                <target>¿Quiénes somos?</target>
+            </trans-unit>
+            <trans-unit id="vYxR3Xc">
+                <source>label.site_sample_services_custom_text</source>
+                <target>Diseño, contenido y funcionalidades pensados para su actividad.</target>
+            </trans-unit>
+            <trans-unit id="Ha_TdU4">
+                <source>label.site_sample_services_custom_title</source>
+                <target>Sitios a medida</target>
+            </trans-unit>
+            <trans-unit id="TkbSS7A">
+                <source>label.site_sample_services_offer_eyebrow</source>
+                <target>Nuestros servicios</target>
+            </trans-unit>
+            <trans-unit id="AKkmYWG">
+                <source>label.site_sample_services_offer_intro</source>
+                <target>Nada de plantillas: cada sitio parte de sus necesidades reales.</target>
+            </trans-unit>
+            <trans-unit id="9CP2q_A">
+                <source>label.site_sample_services_offer_title</source>
+                <target>Sitios hechos a la medida de su proyecto</target>
+            </trans-unit>
+            <trans-unit id="fWlbDON">
+                <source>label.site_sample_services_step_build_text</source>
+                <target>El sitio se construye bloque a bloque, sobre los bundles c975L.</target>
+            </trans-unit>
+            <trans-unit id="44ydqeJ">
+                <source>label.site_sample_services_step_build_title</source>
+                <target>El desarrollo</target>
+            </trans-unit>
+            <trans-unit id="EziiXoo">
+                <source>label.site_sample_services_step_launch_text</source>
+                <target>Alojado en Infomaniak, y con seguimiento tras la entrega.</target>
+            </trans-unit>
+            <trans-unit id="DO9iVTe">
+                <source>label.site_sample_services_step_launch_title</source>
+                <target>La puesta en línea</target>
+            </trans-unit>
+            <trans-unit id="Rzz4csS">
+                <source>label.site_sample_services_step_mockup_text</source>
+                <target>Una primera versión para validar juntos, página a página.</target>
+            </trans-unit>
+            <trans-unit id="rF1rjJz">
+                <source>label.site_sample_services_step_mockup_title</source>
+                <target>La maqueta</target>
+            </trans-unit>
+            <trans-unit id="S0flwk3">
+                <source>label.site_sample_services_step_talk_text</source>
+                <target>Lo que ofrece, a quién, y lo que el sitio debe hacer por usted.</target>
+            </trans-unit>
+            <trans-unit id="sEuMtc3">
+                <source>label.site_sample_services_step_talk_title</source>
+                <target>La conversación</target>
+            </trans-unit>
+            <trans-unit id="Rx3mpT8">
+                <source>label.site_sample_services_steps_eyebrow</source>
+                <target>Nuestro método</target>
+            </trans-unit>
+            <trans-unit id="Nvw2XOj">
+                <source>label.site_sample_services_steps_title</source>
+                <target>De la primera idea a la puesta en línea</target>
+            </trans-unit>
+            <trans-unit id="aWbgiPL">
+                <source>label.site_sample_services_symfony_text</source>
+                <target>Una base sólida y duradera, sobre bundles libres que mantenemos.</target>
+            </trans-unit>
+            <trans-unit id="8q3GsU9">
+                <source>label.site_sample_services_symfony_title</source>
+                <target>Desarrollo Symfony</target>
             </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>

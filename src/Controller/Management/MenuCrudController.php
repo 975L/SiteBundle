@@ -200,7 +200,7 @@ class MenuCrudController extends AbstractCrudController
             ->allowAdd()
             ->allowDelete()
             ->setFormTypeOption('by_reference', false)
-            // A navbar only offers "menu_link", a navigation bar being a plain list of links
+            // A navbar only offers links and dropdowns, a navigation bar being a list of links
             ->setFormTypeOption('entry_options.context', $isNavbar ? BlockRegistry::MENU_NAVBAR_CONTEXT : BlockRegistry::MENU_CONTEXT)
             ->setFormTypeOption('row_attr', $this->blockMoveRowAttrBuilder->build(SiteBlockOwnerResolver::TYPE_MENU, $entity instanceof Menu ? $entity->getId() : null))
             ->onlyWhenUpdating();

@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.32.2
+
+The demo services and story pages are laid out in sections
+
+- The demo services and story pages are laid out in sections, each closing on a call-to-action (08/10/2026)
+- The demo content is 975L's own, its collection items leading to real sites (08/10/2026)
+- The demo home page opens with an alert saying the demo is shared and reset (08/10/2026)
+- Added guided steps for the "Members only" switch and a collection item's title (08/10/2026)
+- The page SEO guided project walks its fields down the screen (08/10/2026)
+- The guided slug step says a redirect is created on its own (08/10/2026)
+
 ## v8.32.1
 
 The demo home page is laid out as a real home page

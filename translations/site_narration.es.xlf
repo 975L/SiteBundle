@@ -46,6 +46,10 @@
                 <source>narration.guided_step_collection_item_save</source>
                 <target>Guarde el elemento: vuelve a la lista de elementos de la colección.</target>
             </trans-unit>
+            <trans-unit id="H6YrxEC">
+                <source>narration.guided_step_collection_item_title</source>
+                <target>Dele un título: es el nombre que la tarjeta muestra primero. El texto, la imagen y el enlace se completan justo debajo.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Abra ahora sus elementos. La colección no es más que un contenedor: son sus elementos los que llevan el contenido.</target>
@@ -218,6 +222,10 @@
                 <source>narration.guided_step_page_creation_blocks</source>
                 <target>Añada un bloque. El contenido de una página está hecho de bloques: texto, imagen, galería, formulario. Añada uno y complételo.</target>
             </trans-unit>
+            <trans-unit id="AfuSv2_">
+                <source>narration.guided_step_page_creation_members</source>
+                <target>Resérvela a los miembros si hace falta. Marcada, solo una persona conectada puede leer la página, que sale del sitemap mientras siga reservada. Déjela sin marcar para una página pública.</target>
+            </trans-unit>
             <trans-unit id="hE.O12b">
                 <source>narration.guided_step_page_creation_new</source>
                 <target>Haga clic en el botón situado encima de la lista: abre el formulario de creación.</target>
@@ -228,7 +236,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa. Para reservarla a los miembros conectados, marque la casilla justo debajo.</target>
+                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -364,7 +372,7 @@
             </trans-unit>
             <trans-unit id="4c9JKMa">
                 <source>narration.guided_step_page_seo_edit</source>
-                <target>Abra la página que quiera modificar. Los campos que nos interesan están todos en la pestaña «Datos», debajo del título.</target>
+                <target>Abra la página que quiera modificar. Los campos que nos interesan están todos en la pestaña «Datos».</target>
             </trans-unit>
             <trans-unit id="5QGMRLR">
                 <source>narration.guided_step_page_seo_frequency</source>
@@ -388,7 +396,7 @@
             </trans-unit>
             <trans-unit id="uMDaXYg">
                 <source>narration.guided_step_page_seo_slug</source>
-                <target>Compruebe su dirección. El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Cambiarlo en una página ya publicada rompe todos los enlaces que apuntaban a ella: abra el candado solo si declara también una redirección.</target>
+                <target>Compruebe su dirección. El slug es lo que sigue al nombre de dominio, y sigue al título por sí solo. Si lo cambia en una página ya publicada, se crea por sí misma una redirección desde la dirección anterior: los enlaces existentes siguen funcionando.</target>
             </trans-unit>
             <trans-unit id="ly5qz_Z">
                 <source>narration.guided_step_page_seo_summary</source>

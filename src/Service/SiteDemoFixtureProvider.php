@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
-// The made-up pages, collection and navbar a demo site is browsed for, every visible text a "site" key so a demo seeded in Spanish reads as a Spanish site, and slugs a real small site would use
+// 975L's own pages, collection and navbar, shown by the bundles' demo - every visible text a "site" key so a demo seeded in Spanish reads as a Spanish site, and slugs a real small site would use
 class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
 {
     // The catalogue every sample text is read from, in the language the site is written in and in each of the others
@@ -66,12 +66,9 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         yield $this->home($images[0] ?? null);
 
         // The page the collection is read under: a collection is browsed through a "collection" block naming it as its source, and one left out of every page would only ever be back-office material
-        $services = $this->page('nos-services', 'services', self::CREATION_SERVICES);
-        $services->addBlock($this->collection());
+        yield $this->services();
 
-        yield $services;
-
-        yield $this->page('notre-histoire', 'history', self::CREATION_HISTORY);
+        yield $this->history();
 
         // One page already in the bin, which is what a bin is: a site that never binned anything shows an empty
         // screen where the two things a bin is for - putting a page back, or removing it for good - have nothing to
@@ -88,8 +85,15 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         $position = 0;
 
-        foreach (['workshop', 'renovation', 'signage'] as $index => $key) {
-            yield $this->item($group, $key, ++$position, $images[$index % max(1, \count($images))] ?? null);
+        // Three of 975L's own sites, each card leading to the real one
+        $projects = [
+            'resistance-haute-savoie' => ['resistance', 'https://resistance-haute-savoie.fr'],
+            'papa-calin' => ['papa_calin', 'https://papa-calin.com'],
+            'run-as' => ['run_as', 'https://run.as'],
+        ];
+
+        foreach ($projects as $slug => [$key, $url]) {
+            yield $this->item($group, $slug, $key, $url, ++$position, $images[($position - 1) % max(1, \count($images))] ?? null);
         }
     }
 
@@ -111,7 +115,10 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         $page->addBlock($this->hero($image));
 
-        $page->addBlock($this->section('feature_bar', 1, ['anchor' => 'atouts', 'eyebrow' => null, 'title' => null], [
+        // Right under the hero, what a visitor cannot guess: the demo is shared, and it does not last
+        $page->addBlock($this->section('alert', 1, ['type' => 'info', 'cssClasses' => null], [], ['content' => 'label.site_sample_home_alert']));
+
+        $page->addBlock($this->section('feature_bar', 2, ['anchor' => 'atouts', 'eyebrow' => null, 'title' => null], [
             'items.0.title' => 'label.site_sample_home_feature_edit_title',
             'items.0.text' => 'label.site_sample_home_feature_edit_text',
             'items.1.title' => 'label.site_sample_home_feature_languages_title',
@@ -122,7 +129,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'items.3.text' => 'label.site_sample_home_feature_symfony_text',
         ]));
 
-        $page->addBlock($this->section('section_features', 2, [
+        $page->addBlock($this->section('section_features', 3, [
             'anchor' => 'back-office',
             'variant' => '',
             'cards' => [
@@ -143,7 +150,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'cards.2.text' => 'label.site_sample_home_features_preview_text',
         ]));
 
-        $page->addBlock($this->section('process_steps', 3, ['anchor' => 'essayez'], [
+        $page->addBlock($this->section('process_steps', 4, ['anchor' => 'essayez'], [
             'eyebrow' => 'label.site_sample_home_steps_eyebrow',
             'title' => 'label.site_sample_home_steps_title',
             'steps.0.title' => 'label.site_sample_home_step_open_title',
@@ -157,21 +164,21 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'steps.3.text' => 'label.site_sample_home_step_save_text',
         ]));
 
-        $page->addBlock($this->section('faq', 4, ['anchor' => 'questions', 'openFirst' => true, 'columns' => 1], [
+        $page->addBlock($this->section('faq', 5, ['anchor' => 'questions', 'openFirst' => true, 'columns' => 1], [
             'title' => 'label.site_sample_home_faq_title',
-            'items.0.question' => 'label.site_sample_home_faq_shared_question',
-            'items.1.question' => 'label.site_sample_home_faq_reset_question',
+            'items.0.question' => 'label.site_sample_home_faq_install_question',
+            'items.1.question' => 'label.site_sample_home_faq_translate_question',
             'items.2.question' => 'label.site_sample_home_faq_code_question',
             'items.3.question' => 'label.site_sample_home_faq_license_question',
         ], [
-            'items.0.answer' => 'label.site_sample_home_faq_shared_answer',
-            'items.1.answer' => 'label.site_sample_home_faq_reset_answer',
+            'items.0.answer' => 'label.site_sample_home_faq_install_answer',
+            'items.1.answer' => 'label.site_sample_home_faq_translate_answer',
             'items.2.answer' => 'label.site_sample_home_faq_code_answer',
             'items.3.answer' => 'label.site_sample_home_faq_license_answer',
         ]));
 
         // Its button is pointed at the collection in the second pass, the page holding it having no identifier yet
-        $page->addBlock($this->section('cta_band', 5, ['anchor' => 'a-vous', 'ctaUrl' => null], [
+        $page->addBlock($this->section('cta_band', 6, ['anchor' => 'a-vous', 'ctaUrl' => null], [
             'title' => 'label.site_sample_home_cta_title',
             'ctaLabel' => 'label.site_sample_home_cta_label',
         ], [
@@ -181,7 +188,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         return $page;
     }
 
-    // A block of the home page, every text read from its key and staged for translation under the very path it is stored at ("items.0.title"), the rich ones inside their box
+    // A block of a page, every text read from its key and staged for translation under the very path it is stored at ("items.0.title"), the rich ones inside their box
     /**
      * @param array<string, mixed>  $data  what is stored as typed, keys and switches alike
      * @param array<string, string> $plain path => key of a plain text
@@ -281,8 +288,119 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         return $hero;
     }
 
-    // Two sections apiece - the shape an editor meets in the back office rather than a single wall of text; "nos-services" gets its collection block on top of them
+    // What 975L offers, how it works, what it made - the collection the home page's last button points at - and a way on to its story
+    private function services(): Page
+    {
+        $page = $this->emptyPage('nos-services', 'services', self::CREATION_SERVICES);
+
+        $page->addBlock($this->textSection('label.site_sample_page_services_lead', 0));
+
+        $page->addBlock($this->section('section_features', 1, [
+            'anchor' => 'services',
+            'variant' => 'tiles',
+            'cards' => [
+                ['icon' => 'bundles/c975lui/icons/pen-ruler.svg'],
+                ['icon' => 'bundles/c975lui/icons/layer-group.svg'],
+                ['icon' => 'bundles/c975lui/icons/code.svg'],
+            ],
+        ], [
+            'eyebrow' => 'label.site_sample_services_offer_eyebrow',
+            'title' => 'label.site_sample_services_offer_title',
+            'intro' => 'label.site_sample_services_offer_intro',
+            'cards.0.title' => 'label.site_sample_services_custom_title',
+            'cards.1.title' => 'label.site_sample_services_cms_title',
+            'cards.2.title' => 'label.site_sample_services_symfony_title',
+        ], [
+            'cards.0.text' => 'label.site_sample_services_custom_text',
+            'cards.1.text' => 'label.site_sample_services_cms_text',
+            'cards.2.text' => 'label.site_sample_services_symfony_text',
+        ]));
+
+        $page->addBlock($this->section('process_steps', 2, ['anchor' => 'methode'], [
+            'eyebrow' => 'label.site_sample_services_steps_eyebrow',
+            'title' => 'label.site_sample_services_steps_title',
+            'steps.0.title' => 'label.site_sample_services_step_talk_title',
+            'steps.1.title' => 'label.site_sample_services_step_mockup_title',
+            'steps.2.title' => 'label.site_sample_services_step_build_title',
+            'steps.3.title' => 'label.site_sample_services_step_launch_title',
+        ], [
+            'steps.0.text' => 'label.site_sample_services_step_talk_text',
+            'steps.1.text' => 'label.site_sample_services_step_mockup_text',
+            'steps.2.text' => 'label.site_sample_services_step_build_text',
+            'steps.3.text' => 'label.site_sample_services_step_launch_text',
+        ]));
+
+        $page->addBlock($this->collection(3));
+
+        // Its button is pointed at the story in the second pass, as the home page's are
+        $page->addBlock($this->section('cta_band', 4, ['anchor' => 'agence', 'ctaUrl' => null], [
+            'title' => 'label.site_sample_services_cta_title',
+            'ctaLabel' => 'label.site_sample_services_cta_label',
+        ], [
+            'text' => 'label.site_sample_services_cta_text',
+        ]));
+
+        return $page;
+    }
+
+    // Where 975L comes from: a few figures, the dates that made it, then what holds its sites together
+    private function history(): Page
+    {
+        $page = $this->emptyPage('notre-histoire', 'history', self::CREATION_HISTORY);
+
+        $page->addBlock($this->textSection('label.site_sample_page_history_lead', 0));
+
+        $page->addBlock($this->section('feature_bar', 1, ['anchor' => 'chiffres', 'eyebrow' => null, 'title' => null], [
+            'items.0.title' => 'label.site_sample_history_figure_year_title',
+            'items.0.text' => 'label.site_sample_history_figure_year_text',
+            'items.1.title' => 'label.site_sample_history_figure_sites_title',
+            'items.1.text' => 'label.site_sample_history_figure_sites_text',
+            'items.2.title' => 'label.site_sample_history_figure_open_source_title',
+            'items.2.text' => 'label.site_sample_history_figure_open_source_text',
+            'items.3.title' => 'label.site_sample_history_figure_languages_title',
+            'items.3.text' => 'label.site_sample_history_figure_languages_text',
+        ]));
+
+        $page->addBlock($this->section('process_steps', 2, ['anchor' => 'dates'], [
+            'eyebrow' => 'label.site_sample_history_timeline_eyebrow',
+            'title' => 'label.site_sample_history_timeline_title',
+            'steps.0.title' => 'label.site_sample_history_date_itu_title',
+            'steps.1.title' => 'label.site_sample_history_date_agency_title',
+            'steps.2.title' => 'label.site_sample_history_date_bundles_title',
+            'steps.3.title' => 'label.site_sample_history_date_today_title',
+        ], [
+            'steps.0.text' => 'label.site_sample_history_date_itu_text',
+            'steps.1.text' => 'label.site_sample_history_date_agency_text',
+            'steps.2.text' => 'label.site_sample_history_date_bundles_text',
+            'steps.3.text' => 'label.site_sample_history_date_today_text',
+        ]));
+
+        $page->addBlock($this->textSection('label.site_sample_page_history_body', 3));
+
+        // Its button is pointed at the services in the second pass, as the home page's are
+        $page->addBlock($this->section('cta_band', 4, ['anchor' => 'projet', 'ctaUrl' => null], [
+            'title' => 'label.site_sample_history_cta_title',
+            'ctaLabel' => 'label.site_sample_history_cta_label',
+        ], [
+            'text' => 'label.site_sample_history_cta_text',
+        ]));
+
+        return $page;
+    }
+
+    // Two sections - the shape an editor meets in the back office rather than a single wall of text
     private function page(string $slug, string $key, string $creation): Page
+    {
+        $page = $this->emptyPage($slug, $key, $creation);
+
+        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_lead', 0));
+        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_body', 1));
+
+        return $page;
+    }
+
+    // A published page with its title staged for translation, and no block yet
+    private function emptyPage(string $slug, string $key, string $creation): Page
     {
         $date = new \DateTime($creation);
 
@@ -295,9 +413,6 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             ->setModification($date);
 
         $this->demoFixtureTranslator->stage($page, PageTranslator::OWNER, self::DOMAIN, ['title' => 'label.site_sample_page_' . $key . '_title']);
-
-        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_lead', 0));
-        $page->addBlock($this->textSection('label.site_sample_page_' . $key . '_body', 1));
 
         return $page;
     }
@@ -325,11 +440,11 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     }
 
     // The keys a "collection" carries in the back office, its source naming the group yielded below - resolved at render time by CollectionItemSourceProvider, so the order the two are recorded in does not matter
-    private function collection(): Block
+    private function collection(int $position): Block
     {
         $block = new Block()
             ->setKind('collection')
-            ->setPosition(2)
+            ->setPosition($position)
             ->setData([
                 'anchor' => 'realisations',
                 'source' => 'site.collection.realisations',
@@ -354,7 +469,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     {
         yield from $this->demoFixtureTranslator->translations();
 
-        $this->linkHomeButtons();
+        $this->linkButtons();
 
         // Only where none exists yet: Menu::$location is unique, and a database already holding a navbar keeps its own rather than failing with the pages already written
         if (null === $this->menuRepository->findOneBy(['location' => Menu::LOCATION_NAVBAR])) {
@@ -362,24 +477,31 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         }
     }
 
-    // The home page's buttons, pointed at their pages by the identifier the first flush handed out ("page:ID", resolved at render time by PageLinkLocalizer): a raw path would lose the "/demo" prefix. Written on the blocks already recorded, the flush closing this pass carrying the change
-    private function linkHomeButtons(): void
+    // The buttons of the pages, pointed at their targets by the identifier the first flush handed out ("page:ID", resolved at render time by PageLinkLocalizer): a raw path would lose the "/demo" prefix. Written on the blocks already recorded, the flush closing this pass carrying the change
+    private function linkButtons(): void
     {
-        $home = $this->pageRepository->findOneBy(['slug' => 'home']);
-        $services = $this->pageRepository->findOneBy(['slug' => 'nos-services']);
-        $history = $this->pageRepository->findOneBy(['slug' => 'notre-histoire']);
-        if (null === $home || null === $services || null === $history) {
-            return;
+        $pages = [];
+        foreach (['home', 'nos-services', 'notre-histoire'] as $slug) {
+            $pages[$slug] = $this->pageRepository->findOneBy(['slug' => $slug]);
+            if (null === $pages[$slug]) {
+                return;
+            }
         }
 
-        foreach ($home->getBlocks() as $block) {
-            $data = $block->getData();
+        $services = 'page:' . $pages['nos-services']->getId();
+        $history = 'page:' . $pages['notre-histoire']->getId();
+        $links = [
+            'home' => ['hero' => ['primaryUrl' => $services, 'secondaryUrl' => $history], 'cta_band' => ['ctaUrl' => $services . '#realisations']],
+            'nos-services' => ['cta_band' => ['ctaUrl' => $history]],
+            'notre-histoire' => ['cta_band' => ['ctaUrl' => $services]],
+        ];
 
-            match ($block->getKind()) {
-                'hero' => $block->setData(['primaryUrl' => 'page:' . $services->getId(), 'secondaryUrl' => 'page:' . $history->getId()] + $data),
-                'cta_band' => $block->setData(['ctaUrl' => 'page:' . $services->getId() . '#realisations'] + $data),
-                default => null,
-            };
+        foreach ($links as $slug => $kinds) {
+            foreach ($pages[$slug]->getBlocks() as $block) {
+                if (isset($kinds[$block->getKind()])) {
+                    $block->setData($kinds[$block->getKind()] + $block->getData());
+                }
+            }
         }
     }
 
@@ -408,15 +530,15 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         return $menu;
     }
 
-    private function item(CollectionGroup $group, string $key, int $position, ?string $image): CollectionItem
+    private function item(CollectionGroup $group, string $slug, string $key, string $url, int $position, ?string $image): CollectionItem
     {
         $item = new CollectionItem()
             ->setCollectionGroup($group)
             ->setTitle($this->trans('label.site_sample_project_' . $key . '_title'))
-            ->setSlug($key)
+            ->setSlug($slug)
             ->setDescription($this->trans('label.site_sample_project_' . $key . '_description'))
-            // No url, for the same reason the hero carries no button - and "#" would be worse than none: the card renders a button labelled with it, and the portfolio variant takes it for a real link
-            ->setUrl(null)
+            // An outside address, which the "/demo" prefix does not touch
+            ->setUrl($url)
             ->setPosition($position);
 
         // A site declaring no placeholder leaves the card without its picture rather than with a broken one - the collection block renders it either way, which an empty collection would not

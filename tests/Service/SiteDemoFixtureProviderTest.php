@@ -117,8 +117,8 @@ class SiteDemoFixtureProviderTest extends TestCase
 
         $this->assertCount(4, $pages);
 
-        // The home page opens on a hero and carries five sections under it, the others two sections apiece - "nos-services" with its collection block on top of them
-        $expected = ['home' => 6, 'nos-services' => 3, 'notre-histoire' => 2, 'ancienne-offre' => 2];
+        // The home page opens on a hero, its alert and five sections, "nos-services" and "notre-histoire" carry five sections apiece - the collection among them - and the binned page its two
+        $expected = ['home' => 7, 'nos-services' => 5, 'notre-histoire' => 5, 'ancienne-offre' => 2];
 
         foreach ($pages as $page) {
             $this->assertCount($expected[$page->getSlug()], $page->getBlocks(), (string) $page->getSlug());
@@ -155,27 +155,54 @@ class SiteDemoFixtureProviderTest extends TestCase
         $this->assertFalse($home->isTitleDisplayed());
 
         $blocks = $home->getBlocks()->toArray();
-        $this->assertSame(['hero', 'feature_bar', 'section_features', 'process_steps', 'faq', 'cta_band'], array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks));
-        $this->assertSame([0, 1, 2, 3, 4, 5], array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks));
+        $this->assertSame(['hero', 'alert', 'feature_bar', 'section_features', 'process_steps', 'faq', 'cta_band'], array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks));
+        $this->assertSame([0, 1, 2, 3, 4, 5, 6], array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks));
 
-        $data = $blocks[4]->getData();
+        $this->assertSame('<div>label.site_sample_home_alert</div>', $blocks[1]->getData()['content']);
+
+        $data = $blocks[5]->getData();
         $this->assertCount(4, $data['items']);
-        $this->assertSame('label.site_sample_home_faq_shared_question', $data['items'][0]['question']);
-        $this->assertSame('<div>label.site_sample_home_faq_shared_answer</div>', $data['items'][0]['answer']);
-        $this->assertSame('bundles/c975lui/icons/pen-ruler.svg', $blocks[2]->getData()['cards'][0]['icon']);
-        $this->assertSame('label.site_sample_home_features_edit_title', $blocks[2]->getData()['cards'][0]['title']);
+        $this->assertSame('label.site_sample_home_faq_install_question', $data['items'][0]['question']);
+        $this->assertSame('<div>label.site_sample_home_faq_install_answer</div>', $data['items'][0]['answer']);
+        $this->assertSame('bundles/c975lui/icons/pen-ruler.svg', $blocks[3]->getData()['cards'][0]['icon']);
+        $this->assertSame('label.site_sample_home_features_edit_title', $blocks[3]->getData()['cards'][0]['title']);
+    }
+
+    // Each page reads in its own order, the collection the home page's last button points at kept under its anchor, and both close on a band leading to the other
+    public function testTheServicesAndHistoryPagesAreLaidOut(): void
+    {
+        $pages = [];
+        foreach ($this->fixtures($this->createProvider()) as $entity) {
+            if ($entity instanceof Page) {
+                $pages[$entity->getSlug()] = $entity->getBlocks()->toArray();
+            }
+        }
+
+        $kinds = static fn (array $blocks): array => array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks);
+        $positions = static fn (array $blocks): array => array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks);
+
+        $this->assertSame(['text_section', 'section_features', 'process_steps', 'collection', 'cta_band'], $kinds($pages['nos-services']));
+        $this->assertSame([0, 1, 2, 3, 4], $positions($pages['nos-services']));
+        $this->assertSame('realisations', $pages['nos-services'][3]->getData()['anchor']);
+
+        $this->assertSame(['text_section', 'feature_bar', 'process_steps', 'text_section', 'cta_band'], $kinds($pages['notre-histoire']));
+        $this->assertSame([0, 1, 2, 3, 4], $positions($pages['notre-histoire']));
     }
 
     // The buttons are pointed at their pages once the first flush gave them an identifier, a raw path losing the "/demo" prefix
-    public function testTheSecondPassPointsTheHomeButtonsAtTheirPages(): void
+    public function testTheSecondPassPointsTheButtonsAtTheirPages(): void
     {
-        $pages = array_filter($this->fixtures($this->createProvider()), static fn (object $e): bool => $e instanceof Page && 'home' === $e->getSlug());
-        $home = reset($pages);
-        $this->assertInstanceOf(Page::class, $home);
+        $pages = [];
+        foreach ($this->fixtures($this->createProvider()) as $entity) {
+            if ($entity instanceof Page) {
+                $pages[$entity->getSlug()] = $entity;
+            }
+        }
 
-        $services = new Page();
+        $home = $pages['home'];
+        $services = $pages['nos-services'];
         new \ReflectionProperty(Page::class, 'id')->setValue($services, 12);
-        $history = new Page();
+        $history = $pages['notre-histoire'];
         new \ReflectionProperty(Page::class, 'id')->setValue($history, 13);
 
         $repository = $this->createStub(PageRepository::class);
@@ -195,11 +222,13 @@ class SiteDemoFixtureProviderTest extends TestCase
         $blocks = $home->getBlocks()->toArray();
         $this->assertSame('page:12', $blocks[0]->getData()['primaryUrl']);
         $this->assertSame('page:13', $blocks[0]->getData()['secondaryUrl']);
-        $this->assertSame('page:12#realisations', $blocks[5]->getData()['ctaUrl']);
+        $this->assertSame('page:12#realisations', $blocks[6]->getData()['ctaUrl']);
         $this->assertSame('label.site_sample_home_hero_primary', $blocks[0]->getData()['primaryLabel']);
+        $this->assertSame('page:13', $services->getBlocks()->last()->getData()['ctaUrl']);
+        $this->assertSame('page:12', $history->getBlocks()->last()->getData()['ctaUrl']);
     }
 
-    // A demo site is public: its made-up pages have no business in a search engine, where the site's own do
+    // A demo site is public: its pages stand in for 975L's own and have no business in a search engine, where the real ones do
     public function testThePagesAreNotIndexable(): void
     {
         foreach ($this->fixtures($this->createProvider()) as $entity) {
@@ -256,14 +285,17 @@ class SiteDemoFixtureProviderTest extends TestCase
         }
     }
 
-    // "#" would render as a button labelled with it, and the portfolio variant would take it for a real link
-    public function testTheItemsCarryNoUrl(): void
+    // Each card leads to the real site it shows, an outside address the "/demo" prefix does not touch
+    public function testTheItemsLeadToTheirRealSites(): void
     {
+        $urls = [];
         foreach ($this->fixtures($this->createProvider()) as $entity) {
             if ($entity instanceof CollectionItem) {
-                $this->assertNull($entity->getUrl(), (string) $entity->getSlug());
+                $urls[$entity->getSlug()] = $entity->getUrl();
             }
         }
+
+        $this->assertSame(['resistance-haute-savoie' => 'https://resistance-haute-savoie.fr', 'papa-calin' => 'https://papa-calin.com', 'run-as' => 'https://run.as'], $urls);
     }
 
     // A collection nothing renders is back-office material only: it is browsed through a block naming it as its source

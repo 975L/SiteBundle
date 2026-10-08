@@ -54,7 +54,7 @@ class SiteGuidedProjectProviderTest extends TestCase
         return new SiteGuidedProjectProvider($this->createAdminUrlGenerator($controllers), $this->createConfigService());
     }
 
-    // The sequence follows the sidebar's own reading order (Collections, Pages, then the advanced "Menus"), so a project sits where the user finds the screen it walks - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
+    // The sequence follows the task a site lives through (Collections, Pages, then Menus), not the sidebar - and the ones sharing the pages follow the order a page lives: created, made findable, checked, then reworked
     public function testGetGuidedProjectsReturnsFifteenProjectsContinuingConfigBundlesOrderSequence(): void
     {
         $projects = $this->createProvider()->getGuidedProjects();
@@ -64,6 +64,18 @@ class SiteGuidedProjectProviderTest extends TestCase
             array_column($projects, 'slug')
         );
         $this->assertSame([2010, 2015, 2020, 2025, 2027, 2030, 2035, 2040, 2050, 2060, 2070, 2080, 2085, 2090, 2095], array_column($projects, 'order'));
+    }
+
+    // The fields are walked in the order the form shows them - the ones shared by every language first, then the summary said in each - so the user never climbs back up the screen
+    public function testThePageSeoProjectWalksItsFieldsDownTheScreen(): void
+    {
+        $projects = array_column($this->createProvider()->getGuidedProjects(), null, 'slug');
+        $fields = array_values(array_filter(
+            array_column($projects['site-page-seo']['steps'], 'highlight'),
+            static fn (string $highlight): bool => str_starts_with($highlight, '#Page_'),
+        ));
+
+        $this->assertSame(['#Page_slug', '#Page_isIndexable', '#Page_changeFrequency', '#Page_ogImage', '#Page_summarySocialNetwork'], $fields);
     }
 
     // Orders are merged across every bundle contributing projects, and two equal ones leave their sequence to the order the providers happen to be registered in - this bundle's own block is the 2000 GuidedProjectProviderInterface reserves it

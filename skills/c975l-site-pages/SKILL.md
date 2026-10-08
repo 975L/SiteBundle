@@ -278,11 +278,14 @@ raw column is the writing language's, whatever language the page is being read i
 
 `SiteDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands a demo site three published pages with
 their blocks and a collection of three items, read by a `collection` block on `nos-services` - loading it is that
-site's own business, this bundle shipping no command that writes to a database. Menus are left out on purpose: a site holds one navbar and one footer of its
-own, and a dataset adding its own would fight the navigation the demo is browsed by. The pages carry written-down
-creation dates and are left out of the index; their blocks ride the cascade, while each `CollectionItem` is handed
-over on its own, nothing cascading off a `CollectionGroup`. The home page holds a `hero`, `feature_bar`, `section_features`, `process_steps`, `faq` and `cta_band`;
-its buttons are linked as `page:ID` in the second pass (`getLinkedDemoFixtures()`), never as a raw path.
+site's own business, this bundle shipping no command that writes to a database. The content is 975L's own, each
+item leading to one of its real sites (an outside URL); a site wanting another demo decorates the provider. The
+second pass lays a navbar only where none exists. The pages carry written-down creation dates and are left out of
+the index; their blocks ride the cascade, while each `CollectionItem` is handed over on its own, nothing cascading
+off a `CollectionGroup`. `home` holds `hero`, `alert`, `feature_bar`, `section_features`, `process_steps`, `faq`,
+`cta_band`; `nos-services` holds `text_section`, `section_features`, `process_steps`, `collection`, `cta_band`;
+`notre-histoire` holds `text_section`, `feature_bar`, `process_steps`, `text_section`, `cta_band`. The hero's buttons
+and the three `cta_band` are linked as `page:ID` in the second pass (`getLinkedDemoFixtures()`), never as a raw path.
 
 ## Social publication
 

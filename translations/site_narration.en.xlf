@@ -46,6 +46,10 @@
                 <source>narration.guided_step_collection_item_save</source>
                 <target>Save the item: you are back on the list of the collection's items.</target>
             </trans-unit>
+            <trans-unit id="H6YrxEC">
+                <source>narration.guided_step_collection_item_title</source>
+                <target>Give it a title: it is the name the card shows first. The text, image and link are filled in right below.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Now open its items. The collection is only a container: its items are what carry the content.</target>
@@ -218,6 +222,10 @@
                 <source>narration.guided_step_page_creation_blocks</source>
                 <target>Add a block. A page's content is made of blocks: text, image, gallery, form. Add one and fill it in.</target>
             </trans-unit>
+            <trans-unit id="AfuSv2_">
+                <source>narration.guided_step_page_creation_members</source>
+                <target>Keep it for members if needed. Checked, only a signed-in person can read the page, and it leaves the sitemap for as long as it stays reserved. Leave it unchecked for a public page.</target>
+            </trans-unit>
             <trans-unit id="hE.O12b">
                 <source>narration.guided_step_page_creation_new</source>
                 <target>Click the button above the list: it opens the creation form.</target>
@@ -228,7 +236,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview. To keep it for signed-in members, check the box right below.</target>
+                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -364,7 +372,7 @@
             </trans-unit>
             <trans-unit id="4c9JKMa">
                 <source>narration.guided_step_page_seo_edit</source>
-                <target>Open the page to edit. The fields we are after all sit in the "Data" tab, below the title.</target>
+                <target>Open the page to edit. The fields we are after all sit in the "Data" tab.</target>
             </trans-unit>
             <trans-unit id="5QGMRLR">
                 <source>narration.guided_step_page_seo_frequency</source>
@@ -388,7 +396,7 @@
             </trans-unit>
             <trans-unit id="uMDaXYg">
                 <source>narration.guided_step_page_seo_slug</source>
-                <target>Check its address. The slug is what follows the domain name, and it follows the title on its own. Changing it on a page already online breaks every link pointing at it: open the padlock only if you also declare a redirect.</target>
+                <target>Check its address. The slug is what follows the domain name, and it follows the title on its own. If you change it on a page already online, a redirect from the old address is created by itself: existing links keep working.</target>
             </trans-unit>
             <trans-unit id="ly5qz_Z">
                 <source>narration.guided_step_page_seo_summary</source>

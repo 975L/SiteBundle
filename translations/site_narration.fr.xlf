@@ -46,6 +46,10 @@
                 <source>narration.guided_step_collection_item_save</source>
                 <target>Enregistrez l'élément : vous revenez sur la liste des éléments de la collection.</target>
             </trans-unit>
+            <trans-unit id="H6YrxEC">
+                <source>narration.guided_step_collection_item_title</source>
+                <target>Donnez-lui un titre : c'est le nom que la carte affiche en premier. Le texte, l'image et le lien se remplissent juste en dessous.</target>
+            </trans-unit>
             <trans-unit id="okcRN..">
                 <source>narration.guided_step_collection_items</source>
                 <target>Ouvrez maintenant ses éléments. La collection n'est qu'un contenant : ce sont ses éléments qui portent le contenu.</target>
@@ -218,6 +222,10 @@
                 <source>narration.guided_step_page_creation_blocks</source>
                 <target>Ajoutez un block. Le contenu d'une page est fait de blocks : texte, image, galerie, formulaire. Ajoutez-en un et remplissez-le.</target>
             </trans-unit>
+            <trans-unit id="AfuSv2_">
+                <source>narration.guided_step_page_creation_members</source>
+                <target>Réservez-la aux membres si besoin. Cochée, seule une personne connectée peut lire la page, et elle sort du sitemap tant qu'elle reste réservée. Laissez-la décochée pour une page publique.</target>
+            </trans-unit>
             <trans-unit id="hE.O12b">
                 <source>narration.guided_step_page_creation_new</source>
                 <target>Cliquez sur le bouton en haut de la liste : il ouvre le formulaire de création.</target>
@@ -228,7 +236,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation. Pour la réserver aux membres connectés, cochez la case juste en dessous.</target>
+                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -364,7 +372,7 @@
             </trans-unit>
             <trans-unit id="4c9JKMa">
                 <source>narration.guided_step_page_seo_edit</source>
-                <target>Ouvrez la page à modifier. Les champs qui nous intéressent sont tous dans l'onglet « Données », sous le titre.</target>
+                <target>Ouvrez la page à modifier. Les champs qui nous intéressent sont tous dans l'onglet « Données ».</target>
             </trans-unit>
             <trans-unit id="5QGMRLR">
                 <source>narration.guided_step_page_seo_frequency</source>
@@ -388,7 +396,7 @@
             </trans-unit>
             <trans-unit id="uMDaXYg">
                 <source>narration.guided_step_page_seo_slug</source>
-                <target>Vérifiez son adresse. Le slug est ce qui suit le nom de domaine, et il suit le titre tout seul. Le changer sur une page déjà en ligne casse tous les liens qui pointaient dessus : n'ouvrez le cadenas que si vous déclarez aussi une redirection.</target>
+                <target>Vérifiez son adresse. Le slug est ce qui suit le nom de domaine, et il suit le titre tout seul. Si vous le changez sur une page déjà en ligne, une redirection depuis l'ancienne adresse est créée d'elle-même : les liens existants continuent de fonctionner.</target>
             </trans-unit>
             <trans-unit id="ly5qz_Z">
                 <source>narration.guided_step_page_seo_summary</source>

@@ -736,15 +736,26 @@ Nothing is persisted per item — see `PageController::resolveCollectionDetail()
 
 `Service\SiteDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands a demo site three published
 pages carrying their blocks, and a collection of three items with their pictures, read by a `collection` block on
-`nos-services` — so a demo has something to browse, edit and put back. Its home page is laid out as a real one is — a `hero`, then a `feature_bar`, `section_features`, `process_steps`, `faq` and `cta_band` — its buttons pointed at their pages as `page:ID` once the first flush gave them an identifier, a raw path losing the demo's prefix. Loading it is that site's own business: this bundle ships no command that writes to a database.
+`nos-services` — so a demo has something to browse, edit and put back. Its content is 975L's own: the bundles' demo
+is the agency's showcase, each item leading to one of its real sites (an outside URL), and a site wanting another
+demo decorates the provider. A fourth page waits in the bin. Loading it is that site's own business: this bundle
+ships no command that writes to a database.
 
-**Menus are deliberately left out.** A site holds one menu per location — one navbar, one footer — so a dataset
-adding its own would either collide with the site's or replace what it navigates by. A demo site's navigation is
-its own content.
+| Page | Blocks |
+|---|---|
+| `home` | `hero`, `alert`, `feature_bar`, `section_features`, `process_steps`, `faq`, `cta_band` |
+| `nos-services` | `text_section`, `section_features`, `process_steps`, `collection`, `cta_band` |
+| `notre-histoire` | `text_section`, `feature_bar`, `process_steps`, `text_section`, `cta_band` |
+
+The hero's buttons and the three `cta_band` are pointed at their pages as `page:ID` in the second pass
+(`getLinkedDemoFixtures()`), once the first flush gave them an identifier — a raw path would lose the demo's prefix.
+
+**A navbar only where none exists.** A site holds one menu per location, so the second pass lays a navbar linking
+the three pages only when the database holds none yet, and leaves an existing one in place.
 
 The pages carry written-down creation dates, so a demo reloaded between two takes of the same recorded sequence
-reads the same dates back, and they are left out of the index: a made-up page has no business in a search engine
-where the site's own do. Their blocks ride the ORM cascade, so a page taken back by a reload leaves with them —
+reads the same dates back, and they are left out of the index: a demo page has no business in a search engine
+where the real site's do. Their blocks ride the ORM cascade, so a page taken back by a reload leaves with them —
 where a `CollectionItem` owns its side of the relation and is therefore handed over on its own.
 
 The pictures come from what the site declares through UiBundle's `PlaceholderMediaProviderInterface`, **as a

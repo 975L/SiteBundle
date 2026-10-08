@@ -238,6 +238,10 @@
                 <source>description.guided_step_collection_item_save</source>
                 <target>You are back on the list of the collection's items.</target>
             </trans-unit>
+            <trans-unit id="DCpQpEZ">
+                <source>description.guided_step_collection_item_title</source>
+                <target>It is the name the card shows first. The text, image and link are filled in right below.</target>
+            </trans-unit>
             <trans-unit id="XYbqA8D">
                 <source>description.guided_step_collection_items</source>
                 <target>The collection is a container: its items are what carry the content.</target>
@@ -382,6 +386,10 @@
                 <source>description.guided_step_page_creation_blocks</source>
                 <target>A page's content is made of blocks: text, image, gallery, form… Add one and fill it in.</target>
             </trans-unit>
+            <trans-unit id="RqVhLXQ">
+                <source>description.guided_step_page_creation_members</source>
+                <target>Checked, only a signed-in person can read the page, and it leaves the sitemap for as long as it stays reserved. Leave it unchecked for a public page.</target>
+            </trans-unit>
             <trans-unit id="ot0jQxm">
                 <source>description.guided_step_page_creation_new</source>
                 <target>The button above the list opens the creation form.</target>
@@ -392,7 +400,7 @@
             </trans-unit>
             <trans-unit id="RGI0ZHq">
                 <source>description.guided_step_page_creation_publish</source>
-                <target>As long as this switch is off, the page is only visible to you, as a preview. To keep it for signed-in members, check the box right below.</target>
+                <target>As long as this switch is off, the page is only visible to you, as a preview.</target>
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
@@ -512,7 +520,7 @@
             </trans-unit>
             <trans-unit id="bfIpkLz">
                 <source>description.guided_step_page_seo_edit</source>
-                <target>These fields all sit in the "Data" tab, below the title. The highlighted button is the first row's: click the one on your page's row.</target>
+                <target>These fields all sit in the "Data" tab. The highlighted button is the first row's: click the one on your page's row.</target>
             </trans-unit>
             <trans-unit id="Ve53OEd">
                 <source>description.guided_step_page_seo_frequency</source>
@@ -532,7 +540,7 @@
             </trans-unit>
             <trans-unit id="QSCJqVU">
                 <source>description.guided_step_page_seo_slug</source>
-                <target>The slug is what follows the domain name, and it follows the title on its own. Changing it on a page already online breaks every link pointing at it, so open the padlock only if you also declare a redirect in the settings.</target>
+                <target>The slug is what follows the domain name, and it follows the title on its own. Changing it on a page already online creates a redirect from the old address by itself, so existing links keep working.</target>
             </trans-unit>
             <trans-unit id="dS6xslk">
                 <source>description.guided_step_page_seo_summary</source>
@@ -1034,6 +1042,10 @@
                 <source>label.guided_step_collection_item_save</source>
                 <target>Save the item</target>
             </trans-unit>
+            <trans-unit id="S6Oh_26">
+                <source>label.guided_step_collection_item_title</source>
+                <target>Give it a title</target>
+            </trans-unit>
             <trans-unit id="A9QBctX">
                 <source>label.guided_step_collection_items</source>
                 <target>Open its items</target>
@@ -1205,6 +1217,10 @@
             <trans-unit id="coxrX3D">
                 <source>label.guided_step_page_creation_blocks</source>
                 <target>Add a block</target>
+            </trans-unit>
+            <trans-unit id="9G8ZHjn">
+                <source>label.guided_step_page_creation_members</source>
+                <target>Keep it for members</target>
             </trans-unit>
             <trans-unit id="qKcJkhs">
                 <source>label.guided_step_page_creation_new</source>
@@ -2034,6 +2050,94 @@
                 <source>label.site_sample_collection_name</source>
                 <target>Our work</target>
             </trans-unit>
+            <trans-unit id="oPPgiZC">
+                <source>label.site_sample_history_cta_label</source>
+                <target>See our services</target>
+            </trans-unit>
+            <trans-unit id="oIhaco8">
+                <source>label.site_sample_history_cta_text</source>
+                <target>Custom website, CMS or Symfony development: see what we do.</target>
+            </trans-unit>
+            <trans-unit id="eBkNCIr">
+                <source>label.site_sample_history_cta_title</source>
+                <target>A project in mind?</target>
+            </trans-unit>
+            <trans-unit id="l5r8x4d">
+                <source>label.site_sample_history_date_agency_text</source>
+                <target>975L and its first Symfony bundles are born.</target>
+            </trans-unit>
+            <trans-unit id="DLyHphl">
+                <source>label.site_sample_history_date_agency_title</source>
+                <target>2018</target>
+            </trans-unit>
+            <trans-unit id="RR6e7hc">
+                <source>label.site_sample_history_date_bundles_text</source>
+                <target>The bundles are brought together, with this demo.</target>
+            </trans-unit>
+            <trans-unit id="BkSNqEx">
+                <source>label.site_sample_history_date_bundles_title</source>
+                <target>2026</target>
+            </trans-unit>
+            <trans-unit id="a0ifQW0">
+                <source>label.site_sample_history_date_itu_text</source>
+                <target>Laurent sets up the CMS of the ITU Radiocommunication Sector, in six languages.</target>
+            </trans-unit>
+            <trans-unit id="OxZt3S7">
+                <source>label.site_sample_history_date_itu_title</source>
+                <target>2005</target>
+            </trans-unit>
+            <trans-unit id="Th23iwZ">
+                <source>label.site_sample_history_date_today_text</source>
+                <target>Some fifteen websites live, all on the same bundles.</target>
+            </trans-unit>
+            <trans-unit id="J0lirWT">
+                <source>label.site_sample_history_date_today_title</source>
+                <target>Today</target>
+            </trans-unit>
+            <trans-unit id="m1IE5ib">
+                <source>label.site_sample_history_figure_languages_text</source>
+                <target>every content is translatable</target>
+            </trans-unit>
+            <trans-unit id="FYTsKsW">
+                <source>label.site_sample_history_figure_languages_title</source>
+                <target>Multilingual</target>
+            </trans-unit>
+            <trans-unit id="YVzFAlf">
+                <source>label.site_sample_history_figure_open_source_text</source>
+                <target>bundles published on GitHub</target>
+            </trans-unit>
+            <trans-unit id="Ja0iye7">
+                <source>label.site_sample_history_figure_open_source_title</source>
+                <target>Open source</target>
+            </trans-unit>
+            <trans-unit id="I5gWT1t">
+                <source>label.site_sample_history_figure_sites_text</source>
+                <target>live on the bundles</target>
+            </trans-unit>
+            <trans-unit id="IzoveWi">
+                <source>label.site_sample_history_figure_sites_title</source>
+                <target>15 websites</target>
+            </trans-unit>
+            <trans-unit id="1ntGz3g">
+                <source>label.site_sample_history_figure_year_text</source>
+                <target>of web experience</target>
+            </trans-unit>
+            <trans-unit id="cY0SoL0">
+                <source>label.site_sample_history_figure_year_title</source>
+                <target>20 years</target>
+            </trans-unit>
+            <trans-unit id="URxxejR">
+                <source>label.site_sample_history_timeline_eyebrow</source>
+                <target>A few dates</target>
+            </trans-unit>
+            <trans-unit id="TcRhUg5">
+                <source>label.site_sample_history_timeline_title</source>
+                <target>From a multilingual CMS to the c975L bundles</target>
+            </trans-unit>
+            <trans-unit id="nl8vVdM">
+                <source>label.site_sample_home_alert</source>
+                <target>Shared demo: what you change, the other visitors see, until the next reset.</target>
+            </trans-unit>
             <trans-unit id="UXG9rFi">
                 <source>label.site_sample_home_cta_label</source>
                 <target>See our work</target>
@@ -2054,6 +2158,14 @@
                 <source>label.site_sample_home_faq_code_question</source>
                 <target>Do I need to know how to code?</target>
             </trans-unit>
+            <trans-unit id="WghJ0zO">
+                <source>label.site_sample_home_faq_install_answer</source>
+                <target>Yes: they install with Composer in a Symfony application.</target>
+            </trans-unit>
+            <trans-unit id="QNjLmx8">
+                <source>label.site_sample_home_faq_install_question</source>
+                <target>Can I install these bundles on my site?</target>
+            </trans-unit>
             <trans-unit id="CZm_zGL">
                 <source>label.site_sample_home_faq_license_answer</source>
                 <target>The MIT license: open source, free and modifiable.</target>
@@ -2062,25 +2174,17 @@
                 <source>label.site_sample_home_faq_license_question</source>
                 <target>Which license are the bundles under?</target>
             </trans-unit>
-            <trans-unit id="FVBeNIg">
-                <source>label.site_sample_home_faq_reset_answer</source>
-                <target>No: the demo is reset regularly, and starts again from this very content.</target>
-            </trans-unit>
-            <trans-unit id="rFZPQVV">
-                <source>label.site_sample_home_faq_reset_question</source>
-                <target>Are my changes kept?</target>
-            </trans-unit>
-            <trans-unit id="3kYk2nX">
-                <source>label.site_sample_home_faq_shared_answer</source>
-                <target>Yes: the demo is shared between all its visitors.</target>
-            </trans-unit>
-            <trans-unit id="OHMNEZw">
-                <source>label.site_sample_home_faq_shared_question</source>
-                <target>Can other visitors see my changes?</target>
-            </trans-unit>
             <trans-unit id="i.z3k4R">
                 <source>label.site_sample_home_faq_title</source>
                 <target>Frequently asked questions</target>
+            </trans-unit>
+            <trans-unit id="q1W8lTd">
+                <source>label.site_sample_home_faq_translate_answer</source>
+                <target>Yes: every page, menu and block is translated from the back office.</target>
+            </trans-unit>
+            <trans-unit id="UhdxsbZ">
+                <source>label.site_sample_home_faq_translate_question</source>
+                <target>Can the content be translated?</target>
             </trans-unit>
             <trans-unit id="UhP1ytg">
                 <source>label.site_sample_home_feature_bin_text</source>
@@ -2228,11 +2332,11 @@
             </trans-unit>
             <trans-unit id="sd_HyXd">
                 <source>label.site_sample_page_history_body</source>
-                <target>There are six of us now, and that idea has not moved. What leaves this place is built to outlast us.</target>
+                <target>Every site we deliver runs on our own bundles, open source and published on GitHub: what is improved for one benefits all the others.</target>
             </trans-unit>
             <trans-unit id="wE8uhw6">
                 <source>label.site_sample_page_history_lead</source>
-                <target>The workshop opened in 2014 in an old joinery, with two benches and the idea that a well-made piece of furniture is repaired rather than replaced.</target>
+                <target>975L is an independent web agency, founded in 2018 by Laurent Marquet, a PHP and Symfony developer.</target>
             </trans-unit>
             <trans-unit id="OLHmE2r">
                 <source>label.site_sample_page_history_title</source>
@@ -2244,47 +2348,131 @@
             </trans-unit>
             <trans-unit id="5_Rfe.A">
                 <source>label.site_sample_page_home_subtitle</source>
-                <target>A whole site, built with the c975L bundles, whose back office is yours to open.</target>
+                <target>This demo is built with the c975L bundles: you hold the keys to its back office.</target>
             </trans-unit>
             <trans-unit id="kAKeEqY">
                 <source>label.site_sample_page_home_title</source>
                 <target>A complete website, block by block</target>
             </trans-unit>
-            <trans-unit id="ZBYST9H">
-                <source>label.site_sample_page_services_body</source>
-                <target>Every project starts with a conversation: what you sell, who to, and what the site has to do for you. The rest follows from that.</target>
-            </trans-unit>
             <trans-unit id="FMlEreK">
                 <source>label.site_sample_page_services_lead</source>
-                <target>We work with craftspeople and small teams who want a site that is clear, quick, and theirs to keep up.</target>
+                <target>975L designs and builds custom websites with Symfony, on its own bundles: you then manage your content yourself.</target>
             </trans-unit>
             <trans-unit id="JRJ3j9d">
                 <source>label.site_sample_page_services_title</source>
                 <target>Our services</target>
             </trans-unit>
-            <trans-unit id="xHxyvd5">
-                <source>label.site_sample_project_renovation_description</source>
-                <target>A frontage brought back to what it was, joinery included, without giving up any of the comfort it has now.</target>
+            <trans-unit id="A79wx0r">
+                <source>label.site_sample_project_papa_calin_description</source>
+                <target>Stories for children, to read and to watch.</target>
             </trans-unit>
-            <trans-unit id="BaMXBvj">
-                <source>label.site_sample_project_renovation_title</source>
-                <target>Shopfront restoration</target>
+            <trans-unit id="qiHMSqE">
+                <source>label.site_sample_project_papa_calin_title</source>
+                <target>Papa Câlin</target>
             </trans-unit>
-            <trans-unit id="OxYUFPX">
-                <source>label.site_sample_project_signage_description</source>
-                <target>Signs and boards drawn for the place, made in the workshop and put up by us.</target>
+            <trans-unit id="f6MK6y4">
+                <source>label.site_sample_project_resistance_description</source>
+                <target>The Resistance in Haute-Savoie during the Second World War.</target>
             </trans-unit>
-            <trans-unit id="23q.uFR">
-                <source>label.site_sample_project_signage_title</source>
-                <target>Made-to-measure signage</target>
+            <trans-unit id="c.8ySFW">
+                <source>label.site_sample_project_resistance_title</source>
+                <target>Résistance Haute-Savoie</target>
             </trans-unit>
-            <trans-unit id="psbA8_H">
-                <source>label.site_sample_project_workshop_description</source>
-                <target>A working space rethought from the ground up, from the floor plan to the last worktop.</target>
+            <trans-unit id="zBnBRNU">
+                <source>label.site_sample_project_run_as_description</source>
+                <target>A web address shortening service.</target>
             </trans-unit>
-            <trans-unit id="f0J4zqJ">
-                <source>label.site_sample_project_workshop_title</source>
-                <target>Workshop rebuild</target>
+            <trans-unit id="59aP5o0">
+                <source>label.site_sample_project_run_as_title</source>
+                <target>run.as</target>
+            </trans-unit>
+            <trans-unit id="UUlEYCA">
+                <source>label.site_sample_services_cms_text</source>
+                <target>You manage pages, menus and media yourself, day to day, without depending on us.</target>
+            </trans-unit>
+            <trans-unit id="mtdvFcP">
+                <source>label.site_sample_services_cms_title</source>
+                <target>Our own CMS</target>
+            </trans-unit>
+            <trans-unit id="_ER546z">
+                <source>label.site_sample_services_cta_label</source>
+                <target>Discover our story</target>
+            </trans-unit>
+            <trans-unit id="3E.Xwuv">
+                <source>label.site_sample_services_cta_text</source>
+                <target>An independent web agency, and open-source bundles anyone can use.</target>
+            </trans-unit>
+            <trans-unit id="f1DVUEM">
+                <source>label.site_sample_services_cta_title</source>
+                <target>Who are we?</target>
+            </trans-unit>
+            <trans-unit id="vYxR3Xc">
+                <source>label.site_sample_services_custom_text</source>
+                <target>Design, content and features thought out for your business.</target>
+            </trans-unit>
+            <trans-unit id="Ha_TdU4">
+                <source>label.site_sample_services_custom_title</source>
+                <target>Custom websites</target>
+            </trans-unit>
+            <trans-unit id="TkbSS7A">
+                <source>label.site_sample_services_offer_eyebrow</source>
+                <target>Our services</target>
+            </trans-unit>
+            <trans-unit id="AKkmYWG">
+                <source>label.site_sample_services_offer_intro</source>
+                <target>No ready-made template: every site starts from your real needs.</target>
+            </trans-unit>
+            <trans-unit id="9CP2q_A">
+                <source>label.site_sample_services_offer_title</source>
+                <target>Websites shaped around your project</target>
+            </trans-unit>
+            <trans-unit id="fWlbDON">
+                <source>label.site_sample_services_step_build_text</source>
+                <target>The site is built block by block, on the c975L bundles.</target>
+            </trans-unit>
+            <trans-unit id="44ydqeJ">
+                <source>label.site_sample_services_step_build_title</source>
+                <target>The development</target>
+            </trans-unit>
+            <trans-unit id="EziiXoo">
+                <source>label.site_sample_services_step_launch_text</source>
+                <target>Hosted at Infomaniak, and looked after once delivered.</target>
+            </trans-unit>
+            <trans-unit id="DO9iVTe">
+                <source>label.site_sample_services_step_launch_title</source>
+                <target>Going live</target>
+            </trans-unit>
+            <trans-unit id="Rzz4csS">
+                <source>label.site_sample_services_step_mockup_text</source>
+                <target>A first version to agree on together, page by page.</target>
+            </trans-unit>
+            <trans-unit id="rF1rjJz">
+                <source>label.site_sample_services_step_mockup_title</source>
+                <target>The mock-up</target>
+            </trans-unit>
+            <trans-unit id="S0flwk3">
+                <source>label.site_sample_services_step_talk_text</source>
+                <target>What you offer, to whom, and what the site must do for you.</target>
+            </trans-unit>
+            <trans-unit id="sEuMtc3">
+                <source>label.site_sample_services_step_talk_title</source>
+                <target>The talk</target>
+            </trans-unit>
+            <trans-unit id="Rx3mpT8">
+                <source>label.site_sample_services_steps_eyebrow</source>
+                <target>How we work</target>
+            </trans-unit>
+            <trans-unit id="Nvw2XOj">
+                <source>label.site_sample_services_steps_title</source>
+                <target>From the first idea to going live</target>
+            </trans-unit>
+            <trans-unit id="aWbgiPL">
+                <source>label.site_sample_services_symfony_text</source>
+                <target>A solid, lasting base, on open-source bundles we maintain.</target>
+            </trans-unit>
+            <trans-unit id="8q3GsU9">
+                <source>label.site_sample_services_symfony_title</source>
+                <target>Symfony development</target>
             </trans-unit>
             <trans-unit id="0kGqgMZ">
                 <source>label.slug</source>

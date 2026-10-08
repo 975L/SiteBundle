@@ -3,6 +3,11 @@
         "date": "2026-10-08",
         "description": [
             {
+                "en": "The guided tours now show where to keep a page for your members and where to title a collection item, and walk a page's search settings in the order they appear",
+                "fr": "Les visites guidées montrent désormais où réserver une page à vos membres et où donner un titre à un élément de collection, et parcourent les réglages de référencement d'une page dans l'ordre de l'écran",
+                "es": "Las visitas guiadas muestran ahora dónde reservar una página a sus miembros y dónde dar un título a un elemento de colección, y recorren los ajustes de posicionamiento de una página en el orden de la pantalla"
+            },
+            {
                 "en": "A page can now be kept for your members: a visitor who is not signed in is asked to sign in, and the page goes back into search engines as soon as you open it to everyone again",
                 "fr": "Une page peut désormais être réservée à vos membres : un visiteur non connecté est invité à se connecter, et la page retourne dans les moteurs de recherche dès que vous la rouvrez à tous",
                 "es": "Ahora se puede reservar una página a sus miembros: a un visitante no conectado se le pide que inicie sesión, y la página vuelve a los motores de búsqueda en cuanto la abre de nuevo a todos"
