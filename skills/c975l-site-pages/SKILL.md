@@ -281,7 +281,8 @@ their blocks and a collection of three items, read by a `collection` block on `n
 site's own business, this bundle shipping no command that writes to a database. Menus are left out on purpose: a site holds one navbar and one footer of its
 own, and a dataset adding its own would fight the navigation the demo is browsed by. The pages carry written-down
 creation dates and are left out of the index; their blocks ride the cascade, while each `CollectionItem` is handed
-over on its own, nothing cascading off a `CollectionGroup`.
+over on its own, nothing cascading off a `CollectionGroup`. The home page holds a `hero`, `feature_bar`, `section_features`, `process_steps`, `faq` and `cta_band`;
+its buttons are linked as `page:ID` in the second pass (`getLinkedDemoFixtures()`), never as a raw path.
 
 ## Social publication
 

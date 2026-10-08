@@ -93,14 +93,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         }
     }
 
-    /**
-     * The one page a visitor lands on, so it carries what the others do not: a picture, and a heading that says where
-     * they are. Everything on it is ordinary back-office material - a hero and two alerts - precisely so that a
-     * visitor can open it in the editor and recognise what they have just been reading.
-     *
-     * Alerts rather than sections for the two sentences that say what a demo is: what they tell a visitor is exactly
-     * what an alert is for, and a visitor wanting to see a block edited will reach for the one that stands out.
-     */
+    // The one page a visitor lands on, laid out as a real home page is - a hero, then one section of each kind - its title hidden behind the hero's own h1
     private function home(?string $image): Page
     {
         $date = new \DateTime(self::CREATION_HOME);
@@ -110,33 +103,125 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             ->setSlug('home')
             ->setIsPublished(true)
             ->setIsIndexable(false)
+            ->setIsTitleDisplayed(false)
             ->setCreation($date)
             ->setModification($date);
 
         $this->demoFixtureTranslator->stage($page, PageTranslator::OWNER, self::DOMAIN, ['title' => 'label.site_sample_page_home_title']);
 
         $page->addBlock($this->hero($image));
-        $page->addBlock($this->alert('info', 'label.site_sample_page_home_lead', 1));
-        $page->addBlock($this->alert('warning', 'label.site_sample_page_home_body', 2));
+
+        $page->addBlock($this->section('feature_bar', 1, ['anchor' => 'atouts', 'eyebrow' => null, 'title' => null], [
+            'items.0.title' => 'label.site_sample_home_feature_edit_title',
+            'items.0.text' => 'label.site_sample_home_feature_edit_text',
+            'items.1.title' => 'label.site_sample_home_feature_languages_title',
+            'items.1.text' => 'label.site_sample_home_feature_languages_text',
+            'items.2.title' => 'label.site_sample_home_feature_bin_title',
+            'items.2.text' => 'label.site_sample_home_feature_bin_text',
+            'items.3.title' => 'label.site_sample_home_feature_symfony_title',
+            'items.3.text' => 'label.site_sample_home_feature_symfony_text',
+        ]));
+
+        $page->addBlock($this->section('section_features', 2, [
+            'anchor' => 'back-office',
+            'variant' => '',
+            'cards' => [
+                ['icon' => 'bundles/c975lui/icons/pen-ruler.svg'],
+                ['icon' => 'bundles/c975lui/icons/layer-group.svg'],
+                ['icon' => 'bundles/c975lui/icons/eye.svg'],
+            ],
+        ], [
+            'eyebrow' => 'label.site_sample_home_features_eyebrow',
+            'title' => 'label.site_sample_home_features_title',
+            'intro' => 'label.site_sample_home_features_intro',
+            'cards.0.title' => 'label.site_sample_home_features_edit_title',
+            'cards.1.title' => 'label.site_sample_home_features_compose_title',
+            'cards.2.title' => 'label.site_sample_home_features_preview_title',
+        ], [
+            'cards.0.text' => 'label.site_sample_home_features_edit_text',
+            'cards.1.text' => 'label.site_sample_home_features_compose_text',
+            'cards.2.text' => 'label.site_sample_home_features_preview_text',
+        ]));
+
+        $page->addBlock($this->section('process_steps', 3, ['anchor' => 'essayez'], [
+            'eyebrow' => 'label.site_sample_home_steps_eyebrow',
+            'title' => 'label.site_sample_home_steps_title',
+            'steps.0.title' => 'label.site_sample_home_step_open_title',
+            'steps.1.title' => 'label.site_sample_home_step_login_title',
+            'steps.2.title' => 'label.site_sample_home_step_edit_title',
+            'steps.3.title' => 'label.site_sample_home_step_save_title',
+        ], [
+            'steps.0.text' => 'label.site_sample_home_step_open_text',
+            'steps.1.text' => 'label.site_sample_home_step_login_text',
+            'steps.2.text' => 'label.site_sample_home_step_edit_text',
+            'steps.3.text' => 'label.site_sample_home_step_save_text',
+        ]));
+
+        $page->addBlock($this->section('faq', 4, ['anchor' => 'questions', 'openFirst' => true, 'columns' => 1], [
+            'title' => 'label.site_sample_home_faq_title',
+            'items.0.question' => 'label.site_sample_home_faq_shared_question',
+            'items.1.question' => 'label.site_sample_home_faq_reset_question',
+            'items.2.question' => 'label.site_sample_home_faq_code_question',
+            'items.3.question' => 'label.site_sample_home_faq_license_question',
+        ], [
+            'items.0.answer' => 'label.site_sample_home_faq_shared_answer',
+            'items.1.answer' => 'label.site_sample_home_faq_reset_answer',
+            'items.2.answer' => 'label.site_sample_home_faq_code_answer',
+            'items.3.answer' => 'label.site_sample_home_faq_license_answer',
+        ]));
+
+        // Its button is pointed at the collection in the second pass, the page holding it having no identifier yet
+        $page->addBlock($this->section('cta_band', 5, ['anchor' => 'a-vous', 'ctaUrl' => null], [
+            'title' => 'label.site_sample_home_cta_title',
+            'ctaLabel' => 'label.site_sample_home_cta_label',
+        ], [
+            'text' => 'label.site_sample_home_cta_text',
+        ]));
 
         return $page;
     }
 
-    // The keys an "alert" carries in the back office, "info" for what a demo offers and "warning" for what it takes back. The key is taken rather than the words, the block being staged for translation from the very key it was written from
-    private function alert(string $type, string $contentKey, int $position): Block
+    // A block of the home page, every text read from its key and staged for translation under the very path it is stored at ("items.0.title"), the rich ones inside their box
+    /**
+     * @param array<string, mixed>  $data  what is stored as typed, keys and switches alike
+     * @param array<string, string> $plain path => key of a plain text
+     * @param array<string, string> $rich  path => key of a rich text
+     */
+    private function section(string $kind, int $position, array $data, array $plain, array $rich = []): Block
     {
-        $block = new Block()
-            ->setKind('alert')
-            ->setPosition($position)
-            ->setData([
-                'type' => $type,
-                'content' => sprintf(self::RICH_TEXT_WRAPPER, $this->trans($contentKey)),
-                'cssClasses' => null,
-            ]);
+        foreach ($plain as $path => $key) {
+            $data = $this->setPath($data, $path, $this->trans($key));
+        }
 
-        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, ['content' => $contentKey], $this->richText(...));
+        foreach ($rich as $path => $key) {
+            $data = $this->setPath($data, $path, $this->richText($this->trans($key)));
+        }
+
+        $block = new Block()
+            ->setKind($kind)
+            ->setPosition($position)
+            ->setData($data);
+
+        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, $plain);
+        $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, $rich, $this->richText(...));
 
         return $block;
+    }
+
+    // Lays a value at "items.0.title", the entries of a collection being numbered the way the back office numbers them
+    /**
+     * @param array<string|int, mixed> $data
+     *
+     * @return array<string|int, mixed>
+     */
+    private function setPath(array $data, string $path, string $value): array
+    {
+        [$head, $rest] = explode('.', $path, 2) + [1 => null];
+        $key = ctype_digit($head) ? (int) $head : $head;
+
+        $data[$key] = null === $rest ? $value : $this->setPath(\is_array($data[$key] ?? null) ? $data[$key] : [], $rest, $value);
+
+        return $data;
     }
 
     // What a rich-text field stores around its prose: a translation written without it is the same words in another box, and the two read as two different texts to whatever compares them
@@ -145,7 +230,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         return sprintf(self::RICH_TEXT_WRAPPER, $value);
     }
 
-    // No button: a link stored in a block's data is a raw path, and a demo served under a prefix would send whoever clicks it back to the site around it
+    // Its two buttons are pointed at their pages in the second pass, neither page having an identifier yet
     private function hero(?string $image): Block
     {
         $hero = new Block()
@@ -153,11 +238,11 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             ->setPosition(0)
             ->setData([
                 'badge' => $this->trans('label.site_sample_page_home_badge'),
-                'title' => '<div>' . $this->trans('label.site_sample_page_home_title') . '</div>',
-                'subtitle' => '<div>' . $this->trans('label.site_sample_page_home_subtitle') . '</div>',
-                'primaryLabel' => null,
+                'title' => $this->richText($this->trans('label.site_sample_home_hero_title')),
+                'subtitle' => $this->richText($this->trans('label.site_sample_page_home_subtitle')),
+                'primaryLabel' => $this->trans('label.site_sample_home_hero_primary'),
                 'primaryUrl' => null,
-                'secondaryLabel' => null,
+                'secondaryLabel' => $this->trans('label.site_sample_home_hero_secondary'),
                 'secondaryUrl' => null,
                 'statValue' => null,
                 'statLabel' => null,
@@ -168,10 +253,14 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
                 'mediaLayout' => 'grid',
             ]);
 
-        // Two calls rather than one: the badge is stored as it is typed, the title and the subtitle inside their own box
-        $this->demoFixtureTranslator->stage($hero, Translation::OWNER_BLOCK, self::DOMAIN, ['badge' => 'label.site_sample_page_home_badge']);
+        // Two calls rather than one: the badge and the buttons are stored as they are typed, the title and the subtitle inside their own box
         $this->demoFixtureTranslator->stage($hero, Translation::OWNER_BLOCK, self::DOMAIN, [
-            'title' => 'label.site_sample_page_home_title',
+            'badge' => 'label.site_sample_page_home_badge',
+            'primaryLabel' => 'label.site_sample_home_hero_primary',
+            'secondaryLabel' => 'label.site_sample_home_hero_secondary',
+        ]);
+        $this->demoFixtureTranslator->stage($hero, Translation::OWNER_BLOCK, self::DOMAIN, [
+            'title' => 'label.site_sample_home_hero_title',
             'subtitle' => 'label.site_sample_page_home_subtitle',
         ], $this->richText(...));
 
@@ -265,9 +354,32 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     {
         yield from $this->demoFixtureTranslator->translations();
 
+        $this->linkHomeButtons();
+
         // Only where none exists yet: Menu::$location is unique, and a database already holding a navbar keeps its own rather than failing with the pages already written
         if (null === $this->menuRepository->findOneBy(['location' => Menu::LOCATION_NAVBAR])) {
             yield $this->navbar();
+        }
+    }
+
+    // The home page's buttons, pointed at their pages by the identifier the first flush handed out ("page:ID", resolved at render time by PageLinkLocalizer): a raw path would lose the "/demo" prefix. Written on the blocks already recorded, the flush closing this pass carrying the change
+    private function linkHomeButtons(): void
+    {
+        $home = $this->pageRepository->findOneBy(['slug' => 'home']);
+        $services = $this->pageRepository->findOneBy(['slug' => 'nos-services']);
+        $history = $this->pageRepository->findOneBy(['slug' => 'notre-histoire']);
+        if (null === $home || null === $services || null === $history) {
+            return;
+        }
+
+        foreach ($home->getBlocks() as $block) {
+            $data = $block->getData();
+
+            match ($block->getKind()) {
+                'hero' => $block->setData(['primaryUrl' => 'page:' . $services->getId(), 'secondaryUrl' => 'page:' . $history->getId()] + $data),
+                'cta_band' => $block->setData(['ctaUrl' => 'page:' . $services->getId() . '#realisations'] + $data),
+                default => null,
+            };
         }
     }
 

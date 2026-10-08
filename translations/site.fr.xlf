@@ -2034,6 +2034,174 @@
                 <source>label.site_sample_collection_name</source>
                 <target>Nos réalisations</target>
             </trans-unit>
+            <trans-unit id="UXG9rFi">
+                <source>label.site_sample_home_cta_label</source>
+                <target>Voir nos réalisations</target>
+            </trans-unit>
+            <trans-unit id=".AVFd75">
+                <source>label.site_sample_home_cta_text</source>
+                <target>Ouvrez le back-office et changez le titre de cette page : c'est le meilleur moyen de voir comment tout s'assemble.</target>
+            </trans-unit>
+            <trans-unit id="mkFJPPI">
+                <source>label.site_sample_home_cta_title</source>
+                <target>À vous de jouer</target>
+            </trans-unit>
+            <trans-unit id="joJvP6l">
+                <source>label.site_sample_home_faq_code_answer</source>
+                <target>Non : tout se fait dans des formulaires, depuis le back-office.</target>
+            </trans-unit>
+            <trans-unit id="wmRzRBg">
+                <source>label.site_sample_home_faq_code_question</source>
+                <target>Faut-il savoir coder ?</target>
+            </trans-unit>
+            <trans-unit id="CZm_zGL">
+                <source>label.site_sample_home_faq_license_answer</source>
+                <target>La licence MIT : libres, gratuits et modifiables.</target>
+            </trans-unit>
+            <trans-unit id="WSUabsY">
+                <source>label.site_sample_home_faq_license_question</source>
+                <target>Sous quelle licence sont les bundles ?</target>
+            </trans-unit>
+            <trans-unit id="FVBeNIg">
+                <source>label.site_sample_home_faq_reset_answer</source>
+                <target>Non : la démonstration est remise à zéro régulièrement, et repart de ce même contenu.</target>
+            </trans-unit>
+            <trans-unit id="rFZPQVV">
+                <source>label.site_sample_home_faq_reset_question</source>
+                <target>Mes modifications sont-elles conservées ?</target>
+            </trans-unit>
+            <trans-unit id="3kYk2nX">
+                <source>label.site_sample_home_faq_shared_answer</source>
+                <target>Oui : la démonstration est partagée entre tous ses visiteurs.</target>
+            </trans-unit>
+            <trans-unit id="OHMNEZw">
+                <source>label.site_sample_home_faq_shared_question</source>
+                <target>Les autres visiteurs voient-ils mes modifications ?</target>
+            </trans-unit>
+            <trans-unit id="i.z3k4R">
+                <source>label.site_sample_home_faq_title</source>
+                <target>Questions fréquentes</target>
+            </trans-unit>
+            <trans-unit id="UhP1ytg">
+                <source>label.site_sample_home_feature_bin_text</source>
+                <target>une page supprimée passe par la corbeille</target>
+            </trans-unit>
+            <trans-unit id="qbjCJfu">
+                <source>label.site_sample_home_feature_bin_title</source>
+                <target>Rien ne se perd</target>
+            </trans-unit>
+            <trans-unit id="TnKcayl">
+                <source>label.site_sample_home_feature_edit_text</source>
+                <target>textes, images, menus et pages</target>
+            </trans-unit>
+            <trans-unit id="myIQBow">
+                <source>label.site_sample_home_feature_edit_title</source>
+                <target>Tout se modifie</target>
+            </trans-unit>
+            <trans-unit id="fImiYZA">
+                <source>label.site_sample_home_feature_languages_text</source>
+                <target>français, anglais et espagnol</target>
+            </trans-unit>
+            <trans-unit id="c6AILAS">
+                <source>label.site_sample_home_feature_languages_title</source>
+                <target>Trois langues</target>
+            </trans-unit>
+            <trans-unit id="sU3qPcS">
+                <source>label.site_sample_home_feature_symfony_text</source>
+                <target>des bundles libres, sous licence MIT</target>
+            </trans-unit>
+            <trans-unit id="C1KYYUy">
+                <source>label.site_sample_home_feature_symfony_title</source>
+                <target>100 % Symfony</target>
+            </trans-unit>
+            <trans-unit id="00hPiW0">
+                <source>label.site_sample_home_features_compose_text</source>
+                <target>Hero, bandeaux, étapes, questions fréquentes : choisissez un block dans la liste et remplissez-le.</target>
+            </trans-unit>
+            <trans-unit id="eaAM2js">
+                <source>label.site_sample_home_features_compose_title</source>
+                <target>Assemblez des sections</target>
+            </trans-unit>
+            <trans-unit id="vNLjGSz">
+                <source>label.site_sample_home_features_edit_text</source>
+                <target>Une fois connecté, un bouton apparaît au survol de chaque block et ouvre directement son formulaire.</target>
+            </trans-unit>
+            <trans-unit id="WC6EtZL">
+                <source>label.site_sample_home_features_edit_title</source>
+                <target>Modifiez sur place</target>
+            </trans-unit>
+            <trans-unit id="dJScM6k">
+                <source>label.site_sample_home_features_eyebrow</source>
+                <target>Le back-office</target>
+            </trans-unit>
+            <trans-unit id="RFuDOgi">
+                <source>label.site_sample_home_features_intro</source>
+                <target>Chaque section de cette page est un block, que vous pouvez modifier, déplacer ou masquer.</target>
+            </trans-unit>
+            <trans-unit id="J_trxJ_">
+                <source>label.site_sample_home_features_preview_text</source>
+                <target>Une page non publiée reste invisible des visiteurs, et l'aperçu vous la montre telle qu'elle sera.</target>
+            </trans-unit>
+            <trans-unit id="BERyTC5">
+                <source>label.site_sample_home_features_preview_title</source>
+                <target>Publiez quand c'est prêt</target>
+            </trans-unit>
+            <trans-unit id="g7G3sf9">
+                <source>label.site_sample_home_features_title</source>
+                <target>Composez vos pages sans écrire de code</target>
+            </trans-unit>
+            <trans-unit id="oapgES0">
+                <source>label.site_sample_home_hero_primary</source>
+                <target>Découvrir nos services</target>
+            </trans-unit>
+            <trans-unit id="XRpYViy">
+                <source>label.site_sample_home_hero_secondary</source>
+                <target>Notre histoire</target>
+            </trans-unit>
+            <trans-unit id="bBFoprn">
+                <source>label.site_sample_home_hero_title</source>
+                <target>Un site complet, &lt;em&gt;bloc par bloc.&lt;/em&gt;</target>
+            </trans-unit>
+            <trans-unit id="J8jDqik">
+                <source>label.site_sample_home_step_edit_text</source>
+                <target>Changez un titre, une image ou l'ordre des sections.</target>
+            </trans-unit>
+            <trans-unit id="xZRbQtY">
+                <source>label.site_sample_home_step_edit_title</source>
+                <target>Modifiez un block</target>
+            </trans-unit>
+            <trans-unit id="fA713Gi">
+                <source>label.site_sample_home_step_login_text</source>
+                <target>Les comptes de démonstration sont indiqués sur la page de connexion.</target>
+            </trans-unit>
+            <trans-unit id="aNvo6dO">
+                <source>label.site_sample_home_step_login_title</source>
+                <target>Connectez-vous</target>
+            </trans-unit>
+            <trans-unit id="8U3a.SP">
+                <source>label.site_sample_home_step_open_text</source>
+                <target>Cliquez sur le lien du back-office, dans le bandeau de la démonstration.</target>
+            </trans-unit>
+            <trans-unit id="CCr6mhH">
+                <source>label.site_sample_home_step_open_title</source>
+                <target>Ouvrez le back-office</target>
+            </trans-unit>
+            <trans-unit id="wDq01pV">
+                <source>label.site_sample_home_step_save_text</source>
+                <target>Revenez sur le site : votre modification est en ligne.</target>
+            </trans-unit>
+            <trans-unit id="KvmGs3T">
+                <source>label.site_sample_home_step_save_title</source>
+                <target>Enregistrez</target>
+            </trans-unit>
+            <trans-unit id="4qT4e84">
+                <source>label.site_sample_home_steps_eyebrow</source>
+                <target>Essayez</target>
+            </trans-unit>
+            <trans-unit id="fxQppFn">
+                <source>label.site_sample_home_steps_title</source>
+                <target>Modifiez cette page en quatre étapes</target>
+            </trans-unit>
             <trans-unit id="mCYfhg.">
                 <source>label.site_sample_menu_history</source>
                 <target>Histoire</target>
@@ -2074,21 +2242,13 @@
                 <source>label.site_sample_page_home_badge</source>
                 <target>Démonstration</target>
             </trans-unit>
-            <trans-unit id="kG5icwM">
-                <source>label.site_sample_page_home_body</source>
-                <target>Rien de ce que vous ferez ne sera conservé : la démonstration est remise à zéro toutes les heures, et repart de ce même contenu.</target>
-            </trans-unit>
-            <trans-unit id="u7.79CD">
-                <source>label.site_sample_page_home_lead</source>
-                <target>Vous êtes sur une démonstration. Tout ce que vous voyez ici est modifiable, y compris cette page : ouvrez le back-office et essayez.</target>
-            </trans-unit>
             <trans-unit id="5_Rfe.A">
                 <source>label.site_sample_page_home_subtitle</source>
                 <target>Un site complet, monté avec les bundles c975L, dont vous avez les clés du back-office.</target>
             </trans-unit>
             <trans-unit id="kAKeEqY">
                 <source>label.site_sample_page_home_title</source>
-                <target>Bienvenue</target>
+                <target>Un site complet, bloc par bloc</target>
             </trans-unit>
             <trans-unit id="ZBYST9H">
                 <source>label.site_sample_page_services_body</source>

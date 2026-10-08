@@ -117,8 +117,8 @@ class SiteDemoFixtureProviderTest extends TestCase
 
         $this->assertCount(4, $pages);
 
-        // The home page opens on a hero and carries two alerts under it, the others two sections apiece - "nos-services" with its collection block on top of them
-        $expected = ['home' => 3, 'nos-services' => 3, 'notre-histoire' => 2, 'ancienne-offre' => 2];
+        // The home page opens on a hero and carries five sections under it, the others two sections apiece - "nos-services" with its collection block on top of them
+        $expected = ['home' => 6, 'nos-services' => 3, 'notre-histoire' => 2, 'ancienne-offre' => 2];
 
         foreach ($pages as $page) {
             $this->assertCount($expected[$page->getSlug()], $page->getBlocks(), (string) $page->getSlug());
@@ -145,23 +145,58 @@ class SiteDemoFixtureProviderTest extends TestCase
         $this->assertFalse($page->isPublished());
     }
 
-    // What a demo says about itself is a block like any other, so a visitor can open it in the editor and change it
-    public function testTheHomePageSaysWhatADemoIsInTwoAlerts(): void
+    // A home page laid out as a real one is, each section a kind of its own and every text filled, its title left to the hero's h1
+    public function testTheHomePageIsLaidOutInSections(): void
     {
         $pages = array_filter($this->fixtures($this->createProvider()), static fn (object $e): bool => $e instanceof Page && 'home' === $e->getSlug());
         $home = reset($pages);
 
         $this->assertInstanceOf(Page::class, $home);
+        $this->assertFalse($home->isTitleDisplayed());
 
-        $alerts = array_values(array_filter($home->getBlocks()->toArray(), static fn (Block $block): bool => 'alert' === $block->getKind()));
+        $blocks = $home->getBlocks()->toArray();
+        $this->assertSame(['hero', 'feature_bar', 'section_features', 'process_steps', 'faq', 'cta_band'], array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks));
+        $this->assertSame([0, 1, 2, 3, 4, 5], array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks));
 
-        $this->assertCount(2, $alerts);
-        $this->assertSame('info', $alerts[0]->getData()['type']);
-        $this->assertSame('warning', $alerts[1]->getData()['type']);
+        $data = $blocks[4]->getData();
+        $this->assertCount(4, $data['items']);
+        $this->assertSame('label.site_sample_home_faq_shared_question', $data['items'][0]['question']);
+        $this->assertSame('<div>label.site_sample_home_faq_shared_answer</div>', $data['items'][0]['answer']);
+        $this->assertSame('bundles/c975lui/icons/pen-ruler.svg', $blocks[2]->getData()['cards'][0]['icon']);
+        $this->assertSame('label.site_sample_home_features_edit_title', $blocks[2]->getData()['cards'][0]['title']);
+    }
 
-        foreach ($alerts as $alert) {
-            $this->assertNotSame('', trim(strip_tags((string) $alert->getData()['content'])));
-        }
+    // The buttons are pointed at their pages once the first flush gave them an identifier, a raw path losing the "/demo" prefix
+    public function testTheSecondPassPointsTheHomeButtonsAtTheirPages(): void
+    {
+        $pages = array_filter($this->fixtures($this->createProvider()), static fn (object $e): bool => $e instanceof Page && 'home' === $e->getSlug());
+        $home = reset($pages);
+        $this->assertInstanceOf(Page::class, $home);
+
+        $services = new Page();
+        new \ReflectionProperty(Page::class, 'id')->setValue($services, 12);
+        $history = new Page();
+        new \ReflectionProperty(Page::class, 'id')->setValue($history, 13);
+
+        $repository = $this->createStub(PageRepository::class);
+        $repository->method('findOneBy')->willReturnCallback(static fn (array $criteria): ?Page => match ($criteria['slug'] ?? null) {
+            'home' => $home,
+            'nos-services' => $services,
+            'notre-histoire' => $history,
+            default => null,
+        });
+
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+        $provider = new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $this->createStub(PlaceholderMediaRegistry::class), $repository, $this->menuRepository(new Menu()), $this->projectDir);
+
+        iterator_to_array($provider->getLinkedDemoFixtures(), false);
+
+        $blocks = $home->getBlocks()->toArray();
+        $this->assertSame('page:12', $blocks[0]->getData()['primaryUrl']);
+        $this->assertSame('page:13', $blocks[0]->getData()['secondaryUrl']);
+        $this->assertSame('page:12#realisations', $blocks[5]->getData()['ctaUrl']);
+        $this->assertSame('label.site_sample_home_hero_primary', $blocks[0]->getData()['primaryLabel']);
     }
 
     // A demo site is public: its made-up pages have no business in a search engine, where the site's own do

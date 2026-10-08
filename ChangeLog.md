@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.32.1
+
+The demo home page is laid out as a real home page
+
+- The demo home page holds a hero and five sections instead of two alerts (08/10/2026)
+- The demo home page hides its title behind the hero's heading (08/10/2026)
+- The demo hero and call-to-action buttons point at their pages as `page:ID` (08/10/2026)
+
 ## v8.32.0
 
 A page can be kept for members from the back office

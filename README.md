@@ -736,7 +736,7 @@ Nothing is persisted per item — see `PageController::resolveCollectionDetail()
 
 `Service\SiteDemoFixtureProvider` (UiBundle's `DemoFixtureProviderInterface`) hands a demo site three published
 pages carrying their blocks, and a collection of three items with their pictures, read by a `collection` block on
-`nos-services` — so a demo has something to browse, edit and put back. Loading it is that site's own business: this bundle ships no command that writes to a database.
+`nos-services` — so a demo has something to browse, edit and put back. Its home page is laid out as a real one is — a `hero`, then a `feature_bar`, `section_features`, `process_steps`, `faq` and `cta_band` — its buttons pointed at their pages as `page:ID` once the first flush gave them an identifier, a raw path losing the demo's prefix. Loading it is that site's own business: this bundle ships no command that writes to a database.
 
 **Menus are deliberately left out.** A site holds one menu per location — one navbar, one footer — so a dataset
 adding its own would either collide with the site's or replace what it navigates by. A demo site's navigation is
