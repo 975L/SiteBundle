@@ -94,6 +94,12 @@ class PageHealthCheckTargetsTest extends TestCase
         $this->assertSame([], $this->targets(['fr'], accessMap: $this->accessMap(['ROLE_USER']))->all());
     }
 
+    // Ticked "Members only" rather than guarded by a rule, the page is no target either, for the very same reason
+    public function testAPageTickedMembersOnlyIsNoTarget(): void
+    {
+        $this->assertSame([], $this->targets(['fr'], membersOnly: true)->all());
+    }
+
     // One open to anyone stays one, whether a rule says so or none matches it
     public function testAPublicPageStaysATarget(): void
     {
@@ -111,9 +117,9 @@ class PageHealthCheckTargetsTest extends TestCase
     }
 
     /** @param list<string> $translatedLocales */
-    private function targets(array $translatedLocales, ?string $siteUrl = 'https://example.com', ?PageTranslator $translator = null, ?AccessMapInterface $accessMap = null): PageHealthCheckTargets
+    private function targets(array $translatedLocales, ?string $siteUrl = 'https://example.com', ?PageTranslator $translator = null, ?AccessMapInterface $accessMap = null, bool $membersOnly = false): PageHealthCheckTargets
     {
-        $page = new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers');
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('nos-ateliers')->setIsMembersOnly($membersOnly);
         new \ReflectionProperty(Page::class, 'id')->setValue($page, 1);
 
         $repository = $this->createStub(PageRepository::class);

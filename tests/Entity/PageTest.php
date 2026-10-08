@@ -76,6 +76,38 @@ class PageTest extends TestCase
         $this->assertFalse($page->isIndexable());
     }
 
+    // A page kept for members is left out while it is, its own isIndexable kept for the day it is opened again
+    public function testMembersOnlyPageIsNotReferencedButKeepsItsIndexableValue(): void
+    {
+        $page = new Page()
+            ->setIsPublished(true)
+            ->setIsMembersOnly(true)
+            ->setIsIndexable(true)
+        ;
+
+        $page->unreferenceWhenUnpublished();
+
+        $this->assertTrue($page->isIndexable());
+        $this->assertFalse($page->isReferenced());
+
+        $page->setIsMembersOnly(false);
+
+        $this->assertTrue($page->isReferenced());
+    }
+
+    // The site root stays open to everyone, whatever ticked the box
+    public function testHomePageIsNeverMembersOnly(): void
+    {
+        $page = new Page()
+            ->setSlug('home')
+            ->setIsMembersOnly(true)
+        ;
+
+        $page->unreferenceWhenUnpublished();
+
+        $this->assertFalse($page->isMembersOnly());
+    }
+
     public function testPublishedPageKeepsItsIndexableValue(): void
     {
         $indexable = new Page()->setIsPublished(true);

@@ -7,13 +7,15 @@
  */
 import { Controller } from '@hotwired/stimulus';
 
-// Keeps the "isIndexable" switch of an index row honest about what unpublishing did to it server-side (Page::unreferenceWhenUnpublished(): an unpublished page is never referenced) - what "sitemap-fields" does on the edit form, done here for the pair of toggles the list shows side by side. Left stale, that switch would keep showing "checked" over a row the database holds as false, and the next click would then send "false" for something already false - unchecking what it displays instead of what it holds. It's also disabled while the page is unpublished: checking it back would be undone by the server rule at once, and the display would be lying again. Mounted on the "isPublished" cell (see PageCrudController::configureFields(), through setHtmlAttribute() - EasyAdmin only renders a field's html attributes on the index <td>), the sibling cell found by the "data-column" EasyAdmin puts on each of them. Nothing is sent from here: unpublishing already carries the rule server-side, this only mirrors it
+// Keeps the "isIndexable" switch of an index row honest about what unpublishing did to it server-side (Page::unreferenceWhenUnpublished(): an unpublished page is never referenced) - what "sitemap-fields" does on the edit form, done here for the pair of toggles the list shows side by side. Left stale, that switch would keep showing "checked" over a row the database holds as false, and the next click would then send "false" for something already false - unchecking what it displays instead of what it holds. It's also disabled while the page is unpublished: checking it back would be undone by the server rule at once, and the display would be lying again. Disabled too, but left as is, while the page is kept for members: it is left out of the sitemap meanwhile (Page::isReferenced()), its own value coming back once the page is opened again. Mounted on the "isPublished" cell (see PageCrudController::configureFields(), through setHtmlAttribute() - EasyAdmin only renders a field's html attributes on the index <td>), the sibling cell found by the "data-column" EasyAdmin puts on each of them. Nothing is sent from here: unpublishing already carries the rule server-side, this only mirrors it
 export default class extends Controller {
     connect() {
         this.published = this.element.querySelector('input[type="checkbox"]');
-        this.indexable = this.element
-            .closest('tr')
-            ?.querySelector('[data-column="isIndexable"] input[type="checkbox"]');
+        const row = this.element.closest('tr');
+        this.indexable = row?.querySelector('[data-column="isIndexable"] input[type="checkbox"]');
+
+        // Absent from the trash, where its column is hidden
+        this.membersOnly = row?.querySelector('[data-column="isMembersOnly"] input[type="checkbox"]') ?? null;
         if (!this.published || !this.indexable) {
             return;
         }
@@ -22,10 +24,12 @@ export default class extends Controller {
         this.sync();
 
         this.published.addEventListener('change', this.sync);
+        this.membersOnly?.addEventListener('change', this.sync);
     }
 
     disconnect() {
         this.published?.removeEventListener('change', this.sync);
+        this.membersOnly?.removeEventListener('change', this.sync);
     }
 
     // Arrow function so it can be used as-is for both add/removeEventListener. Mirrors the new state right away, as optimistically as EasyAdmin's own toggle does - should its PATCH fail, it restores and disables the switch it owns, and this row is visibly broken either way
@@ -35,9 +39,10 @@ export default class extends Controller {
             this.indexable.checked = false;
         }
 
-        this.indexable.disabled = unpublished;
+        const locked = unpublished || (this.membersOnly?.checked ?? false);
+        this.indexable.disabled = locked;
 
         // The class EasyAdmin's own toggle uses when it disables itself, so a locked switch looks the same wherever it comes from
-        this.indexable.closest('.ea-switch')?.classList.toggle('ea-switch-disabled', unpublished);
+        this.indexable.closest('.ea-switch')?.classList.toggle('ea-switch-disabled', locked);
     };
 }

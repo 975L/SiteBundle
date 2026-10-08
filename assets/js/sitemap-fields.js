@@ -7,7 +7,7 @@
  */
 import { Controller } from '@hotwired/stimulus';
 
-// Keeps the sitemap fields consistent with what's above them (see PageCrudController): unpublishing the page unchecks and locks "isIndexable" - an unpublished page is never referenced, a rule Page::unreferenceWhenUnpublished() enforces server-side whatever the entry point, mirrored here so it's seen before saving instead of discovered after - and a non-indexable page locks changeFrequency/priority, which would then be meaningless. Mounted on the "isIndexable" row, not on the checkbox itself: EasyAdmin renders a BooleanField as a <twig:ea:Switch> component that drops the field's "attr". Deliberately not "disabled": a disabled control isn't submitted, so the locked values would be wiped on every single save of a non-indexable page (renaming a title on the seeded "creer-un-compte" would silently drop them). "readonly" keeps them submitted, and since it's a no-op on changeFrequency's <select>, interaction is blocked on top of it. Fields are matched by an id suffix rather than a full id, as EasyAdmin prefixes them with the entity name (eg. "Page_priority")
+// Keeps the sitemap fields consistent with what's above them (see PageCrudController): unpublishing the page unchecks and locks "isIndexable" - an unpublished page is never referenced, a rule Page::unreferenceWhenUnpublished() enforces server-side whatever the entry point, mirrored here so it's seen before saving instead of discovered after - keeping it for members locks it without unchecking it - the page is left out while it is (Page::isReferenced()), its own value kept for the day it is opened again - and a non-indexable page locks changeFrequency/priority, which would then be meaningless. Mounted on the "isIndexable" row, not on the checkbox itself: EasyAdmin renders a BooleanField as a <twig:ea:Switch> component that drops the field's "attr". Deliberately not "disabled": a disabled control isn't submitted, so the locked values would be wiped on every single save of a non-indexable page (renaming a title on the seeded "creer-un-compte" would silently drop them). "readonly" keeps them submitted, and since it's a no-op on changeFrequency's <select>, interaction is blocked on top of it. Fields are matched by an id suffix rather than a full id, as EasyAdmin prefixes them with the entity name (eg. "Page_priority")
 export default class extends Controller {
     static SUFFIXES = ['_changeFrequency', '_priority'];
 
@@ -19,10 +19,11 @@ export default class extends Controller {
         }
 
         this.publishedCheckbox = this.form.querySelector('[id$="_isPublished"]');
+        this.membersOnlyCheckbox = this.form.querySelector('[id$="_isMembersOnly"]');
 
         this.toggle();
 
-        // Listened for on the form, not on this row: the "isPublished" switch sits in a row of its own, whose "change" never bubbles through this one
+        // Listened for on the form, not on this row: the "isPublished" and "isMembersOnly" switches sit in a row of its own, whose "change" never bubbles through this one
         this.form.addEventListener('change', this.toggle);
     }
 
@@ -37,9 +38,11 @@ export default class extends Controller {
         if (unpublished) {
             this.checkbox.checked = false;
         }
-        this.lock(this.checkbox, unpublished);
+        // Locked but left as is: the server never touches isIndexable for a page kept for members
+        const membersOnly = null !== this.membersOnlyCheckbox && this.membersOnlyCheckbox.checked;
+        this.lock(this.checkbox, unpublished || membersOnly);
 
-        const locked = unpublished || !this.checkbox.checked;
+        const locked = unpublished || membersOnly || !this.checkbox.checked;
         this.constructor.SUFFIXES.forEach((suffix) => {
             const field = this.form.querySelector(`[id$="${suffix}"]`);
             if (!field) {

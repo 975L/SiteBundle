@@ -72,6 +72,10 @@ class SmokeTestCommand extends Command
         // The very same set of pages the health check and the sitemap use (published, not deleted), so a site has one single notion of "page that must answer 200" rather than three lists drifting apart
         $pageUrls = [];
         foreach ($this->pageRepository->findAllOrdered() as $page) {
+            // A page kept for members answers the login form to this anonymous run, which is what it should do
+            if ($page->isMembersOnly()) {
+                continue;
+            }
             $url = $this->pagePublicUrlResolver->resolve($page);
             if (null !== $url) {
                 $pageUrls[] = $url;

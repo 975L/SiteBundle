@@ -32,7 +32,7 @@ class MenuLinkVisibilityTest extends TestCase
     }
 
     /**
-     * @return array<string, array{?string, string}>
+     * @return array<string, array{?string, string, 2?: bool}>
      */
     public static function visibilityProvider(): array
     {
@@ -42,16 +42,20 @@ class MenuLinkVisibilityTest extends TestCase
             'guests' => ['guests', '<div class="menu-item menu-item--guests">'],
             'members' => ['members', '<div class="menu-item menu-item--members">'],
             'unknown value' => ['<script>', '<div class="menu-item">'],
+            'unset, to a page kept for members' => [null, '<div class="menu-item menu-item--members">', true],
+            'all, to a page kept for members' => ['all', '<div class="menu-item menu-item--members">', true],
+            'guests, to a page kept for members' => ['guests', '<div class="menu-item menu-item--guests">', true],
         ];
     }
 
-    // The marker class, and nothing else, depends on the value: a stored value outside the three never reaches the attribute
+    // The marker class, and nothing else, depends on the value: a stored value outside the three never reaches the attribute. A link left to everyone that leads to a page kept for members is a members one
     #[DataProvider('visibilityProvider')]
-    public function testTheTemplateWritesTheMarkerClass(?string $visibility, string $expected): void
+    public function testTheTemplateWritesTheMarkerClass(?string $visibility, string $expected, bool $membersOnlyPage = false): void
     {
         $twig = new Environment(new ArrayLoader(['link' => $this->file('templates/blocks/MenuLink.html.twig')]));
         $twig->addFunction(new TwigFunction('menu_link_url', static fn (): string => '/login'));
         $twig->addFunction(new TwigFunction('menu_link_label', static fn (): string => 'Connexion'));
+        $twig->addFunction(new TwigFunction('menu_link_members_only', static fn (): bool => $membersOnlyPage));
 
         $html = $twig->render('link', array_filter(['target' => 'route:app_login', 'visibility' => $visibility]));
 

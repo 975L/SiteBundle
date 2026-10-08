@@ -45,6 +45,11 @@ class PageHealthCheckTargets
 
         $targets = [];
         foreach ($pages as $page) {
+            // Ticked "Members only" rather than guarded by an access_control rule, the page answers the login form all the same (see isPublic())
+            if ($page->isMembersOnly()) {
+                continue;
+            }
+
             $urls = $this->pagePublicUrlResolver->resolveAll($page);
             if ([] === $urls) {
                 throw new \RuntimeException('Site url is not configured: no page url can be resolved.');

@@ -18,6 +18,10 @@
                 <source>description.site_navbar_show_name</source>
                 <target>Afficher le nom (et le slogan) à côté du logo dans la navbar</target>
             </trans-unit>
+            <trans-unit id="Y63vkP7">
+                <source>description.site_pages_members_only</source>
+                <target>Coche par défaut « Réservée aux membres » sur une nouvelle page créée dans le back-office : à activer sur un site privé, pour qu'une page ne devienne publique que si on la rouvre. Les pages par défaut (connexion, mentions légales…) et la page d'accueil restent publiques.</target>
+            </trans-unit>
             <trans-unit id="ah0x8VP">
                 <source>description.site_preconnect</source>
                 <target>Origines à préconnecter (tableau JSON), ex. ["https://example.com"] - utile si logos crédits/Matomo sont sur un domaine tiers</target>
@@ -41,6 +45,10 @@
             <trans-unit id="GKSaIC2">
                 <source>label.site_navbar_show_name</source>
                 <target>Afficher le nom du site dans la barre de navigation</target>
+            </trans-unit>
+            <trans-unit id="fe6CVsN">
+                <source>label.site_pages_members_only</source>
+                <target>Nouvelles pages réservées aux membres</target>
             </trans-unit>
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>

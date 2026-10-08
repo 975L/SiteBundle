@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, tutorial_film, tutorial_films, findRouteName, allPrivate, findPrivate, private films."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, isMembersOnly, members only, site-pages-members-only, isReferenced, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, tutorial_film, tutorial_films, findRouteName, allPrivate, findPrivate, private films."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -38,6 +38,12 @@ plus the sitemap fields (indexable, change frequency, priority).
   page — form, trash, replacement, duplication or import (`Page::unreferenceWhenUnpublished()`, a
   `PreFlush` callback). Publishing again does **not** put it back: referencing a page is a deliberate
   call. The page answers 404 the moment it is unpublished.
+- **Members only** (`isMembersOnly`, a column). An anonymous visitor is sent to the login form
+  (`PageController::gate()` throws `AccessDeniedException`), a collection item rendered through such a
+  detail page too — it replaces an `access_control` rule on `^/pages/...`. While ticked the page is left
+  out of the sitemap, `robots` and social posts through `Page::isReferenced()`, `isIndexable` itself
+  untouched, so unticking references it again. `site-pages-members-only` ticks it on a page created in
+  the back office; `home` is never members only (forced back in the `PreFlush`).
 - **Display the page title** is stored in `Page::$options`, one JSON column for the page's benign
   display options — the same reasoning as `Block::$data`, so adding an option is a code change with no
   migration for every app running this bundle. Read and write through named accessors
@@ -281,7 +287,7 @@ over on its own, nothing cascading off a `CollectionGroup`.
 
 With SocialBundle installed, `PageSocialContentSource` (UiBundle's `SocialContentSourceInterface`, source
 type `page`) hands its automatic publication the oldest page not posted yet, once, with the page's own
-sharing image or as text without one. Non-indexable pages and pages holding a `legal_model` block are never
+sharing image or as text without one. Unreferenced pages (`isReferenced()`) and pages holding a `legal_model` block are never
 offered, and nothing goes out while `site-url` is empty. What was posted where is SocialBundle's to record.
 
 ## Do not
@@ -297,6 +303,8 @@ offered, and nothing goes out while `site-url` is empty. What was posted where i
 - **Do not re-publish a page expecting it to be indexed again** — `isIndexable` has to be checked back
   deliberately.
 - **Do not build a page-template feature.** Duplicate is the answer.
+- **Do not set `isIndexable` to false to hide a members' page.** Read `isReferenced()`; the flag is kept
+  for the day the page is opened again.
 - **Do not publish a content holder, nor hardcode a screen's prose in the app's template.** A
   `<twig:c975LSite:Page:Blocks/>` zone reads the unpublished page; publishing it opens a second url.
 - **Do not add a free-text collection field on an item.** The group is picked by the screen it is

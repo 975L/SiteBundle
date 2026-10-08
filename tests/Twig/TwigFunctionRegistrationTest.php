@@ -33,6 +33,7 @@ class TwigFunctionRegistrationTest extends TestCase
                 'menu_blocks' => 'getMenuBlocks',
                 'menu_link_is_copyright' => 'isMenuLinkCopyright',
                 'menu_link_label' => 'getMenuLinkLabel',
+                'menu_link_members_only' => 'isMenuLinkMembersOnly',
                 'menu_link_url' => 'getMenuLinkUrl',
                 'menu_style' => 'getMenuStyle',
             ]],

@@ -73,13 +73,21 @@ class PageImportProvider implements ImportProviderInterface
             ->setSlug($item['slug'])
             ->setChangeFrequency($item['changeFrequency'] ?? null)
             ->setPriority($item['priority'] ?? null)
-            ->setIsPublished($item['isPublished'] ?? false)
-            // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
-            ->setIsIndexable($item['isIndexable'] ?? true)
             ->setSummarySocialNetwork($item['summarySocialNetwork'] ?? null)
             // Carried whole rather than option by option, same as PageCrudController::clonePage() - an export predating any given option simply omits its key, and the named accessors hold the default
             ->setOptions($item['options'] ?? [])
             ->setModification($now);
+        $this->fillStatus($page, $item);
+    }
+
+    // Who may read the page and whether it is referenced, each with the default an export predating it falls back on
+    private function fillStatus(Page $page, array $item): void
+    {
+        $page
+            ->setIsPublished($item['isPublished'] ?? false)
+            // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
+            ->setIsIndexable($item['isIndexable'] ?? true)
+            ->setIsMembersOnly($item['isMembersOnly'] ?? false);
     }
 
     // Existing Blocks have no natural key to match the imported ones against, so the whole collection is replaced - BlockRemovalListener removes the orphaned rows (and their Medias) on flush

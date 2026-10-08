@@ -50,6 +50,7 @@ class PageExportProviderTest extends TestCase
             'priority' => null,
             'isPublished' => true,
             'isIndexable' => true,
+            'isMembersOnly' => false,
             'summarySocialNetwork' => null,
             'options' => [],
             'ogImage' => null,

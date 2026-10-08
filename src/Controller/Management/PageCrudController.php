@@ -276,10 +276,20 @@ class PageCrudController extends AbstractCrudController
         $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
         $isPublishedField = BooleanField::new('isPublished')
             ->setLabel(t('label.is_published', [], 'site'))
-            // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly, a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
+            // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly (and disables it without unchecking it while the row is kept for members), a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
             ->setHtmlAttribute('data-controller', 'publication-switch');
 
-        // Sitemaps. Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway. Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
+        // Kept for signed-in visitors, an anonymous one being sent to the login form; such a page is left out of the sitemap while it is, its own "isIndexable" kept (see Page::isReferenced()). A new page takes the site's own default, "site-pages-members-only", so a private site's pages stay private unless opened one by one
+        $isMembersOnlyField = BooleanField::new('isMembersOnly')
+            ->setLabel(t('label.is_members_only', [], 'site'))
+            ->setHelp(t('label.is_members_only_help', [], 'site'));
+
+        // The site root stays open to everyone (see Page::unreferenceWhenUnpublished())
+        if ($isHomePage) {
+            $isMembersOnlyField->hideOnForm();
+        }
+
+        // Sitemaps. Unchecking it drops the page from the sitemap and locks the two fields below, read-only rather than disabled so both keep their value. Unchecking "isPublished" above unchecks and locks it in turn, keeping the page for members locks it as it stands, the "sitemap-fields" controller mirroring what Page::unreferenceWhenUnpublished() enforces server-side anyway. Set on the row: EasyAdmin's Switch component drops "attr" entirely, and the event bubbles up anyway
         $isIndexableField = BooleanField::new('isIndexable')
             ->setLabel(t('label.is_indexable', [], 'site'))
             ->setHelp(t('label.is_indexable_help', [], 'site'))
@@ -288,6 +298,7 @@ class PageCrudController extends AbstractCrudController
         // Trashed pages are unpublished, so they are never referenced either (see deleteEntity() and Page::unreferenceWhenUnpublished()) - the column holds "false" for every row of that view. Hidden rather than left there: with "isPublished" gone, the "publication-switch" controller has no cell to mount on, and the switch would stay clickable over a value the server sends straight back to false
         if ($isTrash) {
             $isPublishedField->hideOnIndex();
+            $isMembersOnlyField->hideOnIndex();
             $isIndexableField->hideOnIndex();
         }
 
@@ -407,6 +418,7 @@ class PageCrudController extends AbstractCrudController
             $slugField,
             $isTitleDisplayedField,
             $isPublishedField,
+            $isMembersOnlyField,
             $isIndexableField,
             $changeFrequencyField,
             $priorityField,
@@ -435,6 +447,7 @@ class PageCrudController extends AbstractCrudController
                 $isTitleDisplayedField,
                 $summaryField,
                 $isPublishedField,
+                $isMembersOnlyField,
                 $isIndexableField,
                 $changeFrequencyField,
                 $priorityField,
@@ -896,6 +909,7 @@ class PageCrudController extends AbstractCrudController
             ->setChangeFrequency($source->getChangeFrequency())
             // isIndexable is deliberately not carried over: the copy is created unpublished, and Page::unreferenceWhenUnpublished() would unreference it at the very next flush anyway. Referencing it is a deliberate call, made when it gets published - or taken over from the page it replaces, see publishAsReplacement(). The whole payload rather than option by option: the copy holds the same blocks, so every display option the source had answered stays true of it - and a new option needs nothing here
             ->setOptions($source->getOptions())
+            ->setIsMembersOnly($source->isMembersOnly())
             ->setIsPublished(false)
             ->setCreation($now)
             ->setModification($now);
@@ -1051,7 +1065,7 @@ class PageCrudController extends AbstractCrudController
     #[\Override]
     public function createEntity(string $entityFqcn): Page
     {
-        $page = new Page();
+        $page = new Page()->setIsMembersOnly($this->configService->getBool($this->configService->get('site-pages-members-only')));
         $slug = $this->requestStack->getCurrentRequest()?->query->get('slug');
         if (\is_string($slug) && '' !== $slug) {
             $page->setSlug($slug);

@@ -62,7 +62,7 @@ class PageSocialContentSource implements SocialContentSourceInterface
     // What a search engine is told to list, minus the legal notices: a page with nothing to say to a reader (an account form, the terms of sale) has nothing to say to a follower either
     private function isPostable(Page $page): bool
     {
-        if (!$page->isIndexable()) {
+        if (!$page->isReferenced()) {
             return false;
         }
 

@@ -164,6 +164,19 @@ class MenuExtension
         }
     }
 
+    // Whether the link leads to a page kept for members: written for everyone like a "members" link, and hidden from a guest the same way, the link's html being cached once for every visitor (see MenuLink.html.twig)
+    #[AsTwigFunction('menu_link_members_only')]
+    public function isMenuLinkMembersOnly(?string $target): bool
+    {
+        if (null === $target || '' === $target) {
+            return false;
+        }
+
+        $parsed = self::parseTarget($target);
+
+        return 'page' === $parsed['type'] && true === $this->resolvePage($parsed['pageId'])?->isMembersOnly();
+    }
+
     #[AsTwigFunction('menu_link_label')]
     public function getMenuLinkLabel(?string $target): string
     {

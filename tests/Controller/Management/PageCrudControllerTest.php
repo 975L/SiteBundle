@@ -1406,7 +1406,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame(
             [
                 'id', 'ea_form_tab',
-                'ea_form_fieldset', 'slug', 'isTitleDisplayed', 'isPublished', 'isIndexable', 'changeFrequency', 'priority', 'ogImage', 'creation', 'modification',
+                'ea_form_fieldset', 'slug', 'isTitleDisplayed', 'isPublished', 'isMembersOnly', 'isIndexable', 'changeFrequency', 'priority', 'ogImage', 'creation', 'modification',
                 'ea_form_fieldset', 'title', 'summarySocialNetwork', 'blocks', 'qrcode',
                 'ea_form_tab', 'healthCheck',
             ],
@@ -1566,7 +1566,22 @@ class PageCrudControllerTest extends TestCase
         $fields = $this->createController(['requestStack' => $requestStack])->configureFields(Crud::PAGE_INDEX);
 
         $this->assertFalse($this->findFieldByProperty($fields, 'isPublished')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
+        $this->assertFalse($this->findFieldByProperty($fields, 'isMembersOnly')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
         $this->assertFalse($this->findFieldByProperty($fields, 'isIndexable')->getAsDto()->isDisplayedOn(Crud::PAGE_INDEX));
+    }
+
+    // The site root stays open to everyone, so the home page's form offers no way to keep it for members
+    public function testConfigureFieldsOffersNoMembersOnlyBoxOnTheHomePage(): void
+    {
+        $page = new Page()->setTitle('Accueil')->setSlug('home');
+
+        $controller = $this->createController([
+            'adminContextProvider' => $this->createAdminContextProvider($this->createAdminContext($page)),
+        ]);
+        $controller->setContainer($this->createContainer([]));
+        $fields = $controller->configureFields(Crud::PAGE_EDIT);
+
+        $this->assertFalse($this->findFieldByProperty($fields, 'isMembersOnly')->getAsDto()->isDisplayedOn(Crud::PAGE_EDIT));
     }
 
     public function testCreateIndexQueryBuilderFiltersOutDeletedPagesByDefault(): void
@@ -1945,6 +1960,7 @@ class PageCrudControllerTest extends TestCase
             'priority' => null,
             'isPublished' => true,
             'isIndexable' => true,
+            'isMembersOnly' => false,
             'summarySocialNetwork' => null,
             'options' => [],
             'ogImage' => null,

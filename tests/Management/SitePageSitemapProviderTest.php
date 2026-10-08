@@ -148,6 +148,20 @@ class SitePageSitemapProviderTest extends TestCase
         $this->assertSame('https://example.com/pages/about', $urls[0]['loc']);
     }
 
+    // A page kept for members is left out while it is, and back in once opened again with nothing else touched
+    public function testGetUrlsSkipsMembersOnlyPagesUntilTheyAreOpenedAgain(): void
+    {
+        $page = new Page()->setTitle('Espace membres')->setSlug('espace-membres')->setIsMembersOnly(true);
+        $page->setModification(new \DateTime('2026-01-15'));
+        $provider = $this->createProvider([$page]);
+
+        $this->assertSame([], $provider->getUrls());
+
+        $page->setIsMembersOnly(false);
+
+        $this->assertCount(1, $provider->getUrls());
+    }
+
     // Pages are indexable unless explicitly opted out, so nothing is silently dropped from an existing sitemap
     public function testPagesAreIndexableByDefault(): void
     {

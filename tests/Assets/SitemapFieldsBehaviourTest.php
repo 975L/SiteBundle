@@ -65,6 +65,26 @@ class SitemapFieldsBehaviourTest extends JsCase
         $this->assertTrue($unpublished['state']['priority']['readOnly'], 'Unpublishing left the sitemap fields editable under a switch it has just turned off.');
     }
 
+    // Kept for members, the page is left out of the sitemap meanwhile, but isIndexable is kept and still leaves with the form: opened again, the page is referenced as it was
+    public function testKeepingThePageForMembersLocksTheReferenceWithoutUncheckingIt(): void
+    {
+        $kept = $this->form(
+            'membersOnly().checked = true;
+             fire(membersOnly());
+             const locked = { checked: indexable().checked, state: state(), sent: [...new FormData(form()).keys()] };
+             membersOnly().checked = false;
+             fire(membersOnly());
+
+             return { locked, reopened: state() };'
+        );
+
+        $this->assertTrue($kept['locked']['checked'], 'Keeping the page for members unchecked a reference the server keeps, so the save drops it for good.');
+        $this->assertSame('true', $kept['locked']['state']['indexable']['aria'], 'The reference switch of a page kept for members can still be toggled, for no effect.');
+        $this->assertTrue($kept['locked']['state']['priority']['readOnly'], 'The sitemap fields of a page kept for members stay editable.');
+        $this->assertContains('Page[isIndexable]', $kept['locked']['sent'], 'The reference no longer leaves with the form, so the save drops it.');
+        $this->assertFalse($kept['reopened']['priority']['readOnly'], 'Opening the page again keeps its sitemap fields locked.');
+    }
+
     // The switch sits in a row of its own, whose change never bubbles through this one
     public function testTheSwitchAboveIsListenedForOnTheFormRatherThanOnThisRow(): void
     {
@@ -123,6 +143,7 @@ class SitemapFieldsBehaviourTest extends JsCase
              const field = (suffix) => root.querySelector("[id$=" + suffix + "]");
              const published = () => field("_isPublished");
              const indexable = () => field("_isIndexable");
+             const membersOnly = () => field("_isMembersOnly");
              const priority = () => field("_priority");
              const frequency = () => field("_changeFrequency");
              const fire = (el) => el.dispatchEvent(new Event("change", { bubbles: true }));
@@ -143,7 +164,8 @@ class SitemapFieldsBehaviourTest extends JsCase
         return sprintf(
             '<form>
                 <div class="form-group"><div class="ea-switch"><input type="checkbox" id="Page_isPublished" name="Page[isPublished]"%s></div></div>
-                <div class="form-group" data-controller="sitemap-fields"><div class="ea-switch"><input type="checkbox" id="Page_isIndexable" name="Page[isIndexable]" checked></div></div>
+                <div class="form-group"><div class="ea-switch"><input type="checkbox" id="Page_isMembersOnly" name="Page[isMembersOnly]" value="1"></div></div>
+                <div class="form-group" data-controller="sitemap-fields"><div class="ea-switch"><input type="checkbox" id="Page_isIndexable" name="Page[isIndexable]" value="1" checked></div></div>
                 <div class="form-group"><label for="Page_changeFrequency">Frequence</label><select id="Page_changeFrequency" name="Page[changeFrequency]"><option value="weekly" selected>weekly</option></select></div>
                 <div class="form-group"><label for="Page_priority">Priorite</label><input type="text" id="Page_priority" name="Page[priority]" value="0.5"></div>
             </form>',

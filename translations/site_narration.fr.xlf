@@ -228,7 +228,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation.</target>
+                <target>Publiez la page avec cet interrupteur. Tant qu'il est éteint, la page n'est visible que de vous, en prévisualisation. Pour la réserver aux membres connectés, cochez la case juste en dessous.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -376,7 +376,7 @@
             </trans-unit>
             <trans-unit id="lW6LlUQ">
                 <source>narration.guided_step_page_seo_indexable</source>
-                <target>Laissez-la dans le sitemap. Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Ne la décochez que si la page n'a rien à faire dans les résultats de recherche, comme une création de compte ou un mot de passe oublié.</target>
+                <target>Laissez-la dans le sitemap. Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Ne la décochez que si la page n'a rien à faire dans les résultats de recherche, comme une création de compte ou un mot de passe oublié. Une page réservée aux membres n'est pas référencée tant qu'elle l'est : la case se fige, et la page retourne au sitemap dès qu'elle redevient publique.</target>
             </trans-unit>
             <trans-unit id="9cZbDkQ">
                 <source>narration.guided_step_page_seo_open</source>

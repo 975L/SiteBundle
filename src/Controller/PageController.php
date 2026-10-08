@@ -195,8 +195,8 @@ class PageController extends AbstractController
 
         $pageObject = $this->pageService->findForDisplay($slug);
 
-        // The database collation finds a page whatever the case its slug is written in, so "/pages/About" would answer the very content of "/pages/about" - two urls for one page, and a way around an access rule a site writes on the stored slug. A 301 to the stored slug settles both, before anything of the page is rendered. A draft is left to the gate's 404, so the redirect never tells an unpublished slug exists
-        if (null !== $pageObject && $pageObject->isPublished() && $pageObject->getSlug() !== $slug) {
+        // The database collation finds a page whatever the case its slug is written in, so "/pages/About" would answer the very content of "/pages/about" - two urls for one page, and a way around an access rule a site writes on the stored slug. A 301 to the stored slug settles both, before anything of the page is rendered. A draft is left to the gate's 404, and a page kept for members to the gate's login form when the visitor is anonymous, so the redirect never tells an unpublished or private slug exists
+        if (null !== $pageObject && $pageObject->isPublished() && $pageObject->getSlug() !== $slug && (!$pageObject->isMembersOnly() || $this->isGranted('IS_AUTHENTICATED'))) {
             [$route, $parameters] = $this->sameLanguage('page_display', ['page' => (string) $pageObject->getSlug()]);
 
             return $this->redirectToRoute($route, $parameters, 301);
@@ -227,7 +227,7 @@ class PageController extends AbstractController
         return $this->renderPage($request, $pageObject, $slug, $detailHtml, $detailTitle);
     }
 
-    // What a page's url has to pass before anything of it is rendered: a deleted page is gone for good, an unpublished one was never there, and a request written in another language is answered in that one. A response back is the answer to return as is; null means the request may be served here. Called twice on an item detail - once in display() before the detail is rendered, once through renderPage() - the second run being the same computation on a page that has already passed
+    // What a page's url has to pass before anything of it is rendered: a deleted page is gone for good, an unpublished one was never there, one kept for members sends an anonymous visitor to the login form (the firewall's entry point), and a request written in another language is answered in that one. A response back is the answer to return as is; null means the request may be served here. Called twice on an item detail - once in display() before the detail is rendered, once through renderPage() - the second run being the same computation on a page that has already passed
     private function gate(Request $request, Page $page, string $slug): ?Response
     {
         if ($page->isDeleted()) {
@@ -235,6 +235,9 @@ class PageController extends AbstractController
         }
         if (!$page->isPublished()) {
             throw $this->createNotFoundException();
+        }
+        if ($page->isMembersOnly() && !$this->isGranted('IS_AUTHENTICATED')) {
+            throw $this->createAccessDeniedException();
         }
 
         $this->requireTranslated($request, $page);
@@ -302,7 +305,7 @@ class PageController extends AbstractController
             return null;
         }
 
-        $detailPage = $this->pageService->findWithBlocks($detailPageSlug);
+        $detailPage = $this->findDetailPage($detailPageSlug);
         if (null === $detailPage) {
             return null;
         }
@@ -313,6 +316,17 @@ class PageController extends AbstractController
             $this->twig->render('@c975LSite/pages/_blocks.html.twig', ['blocks' => $detailPage->getBlocks()]),
             $itemData['title'] ?? null,
         ];
+    }
+
+    // The page a collection item is rendered through, gated as that page itself would be when kept for members (see gate()), whatever page the block sits on
+    private function findDetailPage(string $slug): ?Page
+    {
+        $detailPage = $this->pageService->findWithBlocks($slug);
+        if (null !== $detailPage && $detailPage->isMembersOnly() && !$this->isGranted('IS_AUTHENTICATED')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $detailPage;
     }
 
     // PREVIEW

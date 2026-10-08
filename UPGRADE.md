@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+**`site_page` gains an `is_members_only` column** (`TINYINT(1) DEFAULT 0 NOT NULL`): run
+`doctrine:migrations:diff` then `doctrine:migrations:migrate`, then `c975l:config:load-all` for the new
+`site-pages-members-only` setting. Every existing page stays open to everyone. A private site that
+guarded its pages in `security.yaml` (`access_control` on `^/pages/...`) can tick "Members only" on them
+in the back office instead, turn `site-pages-members-only` on so new pages start private, and drop those
+rules: an anonymous visitor asking for such a page is sent to the login form by the firewall's entry point.
+The home page cannot be kept for members and stays open to everyone: a site that guards `/` keeps that rule.
+
 **The `site-menu-link-copyright-auto` setting is removed.** A `menu_link` to the site's Copyright page
 always shows the computed "© year" notice, unless the link is given a `label` of its own in the menu,
 which then wins. A site that had turned the setting off and wants the page's title back types that

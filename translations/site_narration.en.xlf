@@ -228,7 +228,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview.</target>
+                <target>Publish the page with this switch. As long as it is off, the page is only visible to you, as a preview. To keep it for signed-in members, check the box right below.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -376,7 +376,7 @@
             </trans-unit>
             <trans-unit id="lW6LlUQ">
                 <source>narration.guided_step_page_seo_indexable</source>
-                <target>Leave it in the sitemap. Unchecked, the page leaves sitemap.xml and the two settings below freeze. Only uncheck it if the page has no business in search results, like an account creation or a forgotten password.</target>
+                <target>Leave it in the sitemap. Unchecked, the page leaves sitemap.xml and the two settings below freeze. Only uncheck it if the page has no business in search results, like an account creation or a forgotten password. A page kept for members is not referenced while it is: the box freezes, and the page goes back to the sitemap as soon as it is public again.</target>
             </trans-unit>
             <trans-unit id="9cZbDkQ">
                 <source>narration.guided_step_page_seo_open</source>

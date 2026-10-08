@@ -12,7 +12,7 @@
 {% set navbarPage = (detailHtml is defined and detailHtml) or isPreview|default(false) ? null : page %}
 
 {# Read by layout's "meta" block, which defaults to "index, follow" for every other template #}
-{% set robots = page.isIndexable ? 'index, follow' : 'noindex, follow' %}
+{% set robots = page.isReferenced ? 'index, follow' : 'noindex, follow' %}
 
 {# Who publishes this site and what the site itself is, stated once on the home page: every other page describes its own subject - a book, a product, a photo - and none of them names the publisher behind it. Built by SiteSnippetBuilder from the site's own configuration, so it follows the back-office rather than this template; empty while the site has neither name nor url #}
 {# The logo is resolved here because only a template turns a Media into an absolute url, and the description is the page's own summary, which is already its meta description #}

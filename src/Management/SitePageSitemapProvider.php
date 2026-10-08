@@ -41,8 +41,8 @@ class SitePageSitemapProvider implements SelfCheckedSitemapProviderInterface
         // Urls for the pages
         $urls = [];
         foreach ($pages as $page) {
-            // Filtered here rather than in PageRepository::findAllOrdered(), which is also used for public display and health checks - a non-indexable page is still a published page, and stays checked like any other
-            if (!$page->isIndexable()) {
+            // Filtered here rather than in PageRepository::findAllOrdered(), which is also used for public display and health checks - a non-indexable page is still a published page, and stays checked like any other. isReferenced() rather than isIndexable(): a page kept for members is left out too, and back in once opened again
+            if (!$page->isReferenced()) {
                 continue;
             }
 

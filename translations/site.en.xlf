@@ -392,7 +392,7 @@
             </trans-unit>
             <trans-unit id="RGI0ZHq">
                 <source>description.guided_step_page_creation_publish</source>
-                <target>As long as this switch is off, the page is only visible to you, as a preview.</target>
+                <target>As long as this switch is off, the page is only visible to you, as a preview. To keep it for signed-in members, check the box right below.</target>
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
@@ -524,7 +524,7 @@
             </trans-unit>
             <trans-unit id="QlsKKaU">
                 <source>description.guided_step_page_seo_indexable</source>
-                <target>Unchecked, the page leaves sitemap.xml and the two settings below it freeze. Keep it checked unless the page has no business being found (account creation, forgotten password).</target>
+                <target>Unchecked, the page leaves sitemap.xml and the two settings below it freeze. Keep it checked unless the page has no business being found (account creation, forgotten password). A page kept for members is not referenced while it is: the box freezes, and the page goes back to the sitemap as soon as it is public again.</target>
             </trans-unit>
             <trans-unit id="4R0skS1">
                 <source>description.guided_step_page_seo_open</source>
@@ -1725,6 +1725,14 @@
             <trans-unit id="uHgxjl3">
                 <source>label.is_indexable_help</source>
                 <target>Uncheck to leave the page out of the sitemap and ask search engines not to index it (eg. account creation, forgotten password). Unpublishing the page unreferences it automatically: if you publish it again, check this box back to have it referenced</target>
+            </trans-unit>
+            <trans-unit id="4O2Frbe">
+                <source>label.is_members_only</source>
+                <target>Members only</target>
+            </trans-unit>
+            <trans-unit id="Y9G_eVH">
+                <source>label.is_members_only_help</source>
+                <target>Check to keep the page for signed-in visitors: an anonymous visitor is sent to the login form, and the page is not referenced while it is (sitemap, search engines); unchecked, it goes back there on its own. The home page always stays public.</target>
             </trans-unit>
             <trans-unit id="f7EAy._">
                 <source>label.is_published</source>

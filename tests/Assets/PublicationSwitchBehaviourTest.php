@@ -54,6 +54,24 @@ class PublicationSwitchBehaviourTest extends JsCase
         );
     }
 
+    // Kept for members, the page is left out of the sitemap meanwhile without isIndexable being touched: locked as it stands, and given back as it was
+    public function testKeepingTheRowForMembersLocksItsReferenceWithoutUncheckingIt(): void
+    {
+        $this->assertSame(
+            [['checked' => true, 'disabled' => true, 'dimmed' => true], ['checked' => true, 'disabled' => false, 'dimmed' => false]],
+            $this->row(
+                'membersOnly().checked = true;
+                 fire(membersOnly());
+                 const kept = state();
+                 membersOnly().checked = false;
+                 fire(membersOnly());
+
+                 return [kept, state()];'
+            ),
+            'Keeping a row for members either left its reference switch clickable, or unchecked a value the server keeps.'
+        );
+    }
+
     // A list not showing the isIndexable column at all: there is nothing to mirror, and nothing must throw over it
     public function testARowWithoutTheOtherColumnIsSimplyLeftAlone(): void
     {
@@ -92,6 +110,7 @@ class PublicationSwitchBehaviourTest extends JsCase
     {
         $preamble = 'const published = () => root.querySelector("[data-column=isPublished] input");
              const indexable = () => root.querySelector("[data-column=isIndexable] input");
+             const membersOnly = () => root.querySelector("[data-column=isMembersOnly] input");
              const fire = (el) => el.dispatchEvent(new Event("change", { bubbles: true }));
              const state = () => ({
                  checked: indexable().checked,
@@ -108,6 +127,7 @@ class PublicationSwitchBehaviourTest extends JsCase
         return sprintf(
             '<table><tbody><tr>
                 <td data-column="isPublished" data-controller="publication-switch"><div class="ea-switch"><input type="checkbox"%s></div></td>
+                <td data-column="isMembersOnly"><div class="ea-switch"><input type="checkbox"></div></td>
                 <td data-column="isIndexable"><div class="ea-switch"><input type="checkbox" checked></div></td>
             </tr></tbody></table>',
             $published ? ' checked' : ''

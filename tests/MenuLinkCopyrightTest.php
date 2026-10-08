@@ -68,6 +68,7 @@ class MenuLinkCopyrightTest extends TestCase
     {
         $twig = new Environment(new ArrayLoader(['link' => (string) file_get_contents(\dirname(__DIR__) . '/templates/blocks/MenuLink.html.twig')]));
         $twig->addFunction(new TwigFunction('menu_link_url', static fn (): string => '/pages/copyright'));
+        $twig->addFunction(new TwigFunction('menu_link_members_only', static fn (): bool => false));
         $twig->addFunction(new TwigFunction('menu_link_label', static fn (): string => '© 2020 - 2026'));
 
         return $twig->render('link', ['target' => 'page:42'] + $data);

@@ -51,6 +51,7 @@ class PageExportProvider implements ExportProviderInterface
                 'priority' => $page->getPriority(),
                 'isPublished' => $page->isPublished(),
                 'isIndexable' => $page->isIndexable(),
+                'isMembersOnly' => $page->isMembersOnly(),
                 'summarySocialNetwork' => $page->getSummarySocialNetwork(),
                 'options' => $page->getOptions(),
                 'ogImage' => null !== $ogImage ? $this->blockDataExporter->exportMedia($ogImage, $files) : null,

@@ -18,6 +18,10 @@
                 <source>description.site_navbar_show_name</source>
                 <target>Mostrar el nombre (y el eslogan) junto al logo en la barra de navegación</target>
             </trans-unit>
+            <trans-unit id="Y63vkP7">
+                <source>description.site_pages_members_only</source>
+                <target>Marca por defecto «Solo para miembros» en una página nueva creada en el back office: actívelo en un sitio privado, para que una página solo sea pública si se abre a propósito. Las páginas por defecto (inicio de sesión, aviso legal…) y la página de inicio siguen siendo públicas.</target>
+            </trans-unit>
             <trans-unit id="ah0x8VP">
                 <source>description.site_preconnect</source>
                 <target>Orígenes a preconectar (array JSON), ej. ["https://example.com"] - útil si logos de créditos/Matomo están en otro dominio</target>
@@ -41,6 +45,10 @@
             <trans-unit id="GKSaIC2">
                 <source>label.site_navbar_show_name</source>
                 <target>Mostrar el nombre del sitio en la barra de navegación</target>
+            </trans-unit>
+            <trans-unit id="fe6CVsN">
+                <source>label.site_pages_members_only</source>
+                <target>Nuevas páginas solo para miembros</target>
             </trans-unit>
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>

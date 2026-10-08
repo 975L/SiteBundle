@@ -1,6 +1,6 @@
 ---
 name: c975l-site-seo
-description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_config.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, access_control, members' pages, PagePublicUrlResolver, PageHealthCheckTargets, PageLinkLocalizer, InternalLinkLocalizerInterface, llms.txt, site_json_ld, SiteSnippetBuilder, JsonLdBuilder, publisherId, VideoObject, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
+description: "Use this skill when working on the searchability or the monitoring of a Symfony application built on the c975L ecosystem with c975l/site-bundle — sitemaps, canonical urls, the Open Graph image, the content-quality and W3C health checks, the deployment smoke test or the dev profile. Covers what each command reads, which database it must run against, and what the checks deliberately do not flag. Triggers on: sitemap, c975l:sitemaps:create, c975l:site:smoke-test, c975l:health-check:run, c975l:dev-profile:run, canonical_url, ogImage, og:image, content-quality, pagespeed, w3c-html, w3c-css, mixed-content, deployment, files-site, CollectionFilesHealthCheckProvider, translations, TranslationHealthCheckProvider, hreflang, alternates, resolveAlternates, page_alternates, c975l_config.locales_pattern, page_home_localized, page_display_localized, Vary Accept-Language, enabled_locales, noindex, access_control, members' pages, isMembersOnly, isReferenced, PagePublicUrlResolver, PageHealthCheckTargets, PageLinkLocalizer, InternalLinkLocalizerInterface, llms.txt, site_json_ld, SiteSnippetBuilder, JsonLdBuilder, publisherId, VideoObject, site-schema-type, schema.org, JSON-LD, Organization, sameAs."
 ---
 
 # c975L SiteBundle — SEO, health checks and deployment
@@ -126,8 +126,8 @@ Seven providers, five of them about a **published page** and fetched with plain 
 Node or headless browser involved. Each of those five walks `PageHealthCheckTargets`: **one row per page
 and per language it was written in** — another url is another title, another prose and another set of
 links — each row named in that language's own words and opening that language's edit screen. A page the
-firewall's `access_control` keeps for members is no target: an anonymous check would only judge the login
-form. The other two read the database instead — a file a row declares, and
+firewall's `access_control` keeps for members, or ticked *Members only*, is no target: an anonymous check
+would only judge the login form — the smoke test skips the latter too. The other two read the database instead — a file a row declares, and
 what is written in each language. The site-wide checks (TLS, security headers, robots.txt, redirect
 chains, deployment, declared urls) are ConfigBundle's.
 

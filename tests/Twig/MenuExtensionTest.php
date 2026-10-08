@@ -452,6 +452,19 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('', $extension->getMenuLinkUrl('page:42'));
     }
 
+    // Only a page target can lead to a page kept for members; the link is then hidden from a guest by its marker class (see MenuLink.html.twig)
+    public function testIsMenuLinkMembersOnlyTellsAPageKeptForMembers(): void
+    {
+        $kept = new Page()->setTitle('Espace membres')->setSlug('espace-membres')->setIsPublished(true)->setIsMembersOnly(true);
+        $open = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
+        $extension = $this->createExtension($this->createRegistry([]), ['42' => $kept, '43' => $open]);
+
+        $this->assertTrue($extension->isMenuLinkMembersOnly('page:42'));
+        $this->assertFalse($extension->isMenuLinkMembersOnly('page:43'));
+        $this->assertFalse($extension->isMenuLinkMembersOnly('route:app_login'));
+        $this->assertFalse($extension->isMenuLinkMembersOnly(null));
+    }
+
     // A "route:NAME" target resolves via the router directly, using its route name
     public function testGetMenuLinkUrlResolvesDirectRouteForRouteTargets(): void
     {

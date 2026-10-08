@@ -279,6 +279,61 @@ class PageControllerTest extends TestCase
         $controller->display('draft', new Request());
     }
 
+    // A page kept for members sends an anonymous visitor to the login form, the firewall's entry point answering the AccessDeniedException
+    public function testDisplayDeniesAMembersOnlyPageToAnAnonymousVisitor(): void
+    {
+        $page = new Page()->setTitle('Members')->setSlug('members')->setIsPublished(true)->setIsMembersOnly(true);
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['members' => $page]),
+            $this->createConfigService(),
+            isGranted: false,
+        );
+
+        $this->expectException(AccessDeniedException::class);
+        $controller->display('members', new Request());
+    }
+
+    // Asked for in another case, a page kept for members still denies an anonymous visitor rather than redirecting to its stored slug - the 301 would tell the slug exists
+    public function testDisplayDeniesAMembersOnlyPageInAnotherCaseBeforeRedirecting(): void
+    {
+        $page = new Page()->setTitle('Members')->setSlug('members')->setIsPublished(true)->setIsMembersOnly(true);
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: ['Members' => $page]),
+            $this->createConfigService(),
+            isGranted: false,
+        );
+
+        $this->expectException(AccessDeniedException::class);
+        $controller->display('Members', new Request());
+    }
+
+    // A public page whose collection block points at a detail page kept for members sends an anonymous visitor to the login form, as that page itself would
+    public function testDisplayDeniesACollectionDetailFromAMembersOnlyDetailPageToAnAnonymousVisitor(): void
+    {
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData([
+            'source' => 'app.collection.demo',
+            'detailPage' => 'catalog-detail',
+        ]));
+        $detailPage = new Page()->setTitle('Detail template')->setSlug('catalog-detail')->setIsPublished(true)->setIsMembersOnly(true);
+
+        $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
+
+        $controller = $this->createController(
+            $this->createPageService(forDisplayBySlug: [
+                'catalog' => $parent,
+                'catalog-detail' => $detailPage,
+            ]),
+            $this->createConfigService(),
+            isGranted: false,
+            collectionSourceRegistry: $collectionSourceRegistry,
+        );
+
+        $this->expectException(AccessDeniedException::class);
+        $controller->display('catalog/item-1', new Request());
+    }
+
     public function testDisplayThrowsNotFoundWhenPageDoesNotExist(): void
     {
         $controller = $this->createController($this->createPageService(), $this->createConfigService());

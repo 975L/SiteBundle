@@ -16,12 +16,16 @@ use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Twig\PageExtension;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PageExtensionTest extends TestCase
 {
-    private function extension(PageRepository $repository, ?PageEditUrlResolver $resolver = null, ?DefaultPagesImporter $importer = null): PageExtension
+    private function extension(PageRepository $repository, ?PageEditUrlResolver $resolver = null, ?DefaultPagesImporter $importer = null, bool $authenticated = false): PageExtension
     {
-        return new PageExtension($repository, $resolver ?? $this->createStub(PageEditUrlResolver::class), $importer ?? $this->createStub(DefaultPagesImporter::class));
+        $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
+        $authorizationChecker->method('isGranted')->willReturn($authenticated);
+
+        return new PageExtension($repository, $resolver ?? $this->createStub(PageEditUrlResolver::class), $importer ?? $this->createStub(DefaultPagesImporter::class), $authorizationChecker);
     }
 
     // A content holder is meant to stay unpublished: the zone reads it whatever its status, through the same row-alone lookup as a page display
@@ -77,6 +81,18 @@ class PageExtensionTest extends TestCase
         $repository->method('findByLegalModels')->willReturn($pages);
 
         $this->assertSame($pages, $this->extension($repository)->getLegalPages(['france/cookies']));
+    }
+
+    // A legal page kept for members is left out of the "About" menu for an anonymous visitor, as a menu link to it is
+    public function testGetLegalPagesLeavesMembersOnlyPagesOutForAnAnonymousVisitor(): void
+    {
+        $open = new Page()->setSlug('mentions-legales');
+        $kept = new Page()->setSlug('cgv')->setIsMembersOnly(true);
+        $repository = $this->createStub(PageRepository::class);
+        $repository->method('findByLegalModels')->willReturn([$kept, $open]);
+
+        $this->assertSame([$open], $this->extension($repository)->getLegalPages(['france/legal-notice']));
+        $this->assertSame([$kept, $open], $this->extension($repository, authenticated: true)->getLegalPages(['france/legal-notice']));
     }
 
     // No model given asks for every one the site can carry, in the importer's display order - the installed app's "About" menu

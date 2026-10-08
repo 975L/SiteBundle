@@ -67,6 +67,12 @@ class PageSocialContentSourceTest extends TestCase
         $this->assertNull($this->createSource([$this->createPage(1, '2026-01-01', indexable: false), $this->createPage(2, '2026-01-01', legal: true)])->getNextContent([]));
     }
 
+    // A page kept for members has nothing to say to a follower either, who could not read it
+    public function testAPageKeptForMembersIsNotOffered(): void
+    {
+        $this->assertNull($this->createSource([$this->createPage(1, '2026-01-01')->setIsMembersOnly(true)])->getNextContent([]));
+    }
+
     public function testAPageIsPostedOnce(): void
     {
         $this->assertNull($this->createSource([])->getRepeatAfterDays());

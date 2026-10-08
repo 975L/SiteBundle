@@ -66,5 +66,16 @@
         "group": "health_check",
         "severity": "warning",
         "description": "description.healthcheck_pagespeed_api_key"
+    },
+    {
+        "label": "label.site_pages_members_only",
+        "slug": "site-pages-members-only",
+        "sensitive": false,
+        "restricted": false,
+        "value": "false",
+        "kind": "bool",
+        "group": "site",
+        "severity": null,
+        "description": "description.site_pages_members_only"
     }
 ]

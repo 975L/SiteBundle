@@ -87,6 +87,10 @@ class Page implements HasBlocksInterface, \Stringable
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $isDeleted = false;
 
+    // Only for signed-in visitors: an anonymous one is sent to the login form (see PageController::gate()), and the page is left unreferenced while it is (see isReferenced()) - isIndexable itself is kept, so opening the page again puts it back in the sitemap with no other step. Never on "home", the site root staying open to everyone (see unreferenceWhenUnpublished()). A column rather than an option: what the sitemap and the smoke test leave out is filtered on it
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isMembersOnly = false;
+
     // Id of the page this one is meant to take over once approved (see PageCrudController::publishAsReplacement()) - an id, not the slug, so the lookup stays correct even if that page's slug changes (e.g. archived by another draft's own publishAsReplacement()) in the meantime. Null once published as a replacement, or for any page not created that way.
     #[ORM\Column(nullable: true)]
     private ?int $replaces = null;
@@ -204,6 +208,17 @@ class Page implements HasBlocksInterface, \Stringable
         if (!$this->isPublished) {
             $this->isIndexable = false;
         }
+
+        // The site root stays open to everyone, whatever ticked the box (the index switch, an import, an older row)
+        if ('home' === $this->slug) {
+            $this->isMembersOnly = false;
+        }
+    }
+
+    // What the sitemap, the robots meta and the social posts read: a page kept for members is left out while it is, its own isIndexable coming back untouched once it is opened again
+    public function isReferenced(): bool
+    {
+        return $this->isIndexable && !$this->isMembersOnly;
     }
 
     public function isIndexable(): bool
@@ -287,6 +302,18 @@ class Page implements HasBlocksInterface, \Stringable
     public function setIsPublished(bool $isPublished): self
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    public function isMembersOnly(): bool
+    {
+        return $this->isMembersOnly;
+    }
+
+    public function setIsMembersOnly(bool $isMembersOnly): self
+    {
+        $this->isMembersOnly = $isMembersOnly;
 
         return $this;
     }

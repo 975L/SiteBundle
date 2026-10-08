@@ -18,6 +18,10 @@
                 <source>description.site_navbar_show_name</source>
                 <target>Show the site name (and tagline) next to the logo in the navbar</target>
             </trans-unit>
+            <trans-unit id="Y63vkP7">
+                <source>description.site_pages_members_only</source>
+                <target>Checks "Members only" by default on a new page created in the back office: turn it on for a private site, so a page only becomes public when opened on purpose. The default pages (login, legal notice…) and the home page stay public.</target>
+            </trans-unit>
             <trans-unit id="ah0x8VP">
                 <source>description.site_preconnect</source>
                 <target>Origins to preconnect (JSON array), e.g. ["https://example.com"] - useful when credits/Matomo logos are on a third-party domain</target>
@@ -41,6 +45,10 @@
             <trans-unit id="GKSaIC2">
                 <source>label.site_navbar_show_name</source>
                 <target>Show Site Name In Navbar</target>
+            </trans-unit>
+            <trans-unit id="fe6CVsN">
+                <source>label.site_pages_members_only</source>
+                <target>New pages for members only</target>
             </trans-unit>
             <trans-unit id="MhX0IMV">
                 <source>label.site_preconnect</source>

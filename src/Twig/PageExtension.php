@@ -14,6 +14,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Attribute\AsTwigFunction;
 
 class PageExtension
@@ -22,6 +23,7 @@ class PageExtension
         private readonly PageRepository $pageRepository,
         private readonly PageEditUrlResolver $pageEditUrlResolver,
         private readonly DefaultPagesImporter $defaultPagesImporter,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
     ) {
     }
 
@@ -53,10 +55,15 @@ class PageExtension
         return $this->pageRepository->findOneByFormBlockName($formName);
     }
 
-    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section). None given means every model the site can carry, in DefaultPagesImporter's display order - what the installed app's "About" menu lists (see Navbar.html.twig)
+    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section). None given means every model the site can carry, in DefaultPagesImporter's display order - what the installed app's "About" menu lists (see Navbar.html.twig). A page kept for members is left out for an anonymous visitor, as a menu link to it is (see MenuExtension::pageUrl())
     #[AsTwigFunction('site_legal_pages')]
     public function getLegalPages(?array $models = null): array
     {
-        return $this->pageRepository->findByLegalModels($models ?? array_keys($this->defaultPagesImporter->getLegalPageSlugsByModel()));
+        $pages = $this->pageRepository->findByLegalModels($models ?? array_keys($this->defaultPagesImporter->getLegalPageSlugsByModel()));
+        if ($this->authorizationChecker->isGranted('IS_AUTHENTICATED')) {
+            return $pages;
+        }
+
+        return array_values(array_filter($pages, static fn (Page $page): bool => !$page->isMembersOnly()));
     }
 }

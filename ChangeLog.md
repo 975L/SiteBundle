@@ -1,5 +1,27 @@
 # Changelog
 
+## v8.32.0
+
+A page can be kept for members from the back office
+
+- Added the "Members only" switch to a page: an anonymous visitor is sent to the login form (08/10/2026) [Needs db update]
+- A page kept for members is left out of the sitemap, robots and social posts, and referenced again once opened (08/10/2026)
+- Added `Page::isReferenced()`, read by the sitemap, the robots meta and the social posts (08/10/2026)
+- Added the `site-pages-members-only` setting, the default of a page created in the back office (08/10/2026)
+- The home page can never be kept for members (08/10/2026)
+- A collection item rendered through a members-only detail page denies an anonymous visitor (08/10/2026)
+- A page kept for members asked for in another case denies an anonymous visitor before the redirect to its stored slug (08/10/2026)
+- Both page screens lock the sitemap switch of a page kept for members without unchecking it (08/10/2026)
+- The members switch is hidden from the trash's index (08/10/2026)
+- A menu link to a page kept for members is hidden from guests, through `menu_link_members_only()` (08/10/2026)
+- The installed app's "About" menu leaves members-only legal pages out for guests (08/10/2026)
+- The smoke test and the health checks skip the pages kept for members (08/10/2026)
+- A page's export, import and duplication carry the switch (08/10/2026)
+- The page creation and SEO guided steps mention the members switch (08/10/2026)
+- Added the `label.is_members_only`, `label.is_members_only_help`, `label.site_pages_members_only` and `description.site_pages_members_only` translations (08/10/2026)
+- Added the members-only cases to the page, controller, sitemap, social, health check, menu and JS behaviour tests (08/10/2026)
+- README, UPGRADE.md and the `c975l-site-pages`, `c975l-site-seo` and `c975l-site-menus` skills describe the switch (08/10/2026)
+
 ## v8.31.7
 
 The installed app's About menu lists the legal pages

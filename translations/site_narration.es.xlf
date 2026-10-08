@@ -228,7 +228,7 @@
             </trans-unit>
             <trans-unit id="5db92y2">
                 <source>narration.guided_step_page_creation_publish</source>
-                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa.</target>
+                <target>Publique la página con este interruptor. Mientras esté apagado, la página solo será visible para usted, en vista previa. Para reservarla a los miembros conectados, marque la casilla justo debajo.</target>
             </trans-unit>
             <trans-unit id="QLpcgUd">
                 <source>narration.guided_step_page_creation_reopen</source>
@@ -376,7 +376,7 @@
             </trans-unit>
             <trans-unit id="lW6LlUQ">
                 <source>narration.guided_step_page_seo_indexable</source>
-                <target>Déjela en el sitemap. Sin marcar, la página sale de sitemap.xml y los dos ajustes de debajo se bloquean. Desmárquela solo si la página no tiene nada que hacer en los resultados de búsqueda, como una creación de cuenta o una contraseña olvidada.</target>
+                <target>Déjela en el sitemap. Sin marcar, la página sale de sitemap.xml y los dos ajustes de debajo se bloquean. Desmárquela solo si la página no tiene nada que hacer en los resultados de búsqueda, como una creación de cuenta o una contraseña olvidada. Una página reservada a los miembros no se referencia mientras lo esté: la casilla se bloquea, y la página vuelve al sitemap en cuanto vuelve a ser pública.</target>
             </trans-unit>
             <trans-unit id="9cZbDkQ">
                 <source>narration.guided_step_page_seo_open</source>

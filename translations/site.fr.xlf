@@ -392,7 +392,7 @@
             </trans-unit>
             <trans-unit id="RGI0ZHq">
                 <source>description.guided_step_page_creation_publish</source>
-                <target>Tant que cet interrupteur est éteint, la page n'est visible que de vous, en prévisualisation.</target>
+                <target>Tant que cet interrupteur est éteint, la page n'est visible que de vous, en prévisualisation. Pour la réserver aux membres connectés, cochez la case juste en dessous.</target>
             </trans-unit>
             <trans-unit id="ZLl62rT">
                 <source>description.guided_step_page_creation_reopen</source>
@@ -524,7 +524,7 @@
             </trans-unit>
             <trans-unit id="QlsKKaU">
                 <source>description.guided_step_page_seo_indexable</source>
-                <target>Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Laissez-la cochée, sauf si la page n'a rien à faire dans les résultats (création de compte, mot de passe oublié).</target>
+                <target>Décochée, la page sort de sitemap.xml et les deux réglages en dessous se figent. Laissez-la cochée, sauf si la page n'a rien à faire dans les résultats (création de compte, mot de passe oublié). Une page réservée aux membres n'est pas référencée tant qu'elle l'est : la case se fige, et la page retourne au sitemap dès qu'elle redevient publique.</target>
             </trans-unit>
             <trans-unit id="4R0skS1">
                 <source>description.guided_step_page_seo_open</source>
@@ -1725,6 +1725,14 @@
             <trans-unit id="uHgxjl3">
                 <source>label.is_indexable_help</source>
                 <target>Décochez pour retirer la page du sitemap et demander aux moteurs de recherche de ne pas l'indexer (ex. création de compte, mot de passe oublié). Dépublier la page la déréférence automatiquement : si vous la republiez, recochez cette case pour la référencer à nouveau</target>
+            </trans-unit>
+            <trans-unit id="4O2Frbe">
+                <source>label.is_members_only</source>
+                <target>Réservée aux membres</target>
+            </trans-unit>
+            <trans-unit id="Y9G_eVH">
+                <source>label.is_members_only_help</source>
+                <target>Cochez pour réserver la page aux visiteurs connectés : un visiteur anonyme est renvoyé vers la connexion, et la page n'est pas référencée tant qu'elle l'est (sitemap, moteurs de recherche) ; décochée, elle y retourne d'elle-même. La page d'accueil reste toujours publique.</target>
             </trans-unit>
             <trans-unit id="f7EAy._">
                 <source>label.is_published</source>

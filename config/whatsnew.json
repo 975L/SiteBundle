@@ -3,6 +3,11 @@
         "date": "2026-10-08",
         "description": [
             {
+                "en": "A page can now be kept for your members: a visitor who is not signed in is asked to sign in, and the page goes back into search engines as soon as you open it to everyone again",
+                "fr": "Une page peut désormais être réservée à vos membres : un visiteur non connecté est invité à se connecter, et la page retourne dans les moteurs de recherche dès que vous la rouvrez à tous",
+                "es": "Ahora se puede reservar una página a sus miembros: a un visitante no conectado se le pide que inicie sesión, y la página vuelve a los motores de búsqueda en cuanto la abre de nuevo a todos"
+            },
+            {
                 "en": "Once installed on a phone, your site's app now gathers your legal pages in its \"About\" menu, without the footer's other links",
                 "fr": "Une fois installée sur un téléphone, l'application de votre site regroupe désormais vos pages légales dans son menu « À propos », sans les autres liens du pied de page",
                 "es": "Una vez instalada en un teléfono, la aplicación de su sitio reúne ahora sus páginas legales en su menú «Acerca de», sin los demás enlaces del pie de página"
