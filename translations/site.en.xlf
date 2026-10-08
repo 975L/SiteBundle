@@ -1706,6 +1706,14 @@
                 <source>label.info_tutorial_films</source>
                 <target>The films of the guided projects you may follow, each one also opened by its project's "Watch the film" button.</target>
             </trans-unit>
+            <trans-unit id="yaIYAj2">
+                <source>label.install</source>
+                <target>Install</target>
+            </trans-unit>
+            <trans-unit id="b9RDhCs">
+                <source>label.install_app</source>
+                <target>Install the app</target>
+            </trans-unit>
             <trans-unit id="p2lI9Fi">
                 <source>label.is_deleted</source>
                 <target>Deleted</target>

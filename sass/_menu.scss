@@ -223,6 +223,10 @@ img.menu-logo__on-dark {
     width: 100%;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    // Scrolls within the screen under the bar: a sticky or fixed bar never moves, so a list taller than the screen - the installed app's "About" and the languages ending it - was out of reach. "contain" keeps the page behind from scrolling once the list reaches its end
+    max-height: calc(100dvh - var(--navbar-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
 
     &.open {
         display: flex;
@@ -342,10 +346,54 @@ body:not(.has-back-office) .menu-item--back-office {
     display: none;
 }
 
+// The install button (see Navbar.html.twig), written hidden and shown by UiBundle's "pwa" controller once the browser offers to install - the display only applies to a shown one, or it would override the "hidden" attribute. It takes the free space before the magnifier, which then sits right beside it
+.menu .menu-install:not([hidden]) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-left: auto;
+    padding: 0.2rem 0.7rem 0.2rem 0.5rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    background: none;
+    color: var(--navbar-text);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.menu .menu-install:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+.menu .menu-install:not([hidden]) + .menu-ai-search--mobile {
+    margin-left: 0.5rem;
+}
+
+.menu.is-scrolled .menu-install {
+    color: var(--navbar-text-scrolled);
+}
+
+.menu-install-icon {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 // Desktop styles
 @media screen and (min-width: 768px) {
     .menu .menu-ai-search--mobile {
         display: none;
+    }
+
+    // Beside the brand, the links filling the rest of the bar
+    .menu .menu-install:not([hidden]) {
+        margin-left: 1rem;
     }
 
     .menu .menu-ai-search--desktop {
@@ -369,6 +417,9 @@ body:not(.has-back-office) .menu-item--back-office {
     .menu .menu-items {
         position: static;
         box-shadow: none;
+        // Back to an unbounded row, whose own dropdowns hang out of it
+        max-height: none;
+        overflow: visible;
         // Reset the mobile fullscreen dropdown's colored background - desktop keeps the navbar's own flat/translucent (or white) background instead of a solid band behind the links only
         background-color: transparent;
         display: flex;

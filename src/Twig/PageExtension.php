@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Twig;
 
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use Twig\Attribute\AsTwigFunction;
 
@@ -20,6 +21,7 @@ class PageExtension
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly PageEditUrlResolver $pageEditUrlResolver,
+        private readonly DefaultPagesImporter $defaultPagesImporter,
     ) {
     }
 
@@ -51,10 +53,10 @@ class PageExtension
         return $this->pageRepository->findOneByFormBlockName($formName);
     }
 
-    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section)
+    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section). None given means every model the site can carry, in DefaultPagesImporter's display order - what the installed app's "About" menu lists (see Navbar.html.twig)
     #[AsTwigFunction('site_legal_pages')]
-    public function getLegalPages(array $models): array
+    public function getLegalPages(?array $models = null): array
     {
-        return $this->pageRepository->findByLegalModels($models);
+        return $this->pageRepository->findByLegalModels($models ?? array_keys($this->defaultPagesImporter->getLegalPageSlugsByModel()));
     }
 }

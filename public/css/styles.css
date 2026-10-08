@@ -767,6 +767,9 @@ img.menu-logo__on-dark {
   width: 100%;
   z-index: 1000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: calc(100dvh - var(--navbar-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .menu .menu-items.open {
   display: flex;
@@ -871,9 +874,50 @@ body:not(.has-back-office) .menu-item--back-office {
   display: none;
 }
 
+.menu .menu-install:not([hidden]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  padding: 0.2rem 0.7rem 0.2rem 0.5rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  background: none;
+  color: var(--navbar-text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.menu .menu-install:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.menu .menu-install:not([hidden]) + .menu-ai-search--mobile {
+  margin-left: 0.5rem;
+}
+
+.menu.is-scrolled .menu-install {
+  color: var(--navbar-text-scrolled);
+}
+
+.menu-install-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 @media screen and (min-width: 768px) {
   .menu .menu-ai-search--mobile {
     display: none;
+  }
+  .menu .menu-install:not([hidden]) {
+    margin-left: 1rem;
   }
   .menu .menu-ai-search--desktop {
     display: inline-flex;
@@ -892,6 +936,8 @@ body:not(.has-back-office) .menu-item--back-office {
   .menu .menu-items {
     position: static;
     box-shadow: none;
+    max-height: none;
+    overflow: visible;
     background-color: transparent;
     display: flex;
     flex-direction: row;

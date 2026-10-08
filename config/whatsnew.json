@@ -1,5 +1,25 @@
 [
     {
+        "date": "2026-10-08",
+        "description": [
+            {
+                "en": "Once installed on a phone, your site's app now gathers your legal pages in its \"About\" menu, without the footer's other links",
+                "fr": "Une fois installée sur un téléphone, l'application de votre site regroupe désormais vos pages légales dans son menu « À propos », sans les autres liens du pied de page",
+                "es": "Una vez instalada en un teléfono, la aplicación de su sitio reúne ahora sus páginas legales en su menú «Acerca de», sin los demás enlaces del pie de página"
+            },
+            {
+                "en": "Your visitors can install your site as an app straight from the menu bar, when their browser allows it",
+                "fr": "Vos visiteurs peuvent installer votre site comme une application directement depuis la barre de menu, quand leur navigateur le permet",
+                "es": "Sus visitantes pueden instalar su sitio como una aplicación directamente desde la barra de menú, cuando su navegador lo permite"
+            },
+            {
+                "en": "On a phone, a long menu now scrolls, so its last links stay within reach",
+                "fr": "Sur téléphone, un long menu défile désormais, ses derniers liens restent ainsi accessibles",
+                "es": "En el teléfono, un menú largo ahora se desplaza, así sus últimos enlaces siguen al alcance"
+            }
+        ]
+    },
+    {
         "date": "2026-10-07",
         "description": [
             {

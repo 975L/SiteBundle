@@ -425,6 +425,14 @@ A signed-in visitor always finds their own links in the bar. A navbar holding no
 
 A site that built its own members' dropdown keeps it, and the built-in one steps aside — unless that dropdown is hidden, which counts as absent. Its own dropdown then receives the *Management* link, written for everyone in the cached html and shown only under the `has-back-office` body class `layout.html.twig` sets for the same voter (`.menu-item--back-office`, `sass/_menu.scss`).
 
+### Navbar: installed app
+
+Nothing to configure beyond UiBundle's `ui-pwa-enabled` (see [The installable web app](../CoreBundle/UiBundle/README.md#the-installable-web-app)): every site turning it on gets the three below.
+
+- **An install button** (`.menu-install`, `label.install`), beside the magnifier. It is written `hidden` and shown by UiBundle's `pwa` controller only once the browser offers to install the site (`beforeinstallprompt`), so it never shows in the installed app, nor on Safari, which offers no such dialog - an iPhone installs from *Share > Add to Home Screen*.
+- **An About dropdown** (`label.about`, `.menu-app-only`), shown in the installed app alone (`display-mode: standalone`, `sass/_navbar.scss`): the app sheds the footer, and a store asks for the privacy policy to stay within reach. It lists the site's **published legal pages** - `site_legal_pages()` with no argument, every `legal_model` in `DefaultPagesImporter`'s display order - drawn as `menu_link` blocks, so with their translated url and title and the copyright page's live notice. The footer's own blocks are not repeated there: its social links and the entries the bar already holds have no place in a dropdown.
+- **A scrolling mobile menu**: the burger's panel is bounded by the screen under the bar (`max-height: calc(100dvh - var(--navbar-height))`, `overflow-y: auto`), a sticky or fixed bar leaving a longer list out of reach otherwise.
+
 ### Navbar: logo, site name, tagline
 
 `Navbar` reads `site_media('logo')`, `config('site-name')` and the blocks of the `navbar-brand` `Menu` (`menu_blocks('navbar-brand')`) — nothing to pass in. `site-name` stays mandatory (used across meta tags, page titles, etc.), but showing it in the navbar specifically is optional via the `site-navbar-show-name` ConfigBundle key (`bool`, default `true`).

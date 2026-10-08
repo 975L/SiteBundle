@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA footer links, pwa_enabled, label.about."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -204,9 +204,14 @@ carrying the same specificity and winning wherever the sheets load in the other 
 writes nothing while the search is off.
 
 When the site ships as an installed app (`pwa_enabled()`), the bar also carries an **About** dropdown
-holding the `footer` menu's blocks, legal pages included: the installed app sheds the footer (UiBundle's
-`_pwa.scss`) and a store asks for the privacy policy to stay within reach. Its `.menu-app-only` class hides
-it outside `display-mode: standalone` (`sass/_navbar.scss`), so a browser tab never shows it.
+listing the site's published legal pages (`site_legal_pages()` with no argument, drawn through
+`blocks/MenuLink.html.twig` as `page:ID` targets) - never the `footer` menu's blocks, whose social links and
+repeated bar entries have no place there. The installed app sheds the footer (UiBundle's `_pwa.scss`) and a
+store asks for the privacy policy to stay within reach. Its `.menu-app-only` class hides it outside
+`display-mode: standalone` (`sass/_navbar.scss`), so a browser tab never shows it. The same flag writes the
+**install button** (`.menu-install`, a `pwa` controller `install` target) `hidden`, shown only once the
+browser fires `beforeinstallprompt`. The burger's panel scrolls within the screen (`max-height` +
+`overflow-y: auto`, reset from 768px up, where its dropdowns hang out of the row).
 
 Logo and name are wrapped in **one single link** to the home page, not two adjacent ones — a screen
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed

@@ -12,15 +12,16 @@ namespace c975L\SiteBundle\Tests\Twig;
 
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\DefaultPagesImporter;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Twig\PageExtension;
 use PHPUnit\Framework\TestCase;
 
 class PageExtensionTest extends TestCase
 {
-    private function extension(PageRepository $repository, ?PageEditUrlResolver $resolver = null): PageExtension
+    private function extension(PageRepository $repository, ?PageEditUrlResolver $resolver = null, ?DefaultPagesImporter $importer = null): PageExtension
     {
-        return new PageExtension($repository, $resolver ?? $this->createStub(PageEditUrlResolver::class));
+        return new PageExtension($repository, $resolver ?? $this->createStub(PageEditUrlResolver::class), $importer ?? $this->createStub(DefaultPagesImporter::class));
     }
 
     // A content holder is meant to stay unpublished: the zone reads it whatever its status, through the same row-alone lookup as a page display
@@ -76,6 +77,17 @@ class PageExtensionTest extends TestCase
         $repository->method('findByLegalModels')->willReturn($pages);
 
         $this->assertSame($pages, $this->extension($repository)->getLegalPages(['france/cookies']));
+    }
+
+    // No model given asks for every one the site can carry, in the importer's display order - the installed app's "About" menu
+    public function testGetLegalPagesWithoutModelsAsksForEveryModelInDisplayOrder(): void
+    {
+        $importer = $this->createStub(DefaultPagesImporter::class);
+        $importer->method('getLegalPageSlugsByModel')->willReturn(['france/legal-notice' => 'mentions-legales', 'france/cookies' => 'cookies']);
+        $repository = $this->createMock(PageRepository::class);
+        $repository->expects($this->once())->method('findByLegalModels')->with(['france/legal-notice', 'france/cookies'])->willReturn([]);
+
+        $this->assertSame([], $this->extension($repository, null, $importer)->getLegalPages());
     }
 
     // Links to the real Page carrying a "form" Block pointing at "register"/"reset_password_request", instead of the bare/generic route

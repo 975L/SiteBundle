@@ -1,5 +1,17 @@
 # Changelog
 
+## v8.31.7
+
+The installed app's About menu lists the legal pages
+
+- The installed app's "About" dropdown lists the published legal pages instead of the footer's blocks (08/10/2026)
+- `site_legal_pages()` without argument returns every legal model in display order (08/10/2026)
+- The navbar carries an install button, shown once the browser offers to install the site (08/10/2026)
+- The mobile menu panel scrolls within the screen under the bar (08/10/2026)
+- Added the `label.install` and `label.install_app` translations (08/10/2026)
+- Added the no-argument case to `PageExtensionTest` (08/10/2026)
+- README and the `c975l-site-menus` skill describe the install button and the legal pages dropdown (08/10/2026)
+
 ## v8.31.6
 
 Readable ink on a light primary

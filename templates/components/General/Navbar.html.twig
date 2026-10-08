@@ -54,6 +54,16 @@
                 {% endif %}
             </div>
 
+            {# The browser's own install dialog, opened by UiBundle's "pwa" controller: hidden until the browser says the site can be installed, so never shown in the installed app nor by a browser offering no such dialog (Safari) #}
+            {% if pwa_enabled() %}
+                <button type="button" class="menu-install" data-pwa-target="install" data-action="pwa#install" title="{{ 'label.install_app'|trans({}, 'site') }}" hidden>
+                    <svg class="menu-install-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>
+                    </svg>
+                    <span class="menu-install-label">{{ 'label.install'|trans({}, 'site') }}</span>
+                </button>
+            {% endif %}
+
             {# The site search's magnifier, next to the burger so a phone reaches it without opening the menu - its desktop twin ends the links below. UiBundle writes nothing while the search is off #}
             <twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--mobile" />
 
@@ -69,16 +79,18 @@
             {% if not hasMembersDropdown %}
                 <twig:c975LSite:General:AccountMenu :dropdown="true" />
             {% endif %}
-{# The footer's links, legal pages first among them, for the installed app only: it sheds the footer (see UiBundle's _pwa.scss), and a store asks for its privacy policy to stay within reach #}
-            {% set footerBlocks = pwa_enabled() ? menu_blocks('footer') : [] %}
-            {% if footerBlocks is not empty %}
+{# The site's legal pages, for the installed app only: it sheds the footer (see UiBundle's _pwa.scss), and a store asks for its privacy policy to stay within reach. Read off the pages themselves rather than the footer's blocks, whose social links and repeated navbar entries have no place in a dropdown; drawn as "menu_link" blocks, for their translated url and title and the copyright page's live notice #}
+            {% set legalPages = pwa_enabled() ? site_legal_pages() : [] %}
+            {% if legalPages is not empty %}
                 <div class="menu-item menu-dropdown menu-app-only" data-controller="menu-dropdown">
                     <details class="menu-dropdown__details" data-menu-dropdown-target="details">
                         <summary class="menu-dropdown__summary">
                             <span class="menu-label">{{ 'label.about'|trans({}, 'site') }}</span>
                         </summary>
                         <div class="menu-dropdown__items">
-                            <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
+                            {% for legalPage in legalPages %}
+                                {% include '@c975LSite/blocks/MenuLink.html.twig' with {target: 'page:' ~ legalPage.id} only %}
+                            {% endfor %}
                         </div>
                     </details>
                 </div>
