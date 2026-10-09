@@ -95,6 +95,8 @@ class ScaffoldThemeTest extends TestCase
         '--card-accent',
         '--card-accent-color',
         '--card-accent-invert',
+        '--portfolio-grid-accent',
+        '--portfolio-grid-accent-color',
         '--flip-card-accent',
         '--rating-icon-on',
         '--block-radius',

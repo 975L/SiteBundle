@@ -63,6 +63,7 @@ class TutorialCollectionSourceProviderTest extends TestCase
         $this->assertNull($items[0]->data['previous']);
         $this->assertNull($items[2]->data['next']);
         $this->assertSame('/medias/films/fr/one.jpg', $items[0]->imageUrl);
+        $this->assertSame(['one', 'two', 'three'], array_map(static fn ($item): ?string => $item->slug, $items));
     }
 
     public function testTheLimitCutsTheList(): void

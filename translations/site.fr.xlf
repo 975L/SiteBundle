@@ -654,6 +654,10 @@
                 <source>description.menu_translation</source>
                 <target>Un menu porte sa structure une fois : ses éléments et leur ordre s'éditent dans la langue d'écriture. Seuls les libellés saisis à la main se redisent ici — un élément qui prend le titre de la page qu'il vise se traduit avec cette page.</target>
             </trans-unit>
+            <trans-unit id="oTYtHKl">
+                <source>description.tutorial_guided_tour</source>
+                <target>Le tour du back-office, écran par écran, avant d'ouvrir les tutoriels de chaque bundle.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>La page a été supprimée définitivement.</target>

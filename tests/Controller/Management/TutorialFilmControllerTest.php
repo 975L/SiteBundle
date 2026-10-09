@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 class TutorialFilmControllerTest extends TestCase
@@ -51,7 +52,7 @@ class TutorialFilmControllerTest extends TestCase
         $builder->method('isGranted')->willReturn($granted);
         $builder->method('getProjects')->willReturn($granted ? [['slug' => 'back-office', 'label' => 'Ajouter un résistant', 'description' => '', 'steps' => [['label' => 'Ouvrir']]]] : []);
 
-        $catalog = new TutorialCatalog($builder, sys_get_temp_dir(), 'fr', $this->private);
+        $catalog = new TutorialCatalog($builder, $this->createStub(TranslatorInterface::class), sys_get_temp_dir(), 'fr', $this->private);
         $collectionSource = new TutorialCollectionSourceProvider($catalog, $this->createStub(PageRepository::class), new RequestStack(), 'fr');
 
         $router = $this->createStub(UrlGeneratorInterface::class);

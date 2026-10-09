@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.33.1
+
+The tutorials list the filmed guided tour first
+
+- The filmed guided tour leads the tutorials, under the `guided-tour` slug (09/10/2026)
+- Tutorial items carry their film's slug for a `collection_entry` block (09/10/2026)
+- A film without steps shows no walkthrough on a site where nothing can be reported (09/10/2026)
+
 ## v8.33.0
 
 The pages' list shows which pages a social post holds

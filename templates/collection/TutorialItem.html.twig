@@ -65,30 +65,32 @@
                 </p>
             {% endif %}
 
-            {# The steps, each seeking the film to its start - and, on a site holding a contact form, each reportable on its own #}
-            <details class="tutorial-report">
-                <summary>{{ (reportable ? 'label.tutorial_report_problem' : 'label.tutorial_walkthrough')|trans({}, 'site') }}</summary>
-                {% if reportable %}
-                    <p class="text-muted">{{ 'text.tutorial_report_help'|trans({}, 'site') }}</p>
-                {% endif %}
-                <ol>
-                    {% for step in tutorial.steps %}
-                        <li data-tutorial-target="step" data-start="{{ step.start }}">
-                            {% if step.start is not null %}
-                                <button type="button" class="btn btn-link" data-action="tutorial#seek">{{ step.label }}</button>
-                            {% else %}
-                                {{ step.label }}
-                            {% endif %}
-                            {% if reportable %}
-                                <a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: loop.index}) }}" rel="nofollow">{{ 'label.tutorial_report'|trans({}, 'site') }}</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ol>
-                {% if reportable %}
-                    <p><a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: 0}) }}" rel="nofollow">{{ 'label.tutorial_report_whole_film'|trans({}, 'site') }}</a></p>
-                {% endif %}
-            </details>
+            {# The steps, each seeking the film to its start - and, on a site holding a contact form, each reportable on its own. Nothing to unfold for a film without steps (the guided tour) on a site where nothing can be reported #}
+            {% if tutorial.steps is not empty or reportable %}
+                <details class="tutorial-report">
+                    <summary>{{ (reportable ? 'label.tutorial_report_problem' : 'label.tutorial_walkthrough')|trans({}, 'site') }}</summary>
+                    {% if reportable %}
+                        <p class="text-muted">{{ 'text.tutorial_report_help'|trans({}, 'site') }}</p>
+                    {% endif %}
+                    <ol>
+                        {% for step in tutorial.steps %}
+                            <li data-tutorial-target="step" data-start="{{ step.start }}">
+                                {% if step.start is not null %}
+                                    <button type="button" class="btn btn-link" data-action="tutorial#seek">{{ step.label }}</button>
+                                {% else %}
+                                    {{ step.label }}
+                                {% endif %}
+                                {% if reportable %}
+                                    <a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: loop.index}) }}" rel="nofollow">{{ 'label.tutorial_report'|trans({}, 'site') }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                    {% if reportable %}
+                        <p><a href="{{ path('site_tutorial_report', {slug: tutorial.slug, step: 0}) }}" rel="nofollow">{{ 'label.tutorial_report_whole_film'|trans({}, 'site') }}</a></p>
+                    {% endif %}
+                </details>
+            {% endif %}
 
             <nav class="tutorial-dialog-nav" aria-label="{{ 'label.tutorial_walkthrough'|trans({}, 'site') }}">
                 {% if previous %}

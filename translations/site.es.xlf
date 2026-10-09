@@ -654,6 +654,10 @@
                 <source>description.menu_translation</source>
                 <target>Un menú lleva su estructura una sola vez: sus elementos y su orden se editan en el idioma en que fue escrito. Aquí solo se vuelven a decir las etiquetas escritas a mano: un elemento que toma el título de la página a la que apunta se traduce con esa página.</target>
             </trans-unit>
+            <trans-unit id="oTYtHKl">
+                <source>description.tutorial_guided_tour</source>
+                <target>Un recorrido por el back-office, pantalla por pantalla, antes de los tutoriales de cada bundle.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>La página ha sido eliminada definitivamente.</target>

@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Service;
 
 use c975L\ConfigBundle\Management\GuidedProjectBuilder;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 // The films of the back office's guided projects this site publishes: every guided project the installed bundles and the app offer, crossed with the manifest left in public/medias/films/<locale>/ - or in private/medias/films/<locale>/ for films only the back office shows (see findPrivate()). Whatever shoots the films only has to leave that folder as README's "Tutorial films" describes it
 class TutorialCatalog
@@ -21,12 +22,16 @@ class TutorialCatalog
 
     public const string MANIFEST = 'films.json';
 
+    // The dashboard's guided tour, filmed beside the projects under this name though it is none (see ConfigBundle's OnboardingStepBuilder)
+    public const string TOUR = 'guided-tour';
+
     // The manifests already read, by folder and locale: a dashboard asks whether each of its projects is filmed (see TutorialFilmUrlProvider)
     /** @var array<string, array<string, array<string, array<string, mixed>>>> */
     private array $manifests = [];
 
     public function __construct(
         private readonly GuidedProjectBuilder $guidedProjectBuilder,
+        private readonly TranslatorInterface $translator,
         #[Autowire('%kernel.project_dir%/public')]
         private readonly string $publicDirectory,
         #[Autowire(param: 'kernel.default_locale')]
@@ -37,12 +42,12 @@ class TutorialCatalog
     ) {
     }
 
-    // Every project having a film, in the guided sequence's order. getAllProjects() rather than getProjects(): a visitor holds no role, and the filtered list would leave out every parcours
+    // Every project having a film, in the guided sequence's order, the guided tour leading as what a newcomer opens first. getAllProjects() rather than getProjects(): a visitor holds no role, and the filtered list would leave out every parcours
     /** @return list<array<string, mixed>> */
     public function all(string $locale): array
     {
         return $this->tutorials(
-            $this->guidedProjectBuilder->getAllProjects(),
+            [$this->tour($locale), ...$this->guidedProjectBuilder->getAllProjects()],
             $locale,
             $this->publicDirectory,
             static fn (string $slug, string $filmLocale, string $extension, int $version): string => sprintf('/%s/%s/%s.%s?v=%d', self::DIRECTORY, $filmLocale, $slug, $extension, $version),
@@ -96,6 +101,18 @@ class TutorialCatalog
         }
 
         return $tutorials;
+    }
+
+    // The guided tour as a project, without steps: they hang on what the dashboard shows its reader, which a visitor's page cannot rebuild
+    /** @return array{slug: string, label: string, description: string, steps: list<array{label: string}>} */
+    private function tour(string $locale): array
+    {
+        return [
+            'slug' => self::TOUR,
+            'label' => $this->translator->trans('label.onboarding_start', [], 'config', $locale),
+            'description' => $this->translator->trans('description.tutorial_guided_tour', [], 'site', $locale),
+            'steps' => [],
+        ];
     }
 
     // Whether a project has a film in that language or in the site's, read off the manifests alone - what ConfigBundle's own project list asks while it is being built, and so without asking it back for its projects

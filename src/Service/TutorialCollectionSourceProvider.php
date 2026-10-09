@@ -66,6 +66,8 @@ class TutorialCollectionSourceProvider implements CollectionSourceProviderInterf
                 title: $tutorial['label'],
                 description: $tutorial['description'],
                 imageUrl: $tutorial['poster'],
+                // What a "collection_entry" block picks one film by (the guided tour on a demonstration's home page)
+                slug: $tutorial['slug'],
                 data: [
                     'tutorial' => $tutorial,
                     'number' => $index + 1,

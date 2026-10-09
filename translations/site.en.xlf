@@ -654,6 +654,10 @@
                 <source>description.menu_translation</source>
                 <target>A menu carries its structure once: its items and their order are edited in the language it was written in. Only the labels an editor set by hand are said again here - an item taking its label from the page it points at is translated with that page.</target>
             </trans-unit>
+            <trans-unit id="oTYtHKl">
+                <source>description.tutorial_guided_tour</source>
+                <target>A walk through the back office, screen by screen, before the tutorials of each bundle.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>The page has been permanently deleted.</target>

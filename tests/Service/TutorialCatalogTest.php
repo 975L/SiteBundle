@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Management\GuidedProjectBuilder;
 use c975L\SiteBundle\Service\TutorialCatalog;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TutorialCatalogTest extends TestCase
 {
@@ -59,7 +60,10 @@ class TutorialCatalogTest extends TestCase
             ['slug' => 'site-page-creation', 'label' => 'Créer une page', 'description' => '', 'steps' => [$step('Ouvrir'), $step('Enregistrer')]],
         ]);
 
-        return new TutorialCatalog($builder, $this->public, 'fr', $this->private);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnArgument(0);
+
+        return new TutorialCatalog($builder, $translator, $this->public, 'fr', $this->private);
     }
 
     // A project without a film stays off the list, the others keep the guided sequence's order, served from public/medias/films
@@ -70,6 +74,21 @@ class TutorialCatalogTest extends TestCase
         $this->assertSame(['config-settings', 'site-page-creation', 'ui-media'], array_column($tutorials, 'slug'));
         $this->assertSame('/medias/films/fr/site-page-creation.webm?v=1758000000', $tutorials[1]['video']);
         $this->assertSame('/medias/films/fr/site-page-creation.vtt?v=1758000000', $tutorials[1]['subtitles']);
+    }
+
+    // The guided tour leads the list once it has a film, without steps since a visitor's page cannot rebuild them
+    public function testTheGuidedTourLeadsOnceFilmed(): void
+    {
+        $manifest = json_decode((string) file_get_contents($this->public . '/medias/films/fr/films.json'), true);
+        $manifest['guided-tour'] = ['narrated' => true, 'version' => 1760000000, 'starts' => [3.9, 18.3]];
+        file_put_contents($this->public . '/medias/films/fr/films.json', json_encode($manifest));
+
+        $tutorials = $this->catalog()->all('fr');
+
+        $this->assertSame(['guided-tour', 'config-settings', 'site-page-creation', 'ui-media'], array_column($tutorials, 'slug'));
+        $this->assertSame('label.onboarding_start', $tutorials[0]['label']);
+        $this->assertSame([], $tutorials[0]['steps']);
+        $this->assertSame('/medias/films/fr/guided-tour.webm?v=1760000000', $this->catalog()->find('guided-tour', 'en')['video']);
     }
 
     // A film says when it was shot rather than when it was published, the publication date standing in when the manifest has no shooting date
