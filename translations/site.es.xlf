@@ -1950,6 +1950,22 @@
                 <source>label.page_edit</source>
                 <target>Modificar «%title%»</target>
             </trans-unit>
+            <trans-unit id="yE_V92Z">
+                <source>label.page_social</source>
+                <target>Redes sociales</target>
+            </trans-unit>
+            <trans-unit id="G6mKlRU">
+                <source>label.page_social_date_format</source>
+                <target>d/m</target>
+            </trans-unit>
+            <trans-unit id="LaaFGZf">
+                <source>label.page_social_published</source>
+                <target>Publicada %date%</target>
+            </trans-unit>
+            <trans-unit id="Lawa5Fo">
+                <source>label.page_social_reserved</source>
+                <target>Reservada %date%</target>
+            </trans-unit>
             <trans-unit id="lpx4e3r">
                 <source>label.page_translation_complete</source>
                 <target>Traducida a todos los idiomas declarados.</target>

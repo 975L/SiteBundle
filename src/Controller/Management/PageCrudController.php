@@ -30,6 +30,7 @@ use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
+use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
@@ -38,6 +39,7 @@ use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Model\QrCodeOptions;
+use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
@@ -105,6 +107,10 @@ class PageCrudController extends AbstractCrudController
     // The hidden field carrying the page's version the edit screen was opened on (see guardStaleVersion)
     public const string OPENED_VERSION_FIELD = 'openedVersion';
 
+    // The posts' hold on every page, asked once for the whole list rather than once per row
+    /** @var array<string, SocialContentStatus>|null */
+    private ?array $socialStatusMap = null;
+
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -127,6 +133,7 @@ class PageCrudController extends AbstractCrudController
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly TranslationCopier $translationCopier,
         private readonly ContentLocaleScreen $contentLocaleScreen,
+        private readonly ?SocialContentStatusProviderInterface $socialStatuses = null,
     ) {
     }
 
@@ -251,6 +258,43 @@ class PageCrudController extends AbstractCrudController
             ->setFormType(PageQrCodeType::class)
             ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
             ->setFormTypeOption('content_locale', $locale);
+    }
+
+    // Whether a social post holds the page - reserved by a draft, or published - on a site with SocialBundle only
+    /** @return list<FieldInterface> */
+    private function socialStatusFields(): array
+    {
+        if (null === $this->socialStatuses) {
+            return [];
+        }
+
+        return [
+            TextField::new('id')
+                ->setLabel(t('label.page_social', [], 'site'))
+                ->formatValue(fn (mixed $value, Page $page): string => $this->socialStatusBadge($page))
+                ->renderAsHtml()
+                ->setSortable(false)
+                ->onlyOnIndex(),
+        ];
+    }
+
+    // The badge of that post's state and date, empty for a page no post holds
+    private function socialStatusBadge(Page $page): string
+    {
+        $this->socialStatusMap ??= $this->socialStatuses?->getStatuses('page', $this->pageRepository->findAllIds()) ?? [];
+        $status = $this->socialStatusMap[(string) $page->getId()] ?? null;
+        if (null === $status) {
+            return '';
+        }
+
+        // The date's format is the language's own: "09/10" reads as the 10th of September in English
+        $date = $status->at->format($this->translator->trans('label.page_social_date_format', [], 'site'));
+
+        return sprintf(
+            '<span class="badge %s">%s</span>',
+            $status->isPublished() ? 'badge-success' : 'badge-warning',
+            htmlspecialchars($this->translator->trans('label.page_social_' . $status->state, ['%date%' => $date], 'site')),
+        );
     }
 
     // The language a page is being written in, when it is not the one the site was written in: read from the url the language selector links to (see page_crud_edit.html.twig), and only ever one the site declares
@@ -400,6 +444,8 @@ class PageCrudController extends AbstractCrudController
 
         // Health check. Edit only: the page must exist and have been checked once before there is anything to show. The language the screen was opened on travels with it: that language is read at another url, so it has a bilan of its own (see PageHealthCheckTargets)
         $tail = [
+            ...$this->socialStatusFields(),
+
             FormField::addTab(t('label.tab_health_check', [], 'site'))
                 ->hideOnIndex()
                 ->onlyWhenUpdating(),

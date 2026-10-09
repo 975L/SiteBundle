@@ -26,10 +26,12 @@ use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
+use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Management\BlockDataExporter;
+use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
@@ -181,6 +183,8 @@ class PageCrudControllerTest extends TestCase
             $services['translationCopier'],
             // Built on the very request stack, url generator and languages the test hands over, so a screen opened on a language reads it off the same request
             $services['contentLocaleScreen'] ?? new ContentLocaleScreen($services['requestStack'], $services['adminUrlGenerator'], $services['siteLocales']),
+            // Null as on a site without SocialBundle, but in the tests about the social column
+            $services['socialStatuses'] ?? null,
         );
     }
 
@@ -960,6 +964,42 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['connection' => $connection]);
 
         $this->assertSame([['slug' => 'about']], $this->invokePrivate($controller, 'fetchExportRows'));
+    }
+
+    // A site without SocialBundle has no social column at all
+    public function testTheSocialColumnIsLeftOutWithoutSocialBundle(): void
+    {
+        $this->assertSame([], $this->invokePrivate($this->createController(), 'socialStatusFields'));
+    }
+
+    // A page a post holds says so in the list, reserved by a draft or published, with its date in the language's format - nothing for one no post holds. SocialBundle is asked once for the whole list, not once per row
+    public function testTheSocialBadgeSaysWhetherAPostHoldsThePage(): void
+    {
+        $statuses = $this->createMock(SocialContentStatusProviderInterface::class);
+        $statuses->expects($this->once())->method('getStatuses')->with('page', ['7', '8', '9'])->willReturn([
+            '7' => new SocialContentStatus(SocialContentStatus::PUBLISHED, new \DateTimeImmutable('2026-10-09')),
+            '9' => new SocialContentStatus(SocialContentStatus::RESERVED, new \DateTimeImmutable('2026-10-12')),
+        ]);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findAllIds')->willReturn(['7', '8', '9']);
+        $translator = $this->createStub(TranslatorInterface::class);
+        $translator->method('trans')->willReturnCallback(static fn (string $id, array $parameters = []): string => 'label.page_social_date_format' === $id ? 'm/d' : $id . ' ' . implode(' ', $parameters));
+        $controller = $this->createController(['socialStatuses' => $statuses, 'pageRepository' => $pageRepository, 'translator' => $translator]);
+
+        $badge = fn (int $id): string => $this->invokePrivate($controller, 'socialStatusBadge', [$this->createPageWithId($id)]);
+        $this->assertSame('<span class="badge badge-success">label.page_social_published 10/09</span>', $badge(7));
+        $this->assertSame('', $badge(8));
+        $this->assertSame('<span class="badge badge-warning">label.page_social_reserved 10/12</span>', $badge(9));
+        $this->assertCount(1, $this->invokePrivate($controller, 'socialStatusFields'));
+    }
+
+    // A page as Doctrine would hand it back, its id set
+    private function createPageWithId(int $id): Page
+    {
+        $page = new Page();
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, $id);
+
+        return $page;
     }
 
     // --- configureActions / configureFields / configureFilters / createIndexQueryBuilder ------------------

@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.33.0
+
+The pages' list shows which pages a social post holds
+
+- Added a "Social networks" column to the pages' list, reserved or published with its date (09/10/2026)
+- The social column asks SocialBundle once for the whole list and is not sortable (09/10/2026)
+- The social badge's date format is translatable (09/10/2026)
+- `PageSocialContentSource` implements `BrowsableSocialContentSourceInterface` (09/10/2026)
+- Added `PageRepository::findSocialCandidates()`, filtering the postable pages in SQL (09/10/2026)
+- Added `PageRepository::findAllIds()` (09/10/2026)
+- A page without a public url no longer blocks the social publication nor takes a place in the selector (09/10/2026)
+- Pages created together are offered by id order (09/10/2026)
+- `CollectionItem::$user` is joined `ON DELETE SET NULL`, so deleting a user is no longer blocked by their collection items (09/10/2026) [Needs db update]
+
 ## v8.32.3
 
 The demo collection shows the real sites' screenshots

@@ -466,6 +466,8 @@ Social icons in the footer (site or email) are no longer a dedicated component/c
 
 With SocialBundle installed, the site's pages are also a source for its automatic publication (`PageSocialContentSource`, UiBundle's `SocialContentSourceInterface`): the oldest page not posted yet goes out once, with its own sharing image, leaving out non-indexable pages and legal notices. A site without SocialBundle never asks.
 
+It is also browsable (UiBundle's `BrowsableSocialContentSourceInterface`): on a draft's screen, SocialBundle can swap its page for another one chosen among those still free, the latest first — pages having no groups, there is nothing to draw again from. The other way round, the pages' list shows a "Réseaux sociaux" column — "Réservée 10/10" for a page a draft holds, "Publiée 09/10" once it went out — read from UiBundle's `SocialContentStatusProviderInterface`, which SocialBundle implements; without SocialBundle the column is not shown.
+
 ---
 
 ## Users

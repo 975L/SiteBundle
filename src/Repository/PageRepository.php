@@ -45,6 +45,53 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
+    // Every page's id, as a string - what the back-office list asks SocialBundle about in one go
+    /** @return list<string> */
+    public function findAllIds(): array
+    {
+        $ids = $this->createQueryBuilder('p')
+            ->select('p.id')
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        return array_map(strval(...), $ids);
+    }
+
+    // The published pages a social post could announce, oldest first: referenced, not a legal notice, not already held by a post - without their blocks and medias, only the oldest few being turned into a post
+    /**
+     * @param list<string> $excludedIds
+     *
+     * @return list<Page>
+     */
+    public function findSocialCandidates(array $excludedIds): array
+    {
+        $queryBuilder = $this->createQueryBuilder('p')
+            ->leftJoin('p.blocks', 'legal', 'WITH', 'legal.kind = :legal')
+            ->andWhere('legal.id IS NULL')
+            ->andWhere('p.isPublished = :published')
+            ->andWhere('p.isDeleted = :deleted')
+            ->andWhere('p.isIndexable = :indexable')
+            ->andWhere('p.isMembersOnly = :membersOnly')
+            ->setParameter('legal', 'legal_model')
+            ->setParameter('published', true)
+            ->setParameter('deleted', false)
+            ->setParameter('indexable', true)
+            ->setParameter('membersOnly', false)
+            ->orderBy('p.creation', \SortDirection::Ascending)
+            ->addOrderBy('p.id', \SortDirection::Ascending)
+        ;
+
+        if ([] !== $excludedIds) {
+            $queryBuilder
+                ->andWhere('p.id NOT IN (:excluded)')
+                ->setParameter('excluded', array_map(intval(...), $excludedIds))
+            ;
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     // Find one page by id, with its blocks and their medias eager-loaded (used by the articles_slider block)
     public function findOneByIdWithBlocks(int $id): ?Page
     {

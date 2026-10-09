@@ -83,8 +83,9 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    // "SET NULL" and not the default: this only records who created the item, and deleting that account must not be blocked by it
     #[ORM\ManyToOne(targetEntity: UserInterface::class)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?UserInterface $user = null;
 
     public function getId(): ?int

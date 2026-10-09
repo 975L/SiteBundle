@@ -13,12 +13,12 @@ namespace c975L\SiteBundle\Service;
 use c975L\ConfigBundle\Service\SiteUrlResolver;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\PageRepository;
-use c975L\UiBundle\Contract\SocialContentSourceInterface;
+use c975L\UiBundle\Contract\BrowsableSocialContentSourceInterface;
 use c975L\UiBundle\Model\SocialContent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-// Hands SocialBundle's publication the site's pages, oldest first - a site without SocialBundle simply never asks. What went out where is SocialBundle's to record
-class PageSocialContentSource implements SocialContentSourceInterface
+// Hands SocialBundle's publication the site's pages, oldest first, or the latest first for a post's page to be changed - a site without SocialBundle simply never asks. What went out where is SocialBundle's to record
+class PageSocialContentSource implements BrowsableSocialContentSourceInterface
 {
     public function __construct(
         private readonly PageRepository $pageRepository,
@@ -40,15 +40,41 @@ class PageSocialContentSource implements SocialContentSourceInterface
         return null;
     }
 
+    // The oldest page a post can be made of - one without a public url passed over for the next
     public function getNextContent(array $excludedIds): ?SocialContent
     {
-        $pages = array_filter(
-            $this->pageRepository->findAllOrdered(),
-            fn (Page $page): bool => !\in_array((string) $page->getId(), $excludedIds, true) && $this->isPostable($page),
-        );
-        usort($pages, static fn (Page $a, Page $b): int => $a->getCreation() <=> $b->getCreation());
+        foreach ($this->pageRepository->findSocialCandidates($excludedIds) as $page) {
+            $content = $this->toContent($page);
+            if (null !== $content) {
+                return $content;
+            }
+        }
 
-        return [] === $pages ? null : $this->toContent($pages[0]);
+        return null;
+    }
+
+    // The pages still free, the latest first - the scopes are ignored, a page belonging to no group. A page without a public url never takes a place, and none past the limit is turned into a post
+    public function findContents(array $excludedIds, array $scopeIds, int $limit): array
+    {
+        $contents = [];
+        foreach (array_reverse($this->pageRepository->findSocialCandidates($excludedIds)) as $page) {
+            if (\count($contents) >= $limit) {
+                break;
+            }
+
+            $content = $this->toContent($page);
+            if (null !== $content) {
+                $contents[] = $content;
+            }
+        }
+
+        return $contents;
+    }
+
+    // Never a group: the pages are not split into any
+    public function getContentScope(string $sourceId): ?string
+    {
+        return null;
     }
 
     // Null for a page unpublished or trashed since its post was prepared
@@ -59,7 +85,7 @@ class PageSocialContentSource implements SocialContentSourceInterface
         return $page instanceof Page && $page->isPublished() && !$page->isDeleted() && $this->isPostable($page) ? $this->toContent($page) : null;
     }
 
-    // What a search engine is told to list, minus the legal notices: a page with nothing to say to a reader (an account form, the terms of sale) has nothing to say to a follower either
+    // What a search engine is told to list, minus the legal notices - the same rule PageRepository::findSocialCandidates() applies in SQL: a page with nothing to say to a reader (an account form, the terms of sale) has nothing to say to a follower either
     private function isPostable(Page $page): bool
     {
         if (!$page->isReferenced()) {
