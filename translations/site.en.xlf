@@ -2088,7 +2088,7 @@
             </trans-unit>
             <trans-unit id="Th23iwZ">
                 <source>label.site_sample_history_date_today_text</source>
-                <target>Some fifteen websites live, all on the same bundles.</target>
+                <target>Over twenty websites live, all on the same bundles.</target>
             </trans-unit>
             <trans-unit id="J0lirWT">
                 <source>label.site_sample_history_date_today_title</source>
@@ -2116,7 +2116,7 @@
             </trans-unit>
             <trans-unit id="IzoveWi">
                 <source>label.site_sample_history_figure_sites_title</source>
-                <target>15 websites</target>
+                <target>20+ websites</target>
             </trans-unit>
             <trans-unit id="1ntGz3g">
                 <source>label.site_sample_history_figure_year_text</source>
@@ -2124,7 +2124,7 @@
             </trans-unit>
             <trans-unit id="cY0SoL0">
                 <source>label.site_sample_history_figure_year_title</source>
-                <target>20 years</target>
+                <target>30 years</target>
             </trans-unit>
             <trans-unit id="URxxejR">
                 <source>label.site_sample_history_timeline_eyebrow</source>
@@ -2133,10 +2133,6 @@
             <trans-unit id="TcRhUg5">
                 <source>label.site_sample_history_timeline_title</source>
                 <target>From a multilingual CMS to the c975L bundles</target>
-            </trans-unit>
-            <trans-unit id="nl8vVdM">
-                <source>label.site_sample_home_alert</source>
-                <target>Shared demo: what you change, the other visitors see, until the next reset.</target>
             </trans-unit>
             <trans-unit id="UXG9rFi">
                 <source>label.site_sample_home_cta_label</source>

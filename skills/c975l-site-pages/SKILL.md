@@ -282,10 +282,12 @@ site's own business, this bundle shipping no command that writes to a database. 
 item leading to one of its real sites (an outside URL); a site wanting another demo decorates the provider. The
 second pass lays a navbar only where none exists. The pages carry written-down creation dates and are left out of
 the index; their blocks ride the cascade, while each `CollectionItem` is handed over on its own, nothing cascading
-off a `CollectionGroup`. `home` holds `hero`, `alert`, `feature_bar`, `section_features`, `process_steps`, `faq`,
+off a `CollectionGroup`. `home` holds `hero`, `feature_bar`, `section_features`, `process_steps`, `faq`,
 `cta_band`; `nos-services` holds `text_section`, `section_features`, `process_steps`, `collection`, `cta_band`;
 `notre-histoire` holds `text_section`, `feature_bar`, `process_steps`, `text_section`, `cta_band`. The hero's buttons
 and the three `cta_band` are linked as `page:ID` in the second pass (`getLinkedDemoFixtures()`), never as a raw path.
+The `collection` block uses the `portfolio` variant; an item's picture is the site's `keyed_images` entry
+`site/<slug>` when declared, a picture of the `images` pool otherwise.
 
 ## Social publication
 

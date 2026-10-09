@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.32.3
+
+The demo collection shows the real sites' screenshots
+
+- Removed the `alert-*.svg` icons (09/10/2026)
+- Removed the demo home page's alert (09/10/2026)
+- Demo collection items show the screenshot the site declares as `site/<slug>` (09/10/2026)
+- Demo collection block uses the `portfolio` variant (09/10/2026)
+- Updated the demo history figures (09/10/2026)
+
 ## v8.32.2
 
 The demo services and story pages are laid out in sections

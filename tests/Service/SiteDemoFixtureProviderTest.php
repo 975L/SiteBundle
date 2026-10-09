@@ -48,14 +48,18 @@ class SiteDemoFixtureProviderTest extends TestCase
         new Filesystem()->remove([$this->projectDir, ...$this->temporaryCopies]);
     }
 
-    /** @param list<string> $images */
-    private function createProvider(array $images = [self::IMAGE], ?Menu $existingNavbar = null): SiteDemoFixtureProvider
+    /**
+     * @param list<string>                $images
+     * @param array<string, list<string>> $keyed
+     */
+    private function createProvider(array $images = [self::IMAGE], ?Menu $existingNavbar = null, array $keyed = []): SiteDemoFixtureProvider
     {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
 
         $registry = $this->createStub(PlaceholderMediaRegistry::class);
         $registry->method('getImages')->willReturn($images);
+        $registry->method('getImagesFor')->willReturnCallback(static fn (string $key): array => $keyed[$key] ?? []);
 
         return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->pageRepository(), $this->menuRepository($existingNavbar), $this->projectDir);
     }
@@ -117,8 +121,8 @@ class SiteDemoFixtureProviderTest extends TestCase
 
         $this->assertCount(4, $pages);
 
-        // The home page opens on a hero, its alert and five sections, "nos-services" and "notre-histoire" carry five sections apiece - the collection among them - and the binned page its two
-        $expected = ['home' => 7, 'nos-services' => 5, 'notre-histoire' => 5, 'ancienne-offre' => 2];
+        // The home page opens on a hero and five sections, "nos-services" and "notre-histoire" carry five sections apiece - the collection among them - and the binned page its two
+        $expected = ['home' => 6, 'nos-services' => 5, 'notre-histoire' => 5, 'ancienne-offre' => 2];
 
         foreach ($pages as $page) {
             $this->assertCount($expected[$page->getSlug()], $page->getBlocks(), (string) $page->getSlug());
@@ -155,17 +159,15 @@ class SiteDemoFixtureProviderTest extends TestCase
         $this->assertFalse($home->isTitleDisplayed());
 
         $blocks = $home->getBlocks()->toArray();
-        $this->assertSame(['hero', 'alert', 'feature_bar', 'section_features', 'process_steps', 'faq', 'cta_band'], array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks));
-        $this->assertSame([0, 1, 2, 3, 4, 5, 6], array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks));
+        $this->assertSame(['hero', 'feature_bar', 'section_features', 'process_steps', 'faq', 'cta_band'], array_map(static fn (Block $block): string => (string) $block->getKind(), $blocks));
+        $this->assertSame([0, 1, 2, 3, 4, 5], array_map(static fn (Block $block): int => (int) $block->getPosition(), $blocks));
 
-        $this->assertSame('<div>label.site_sample_home_alert</div>', $blocks[1]->getData()['content']);
-
-        $data = $blocks[5]->getData();
+        $data = $blocks[4]->getData();
         $this->assertCount(4, $data['items']);
         $this->assertSame('label.site_sample_home_faq_install_question', $data['items'][0]['question']);
         $this->assertSame('<div>label.site_sample_home_faq_install_answer</div>', $data['items'][0]['answer']);
-        $this->assertSame('bundles/c975lui/icons/pen-ruler.svg', $blocks[3]->getData()['cards'][0]['icon']);
-        $this->assertSame('label.site_sample_home_features_edit_title', $blocks[3]->getData()['cards'][0]['title']);
+        $this->assertSame('bundles/c975lui/icons/pen-ruler.svg', $blocks[2]->getData()['cards'][0]['icon']);
+        $this->assertSame('label.site_sample_home_features_edit_title', $blocks[2]->getData()['cards'][0]['title']);
     }
 
     // Each page reads in its own order, the collection the home page's last button points at kept under its anchor, and both close on a band leading to the other
@@ -222,7 +224,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $blocks = $home->getBlocks()->toArray();
         $this->assertSame('page:12', $blocks[0]->getData()['primaryUrl']);
         $this->assertSame('page:13', $blocks[0]->getData()['secondaryUrl']);
-        $this->assertSame('page:12#realisations', $blocks[6]->getData()['ctaUrl']);
+        $this->assertSame('page:12#realisations', $blocks[5]->getData()['ctaUrl']);
         $this->assertSame('label.site_sample_home_hero_primary', $blocks[0]->getData()['primaryLabel']);
         $this->assertSame('page:13', $services->getBlocks()->last()->getData()['ctaUrl']);
         $this->assertSame('page:12', $history->getBlocks()->last()->getData()['ctaUrl']);
@@ -285,6 +287,22 @@ class SiteDemoFixtureProviderTest extends TestCase
         }
     }
 
+    // A site declaring the screenshot of one of them shows it on that card, the others keeping a picture of the pool
+    public function testAnItemShowsTheScreenshotTheSiteDeclaresForIt(): void
+    {
+        file_put_contents($this->projectDir . '/public/showcase/papa-calin-1.webp', 'screenshot');
+
+        $files = [];
+        foreach ($this->fixtures($this->createProvider(keyed: ['site/papa-calin' => ['showcase/papa-calin-1.webp']])) as $entity) {
+            if ($entity instanceof CollectionItem) {
+                $files[$entity->getSlug()] = (string) $entity->getFile()?->getPathname();
+            }
+        }
+
+        $this->assertStringEndsWith('-papa-calin-1.webp', $files['papa-calin']);
+        $this->assertStringEndsWith('-photo.webp', $files['run-as']);
+    }
+
     // Each card leads to the real site it shows, an outside address the "/demo" prefix does not touch
     public function testTheItemsLeadToTheirRealSites(): void
     {
@@ -315,6 +333,7 @@ class SiteDemoFixtureProviderTest extends TestCase
                 foreach ($entity->getBlocks() as $block) {
                     if ('collection' === $block->getKind()) {
                         $sources[] = $block->getData()['source'];
+                        $this->assertSame('portfolio', $block->getData()['variant']);
                     }
                 }
             }

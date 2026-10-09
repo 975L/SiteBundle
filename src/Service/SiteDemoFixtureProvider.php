@@ -85,7 +85,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         $position = 0;
 
-        // Three of 975L's own sites, each card leading to the real one
+        // Three of 975L's own sites, each card leading to the real one and showing its screenshot when the site declares it ("site/<slug>", see PlaceholderMediaProviderInterface's "keyed_images"), a picture of the pool otherwise
         $projects = [
             'resistance-haute-savoie' => ['resistance', 'https://resistance-haute-savoie.fr'],
             'papa-calin' => ['papa_calin', 'https://papa-calin.com'],
@@ -93,7 +93,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         ];
 
         foreach ($projects as $slug => [$key, $url]) {
-            yield $this->item($group, $slug, $key, $url, ++$position, $images[($position - 1) % max(1, \count($images))] ?? null);
+            yield $this->item($group, $slug, $key, $url, ++$position, $this->placeholderMediaRegistry->getImagesFor('site/' . $slug)[0] ?? $images[($position - 1) % max(1, \count($images))] ?? null);
         }
     }
 
@@ -115,10 +115,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         $page->addBlock($this->hero($image));
 
-        // Right under the hero, what a visitor cannot guess: the demo is shared, and it does not last
-        $page->addBlock($this->section('alert', 1, ['type' => 'info', 'cssClasses' => null], [], ['content' => 'label.site_sample_home_alert']));
-
-        $page->addBlock($this->section('feature_bar', 2, ['anchor' => 'atouts', 'eyebrow' => null, 'title' => null], [
+        $page->addBlock($this->section('feature_bar', 1, ['anchor' => 'atouts', 'eyebrow' => null, 'title' => null], [
             'items.0.title' => 'label.site_sample_home_feature_edit_title',
             'items.0.text' => 'label.site_sample_home_feature_edit_text',
             'items.1.title' => 'label.site_sample_home_feature_languages_title',
@@ -129,7 +126,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'items.3.text' => 'label.site_sample_home_feature_symfony_text',
         ]));
 
-        $page->addBlock($this->section('section_features', 3, [
+        $page->addBlock($this->section('section_features', 2, [
             'anchor' => 'back-office',
             'variant' => '',
             'cards' => [
@@ -150,7 +147,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'cards.2.text' => 'label.site_sample_home_features_preview_text',
         ]));
 
-        $page->addBlock($this->section('process_steps', 4, ['anchor' => 'essayez'], [
+        $page->addBlock($this->section('process_steps', 3, ['anchor' => 'essayez'], [
             'eyebrow' => 'label.site_sample_home_steps_eyebrow',
             'title' => 'label.site_sample_home_steps_title',
             'steps.0.title' => 'label.site_sample_home_step_open_title',
@@ -164,7 +161,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
             'steps.3.text' => 'label.site_sample_home_step_save_text',
         ]));
 
-        $page->addBlock($this->section('faq', 5, ['anchor' => 'questions', 'openFirst' => true, 'columns' => 1], [
+        $page->addBlock($this->section('faq', 4, ['anchor' => 'questions', 'openFirst' => true, 'columns' => 1], [
             'title' => 'label.site_sample_home_faq_title',
             'items.0.question' => 'label.site_sample_home_faq_install_question',
             'items.1.question' => 'label.site_sample_home_faq_translate_question',
@@ -178,7 +175,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         ]));
 
         // Its button is pointed at the collection in the second pass, the page holding it having no identifier yet
-        $page->addBlock($this->section('cta_band', 6, ['anchor' => 'a-vous', 'ctaUrl' => null], [
+        $page->addBlock($this->section('cta_band', 5, ['anchor' => 'a-vous', 'ctaUrl' => null], [
             'title' => 'label.site_sample_home_cta_title',
             'ctaLabel' => 'label.site_sample_home_cta_label',
         ], [
@@ -455,7 +452,8 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
                 'linkLabel' => null,
                 'linkUrl' => null,
                 'detailPage' => null,
-                'variant' => '',
+                // The cards 975L shows its own sites with, a screenshot above its title and text
+                'variant' => 'portfolio',
             ]);
 
         $this->demoFixtureTranslator->stage($block, Translation::OWNER_BLOCK, self::DOMAIN, ['title' => 'label.site_sample_collection_name']);

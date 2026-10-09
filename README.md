@@ -743,7 +743,7 @@ ships no command that writes to a database.
 
 | Page | Blocks |
 |---|---|
-| `home` | `hero`, `alert`, `feature_bar`, `section_features`, `process_steps`, `faq`, `cta_band` |
+| `home` | `hero`, `feature_bar`, `section_features`, `process_steps`, `faq`, `cta_band` |
 | `nos-services` | `text_section`, `section_features`, `process_steps`, `collection`, `cta_band` |
 | `notre-histoire` | `text_section`, `feature_bar`, `process_steps`, `text_section`, `cta_band` |
 
@@ -760,7 +760,8 @@ where a `CollectionItem` owns its side of the relation and is therefore handed o
 
 The pictures come from what the site declares through UiBundle's `PlaceholderMediaProviderInterface`, **as a
 temporary copy**: an upload moves the file it is handed. A site declaring none still gets its collection, its cards
-simply showing no picture.
+simply showing no picture. The `collection` block uses the `portfolio` variant, and an item shows the screenshot the
+site declares under `keyed_images` as `site/<slug>` (`site/papa-calin`...), a picture of the pool otherwise.
 
 ---
 
