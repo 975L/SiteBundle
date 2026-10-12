@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.33.3
+
+A primary menu button keeps its label on hover
+
+- The primary menu item's label keeps the button colour on hover and focus (12/10/2026)
+
 ## v8.33.2
 
 A long single-word title fits on a phone

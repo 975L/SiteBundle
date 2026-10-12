@@ -6,6 +6,11 @@
                 "en": "Long titles made of a single word now fit on a phone screen instead of overflowing the page",
                 "fr": "Les titres longs d'un seul mot tiennent désormais sur l'écran d'un téléphone au lieu de déborder de la page",
                 "es": "Los títulos largos de una sola palabra caben ahora en la pantalla de un teléfono en lugar de desbordar la página"
+            },
+            {
+                "en": "A menu entry shown as a button no longer turns blank when hovered",
+                "fr": "Une entrée de menu affichée en bouton ne devient plus vierge au survol",
+                "es": "Una entrada de menú mostrada como botón ya no queda en blanco al pasar el cursor"
             }
         ]
     },

@@ -475,6 +475,12 @@ body:not(.has-back-office) .menu-item--back-office {
         color: var(--navbar-active-color);
     }
 
+    // The pill keeps its own ink under the pointer: scoped to ".menu", the rule above weighs as much as the pill's own hover and comes after it, which painted its label in --navbar-active-color - the primary on a primary ground, a button going blank when hovered
+    .menu .menu-item--primary .menu-link:hover .menu-label,
+    .menu .menu-item--primary .menu-link:focus .menu-label {
+        color: var(--navbar-btn-color);
+    }
+
     .menu .menu-label {
         color: var(--navbar-text);
     }
