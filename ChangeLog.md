@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.33.2
+
+A long single-word title fits on a phone
+
+- The `h1` size is fluid on narrow screens (12/10/2026)
+- A title wider than the screen wraps instead of widening the page (12/10/2026)
+
 ## v8.33.1
 
 The tutorials list the filmed guided tour first

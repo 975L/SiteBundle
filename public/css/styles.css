@@ -427,10 +427,11 @@ h6 {
   font-weight: var(--font-title-weight);
   text-align: center;
   margin: 0.5em auto 0.5em auto;
+  overflow-wrap: anywhere;
 }
 
 h1 {
-  font-size: calc(2.5rem * var(--font-size-title-scale, 1));
+  font-size: calc(clamp(1.5rem, 7.5vw, 2.5rem) * var(--font-size-title-scale, 1));
 }
 
 h2 {

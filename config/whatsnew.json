@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-12",
+        "description": [
+            {
+                "en": "Long titles made of a single word now fit on a phone screen instead of overflowing the page",
+                "fr": "Les titres longs d'un seul mot tiennent désormais sur l'écran d'un téléphone au lieu de déborder de la page",
+                "es": "Los títulos largos de una sola palabra caben ahora en la pantalla de un teléfono en lugar de desbordar la página"
+            }
+        ]
+    },
+    {
         "date": "2026-10-09",
         "description": [
             {

@@ -26,10 +26,13 @@ h6 {
     font-weight: var(--font-title-weight);
     text-align: center;
     margin: 0.5em auto 0.5em auto;
+    // A single-word title wider than the screen breaks rather than widening the page
+    overflow-wrap: anywhere;
 }
 
+// Fluid below 533px wide, so that a long single-word title fits on a phone
 h1 {
-    font-size: calc(2.5rem * var(--font-size-title-scale, 1));
+    font-size: calc(clamp(1.5rem, 7.5vw, 2.5rem) * var(--font-size-title-scale, 1));
 }
 
 h2 {
