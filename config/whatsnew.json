@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-10-13",
+        "description": [
+            {
+                "en": "A menu link or dropdown can now be hidden in the installed app while staying on the site: tick \"Hide in the installed app\"",
+                "fr": "Un lien ou un menu déroulant peut désormais être masqué dans l'application installée tout en restant sur le site : cochez « Masquer dans l'application installée »",
+                "es": "Un enlace o un menú desplegable puede ahora ocultarse en la aplicación instalada y seguir en el sitio: marque «Ocultar en la aplicación instalada»"
+            },
+            {
+                "en": "The installed app's \"About\" menu now gives access to your downloads",
+                "fr": "Le menu « À propos » de l'application installée donne désormais accès à vos téléchargements",
+                "es": "El menú «Acerca de» de la aplicación instalada da ahora acceso a sus descargas"
+            }
+        ]
+    },
+    {
         "date": "2026-10-12",
         "description": [
             {

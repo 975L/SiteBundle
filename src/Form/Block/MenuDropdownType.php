@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Form\Block;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,6 +39,12 @@ class MenuDropdownType extends AbstractType
                 ),
                 'empty_data' => 'all',
                 'help' => 'help.menu_dropdown_visibility',
+            ])
+            // The same box as a link's (see MenuLinkType), the installed app shedding the whole dropdown in one go
+            ->add('hideInApp', CheckboxType::class, [
+                'label' => 'label.menu_link_hide_in_app',
+                'required' => false,
+                'help' => 'help.menu_dropdown_hide_in_app',
             ]);
     }
 

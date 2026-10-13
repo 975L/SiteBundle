@@ -488,7 +488,7 @@
             </trans-unit>
             <trans-unit id="LgdEHnw">
                 <source>description.guided_step_page_menu_visibility</source>
-                <target>Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada. La barra ya ofrece a los miembros un menú «Mi espacio»: un menú desplegable reservado a los miembros lo sustituye y recibe el enlace «Gestión».</target>
+                <target>Por defecto, lo ve todo el mundo. «Visible para» lo reserva a los visitantes sin sesión iniciada, para un enlace «Iniciar sesión», o a los miembros con sesión iniciada. La barra ya ofrece a los miembros un menú «Mi espacio»: un menú desplegable reservado a los miembros lo sustituye y recibe el enlace «Gestión». La casilla «Ocultar en la aplicación instalada» quita el enlace de la aplicación, pero lo mantiene en el sitio.</target>
             </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
@@ -682,6 +682,10 @@
                 <source>flash.page_to_replace_not_found</source>
                 <target>No se encontró la página a reemplazar (ya eliminada o renombrada): no se publicó nada.</target>
             </trans-unit>
+            <trans-unit id="S3TGC8U">
+                <source>help.menu_dropdown_hide_in_app</source>
+                <target>Quita todo el menú desplegable, y sus enlaces, de la aplicación instalada (PWA, Play Store) - sigue mostrándose en el sitio</target>
+            </trans-unit>
             <trans-unit id="of9fBdv">
                 <source>help.menu_dropdown_label</source>
                 <target>Lo que muestra la barra de navegación, desplegándose debajo los enlaces del menú</target>
@@ -689,6 +693,10 @@
             <trans-unit id="wGNl2Ev">
                 <source>help.menu_dropdown_visibility</source>
                 <target>Oculta todo el menú según si el visitante ha iniciado sesión o no - p. ej. un menú «Mi cuenta» para los miembros</target>
+            </trans-unit>
+            <trans-unit id=".ihNdn1">
+                <source>help.menu_link_hide_in_app</source>
+                <target>Quita la entrada de la barra de navegación de la aplicación instalada (PWA, Play Store), que solo conserva lo esencial - sigue mostrándose en el sitio. Sin efecto en el pie de página ni en los correos electrónicos</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1829,6 +1837,10 @@
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>
                 <target>Objetivo</target>
+            </trans-unit>
+            <trans-unit id="ZgxTmjD">
+                <source>label.menu_link_hide_in_app</source>
+                <target>Ocultar en la aplicación instalada</target>
             </trans-unit>
             <trans-unit id="sa_931Z">
                 <source>label.menu_link_label</source>

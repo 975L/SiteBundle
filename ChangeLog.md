@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.34.0
+
+A menu entry can be left out of the installed app
+
+- Added a "Hide in the installed app" checkbox to `menu_link` and `menu_dropdown` (13/10/2026)
+- The built-in account menu takes over in the app when the members' dropdown is hidden there (13/10/2026)
+- The app's "About" dropdown shows on any PWA site and links the downloads (13/10/2026)
+- The `site-page-menu` guided project mentions the new checkbox (13/10/2026)
+- Requires `c975l/core-bundle` ^1.59 (13/10/2026)
+
 ## v8.33.3
 
 A primary menu button keeps its label on hover

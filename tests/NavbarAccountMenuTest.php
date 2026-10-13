@@ -54,8 +54,21 @@ class NavbarAccountMenuTest extends TestCase
         $source = $this->template('components/General/Navbar.html.twig');
 
         $this->assertStringContainsString("block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members'", $source);
-        $this->assertStringContainsString("{% if not hasMembersDropdown %}\n                <twig:c975LSite:General:AccountMenu :dropdown=\"true\" />", $source);
+        $this->assertStringContainsString("{% if not hasMembersDropdown or membersDropdownIsWebOnly %}\n                <twig:c975LSite:General:AccountMenu :dropdown=\"true\" :appOnly=\"membersDropdownIsWebOnly\" />", $source);
         $this->assertSame(2, substr_count($source, '<twig:c975LSite:General:AccountMenu'));
+    }
+
+    // A members' dropdown ticked "hide in the installed app" would leave the app with no account menu: the built-in one is written for the app alone
+    public function testTheBuiltInMenuTakesOverInTheAppWhenTheSiteOneIsWebOnly(): void
+    {
+        $this->assertStringContainsString(
+            '{% set membersDropdownIsWebOnly = hasMembersDropdown and membersDropdowns|filter(block => not (block.data.hideInApp ?? false)) is empty %}',
+            $this->template('components/General/Navbar.html.twig')
+        );
+        $this->assertStringContainsString(
+            "<div class=\"menu-item menu-dropdown{{ appOnly|default(false) ? ' menu-app-only' : '' }}\"",
+            $this->template('components/General/AccountMenu.html.twig')
+        );
     }
 
     // A members' dropdown is cached once for everyone: the back-office link is written for all of them and the body class decides

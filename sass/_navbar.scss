@@ -54,3 +54,10 @@
         display: none;
     }
 }
+
+// And the other way round: an entry ticked "hide in the installed app" (see MenuLinkType's "hideInApp"), the app's bar being kept to what the app is for
+@media (display-mode: standalone) {
+    .menu .menu-item.menu-item--web-only {
+        display: none;
+    }
+}

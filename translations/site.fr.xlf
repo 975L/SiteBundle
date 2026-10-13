@@ -488,7 +488,7 @@
             </trans-unit>
             <trans-unit id="LgdEHnw">
                 <source>description.guided_step_page_menu_visibility</source>
-                <target>Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés. La barre propose déjà aux membres un menu « Mon espace » : un menu déroulant réservé aux membres le remplace et reçoit le lien « Gestion ».</target>
+                <target>Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés. La barre propose déjà aux membres un menu « Mon espace » : un menu déroulant réservé aux membres le remplace et reçoit le lien « Gestion ». La case « Masquer dans l'application installée » retire le lien de l'application, tout en le gardant sur le site.</target>
             </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
@@ -682,6 +682,10 @@
                 <source>flash.page_to_replace_not_found</source>
                 <target>La page à remplacer est introuvable (déjà supprimée ou renommée) : rien n'a été publié.</target>
             </trans-unit>
+            <trans-unit id="S3TGC8U">
+                <source>help.menu_dropdown_hide_in_app</source>
+                <target>Retire tout le menu déroulant, et ses liens, de l'application installée (PWA, Play Store) - il reste affiché sur le site</target>
+            </trans-unit>
             <trans-unit id="of9fBdv">
                 <source>help.menu_dropdown_label</source>
                 <target>Ce que le navbar affiche, les liens du menu se déroulant dessous</target>
@@ -689,6 +693,10 @@
             <trans-unit id="wGNl2Ev">
                 <source>help.menu_dropdown_visibility</source>
                 <target>Masque tout le menu selon que le visiteur est connecté ou non - ex. un menu « Mon compte » pour les membres</target>
+            </trans-unit>
+            <trans-unit id=".ihNdn1">
+                <source>help.menu_link_hide_in_app</source>
+                <target>Retire l'entrée de la barre de navigation de l'application installée (PWA, Play Store), qui ne garde alors que l'essentiel - elle reste affichée sur le site. Sans effet dans le pied de page et les e-mails</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1829,6 +1837,10 @@
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>
                 <target>Cible</target>
+            </trans-unit>
+            <trans-unit id="ZgxTmjD">
+                <source>label.menu_link_hide_in_app</source>
+                <target>Masquer dans l'application installée</target>
             </trans-unit>
             <trans-unit id="sa_931Z">
                 <source>label.menu_link_label</source>

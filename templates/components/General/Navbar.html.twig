@@ -15,7 +15,10 @@
 {% set navbarPosition = navbarPosition == 'static' ? 'relative' : navbarPosition %}
 
 {# A site that built its own "members" dropdown keeps it, MenuDropdown.html.twig adding the back-office link to it; any other gets the built-in one. A hidden one counts as absent, Blocks.html.twig never drawing it #}
-{% set hasMembersDropdown = menu_blocks('navbar')|filter(block => block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members') is not empty %}
+{% set membersDropdowns = menu_blocks('navbar')|filter(block => block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members') %}
+{% set hasMembersDropdown = membersDropdowns is not empty %}
+{# Ticked "hide in the installed app" on each of them, the app is left with no account menu at all: the built-in one takes over there, and there alone #}
+{% set membersDropdownIsWebOnly = hasMembersDropdown and membersDropdowns|filter(block => not (block.data.hideInApp ?? false)) is empty %}
 
 {% if menu_blocks('navbar') is not empty %}
     {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
@@ -76,18 +79,24 @@
 
         <div class="menu-items" data-menu-target="items">
             <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
-            {% if not hasMembersDropdown %}
-                <twig:c975LSite:General:AccountMenu :dropdown="true" />
+            {% if not hasMembersDropdown or membersDropdownIsWebOnly %}
+                <twig:c975LSite:General:AccountMenu :dropdown="true" :appOnly="membersDropdownIsWebOnly" />
             {% endif %}
-{# The site's legal pages, for the installed app only: it sheds the footer (see UiBundle's _pwa.scss), and a store asks for its privacy policy to stay within reach. Read off the pages themselves rather than the footer's blocks, whose social links and repeated navbar entries have no place in a dropdown; drawn as "menu_link" blocks, for their translated url and title and the copyright page's live notice #}
-            {% set legalPages = pwa_enabled() ? site_legal_pages() : [] %}
-            {% if legalPages is not empty %}
+{# The installed app's own entries - its downloads and the site's legal pages: it sheds the footer (see UiBundle's _pwa.scss), and a store asks for its privacy policy to stay within reach. Read off the pages themselves rather than the footer's blocks, whose social links and repeated navbar entries have no place in a dropdown; drawn as "menu_link" blocks, for their translated url and title and the copyright page's live notice #}
+            {% if pwa_enabled() %}
+                {% set legalPages = site_legal_pages() %}
                 <div class="menu-item menu-dropdown menu-app-only" data-controller="menu-dropdown">
                     <details class="menu-dropdown__details" data-menu-dropdown-target="details">
                         <summary class="menu-dropdown__summary">
                             <span class="menu-label">{{ 'label.about'|trans({}, 'site') }}</span>
                         </summary>
                         <div class="menu-dropdown__items">
+{# What this phone keeps for offline use (see UiBundle's PwaController), which the site only links from a download button #}
+                            <div class="menu-item">
+                                <a href="{{ path('ui_pwa_downloads') }}" class="menu-link">
+                                    <span class="menu-label">{{ 'label.pwa_downloads'|trans({}, 'ui') }}</span>
+                                </a>
+                            </div>
                             {% for legalPage in legalPages %}
                                 {% include '@c975LSite/blocks/MenuLink.html.twig' with {target: 'page:' ~ legalPage.id} only %}
                             {% endfor %}

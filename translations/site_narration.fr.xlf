@@ -336,7 +336,7 @@
             </trans-unit>
             <trans-unit id="CduhpcC">
                 <source>narration.guided_step_page_menu_visibility</source>
-                <target>Choisissez qui voit le lien. Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés. La barre propose déjà aux membres un menu « Mon espace » : un menu déroulant réservé aux membres le remplace et reçoit le lien « Gestion ».</target>
+                <target>Choisissez qui voit le lien. Par défaut, tout le monde le voit. « Visible par » le réserve aux visiteurs non connectés, pour un lien « Connexion », ou aux membres connectés. La barre propose déjà aux membres un menu « Mon espace » : un menu déroulant réservé aux membres le remplace et reçoit le lien « Gestion ». La case « Masquer dans l'application installée » retire le lien de l'application, tout en le gardant sur le site.</target>
             </trans-unit>
             <trans-unit id="C_XxP3U">
                 <source>narration.guided_step_page_revision_done</source>

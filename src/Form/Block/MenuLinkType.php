@@ -68,6 +68,12 @@ class MenuLinkType extends AbstractType
                 ),
                 'empty_data' => 'all',
                 'help' => 'help.menu_link_visibility',
+            ])
+            // Leaves the link out of the installed app (see _navbar.scss's .menu-item--web-only), whose bar is kept to what the app is for - a marker class too, the display mode being known to the browser alone
+            ->add('hideInApp', CheckboxType::class, [
+                'label' => 'label.menu_link_hide_in_app',
+                'required' => false,
+                'help' => 'help.menu_link_hide_in_app',
             ]);
     }
 

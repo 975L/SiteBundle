@@ -488,7 +488,7 @@
             </trans-unit>
             <trans-unit id="LgdEHnw">
                 <source>description.guided_step_page_menu_visibility</source>
-                <target>By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members. The bar already offers members a "My space" menu: a dropdown menu kept for members replaces it and receives the "Management" link.</target>
+                <target>By default, everyone sees it. "Visible to" keeps it for signed-out visitors, for a "Sign in" link, or for signed-in members. The bar already offers members a "My space" menu: a dropdown menu kept for members replaces it and receives the "Management" link. The "Hide in the installed app" box leaves the link out of the app, while keeping it on the site.</target>
             </trans-unit>
             <trans-unit id="dr5AYYx">
                 <source>description.guided_step_page_revision_done</source>
@@ -682,6 +682,10 @@
                 <source>flash.page_to_replace_not_found</source>
                 <target>The page to replace could not be found (already deleted or renamed): nothing was published.</target>
             </trans-unit>
+            <trans-unit id="S3TGC8U">
+                <source>help.menu_dropdown_hide_in_app</source>
+                <target>Leaves the whole dropdown menu, and its links, out of the installed app (PWA, Play Store) - it still shows on the site</target>
+            </trans-unit>
             <trans-unit id="of9fBdv">
                 <source>help.menu_dropdown_label</source>
                 <target>What the navbar shows, the menu's links unfolding under it</target>
@@ -689,6 +693,10 @@
             <trans-unit id="wGNl2Ev">
                 <source>help.menu_dropdown_visibility</source>
                 <target>Hides the whole menu depending on whether the visitor is signed in - e.g. a "My account" menu for members</target>
+            </trans-unit>
+            <trans-unit id=".ihNdn1">
+                <source>help.menu_link_hide_in_app</source>
+                <target>Leaves the entry out of the installed app's navigation bar (PWA, Play Store), kept to the essentials - it still shows on the site. No effect in the footer and in emails</target>
             </trans-unit>
             <trans-unit id="LABQ8NS">
                 <source>help.menu_link_label</source>
@@ -1829,6 +1837,10 @@
             <trans-unit id="C_qZ.4z">
                 <source>label.menu_item_target</source>
                 <target>Target</target>
+            </trans-unit>
+            <trans-unit id="ZgxTmjD">
+                <source>label.menu_link_hide_in_app</source>
+                <target>Hide in the installed app</target>
             </trans-unit>
             <trans-unit id="sa_931Z">
                 <source>label.menu_link_label</source>

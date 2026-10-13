@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, hideInApp, menu-item--web-only, menu-app-only, hide in the installed app, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -133,6 +133,10 @@ kind, opted into `menu_navbar` alone, its slots built with `menu_slot` like `men
 drag into it the same way and it never holds another container. `label` is required and
 translatable, `visibility` is a link's own (`all`/`guests`/`members`) applied to the whole of it.
 
+Like a `menu_link`, it has a `hideInApp` checkbox: the entry gets a `.menu-item--web-only` class, which
+`sass/_navbar.scss` hides under `display-mode: standalone`, so the installed app does without it. The
+rule is scoped to the navbar: ticked in a footer or an email menu, the box does nothing.
+
 A native `<details>`, working with no javascript; `menu-dropdown.js` closes it on an outside click or
 Escape on a desktop and keeps it open below 768px, where it reads as a heading inside the burger. Do
 not turn a `menu_group` into a dropdown: existing menus rely on the group staying as it is.
@@ -144,7 +148,9 @@ in the navbar, `Navbar.html.twig` draws `<twig:c975LSite:General:AccountMenu :dr
 ("My space": account, back office for the `C975L_ACCESS_BACK_OFFICE` voter, sign out); the fallback
 bar draws it as a row (`.nav-simple-account`). It is rendered live, outside the cached menu. A site's
 own members' dropdown replaces it (a hidden one counts as absent) and receives the back-office link,
-written for everyone and shown by the `has-back-office` body class `layout.html.twig` sets.
+written for everyone and shown by the `has-back-office` body class `layout.html.twig` sets. When every
+members' dropdown is ticked `hideInApp`, the built-in one is drawn too, with `:appOnly="true"`
+(`.menu-app-only`), so a member keeps an account menu in the installed app.
 
 ## Footer display style
 
@@ -206,7 +212,7 @@ carrying the same specificity and winning wherever the sheets load in the other 
 writes nothing while the search is off.
 
 When the site ships as an installed app (`pwa_enabled()`), the bar also carries an **About** dropdown
-listing the site's published legal pages (`site_legal_pages()` with no argument, drawn through
+listing the app's downloads (UiBundle's `ui_pwa_downloads` route) and the site's published legal pages (`site_legal_pages()` with no argument, drawn through
 `blocks/MenuLink.html.twig` as `page:ID` targets) - never the `footer` menu's blocks, whose social links and
 repeated bar entries have no place there. The installed app sheds the footer (UiBundle's `_pwa.scss`) and a
 store asks for the privacy policy to stay within reach. Its `.menu-app-only` class hides it outside

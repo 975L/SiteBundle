@@ -9,7 +9,7 @@
     {% set visibility = visibility|default('all') == 'all' and menu_link_members_only(target) ? 'members' : visibility|default('all') %}
     {% set visibilityClass = visibility in ['guests', 'members'] ? 'menu-item--' ~ visibility : null %}
     {% set isCopyright = label|default('') is empty and resolvedLabel starts with '© ' %}
-    <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null, isCopyright ? 'menu-item--copyright' : null, visibilityClass]|filter(v => v is not null)|join(' ') }}">
+    <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null, isCopyright ? 'menu-item--copyright' : null, visibilityClass, hideInApp|default(false) ? 'menu-item--web-only' : null]|filter(v => v is not null)|join(' ') }}">
         {# The copyright notice's "©" stays off the link, where three quick clicks lead to the login form (see assets/js/edit-shortcut.js) - inside it, the first click opens the copyright page #}
         {% if isCopyright %}
             <span class="menu-label">©</span>

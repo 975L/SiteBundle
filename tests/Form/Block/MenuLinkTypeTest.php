@@ -244,6 +244,17 @@ class MenuLinkTypeTest extends TypeTestCase
         $this->assertFalse($form->get('strong')->getConfig()->getRequired());
     }
 
+    // The "hideInApp" field (see MenuLink.html.twig / _navbar.scss's .menu-item--web-only) leaves the link out of the installed app - optional, so a link saved before it existed stays everywhere
+    public function testHideInAppFieldIsPresentAndOptional(): void
+    {
+        $this->withPages([]);
+
+        $form = $this->factory->create(MenuLinkType::class);
+
+        $this->assertTrue($form->has('hideInApp'));
+        $this->assertFalse($form->get('hideInApp')->getConfig()->getRequired());
+    }
+
     // The "visibility" field (see MenuLink.html.twig / _menu.scss's .menu-item--guests/--members) offers the three audiences, "all" first
     public function testVisibilityFieldOffersTheThreeAudiences(): void
     {
