@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.35.1
+
+The smoke test checks the sitemap urls a slice at a time
+
+- The smoke test checks a slice of 100 titled sitemap urls per run, picked by the hour (15/10/2026)
+- Added the `--slice` option to `c975l:site:smoke-test` (15/10/2026)
+- Added a test of the slice rotation (15/10/2026)
+- Updated the readme and the SEO skill (15/10/2026)
+
 ## v8.35.0
 
 Back-office screens drawn with EasyAdmin 5.7 components

@@ -23,17 +23,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
-// Checks every published page, titled sitemap-provider url and home css/js asset answers 200, exiting non-zero on the first failure so a deployment pipeline fails; deliberately not a health check
+// Checks every published page, one slice of the titled sitemap-provider urls and home css/js asset answers 200, exiting non-zero on the first failure so a deployment pipeline fails; deliberately not a health check
 /**
  * @author Laurent Marquet <laurent.marquet@laposte.net>
  * @copyright 2026 975L <contact@975l.com>
  */
 #[AsCommand(
     name: 'c975l:site:smoke-test',
-    description: 'Checks that every published page, titled sitemap url and css/js asset it references answers 200 - meant to run right after a deployment'
+    description: 'Checks that every published page, a slice of the titled sitemap urls and the css/js assets answer 200 - meant to run right after a deployment'
 )]
 class SmokeTestCommand extends Command
 {
+    // Sitemap urls checked per run. Every one of them, every hour, had a site declaring each of its records (1800 urls on resistance-haute-savoie.fr) fire thousands of requests an hour from the host's own address, until the hosting's front proxy answered 429 to every site sharing it
+    private const int SITEMAP_SLICE_SIZE = 100;
+
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
@@ -49,6 +52,7 @@ class SmokeTestCommand extends Command
     protected function configure(): void
     {
         $this->addOption('pages-only', null, InputOption::VALUE_NONE, 'Only checks the pages, skipping their css/js assets');
+        $this->addOption('slice', null, InputOption::VALUE_REQUIRED, 'Which slice of the sitemap urls to check, defaults to the one the current hour points at');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -82,15 +86,7 @@ class SmokeTestCommand extends Command
             }
         }
 
-        // The titled urls the sitemap providers declare, which are the app's own routes (/tutoriels) no Page row stands for: untitled ones are left out, a gallery declaring every photo would turn a smoke test into a crawl
-        foreach ($this->sitemapProviders as $provider) {
-            foreach ($provider->getUrls() as $url) {
-                if (isset($url['title'])) {
-                    $pageUrls[] = $url['loc'];
-                }
-            }
-        }
-        $pageUrls = array_values(array_unique($pageUrls));
+        $pageUrls = array_values(array_unique([...$pageUrls, ...$this->sitemapSlice($input, $io, $pageUrls)]));
 
         if (!$pageUrls) {
             $io->warning('Aucune page publiée à tester.');
@@ -115,6 +111,32 @@ class SmokeTestCommand extends Command
         }
 
         return $this->report($io, $output, $statuses);
+    }
+
+    // The titled urls the sitemap providers declare, which are the app's own routes (/tutoriels) no Page row stands for: untitled ones are left out, a gallery declaring every photo would turn a smoke test into a crawl. Only one slice of SITEMAP_SLICE_SIZE is returned, picked by the hour since the epoch so that every slice comes round in turn - a site with 1800 urls has each of them checked once in 18 hours, a small one has them all checked every run
+    private function sitemapSlice(InputInterface $input, SymfonyStyle $io, array $pageUrls): array
+    {
+        $sitemapUrls = [];
+        foreach ($this->sitemapProviders as $provider) {
+            foreach ($provider->getUrls() as $url) {
+                if (isset($url['title'])) {
+                    $sitemapUrls[] = $url['loc'];
+                }
+            }
+        }
+
+        // Pages are checked anyway, so they don't take a place in a slice
+        $slices = array_chunk(array_values(array_diff(array_unique($sitemapUrls), $pageUrls)), self::SITEMAP_SLICE_SIZE);
+        if (!$slices) {
+            return [];
+        }
+
+        $slice = (int) ($input->getOption('slice') ?? intdiv(time(), 3600)) % \count($slices);
+        if ($io->isVerbose()) {
+            $io->writeln(sprintf('Urls du sitemap : tranche %d sur %d', $slice + 1, \count($slices)));
+        }
+
+        return $slices[$slice];
     }
 
     // Only failures are listed by default: a deployment log with 50 "ok" lines in it is a log nobody reads. -v prints every url checked

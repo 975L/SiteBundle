@@ -614,7 +614,9 @@ The page's own url is handed to the edit screen as `page_public_path` (published
 php bin/console c975l:site:smoke-test
 ```
 
-Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus every url a sitemap provider declares with a `title` (an app's own routes no Page row stands for; untitled ones such as gallery photos are left out), plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
+Meant to run at the end of a deployment: it checks that every published page — the very same list the sitemap and the health checks use, resolved through `PagePublicUrlResolver` — plus one slice of the urls a sitemap provider declares with a `title` (an app's own routes no Page row stands for; untitled ones such as gallery photos are left out), plus every css/js asset the home page references, answer 200, and exits non-zero on the first failure so a CI job fails instead of leaving a broken site online. Only failures are printed; `-v` lists every url checked. `--pages-only` skips the asset pass.
+
+Those sitemap urls are checked a hundred at a time, the slice picked by the hour, so each one comes round once in as many hours as there are slices (`--slice=N` checks a given one): a site declaring every record, 1800 urls on resistance-haute-savoie.fr, fired thousands of requests an hour from the host's own address until the hosting's front proxy answered 429 to every site sharing it.
 
 A site left in maintenance (`site-maintenance`) answers 503 on every public url by construction, so the command checks nothing and exits 0 rather than reporting a deployment that went fine as broken — run it once the site is back online.
 

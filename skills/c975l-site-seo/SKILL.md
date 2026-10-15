@@ -172,11 +172,12 @@ only automated signal here, and it reports one score rather than per-criterion d
 ## Smoke test
 
 ```bash
-php bin/console c975l:site:smoke-test [-v] [--pages-only]
+php bin/console c975l:site:smoke-test [-v] [--pages-only] [--slice=N]
 ```
 
-Meant for the end of a deployment: every published page, every url a `SitemapProviderInterface` declares
-with a `title` (untitled ones are left out), plus every css/js asset the home page references must answer 200, and it **exits non-zero on the first failure** so a CI job fails instead of
+Meant for the end of a deployment: every published page, one slice of 100 of the urls a `SitemapProviderInterface` declares
+with a `title` (untitled ones are left out; the hour picks the slice, `--slice=N` forces one, so a site declaring
+every record has each url checked once a day rather than hammering its host hourly), plus every css/js asset the home page references must answer 200, and it **exits non-zero on the first failure** so a CI job fails instead of
 leaving a broken site online. Assets are read out of the home page's rendered HTML rather than declared
 anywhere — AssetMapper's filenames are hashed, so this is what proves `asset-map:compile` and the
 stylesheet cache warmer both ran, and in the right order. Requests go ten at a time (`SmokeTestClient::CONCURRENCY`):

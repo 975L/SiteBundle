@@ -191,6 +191,32 @@ class SmokeTestCommandTest extends TestCase
         $this->assertSame(Command::SUCCESS, $tester->execute(['--pages-only' => true]));
     }
 
+    // 250 sitemap urls make three slices of 100: the pages are checked every run, the sitemap urls one slice at a time, the slice wrapping round past the last one
+    public function testItChecksOneSliceOfTheSitemapUrlsPerRun(): void
+    {
+        $sitemapUrls = array_map(static fn (int $i): string => 'https://example.com/livres/' . $i, range(1, 250));
+        $provider = $this->createStub(SitemapProviderInterface::class);
+        $provider->method('getUrls')->willReturn(array_map(static fn (string $loc): array => ['loc' => $loc, 'title' => $loc], $sitemapUrls));
+
+        foreach ([0 => [1, 100], 2 => [201, 250], 4 => [101, 200]] as $slice => [$first, $last]) {
+            $checked = [];
+            $smokeTestClient = $this->createStub(SmokeTestClient::class);
+            $smokeTestClient->method('check')->willReturnCallback(static function (array $urls) use (&$checked): array {
+                $checked = $urls;
+
+                return array_fill_keys($urls, 200);
+            });
+
+            $tester = new CommandTester($this->command(['https://example.com/'], $smokeTestClient, sitemapProviders: [$provider]));
+
+            $this->assertSame(Command::SUCCESS, $tester->execute(['--pages-only' => true, '--slice' => (string) $slice]));
+            $this->assertSame(
+                ['https://example.com/', ...\array_slice($sitemapUrls, $first - 1, $last - $first + 1)],
+                $checked
+            );
+        }
+    }
+
     private function tester(array $pageUrls, array $assets, array $checkReturns): CommandTester
     {
         $smokeTestClient = $this->createStub(SmokeTestClient::class);
