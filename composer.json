@@ -23,9 +23,9 @@
     ],
     "require": {
         "php": ">=8.4",
-        "c975l/core-bundle": "^1.59",
+        "c975l/core-bundle": "^1.69.1",
         "doctrine/orm": "^3.7",
-        "easycorp/easyadmin-bundle": "^5.1",
+        "easycorp/easyadmin-bundle": "^5.7",
         "symfony/form": "^8.0",
         "symfony/framework-bundle": "^8.0",
         "symfony/string": "^8.0",

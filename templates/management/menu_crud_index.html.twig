@@ -9,9 +9,7 @@
             <input type="hidden" name="_token" value="{{ csrf_token('site_menu_create') }}">
             <span>{{ ('label.create_menu'|trans({}, 'site')) }}</span>
             {% for location, label in missing_locations %}
-                <button type="submit" name="location" value="{{ location }}" class="btn btn-secondary">
-                    <i class="fa fa-plus"></i> {{ label }}
-                </button>
+                <twig:ea:Button type="submit" name="location" value="{{ location }}" icon="fa fa-plus">{{ label }}</twig:ea:Button>
             {% endfor %}
         </form>
     {% endif %}

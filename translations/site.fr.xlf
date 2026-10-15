@@ -6,10 +6,6 @@
                 <source>action.add_collection_item</source>
                 <target>Ajouter un élément</target>
             </trans-unit>
-            <trans-unit id="wPEuKmL">
-                <source>action.cancel</source>
-                <target>Annuler</target>
-            </trans-unit>
             <trans-unit id="sSgetpg">
                 <source>action.delete_permanently</source>
                 <target>Supprimer définitivement</target>

@@ -396,4 +396,13 @@ class MenuCrudControllerTest extends TestCase
 
         $this->assertSame(302, $response->getStatusCode());
     }
+
+    // create() reads "location" from the clicked button, so each one must submit the form and carry its location - written out rather than left to the component's default
+    public function testEachLocationButtonSubmitsItsLocation(): void
+    {
+        $this->assertStringContainsString(
+            '<twig:ea:Button type="submit" name="location" value="{{ location }}"',
+            (string) file_get_contents(\dirname(__DIR__, 3) . '/templates/management/menu_crud_index.html.twig')
+        );
+    }
 }

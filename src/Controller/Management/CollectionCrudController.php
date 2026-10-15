@@ -98,10 +98,8 @@ class CollectionCrudController extends AbstractCrudController
                 ->generateUrl())
         ;
 
-        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
-        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
-            ->linkToCrudAction(Action::INDEX)
-            ->addCssClass('btn btn-secondary');
+        // Lets the admin back out of a create/edit without saving
+        $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'));
 
         return $actions
             // EasyAdmin only puts it on PAGE_EDIT by default - here it keeps a freshly created collection on its own edit screen, where the "Items" action leads into that collection rather than the first row of the list

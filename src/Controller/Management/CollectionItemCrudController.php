@@ -158,11 +158,9 @@ class CollectionItemCrudController extends AbstractCrudController
             ->createAsGlobalAction()
         ;
 
-        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions, save for
-        // the collection it has to carry (see $scoped below)
-        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
-            ->linkToUrl(fn (): string => $this->scopedUrl(Action::INDEX))
-            ->addCssClass('btn btn-secondary');
+        // Lets the admin back out of a create/edit without saving, to the index of the collection it has to carry (see $scoped below)
+        $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'))
+            ->linkToUrl(fn (): string => $this->scopedUrl(Action::INDEX));
 
         // The very same edit screen, opened on another language - shown only where the site declares more than one
         $translateAction = EasyAdminActionHelper::toIconOnly(

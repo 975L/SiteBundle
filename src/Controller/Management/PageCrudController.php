@@ -565,8 +565,7 @@ class PageCrudController extends AbstractCrudController
                     ->generateUrl());
 
         return $action
-            ->createAsGlobalAction()
-            ->addCssClass('btn btn-secondary');
+            ->createAsGlobalAction();
     }
 
     // Publishes this page in place of another, one sub-action per page; the target is always the id the link carries. Edit screen only, being a rarer deliberate act; not added at all with no other page, an ActionGroup needing at least one action
@@ -625,40 +624,34 @@ class PageCrudController extends AbstractCrudController
             ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('deletePermanently', $page, self::DELETE_PERMANENTLY_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->askConfirmation(t('confirm.delete_permanently', [], 'site'))
-            ->asDangerAction()
-            ->addCssClass('btn btn-danger');
+            ->asDangerAction();
 
         // Restores a page out of the trash, only shown once already in the trash
         $restoreAction = Action::new('restore', t('action.restore', [], 'site'), 'fa fa-trash-restore')
             ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('restore', $page, self::RESTORE_CSRF_TOKEN))
-            ->displayIf(static fn (Page $page): bool => $page->isDeleted())
-            ->addCssClass('btn btn-secondary');
+            ->displayIf(static fn (Page $page): bool => $page->isDeleted());
 
         // Opens the published page on the public site, in a new tab - hidden for unpublished/trashed pages Split from the preview action (rather than one action with a dynamic label) so each keeps its own icon - the only way to tell them apart once icon-only on the index
         $viewOnSiteAction = Action::new('viewOnSite', t('action.view_on_site', [], 'site'), 'fa fa-external-link-alt')
             ->linkToUrl(fn (Page $page) => $this->pagePath($page))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static fn (Page $page): bool => $page->isPublished() && !$page->isDeleted())
-            ->addCssClass('btn btn-secondary');
+            ->displayIf(static fn (Page $page): bool => $page->isPublished() && !$page->isDeleted());
 
         // Opens an admin-only preview of an unpublished page (works even though it isn't public yet), in a new tab
         $previewAction = Action::new('preview', t('action.preview', [], 'site'), 'fa fa-eye')
             ->linkToUrl(fn (Page $page) => $this->pagePath($page))
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static fn (Page $page): bool => !$page->isPublished() && !$page->isDeleted())
-            ->addCssClass('btn btn-secondary');
+            ->displayIf(static fn (Page $page): bool => !$page->isPublished() && !$page->isDeleted());
 
         // The very same edit screen, opened on another language: the fields are the page's own, filled in that language (see translationFields). Shown only where the site declares more than one - on a single-language site there is nothing to open
         $translateAction = $this->contentLocaleScreen->action('translate', t('action.translate', [], 'site'), 'fa fa-language', $this->pageTranslator->getTranslatableLocales())
-            ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted())
-            ->addCssClass('btn btn-secondary');
+            ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted());
 
         // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved immediately (see duplicate()), not deferred to a form submit like block duplication is
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'site'), 'fa fa-copy')
             ->linkToCrudAction('duplicate')
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
-            ->askConfirmation(t('confirm.duplicate', [], 'site'))
-            ->addCssClass('btn btn-secondary');
+            ->askConfirmation(t('confirm.duplicate', [], 'site'));
 
         // ActionFactory overwrites an ActionGroupDto's cssClass with "btn" - the class goes through addCssClass(), which the factory leaves alone and action_group.html.twig renders separately, so SiteGuidedProjectProvider's ".action-export" step has something to highlight
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
@@ -669,10 +662,8 @@ class PageCrudController extends AbstractCrudController
             ->addAction(Action::new('exportJson', 'JSON')->linkToCrudAction('exportJson'))
         ;
 
-        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
-        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
-            ->linkToCrudAction(Action::INDEX)
-            ->addCssClass('btn btn-secondary');
+        // Lets the admin back out of a create/edit without saving
+        $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'));
 
         return $actions
             ->add(Crud::PAGE_INDEX, $this->trashAction())

@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.35.0
+
+Back-office screens drawn with EasyAdmin 5.7 components
+
+- Requires `easycorp/easyadmin-bundle` ^5.7 (14/10/2026)
+- Back-office screens drawn with EasyAdmin Twig components (14/10/2026)
+- Custom actions no longer add the `btn` classes EasyAdmin already sets (14/10/2026)
+- Cancel actions built with core-bundle's `EasyAdminActionHelper::cancel()` (15/10/2026)
+- Removed the `action.cancel` key of the `site` domain, EasyAdmin's own being used (15/10/2026)
+- Requires `c975l/core-bundle` ^1.69.1 (15/10/2026)
+
 ## v8.34.0
 
 A menu entry can be left out of the installed app

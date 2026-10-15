@@ -121,16 +121,13 @@ class MenuCrudController extends AbstractCrudController
     {
         $role = $this->configService->get('site-role-editor');
 
-        // Lets the admin back out of a create/edit without saving - mirrors EasyAdmin's own built-in actions (linkToCrudAction targeting INDEX, same as Action::INDEX itself)
-        $cancelAction = Action::new('cancel', $this->translator->trans('action.cancel', [], 'EasyAdminBundle'), 'fa fa-times')
-            ->linkToCrudAction(Action::INDEX)
-            ->addCssClass('btn btn-secondary');
+        // Lets the admin back out of a create/edit without saving
+        $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'));
 
         // The screen that writes a menu's own labels in another language, showing only where the site declares more than one: an item taking its label from the page it points at is translated with that page, not here (see TranslationController)
         $translateAction = Action::new('translate', $this->translator->trans('action.translate', [], 'site'), 'fa fa-language')
             ->linkToUrl(fn (Menu $menu) => $this->generateUrl('management_menu_translate', ['id' => $menu->getId()]))
-            ->displayIf(fn (Menu $menu): bool => $this->pageTranslator->isActive())
-            ->addCssClass('btn btn-secondary');
+            ->displayIf(fn (Menu $menu): bool => $this->pageTranslator->isActive());
 
         return $actions
             ->add(Crud::PAGE_INDEX, $translateAction)

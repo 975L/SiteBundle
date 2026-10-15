@@ -11,10 +11,9 @@
             <div class="content-panel-header d-flex flex-wrap gap-2 align-items-center justify-content-between">
                 <h4 class="mb-0">{{ 'label.collection_items'|trans({}, 'site') }}</h4>
 
-                <a class="btn btn-primary" href="{{ ea_url().setController(collection_item_controller).setAction('new').set('collectionGroup', collection_group_id).set('entityId', null) }}">
-                    <i class="fas fa-plus"></i>
+                <twig:ea:Button htmlElement="a" variant="primary" icon="fas fa-plus" href="{{ ea_url().setController(collection_item_controller).setAction('new').set('collectionGroup', collection_group_id).set('entityId', null) }}">
                     {{ 'action.add_collection_item'|trans({}, 'site') }}
-                </a>
+                </twig:ea:Button>
             </div>
 
             <div class="content-panel-body">
@@ -33,6 +32,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% set edit_label = 'action.edit'|trans({}, 'EasyAdminBundle') %}
                                 {% for item in collection_items %}
                                     <tr>
                                         <td>{{ item.position }}</td>
@@ -40,10 +40,7 @@
                                         <td>{{ item.url }}</td>
                                         <td>{{ item.filename }}</td>
                                         <td class="text-end">
-                                            <a class="btn btn-secondary btn-sm" href="{{ ea_url().setController(collection_item_controller).setAction('edit').setEntityId(item.id).set('collectionGroup', collection_group_id) }}" title="{{ 'action.edit'|trans({}, 'EasyAdminBundle') }}">
-                                                <i class="fas fa-edit"></i>
-                                                <span class="visually-hidden">{{ 'action.edit'|trans({}, 'EasyAdminBundle') }}</span>
-                                            </a>
+                                            <twig:ea:Button htmlElement="a" size="sm" icon="fas fa-edit" href="{{ ea_url().setController(collection_item_controller).setAction('edit').setEntityId(item.id).set('collectionGroup', collection_group_id) }}" title="{{ edit_label }}" aria-label="{{ edit_label }}" />
                                         </td>
                                     </tr>
                                 {% endfor %}

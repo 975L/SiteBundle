@@ -43,8 +43,8 @@
         {% endfor %}
 
         {% if rows is not empty %}
-            <button type="submit" class="btn btn-primary" data-menu-translation-submit>{{ 'action.save'|trans({}, 'site') }}</button>
+            <twig:ea:Button type="submit" variant="primary" data-menu-translation-submit>{{ 'action.save'|trans({}, 'site') }}</twig:ea:Button>
         {% endif %}
-        <a class="btn btn-secondary" href="{{ ea_url().setController(subject.backController).setAction('index') }}">{{ 'action.cancel'|trans({}, 'site') }}</a>
+        <twig:ea:Button htmlElement="a" href="{{ ea_url().setController(subject.backController).setAction('index') }}">{{ 'action.cancel'|trans({}, 'EasyAdminBundle') }}</twig:ea:Button>
     </form>
 {% endblock %}

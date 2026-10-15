@@ -175,6 +175,15 @@ class TranslationControllerTest extends TestCase
         );
     }
 
+    // The save button submits the form whatever the component's default, and the guided tour points at it (see SiteGuidedProjectProvider)
+    public function testTheSaveButtonSubmitsTheForm(): void
+    {
+        $this->assertStringContainsString(
+            '<twig:ea:Button type="submit" variant="primary" data-menu-translation-submit>',
+            (string) file_get_contents(\dirname(__DIR__, 3) . '/templates/management/translation.html.twig')
+        );
+    }
+
     #[\PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations]
     // A language the site does not declare has no screen
     public function testALanguageTheSiteDoesNotDeclareIsNotFound(): void
