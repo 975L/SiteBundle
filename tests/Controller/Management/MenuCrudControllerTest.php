@@ -181,6 +181,22 @@ class MenuCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'cancel'));
     }
 
+    // The row's own actions are icons on the list, their label kept as the title
+    public function testConfigureActionsTurnsTheRowActionsIntoIcons(): void
+    {
+        $index = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        )->getAsDto(Crud::PAGE_INDEX);
+
+        foreach ([Action::EDIT, Action::DELETE, 'translate'] as $name) {
+            $action = $index->getAction(Crud::PAGE_INDEX, $name);
+            $this->assertFalse($action?->getLabel(), $name);
+            $this->assertArrayHasKey('title', $action->getHtmlAttributes(), $name);
+        }
+    }
+
     // --- configureFields: location ------------------------------------------------------------------------
 
     // Every location is offered, whatever is already taken: the field is only ever rendered on the edit page, disabled, its value having been set once and for all by create()

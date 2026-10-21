@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.35.6
+
+Made the remaining row actions of the lists icon-only
+
+- Collection, collection item and menu lists use iconOnlyDefaults() for Edit and Delete (21/10/2026)
+- Page list shows translate, restore and permanent delete as icons (21/10/2026)
+- Menu list shows translate as an icon (21/10/2026)
+- Requires c975l/core-bundle ^1.72.2 (21/10/2026)
+- Guided steps on translation name the action rather than the button text (21/10/2026)
+
 ## v8.35.5
 
 c975l:site:create wires the user provider and form login

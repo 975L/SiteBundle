@@ -169,6 +169,9 @@ class CollectionItemCrudController extends AbstractCrudController
             $this->translator->trans('action.translate', [], 'site'),
         );
 
+        // EasyAdmin's own Edit and Delete as icons on the list, their label kept as the title
+        EasyAdminActionHelper::iconOnlyDefaults($actions, $this->translator);
+
         return $actions
             ->add(Crud::PAGE_INDEX, $backToCollectionsAction)
             ->add(Crud::PAGE_INDEX, $translateAction)
@@ -179,14 +182,6 @@ class CollectionItemCrudController extends AbstractCrudController
             // to, and the guard above bounced the admin back to the list of collections they had just left
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->linkToUrl(
                 fn (): string => $this->scopedUrl(Action::NEW),
-            ))
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
-            ))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
             ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission('collections', $role)

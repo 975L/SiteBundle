@@ -1080,7 +1080,7 @@
             </trans-unit>
             <trans-unit id="vb8kunb">
                 <source>label.guided_step_collection_translation_action</source>
-                <target>Hacer clic en «Traducir»</target>
+                <target>Abrir la traducción</target>
             </trans-unit>
             <trans-unit id="BSSwaBx">
                 <source>label.guided_step_collection_translation_check</source>
@@ -1204,7 +1204,7 @@
             </trans-unit>
             <trans-unit id="qg4jejB">
                 <source>label.guided_step_menu_translation_action</source>
-                <target>Haga clic en «Traducir»</target>
+                <target>Abrir la traducción</target>
             </trans-unit>
             <trans-unit id="8zJZCC1">
                 <source>label.guided_step_menu_translation_locale</source>
@@ -1408,7 +1408,7 @@
             </trans-unit>
             <trans-unit id="0yl7omC">
                 <source>label.guided_step_page_translation_action</source>
-                <target>Haga clic en «Traducir»</target>
+                <target>Abrir la traducción</target>
             </trans-unit>
             <trans-unit id=".gWgNor">
                 <source>label.guided_step_page_translation_blocks</source>

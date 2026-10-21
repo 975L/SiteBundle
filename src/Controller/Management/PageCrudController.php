@@ -644,8 +644,11 @@ class PageCrudController extends AbstractCrudController
             ->displayIf(static fn (Page $page): bool => !$page->isPublished() && !$page->isDeleted());
 
         // The very same edit screen, opened on another language: the fields are the page's own, filled in that language (see translationFields). Shown only where the site declares more than one - on a single-language site there is nothing to open
-        $translateAction = $this->contentLocaleScreen->action('translate', t('action.translate', [], 'site'), 'fa fa-language', $this->pageTranslator->getTranslatableLocales())
-            ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted());
+        $translateAction = EasyAdminActionHelper::toIconOnly(
+            $this->contentLocaleScreen->action('translate', t('action.translate', [], 'site'), 'fa fa-language', $this->pageTranslator->getTranslatableLocales())
+                ->displayIf(fn (Page $page): bool => $this->pageTranslator->isActive() && !$page->isDeleted()),
+            $this->translator->trans('action.translate', [], 'site'),
+        );
 
         // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved immediately (see duplicate()), not deferred to a form submit like block duplication is
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'site'), 'fa fa-copy')
@@ -690,6 +693,14 @@ class PageCrudController extends AbstractCrudController
     // The index's own row actions are icon-only (see EasyAdminActionHelper), and "delete" reads as "move to trash" everywhere, since that's all it does here
     private function tuneIndexActions(Actions $actions): Actions
     {
+        // The bundle's own row actions, each titled by its label
+        foreach (['viewOnSite' => 'action.view_on_site', 'preview' => 'action.preview', 'duplicate' => 'action.duplicate', 'restore' => 'action.restore', 'deletePermanently' => 'action.delete_permanently'] as $name => $key) {
+            $actions->update(Crud::PAGE_INDEX, $name, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+                $action,
+                $this->translator->trans($key, [], 'site'),
+            ));
+        }
+
         return $actions
             // "exportSelection" leads the list although the rest of it is about row actions, and "batchDelete" is deliberately not named: reorder() turns EasyAdmin's own priority ordering off for the whole page, and without it the batch bar falls back to the order actions were added in - which puts delete first, the dashboard declaring it before any bundle's own. Naming the export alone is enough to put it ahead, and naming delete would throw on a screen that disables it
             ->reorder(Crud::PAGE_INDEX, ['exportSelection', Action::EDIT, 'viewOnSite', 'preview', 'duplicate'])
@@ -712,18 +723,6 @@ class PageCrudController extends AbstractCrudController
                 $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
             ))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, static fn (Action $action): Action => $action->displayIf(static fn (Page $page): bool => !$page->isDeleted()))
-            ->update(Crud::PAGE_INDEX, 'viewOnSite', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.view_on_site', [], 'site'),
-            ))
-            ->update(Crud::PAGE_INDEX, 'preview', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.preview', [], 'site'),
-            ))
-            ->update(Crud::PAGE_INDEX, 'duplicate', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.duplicate', [], 'site'),
-            ))
         ;
     }
 

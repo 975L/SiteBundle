@@ -125,21 +125,19 @@ class MenuCrudController extends AbstractCrudController
         $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'));
 
         // The screen that writes a menu's own labels in another language, showing only where the site declares more than one: an item taking its label from the page it points at is translated with that page, not here (see TranslationController)
-        $translateAction = Action::new('translate', $this->translator->trans('action.translate', [], 'site'), 'fa fa-language')
-            ->linkToUrl(fn (Menu $menu) => $this->generateUrl('management_menu_translate', ['id' => $menu->getId()]))
-            ->displayIf(fn (Menu $menu): bool => $this->pageTranslator->isActive());
+        $translateAction = EasyAdminActionHelper::toIconOnly(
+            Action::new('translate', $this->translator->trans('action.translate', [], 'site'), 'fa fa-language')
+                ->linkToUrl(fn (Menu $menu) => $this->generateUrl('management_menu_translate', ['id' => $menu->getId()]))
+                ->displayIf(fn (Menu $menu): bool => $this->pageTranslator->isActive()),
+            $this->translator->trans('action.translate', [], 'site'),
+        );
+
+        // EasyAdmin's own Edit and Delete as icons on the list, their label kept as the title
+        EasyAdminActionHelper::iconOnlyDefaults($actions, $this->translator);
 
         return $actions
             ->add(Crud::PAGE_INDEX, $translateAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
-            ))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
-            ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission(Action::EDIT, $role)
             ->setPermission(Action::DELETE, $role)

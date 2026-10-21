@@ -144,6 +144,19 @@ class CollectionCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'items'));
     }
 
+    // "Items" is an icon on the list but keeps its words on the edit screen, the same action being shared by both
+    public function testConfigureActionsTurnsItemsIntoAnIconOnTheIndexOnly(): void
+    {
+        $actions = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+        );
+
+        $this->assertFalse($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'items')?->getLabel());
+        $this->assertNotFalse($actions->getAsDto(Crud::PAGE_EDIT)->getAction(Crud::PAGE_EDIT, 'items')?->getLabel());
+    }
+
     // The guided project highlights ".action-saveAndContinue" on the create screen, where EasyAdmin does not put it by default
     public function testConfigureActionsAddsSaveAndContinueOnNew(): void
     {

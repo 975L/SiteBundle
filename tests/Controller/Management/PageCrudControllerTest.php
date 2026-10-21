@@ -1045,6 +1045,24 @@ class PageCrudControllerTest extends TestCase
         $this->assertNotNull($actions->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'exportSelection'));
     }
 
+    // Every row action of the list is an icon, its label kept as the title
+    public function testConfigureActionsTurnsTheRowActionsIntoIcons(): void
+    {
+        $index = $this->createController()->configureActions(
+            Actions::new()
+                ->add(Crud::PAGE_INDEX, Action::EDIT)
+                ->add(Crud::PAGE_INDEX, Action::DELETE)
+                ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                ->add(Crud::PAGE_DETAIL, Action::DELETE)
+        )->getAsDto(Crud::PAGE_INDEX);
+
+        foreach ([Action::EDIT, Action::DELETE, 'viewOnSite', 'preview', 'duplicate', 'restore', 'deletePermanently', 'translate'] as $name) {
+            $action = $index->getAction(Crud::PAGE_INDEX, $name);
+            $this->assertFalse($action?->getLabel(), $name);
+            $this->assertArrayHasKey('title', $action->getHtmlAttributes(), $name);
+        }
+    }
+
     // tuneIndexActions()'s own reorder() turns EasyAdmin's automatic ordering off for the whole page, and the batch bar then falls back to the order actions were added in - which puts the dashboard's "batchDelete" ahead of the export, delete reading first
     public function testConfigureActionsPutsTheExportAheadOfDeleteInTheBatchBar(): void
     {

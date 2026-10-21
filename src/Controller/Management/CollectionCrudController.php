@@ -101,6 +101,9 @@ class CollectionCrudController extends AbstractCrudController
         // Lets the admin back out of a create/edit without saving
         $cancelAction = EasyAdminActionHelper::cancel($this->translator->trans('action.cancel', [], 'EasyAdminBundle'));
 
+        // EasyAdmin's own Edit and Delete as icons on the list, their label kept as the title
+        EasyAdminActionHelper::iconOnlyDefaults($actions, $this->translator);
+
         return $actions
             // EasyAdmin only puts it on PAGE_EDIT by default - here it keeps a freshly created collection on its own edit screen, where the "Items" action leads into that collection rather than the first row of the list
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
@@ -108,13 +111,9 @@ class CollectionCrudController extends AbstractCrudController
             ->add(Crud::PAGE_EDIT, $itemsAction)
             ->add(Crud::PAGE_NEW, $cancelAction)
             ->add(Crud::PAGE_EDIT, $cancelAction)
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
+            ->update(Crud::PAGE_INDEX, 'items', fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
-                $this->translator->trans('action.edit', [], 'EasyAdminBundle'),
-            ))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
-                $action,
-                $this->translator->trans('action.delete', [], 'EasyAdminBundle'),
+                $this->translator->trans('label.collection_items', [], 'site'),
             ))
             ->setPermission(Action::INDEX, $role)
             ->setPermission('items', $role)

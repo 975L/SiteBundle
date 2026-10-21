@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-21",
+        "description": [
+            {
+                "en": "The page, menu and collection lists now show their row actions as icons, the action's name appearing on hover",
+                "fr": "Les listes des pages, des menus et des collections affichent désormais leurs actions sous forme d'icônes, leur nom apparaissant au survol",
+                "es": "Las listas de páginas, menús y colecciones muestran ahora sus acciones como iconos, cuyo nombre aparece al pasar el ratón"
+            }
+        ]
+    },
+    {
         "date": "2026-10-13",
         "description": [
             {
