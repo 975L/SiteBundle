@@ -336,6 +336,98 @@ To show them, create a page and add a **`collection` block** on the **"Tutorials
 
 An app grouping its films otherwise (by bundle, by theme) draws them with the same card through `TutorialCollectionSourceProvider::items()`, and may add a `tryUrl` to a film to offer a place to walk the parcours for real.
 
+### How the c975L films are shot
+
+No screen is recorded by hand and no film is edited: each one is generated from a guided project, so a step added or reworded in a bundle gives a new film on the next shoot, in every language the project is translated into. The c975L films come out of a private tool, a Node + Playwright camera holding nothing of Symfony, which reaches the site only through what any tool can use:
+
+- **the local server** (`symfony serve`) of a copy of the site, the bundles' films being shot on bundles.975l.com's demo, put back by `app:demo:reset` before each film;
+- **a throwaway account**, `c975l:config:tutorial-account --as=<contributor|editor|admin|super_admin>` printing `{"email": ..., "password": ...}` as JSON, `--close` removing it once the shoot is over (refused outside development);
+- **the guided project itself**, `/management/guided-project/{slug}` returning its steps as JSON in the language asked by `Accept-Language`, each with its `label`, `description`, `narration` (the sentence said over it, falling back on the caption), `url` and `highlight`.
+
+The camera then chains four commands:
+
+1. **record** - signs in, opens the project from the dashboard and lets its panel do the walking, clicking "Next" from step to step; a `scenarios/<slug>.js` adds, where the panel's own "Go there" is not enough, one function per step that clicks and fills like a reader would (create freely, never modify nor delete what is there: the copy is shot again and again). It notes the second each step starts at, and sets aside a film shot over an HTTP or JavaScript error;
+2. **narrate** - has ElevenLabs say each step's `narration`, every sentence cached so that it is only paid for once, and lays the voice over the film;
+3. **publish** - writes the `.webm`, `.vtt`, `.jpg` and the `films.json` entry described above;
+4. **upload** - copies `public/medias/films` (or `private/`) to the server, these files being in no git repository.
+
+A film is only shot again when its project's steps or its scenario changed, so a whole run is left to go overnight.
+
+The bare bones of it, two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root: `~/films/films.sh site-page-creation fr`. It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
+
+```bash
+#!/bin/bash
+# Shoots one guided project into public/medias/films/<locale>/
+set -euo pipefail
+Slug=${1:?guided project slug}
+Locale=${2:-fr}
+
+# The local server and its address
+symfony server:start -d
+Url=$(symfony server:status | grep -oE 'https?://127\.0\.0\.1:[0-9]+' | head -1)
+
+# A throwaway account, removed whatever happens
+Account=$(php bin/console c975l:config:tutorial-account --as=admin)
+trap 'php bin/console c975l:config:tutorial-account --close' EXIT
+
+node "$(dirname "$0")/record.mjs" "$Url" "$Slug" "$Locale" "$Account"
+```
+
+```js
+// record.mjs - films a guided project and writes what TutorialCatalog reads
+import { chromium } from 'playwright';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+
+const [url, slug, locale, account] = process.argv.slice(2);
+const { email, password } = JSON.parse(account);
+const dir = `public/medias/films/${locale}`;
+mkdirSync(dir, { recursive: true });
+
+const browser = await chromium.launch();
+const context = await browser.newContext({ locale, ignoreHTTPSErrors: true, recordVideo: { dir: 'var/films', size: { width: 1280, height: 720 } } });
+const page = await context.newPage();
+const started = Date.now();
+const elapsed = () => (Date.now() - started) / 1000;
+
+// Signs in, then reads the project's steps in the film's language
+await page.goto(`${url}/login`);
+await page.fill('#username', email);
+await page.fill('#password', password);
+await Promise.all([page.waitForURL((address) => !address.pathname.endsWith('/login')), page.click('form:has(#password) button[type="submit"]')]);
+const { steps } = await (await page.request.get(`${url}/management/guided-project/${slug}`, { headers: { 'Accept-Language': locale } })).json();
+
+// Shows each step's page and what it points at, for as long as its sentence takes to read
+const starts = [];
+for (const step of steps) {
+    starts.push(elapsed());
+    if (step.url) await page.goto(new URL(step.url, url).href);
+    if (step.highlight) await page.locator(step.highlight).first().scrollIntoViewIfNeeded().catch(() => {});
+    await page.waitForTimeout(1500 + step.narration.length * 60);
+}
+const end = elapsed();
+
+// The film, then its poster
+const video = page.video();
+await context.close();
+await video.saveAs(`${dir}/${slug}.webm`);
+await browser.close();
+execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', '2', '-i', `${dir}/${slug}.webm`, '-frames:v', '1', `${dir}/${slug}.jpg`]);
+
+// The subtitles, one cue per step
+const time = (seconds) => new Date(seconds * 1000).toISOString().substring(11, 23);
+const cues = steps.map((step, index) => `${time(starts[index])} --> ${time(starts[index + 1] ?? end)}\n${step.narration}\n`);
+writeFileSync(`${dir}/${slug}.vtt`, `WEBVTT\n\n${cues.join('\n')}`);
+
+// Its entry in the manifest, beside the other films
+const manifest = `${dir}/films.json`;
+const films = existsSync(manifest) ? JSON.parse(readFileSync(manifest, 'utf8')) : {};
+films[slug] = { narrated: false, version: Math.floor(Date.now() / 1000), starts };
+writeFileSync(manifest, JSON.stringify(films, null, 4));
+```
+
+The voice is one more step between the two: each `narration` sent to a text-to-speech service, the clips laid at their `starts` with `ffmpeg`, and `narrated` set to `true`.
+
 ## Menus
 
 The site-wide navbar, footer, email header and email footer are managed entirely from the database — no app-side template override needed. Each is a `Menu` (`location`: `navbar`, `footer`, `email-header` or `email-footer`, one row per location, same singleton pattern as the site-wide graphics managed via UiBundle’s `SiteGraphicCrudController`).

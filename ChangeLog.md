@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.35.2
+
+Documented how the c975L tutorial films are shot
+
+- Added "How the c975L films are shot" to the readme, with a bare-bones camera (21/10/2026)
+- The pages skill points to the film shooting mechanism (21/10/2026)
+
 ## v8.35.1
 
 The smoke test checks the sitemap urls a slice at a time
