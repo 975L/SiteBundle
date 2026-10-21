@@ -71,8 +71,11 @@ Core-bundle's `layout.html.twig`, the parent this bundle's own extends, asks for
 ### Download
 
 ```bash
+composer config extra.symfony.allow-contrib true
 composer require c975l/site-bundle
 ```
+
+The first line lets Flex apply the recipes kept in `symfony/recipes-contrib`, VichUploaderBundle's among them: without it that bundle is never registered in `config/bundles.php`, and the install stops on a missing `Vich\UploaderBundle\Templating\Helper\UploaderHelper` service.
 
 ### Load configuration values
 
@@ -353,7 +356,7 @@ The camera then chains four commands:
 
 A film is only shot again when its project's steps or its scenario changed, so a whole run is left to go overnight.
 
-The bare bones of it, to film in your own app any guided project the installed bundles offer (`/management/guided-projects` lists them, each button's `data-guided-project-slug` naming it): two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root in development: `~/films/films.sh site-page-creation fr editor`. The language must be one the app declares (`framework.enabled_locales`), the steps coming in its default one otherwise; the level, the one the project asks for, the throwaway account holding that role alone (no `role_hierarchy` is shipped: `admin` does not see an editor's projects). It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
+The bare bones of it, to film in your own app (installed as told in [Installation](#installation), then [`c975l:site:create`](#create-a-new-site)) any guided project the installed bundles offer (`/management/guided-projects` lists them, each button's `data-guided-project-slug` naming it): two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root in development: `~/films/films.sh site-page-creation fr editor`. The language must be one the app declares (`framework.enabled_locales`), the steps coming in its default one otherwise; the level, the one the project asks for, the throwaway account holding that role alone (no `role_hierarchy` is shipped: `admin` does not see an editor's projects). It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
 
 ```bash
 #!/bin/bash
@@ -1123,6 +1126,14 @@ It walks through, in order:
    `public/medias` and the singleton graphics written at the root of `public/` — what the
    back-office uploads at runtime travels between environments through the content export/import,
    never through git, or the next deploy's working-tree reset would wipe it).
+   It then wires `config/packages/security.yaml`, as plain text so its comments survive, adding
+   only what is missing - a re-run, or a site with its own settings, changes nothing:
+   - the user provider: the Symfony skeleton's `users_in_memory` becomes `App\Entity\User` by its
+     `email`, what `make:user` would have written, a `User` coming from the scaffold leaving it out;
+   - on the `main` firewall, `form_login` and `logout` (the scaffolded `SecurityController`'s
+     `app_login` and `app_logout`), without which a fresh skeleton has no way in, then
+     `user_checker`, `login_throttling` and `entry_point` (see ConfigBundle's README);
+   - `^/management` under `access_control`, for anonymous visitors only.
 2. **Default config** — runs `c975l:config:load-all` internally.
 3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet,
    then stops if the database still holds sensitive config encrypted with another key (a reused

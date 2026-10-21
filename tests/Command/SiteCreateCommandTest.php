@@ -217,6 +217,50 @@ class SiteCreateCommandTest extends TestCase
         $this->assertSame($yaml, file_get_contents($path));
     }
 
+    // The skeleton's in-memory provider gives way to App\Entity\User, on the firewall too
+    public function testEnsureUserProviderSwapsTheSkeletonsInMemoryOne(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    providers:\n        users_in_memory: { memory: null }\n    firewalls:\n        main:\n            lazy: true\n            provider: users_in_memory\n");
+
+        $this->callSecurityStep('ensureUserProvider');
+
+        $this->assertSame("security:\n    providers:\n        app_user_provider: { entity: { class: App\\Entity\\User, property: email } }\n    firewalls:\n        main:\n            lazy: true\n            provider: app_user_provider\n", file_get_contents($path));
+    }
+
+    // A provider of the site's own, make:user's included, is left alone
+    public function testEnsureUserProviderLeavesAnotherProviderAlone(): void
+    {
+        $yaml = "security:\n    providers:\n        app_user_provider:\n            entity:\n                class: App\\Entity\\User\n                property: email\n    firewalls:\n        main:\n            provider: app_user_provider\n";
+        $path = $this->writeSecurityYaml($yaml);
+
+        $this->callSecurityStep('ensureUserProvider');
+
+        $this->assertSame($yaml, file_get_contents($path));
+    }
+
+    // The sign-in form and the sign-out land under "main" as flow YAML
+    public function testEnsureFormLoginAddsTheFormAndTheLogout(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
+
+        $this->callSecurityStep('ensureFormLogin');
+
+        $content = file_get_contents($path);
+        $this->assertStringContainsString('            form_login: { login_path: app_login, check_path: app_login, enable_csrf: true }', $content);
+        $this->assertStringContainsString('            logout: { path: app_logout }', $content);
+    }
+
+    // A site already signing in its own way keeps its form_login and logout
+    public function testEnsureFormLoginLeavesAnExistingOneAlone(): void
+    {
+        $yaml = "security:\n    firewalls:\n        main:\n            form_login:\n                login_path: app_login\n            logout:\n                path: app_logout\n";
+        $path = $this->writeSecurityYaml($yaml);
+
+        $this->callSecurityStep('ensureFormLogin');
+
+        $this->assertSame($yaml, file_get_contents($path));
+    }
+
     // The throttling line is flow YAML, so the same line stays valid when printed as the manual fallback
     public function testEnsureLoginThrottlingWritesAFlowMapping(): void
     {

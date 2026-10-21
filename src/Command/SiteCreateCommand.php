@@ -103,6 +103,8 @@ class SiteCreateCommand extends Command
         if (null !== $themeImportReminder) {
             $io->note($themeImportReminder);
         }
+        $this->ensureUserProvider($io);
+        $this->ensureFormLogin($io);
         $this->ensureUserChecker($io);
         $this->ensureLoginThrottling($io);
         $this->ensureLoginEntryPoint($io);
@@ -191,6 +193,33 @@ class SiteCreateCommand extends Command
         ));
 
         return false;
+    }
+
+    // Swaps the skeleton's in-memory provider for App\Entity\User, which make:user would have written but a User coming from the scaffold leaves out; any other provider is the site's own and stays
+    private function ensureUserProvider(SymfonyStyle $io): void
+    {
+        $path = $this->projectDir . '/config/packages/security.yaml';
+        if (!is_file($path)) {
+            return;
+        }
+
+        $content = file_get_contents($path);
+        $swapped = preg_replace(
+            ['/^([ \t]*)users_in_memory:[ \t]*\{[ \t]*memory:[ \t]*null[ \t]*\}[ \t]*$/m', '/^([ \t]*)provider:[ \t]*users_in_memory[ \t]*$/m'],
+            ['$1app_user_provider: { entity: { class: App\Entity\User, property: email } }', '$1provider: app_user_provider'],
+            $content
+        );
+        if ($swapped !== $content) {
+            file_put_contents($path, $swapped);
+            $io->text('  ✓ Fournisseur d\'utilisateurs App\\Entity\\User enregistré dans security.yaml');
+        }
+    }
+
+    // The sign-in form and the sign-out of the scaffolded SecurityController (app_login, app_logout), without which a fresh skeleton has no way in
+    private function ensureFormLogin(SymfonyStyle $io): void
+    {
+        $this->addToMainFirewall($io, 'form_login', 'form_login: { login_path: app_login, check_path: app_login, enable_csrf: true }', 'form_login enregistré');
+        $this->addToMainFirewall($io, 'logout', 'logout: { path: app_logout }', 'logout enregistré');
     }
 
     // Wires the scaffolded App\Security\UserChecker (refuses login while User::isEnabled is false, see README "Account activation") onto the "main" firewall

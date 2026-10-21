@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.35.5
+
+c975l:site:create wires the user provider and form login
+
+- c975l:site:create swaps the skeleton's in-memory provider for App\Entity\User (21/10/2026)
+- c975l:site:create adds form_login and logout to the main firewall (21/10/2026)
+- The readme tells to allow Flex contrib recipes before installing (21/10/2026)
+- The pages skill tells which locale the guided project steps come in (21/10/2026)
+
 ## v8.35.4
 
 The readme camera films a project at its own level
