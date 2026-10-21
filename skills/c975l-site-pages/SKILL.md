@@ -248,7 +248,7 @@ backed up too.
 
 Shooting the films is no SiteBundle code: the c975L camera is a private Node + Playwright tool. The README's
 "How the c975L films are shot" gives its mechanism and a bare-bones `films.sh` + `record.mjs` to adapt. A
-shooter only needs the local `symfony serve` URL, `c975l:config:tutorial-account --as=<level>` (JSON
+shooter only needs the local `symfony serve` URL, `c975l:config:tutorial-account --as=<level>` (the project's own level, no `role_hierarchy` being shipped; JSON
 `email`/`password`, `--close` after) and `/management/guided-project/{slug}` (steps as JSON in the
 `Accept-Language` asked: `label`, `description`, `narration`, `url`, `highlight`). It writes one `starts`
 entry per step, or the steps go untimed.

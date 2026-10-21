@@ -353,7 +353,7 @@ The camera then chains four commands:
 
 A film is only shot again when its project's steps or its scenario changed, so a whole run is left to go overnight.
 
-The bare bones of it, to film in your own app any guided project the installed bundles offer (`/management/guided-projects` lists them, each button's `data-guided-project-slug` naming it): two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root in development: `~/films/films.sh site-page-creation fr`. It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
+The bare bones of it, to film in your own app any guided project the installed bundles offer (`/management/guided-projects` lists them, each button's `data-guided-project-slug` naming it): two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root in development: `~/films/films.sh site-page-creation fr editor`. The language must be one the app declares (`framework.enabled_locales`), the steps coming in its default one otherwise; the level, the one the project asks for, the throwaway account holding that role alone (no `role_hierarchy` is shipped: `admin` does not see an editor's projects). It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
 
 ```bash
 #!/bin/bash
@@ -361,13 +361,15 @@ The bare bones of it, to film in your own app any guided project the installed b
 set -euo pipefail
 Slug=${1:?guided project slug}
 Locale=${2:-fr}
+# The level the project asks for: an account holds that role alone, no role_hierarchy being shipped
+Level=${3:-editor}
 
 # The local server and its address
 symfony server:start -d
 Url=$(symfony server:status | grep -oE 'https?://127\.0\.0\.1:[0-9]+' | head -1)
 
 # A throwaway account, removed whatever happens
-Account=$(php bin/console c975l:config:tutorial-account --as=admin)
+Account=$(php bin/console c975l:config:tutorial-account --as=$Level)
 trap 'php bin/console c975l:config:tutorial-account --close' EXIT
 
 node "$(dirname "$0")/record.mjs" "$Url" "$Slug" "$Locale" "$Account"
@@ -385,7 +387,10 @@ const dir = `public/medias/films/${locale}`;
 mkdirSync(dir, { recursive: true });
 
 const browser = await chromium.launch();
-const context = await browser.newContext({ locale, ignoreHTTPSErrors: true, recordVideo: { dir: 'var/films', size: { width: 1280, height: 720 } } });
+const context = await browser.newContext({ locale, ignoreHTTPSErrors: true, bypassCSP: true, recordVideo: { dir: 'var/films', size: { width: 1280, height: 720 } } });
+
+// Keeps the Symfony debug toolbar out of the picture
+await context.addInitScript(() => addEventListener('DOMContentLoaded', () => document.head.append(Object.assign(document.createElement('style'), { textContent: '.sf-toolbar { display: none !important; }' }))));
 const page = await context.newPage();
 const started = Date.now();
 const elapsed = () => (Date.now() - started) / 1000;
@@ -402,7 +407,7 @@ const starts = [];
 for (const step of steps) {
     starts.push(elapsed());
     if (step.url) await page.goto(new URL(step.url, url).href);
-    if (step.highlight) await page.locator(step.highlight).first().scrollIntoViewIfNeeded().catch(() => {});
+    if (step.highlight) await page.locator(step.highlight).first().scrollIntoViewIfNeeded({ timeout: 2000 }).catch(() => {});
     await page.waitForTimeout(1500 + step.narration.length * 60);
 }
 const end = elapsed();

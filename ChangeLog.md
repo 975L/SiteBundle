@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.35.4
+
+The readme camera films a project at its own level
+
+- The bare-bones camera takes the guided project's level as third argument (21/10/2026)
+- The readme names the locale and level constraints of a film (21/10/2026)
+- The bare-bones camera hides the Symfony debug toolbar (21/10/2026)
+- The bare-bones camera bounds the highlight scroll wait (21/10/2026)
+- The pages skill tells the tutorial account takes the project's own level (21/10/2026)
+
 ## v8.35.3
 
 The readme tells how to film any installed guided project
