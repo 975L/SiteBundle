@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.35.3
+
+The readme tells how to film any installed guided project
+
+- The bare-bones camera of the readme names where to find a guided project's slug (21/10/2026)
+
 ## v8.35.2
 
 Documented how the c975L tutorial films are shot

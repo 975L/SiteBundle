@@ -353,7 +353,7 @@ The camera then chains four commands:
 
 A film is only shot again when its project's steps or its scenario changed, so a whole run is left to go overnight.
 
-The bare bones of it, two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root: `~/films/films.sh site-page-creation fr`. It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
+The bare bones of it, to film in your own app any guided project the installed bundles offer (`/management/guided-projects` lists them, each button's `data-guided-project-slug` naming it): two files kept anywhere outside the app (`npm install playwright && npx playwright install chromium` beside them, `ffmpeg` installed), run from the app's root in development: `~/films/films.sh site-page-creation fr`. It shows each step's page for as long as its sentence takes to read, and leaves out the panel, the scenarios and the voice, the film being published mute with its subtitles.
 
 ```bash
 #!/bin/bash
