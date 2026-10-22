@@ -126,6 +126,62 @@ class W3cValidatorClientTest extends TestCase
         $this->assertCount(3, $result['benignErrors']);
     }
 
+    // The real case behind this: 88 errors on every page of a site whose cards are sized in container units - the validator names neither the unit nor the value, so the line is read back from the stylesheet, once for all the errors it carries
+    public function testValidateCssExcusesTheContainerQueryUnitsReadOnTheLineTheyAreOn(): void
+    {
+        $sheetRequests = 0;
+        $httpClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$sheetRequests): MockResponse {
+                if (str_starts_with($url, 'https://example.com/css/site.css')) {
+                    ++$sheetRequests;
+
+                    return new MockResponse(".card {\n    container-type: inline-size;\n    border-radius: 2cqw;\n    text-shadow: 0 0.3cqw 0.8cqw black;\n    width: 10pz;\n}\n", ['http_code' => 200]);
+                }
+
+                $source = 'https://example.com/css/site.css?v=1';
+
+                return new MockResponse(json_encode([
+                    'cssvalidation' => [
+                        'errors' => [
+                            ['line' => 2, 'source' => $source, 'type' => 'noexistence-at-all', 'message' => 'Property “container-type” doesn\'t exist : '],
+                            ['line' => 3, 'source' => $source, 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension'],
+                            ['line' => 4, 'source' => $source, 'type' => 'value', 'message' => '“0” is not a “text-shadow” value : '],
+                            ['line' => 5, 'source' => $source, 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension'],
+                        ],
+                        'warnings' => [],
+                    ],
+                ]), ['http_code' => 200]);
+            }
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        // The typo stays an error: only the units named one by one are excused
+        $this->assertSame(['line 5: Unknown dimension'], $result['errors']);
+        $this->assertCount(3, $result['benignErrors']);
+        $this->assertSame(1, $sheetRequests);
+    }
+
+    // A stylesheet that cannot be read back excuses nothing: the validator's verdict stands
+    public function testAnUnknownDimensionStaysAnErrorWhenTheStylesheetCannotBeRead(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url, array $options) => str_contains($url, 'site.css')
+                ? new MockResponse('', ['http_code' => 404])
+                : new MockResponse(json_encode([
+                    'cssvalidation' => [
+                        'errors' => [['line' => 3, 'source' => 'https://example.com/css/site.css', 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension']],
+                        'warnings' => [],
+                    ],
+                ]), ['http_code' => 200])
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        $this->assertSame(['line 3: Unknown dimension'], $result['errors']);
+        $this->assertSame([], $result['benignErrors']);
+    }
+
     // Without the validator's admission about variables, a type verdict stays a verdict: a sheet with no variable writing calc(10px + 5) has a real error
     public function testATypeVerdictStaysAnErrorWhenTheValidatorDidNotDeclareVariablesUnchecked(): void
     {
@@ -201,6 +257,7 @@ class W3cValidatorClientTest extends TestCase
                         ['line' => 5, 'message' => '“:-moz-focusring” is a vendor extended pseudo-class'],
                         ['line' => 6, 'message' => '“auto” is not defined by any specification as an allowed value for “pointer-events”, but is supported in multiple browsers'],
                         ['line' => 7, 'message' => 'The property “clip” is deprecated'],
+                        ['line' => 8, 'message' => 'The value “text” is deprecated'],
                     ],
                 ],
             ]), ['http_code' => 200])
@@ -209,9 +266,9 @@ class W3cValidatorClientTest extends TestCase
         $client = new W3cValidatorClient($httpClient);
         $result = $client->validateCss('https://example.com/pages/home/');
 
-        // A deprecated property is something to actually fix, unlike the five above it
+        // A deprecated property is something to actually fix, unlike the others
         $this->assertSame(['line 7: The property “clip” is deprecated'], $result['warnings']);
-        $this->assertCount(5, $result['benignWarnings']);
+        $this->assertCount(6, $result['benignWarnings']);
     }
 
     public function testValidateCssHandlesAMultiPartMessageArray(): void

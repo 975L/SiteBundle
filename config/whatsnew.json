@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-22",
+        "description": [
+            {
+                "en": "The CSS check of the health dashboard no longer reports as errors the modern units and properties browsers all support",
+                "fr": "La vérification CSS du tableau de santé ne signale plus comme erreurs les unités et propriétés modernes que tous les navigateurs prennent en charge",
+                "es": "La verificación CSS del panel de salud ya no señala como errores las unidades y propiedades modernas que todos los navegadores admiten"
+            }
+        ]
+    },
+    {
         "date": "2026-10-21",
         "description": [
             {

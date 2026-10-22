@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.35.7
+
+The CSS health check excuses container query units
+
+- CSS health check excuses the container query units on the line writing them (22/10/2026)
+- CSS health check excuses the container properties (22/10/2026)
+- CSS health check excuses the deprecation warning of background-clip: text (22/10/2026)
+
 ## v8.35.6
 
 Made the remaining row actions of the lists icon-only
