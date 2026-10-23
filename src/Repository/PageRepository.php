@@ -45,19 +45,6 @@ class PageRepository extends ServiceEntityRepository
         ;
     }
 
-    // Every page's id, as a string - what the back-office list asks SocialBundle about in one go
-    /** @return list<string> */
-    public function findAllIds(): array
-    {
-        $ids = $this->createQueryBuilder('p')
-            ->select('p.id')
-            ->getQuery()
-            ->getSingleColumnResult()
-        ;
-
-        return array_map(strval(...), $ids);
-    }
-
     // The published pages a social post could announce, oldest first: referenced, not a legal notice, not already held by a post - without their blocks and medias, only the oldest few being turned into a post
     /**
      * @param list<string> $excludedIds

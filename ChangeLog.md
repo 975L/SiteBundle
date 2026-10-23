@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.36.0
+
+Social column shared through UiBundle
+
+- Requires `c975l/core-bundle` ^1.73 for UiBundle's `SocialStatusCrudTrait` (23/10/2026)
+- The pages' social column asks SocialBundle about the rows shown only, dated in the site's time zone (23/10/2026)
+- Removed `PageRepository::findAllIds()`, which the column alone read (23/10/2026)
+- The trash of the pages has no social column (23/10/2026)
+
 ## v8.35.7
 
 The CSS health check excuses container query units

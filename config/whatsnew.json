@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-23",
+        "description": [
+            {
+                "en": "The page list opens faster on a site publishing to social networks, and its trash no longer shows the social networks column",
+                "fr": "La liste des pages s'ouvre plus vite sur un site qui publie sur les réseaux sociaux, et sa corbeille n'affiche plus la colonne des réseaux sociaux",
+                "es": "La lista de páginas se abre más rápido en un sitio que publica en las redes sociales, y su papelera ya no muestra la columna de las redes sociales"
+            }
+        ]
+    },
+    {
         "date": "2026-10-22",
         "description": [
             {

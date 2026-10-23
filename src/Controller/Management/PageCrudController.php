@@ -31,6 +31,7 @@ use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
+use c975L\UiBundle\Controller\Management\Trait\SocialStatusCrudTrait;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
@@ -39,7 +40,6 @@ use c975L\UiBundle\Form\BlockType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Model\QrCodeOptions;
-use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
@@ -97,6 +97,9 @@ use function Symfony\Component\Translation\t;
 
 class PageCrudController extends AbstractCrudController
 {
+    // Brings index(), which fills the social badges - an index() declared here would have to call it
+    use SocialStatusCrudTrait;
+
     // The two actions of the trash are reached by a GET, so their token travels in the url the row buttons carry (see addPageActions()) - a confirmation modal only holds a click back, never a request forged elsewhere
     public const RESTORE_CSRF_TOKEN = 'page_restore';
     public const DELETE_PERMANENTLY_CSRF_TOKEN = 'page_delete_permanently';
@@ -106,10 +109,6 @@ class PageCrudController extends AbstractCrudController
 
     // The hidden field carrying the page's version the edit screen was opened on (see guardStaleVersion)
     public const string OPENED_VERSION_FIELD = 'openedVersion';
-
-    // The posts' hold on every page, asked once for the whole list rather than once per row
-    /** @var array<string, SocialContentStatus>|null */
-    private ?array $socialStatusMap = null;
 
     public function __construct(
         private readonly Security $security,
@@ -260,41 +259,22 @@ class PageCrudController extends AbstractCrudController
             ->setFormTypeOption('content_locale', $locale);
     }
 
-    // Whether a social post holds the page - reserved by a draft, or published - on a site with SocialBundle only
-    /** @return list<FieldInterface> */
-    private function socialStatusFields(): array
+    // The type SocialBundle files the pages under (see UiBundle's SocialStatusCrudTrait)
+    private function socialSourceType(): string
     {
-        if (null === $this->socialStatuses) {
-            return [];
-        }
-
-        return [
-            TextField::new('id')
-                ->setLabel(t('label.page_social', [], 'site'))
-                ->formatValue(fn (mixed $value, Page $page): string => $this->socialStatusBadge($page))
-                ->renderAsHtml()
-                ->setSortable(false)
-                ->onlyOnIndex(),
-        ];
+        return 'page';
     }
 
-    // The badge of that post's state and date, empty for a page no post holds
-    private function socialStatusBadge(Page $page): string
+    // The domain the social column's keys are shipped in
+    private function socialTranslationDomain(): string
     {
-        $this->socialStatusMap ??= $this->socialStatuses?->getStatuses('page', $this->pageRepository->findAllIds()) ?? [];
-        $status = $this->socialStatusMap[(string) $page->getId()] ?? null;
-        if (null === $status) {
-            return '';
-        }
+        return 'site';
+    }
 
-        // The date's format is the language's own: "09/10" reads as the 10th of September in English
-        $date = $status->at->format($this->translator->trans('label.page_social_date_format', [], 'site'));
-
-        return sprintf(
-            '<span class="badge %s">%s</span>',
-            $status->isPublished() ? 'badge-success' : 'badge-warning',
-            htmlspecialchars($this->translator->trans('label.page_social_' . $status->state, ['%date%' => $date], 'site')),
-        );
+    // The trash holds nothing a post could announce
+    private function socialStatusColumnShown(): bool
+    {
+        return !$this->isTrash();
     }
 
     // The language a page is being written in, when it is not the one the site was written in: read from the url the language selector links to (see page_crud_edit.html.twig), and only ever one the site declares
@@ -316,8 +296,6 @@ class PageCrudController extends AbstractCrudController
         // The language the page itself is written in, named in its own words: "Dans cette langue (français)" says which one an editor is looking at, a multilingual site having several screens that look alike
         $writingLocale = $this->siteLocales->getDefaultLocale();
 
-        // Trashed pages are always unpublished, no need to show that column in the trash view
-        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
         $isPublishedField = BooleanField::new('isPublished')
             ->setLabel(t('label.is_published', [], 'site'))
             // Both switches toggle the entity through ajax on the index, where unpublishing a page also unreferences it (see Page::unreferenceWhenUnpublished()) - the "publication-switch" controller unchecks and disables the "isIndexable" one accordingly (and disables it without unchecking it while the row is kept for members), a stale "checked" over a value the database holds as false making the next click send "false" for something already false. Set through setHtmlAttribute() and not on the checkbox: EasyAdmin renders these attributes on the index <td>, which is also where the sibling cell can be reached from
@@ -340,7 +318,7 @@ class PageCrudController extends AbstractCrudController
             ->setFormTypeOption('row_attr', ['data-controller' => 'sitemap-fields']);
 
         // Trashed pages are unpublished, so they are never referenced either (see deleteEntity() and Page::unreferenceWhenUnpublished()) - the column holds "false" for every row of that view. Hidden rather than left there: with "isPublished" gone, the "publication-switch" controller has no cell to mount on, and the switch would stay clickable over a value the server sends straight back to false
-        if ($isTrash) {
+        if ($this->isTrash()) {
             $isPublishedField->hideOnIndex();
             $isMembersOnlyField->hideOnIndex();
             $isIndexableField->hideOnIndex();
@@ -545,12 +523,16 @@ class PageCrudController extends AbstractCrudController
         return $this->applyActionPermissions($this->tuneIndexActions($this->addPageActions($actions)), $role);
     }
 
+    // Whether the index is showing the trash rather than the pages - read by the fields, the actions and the query alike
+    private function isTrash(): bool
+    {
+        return (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
+    }
+
     // Toggles between "go to trash" and "back to pages", depending on where we currently are
     private function trashAction(): Action
     {
-        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
-
-        $action = $isTrash
+        $action = $this->isTrash()
             ? Action::new('trash', t('label.pages', [], 'site'), 'fa fa-file')
                 ->linkToUrl(fn () => $this->adminUrlGenerator
                     ->setController(self::class)
@@ -760,11 +742,9 @@ class PageCrudController extends AbstractCrudController
         FieldCollection $fields,
         FilterCollection $filters,
     ): QueryBuilder {
-        $isTrash = (bool) $this->requestStack->getCurrentRequest()?->query->get('trash');
-
         return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->andWhere('entity.isDeleted = :isDeleted')
-            ->setParameter('isDeleted', $isTrash)
+            ->setParameter('isDeleted', $this->isTrash())
         ;
     }
 

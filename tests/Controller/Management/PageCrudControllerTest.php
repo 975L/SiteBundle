@@ -31,7 +31,6 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Management\BlockDataExporter;
-use c975L\UiBundle\Model\SocialContentStatus;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
@@ -972,34 +971,27 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame([], $this->invokePrivate($this->createController(), 'socialStatusFields'));
     }
 
-    // A page a post holds says so in the list, reserved by a draft or published, with its date in the language's format - nothing for one no post holds. SocialBundle is asked once for the whole list, not once per row
-    public function testTheSocialBadgeSaysWhetherAPostHoldsThePage(): void
+    // The shared social column (see UiBundle's SocialStatusCrudTrait), asked about as "page" in this bundle's domain
+    public function testTheSocialColumnIsThePagesOne(): void
     {
-        $statuses = $this->createMock(SocialContentStatusProviderInterface::class);
-        $statuses->expects($this->once())->method('getStatuses')->with('page', ['7', '8', '9'])->willReturn([
-            '7' => new SocialContentStatus(SocialContentStatus::PUBLISHED, new \DateTimeImmutable('2026-10-09')),
-            '9' => new SocialContentStatus(SocialContentStatus::RESERVED, new \DateTimeImmutable('2026-10-12')),
-        ]);
-        $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findAllIds')->willReturn(['7', '8', '9']);
-        $translator = $this->createStub(TranslatorInterface::class);
-        $translator->method('trans')->willReturnCallback(static fn (string $id, array $parameters = []): string => 'label.page_social_date_format' === $id ? 'm/d' : $id . ' ' . implode(' ', $parameters));
-        $controller = $this->createController(['socialStatuses' => $statuses, 'pageRepository' => $pageRepository, 'translator' => $translator]);
+        $controller = $this->createController(['socialStatuses' => $this->createStub(SocialContentStatusProviderInterface::class)]);
 
-        $badge = fn (int $id): string => $this->invokePrivate($controller, 'socialStatusBadge', [$this->createPageWithId($id)]);
-        $this->assertSame('<span class="badge badge-success">label.page_social_published 10/09</span>', $badge(7));
-        $this->assertSame('', $badge(8));
-        $this->assertSame('<span class="badge badge-warning">label.page_social_reserved 10/12</span>', $badge(9));
-        $this->assertCount(1, $this->invokePrivate($controller, 'socialStatusFields'));
+        $label = $this->invokePrivate($controller, 'socialStatusFields')[0]->getAsDto()->getLabel();
+
+        $this->assertSame('label.page_social', $label->getMessage());
+        $this->assertSame('site', $label->getDomain());
+        $this->assertSame('page', $this->invokePrivate($controller, 'socialSourceType'));
     }
 
-    // A page as Doctrine would hand it back, its id set
-    private function createPageWithId(int $id): Page
+    // The trash holds nothing a post could announce, so it has no social column
+    public function testTheTrashHasNoSocialColumn(): void
     {
-        $page = new Page();
-        new \ReflectionProperty(Page::class, 'id')->setValue($page, $id);
+        $controller = $this->createController([
+            'socialStatuses' => $this->createStub(SocialContentStatusProviderInterface::class),
+            'requestStack' => new RequestStack([new Request(['trash' => 1])]),
+        ]);
 
-        return $page;
+        $this->assertSame([], $this->invokePrivate($controller, 'socialStatusFields'));
     }
 
     // --- configureActions / configureFields / configureFilters / createIndexQueryBuilder ------------------
