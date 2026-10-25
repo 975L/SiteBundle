@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.36.1
+
+CI installs the latest lizard
+
+- `.github/workflows/ci.yml` no longer pins lizard to 1.17.31 (25/10/2026)
+
 ## v8.36.0
 
 Social column shared through UiBundle
