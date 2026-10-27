@@ -527,7 +527,7 @@ It is a native `<details>`: it opens and closes with no javascript at all. `menu
 
 A signed-in visitor always finds their own links in the bar. A navbar holding no `menu_dropdown` whose visibility is `members` draws the built-in **"My space"** dropdown (`AccountMenu` component, `label.my_space`): *My account*, *Management* for whoever passes the `C975L_ACCESS_BACK_OFFICE` voter, and *Sign out* (`rel="nofollow"`). The fallback bar draws the same links as a row (`.nav-simple-account`). Rendered on every request, outside the cached menu, it writes nothing for a guest.
 
-A site that built its own members' dropdown keeps it, and the built-in one steps aside — unless that dropdown is hidden, which counts as absent. Ticked `hideInApp`, it leaves the installed app, where the built-in one is then drawn in its place (`appOnly`, so with `.menu-app-only`). Its own dropdown then receives the *Management* link, written for everyone in the cached html and shown only under the `has-back-office` body class `layout.html.twig` sets for the same voter (`.menu-item--back-office`, `sass/_menu.scss`).
+A site that built its own members' dropdown keeps it, and the built-in one steps aside — unless that dropdown is hidden, which counts as absent. Ticked `hideInApp`, it leaves the installed app, where the built-in one is then drawn in its place (`appOnly`, so with `.menu-app-only`). Its own dropdown then receives the *Management* link, written for everyone in the cached html and shown only under the `has-back-office` body class `layout.html.twig` sets for the same voter (`.menu-item--back-office`, `sass/_menu.scss`). Its *Sign out* link (`route:app_logout`) is drawn last, after *Management*, wherever it sits in the back office.
 
 ### Navbar: installed app
 

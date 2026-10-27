@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.36.2
+
+Sign-out ends a members' dropdown
+
+- `menu_dropdown` draws its `route:app_logout` link last, after the back-office link (27/10/2026)
+
 ## v8.36.1
 
 CI installs the latest lizard

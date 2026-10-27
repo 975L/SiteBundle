@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-27",
+        "description": [
+            {
+                "en": "In your members' menu, Sign out now always comes last, after the back-office link",
+                "fr": "Dans votre menu des membres, Se déconnecter vient désormais toujours en dernier, après le lien vers l'administration",
+                "es": "En su menú de miembros, Cerrar sesión aparece ahora siempre en último lugar, después del enlace a la administración"
+            }
+        ]
+    },
+    {
         "date": "2026-10-23",
         "description": [
             {

@@ -6,7 +6,9 @@
             <span class="menu-label">{{ label }}</span>
         </summary>
         <div class="menu-dropdown__items">
-            {% for slot in block.slots %}{{ render_block(slot) }}{% endfor %}
+            {# The sign-out link (the scaffold's app_logout, see SiteCreateCommand) ends the list whatever its position in the back office, after the back-office link, as in the built-in AccountMenu.html.twig #}
+            {% set logoutTarget = 'route:app_logout' %}
+            {% for slot in block.slots|filter(slot => (slot.data.target ?? null) != logoutTarget) %}{{ render_block(slot) }}{% endfor %}
             {# The back-office link of a members' dropdown, written for everyone and shown by the layout's "has-back-office" body class, this html being cached once for all (see _menu.scss) #}
             {% if visibility|default('all') == 'members' %}
                 <div class="menu-item menu-item--back-office">
@@ -15,6 +17,7 @@
                     </a>
                 </div>
             {% endif %}
+            {% for slot in block.slots|filter(slot => (slot.data.target ?? null) == logoutTarget) %}{{ render_block(slot) }}{% endfor %}
         </div>
     </details>
 </div>
