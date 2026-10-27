@@ -20,15 +20,15 @@ class NavbarRuleScopeTest extends TestCase
     private const array SCOPED = [
         '.menu .menu-item',
         '.menu .menu-item.active',
-        '.menu .menu-link:hover .menu-label',
-        '.menu .menu-link:focus .menu-label',
-        '.menu .menu-label',
+        '.menu:not(.menu--collapsed) .menu-link:hover .menu-label',
+        '.menu:not(.menu--collapsed) .menu-link:focus .menu-label',
+        '.menu:not(.menu--collapsed) .menu-label',
     ];
 
     // Both repaint the pill's own label at the very weight the pill's rule carries, (0,3,0), so only source order keeps the pill's color on top
     private const array OUTWEIGHED_BY_ORDER = [
-        '.menu .menu-label',
-        '.menu.is-scrolled .menu-label',
+        '.menu:not(.menu--collapsed) .menu-label',
+        '.menu:not(.menu--collapsed).is-scrolled .menu-label',
     ];
 
     // The bare form of each rule above that must not be left behind - ".menu-label" is out, the base rule sizing every label the site over deliberately carrying no scope
@@ -96,8 +96,8 @@ class NavbarRuleScopeTest extends TestCase
     {
         $css = $this->stylesheet($file);
 
-        $pill = strpos($css, '.menu .menu-item--primary .menu-label');
-        $this->assertNotFalse($pill, sprintf('"%s" no longer paints ".menu .menu-item--primary .menu-label", so the pill reads the navbar\'s text color.', $file));
+        $pill = strpos($css, '.menu:not(.menu--collapsed) .menu-item--primary .menu-label');
+        $this->assertNotFalse($pill, sprintf('"%s" no longer paints ".menu:not(.menu--collapsed) .menu-item--primary .menu-label", so the pill reads the navbar\'s text color.', $file));
 
         foreach (self::OUTWEIGHED_BY_ORDER as $selector) {
             $position = strrpos($css, $selector);

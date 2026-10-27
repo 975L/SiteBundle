@@ -7,11 +7,11 @@
     {% set action = (languages|first)|split('?')|first %}
     {% set carried = app.request.query.all|filter((value, name) => name != '_locale' and value is not iterable) %}
     {% if dropdown|default(false) %}
-        {# The navbar's own look (see blocks/MenuDropdown.html.twig and menu-dropdown.js): the language being read as the title, the others unfolding under it. Still a GET form and no link at all - one submit button per language, nothing a crawler follows #}
-        <div class="menu-item menu-dropdown menu-languages-dropdown" data-controller="menu-dropdown">
+        {# The navbar's pill beside the magnifier (see Navbar.html.twig and menu-dropdown.js): the code of the language being read as its title, every language unfolding under it by its full name. A toggle on any screen, never the heading a "menu_dropdown" block becomes in the burger. Still a GET form and no link at all - one submit button per language, nothing a crawler follows #}
+        <div class="menu-dropdown menu-languages-dropdown" data-controller="menu-dropdown" data-menu-dropdown-toggle-value="true">
             <details class="menu-dropdown__details" data-menu-dropdown-target="details">
-                <summary class="menu-dropdown__summary" aria-label="{{ 'menu.languages'|trans({}, 'site') }} : {{ app.request.locale|language_name }}">
-                    <span class="menu-label">{{ app.request.locale|language_name }}</span>
+                <summary class="menu-dropdown__summary" aria-label="{{ app.request.locale|upper }} - {{ 'menu.languages'|trans({}, 'site') }} : {{ app.request.locale|language_name }}">
+                    <span class="menu-label">{{ app.request.locale|upper }}</span>
                 </summary>
                 <form class="menu-dropdown__items" method="get" action="{{ action }}">
                     {% for name, value in carried %}

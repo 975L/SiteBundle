@@ -7,18 +7,16 @@
  */
 import { Controller } from "@hotwired/stimulus";
 
-// The navbar's dropdown is a <details>, which opens and closes on its own (see blocks/MenuDropdown.html.twig). This is the enhancement: closed on a click elsewhere or on Escape, as a menu is expected to, and always open below the navbar's breakpoint, where it is a heading among the burger's links
+// The navbar's dropdown is a <details>, which opens and closes on its own (see blocks/MenuDropdown.html.twig). This is the enhancement: closed on a click elsewhere or on Escape, as a menu is expected to, and always open while the links sit in the burger, where it is a heading among them - once menu-collapse.js folded the bar, which it always does below the breakpoint. The "toggle" value keeps a dropdown a toggle on any screen: the languages beside the magnifier, which never go into the burger
 export default class extends Controller {
     static targets = ["details"];
-
-    // Same breakpoint as _menu.scss's desktop styles
-    static mobile = "(max-width: 767.98px)";
+    static values = { toggle: Boolean };
 
     connect() {
-        this.media = window.matchMedia(this.constructor.mobile);
-        this.sync = () => this.detailsTarget.open = this.media.matches;
+        this.isHeading = () => !this.toggleValue && null !== this.element.closest(".menu--collapsed");
+        this.sync = () => this.detailsTarget.open = this.isHeading();
         this.close = (event) => {
-            if (this.media.matches || !this.detailsTarget.open) {
+            if (this.isHeading() || !this.detailsTarget.open) {
                 return;
             }
             if ("keydown" === event.type ? "Escape" === event.key && this.element.contains(document.activeElement) : !this.element.contains(event.target)) {
@@ -30,19 +28,22 @@ export default class extends Controller {
             }
         };
 
-        // On a phone the title is a heading, not a toggle: without this a tap would fold the links away again
-        this.keepOpen = (event) => this.media.matches && event.preventDefault();
+        // In the burger the title is a heading, not a toggle: without this a tap would fold the links away again
+        this.keepOpen = (event) => this.isHeading() && event.preventDefault();
 
-        this.sync();
+        // A toggle starts closed and stays the visitor's to open, whatever the width
+        if (!this.toggleValue) {
+            this.sync();
+            document.addEventListener("menu-collapse:change", this.sync);
+        }
         this.detailsTarget.querySelector("summary").addEventListener("click", this.keepOpen);
-        this.media.addEventListener("change", this.sync);
         document.addEventListener("click", this.close);
         document.addEventListener("keydown", this.close);
     }
 
     disconnect() {
         this.detailsTarget.querySelector("summary").removeEventListener("click", this.keepOpen);
-        this.media.removeEventListener("change", this.sync);
+        document.removeEventListener("menu-collapse:change", this.sync);
         document.removeEventListener("click", this.close);
         document.removeEventListener("keydown", this.close);
     }

@@ -101,14 +101,14 @@ class NavbarMenuDropdownTest extends TestCase
         $this->assertTrue($filled->isValid());
     }
 
-    // On a desktop the links hang under their title instead of pushing the bar down
+    // On a bar whose links fit the links hang under their title instead of pushing the bar down
     #[\PHPUnit\Framework\Attributes\DataProvider('stylesheetProvider')]
     public function testEachStylesheetHangsTheLinksUnderTheTitle(string $file): void
     {
         $css = $this->stylesheet($file);
 
-        $this->assertMatchesRegularExpression('/\.menu \.menu-dropdown\{position:relative;?\}/', $css);
-        $this->assertMatchesRegularExpression('/\.menu \.menu-dropdown__items\{position:absolute;top:100%/', $css);
+        $this->assertMatchesRegularExpression('/\.menu:not\(\.menu--collapsed\) \.menu-dropdown\{position:relative;?\}/', $css);
+        $this->assertMatchesRegularExpression('/\.menu:not\(\.menu--collapsed\) \.menu-dropdown__items\{position:absolute;top:100%/', $css);
     }
 
     private function registry(): BlockRegistry

@@ -14,8 +14,10 @@
     position: var(--navbar-position);
     top: 0;
     z-index: var(--navbar-z-index);
+    // A row at every width: the brand, the links, then the tools - the links leaving that row for the dropdown hanging under the bar while they sit in the burger, where they are taken out of the flow
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     background-color: var(--navbar-background);
     box-shadow: var(--shadow-nav);
     border-bottom: var(--border-nav);
@@ -49,7 +51,10 @@ body.navbar-fixed {
     padding-top: var(--navbar-height);
 }
 
+// Takes the room the tools leave while the links sit in the burger, which sends the install button to its far end, against the magnifier
 .menu-header {
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -58,18 +63,22 @@ body.navbar-fixed {
     padding: var(--navbar-padding-y) 15px;
 }
 
+// "min-width: 0" down the brand's chain lets a long site name shrink to an ellipsis rather than slide under the tools on a phone
 .menu-brand {
+    min-width: 0;
     display: flex;
     flex-direction: column;
 }
 
 .menu-brand-top {
+    min-width: 0;
     display: flex;
     align-items: center;
 }
 
 // The single link wrapping the logo and the site name (see Navbar.html.twig). _links.scss repaints every hovered link in --link-color and underlines it; the brand is a label, not a body link, and the underline would otherwise be drawn through the name inside. ":visited:hover" is repeated here because the generic rule carries it too, and would otherwise outweigh a single pseudo-class
 .menu-brand-link {
+    min-width: 0;
     display: flex;
     align-items: center;
 
@@ -127,6 +136,10 @@ img.menu-logo__on-dark {
     // Its own token, declared on the element itself: it is a <span> inside .menu-brand-link now, so the --link-color the generic hover rule sets on that link would otherwise be inherited straight through it
     color: var(--navbar-site-name-color);
     margin-left: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 // A fixed navbar gives back --navbar-height to the page, which is the bar's floor - the tagline would push it past that and slip content under the bar
@@ -158,7 +171,22 @@ img.menu-logo__on-dark {
     }
 }
 
-// Stays in the header's flow: .menu-header already sends it to the far end and centers it on the line, where a "fixed" button instead resolved its top from a static position the flex line put above the viewport
+// The magnifier, the languages and the burger (see Navbar.html.twig), on the bar's own line at every width. The right gutter is the one .menu-header keeps on its left
+.menu-tools {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-right: 15px;
+    // The magnifier takes the ink it sits in (see UiBundle's _ai-search.scss), and so does the languages pill
+    color: var(--navbar-text);
+}
+
+.menu.is-scrolled .menu-tools {
+    color: var(--navbar-text-scrolled);
+}
+
+// Stays in the bar's flow: the tools end the line and center it, where a "fixed" button instead resolved its top from a static position the flex line put above the viewport
 .menu-toggle {
     display: flex;
     align-items: center;
@@ -337,16 +365,7 @@ body:not(.has-back-office) .menu-item--back-office {
     color: var(--button-color);
 }
 
-// The site search's magnifier (UiBundle's AiSearch:Trigger): beside the burger on a phone, at the end of the links on a desktop - one of the two twins shown at a time, scoped under .menu to outweigh UiBundle's own display whatever order the sheets load in
-.menu .menu-ai-search--mobile {
-    margin-left: auto;
-}
-
-.menu .menu-ai-search--desktop {
-    display: none;
-}
-
-// The install button (see Navbar.html.twig), written hidden and shown by UiBundle's "pwa" controller once the browser offers to install - the display only applies to a shown one, or it would override the "hidden" attribute. It takes the free space before the magnifier, which then sits right beside it
+// The install button (see Navbar.html.twig), written hidden and shown by UiBundle's "pwa" controller once the browser offers to install - the display only applies to a shown one, or it would override the "hidden" attribute. It takes the free space of the header, which leaves it right beside the tools
 .menu .menu-install:not([hidden]) {
     display: inline-flex;
     align-items: center;
@@ -367,10 +386,6 @@ body:not(.has-back-office) .menu-item--back-office {
     outline-offset: 2px;
 }
 
-.menu .menu-install:not([hidden]) + .menu-ai-search--mobile {
-    margin-left: 0.5rem;
-}
-
 .menu.is-scrolled .menu-install {
     color: var(--navbar-text-scrolled);
 }
@@ -385,129 +400,112 @@ body:not(.has-back-office) .menu-item--back-office {
     stroke-linejoin: round;
 }
 
-// Desktop styles
+// Desktop styles - a bar whose links fit on one line, menu-collapse.js folding it into its burger otherwise. Without javascript the links wrap onto a second line rather than run off the screen
 @media screen and (min-width: 768px) {
-    .menu .menu-ai-search--mobile {
-        display: none;
-    }
-
-    // Beside the brand, the links filling the rest of the bar
-    .menu .menu-install:not([hidden]) {
-        margin-left: 1rem;
-    }
-
-    .menu .menu-ai-search--desktop {
-        display: inline-flex;
-        margin-left: 0.5rem;
-    }
-
-    .menu {
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .menu-header {
-        flex: 0 0 auto;
-    }
-
-    .menu-toggle {
-        display: none;
-    }
-
-    .menu .menu-items {
-        position: static;
-        box-shadow: none;
-        // Back to an unbounded row, whose own dropdowns hang out of it
-        max-height: none;
-        overflow: visible;
-        // Reset the mobile fullscreen dropdown's colored background - desktop keeps the navbar's own flat/translucent (or white) background instead of a solid band behind the links only
-        background-color: transparent;
-        display: flex;
-        flex-direction: row;
-        flex: 1;
-        justify-content: flex-end;
-        padding-right: 15px;
-    }
-
-    .menu-items .blocks {
-        display: flex;
-        flex-direction: row;
-    }
-
-    // A bar holding more items than its width fits wraps them onto a second line, flush right like the first: left on one line, they ran past the viewport, where the root's "overflow-x: clip" cut them away with no way left to reach them. Scoped to .menu, the footer laying its own row out in _footer.scss
-    .menu .menu-items .blocks {
-        flex-wrap: wrap;
-        justify-content: flex-end;
-    }
-
-    .menu .menu-items .menu-link,
-    .menu .menu-items .menu-dropdown__summary {
-        color: var(--navbar-text);
-    }
-
-    .menu.is-scrolled .menu-items .menu-link,
-    .menu.is-scrolled .menu-items .menu-dropdown__summary {
-        color: var(--navbar-text-scrolled);
-    }
-
-    // The bar keeps its own background: no wash, the hover reads on the label instead - restated for the pill, whose own hover fill the reset would take away
-    .menu .menu-link:hover,
-    .menu .menu-link:focus,
-    .menu .menu-dropdown__summary:hover,
-    .menu .menu-dropdown__summary:focus {
-        background-color: transparent;
-    }
-
-    .menu .menu-item--primary .menu-link {
-        box-shadow: none;
-
-        &:hover,
-        &:focus {
-            background-color: var(--navbar-btn-background-hover);
+    .menu:not(.menu--collapsed) {
+        // Beside the brand, the links filling the rest of the bar
+        .menu-install:not([hidden]) {
+            margin-left: 1rem;
         }
-    }
 
-    // .menu-label sets its own color, so the hover has to target the label rather than the link. Scoped to ".menu" like the item above: unscoped it weighs (0,3,0) against the (0,2,2) of the footer's own "footer a:hover .menu-label", so it beat that rule in the footer and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
-    .menu .menu-link:hover .menu-label,
-    .menu .menu-link:focus .menu-label,
-    .menu .menu-dropdown__summary:hover .menu-label,
-    .menu .menu-dropdown__summary:focus .menu-label {
-        color: var(--navbar-active-color);
-    }
+        .menu-header {
+            flex: 0 0 auto;
+        }
 
-    // The pill keeps its own ink under the pointer: scoped to ".menu", the rule above weighs as much as the pill's own hover and comes after it, which painted its label in --navbar-active-color - the primary on a primary ground, a button going blank when hovered
-    .menu .menu-item--primary .menu-link:hover .menu-label,
-    .menu .menu-item--primary .menu-link:focus .menu-label {
-        color: var(--navbar-btn-color);
-    }
+        .menu-toggle {
+            display: none;
+        }
 
-    .menu .menu-label {
-        color: var(--navbar-text);
-    }
-
-    .menu.is-scrolled .menu-label {
-        color: var(--navbar-text-scrolled);
-    }
-
-    // Restated after the two rules above: tying their specificity, they took --navbar-btn-color out of the cascade, leaving the pill's label in the navbar's text color on its own --primary fill
-    .menu .menu-item--primary .menu-label,
-    .menu.is-scrolled .menu-item--primary .menu-label {
-        color: var(--navbar-btn-color);
-    }
-
-    // The active page's underline, in the navbar's own color - scoped like the rest, a footer holding a link to the page being read having taken it too
-    .menu .menu-item {
-        border-top: none;
-        border-bottom: 3px solid transparent;
-
-        &.active {
+        .menu-items {
+            position: static;
+            box-shadow: none;
+            // Back to an unbounded row, whose own dropdowns hang out of it
+            max-height: none;
+            overflow: visible;
+            // Reset the mobile fullscreen dropdown's colored background - desktop keeps the navbar's own flat/translucent (or white) background instead of a solid band behind the links only
             background-color: transparent;
-            border-bottom-color: var(--navbar-active-color);
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+        }
+
+        // A bar holding more items than its width fits wraps them onto a second line, flush right like the first, until menu-collapse.js folds it: left on one line, they ran past the viewport, where the root's "overflow-x: clip" cut them away with no way left to reach them. Scoped to the navbar, the footer laying its own row out in _footer.scss
+        .menu-items .blocks {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .menu-items .menu-link,
+        .menu-items .menu-dropdown__summary {
+            color: var(--navbar-text);
+        }
+
+        &.is-scrolled .menu-items .menu-link,
+        &.is-scrolled .menu-items .menu-dropdown__summary {
+            color: var(--navbar-text-scrolled);
+        }
+
+        // The bar keeps its own background: no wash, the hover reads on the label instead - restated for the pill, whose own hover fill the reset would take away
+        .menu-link:hover,
+        .menu-link:focus,
+        .menu-dropdown__summary:hover,
+        .menu-dropdown__summary:focus {
+            background-color: transparent;
+        }
+
+        .menu-item--primary .menu-link {
+            box-shadow: none;
+
+            &:hover,
+            &:focus {
+                background-color: var(--navbar-btn-background-hover);
+            }
+        }
+
+        // .menu-label sets its own color, so the hover has to target the label rather than the link. Scoped to the navbar like the item above: unscoped it beat the footer's own "footer a:hover .menu-label" and repainted a footer link in --navbar-active-color on hover - invisible on the default band, that color being what paints it, and a stray brand color on any footer given one of its own
+        .menu-link:hover .menu-label,
+        .menu-link:focus .menu-label,
+        .menu-dropdown__summary:hover .menu-label,
+        .menu-dropdown__summary:focus .menu-label {
+            color: var(--navbar-active-color);
+        }
+
+        // The pill keeps its own ink under the pointer: the rule above weighs as much as the pill's own hover and comes after it, which painted its label in --navbar-active-color - the primary on a primary ground, a button going blank when hovered
+        .menu-item--primary .menu-link:hover .menu-label,
+        .menu-item--primary .menu-link:focus .menu-label {
+            color: var(--navbar-btn-color);
+        }
+
+        .menu-label {
+            color: var(--navbar-text);
+        }
+
+        &.is-scrolled .menu-label {
+            color: var(--navbar-text-scrolled);
+        }
+
+        // Restated after the two rules above: tying their specificity, they took --navbar-btn-color out of the cascade, leaving the pill's label in the navbar's text color on its own --primary fill
+        .menu-item--primary .menu-label,
+        &.is-scrolled .menu-item--primary .menu-label {
+            color: var(--navbar-btn-color);
+        }
+
+        // The active page's underline, in the navbar's own color - scoped like the rest, a footer holding a link to the page being read having taken it too
+        .menu-item {
+            border-top: none;
+            border-bottom: 3px solid transparent;
+
+            &.active {
+                background-color: transparent;
+                border-bottom-color: var(--navbar-active-color);
+            }
         }
     }
 
-    // The underline treatment above doesn't suit a filled pill button - and it reads better set apart from the plain links.
-    // Left unscoped where the two rules above are not: its border reset is a no-op outside the navbar now that the underline is scoped, and its margin is what keeps a footer's own "primary" pill spaced exactly as it was
+    // The underline treatment above doesn't suit a filled pill button, set apart from the plain links. Left unscoped where the rules above are not: its border reset is a no-op outside the navbar now that the underline is scoped, and its margin is what keeps a footer's own "primary" pill spaced exactly as it was
     .menu-item--primary {
         margin-left: 0.75rem;
         border-bottom: none;
@@ -517,6 +515,7 @@ body:not(.has-back-office) .menu-item--back-office {
         }
     }
 }
+
 // Language menu (see templates/components/General/Languages.html.twig): one field rather than a row of links - a site declaring a third language used to take a line of the bar with it, and a fourth would take two. Drawn as a menu entry and not as a form control: the bar reads as a row of words, and a bordered box in the middle of it reads as a stray widget. Classes of its own rather than the "menu-item"/"menu-link" pair, whose underline and hover wash say "this is the page you are on" - a language is not a page
 .menu-languages {
     display: flex;
@@ -560,38 +559,6 @@ body:not(.has-back-office) .menu-item--back-office {
     background-color: var(--background);
 }
 
-// Inside the navbar's mobile dropdown, whose --primary background stays the same in both modes - same ink and same reason as .menu-label above, undone at the desktop breakpoint where the bar keeps its own background
-.menu .menu-languages-select,
-.menu .menu-languages-submit {
-    color: var(--button-color);
-}
-
-// The separator every line of the mobile dropdown carries, and the room the languages need when they follow the menu's own items
-.menu .menu-languages {
-    border-top: 1px solid color-mix(in srgb, var(--button-color) 20%, transparent);
-}
-
-@media screen and (min-width: 768px) {
-    .menu .menu-languages {
-        border-top: none;
-    }
-
-    .menu .menu-languages-select,
-    .menu .menu-languages-submit {
-        color: var(--navbar-text);
-    }
-
-    .menu.is-scrolled .menu-languages-select,
-    .menu.is-scrolled .menu-languages-submit {
-        color: var(--navbar-text-scrolled);
-    }
-
-    // Flush with the row it ends: the field's own right padding would add to the gutter .menu-items already keeps, and the bar would end on a hole where every other line of it ends on a word
-    .menu .menu-languages-select {
-        padding-right: 0;
-    }
-}
-
 // The fallback bar, a centered column with no items row to sit in: the languages take a line of their own under the brand
 .nav-simple .menu-languages {
     justify-content: center;
@@ -616,49 +583,51 @@ body:not(.has-back-office) .menu-item--back-office {
     padding-left: 2rem;
 }
 
-// On a desktop a title with its caret, the links hanging under it on the navbar's own background, so they read in the navbar's own colors
+// On a bar whose links fit, a title with its caret, the links hanging under it on the navbar's own background, so they read in the navbar's own colors
 @media screen and (min-width: 768px) {
-    .menu .menu-dropdown {
-        position: relative;
-    }
+    .menu:not(.menu--collapsed) {
+        .menu-dropdown {
+            position: relative;
+        }
 
-    .menu .menu-dropdown__summary .menu-label {
-        font-size: 1rem;
-        opacity: 1;
-    }
+        .menu-dropdown__summary .menu-label {
+            font-size: 1rem;
+            opacity: 1;
+        }
 
-    .menu .menu-dropdown__summary::after {
-        content: #{"\"\\25BE\""};
-        margin-left: 0.35em;
-        color: var(--navbar-text);
-    }
+        .menu-dropdown__summary::after {
+            content: #{"\"\\25BE\""};
+            margin-left: 0.35em;
+            color: var(--navbar-text);
+        }
 
-    .menu.is-scrolled .menu-dropdown__summary::after {
-        color: var(--navbar-text-scrolled);
-    }
+        &.is-scrolled .menu-dropdown__summary::after {
+            color: var(--navbar-text-scrolled);
+        }
 
-    .menu .menu-dropdown__items {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        z-index: 1001;
-        display: flex;
-        flex-direction: column;
-        min-width: 12rem;
-        padding: 0.25rem 0;
-        background-color: var(--navbar-background);
-        // A card's corners, not a button's: a site rounding its buttons into pills (--radius-btn: 999px) turned the open menu into a pebble
-        border-radius: var(--radius-card);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
+        .menu-dropdown__items {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            min-width: 12rem;
+            padding: 0.25rem 0;
+            background-color: var(--navbar-background);
+            // A card's corners, not a button's: a site rounding its buttons into pills (--radius-btn: 999px) turned the open menu into a pebble
+            border-radius: var(--radius-card);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
 
-    .menu.is-scrolled .menu-dropdown__items {
-        background-color: var(--navbar-background-scrolled);
-    }
+        &.is-scrolled .menu-dropdown__items {
+            background-color: var(--navbar-background-scrolled);
+        }
 
-    .menu .menu-dropdown__items .menu-link {
-        padding-left: 1rem;
+        .menu-dropdown__items .menu-link {
+            padding-left: 1rem;
+        }
     }
 }
 
@@ -679,4 +648,73 @@ form.menu-dropdown__items {
 
 .menu-dropdown__items [aria-current] .menu-label {
     font-weight: bold;
+}
+
+// The languages beside the magnifier (see Languages.html.twig): a pill holding the code of the language being read, its list hanging under it on the navbar's own background at every width - in the bar's ink rather than the burger's, the pill never going into it. Written after the dropdown rules above so it wins the ties with them
+.menu .menu-languages-dropdown {
+    position: relative;
+}
+
+.menu .menu-languages-dropdown .menu-dropdown__summary {
+    padding: 0.2rem 0.7rem;
+    border: 1.5px solid currentColor;
+    border-radius: 999px;
+    color: inherit;
+}
+
+.menu .menu-languages-dropdown .menu-dropdown__summary::after {
+    content: #{"\"\\25BE\""};
+    margin-left: 0.35em;
+    color: inherit;
+}
+
+.menu .menu-languages-dropdown .menu-dropdown__summary .menu-label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    opacity: 1;
+}
+
+.menu .menu-languages-dropdown .menu-label {
+    color: inherit;
+}
+
+.menu .menu-languages-dropdown .menu-dropdown__items {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
+    padding: 0.25rem 0;
+    background-color: var(--navbar-background);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.menu.is-scrolled .menu-languages-dropdown .menu-dropdown__items {
+    background-color: var(--navbar-background-scrolled);
+}
+
+// No separator and no underline: these lines are languages, not the pages of the bar
+.menu .menu-languages-dropdown .menu-item {
+    border: none;
+}
+
+.menu .menu-languages-dropdown .menu-dropdown__items .menu-link {
+    padding-left: 1rem;
+    color: inherit;
+}
+
+.menu .menu-languages-dropdown .menu-link:hover,
+.menu .menu-languages-dropdown .menu-link:focus,
+.menu .menu-languages-dropdown .menu-dropdown__summary:hover,
+.menu .menu-languages-dropdown .menu-dropdown__summary:focus {
+    background-color: transparent;
+}
+
+.menu .menu-languages-dropdown .menu-link:hover .menu-label,
+.menu .menu-languages-dropdown .menu-link:focus .menu-label {
+    color: var(--navbar-active-color);
 }

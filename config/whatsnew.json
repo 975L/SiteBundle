@@ -6,6 +6,16 @@
                 "en": "In your members' menu, Sign out now always comes last, after the back-office link",
                 "fr": "Dans votre menu des membres, Se déconnecter vient désormais toujours en dernier, après le lien vers l'administration",
                 "es": "En su menú de miembros, Cerrar sesión aparece ahora siempre en último lugar, después del enlace a la administración"
+            },
+            {
+                "en": "Your site's menu bar now folds into its menu button whenever its links no longer fit on one line, on tablets too",
+                "fr": "La barre de menu de votre site se replie désormais dans son bouton de menu dès que ses liens ne tiennent plus sur une ligne, tablettes comprises",
+                "es": "La barra de menú de su sitio se pliega ahora en su botón de menú en cuanto sus enlaces ya no caben en una línea, también en tabletas"
+            },
+            {
+                "en": "The search magnifier and the language choice now stay on the menu bar at every screen size, the language shown as a short code",
+                "fr": "La loupe de recherche et le choix de la langue restent désormais sur la barre de menu quelle que soit la taille de l'écran, la langue affichée par son code court",
+                "es": "La lupa de búsqueda y la elección del idioma permanecen ahora en la barra de menú en cualquier tamaño de pantalla, el idioma mostrado con su código corto"
             }
         ]
     },

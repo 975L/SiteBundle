@@ -70,7 +70,16 @@ class DarkThemeTextTokensTest extends TestCase
 
         $this->assertStringContainsString('--footer-text:var(--button-color)', $css, sprintf('"%s" has the footer band read another ink than the one derived from --primary.', $file));
         $this->assertMatchesRegularExpression('/\.menu-label\{[^}]*color:var\(--button-color\)/', $css, sprintf('"%s" has the mobile dropdown\'s labels read another ink than the one derived from --primary.', $file));
-        $this->assertMatchesRegularExpression('/\.menu\.menu-languages-select,\.menu\.menu-languages-submit\{[^}]*color:var\(--button-color\)/', $css, sprintf('"%s" has the mobile dropdown\'s language switcher read another ink than the one derived from --primary.', $file));
+    }
+
+    // The language pill is not on a colored band: it reads the navbar's own ink, which .menu-tools takes from the token both dark branches restate
+    #[DataProvider('stylesheetProvider')]
+    public function testTheLanguagePillReadsTheNavbarInk(string $file): void
+    {
+        $css = (string) preg_replace('/\s+/', '', $this->stylesheet($file));
+
+        $this->assertMatchesRegularExpression('/\.menu-tools\{[^}]*color:var\(--navbar-text\)/', $css, sprintf('"%s" has the tools beside the burger read another ink than --navbar-text.', $file));
+        $this->assertMatchesRegularExpression('/\.menu\.menu-languages-dropdown\.menu-label\{color:inherit/', $css, sprintf('"%s" paints the language pill\'s code instead of letting it inherit the tools\' ink.', $file));
     }
 
     // The other way to survive dark mode: a token mixed out of --text and --background follows the palette wherever it is repainted, so it is declared once and restated in neither branch - a second declaration would freeze it back to a fixed grey

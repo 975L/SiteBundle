@@ -3,6 +3,7 @@ import BasicController from './js/basic.js';
 import EditShortcutController from './js/edit-shortcut.js';
 import LanguagesController from './js/languages.js';
 import MenuActiveController from './js/menu-active.js';
+import MenuCollapseController from './js/menu-collapse.js';
 import MenuDropdownController from './js/menu-dropdown.js';
 import TutorialController from './js/tutorial.js';
 
@@ -13,5 +14,6 @@ app.register('basic', BasicController);
 app.register('edit-shortcut', EditShortcutController);
 app.register('languages', LanguagesController);
 app.register('menu-active', MenuActiveController);
+app.register('menu-collapse', MenuCollapseController);
 app.register('menu-dropdown', MenuDropdownController);
 app.register('tutorial', TutorialController);

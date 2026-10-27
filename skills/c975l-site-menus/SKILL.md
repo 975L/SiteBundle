@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, hideInApp, menu-item--web-only, menu-app-only, hide in the installed app, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only, app_logout, sign out order."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, hideInApp, menu-item--web-only, menu-app-only, hide in the installed app, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only, app_logout, sign out order, menu-collapse, menu--collapsed, menu-tools, language pill, burger fold."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/AccountMenu.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/menu-collapse.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/AccountMenu.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -84,8 +84,8 @@ declares more than one language. Where UiBundle's AI rephrasing is on (`ai_rephr
 label field of that screen carries its toolbar, pinned to the screen's language
 (`TranslationFormContext::set()`) and handed the original text, the field itself starting empty.
 
-The bar also carries the **language menu** itself (`General:Languages`, rendered inside the items so it
-follows the mobile dropdown, and on the fallback bar too). It offers only the languages the page being
+The bar also carries the **language menu** itself (`General:Languages`, rendered in `.menu-tools` beside the
+magnifier so it stays on the bar at any width, and on the fallback bar too). It offers only the languages the page being
 read was really written in — the list `page_languages()` answers — and links each to the **bare url with
 `?_locale=xx`**, never to that language's own `/en/...`: a localised route already says which language it
 answers in, so ConfigBundle's `LocaleListener` leaves the session alone there and the choice would last a
@@ -93,8 +93,9 @@ single page. A template says which `Page` the menu rewrites the url of by settin
 on a collection item's detail view and in preview. **With no `Page` behind the screen** — a shop listing, a
 product sheet, a campaign, a basket — the menu falls back on `screen_languages()` (ConfigBundle's
 `LocalizedUrlGenerator::screenLanguages()`), the languages that screen itself answers in, and draws nothing
-where it answers in one language alone. In the navbar's items it is drawn as a dropdown (`dropdown` prop,
-same markup as `menu_dropdown`, one submit button per language), elsewhere as a `<select>`. Restyled
+where it answers in one language alone. On the navbar it is drawn as a pill showing the language code (`dropdown` prop,
+same markup as `menu_dropdown` with `data-menu-dropdown-toggle-value="true"`, a toggle on any screen, one
+submit button per language), its `aria-label` starting with that code; elsewhere as a `<select>`. Restyled
 through `.menu-languages` and `.menu-languages-dropdown`.
 
 ### Exposing another bundle's route
@@ -138,7 +139,8 @@ Like a `menu_link`, it has a `hideInApp` checkbox: the entry gets a `.menu-item-
 rule is scoped to the navbar: ticked in a footer or an email menu, the box does nothing.
 
 A native `<details>`, working with no javascript; `menu-dropdown.js` closes it on an outside click or
-Escape on a desktop and keeps it open below 768px, where it reads as a heading inside the burger. Do
+Escape, and keeps it open while the bar is folded (`.menu--collapsed`), where it reads as a heading inside the
+burger. Its `toggle` value keeps it a toggle whatever the bar does. Do
 not turn a `menu_group` into a dropdown: existing menus rely on the group staying as it is.
 
 ## Account menu
@@ -206,11 +208,10 @@ alone is its own containing block and has nowhere to travel — via
 more than the navigation inside opts out of it** and has to arrange its own sticky header.
 
 The bar also carries UiBundle's site search magnifier (`<twig:c975LUi:AiSearch:Trigger>`), written
-twice: `.menu-ai-search--mobile` beside the burger, reachable without opening the menu, and
-`.menu-ai-search--desktop` after the links from 768px up, one of the two shown at a time. Both rules
-are **scoped under `.menu`** in `sass/_menu.scss`, UiBundle's own `.ai-search-trigger { display }`
-carrying the same specificity and winning wherever the sheets load in the other order. The component
-writes nothing while the search is off.
+once in `.menu-tools`, followed by the language pill and the burger: out of the items, so they stay on
+the bar at any width. Its rules are **scoped under `.menu`** in `sass/_menu.scss`, UiBundle's own
+`.ai-search-trigger { display }` carrying the same specificity and winning wherever the sheets load in the
+other order. The component writes nothing while the search is off.
 
 When the site ships as an installed app (`pwa_enabled()`), the bar also carries an **About** dropdown
 listing the app's downloads (UiBundle's `ui_pwa_downloads` route) and the site's published legal pages (`site_legal_pages()` with no argument, drawn through
@@ -224,11 +225,13 @@ browser fires `beforeinstallprompt`. The burger's panel scrolls within the scree
 
 Logo and name are wrapped in **one single link** to the home page, not two adjacent ones — a screen
 reader announced the same destination twice. The logo's `alt` is emptied when the name is printed
-beside it.
+beside it. A name too long for a phone's bar ends in an ellipsis rather than slide under the tools.
 
-From 768px up, a bar holding more items than its width fits **wraps them onto a second line**, flush
-right (`.menu .menu-items .blocks`) — left on one line, they ran past the viewport where the root's
-`overflow-x: clip` hid them. The footer lays its own row out in `sass/_footer.scss`, untouched.
+**`menu-collapse.js` folds the bar into its burger** (`.menu--collapsed` on the `<nav>`) as soon as its
+links no longer fit on one line, whatever the width, and always below 768px; the desktop rules are
+scoped under `.menu:not(.menu--collapsed)`. It measures again whenever the bar or its items change width,
+and once the fonts are in. Without javascript, a bar too narrow **wraps its links onto a second line**,
+flush right (`.menu .menu-items .blocks`), rather than running past the viewport. The footer lays its own row out in `sass/_footer.scss`, untouched.
 
 A site may upload a second logo on the `logo-on-dark` site-graphic role, drawn for a dark page. Both
 images are then written — on the menu brand and on the fallback bar alike — and the stylesheet paints

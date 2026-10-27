@@ -68,13 +68,13 @@ class NavbarAppMenuTest extends TestCase
         return (string) file_get_contents($path);
     }
 
-    // From the dropdown's opening tag to the search trigger that follows it
+    // From the dropdown's opening tag to the tools that follow the items
     private function appMenu(): string
     {
         $source = $this->navbar();
         $start = strpos($source, '<div class="menu-item menu-dropdown menu-app-only"');
         $this->assertNotFalse($start, 'The navbar no longer writes the "menu-app-only" dropdown.');
 
-        return substr($source, $start, (int) strpos($source, '<twig:c975LUi:AiSearch:Trigger class="menu-ai-search menu-ai-search--desktop"') - $start);
+        return substr($source, $start, (int) strpos($source, '<div class="menu-tools">') - $start);
     }
 }

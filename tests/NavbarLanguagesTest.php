@@ -108,6 +108,28 @@ class NavbarLanguagesTest extends TestCase
         $this->assertSame(1, substr_count($this->template('components/General/Navbar.html.twig'), 'General:Languages page="{{ page|default(null) }}" :dropdown="true"'));
     }
 
+    // Beside the magnifier and not among the links: a phone or a tablet reaches it without opening the burger
+    public function testTheMenuBarLanguagesSitInTheToolsBesideTheMagnifier(): void
+    {
+        $navbar = $this->template('components/General/Navbar.html.twig');
+        $tools = (int) strpos($navbar, '<div class="menu-tools">');
+
+        $this->assertGreaterThan(0, $tools, 'The navbar no longer writes its tools.');
+        $this->assertGreaterThan($tools, strpos($navbar, 'General:Languages page="{{ page|default(null) }}" :dropdown="true"'));
+        $this->assertGreaterThan($tools, strpos($navbar, '<twig:c975LUi:AiSearch:Trigger class="menu-ai-search" />'));
+        $this->assertSame(1, substr_count($navbar, '<twig:c975LUi:AiSearch:Trigger class="menu-ai-search'));
+    }
+
+    // The pill shows the code of the language being read, and stays a toggle on any screen rather than the heading a "menu_dropdown" block becomes in the burger
+    public function testTheDropdownIsAPillHoldingTheLanguageCode(): void
+    {
+        $rendered = $this->renderLanguages(['page' => 'a-page', 'dropdown' => true], ['fr' => '/a?_locale=fr', 'en' => '/a?_locale=en']);
+
+        $this->assertStringContainsString('data-menu-dropdown-toggle-value="true"', $rendered);
+        $this->assertStringContainsString('aria-label="FR - menu.languages : FR"', $rendered);
+        $this->assertStringNotContainsString('class="menu-item menu-dropdown', $rendered);
+    }
+
     // Nothing to follow at all: a crawler used to be handed one query-string variant per language of a page the sitemap already declares once per language, and told not to follow them
     public function testTheMenuHoldsNoLinkAtAll(): void
     {

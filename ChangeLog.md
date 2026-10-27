@@ -1,5 +1,16 @@
 # Changelog
 
+## v8.37.0
+
+The navbar folds into its burger when its links no longer fit
+
+- Added `menu-collapse.js`, folding the navbar whenever its links overflow one line (27/10/2026)
+- Magnifier, language pill and burger grouped in `.menu-tools`, kept on the bar at any width (27/10/2026)
+- The navbar's language menu is a pill showing the language code (27/10/2026)
+- The language pill's `aria-label` starts with the visible code (27/10/2026)
+- `menu-dropdown.js` reads `.menu--collapsed` alone, dropping its own breakpoint (27/10/2026)
+- A long site name ends in an ellipsis on a phone's navbar (27/10/2026)
+
 ## v8.36.2
 
 Sign-out ends a members' dropdown
