@@ -570,6 +570,10 @@
                 <source>description.guided_step_page_translation_medias</source>
                 <target>A caption, the title and the text of a card, the alternative a screen reader announces: a picture's own words are said in the new language too.</target>
             </trans-unit>
+            <trans-unit id="qnzxIvb">
+                <source>description.guided_step_page_translation_og_image</source>
+                <target>The picture networks show when this very address is shared: its alternative text in this language, and a picture of its own when the original carries words. Nothing shows until the page has a share image.</target>
+            </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
                 <target>The list of pages, where every translation starts from. You can also start from the page as read on the site: the "edit this block" button opens the screen of the language you are reading in.</target>
@@ -1433,6 +1437,10 @@
             <trans-unit id="IRlJAsj">
                 <source>label.guided_step_page_translation_medias</source>
                 <target>Take in the pictures' texts</target>
+            </trans-unit>
+            <trans-unit id=".DNUlkZ">
+                <source>label.guided_step_page_translation_og_image</source>
+                <target>Adapt the share image</target>
             </trans-unit>
             <trans-unit id="1eGYN.t">
                 <source>label.guided_step_page_translation_open</source>

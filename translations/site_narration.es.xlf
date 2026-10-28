@@ -430,6 +430,10 @@
                 <source>narration.guided_step_page_translation_medias</source>
                 <target>Bajo los bloques que llevan imágenes, cada imagen tiene sus propios campos. Diga sus palabras también en el nuevo idioma. Su enlace y sus créditos no están ahí: valen para todos los idiomas.</target>
             </trans-unit>
+            <trans-unit id="2Eq72Vx">
+                <source>narration.guided_step_page_translation_og_image</source>
+                <target>Justo debajo del resumen, la imagen para compartir. Dele su texto alternativo en este idioma, y una imagen propia si la original lleva palabras. Solo aparece cuando la página ya tiene una imagen para compartir.</target>
+            </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>
                 <target>Abra el menú «Páginas», en la columna de la izquierda: de esta lista parte cada traducción.</target>

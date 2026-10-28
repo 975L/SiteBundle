@@ -570,6 +570,10 @@
                 <source>description.guided_step_page_translation_medias</source>
                 <target>Un pie de foto, el título y el texto de una tarjeta, la alternativa que anuncia un lector de pantalla: las palabras que lleva una imagen se dicen también en el nuevo idioma.</target>
             </trans-unit>
+            <trans-unit id="qnzxIvb">
+                <source>description.guided_step_page_translation_og_image</source>
+                <target>La imagen que muestran las redes cuando se comparte esta dirección: su texto alternativo en este idioma, y una imagen propia cuando la original lleva palabras. No aparece nada mientras la página no tenga imagen para compartir.</target>
+            </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
                 <target>La lista de páginas, de donde parte cada traducción. También puede partir de la página leída en el sitio: el botón «editar este bloque» abre directamente la pantalla del idioma que está leyendo.</target>
@@ -1433,6 +1437,10 @@
             <trans-unit id="IRlJAsj">
                 <source>label.guided_step_page_translation_medias</source>
                 <target>Repase los textos de las imágenes</target>
+            </trans-unit>
+            <trans-unit id=".DNUlkZ">
+                <source>label.guided_step_page_translation_og_image</source>
+                <target>Adapte la imagen para compartir</target>
             </trans-unit>
             <trans-unit id="1eGYN.t">
                 <source>label.guided_step_page_translation_open</source>

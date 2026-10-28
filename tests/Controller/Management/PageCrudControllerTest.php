@@ -32,6 +32,8 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Management\BlockDataExporter;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\ContentTranslator;
+use c975L\UiBundle\Service\MediaTranslator;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
 use Doctrine\DBAL\Connection;
@@ -69,6 +71,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -184,6 +187,8 @@ class PageCrudControllerTest extends TestCase
             $services['contentLocaleScreen'] ?? new ContentLocaleScreen($services['requestStack'], $services['adminUrlGenerator'], $services['siteLocales']),
             // Null as on a site without SocialBundle, but in the tests about the social column
             $services['socialStatuses'] ?? null,
+            // Null as on a construction that leaves it out, but in the tests about the share image of a language
+            $services['mediaTranslator'] ?? null,
         );
     }
 
@@ -1551,9 +1556,9 @@ class PageCrudControllerTest extends TestCase
      *
      * @return iterable<mixed>
      */
-    private function translationScreenFields(string $asked = 'es'): iterable
+    private function translationScreenFields(string $asked = 'es', ?Media $ogImage = null, ?MediaTranslator $mediaTranslator = null): iterable
     {
-        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers');
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setOgImage($ogImage);
         new \ReflectionProperty(Page::class, 'id')->setValue($page, 12);
 
         $request = new Request([PageCrudController::CONTENT_LOCALE_PARAM => $asked]);
@@ -1568,10 +1573,91 @@ class PageCrudControllerTest extends TestCase
             'requestStack' => $requestStack,
             'pageTranslator' => $pageTranslator,
             'siteLocales' => new SiteLocales(['fr', 'es'], 'fr'),
+            'mediaTranslator' => $mediaTranslator,
         ]);
         $controller->setContainer($this->createContainer([]));
 
         return $controller->configureFields(Crud::PAGE_EDIT);
+    }
+
+    // A share image as read back from the database, its id set the way Doctrine sets it
+    private function createOgImage(): Media
+    {
+        $media = new Media()->setFilename('medias/site/media-ab.webp')->setAlt('Nos ateliers')->setMimeType('image/webp');
+        new \ReflectionProperty(Media::class, 'id')->setValue($media, 7);
+
+        return $media;
+    }
+
+    // A real MediaTranslator over a stubbed table, the rows it would stage handed to $staged
+    private function createMediaTranslator(array &$staged = []): MediaTranslator
+    {
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('isActive')->willReturn(true);
+        $contentTranslator->method('values')->willReturn([]);
+        $contentTranslator->method('stage')->willReturnCallback(static function (string $owner, int $id, string $locale, array $values) use (&$staged): void {
+            $staged[] = [$owner, $id, $locale, $values];
+        });
+
+        return new MediaTranslator($contentTranslator);
+    }
+
+    // A page with a share image offers it in the language on screen, right under the texts that go with it on a network: the language's alternative text, and a picture of its own when the image carries words
+    public function testConfigureFieldsOnALanguageScreenOffersTheShareImageOfThatLanguage(): void
+    {
+        $ogImage = $this->createOgImage();
+        $fields = iterator_to_array($this->translationScreenFields(ogImage: $ogImage, mediaTranslator: $this->createMediaTranslator()));
+
+        $properties = array_map(static fn ($field) => $field->getAsDto()->getProperty(), $fields);
+        $this->assertSame(['title', 'summarySocialNetwork', PageCrudController::OG_IMAGE_TRANSLATION_FIELD, PageCrudController::OG_IMAGE_TRANSLATION_RENDERED, 'blocks'], array_slice($properties, array_search('title', $properties, true), 5));
+
+        $options = $this->findFieldByProperty($fields, PageCrudController::OG_IMAGE_TRANSLATION_FIELD)->getAsDto()->getFormTypeOptions();
+        $this->assertFalse($options['mapped'], 'A mapped field would write the language over the image every language shares.');
+        $this->assertSame($ogImage, $options['media']);
+        $this->assertSame('[Nos ateliers]', $options['data']['alt']);
+    }
+
+    // A page with no share image has nothing to say in another language: the language's own picture is given once the image itself is chosen
+    public function testConfigureFieldsOnALanguageScreenOffersNoShareImageWhenThePageHasNone(): void
+    {
+        $properties = array_map(static fn ($field) => $field->getAsDto()->getProperty(), iterator_to_array($this->translationScreenFields(mediaTranslator: $this->createMediaTranslator())));
+
+        $this->assertNotContains(PageCrudController::OG_IMAGE_TRANSLATION_FIELD, $properties);
+    }
+
+    // What the language screen sent is staged on the image, written with the page on its flush: the alternative text, and the picture under a name carrying the language
+    public function testALanguageScreenStagesTheShareImageOfThatLanguage(): void
+    {
+        $staged = [];
+        $ogImage = $this->createOgImage();
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setOgImage($ogImage);
+        $picture = tempnam(sys_get_temp_dir(), 'og');
+        file_put_contents($picture, 'picture');
+
+        $controller = $this->createController(['mediaTranslator' => $this->createMediaTranslator($staged)]);
+        new \ReflectionMethod($controller, 'stageOgImageTranslation')->invoke($controller, $page, 'es', [
+            PageCrudController::OG_IMAGE_TRANSLATION_FIELD => ['alt' => 'Nuestros talleres', 'file' => new File($picture)],
+            PageCrudController::OG_IMAGE_TRANSLATION_RENDERED => '1',
+        ]);
+        unlink($picture);
+
+        $this->assertSame([Translation::OWNER_MEDIA, 7, 'es', ['alt' => 'Nuestros talleres']], $staged[0]);
+        $this->assertMatchesRegularExpression('#^medias/site/media-ab-es-[0-9a-f]{8}\.#', $staged[1][3][MediaTranslator::FILE]);
+    }
+
+    // A submission that never carried the marker never carried the share image either: staging the null it reads as would take the language's alternative text away
+    public function testASubmissionWithoutTheRenderedMarkerStagesNoShareImage(): void
+    {
+        $staged = [];
+        $page = new Page()->setTitle('Nos ateliers')->setSlug('ateliers')->setOgImage($this->createOgImage());
+
+        $controller = $this->createController(['mediaTranslator' => $this->createMediaTranslator($staged)]);
+        new \ReflectionMethod($controller, 'stageOgImageTranslation')->invoke($controller, $page, 'es', [
+            PageCrudController::OG_IMAGE_TRANSLATION_FIELD => ['alt' => null],
+            PageCrudController::OG_IMAGE_TRANSLATION_RENDERED => null,
+        ]);
+
+        $this->assertSame([], $staged);
     }
 
     // The "Health check" tab and its panel field only make sense once the page exists and has been checked at least once (see PageHealthCheckExtension) - onlyWhenUpdating() keeps both off the "new" page entirely

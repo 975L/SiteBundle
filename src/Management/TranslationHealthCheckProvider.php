@@ -22,6 +22,7 @@ use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\ContentTranslator;
@@ -102,6 +103,9 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
     {
         $blockKeys = [];
         $this->collectBlockKeys($page->getBlocks(), $blockKeys);
+
+        // The share image too, which a language screen offers since its alternative text goes out with every share of that language's address
+        $this->collectMediaKeys(array_filter([$page->getOgImage()]), $blockKeys);
 
         $own = [];
         foreach (PageTranslator::FIELDS as $field) {
@@ -232,7 +236,7 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
             $seen[$id] = true;
 
             $this->collectDataKeys($block, $id, $kind, $keys);
-            $this->collectMediaKeys($block, $keys);
+            $this->collectMediaKeys($block->getMedias(), $keys);
 
             $this->collectBlockKeys($block->getSlots(), $keys, $seen);
         }
@@ -266,11 +270,12 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
     /**
      * A grid's cards carry their title and their text on the media itself rather than in the block's data, so a page counted on its blocks alone would report a translated grid whose every card is still in the writing language.
      *
-     * @param list<string> $keys
+     * @param iterable<Media> $medias
+     * @param list<string>    $keys
      */
-    private function collectMediaKeys(Block $block, array &$keys): void
+    private function collectMediaKeys(iterable $medias, array &$keys): void
     {
-        foreach ($block->getMedias() as $media) {
+        foreach ($medias as $media) {
             $mediaId = $media->getId();
 
             if (null === $mediaId) {

@@ -2,9 +2,9 @@
 {# The sets below run before the parent (Twig compiles a child's body ahead of the parent's yield) and translate this bundle's entities into the plain variables the parent reads - it knows nothing of Page, Menu or Navbar #}
 {% extends '@c975LUi/layout.html.twig' %}
 
-{# The Page's own share image opens the parent's cascade, ahead of the url's row, the site's default og-image and the logo. Resolved here rather than by the template rendering the Page, which would otherwise have to know the whole cascade #}
+{# The Page's own share image opens the parent's cascade, ahead of the url's row, the site's default og-image and the logo. Resolved here rather than by the template rendering the Page, which would otherwise have to know the whole cascade. Read through page_og_image(), so a language given a picture of its own shares that one #}
 {% if (ogImage is not defined or ogImage == null) and page is defined and page.ogImage is not null %}
-    {% set ogImageMedia = page.ogImage %}
+    {% set ogImageMedia = page_og_image(page) %}
 {% endif %}
 
 {# A Page says in a column whether its title is printed as the page heading; templates with no Page behind them keep printing theirs #}

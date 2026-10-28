@@ -37,10 +37,12 @@ use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Field\OgImageField;
 use c975L\UiBundle\Form\BlockType;
+use c975L\UiBundle\Form\MediaTranslationType;
 use c975L\UiBundle\Form\Util\CollectionReconciler;
 use c975L\UiBundle\Form\Util\SubmissionIntegrity;
 use c975L\UiBundle\Model\QrCodeOptions;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
+use c975L\UiBundle\Service\MediaTranslator;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
 use c975L\UiBundle\Service\UniqueSlug;
@@ -82,6 +84,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,6 +113,12 @@ class PageCrudController extends AbstractCrudController
     // The hidden field carrying the page's version the edit screen was opened on (see guardStaleVersion)
     public const string OPENED_VERSION_FIELD = 'openedVersion';
 
+    // The share image as a language screen offers it, unmapped like the page's two texts (see translationFields)
+    public const string OG_IMAGE_TRANSLATION_FIELD = 'ogImageTranslation';
+
+    // The proof the language screen really rendered the share image, on BlockType's MEDIA_TRANSLATIONS_RENDERED pattern: a submission without it would read as an alternative text emptied on purpose
+    public const string OG_IMAGE_TRANSLATION_RENDERED = 'ogImageTranslationRendered';
+
     public function __construct(
         private readonly Security $security,
         private readonly ConfigServiceInterface $configService,
@@ -133,6 +142,8 @@ class PageCrudController extends AbstractCrudController
         private readonly TranslationCopier $translationCopier,
         private readonly ContentLocaleScreen $contentLocaleScreen,
         private readonly ?SocialContentStatusProviderInterface $socialStatuses = null,
+        // Optional and last for the same reason: a construction that leaves it out offers no share image on the language screens
+        private readonly ?MediaTranslator $mediaTranslator = null,
     ) {
     }
 
@@ -161,10 +172,11 @@ class PageCrudController extends AbstractCrudController
         $this->contentLocaleScreen->stageOnSubmit(
             $formBuilder,
             $contentLocale,
-            PageTranslator::FIELDS,
+            [...PageTranslator::FIELDS, self::OG_IMAGE_TRANSLATION_FIELD, self::OG_IMAGE_TRANSLATION_RENDERED],
             function (object $page, array $values) use ($contentLocale): void {
                 if ($page instanceof Page && null !== $contentLocale) {
                     $this->pageTranslator->stage($page, $contentLocale, $values);
+                    $this->stageOgImageTranslation($page, $contentLocale, $values);
                 }
             }
         );
@@ -239,6 +251,26 @@ class PageCrudController extends AbstractCrudController
             // Opt-in marker read by the block form theme, which is what puts Donovan under a plain textarea
             ->setFormTypeOption('attr', ['data-ai-rephrase' => true]);
 
+        // The share image as this language shows it: its alternative text, and a picture of its own when the image carries words. Only once the page has one, the image itself being chosen for every language at once
+        $ogImage = $page->getOgImage();
+        if (null !== $ogImage && null !== $this->mediaTranslator) {
+            yield Field::new(self::OG_IMAGE_TRANSLATION_FIELD)
+                ->setLabel(t('label.og_image', [], 'site'))
+                ->setFormType(MediaTranslationType::class)
+                ->setFormTypeOptions([
+                    'mapped' => false,
+                    'required' => false,
+                    'data' => $this->mediaTranslator->promptValues($ogImage, $locale),
+                    'media' => $ogImage,
+                    'translated_file' => $this->mediaTranslator->translatedFile($ogImage, $locale),
+                ]);
+
+            yield Field::new(self::OG_IMAGE_TRANSLATION_RENDERED)
+                ->setLabel(false)
+                ->setFormType(HiddenType::class)
+                ->setFormTypeOptions(['mapped' => false, 'data' => '1']);
+        }
+
         // Neither add nor delete, unlike the collection above: a page is composed once, and a block taken away from a language screen would be taken away from every language at once. Said explicitly, EasyAdmin's CollectionField allowing both by default
         yield CollectionField::new('blocks')
             ->setLabel(t('label.blocks', [], 'ui'))
@@ -257,6 +289,22 @@ class PageCrudController extends AbstractCrudController
             ->setFormType(PageQrCodeType::class)
             ->setFormTypeOption('row_attr', ['data-page-qrcode' => '1'])
             ->setFormTypeOption('content_locale', $locale);
+    }
+
+    // Hands the share image's texts and file over to be stored on the flush that saves the page, the way a block's medias are (see BlockType::stageMediaTranslations)
+    /** @param array<string, mixed> $values what the language screen sent, the share image's field an array once it was rendered */
+    private function stageOgImageTranslation(Page $page, string $locale, array $values): void
+    {
+        // Nothing rendered, nothing written (see OG_IMAGE_TRANSLATION_RENDERED)
+        $ogImage = $page->getOgImage();
+        $submitted = $values[self::OG_IMAGE_TRANSLATION_FIELD] ?? null;
+        if (null === ($values[self::OG_IMAGE_TRANSLATION_RENDERED] ?? null) || !\is_array($submitted) || null === $ogImage || null === $this->mediaTranslator) {
+            return;
+        }
+
+        $this->mediaTranslator->stage($ogImage, $locale, $submitted);
+        $file = $submitted['file'] ?? null;
+        $this->mediaTranslator->stageFile($ogImage, $locale, $file instanceof File ? $file : null, true === ($submitted['removeFile'] ?? false));
     }
 
     // The type SocialBundle files the pages under (see UiBundle's SocialStatusCrudTrait)

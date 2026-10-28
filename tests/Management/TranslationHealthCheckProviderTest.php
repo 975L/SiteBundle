@@ -23,6 +23,7 @@ use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Tests\PagePublicUrlGeneratorTestTrait;
 use c975L\UiBundle\Entity\Block;
+use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\ContentTranslator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGeneratorInterface;
@@ -53,10 +54,13 @@ class TranslationHealthCheckProviderTest extends TestCase
      * @param array<string, array<string, string|null>> $pageValues  locale => field => value
      * @param array<string, array<string, string|null>> $blockValues locale => field => value
      */
-    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = [], ?string $siteUrl = 'https://exemple.com', ?array $blockData = null): TranslationHealthCheckProvider
+    private function createProvider(array $locales, array $pageValues = [], array $blockValues = [], array $menus = [], ?string $siteUrl = 'https://exemple.com', ?array $blockData = null, ?Media $ogImage = null): TranslationHealthCheckProvider
     {
+        $page = null === $blockData ? $this->createPage() : $this->createPage($blockData);
+        $page->setOgImage($ogImage);
+
         $pageRepository = $this->createStub(PageRepository::class);
-        $pageRepository->method('findAllOrdered')->willReturn([null === $blockData ? $this->createPage() : $this->createPage($blockData)]);
+        $pageRepository->method('findAllOrdered')->willReturn([$page]);
 
         $menuRepository = $this->createStub(MenuRepository::class);
         $menuRepository->method('findAll')->willReturn($menus);
@@ -188,6 +192,23 @@ class TranslationHealthCheckProviderTest extends TestCase
 
         $this->assertSame(HealthCheckResult::STATUS_OK, $results[0]['status']);
         $this->assertSame([], $results[0]['details']['missing']);
+    }
+
+    // The share image's alternative text goes out with every share of the page's address in that language: a page whose texts are all done and whose share image still speaks the writing language is not
+    public function testTheShareImagesAlternativeTextIsCounted(): void
+    {
+        $ogImage = new Media()->setAlt('La vitrine de l\'atelier');
+        new \ReflectionProperty(Media::class, 'id')->setValue($ogImage, 56);
+
+        $results = $this->createProvider(
+            ['en'],
+            ['en' => ['title' => 'Our workshops']],
+            ['en' => ['title' => 'What we do', 'content' => 'One a month']],
+            ogImage: $ogImage,
+        )->runChecks();
+
+        $this->assertSame(4, $results[0]['details']['texts']);
+        $this->assertSame(['en' => 1], $results[0]['details']['missing']);
     }
 
     // A menu gets a row of its own, named after its location and pointed at the site root: it is read on every page and has no url of its own

@@ -527,6 +527,13 @@ class SiteGuidedProjectProvider implements GuidedProjectProviderInterface
                     'highlight' => '#Page_summarySocialNetwork',
                 ],
                 [
+                    'label' => 'label.guided_step_page_translation_og_image',
+                    'description' => 'description.guided_step_page_translation_og_image',
+                    'narration' => 'narration.guided_step_page_translation_og_image',
+                    // Shown only once the page has a share image, the image itself being chosen for every language at once (see PageCrudController::translationFields)
+                    'highlight' => '#Page_' . PageCrudController::OG_IMAGE_TRANSLATION_FIELD,
+                ],
+                [
                     'label' => 'label.guided_step_page_translation_blocks',
                     'description' => 'description.guided_step_page_translation_blocks',
                     'narration' => 'narration.guided_step_page_translation_blocks',

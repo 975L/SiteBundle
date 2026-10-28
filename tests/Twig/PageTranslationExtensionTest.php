@@ -14,6 +14,9 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\SiteBundle\Twig\PageTranslationExtension;
+use c975L\UiBundle\Entity\Media;
+use c975L\UiBundle\Service\ContentTranslator;
+use c975L\UiBundle\Service\MediaTranslator;
 use PHPUnit\Framework\TestCase;
 
 class PageTranslationExtensionTest extends TestCase
@@ -27,7 +30,7 @@ class PageTranslationExtensionTest extends TestCase
      * @param array<string, string> $alternates
      * @param list<string>          $translatedLocales
      */
-    private function createExtension(string $title = 'Nos ateliers', ?string $summary = 'Un atelier par mois', array $alternates = [], array $translatedLocales = ['fr'], string $path = '/pages/ateliers'): PageTranslationExtension
+    private function createExtension(string $title = 'Nos ateliers', ?string $summary = 'Un atelier par mois', array $alternates = [], array $translatedLocales = ['fr'], string $path = '/pages/ateliers', array $mediaTranslation = []): PageTranslationExtension
     {
         $pageTranslator = $this->createStub(PageTranslator::class);
         $pageTranslator->method('getTitle')->willReturn($title);
@@ -38,7 +41,21 @@ class PageTranslationExtensionTest extends TestCase
         $pagePublicUrlResolver->method('resolveAlternates')->willReturn($alternates);
         $pagePublicUrlResolver->method('resolvePath')->willReturn($path);
 
-        return new PageTranslationExtension($pageTranslator, $pagePublicUrlResolver);
+        // A real MediaTranslator over a stubbed table: the overlay it lays on the media is what is under test
+        $contentTranslator = $this->createStub(ContentTranslator::class);
+        $contentTranslator->method('isActive')->willReturn(true);
+        $contentTranslator->method('translate')->willReturn($mediaTranslation);
+
+        return new PageTranslationExtension($pageTranslator, $pagePublicUrlResolver, new MediaTranslator($contentTranslator));
+    }
+
+    // A share image as read back from the database, its id set the way Doctrine sets it
+    private function createOgImage(): Media
+    {
+        $media = new Media()->setFilename('medias/site/media-ab.webp')->setAlt('Nos ateliers');
+        new \ReflectionProperty(Media::class, 'id')->setValue($media, 7);
+
+        return $media;
     }
 
     // The title a template reads is the one of the language being served, never the raw column
@@ -93,5 +110,30 @@ class PageTranslationExtensionTest extends TestCase
     public function testThereAreNoLanguagesOnAPageNobodyTranslated(): void
     {
         $this->assertSame([], $this->createExtension()->getLanguages($this->createPage()));
+    }
+
+    // A language given a picture of its own shares that one, with its own alternative text
+    public function testTheOgImageIsTheLanguagesOwnFile(): void
+    {
+        $page = $this->createPage()->setOgImage($this->createOgImage());
+
+        $ogImage = $this->createExtension(mediaTranslation: ['filename' => 'medias/site/media-ab-en-1a2b3c4d.webp', 'alt' => 'Our workshops'])->getOgImage($page);
+
+        $this->assertSame('medias/site/media-ab-en-1a2b3c4d.webp', $ogImage?->getFilename());
+        $this->assertSame('Our workshops', $ogImage->getAlt());
+    }
+
+    // A language given nothing shares the image the page was written with
+    public function testTheOgImageIsThePagesOwnWhenNothingIsTranslated(): void
+    {
+        $page = $this->createPage()->setOgImage($this->createOgImage());
+
+        $this->assertSame('medias/site/media-ab.webp', $this->createExtension()->getOgImage($page)?->getFilename());
+    }
+
+    // A page without a share image leaves the layout's cascade to the site's default
+    public function testThereIsNoOgImageWhenThePageCarriesNone(): void
+    {
+        $this->assertNull($this->createExtension()->getOgImage($this->createPage()));
     }
 }

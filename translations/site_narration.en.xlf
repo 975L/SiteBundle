@@ -430,6 +430,10 @@
                 <source>narration.guided_step_page_translation_medias</source>
                 <target>Under the blocks that hang pictures, each picture has boxes of its own. Say its words in the new language too. Its link and its credits are not there: they hold for every language.</target>
             </trans-unit>
+            <trans-unit id="2Eq72Vx">
+                <source>narration.guided_step_page_translation_og_image</source>
+                <target>Just under the summary, the share image. Give it its alternative text in this language, and a picture of its own if the original carries words. It only shows once the page has a share image.</target>
+            </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>
                 <target>Open the "Pages" menu in the left-hand column: every translation starts from this list.</target>

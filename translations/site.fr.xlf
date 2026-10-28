@@ -570,6 +570,10 @@
                 <source>description.guided_step_page_translation_medias</source>
                 <target>Une légende, le titre et le texte d'une carte, l'alternative qu'annonce un lecteur d'écran : les mots que porte une image se disent aussi dans la nouvelle langue.</target>
             </trans-unit>
+            <trans-unit id="qnzxIvb">
+                <source>description.guided_step_page_translation_og_image</source>
+                <target>L'image que montrent les réseaux quand cette adresse est partagée : son texte alternatif dans cette langue, et une image à elle quand l'originale porte des mots. Rien ne s'affiche tant que la page n'a pas d'image de partage.</target>
+            </trans-unit>
             <trans-unit id="WWYrbp2">
                 <source>description.guided_step_page_translation_open</source>
                 <target>La liste des pages, d'où part chaque traduction. Vous pouvez aussi partir de la page lue sur le site : le bouton « éditer ce block » ouvre directement l'écran de la langue que vous lisez.</target>
@@ -1433,6 +1437,10 @@
             <trans-unit id="IRlJAsj">
                 <source>label.guided_step_page_translation_medias</source>
                 <target>Reprenez les textes des images</target>
+            </trans-unit>
+            <trans-unit id=".DNUlkZ">
+                <source>label.guided_step_page_translation_og_image</source>
+                <target>Adaptez l'image de partage</target>
             </trans-unit>
             <trans-unit id="1eGYN.t">
                 <source>label.guided_step_page_translation_open</source>

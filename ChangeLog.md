@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.0
+
+A page shares a picture of its own in each language
+
+- Added the `page_og_image()` Twig function, the layout reading the share image through it (28/10/2026)
+- A page's language screen offers its share image's alternative text and a picture of its own for that language (28/10/2026)
+
 ## v8.37.0
 
 The navbar folds into its burger when its links no longer fit

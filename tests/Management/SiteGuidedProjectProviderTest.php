@@ -498,8 +498,15 @@ class SiteGuidedProjectProviderTest extends TestCase
         }
 
         preg_match_all('/(\w*Field)::new\(\s*\'(\w+)\'/', $this->controllerSource($controller), $fields, PREG_SET_ORDER);
+        $declared = array_column($fields, 1, 2);
 
-        return array_column($fields, 1, 2);
+        // A property named through one of the controller's own constants, read the way PHP reads it
+        preg_match_all('/(\w*Field)::new\(\s*self::(\w+)/', $this->controllerSource($controller), $constants, PREG_SET_ORDER);
+        foreach ($constants as [, $class, $constant]) {
+            $declared[\constant('c975L\\SiteBundle\\Controller\\Management\\' . $controller . '::' . $constant)] = $class;
+        }
+
+        return $declared;
     }
 
     private function controllerSource(string $controller): string

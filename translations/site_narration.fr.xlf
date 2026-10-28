@@ -430,6 +430,10 @@
                 <source>narration.guided_step_page_translation_medias</source>
                 <target>Sous les blocks qui portent des images, chaque image a ses propres champs. Redites ses mots dans la nouvelle langue. Son lien et ses crédits n'y sont pas : ils valent pour toutes les langues.</target>
             </trans-unit>
+            <trans-unit id="2Eq72Vx">
+                <source>narration.guided_step_page_translation_og_image</source>
+                <target>Juste sous le résumé, l'image de partage. Donnez-lui son texte alternatif dans cette langue, et une image à elle si l'originale porte des mots. Elle n'apparaît que si la page a déjà une image de partage.</target>
+            </trans-unit>
             <trans-unit id="iydPVi0">
                 <source>narration.guided_step_page_translation_open</source>
                 <target>Ouvrez le menu « Pages », dans la colonne de gauche : c'est de cette liste que part chaque traduction.</target>
