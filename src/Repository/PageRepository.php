@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Repository;
 
 use c975L\SiteBundle\Entity\Page;
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -54,8 +55,8 @@ class PageRepository extends ServiceEntityRepository
     public function findSocialCandidates(array $excludedIds): array
     {
         $queryBuilder = $this->createQueryBuilder('p')
-            ->leftJoin('p.blocks', 'legal', 'WITH', 'legal.kind = :legal')
-            ->andWhere('legal.id IS NULL')
+            // Any legal block keeps the page out, whatever other blocks it holds - a join filtered on the kind would let it in through those
+            ->andWhere('NOT EXISTS (SELECT legal.id FROM ' . Block::class . ' legal WHERE legal MEMBER OF p.blocks AND legal.kind = :legal)')
             ->andWhere('p.isPublished = :published')
             ->andWhere('p.isDeleted = :deleted')
             ->andWhere('p.isIndexable = :indexable')

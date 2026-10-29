@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.1
+
+A legal page never enters a social series
+
+- `findSocialCandidates()` excludes a page holding a `legal_model` block beside other blocks (29/10/2026)
+- Added `PageRepositoryTest`, run on SQLite in memory (29/10/2026)
+
 ## v8.38.0
 
 A page shares a picture of its own in each language
