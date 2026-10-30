@@ -112,6 +112,7 @@
 /* FOOTER */
 footer {
   background-color: var(--footer-background);
+  color: var(--footer-text);
   border-top: var(--footer-border);
   margin-top: var(--footer-margin-top);
   margin-left: var(--footer-margin-x);

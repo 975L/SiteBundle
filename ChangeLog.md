@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.2
+
+Only the footer's "©" leads to the login form
+
+- The `edit-shortcut` controller counts clicks on its `trigger` target alone, the footer's "©" (30/10/2026)
+- The footer band carries `--footer-text`, so plain text printed in it is readable (30/10/2026)
+
 ## v8.38.1
 
 A legal page never enters a social series

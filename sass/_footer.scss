@@ -1,6 +1,8 @@
 /* FOOTER */
+// Color set on the band itself, so plain text a block prints there (e.g. SocialBundle's intro) doesn't inherit body's --text
 footer {
     background-color: var(--footer-background);
+    color: var(--footer-text);
     border-top: var(--footer-border);
     margin-top: var(--footer-margin-top);
     margin-left: var(--footer-margin-x);

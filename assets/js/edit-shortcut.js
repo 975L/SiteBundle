@@ -10,8 +10,10 @@ import { Controller } from "@hotwired/stimulus";
 const CLICKS = 3;
 const DELAY = 600;
 
-// Three quick clicks or taps on the footer, off its links, lead to the login form and back to the page being read, where the edit buttons are then shown. No link is written in the page, and the footer's html stays the same for every visitor so it can be cached once
+// Three quick clicks or taps on the footer's "©" (its "trigger" target) lead to the login form and back to the page being read, where the edit buttons are then shown. The rest of the footer is left alone, a double click there selecting text. No link is written in the page, and the footer's html stays the same for every visitor so it can be cached once
 export default class extends Controller {
+    static targets = ["trigger"];
+
     connect() {
         this.clicks = [];
         this.onClick = this.click.bind(this);
@@ -22,9 +24,9 @@ export default class extends Controller {
         this.element.removeEventListener("click", this.onClick);
     }
 
-    // Counts the clicks of the last DELAY ms, a link keeping its own job
+    // Counts the clicks on a trigger in the last DELAY ms
     click(event) {
-        if (event.target.closest("a, button")) {
+        if (!this.triggerTargets.some((trigger) => trigger.contains(event.target))) {
             return;
         }
 

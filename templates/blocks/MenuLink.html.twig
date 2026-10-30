@@ -10,9 +10,9 @@
     {% set visibilityClass = visibility in ['guests', 'members'] ? 'menu-item--' ~ visibility : null %}
     {% set isCopyright = label|default('') is empty and resolvedLabel starts with '© ' %}
     <div class="{{ ['menu-item', primary|default(false) ? 'menu-item--primary' : null, strong|default(false) ? 'menu-item--strong' : null, isCopyright ? 'menu-item--copyright' : null, visibilityClass, hideInApp|default(false) ? 'menu-item--web-only' : null]|filter(v => v is not null)|join(' ') }}">
-        {# The copyright notice's "©" stays off the link, where three quick clicks lead to the login form (see assets/js/edit-shortcut.js) - inside it, the first click opens the copyright page #}
+        {# The copyright notice's "©" stays off the link, as the "trigger" where three quick clicks lead to the login form (see assets/js/edit-shortcut.js) - inside it, the first click opens the copyright page #}
         {% if isCopyright %}
-            <span class="menu-label">©</span>
+            <span class="menu-label" data-edit-shortcut-target="trigger">©</span>
             <a href="{{ url }}" class="menu-link">
                 <span class="menu-label">{{ resolvedLabel|slice(2) }}</span>
             </a>

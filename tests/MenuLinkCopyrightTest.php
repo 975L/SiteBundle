@@ -16,7 +16,7 @@ use Twig\Environment;
 use Twig\Loader\ArrayLoader;
 use Twig\TwigFunction;
 
-// The "©" of a copyright menu link is the footer's edit shortcut, which assets/js/edit-shortcut.js ignores inside a link - see EditShortcutBehaviourTest
+// The "©" of a copyright menu link is the footer's edit shortcut, the "trigger" target of assets/js/edit-shortcut.js - see EditShortcutBehaviourTest
 class MenuLinkCopyrightTest extends TestCase
 {
     public function testTheCopyrightSignIsWrittenOffTheLink(): void
@@ -26,9 +26,9 @@ class MenuLinkCopyrightTest extends TestCase
         $this->assertStringContainsString("resolvedLabel starts with '© '", $template);
         $this->assertStringContainsString("isCopyright ? 'menu-item--copyright' : null", $template);
         $this->assertMatchesRegularExpression(
-            '#<span class="menu-label">©</span>\s*<a href="\{\{ url \}\}" class="menu-link">\s*<span class="menu-label">\{\{ resolvedLabel\|slice\(2\) \}\}</span>#',
+            '#<span class="menu-label" data-edit-shortcut-target="trigger">©</span>\s*<a href="\{\{ url \}\}" class="menu-link">\s*<span class="menu-label">\{\{ resolvedLabel\|slice\(2\) \}\}</span>#',
             $template,
-            'The "©" of the copyright notice is back inside the link, so three clicks on it open the copyright page instead of the login form.'
+            'The "©" of the copyright notice is back inside the link or lost its "trigger" target, so three clicks on it no longer lead to the login form.'
         );
     }
 

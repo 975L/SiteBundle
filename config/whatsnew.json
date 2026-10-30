@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-10-30",
+        "description": [
+            {
+                "en": "Text shown in your site's footer now takes the footer's own color, so it stays readable",
+                "fr": "Le texte affiché dans le pied de page de votre site prend désormais la couleur du pied de page, il reste ainsi lisible",
+                "es": "El texto que aparece en el pie de página de su sitio adopta ahora el color del pie de página, de modo que sigue siendo legible"
+            },
+            {
+                "en": "To sign in from your site, click three times quickly on the © of the footer; a double click elsewhere in the footer now simply selects the text",
+                "fr": "Pour vous connecter depuis votre site, cliquez trois fois rapidement sur le © du pied de page ; un double clic ailleurs dans le pied de page sélectionne désormais simplement le texte",
+                "es": "Para iniciar sesión desde su sitio, haga clic tres veces rápidamente en el © del pie de página; un doble clic en otra parte del pie de página ahora simplemente selecciona el texto"
+            }
+        ]
+    },
+    {
         "date": "2026-10-29",
         "description": [
             {

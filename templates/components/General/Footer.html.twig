@@ -7,13 +7,13 @@
 {% set hasCopyrightLink = footerItems|filter(
     block => (block.data.label ?? '') is empty and menu_link_is_copyright(block.data.target ?? '')
 )|length > 0 %}
-{# "edit-shortcut": three quick clicks off the links lead to the login form and back to this page, see assets/js/edit-shortcut.js #}
+{# "edit-shortcut": three quick clicks on the copyright notice lead to the login form and back to this page, see assets/js/edit-shortcut.js #}
 <footer data-controller="menu-active edit-shortcut">
     <div class="menu-items{{ footerStyle ? ' menu-items--' ~ footerStyle : '' }}">
         <twig:c975LUi:Blocks:Blocks blocks="{{ footerBlocks }}" />
         {% if not hasCopyrightLink and copyright is defined and copyright is not empty %}
             <div class="menu-item">
-                <span class="menu-label">{{ copyright }}</span>
+                <span class="menu-label" data-edit-shortcut-target="trigger">{{ copyright }}</span>
             </div>
         {% endif %}
     </div>

@@ -267,12 +267,13 @@ Hovering a **footer** item as an editor raises UiBundle's Edit button, opening t
 with that row unfolded (`MenuBlockEditUrlProvider`). The navbar is deliberately left out: it is hovered
 on every visit just to navigate.
 
-Three quick clicks or taps on the footer, off its links, lead to `/login?_target_path=<current page>`
+Three quick clicks or taps on the footer's "©" lead to `/login?_target_path=<current page>`
 (`edit-shortcut` controller, set on the footer next to `menu-active`), so an editor signs in and lands back
 on the page with its edit buttons. The footer's html stays the same for every visitor; the cancelable
 `edit-shortcut:open` event carries the url, so a site can send it elsewhere.
-A copyright `menu_link` writes its "©" off the link (`menu-item--copyright`), so the notice's own
-sign is a place those clicks land.
+Only the controller's `trigger` target counts: the "©" a copyright `menu_link` writes off its link
+(`menu-item--copyright`), or the footer's fallback copyright line. The rest of the footer is left to text
+selection.
 
 ## Do not
 
