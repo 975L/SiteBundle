@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.3
+
+Demo pictures copied through UiBundle's DemoFixtureMediaCopier
+
+- `SiteDemoFixtureProvider`: pictures copied through UiBundle's `DemoFixtureMediaCopier`, its own copy removed (30/10/2026)
+- Requires `c975l/core-bundle` ^1.81.3 (30/10/2026)
+
 ## v8.38.2
 
 Only the footer's "©" leads to the login form

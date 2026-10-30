@@ -21,6 +21,7 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureMediaCopier;
 use c975L\UiBundle\Service\DemoFixtureTranslator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -61,7 +62,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $registry->method('getImages')->willReturn($images);
         $registry->method('getImagesFor')->willReturnCallback(static fn (string $key): array => $keyed[$key] ?? []);
 
-        return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->pageRepository(), $this->menuRepository($existingNavbar), $this->projectDir);
+        return new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $registry, $this->pageRepository(), $this->menuRepository($existingNavbar), new DemoFixtureMediaCopier($this->projectDir));
     }
 
     /** @return list<object> */
@@ -217,7 +218,7 @@ class SiteDemoFixtureProviderTest extends TestCase
 
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
-        $provider = new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $this->createStub(PlaceholderMediaRegistry::class), $repository, $this->menuRepository(new Menu()), $this->projectDir);
+        $provider = new SiteDemoFixtureProvider(new DemoFixtureTranslator($translator, ['fr'], 'fr'), $translator, $this->createStub(PlaceholderMediaRegistry::class), $repository, $this->menuRepository(new Menu()), new DemoFixtureMediaCopier($this->projectDir));
 
         iterator_to_array($provider->getLinkedDemoFixtures(), false);
 
@@ -419,7 +420,7 @@ class SiteDemoFixtureProviderTest extends TestCase
         $registry->method('getImages')->willReturn([]);
 
         $demoFixtureTranslator = new DemoFixtureTranslator($translator, ['fr', 'en'], 'fr');
-        $provider = new SiteDemoFixtureProvider($demoFixtureTranslator, $translator, $registry, $this->pageRepository(), $this->menuRepository(), $this->projectDir);
+        $provider = new SiteDemoFixtureProvider($demoFixtureTranslator, $translator, $registry, $this->pageRepository(), $this->menuRepository(), new DemoFixtureMediaCopier($this->projectDir));
 
         $flushed = [];
         foreach ($provider->getDemoFixtures() as $index => $entity) {

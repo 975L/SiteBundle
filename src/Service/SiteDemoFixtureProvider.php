@@ -22,10 +22,9 @@ use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Media;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\PlaceholderMediaRegistry;
+use c975L\UiBundle\Service\DemoFixtureMediaCopier;
 use c975L\UiBundle\Service\DemoFixtureTranslator;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // 975L's own pages, collection and navbar, shown by the bundles' demo - every visible text a "site" key so a demo seeded in Spanish reads as a Spanish site, and slugs a real small site would use
 class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixtureProviderInterface
@@ -48,8 +47,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
         private readonly PlaceholderMediaRegistry $placeholderMediaRegistry,
         private readonly PageRepository $pageRepository,
         private readonly MenuRepository $menuRepository,
-        #[Autowire(param: 'kernel.project_dir')]
-        private readonly string $projectDir,
+        private readonly DemoFixtureMediaCopier $demoFixtureMediaCopier,
     ) {
     }
 
@@ -270,7 +268,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         // A site declaring no placeholder gets the hero without its picture, which the template renders as readily
         if (null !== $image) {
-            $file = $this->temporaryCopy($image);
+            $file = $this->demoFixtureMediaCopier->copy($image);
             if (null !== $file) {
                 // setFile() returns nothing, unlike the setters around it, so the two calls stay apart
                 $media = new Media()->setAlt($this->trans('label.site_sample_page_home_title'));
@@ -541,32 +539,13 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
 
         // A site declaring no placeholder leaves the card without its picture rather than with a broken one - the collection block renders it either way, which an empty collection would not
         if (null !== $image) {
-            $file = $this->temporaryCopy($image);
+            $file = $this->demoFixtureMediaCopier->copy($image);
             if (null !== $file) {
                 $item->setFile($file);
             }
         }
 
         return $item;
-    }
-
-    /**
-     * VichUploader moves the file it is handed, so what it gets is a copy: the placeholder itself is read by every
-     * other showcase of the site, and would be gone after the first load.
-     *
-     * A ReplacingFile rather than a plain File, which UploadHandler::hasUploadedFile() leaves silently ignored -
-     * the row would be written with no file name and nothing would reach the disk.
-     */
-    private function temporaryCopy(string $publicPath): ?ReplacingFile
-    {
-        $source = $this->projectDir . '/public/' . $publicPath;
-        if (!is_file($source)) {
-            return null;
-        }
-
-        $target = sys_get_temp_dir() . '/c975l-demo-' . uniqid() . '-' . basename($publicPath);
-
-        return copy($source, $target) ? new ReplacingFile($target, true, true, true) : null;
     }
 
     private function trans(string $key): string
