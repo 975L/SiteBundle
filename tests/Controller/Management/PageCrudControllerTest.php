@@ -476,7 +476,7 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($page->isIndexable());
     }
 
-    // From the trash, the batch "Delete" removes a page for good, leaves a 410 at its url and says so
+    // From the trash, the batch "Delete" removes a page for good and leaves a 410 at its url - the message for the whole selection is TrashBatchDeleteTrait's, said once rather than per row
     public function testDeleteEntityRemovesATrashedPageForGoodFromTheTrash(): void
     {
         $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
@@ -500,11 +500,11 @@ class PageCrudControllerTest extends TestCase
         $this->assertInstanceOf(Redirect::class, $persisted);
         $this->assertSame('/pages/old-page', $persisted->getFromPath());
         $this->assertTrue($persisted->isGone());
-        $this->assertSame(['flash.page_deleted_permanently'], $requestStack->getSession()->getFlashBag()->get('success'));
+        $this->assertSame([], $requestStack->getSession()->getFlashBag()->get('success'));
     }
 
-    // The CRUD only asks for an editor, while removing for good is "site-role-admin": an editor's row is skipped rather than failing the batch after the ones already handled
-    public function testDeleteEntitySkipsATrashedPageBelowAdmin(): void
+    // Removing for good is "site-role-admin", EasyAdmin's single delete held to the bar of the row button - the batch is refused before its first row by TrashBatchDeleteTrait
+    public function testDeleteEntityDeniesAnEditorRemovingATrashedPage(): void
     {
         $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
 
@@ -516,9 +516,13 @@ class PageCrudControllerTest extends TestCase
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
-        $controller->deleteEntity($manager, $page);
 
-        $this->assertTrue($page->isDeleted());
+        try {
+            $controller->deleteEntity($manager, $page);
+            $this->fail('An editor removed a page for good');
+        } catch (AccessDeniedException) {
+            $this->assertTrue($page->isDeleted());
+        }
     }
 
     // Decided by the screen, not the row: a replayed trashing of a page already in the trash, or a stale trash selection holding one restored meanwhile, touches nothing

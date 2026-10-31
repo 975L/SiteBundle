@@ -67,9 +67,10 @@ plus the sitemap fields (indexable, change frequency, priority).
   back out or removing it for good is the bar those two methods state themselves — a button leading to
   its own 403 is a button not to draw.
 - **`deleteEntity()` decides by the screen, not the row**: from the pages it trashes, from the trash
-  (`?trash=1`, carried by the batch action's url) it removes for good, `site-role-admin` only, a row
-  not on the screen it came from or an editor's row being skipped rather than failing the batch. An
-  override keeps that guard, or a replayed trashing removes a page for good.
+  (`?trash=1`, carried by the batch action's url) it removes for good, `site-role-admin` only (an
+  editor is denied), a row not on the screen it came from being skipped. The batch of the trash is
+  ConfigBundle's `TrashBatchDeleteTrait`: the admin role checked before the first row, one message for
+  the whole selection. An override keeps that guard, or a replayed trashing removes a page for good.
 - **The three table exports (`exportSql`, `exportCsv`, `exportJson`) are `site-role-admin` too**, the
   same bar their own methods state — an editor is shown no button leading to their 403.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.38.5
+
+Trash emptied through ConfigBundle's TrashBatchDeleteTrait
+
+- `PageCrudController`: trash batch checks the admin role first and flashes one message for the whole selection (31/10/2026)
+- `PageCrudController::deleteEntity()`: denies an editor removing a trashed page for good instead of skipping it (31/10/2026)
+- Requires `c975l/core-bundle` ^1.84.0 (31/10/2026)
+
 ## v8.38.4
 
 Trash emptied in a batch, and titled as such

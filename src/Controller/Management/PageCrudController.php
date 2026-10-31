@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Contract\UserInterface;
+use c975L\ConfigBundle\Controller\Management\Trait\TrashBatchDeleteTrait;
 use c975L\ConfigBundle\Entity\Redirect;
 use c975L\ConfigBundle\Management\ContentLocaleScreen;
 use c975L\ConfigBundle\Management\ContentQualityAnalyzer;
@@ -101,6 +102,9 @@ class PageCrudController extends AbstractCrudController
 {
     // Brings index(), which fills the social badges - an index() declared here would have to call it
     use SocialStatusCrudTrait;
+
+    // Overrides batchDelete(): from the trash, the admin role checked before the first row and a single message for the whole selection
+    use TrashBatchDeleteTrait;
 
     // The two actions of the trash are reached by a GET, so their token travels in the url the row buttons carry (see addPageActions()) - a confirmation modal only holds a click back, never a request forged elsewhere
     public const RESTORE_CSRF_TOKEN = 'page_restore';
@@ -772,7 +776,7 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('trash', $role)
             ->setPermission('restore', $adminRole)
             ->setPermission('deletePermanently', $adminRole)
-            // Emptying the trash in a batch is the admin's, like its row button: an editor is not shown a button deleteEntity() would skip - display only, the real guard being the one of deleteEntity()
+            // Emptying the trash in a batch is the admin's, like its row button: an editor is not shown a button TrashBatchDeleteTrait would refuse - display only, the real guard being the one of the trait and deleteEntity()
             ->setPermission(Action::BATCH_DELETE, $this->isTrash() ? $adminRole : $role)
             ->setPermission('viewOnSite', $role)
             ->setPermission('preview', $role)
@@ -843,7 +847,7 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
-    // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact. One already in the trash is removed for good only by the batch "Delete" of the trash, and only for the admin - the batch checks the editor's role of Action::DELETE, and an editor's stale selection skips the row rather than failing after the ones already handled
+    // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact. One already in the trash is removed for good by the batch "Delete" of the trash, at the admin role only - TrashBatchDeleteTrait checks it before the first row and says once what went
     #[\Override]
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
@@ -852,11 +856,10 @@ class PageCrudController extends AbstractCrudController
             return;
         }
 
+        // From the trash, at the admin role like its row button - TrashBatchDeleteTrait checked it before the first row and says once what went, this holds EasyAdmin's single delete to the same bar
         if ($page->isDeleted()) {
-            if ($this->isGranted($this->configService->get('site-role-admin'))) {
-                $this->removeForGood($entityManager, $page);
-                $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
-            }
+            $this->denyAccessUnlessGranted((string) $this->configService->get('site-role-admin'));
+            $this->removeForGood($entityManager, $page);
 
             return;
         }
