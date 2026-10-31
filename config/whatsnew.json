@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-10-31",
+        "description": [
+            {
+                "en": "Tick several pages in the trash to delete them permanently in one go, and the trash now says its name at the top of the screen",
+                "fr": "Cochez plusieurs pages dans la corbeille pour les supprimer définitivement en une fois, et la corbeille affiche désormais son nom en haut de l'écran",
+                "es": "Marque varias páginas en la papelera para eliminarlas definitivamente de una vez, y la papelera muestra ahora su nombre en la parte superior de la pantalla"
+            }
+        ]
+    },
+    {
         "date": "2026-10-30",
         "description": [
             {

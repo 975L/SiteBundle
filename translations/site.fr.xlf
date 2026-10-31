@@ -6,10 +6,6 @@
                 <source>action.add_collection_item</source>
                 <target>Ajouter un élément</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Supprimer définitivement</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Dupliquer</target>
@@ -17,10 +13,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Exporter la sélection</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Mettre à la corbeille</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -592,11 +584,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>Rien n'est effacé : la page quitte le site et ses menus, et attend dans la corbeille. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
+                <target>Rien n'est effacé : la page quitte le site et ses menus, et attend dans la corbeille. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page. Cochez plusieurs pages pour les « Mettre à la corbeille » ensemble.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>Celle-là ne se rattrape pas et emporte les blocks de la page - une confirmation vous est demandée. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page.</target>
+                <target>Celle-là ne se rattrape pas et emporte les blocks de la page - une confirmation vous est demandée. Le bouton mis en évidence est celui de la première ligne : cliquez celui de votre page. Cochez plusieurs pages pour vider la corbeille d'un coup.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>

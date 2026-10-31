@@ -456,11 +456,11 @@
             </trans-unit>
             <trans-unit id="VJVr58Y">
                 <source>narration.guided_step_trash_delete</source>
-                <target>Mettez-la à la corbeille. Rien n'est effacé : la page quitte le site et ses menus, et attend là.</target>
+                <target>Mettez-la à la corbeille. Rien n'est effacé : la page quitte le site et ses menus, et attend là. Cochez plusieurs pages pour les mettre à la corbeille ensemble.</target>
             </trans-unit>
             <trans-unit id="jUNOiXm">
                 <source>narration.guided_step_trash_delete_permanently</source>
-                <target>Vous pouvez aussi la supprimer définitivement. Celle-là ne se rattrape pas et emporte les blocks de la page : une confirmation vous est demandée.</target>
+                <target>Vous pouvez aussi la supprimer définitivement. Celle-là ne se rattrape pas et emporte les blocks de la page : une confirmation vous est demandée. Cochez-en plusieurs pour vider la corbeille d'un coup.</target>
             </trans-unit>
             <trans-unit id="fAhjLKA">
                 <source>narration.guided_step_trash_open</source>

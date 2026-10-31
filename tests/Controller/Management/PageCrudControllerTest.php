@@ -476,6 +476,106 @@ class PageCrudControllerTest extends TestCase
         $this->assertFalse($page->isIndexable());
     }
 
+    // From the trash, the batch "Delete" removes a page for good, leaves a 410 at its url and says so
+    public function testDeleteEntityRemovesATrashedPageForGoodFromTheTrash(): void
+    {
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
+
+        $persisted = null;
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->once())->method('remove')->with($page);
+        $manager->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted = $entity;
+        });
+
+        $requestStack = $this->createRequestStackWithSession();
+        $requestStack->getCurrentRequest()?->query->set('trash', 1);
+        $controller = $this->createController(['requestStack' => $requestStack]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'request_stack' => $requestStack,
+        ]));
+        $controller->deleteEntity($manager, $page);
+
+        $this->assertInstanceOf(Redirect::class, $persisted);
+        $this->assertSame('/pages/old-page', $persisted->getFromPath());
+        $this->assertTrue($persisted->isGone());
+        $this->assertSame(['flash.page_deleted_permanently'], $requestStack->getSession()->getFlashBag()->get('success'));
+    }
+
+    // The CRUD only asks for an editor, while removing for good is "site-role-admin": an editor's row is skipped rather than failing the batch after the ones already handled
+    public function testDeleteEntitySkipsATrashedPageBelowAdmin(): void
+    {
+        $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted(true);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('remove');
+        $manager->expects($this->never())->method('flush');
+
+        $controller = $this->createController(['requestStack' => new RequestStack([new Request(['trash' => 1])])]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(false),
+        ]));
+        $controller->deleteEntity($manager, $page);
+
+        $this->assertTrue($page->isDeleted());
+    }
+
+    // Decided by the screen, not the row: a replayed trashing of a page already in the trash, or a stale trash selection holding one restored meanwhile, touches nothing
+    public function testDeleteEntityLeavesAPageNotOnTheScreenItCameFrom(): void
+    {
+        foreach ([[[], true], [['trash' => 1], false]] as [$query, $deleted]) {
+            $page = new Page()->setTitle('Old Page')->setSlug('old-page')->setIsDeleted($deleted)->setIsPublished(!$deleted);
+
+            $manager = $this->createMock(EntityManagerInterface::class);
+            $manager->expects($this->never())->method('remove');
+            $manager->expects($this->never())->method('flush');
+
+            $this->createController(['requestStack' => new RequestStack([new Request($query)])])->deleteEntity($manager, $page);
+
+            $this->assertSame($deleted, $page->isDeleted());
+            $this->assertSame(!$deleted, $page->isPublished());
+        }
+    }
+
+    // The batch "Delete" says what it does on each screen: moving to the trash from the pages, removing for good from the trash, where only an admin is shown it
+    public function testConfigureActionsWordsTheBatchDeleteForEachScreen(): void
+    {
+        $configService = $this->createStub(ConfigServiceInterface::class);
+        $configService->method('get')->willReturnCallback(static fn (string $key): string => 'site-role-admin' === $key ? 'ROLE_ADMIN' : 'ROLE_EDITOR');
+
+        foreach ([[[], 'action.move_to_trash', 'ROLE_EDITOR'], [['trash' => 1], 'action.delete_permanently', 'ROLE_ADMIN']] as [$query, $label, $role]) {
+            $dto = $this->createController([
+                'configService' => $configService,
+                'requestStack' => new RequestStack([new Request($query)]),
+            ])->configureActions(
+                Actions::new()
+                    ->add(Crud::PAGE_INDEX, Action::BATCH_DELETE)
+                    ->add(Crud::PAGE_INDEX, Action::EDIT)
+                    ->add(Crud::PAGE_INDEX, Action::DELETE)
+                    ->add(Crud::PAGE_DETAIL, Action::EDIT)
+                    ->add(Crud::PAGE_DETAIL, Action::DELETE)
+            )->getAsDto(Crud::PAGE_INDEX);
+
+            $batchDelete = $dto->getAction(Crud::PAGE_INDEX, Action::BATCH_DELETE);
+            $this->assertInstanceOf(TranslatableInterface::class, $batchDelete?->getLabel());
+            $this->assertSame($label, $batchDelete->getLabel()->getMessage());
+            $this->assertSame($role, $dto->getActionPermissions()[Action::BATCH_DELETE]);
+        }
+    }
+
+    // The trash is the pages' own index, and its title says which of the two is shown
+    public function testTheTrashIsTitledAsSuch(): void
+    {
+        foreach ([[[], 'label.pages'], [['trash' => 1], 'action.trash']] as [$query, $key]) {
+            $title = $this->createController(['requestStack' => new RequestStack([new Request($query)])])
+                ->configureCrud(Crud::new())->getAsDto()->getCustomPageTitle(Crud::PAGE_INDEX);
+
+            $this->assertInstanceOf(TranslatableMessage::class, $title);
+            $this->assertSame($key, $title->getMessage());
+        }
+    }
+
     // --- duplicate -------------------------------------------------------------------------------------
 
     public function testDuplicateDeniesAccessBelowEditor(): void
@@ -1614,6 +1714,7 @@ class PageCrudControllerTest extends TestCase
         $options = $this->findFieldByProperty($fields, PageCrudController::OG_IMAGE_TRANSLATION_FIELD)->getAsDto()->getFormTypeOptions();
         $this->assertFalse($options['mapped'], 'A mapped field would write the language over the image every language shares.');
         $this->assertSame($ogImage, $options['media']);
+        $this->assertTrue($options['og_image'], 'A file dropped for one language skips the conversion the share image gets, so only the formats every network reads are taken.');
         $this->assertSame('[Nos ateliers]', $options['data']['alt']);
     }
 

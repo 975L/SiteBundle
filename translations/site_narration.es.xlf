@@ -456,11 +456,11 @@
             </trans-unit>
             <trans-unit id="VJVr58Y">
                 <source>narration.guided_step_trash_delete</source>
-                <target>Envíela a la papelera. No se borra nada: la página abandona el sitio y sus menús, y espera ahí.</target>
+                <target>Envíela a la papelera. No se borra nada: la página abandona el sitio y sus menús, y espera ahí. Marque varias páginas para enviarlas juntas a la papelera.</target>
             </trans-unit>
             <trans-unit id="jUNOiXm">
                 <source>narration.guided_step_trash_delete_permanently</source>
-                <target>También puede eliminarla definitivamente. Esta no tiene vuelta atrás y se lleva los bloques de la página: se le pide una confirmación.</target>
+                <target>También puede eliminarla definitivamente. Esta no tiene vuelta atrás y se lleva los bloques de la página: se le pide una confirmación. Marque varias para vaciar la papelera de una vez.</target>
             </trans-unit>
             <trans-unit id="fAhjLKA">
                 <source>narration.guided_step_trash_open</source>

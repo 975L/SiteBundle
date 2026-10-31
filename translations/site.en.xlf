@@ -6,10 +6,6 @@
                 <source>action.add_collection_item</source>
                 <target>Add an item</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Delete permanently</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Duplicate</target>
@@ -17,10 +13,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Export selection</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Move to trash</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -592,11 +584,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>Nothing is erased: the page leaves the site and its menus, and waits in the trash. The highlighted button is the first row's: click the one on your page's row.</target>
+                <target>Nothing is erased: the page leaves the site and its menus, and waits in the trash. The highlighted button is the first row's: click the one on your page's row. Tick several pages to "Move to the recycle bin" together.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>This one cannot be undone, and takes the page's blocks along - it asks you to confirm. The highlighted button is the first row's: click the one on your page's row.</target>
+                <target>This one cannot be undone, and takes the page's blocks along - it asks you to confirm. The highlighted button is the first row's: click the one on your page's row. Tick several pages to empty the trash at once.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>

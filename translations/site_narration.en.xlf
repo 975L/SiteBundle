@@ -456,11 +456,11 @@
             </trans-unit>
             <trans-unit id="VJVr58Y">
                 <source>narration.guided_step_trash_delete</source>
-                <target>Move it to the trash. Nothing is erased: the page leaves the site and its menus, and waits there.</target>
+                <target>Move it to the trash. Nothing is erased: the page leaves the site and its menus, and waits there. Tick several pages to move them to the trash together.</target>
             </trans-unit>
             <trans-unit id="jUNOiXm">
                 <source>narration.guided_step_trash_delete_permanently</source>
-                <target>You can also remove it for good. That one cannot be undone and takes the page's blocks along: you are asked to confirm.</target>
+                <target>You can also remove it for good. That one cannot be undone and takes the page's blocks along: you are asked to confirm. Tick several to empty the trash at once.</target>
             </trans-unit>
             <trans-unit id="fAhjLKA">
                 <source>narration.guided_step_trash_open</source>

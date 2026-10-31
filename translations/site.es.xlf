@@ -6,10 +6,6 @@
                 <source>action.add_collection_item</source>
                 <target>Añadir un elemento</target>
             </trans-unit>
-            <trans-unit id="sSgetpg">
-                <source>action.delete_permanently</source>
-                <target>Eliminar definitivamente</target>
-            </trans-unit>
             <trans-unit id="IzBoXOt">
                 <source>action.duplicate</source>
                 <target>Duplicar</target>
@@ -17,10 +13,6 @@
             <trans-unit id="DYrEVzQ">
                 <source>action.export_selection</source>
                 <target>Exportar la selección</target>
-            </trans-unit>
-            <trans-unit id="vUjYe27">
-                <source>action.move_to_trash</source>
-                <target>Mover a la papelera</target>
             </trans-unit>
             <trans-unit id="OVrqPFV">
                 <source>action.preview</source>
@@ -592,11 +584,11 @@
             </trans-unit>
             <trans-unit id="gbOCxHj">
                 <source>description.guided_step_trash_delete</source>
-                <target>No se borra nada: la página abandona el sitio y sus menús, y espera en la papelera. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
+                <target>No se borra nada: la página abandona el sitio y sus menús, y espera en la papelera. El botón resaltado es el de la primera fila: pulse el de la fila de su página. Marque varias páginas para «Mover a la papelera» juntas.</target>
             </trans-unit>
             <trans-unit id="ARUi17r">
                 <source>description.guided_step_trash_delete_permanently</source>
-                <target>Esta no tiene vuelta atrás y se lleva los blocks de la página: se le pide una confirmación. El botón resaltado es el de la primera fila: pulse el de la fila de su página.</target>
+                <target>Esta no tiene vuelta atrás y se lleva los blocks de la página: se le pide una confirmación. El botón resaltado es el de la primera fila: pulse el de la fila de su página. Marque varias páginas para vaciar la papelera de una vez.</target>
             </trans-unit>
             <trans-unit id="mkzu0PB">
                 <source>description.guided_step_trash_open</source>

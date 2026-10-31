@@ -84,7 +84,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -263,6 +262,7 @@ class PageCrudController extends AbstractCrudController
                     'data' => $this->mediaTranslator->promptValues($ogImage, $locale),
                     'media' => $ogImage,
                     'translated_file' => $this->mediaTranslator->translatedFile($ogImage, $locale),
+                    'og_image' => true,
                 ]);
 
             yield Field::new(self::OG_IMAGE_TRANSLATION_RENDERED)
@@ -302,9 +302,7 @@ class PageCrudController extends AbstractCrudController
             return;
         }
 
-        $this->mediaTranslator->stage($ogImage, $locale, $submitted);
-        $file = $submitted['file'] ?? null;
-        $this->mediaTranslator->stageFile($ogImage, $locale, $file instanceof File ? $file : null, true === ($submitted['removeFile'] ?? false));
+        $this->mediaTranslator->stageSubmitted($ogImage, $locale, $submitted);
     }
 
     // The type SocialBundle files the pages under (see UiBundle's SocialStatusCrudTrait)
@@ -568,7 +566,10 @@ class PageCrudController extends AbstractCrudController
             ->linkToCrudAction('exportSelection'));
         $actions->setPermission('exportSelection', $this->configService->get('site-role-admin'));
 
-        return $this->applyActionPermissions($this->tuneIndexActions($this->addPageActions($actions)), $role);
+        $this->applyActionPermissions($this->tuneIndexActions($this->addPageActions($actions)), $role);
+
+        // The batch "Delete" runs deleteEntity() below, which trashes from the pages and removes for good from the trash - worded for each, the one of the trash posting back to the trash
+        return EasyAdminActionHelper::trashBatchDelete($actions, $this->isTrash(), $this->adminUrlGenerator);
     }
 
     // Whether the index is showing the trash rather than the pages - read by the fields, the actions and the query alike
@@ -650,7 +651,7 @@ class PageCrudController extends AbstractCrudController
     private function addPageActions(Actions $actions): Actions
     {
         // Permanently removes the page, only shown once already in the trash askConfirmation() reuses EasyAdmin's own confirmation modal (the same one shown for "move to trash") instead of a native confirm() - keeps the UI consistent. Built as a url rather than linked to the crud action, so the csrf token the action checks travels with it
-        $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'site'), 'fa fa-trash')
+        $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'config'), 'fa fa-trash')
             ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('deletePermanently', $page, self::DELETE_PERMANENTLY_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
             ->askConfirmation(t('confirm.delete_permanently', [], 'site'))
@@ -724,10 +725,10 @@ class PageCrudController extends AbstractCrudController
     private function tuneIndexActions(Actions $actions): Actions
     {
         // The bundle's own row actions, each titled by its label
-        foreach (['viewOnSite' => 'action.view_on_site', 'preview' => 'action.preview', 'duplicate' => 'action.duplicate', 'restore' => 'action.restore', 'deletePermanently' => 'action.delete_permanently'] as $name => $key) {
+        foreach (['viewOnSite' => ['action.view_on_site', 'site'], 'preview' => ['action.preview', 'site'], 'duplicate' => ['action.duplicate', 'site'], 'restore' => ['action.restore', 'site'], 'deletePermanently' => ['action.delete_permanently', 'config']] as $name => [$key, $domain]) {
             $actions->update(Crud::PAGE_INDEX, $name, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action,
-                $this->translator->trans($key, [], 'site'),
+                $this->translator->trans($key, [], $domain),
             ));
         }
 
@@ -741,10 +742,10 @@ class PageCrudController extends AbstractCrudController
                     ->setIcon('fa fa-box-archive')
                     ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
-                $this->translator->trans('action.move_to_trash', [], 'site'),
+                $this->translator->trans('action.move_to_trash', [], 'config'),
             ))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn (Action $action): Action => $action
-                ->setLabel(t('action.move_to_trash', [], 'site'))
+                ->setLabel(t('action.move_to_trash', [], 'config'))
                 ->setIcon('fa fa-box-archive')
                 ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
                 ->displayIf(static fn (Page $page): bool => !$page->isDeleted()))
@@ -771,6 +772,8 @@ class PageCrudController extends AbstractCrudController
             ->setPermission('trash', $role)
             ->setPermission('restore', $adminRole)
             ->setPermission('deletePermanently', $adminRole)
+            // Emptying the trash in a batch is the admin's, like its row button: an editor is not shown a button deleteEntity() would skip - display only, the real guard being the one of deleteEntity()
+            ->setPermission(Action::BATCH_DELETE, $this->isTrash() ? $adminRole : $role)
             ->setPermission('viewOnSite', $role)
             ->setPermission('preview', $role)
             ->setPermission('duplicate', $role)
@@ -804,6 +807,8 @@ class PageCrudController extends AbstractCrudController
             // Named in the editor's own language: with no label, EasyAdmin falls back on the class name and prints "Page", "Créer Page"
             ->setEntityLabelInSingular(t('label.page', [], 'site'))
             ->setEntityLabelInPlural(t('label.pages', [], 'site'))
+            // The trash is the same screen as the pages, and says which of the two is shown rather than printing "Pages" over both
+            ->setPageTitle(Crud::PAGE_INDEX, t($this->isTrash() ? 'action.trash' : 'label.pages', [], 'site'))
             // The page's own title, and the language written in, so that several tabs open on the back office can be told apart
             ->setPageTitle(Crud::PAGE_EDIT, $this->editPageTitle(...))
             ->setEntityPermission($this->configService->get('site-role-editor'))
@@ -838,10 +843,24 @@ class PageCrudController extends AbstractCrudController
         ;
     }
 
-    // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact
+    // Move to trash: marks page as deleted and unpublished, keeps its content (blocks) intact. One already in the trash is removed for good only by the batch "Delete" of the trash, and only for the admin - the batch checks the editor's role of Action::DELETE, and an editor's stale selection skips the row rather than failing after the ones already handled
     #[\Override]
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
+        // Decided by the screen the delete came from, never by the row alone: a replayed trashing of a page already there, or a stale trash selection holding one restored meanwhile, is left alone
+        if ($page->isDeleted() !== $this->isTrash()) {
+            return;
+        }
+
+        if ($page->isDeleted()) {
+            if ($this->isGranted($this->configService->get('site-role-admin'))) {
+                $this->removeForGood($entityManager, $page);
+                $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
+            }
+
+            return;
+        }
+
         $page->setIsDeleted(true);
         $page->setIsPublished(false);
         $page->setModification(new \DateTime());
@@ -880,8 +899,16 @@ class PageCrudController extends AbstractCrudController
             return $this->redirect($this->trashIndexUrl());
         }
 
-        $page = $context->getEntity()->getInstance();
+        $this->removeForGood($entityManager, $context->getEntity()->getInstance());
 
+        $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
+
+        return $this->redirect($this->trashIndexUrl());
+    }
+
+    // What removing a page for good takes, whether from its row button or from the batch action of the trash: its url and those pointing at it left answering 410, then the row and its blocks dropped
+    private function removeForGood(EntityManagerInterface $entityManager, Page $page): void
+    {
         // Redirects pointing to this page's slug would otherwise dangle once it's gone. Turned into "gone" rows rather than deleted: their own urls led to content that is now just as removed, so they answer 410 like the page's own url below instead of dropping back to a 404 that says nothing
         foreach ($this->redirectRepository->findByToUrl('/pages/' . $page->getSlug()) as $redirect) {
             $redirect->setGone(true)->setToUrl(null);
@@ -895,10 +922,6 @@ class PageCrudController extends AbstractCrudController
 
         $entityManager->remove($page);
         $entityManager->flush();
-
-        $this->addFlash('success', $this->translator->trans('flash.page_deleted_permanently', [], 'site'));
-
-        return $this->redirect($this->trashIndexUrl());
     }
 
     // Restores a page out of the trash - keeps its content untouched. If it was archived by publishAsReplacement(), tries to reclaim its real slug (free unless something else has since taken it), otherwise keeps the technical one and warns the admin to rename it manually.

@@ -1,5 +1,20 @@
 # Changelog
 
+## v8.38.4
+
+Trash emptied in a batch, and titled as such
+
+- `PageCrudController`: the batch "Delete" reads "Move to the recycle bin" on the pages and "Delete permanently" in the trash (31/10/2026)
+- `PageCrudController`: the trash's batch "Delete" removes the selection for good, `site-role-admin` only (31/10/2026)
+- `PageCrudController`: `deleteEntity()` decides by the screen, skipping a row no longer there or below admin (31/10/2026)
+- `PageCrudController`: the trash is titled "Trash" rather than "Pages" (31/10/2026)
+- `PageCrudController`: removing a page for good shared by its row button and the batch action (31/10/2026)
+- `PageCrudController`: a language's share image takes only jpeg, png or webp up to 2 MB (31/10/2026)
+- `PageCrudController`: the share image's language texts and file staged through `MediaTranslator::stageSubmitted()` (31/10/2026)
+- Trash guided project and its narrations mention the batch gestures (31/10/2026)
+- `action.move_to_trash` and `action.delete_permanently` read from ConfigBundle's `config` catalog, shared with the batch action, and removed from the `site` one (31/10/2026)
+- Requires `c975l/core-bundle` ^1.83.0 (31/10/2026)
+
 ## v8.38.3
 
 Demo pictures copied through UiBundle's DemoFixtureMediaCopier
