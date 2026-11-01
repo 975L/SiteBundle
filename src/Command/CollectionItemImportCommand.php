@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Command;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
+use c975L\SiteBundle\Management\CollectionItemUrlWriter;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +39,7 @@ class CollectionItemImportCommand extends Command
         private readonly CollectionItemRepository $collectionItemRepository,
         private readonly CollectionGroupResolver $collectionGroupResolver,
         private readonly SluggerInterface $slugger,
+        private readonly CollectionItemUrlWriter $urlWriter,
         #[Autowire(param: 'kernel.project_dir')]
         private readonly string $projectDir,
     ) {
@@ -188,9 +190,13 @@ class CollectionItemImportCommand extends Command
             ->setTitle($title)
             ->setSlug($slug)
             ->setDescription($row['description'] ?? null)
-            ->setUrl($row['url'] ?? null)
             ->setPosition($state['position']++)
         ;
+
+        // As a missing image, it only warns - the value itself left out of the report, a file's address having no place on a terminal
+        if (!$this->urlWriter->write($item, $row['url'] ?? null)) {
+            $io->warning(sprintf('  Url dropped for "%s": not an address a visitor may be sent to.', $title));
+        }
 
         $this->attachImage($item, $row['image'] ?? null, $imagesDir, $io);
 

@@ -12,11 +12,18 @@ namespace c975L\SiteBundle\Tests\Entity;
 
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
+use c975L\UiBundle\Validator\SafeUrl;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\File;
 
 class CollectionItemTest extends TestCase
 {
+    // An item's url may be a page of this very site as well as an outside address: SafeUrl and not Url
+    public function testTheUrlDeclaresSafeUrl(): void
+    {
+        $this->assertCount(1, new \ReflectionProperty(CollectionItem::class, 'url')->getAttributes(SafeUrl::class));
+    }
+
     private function collectionGroup(string $slug): CollectionGroup
     {
         return new CollectionGroup()->setName(ucfirst($slug))->setSlug($slug);

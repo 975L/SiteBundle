@@ -272,12 +272,12 @@ class PageController extends AbstractController
     }
 
     // Tries, on a parent page its caller has already found and gated, the slug's last segment as a "collection" block's item slug, resolved against the block's own source, then rendered via a separate Page (the block's "detailPage") whose own blocks render normally, with "collectionItem" (see CollectionItemContext) set for the duration of this render - no Page/Block row persisted per item (see README, "Item detail pages"); tries each "collection" block on the page independently, so only the one whose source resolves this item slug wins; @return array{0: ?Page, 1: ?string, 2: ?string}
-    private function resolveCollectionDetail(Page $parentPage, string $slug): array
+    private function resolveCollectionDetail(Page $parentPage, string $slug, bool $isPreview = false): array
     {
         $itemSlug = substr($slug, (int) strrpos($slug, '/') + 1);
 
         foreach ($parentPage->getBlocks() as $block) {
-            $detail = $this->renderCollectionDetail($block, $itemSlug);
+            $detail = $this->renderCollectionDetail($block, $itemSlug, $isPreview);
             if (null !== $detail) {
                 return [$parentPage, $detail[0], $detail[1]];
             }
@@ -287,7 +287,7 @@ class PageController extends AbstractController
     }
 
     // One block's own attempt at the item slug - null as soon as anything doesn't line up (a block of another kind, an incomplete "collection" block, an item its source doesn't know, a detail page since unpublished), so the caller simply moves on to the next block; @return array{0: string, 1: ?string}|null - the rendered detail page and the item's own title
-    private function renderCollectionDetail(Block $block, string $itemSlug): ?array
+    private function renderCollectionDetail(Block $block, string $itemSlug, bool $isPreview): ?array
     {
         if ('collection' !== $block->getKind()) {
             return null;
@@ -305,7 +305,7 @@ class PageController extends AbstractController
             return null;
         }
 
-        $detailPage = $this->findDetailPage($detailPageSlug);
+        $detailPage = $this->findDetailPage($detailPageSlug, $isPreview);
         if (null === $detailPage) {
             return null;
         }
@@ -318,11 +318,15 @@ class PageController extends AbstractController
         ];
     }
 
-    // The page a collection item is rendered through, gated as that page itself would be when kept for members (see gate()), whatever page the block sits on
-    private function findDetailPage(string $slug): ?Page
+    // The page a collection item is rendered through, gated as that page itself would be, whatever page the block sits on: none when deleted or unpublished, the item then answering as if it had no page - an editor's preview alone seeing a draft - and kept for members as gate() does
+    private function findDetailPage(string $slug, bool $isPreview): ?Page
     {
         $detailPage = $this->pageService->findWithBlocks($slug);
-        if (null !== $detailPage && $detailPage->isMembersOnly() && !$this->isGranted('IS_AUTHENTICATED')) {
+        if (null === $detailPage || $detailPage->isDeleted() || (!$isPreview && !$detailPage->isPublished())) {
+            return null;
+        }
+
+        if ($detailPage->isMembersOnly() && !$this->isGranted('IS_AUTHENTICATED')) {
             throw $this->createAccessDeniedException();
         }
 
@@ -356,7 +360,7 @@ class PageController extends AbstractController
             $parentPage = $this->parentPageOf($slug);
 
             if (null !== $parentPage) {
-                [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($parentPage, $slug);
+                [$pageObject, $detailHtml, $detailTitle] = $this->resolveCollectionDetail($parentPage, $slug, true);
             }
         }
 

@@ -78,7 +78,7 @@ class EmailFooterTest extends TestCase
     public function testTheIdentificationIsReadFromTheSiteOwner(): void
     {
         $this->assertMatchesRegularExpression(
-            "/\\{% if config\\('site-owner'\\) %\\}.*?config\\('site-owner'\\)\\|raw.*?\\{% endif %\\}/s",
+            "/\\{% if config\\('site-owner'\\) %\\}.*?config\\('site-owner'\\)\\|sanitize_html\\('c975l\\.rich'\\).*?\\{% endif %\\}/s",
             $this->layout(),
             'The e-mail footer no longer prints "site-owner", so every e-mail leaves identifying nobody.'
         );

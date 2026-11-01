@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\UiBundle\Contract\VichImageResizableInterface;
 use c975L\UiBundle\Contract\VichMediaNamableInterface;
+use c975L\UiBundle\Validator\SafeUrl;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -58,6 +59,7 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[SafeUrl]
     private ?string $url = null;
 
     #[ORM\Column]

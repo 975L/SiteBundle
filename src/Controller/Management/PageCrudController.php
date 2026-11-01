@@ -110,6 +110,10 @@ class PageCrudController extends AbstractCrudController
     public const RESTORE_CSRF_TOKEN = 'page_restore';
     public const DELETE_PERMANENTLY_CSRF_TOKEN = 'page_delete_permanently';
 
+    // The same for the two GET actions an editor reaches on a page: a copy saved at once, and a swap that replaces a page online
+    public const DUPLICATE_CSRF_TOKEN = 'page_duplicate';
+    public const PUBLISH_AS_REPLACEMENT_CSRF_TOKEN = 'page_publish_as_replacement';
+
     // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
     public const string CONTENT_LOCALE_PARAM = ContentLocaleScreen::PARAM;
 
@@ -616,6 +620,7 @@ class PageCrudController extends AbstractCrudController
                     ->setAction('publishAsReplacement')
                     ->setEntityId($page->getId())
                     ->set('replaces', $targetId)
+                    ->set('token', $this->csrfTokenManager->getToken(self::PUBLISH_AS_REPLACEMENT_CSRF_TOKEN)->getValue())
                     ->generateUrl())
                 ->displayIf(static fn (Page $page): bool => $page->getId() !== $targetId)
                 ->askConfirmation($this->translator->trans('confirm.publish_as_replacement', ['%title%' => $target->getTitle()], 'site'));
@@ -687,7 +692,12 @@ class PageCrudController extends AbstractCrudController
 
         // Duplicates the page and all its content (blocks, medias) into a new, unpublished page - saved immediately (see duplicate()), not deferred to a form submit like block duplication is
         $duplicateAction = Action::new('duplicate', t('action.duplicate', [], 'site'), 'fa fa-copy')
-            ->linkToCrudAction('duplicate')
+            ->linkToUrl(fn (Page $page): string => $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('duplicate')
+                ->setEntityId($page->getId())
+                ->set('token', $this->csrfTokenManager->getToken(self::DUPLICATE_CSRF_TOKEN)->getValue())
+                ->generateUrl())
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
             ->askConfirmation(t('confirm.duplicate', [], 'site'));
 
@@ -960,9 +970,14 @@ class PageCrudController extends AbstractCrudController
 
     // Duplicates the page with all its content (blocks, medias, og-image) into a new page, unpublished and saved immediately - redirects straight to editing the copy
     #[AdminRoute('/{entityId}/duplicate')]
-    public function duplicate(AdminContext $context, EntityManagerInterface $entityManager): Response
+    public function duplicate(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
+
+        // A GET, so the token alone tells a click on the button from a request forged elsewhere
+        if (!$this->isCsrfTokenValid(self::DUPLICATE_CSRF_TOKEN, $request->query->getString('token'))) {
+            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
 
         $copy = $this->clonePage($context->getEntity()->getInstance());
 
@@ -1023,12 +1038,18 @@ class PageCrudController extends AbstractCrudController
 
     // Swaps this (unpublished) page in for the one it replaces: the original's slug is archived, this page takes it over and gets published, and the original is moved to trash (recoverable, see restore()). Looked up by id, not slug - the original's slug may have changed since this copy was created (e.g. archived by another draft's own publishAsReplacement()), and an id stays correct regardless. Since the public slug is never held by both rows at once, and never reassigned back to the trashed original, visitors are never routed to a deleted page (no 410) - two separate flushes so the unique constraint on slug is never violated by the swap itself, wrapped in one transaction so a failure between them can't leave neither row holding the live slug. The target's id comes from the "replaces" query param (picked from the $publishAsReplacementGroup dropdown in configureActions()), falling back to getReplaces() for a page that already carries a target and hasn't had its dropdown target overridden.
     #[AdminRoute('/{entityId}/publish-as-replacement')]
-    public function publishAsReplacement(AdminContext $context, EntityManagerInterface $entityManager, ?Request $request = null): Response
+    public function publishAsReplacement(AdminContext $context, Request $request, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted($this->configService->get('site-role-editor'));
 
         $copy = $context->getEntity()->getInstance();
-        $originalId = $request?->query->getInt('replaces') ?: $copy->getReplaces();
+
+        // A GET swapping a page online: the token alone tells a click on the button from a request forged elsewhere
+        if (!$this->isCsrfTokenValid(self::PUBLISH_AS_REPLACEMENT_CSRF_TOKEN, $request->query->getString('token'))) {
+            return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::EDIT)->setEntityId($copy->getId())->generateUrl());
+        }
+
+        $originalId = $request->query->getInt('replaces') ?: $copy->getReplaces();
         $original = null !== $originalId ? $this->pageRepository->find($originalId) : null;
 
         // Already archived by another draft's own publishAsReplacement() (non-null archivedSlug, not yet restored) - its current slug is the mangled "-archived" one, not the live one this copy was meant to take over, so treat it the same as "not found" rather than publishing under it

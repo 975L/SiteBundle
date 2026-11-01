@@ -14,6 +14,7 @@ use c975L\SiteBundle\Command\CollectionItemImportCommand;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
+use c975L\SiteBundle\Management\CollectionItemUrlWriter;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,9 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CollectionItemImportCommandTest extends TestCase
 {
@@ -85,8 +89,41 @@ class CollectionItemImportCommandTest extends TestCase
                 new AsciiSlugger(),
             ),
             new AsciiSlugger(),
+            $this->createUrlWriter(),
             $this->projectDir,
         ));
+    }
+
+    // Refuses what starts with "javascript:", the real constraints being read by CollectionItemUrlWriterTest
+    private function createUrlWriter(): CollectionItemUrlWriter
+    {
+        $validator = $this->createStub(ValidatorInterface::class);
+        $validator->method('validateProperty')->willReturnCallback(static fn (CollectionItem $item): ConstraintViolationList => str_starts_with((string) $item->getUrl(), 'javascript:')
+            ? new ConstraintViolationList([new ConstraintViolation('refused', null, [], $item, 'url', $item->getUrl())])
+            : new ConstraintViolationList());
+
+        return new CollectionItemUrlWriter($validator);
+    }
+
+    // The item stays worth importing, as with a missing image; only its address is left out, and the terminal says so without printing it
+    public function testAnUrlThatWouldNotPassIsDroppedWithAWarning(): void
+    {
+        $this->writeJson([['title' => 'Projet Alpha', 'url' => 'javascript:alert(1)'], ['title' => 'Projet Beta', 'url' => '/projets/beta']]);
+
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+        $tester = $this->createTester($em, $this->createStub(CollectionItemRepository::class));
+
+        $this->assertSame(Command::SUCCESS, $tester->execute(['--group' => 'projects', '--json-file' => 'items.json']));
+        $this->assertCount(2, $persisted);
+        $this->assertNull($persisted[0]->getUrl());
+        $this->assertSame('/projets/beta', $persisted[1]->getUrl());
+        $this->assertStringContainsString('Url dropped for "Projet Alpha"', $tester->getDisplay());
+        $this->assertStringNotContainsString('javascript:', $tester->getDisplay());
+        $this->assertStringNotContainsString('Projet Beta": not', $tester->getDisplay());
     }
 
     public function testExecuteFailsWhenGroupOptionIsMissing(): void

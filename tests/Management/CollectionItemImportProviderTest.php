@@ -14,11 +14,15 @@ use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
 use c975L\SiteBundle\Management\CollectionItemImportProvider;
+use c975L\SiteBundle\Management\CollectionItemUrlWriter;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CollectionItemImportProviderTest extends TestCase
 {
@@ -39,6 +43,17 @@ class CollectionItemImportProviderTest extends TestCase
         return new CollectionGroupResolver($repository, new AsciiSlugger());
     }
 
+    // Refuses what starts with "javascript:", the real constraints being read by CollectionItemUrlWriterTest
+    private function createUrlWriter(): CollectionItemUrlWriter
+    {
+        $validator = $this->createStub(ValidatorInterface::class);
+        $validator->method('validateProperty')->willReturnCallback(static fn (CollectionItem $item): ConstraintViolationList => str_starts_with((string) $item->getUrl(), 'javascript:')
+            ? new ConstraintViolationList([new ConstraintViolation('refused', null, [], $item, 'url', $item->getUrl())])
+            : new ConstraintViolationList());
+
+        return new CollectionItemUrlWriter($validator);
+    }
+
     private function createFilesDir(string $entryPath, string $content): string
     {
         $filesDir = sys_get_temp_dir() . '/collection_item_import_test_' . bin2hex(random_bytes(4));
@@ -54,10 +69,44 @@ class CollectionItemImportProviderTest extends TestCase
             $this->createStub(EntityManagerInterface::class),
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver(),
+            $this->createUrlWriter(),
         );
 
         $this->assertTrue($provider->supportsImport('site_collection_item'));
         $this->assertFalse($provider->supportsImport('site_page'));
+    }
+
+    // A content archive is an editor's file like any other: what a browser would run never reaches the entity, and the item is still imported - over the url it held, an import always overwriting
+    public function testImportDropsAnUrlThatWouldNotPass(): void
+    {
+        $existing = new CollectionItem()->setUrl('https://example.com/held');
+        $provider = new CollectionItemImportProvider(
+            $this->createStub(EntityManagerInterface::class),
+            $this->createCollectionItemRepository($existing),
+            $this->createCollectionGroupResolver(new CollectionGroup()->setName('Projects')->setSlug('projects')),
+            $this->createUrlWriter(),
+        );
+
+        $result = $provider->import([['collectionGroup' => 'Projects', 'title' => 'My Project', 'slug' => 'my-project', 'url' => 'javascript:alert(1)']]);
+
+        $this->assertSame(['created' => 0, 'updated' => 1], $result);
+        $this->assertNull($existing->getUrl());
+        $this->assertSame('My Project', $existing->getTitle());
+    }
+
+    public function testImportKeepsAPathOfTheSite(): void
+    {
+        $existing = new CollectionItem();
+        $provider = new CollectionItemImportProvider(
+            $this->createStub(EntityManagerInterface::class),
+            $this->createCollectionItemRepository($existing),
+            $this->createCollectionGroupResolver(new CollectionGroup()->setName('Projects')->setSlug('projects')),
+            $this->createUrlWriter(),
+        );
+
+        $provider->import([['collectionGroup' => 'Projects', 'title' => 'My Project', 'slug' => 'my-project', 'url' => '/projects/alpha']]);
+
+        $this->assertSame('/projects/alpha', $existing->getUrl());
     }
 
     public function testImportCreatesANewCollectionItemFromTheExtractedZipFile(): void
@@ -75,6 +124,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver($projects),
+            $this->createUrlWriter(),
         );
 
         $result = $provider->import([[
@@ -119,6 +169,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver(null),
+            $this->createUrlWriter(),
         );
 
         $provider->import([[
@@ -157,6 +208,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $repository,
             $this->createCollectionGroupResolver(null),
+            $this->createUrlWriter(),
         );
 
         $provider->import([[
@@ -187,6 +239,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             new CollectionGroupResolver($repository, new AsciiSlugger()),
+            $this->createUrlWriter(),
         );
 
         $provider->import([[
@@ -212,6 +265,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver(null),
+            $this->createUrlWriter(),
         );
 
         $provider->import([
@@ -239,6 +293,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver(null),
+            $this->createUrlWriter(),
         );
 
         $provider->import([
@@ -262,6 +317,7 @@ class CollectionItemImportProviderTest extends TestCase
             $this->createStub(EntityManagerInterface::class),
             $this->createCollectionItemRepository($existing),
             $this->createCollectionGroupResolver($projects),
+            $this->createUrlWriter(),
         );
 
         $result = $provider->import([[
@@ -298,6 +354,7 @@ class CollectionItemImportProviderTest extends TestCase
             $em,
             $this->createCollectionItemRepository(),
             $this->createCollectionGroupResolver($projects),
+            $this->createUrlWriter(),
         );
 
         $result = $provider->import([[

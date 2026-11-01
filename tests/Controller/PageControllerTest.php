@@ -334,6 +334,49 @@ class PageControllerTest extends TestCase
         $controller->display('catalog/item-1', new Request());
     }
 
+    // A detail page unpublished or in the trash is no page at all: the item answers as if it had none, its template unread
+    public function testDisplayFindsNoCollectionDetailThroughADetailPageOffline(): void
+    {
+        foreach ([new Page()->setIsPublished(false), new Page()->setIsPublished(true)->setIsDeleted(true)] as $detailPage) {
+            try {
+                $this->detailController($detailPage)->display('catalog/item-1', new Request());
+                $this->fail('The item of an offline detail page was served.');
+            } catch (NotFoundHttpException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+    }
+
+    // A preview is the one screen for a draft, and the trash stays closed to it too
+    public function testAPreviewDrawsADraftDetailPageButNotOneInTheTrash(): void
+    {
+        $response = $this->detailController(new Page()->setIsPublished(false))->preview('catalog/item-1', new Request());
+        $this->assertSame(200, $response->getStatusCode());
+
+        $this->expectException(NotFoundHttpException::class);
+        $this->detailController(new Page()->setIsDeleted(true))->preview('catalog/item-1', new Request());
+    }
+
+    // A published page whose collection block renders its items through the given detail page
+    private function detailController(Page $detailPage): PageController
+    {
+        $parent = new Page()->setTitle('Catalog')->setSlug('catalog')->setIsPublished(true);
+        $parent->addBlock(new Block()->setKind('collection')->setData(['source' => 'app.collection.demo', 'detailPage' => 'catalog-detail']));
+
+        $collectionSourceRegistry = $this->createStub(CollectionSourceRegistry::class);
+        $collectionSourceRegistry->method('detail')->willReturn(['title' => 'Item One']);
+
+        $twig = $this->createStub(Environment::class);
+        $twig->method('render')->willReturn('<detail>');
+
+        return $this->createController(
+            $this->createPageService(forDisplayBySlug: ['catalog' => $parent, 'catalog-detail' => $detailPage->setTitle('Detail')->setSlug('catalog-detail')]),
+            $this->createConfigService(),
+            collectionSourceRegistry: $collectionSourceRegistry,
+            twig: $twig,
+        );
+    }
+
     public function testDisplayThrowsNotFoundWhenPageDoesNotExist(): void
     {
         $controller = $this->createController($this->createPageService(), $this->createConfigService());

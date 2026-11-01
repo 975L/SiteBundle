@@ -26,6 +26,7 @@ class CollectionItemImportProvider implements ImportProviderInterface
         private readonly EntityManagerInterface $em,
         private readonly CollectionItemRepository $collectionItemRepository,
         private readonly CollectionGroupResolver $collectionGroupResolver,
+        private readonly CollectionItemUrlWriter $urlWriter,
     ) {
     }
 
@@ -53,7 +54,7 @@ class CollectionItemImportProvider implements ImportProviderInterface
         return ['created' => $created, 'updated' => $updated];
     }
 
-    // One exported item written over whatever already lives under its (collection, slug) pair - returns whether it had to be created
+    // One exported item written over whatever already lives under its (collection, slug) pair - returns whether it had to be created. An url that would not pass is dropped, as GalleryMedia::setExternalUrl() does: an import only counts what it made, with no row to report
     private function importItem(array $item, CollectionGroup $collectionGroup, ?string $filesDir): bool
     {
         $collectionItem = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $item['slug']);
@@ -65,8 +66,8 @@ class CollectionItemImportProvider implements ImportProviderInterface
             ->setTitle($item['title'])
             ->setSlug($item['slug'])
             ->setDescription($item['description'] ?? null)
-            ->setUrl($item['url'] ?? null)
             ->setPosition($item['position'] ?? 0);
+        $this->urlWriter->write($collectionItem, $item['url'] ?? null);
 
         if (null !== $filesDir && isset($item['file'])) {
             $collectionItem->setFile(new ReplacingFile($filesDir . '/' . $item['file'], true, true, true));

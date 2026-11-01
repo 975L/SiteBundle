@@ -580,6 +580,149 @@ class PageCrudControllerTest extends TestCase
         }
     }
 
+    // A GET swapping a page online, or saving a copy: nothing but the token tells a click on the button from a request an <img> fired on a logged-in editor
+    public function testDuplicateCopiesNothingWhenCsrfTokenIsInvalid(): void
+    {
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('persist');
+        $manager->expects($this->never())->method('flush');
+
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
+        ]));
+
+        $response = $controller->duplicate($this->createAdminContext(new Page()->setTitle('Original')->setSlug('original')), new Request(), $manager);
+
+        $this->assertSame(302, $response->getStatusCode());
+    }
+
+    public function testPublishAsReplacementSwapsNothingWhenCsrfTokenIsInvalid(): void
+    {
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('flush');
+
+        $copy = new Page()->setTitle('Copy')->setSlug('copy');
+        $controller = $this->createController();
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(false),
+        ]));
+
+        $response = $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['replaces' => '7']), $manager);
+
+        $this->assertSame(302, $response->getStatusCode());
+        $this->assertFalse($copy->isPublished());
+    }
+
+    // What a click does: the url the button really carries reaches the action through EasyAdmin's router, with a token the action accepts
+    public function testTheDuplicateButtonReachesItsAction(): void
+    {
+        $flow = new RealAdminFlow(PageCrudController::class);
+        $source = $this->pageWithId('Original', 'original', 7);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturn(null);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->once())->method('persist')->willReturnCallback(static function (Page $copy): void {
+            new \ReflectionProperty(Page::class, 'id')->setValue($copy, 8);
+        });
+
+        $controller = $this->controllerOn($flow, $pageRepository);
+        $action = $controller->configureActions($this->defaultActions())->getAsDto(Crud::PAGE_INDEX)->getAction(Crud::PAGE_INDEX, 'duplicate');
+        $url = ($action->getUrl())($source);
+
+        $this->assertSame('duplicate', $flow->routeOf($url)[EA::CRUD_ACTION] ?? null);
+        $this->assertSame('7', $flow->routeOf($url)[EA::ENTITY_ID] ?? null);
+
+        $this->assertSame(302, $controller->duplicate($this->createAdminContext($source), Request::create($url), $manager)->getStatusCode());
+    }
+
+    public function testThePublishAsReplacementButtonReachesItsAction(): void
+    {
+        $flow = new RealAdminFlow(PageCrudController::class);
+        $flow->requestStack->getCurrentRequest()->attributes->set(EA::CRUD_ACTION, Crud::PAGE_EDIT);
+        $copy = $this->pageWithId('Copy', 'copy', 7);
+        $original = $this->pageWithId('Home', 'home', 99)->setIsPublished(true);
+
+        $queryBuilder = $this->createStub(QueryBuilder::class);
+        $queryBuilder->method('andWhere')->willReturnSelf();
+        $queryBuilder->method('setParameter')->willReturnSelf();
+        $query = $this->createStub(Query::class);
+        $query->method('getResult')->willReturn([$original]);
+        $queryBuilder->method('getQuery')->willReturn($query);
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('createQueryBuilder')->willReturn($queryBuilder);
+        $pageRepository->method('find')->willReturn($original);
+
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('wrapInTransaction')->willReturnCallback(static fn (callable $work): mixed => $work());
+
+        $controller = $this->controllerOn($flow, $pageRepository);
+        $group = $controller->configureActions($this->defaultActions())->getAsDto(Crud::PAGE_EDIT)->getActions()['publishAsReplacement'];
+        $url = ($group->getActions()[0]->getUrl())($copy);
+
+        $this->assertSame('publishAsReplacement', $flow->routeOf($url)[EA::CRUD_ACTION] ?? null);
+
+        $controller->publishAsReplacement($this->createAdminContext($copy), Request::create($url), $manager);
+
+        $this->assertTrue($copy->isPublished());
+        $this->assertSame('home', $copy->getSlug());
+    }
+
+    // Each action's token opens that action alone
+    public function testATokenOfTheOtherActionIsRefused(): void
+    {
+        $flow = new RealAdminFlow(PageCrudController::class);
+        $copy = $this->pageWithId('Copy', 'copy', 7);
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->never())->method('flush');
+
+        $this->controllerOn($flow, $this->createStub(PageRepository::class))->publishAsReplacement(
+            $this->createAdminContext($copy),
+            new Request(['replaces' => '99', 'token' => $flow->csrfTokenManager->getToken(PageCrudController::DUPLICATE_CSRF_TOKEN)->getValue()]),
+            $manager,
+        );
+
+        $this->assertFalse($copy->isPublished());
+    }
+
+    private function pageWithId(string $title, string $slug, int $id): Page
+    {
+        $page = new Page()->setTitle($title)->setSlug($slug);
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, $id);
+
+        return $page;
+    }
+
+    private function controllerOn(RealAdminFlow $flow, PageRepository $pageRepository): PageCrudController
+    {
+        $controller = $this->createController([
+            'adminUrlGenerator' => $flow->urlGenerator,
+            'csrfTokenManager' => $flow->csrfTokenManager,
+            'requestStack' => $flow->requestStack,
+            'pageRepository' => $pageRepository,
+        ]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $flow->csrfTokenManager,
+            'request_stack' => $flow->requestStack,
+        ]));
+
+        return $controller;
+    }
+
+    // What EasyAdmin's runtime hands configureActions() before it runs
+    private function defaultActions(): Actions
+    {
+        return Actions::new()
+            ->add(Crud::PAGE_INDEX, Action::EDIT)
+            ->add(Crud::PAGE_INDEX, Action::DELETE)
+            ->add(Crud::PAGE_DETAIL, Action::EDIT)
+            ->add(Crud::PAGE_DETAIL, Action::DELETE);
+    }
+
     // --- duplicate -------------------------------------------------------------------------------------
 
     public function testDuplicateDeniesAccessBelowEditor(): void
@@ -591,7 +734,7 @@ class PageCrudControllerTest extends TestCase
             'security.authorization_checker' => $this->createAuthorizationChecker(false),
         ]));
 
-        $controller->duplicate($this->createAdminContext(new Page()), $this->createStub(EntityManagerInterface::class));
+        $controller->duplicate($this->createAdminContext(new Page()), new Request(), $this->createStub(EntityManagerInterface::class));
     }
 
     public function testDuplicateClonesPageTitleSlugAndContent(): void
@@ -617,10 +760,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $response = $controller->duplicate($this->createAdminContext($source), $manager);
+        $response = $controller->duplicate($this->createAdminContext($source), new Request(['token' => 'token']), $manager);
 
         $this->assertSame(302, $response->getStatusCode());
     }
@@ -641,10 +785,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->duplicate($this->createAdminContext($source), $manager);
+        $controller->duplicate($this->createAdminContext($source), new Request(['token' => 'token']), $manager);
 
         $this->assertInstanceOf(Page::class, $capturedCopy);
         $this->assertFalse($capturedCopy->isPublished());
@@ -670,10 +815,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->duplicate($this->createAdminContext($source), $manager);
+        $controller->duplicate($this->createAdminContext($source), new Request(['token' => 'token']), $manager);
 
         $copiedBlock = $capturedCopy->getBlocks()->first();
         $this->assertNotSame($block, $copiedBlock);
@@ -701,10 +847,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->duplicate($this->createAdminContext($source), $manager);
+        $controller->duplicate($this->createAdminContext($source), new Request(['token' => 'token']), $manager);
 
         $this->assertTrue($capturedCopy->getBlocks()->first()->isHidden());
     }
@@ -732,10 +879,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->duplicate($this->createAdminContext($source), $manager);
+        $controller->duplicate($this->createAdminContext($source), new Request(['token' => 'token']), $manager);
 
         $copiedContainer = $capturedCopy->getBlocks()->first();
         $copiedColumn = $copiedContainer->getSlots()->first();
@@ -763,6 +911,7 @@ class PageCrudControllerTest extends TestCase
 
         $controller->publishAsReplacement(
             $this->createAdminContext(new Page()),
+            new Request(),
             $this->createStub(EntityManagerInterface::class)
         );
     }
@@ -789,10 +938,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $response = $controller->publishAsReplacement($this->createAdminContext($copy), $manager);
+        $response = $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['token' => 'token']), $manager);
 
         $this->assertSame(302, $response->getStatusCode());
         $this->assertSame('home-archived', $original->getSlug());
@@ -826,10 +976,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $controller->publishAsReplacement($this->createAdminContext($copy), $manager);
+        $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['token' => 'token']), $manager);
 
         $this->assertTrue($copy->isIndexable());
         $this->assertFalse($original->isIndexable());
@@ -849,10 +1000,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $response = $controller->publishAsReplacement($this->createAdminContext($copy), $manager);
+        $response = $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['token' => 'token']), $manager);
 
         $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse($copy->isPublished());
@@ -873,11 +1025,12 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $request = new Request(['replaces' => '7']);
-        $response = $controller->publishAsReplacement($this->createAdminContext($page), $manager, $request);
+        $request = new Request(['replaces' => '7', 'token' => 'token']);
+        $response = $controller->publishAsReplacement($this->createAdminContext($page), $request, $manager);
 
         $this->assertSame(302, $response->getStatusCode());
         $this->assertTrue($page->isPublished());
@@ -900,10 +1053,11 @@ class PageCrudControllerTest extends TestCase
         $controller = $this->createController(['pageRepository' => $pageRepository]);
         $controller->setContainer($this->createContainer([
             'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
             'request_stack' => $this->createRequestStackWithSession(),
         ]));
 
-        $response = $controller->publishAsReplacement($this->createAdminContext($copy), $manager);
+        $response = $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['token' => 'token']), $manager);
 
         $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse($copy->isPublished());

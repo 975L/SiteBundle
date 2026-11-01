@@ -1,6 +1,6 @@
 ---
 name: c975l-site-pages
-description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, empty trash, batch delete, deleteEntity, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, BrowsableSocialContentSourceInterface, SocialContentStatusProviderInterface, SocialStatusCrudTrait, findSocialCandidates, isMembersOnly, members only, site-pages-members-only, isReferenced, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, tutorial_film, tutorial_films, findRouteName, allPrivate, findPrivate, private films, guided-tour, TutorialCatalog::TOUR, collection_entry, shoot the films, record.mjs, films.sh, guided-project JSON, c975l:config:tutorial-account."
+description: "Use this skill when working with pages or collections in a Symfony application built on the c975L ecosystem with c975l/site-bundle — the Page entity, file-based pages, the trash and the redirects a deletion leaves behind, the block kinds this bundle adds, publish-as-replacement, and CollectionGroup/CollectionItem with their per-item detail pages. Triggers on: Page entity, page_display, page_home, page_preview, PageCrudController, twig_content, articles_slider, CollectionGroup, CollectionItem, CollectionItemUrlWriter, SafeUrl, collection block, detailPage, collectionItem, reorder, ea-index-sort, publish as replacement, duplicate page, trash, restore, empty trash, batch delete, deleteEntity, site-role-admin, SiteBlockEditUrlProvider, FormEditUrl, max_input_vars, site_page, SiteDemoFixtureProvider, DemoFixtureProviderInterface, demo dataset, TwigContentTemplateChecker, templatePath, block-thumbs, ui-block-thumb, getManagementStylesheets, translate page, SiteTextProvider, c975l:translate:content, translate the whole site, management_menu_translate, TranslationController, PageTranslator, SiteLocales, enabled_locales, translation_locale, contenu, fieldset-all-languages, content_locale, PageHealthCheckPanelType, page_title, page_summary, translatable, ContentTranslator, PageLinkLocalizer, CollectionItemTranslator, render_owned_blocks, c975LSite:Page:Blocks, content zone, content holder, site_content_page, site_page_new_url, findWithBlocks, findForDisplay, PageServiceInterface, PageLocalesCacheListener, LOCALES_CACHE_TAG, PageSocialContentSource, SocialContentSourceInterface, BrowsableSocialContentSourceInterface, SocialContentStatusProviderInterface, SocialStatusCrudTrait, findSocialCandidates, isMembersOnly, members only, site-pages-members-only, isReferenced, optimistic lock, OPENED_VERSION_FIELD, page_modified_elsewhere, PageExportProvider, PageImportProvider, TutorialCatalog, TutorialCollectionSourceProvider, site.collection.tutorials, films.json, tutorial films, TutorialFilmUrlProvider, site_tutorial_film, site_tutorial_report, findOneByCollectionSource, SiteBackupPathProvider, TutorialFilmController, tutorial_film, tutorial_films, findRouteName, allPrivate, findPrivate, private films, guided-tour, TutorialCatalog::TOUR, collection_entry, shoot the films, record.mjs, films.sh, guided-project JSON, c975l:config:tutorial-account."
 ---
 
 # c975L SiteBundle — pages and collections
@@ -157,6 +157,8 @@ exists, which would 404 — opens the Page form with that row unfolded (`BlockFo
 Any non-deleted page's edit screen lists every other page as a replacement target: picking one archives
 the target's slug, moves it to the trash and swaps the current page in. The usual way to prepare one is
 the **Duplicate** action, which builds an unpublished copy of the whole block tree, medias included.
+Both are GET actions checking a CSRF token their buttons carry (`PageCrudController::DUPLICATE_CSRF_TOKEN`,
+`PUBLISH_AS_REPLACEMENT_CSRF_TOKEN`): a link written by hand without it changes nothing and is sent back.
 
 **There is deliberately no page-template mechanism.** A page's arrangement is composed in the admin,
 block by block, never derived from a stored arrangement — a "template" could only be a snapshot of
@@ -183,6 +185,10 @@ An item's title and description are translatable through `CollectionItemTranslat
 language, its language screen carrying those two fields alone, and the cards and the detail page read them
 in the language being read. Image, link, slug and position are the same in every language.
 
+An item's link is held by UiBundle's `SafeUrl` constraint, a path of the site or a `page:12#anchor` target
+still passing. Both imports write it through `CollectionItemUrlWriter`, which drops a link the constraints
+of `CollectionItem::$url` refuse and keeps the item.
+
 The items index reorders by drag-and-drop through **UiBundle's `ea-index-sort.js`**, which SiteBundle no
 longer duplicates: `collection_item_crud_index.html.twig` opts in by declaring `data-reorder-url`,
 `data-reorder-group` and `data-reorder-token` on each row, and `CollectionItemCrudController::reorder()`
@@ -205,8 +211,8 @@ From then on `/pages/{page}/{itemSlug}` calls the source's `detail($itemSlug)`; 
 renders the detail page's blocks with a `collectionItem` Twig global exposing it for that one render
 (`CollectionItemContext`). A `twig_content` block reads it as
 `{% include templatePath with collectionItem.get() %}`, its `templatePath` being one of the app's own
-templates. A null result falls through to a 404. **Nothing
-is persisted per item.**
+templates. A null result falls through to a 404, and so does a detail page unpublished or in the trash, a
+preview alone still drawing a draft. **Nothing is persisted per item.**
 
 **The language is confirmed before the detail renders.** `PageController::display()` runs its gate — deleted,
 unpublished, untranslated, asked-in-another-language — on the parent page *before* resolving the item, because

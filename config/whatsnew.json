@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-11-01",
+        "description": [
+            {
+                "en": "A collection item now answers as not found while its detail page is unpublished or in the trash; a preview still shows a draft.",
+                "fr": "Un élément de collection répond désormais comme introuvable tant que sa page de détail est dépubliée ou à la corbeille ; un aperçu montre toujours un brouillon.",
+                "es": "Un elemento de colección responde ahora como no encontrado mientras su página de detalle esté sin publicar o en la papelera; una vista previa sigue mostrando un borrador."
+            },
+            {
+                "en": "A collection item's link now refuses an address that could run code in the visitor's browser; an import leaves such a link out and keeps the item.",
+                "fr": "Le lien d'un élément de collection refuse désormais une adresse capable d'exécuter du code dans le navigateur du visiteur ; un import écarte ce lien et garde l'élément.",
+                "es": "El enlace de un elemento de colección rechaza ahora una dirección capaz de ejecutar código en el navegador del visitante; una importación descarta ese enlace y conserva el elemento."
+            }
+        ]
+    },
+    {
         "date": "2026-10-31",
         "description": [
             {

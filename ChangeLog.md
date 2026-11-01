@@ -1,5 +1,19 @@
 # Changelog
 
+## v8.38.6
+
+Page buttons carry a CSRF token, offline detail pages answer 404
+
+- `PageCrudController::duplicate()`, `publishAsReplacement()`: a CSRF token checked, sent by their buttons, as `restore()` and `deletePermanently()` (01/11/2026)
+- `PageCrudController::duplicate()`, `publishAsReplacement()`: signature now takes the `Request` second, required (01/11/2026)
+- `PageController`: a collection item whose detail page is unpublished or deleted answers 404, a preview still drawing a draft (01/11/2026)
+- `emails/fullLayout.html.twig`: `site-owner` printed through `sanitize_html('c975l.rich')` rather than `|raw` (01/11/2026)
+- `CollectionItem::$url`: `SafeUrl`, a path of the site still passing (01/11/2026)
+- `CollectionItemImportProvider`: an imported `url` that would not pass the constraints of `CollectionItem::$url` dropped, the item still imported (01/11/2026)
+- `c975l:site:collection-item:import`: such a `url` dropped with a warning, the item still imported (01/11/2026)
+- Added `CollectionItemUrlWriter`, shared by both (01/11/2026)
+- Requires `c975l/core-bundle` ^1.85.0 (01/11/2026)
+
 ## v8.38.5
 
 Trash emptied through ConfigBundle's TrashBatchDeleteTrait
