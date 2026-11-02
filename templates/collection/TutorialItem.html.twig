@@ -1,5 +1,5 @@
 {# One film of the "site.collection.tutorials" source (TutorialCollectionSourceProvider), and the dialog it opens. Every link to a film is its page anchor, so a card, "previous / next" and a shared url all open it the same way. A click on one is UiBundle's scrollButtons pushing the anchor, with no hashchange: it says so with "anchor:scroll" #}
-{# The layout sets a sitewide <base href> at the domain root, so a bare "#x" would leave the page: every anchor carries the page's own path #}
+{# The page's own path, carried by every anchor and by the film's absolute url in the JSON-LD #}
 {% set here = app.request.baseUrl ~ app.request.pathInfo %}
 {# The heading the collection block asks for, matched against the offered levels and never interpolated, same rule as the block's own #}
 {% set heading = level|default('') in ['h2', 'h3', 'h4'] ? level : 'h2' %}

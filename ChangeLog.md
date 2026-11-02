@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.7
+
+Corrected stale comments
+
+- `collection/TutorialItem`: comment no longer cites the removed `<base href>` (02/11/2026)
+- Corrected `bin/ci.sh` comment and message: vendor follows composer.lock, no symlinks (02/11/2026)
+
 ## v8.38.6
 
 Page buttons carry a CSRF token, offline detail pages answer 404
