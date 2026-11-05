@@ -16,7 +16,8 @@
     {% if items is empty %}
         <p class="text-muted">{{ 'text.tutorial_films_none'|trans({}, 'site') }}</p>
     {% else %}
-        <div class="tutorial-films">
+        {# Out of EasyAdmin's prose, the films keeping their own block's look #}
+        <div class="tutorial-films" data-ea-not-prose>
             {% for item in items %}
                 {{ include(itemTemplate, item.data|merge({level: 'h2'})) }}
             {% endfor %}

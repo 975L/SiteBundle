@@ -25,7 +25,7 @@
         "php": ">=8.4",
         "c975l/core-bundle": "^1.85.0",
         "doctrine/orm": "^3.7",
-        "easycorp/easyadmin-bundle": "^5.7",
+        "easycorp/easyadmin-bundle": "^5.9",
         "symfony/form": "^8.0",
         "symfony/framework-bundle": "^8.0",
         "symfony/string": "^8.0",

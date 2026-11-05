@@ -94,6 +94,15 @@ class TutorialFilmControllerTest extends TestCase
         $this->assertFileExists(\dirname(__DIR__, 3) . '/public/css/management-tutorials.min.css', 'The back office tutorials sass has not been compiled.');
     }
 
+    // The films stay out of EasyAdmin's prose, keeping their own block's look
+    public function testTheFilmsStayOutOfTheProse(): void
+    {
+        $this->assertStringContainsString(
+            '<div class="tutorial-films" data-ea-not-prose>',
+            (string) file_get_contents(\dirname(__DIR__, 3) . '/templates/management/tutorial_films.html.twig')
+        );
+    }
+
     // A film whose project the reader may not follow stays off the page, as its files stay out of reach
     public function testThePageLeavesOutTheProjectsOutOfReach(): void
     {

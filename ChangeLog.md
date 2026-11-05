@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.10
+
+Tutorial films stay out of EasyAdmin's prose
+
+- The tutorial films page stays out of EasyAdmin 5.9's prose (05/11/2026)
+- Changed the buttons' colors to EasyAdmin 5.9's `color` prop, EasyAdmin required in ^5.9 (05/11/2026)
+
 ## v8.38.9
 
 Smoke test tries a transient failure again before reporting it

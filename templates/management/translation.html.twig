@@ -43,7 +43,7 @@
         {% endfor %}
 
         {% if rows is not empty %}
-            <twig:ea:Button type="submit" variant="primary" data-menu-translation-submit>{{ 'action.save'|trans({}, 'site') }}</twig:ea:Button>
+            <twig:ea:Button type="submit" color="primary" data-menu-translation-submit>{{ 'action.save'|trans({}, 'site') }}</twig:ea:Button>
         {% endif %}
         <twig:ea:Button htmlElement="a" href="{{ ea_url().setController(subject.backController).setAction('index') }}">{{ 'action.cancel'|trans({}, 'EasyAdminBundle') }}</twig:ea:Button>
     </form>

@@ -179,7 +179,7 @@ class TranslationControllerTest extends TestCase
     public function testTheSaveButtonSubmitsTheForm(): void
     {
         $this->assertStringContainsString(
-            '<twig:ea:Button type="submit" variant="primary" data-menu-translation-submit>',
+            '<twig:ea:Button type="submit" color="primary" data-menu-translation-submit>',
             (string) file_get_contents(\dirname(__DIR__, 3) . '/templates/management/translation.html.twig')
         );
     }
