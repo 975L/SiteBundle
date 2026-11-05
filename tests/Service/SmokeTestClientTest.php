@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Tests\Service;
 
 use c975L\SiteBundle\Service\SmokeTestClient;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -38,12 +39,65 @@ class SmokeTestClientTest extends TestCase
         $client = new SmokeTestClient(new MockHttpClient([
             new MockResponse('', ['error' => 'Could not resolve host']),
             new MockResponse('', ['http_code' => 200]),
-        ]));
+            new MockResponse('', ['error' => 'Could not resolve host']),
+        ]), 0);
 
         $this->assertSame(
             ['https://nope.example.com/' => 0, 'https://example.com/' => 200],
             $client->check(['https://nope.example.com/', 'https://example.com/'])
         );
+    }
+
+    // One request reset by php-fpm on a healthy site must not fail a deployment: only that url is tried again, and it keeps its place in the result
+    public function testCheckTriesATransientStatusAgainAndKeepsTheOrder(): void
+    {
+        $requested = [];
+        $answers = [503, 200, 200];
+        $client = new SmokeTestClient(new MockHttpClient(
+            static function (string $method, string $url) use (&$requested, &$answers): MockResponse {
+                $requested[] = $url;
+
+                return new MockResponse('', ['http_code' => array_shift($answers)]);
+            }
+        ), 0);
+
+        $this->assertSame(
+            ['https://example.com/item-1' => 200, 'https://example.com/item-2' => 200],
+            $client->check(['https://example.com/item-1', 'https://example.com/item-2'])
+        );
+        $this->assertSame(['https://example.com/item-1', 'https://example.com/item-2', 'https://example.com/item-1'], $requested);
+    }
+
+    // The second try is the last one: its answer is what gets reported
+    public function testCheckReportsATransientStatusThatLasts(): void
+    {
+        $requests = 0;
+        $client = new SmokeTestClient(new MockHttpClient(
+            static function () use (&$requests): MockResponse {
+                ++$requests;
+
+                return new MockResponse('', ['http_code' => 503]);
+            }
+        ), 0);
+
+        $this->assertSame(['https://example.com/' => 503], $client->check(['https://example.com/']));
+        $this->assertSame(2, $requests);
+    }
+
+    // A 500 or a 404 comes from the application: a second try would only delay the report
+    public function testCheckDoesNotTryAnApplicationErrorAgain(): void
+    {
+        $requests = 0;
+        $client = new SmokeTestClient(new MockHttpClient(
+            static function () use (&$requests): MockResponse {
+                ++$requests;
+
+                return new MockResponse('', ['http_code' => 500]);
+            }
+        ), 0);
+
+        $this->assertSame(['https://example.com/' => 500], $client->check(['https://example.com/']));
+        $this->assertSame(1, $requests);
     }
 
     public function testCheckKeepsEveryUrlInOrderAcrossBatches(): void
@@ -117,9 +171,46 @@ class SmokeTestClientTest extends TestCase
     {
         $client = new SmokeTestClient(new MockHttpClient(function (): never {
             throw new TransportException('Connection refused');
-        }));
+        }), 0);
 
         $this->assertSame([], $client->findAssets('https://example.com', 'https://example.com'));
+    }
+
+    // The home page reset once by php-fpm must not fail the run on "no asset found"
+    public function testFindAssetsTriesATransientStatusAgain(): void
+    {
+        $answers = [
+            new MockResponse('', ['http_code' => 503]),
+            new MockResponse('<html><head><script src="/assets/app.js"></script></head></html>', ['http_code' => 200]),
+        ];
+        $client = new SmokeTestClient(new MockHttpClient($answers), 0);
+
+        $this->assertSame(['https://example.com/assets/app.js'], $client->findAssets('https://example.com', 'https://example.com'));
+    }
+
+    // A second try is the last one, and a 500 comes from the application so it gets none
+    #[DataProvider('giveUpStatusProvider')]
+    public function testFindAssetsGivesUpOnAStatusThatLastsOrIsNotTransient(int $status, int $expectedRequests): void
+    {
+        $requests = 0;
+        $client = new SmokeTestClient(new MockHttpClient(
+            static function () use (&$requests, $status): MockResponse {
+                ++$requests;
+
+                return new MockResponse('', ['http_code' => $status]);
+            }
+        ), 0);
+
+        $this->assertSame([], $client->findAssets('https://example.com', 'https://example.com'));
+        $this->assertSame($expectedRequests, $requests);
+    }
+
+    public static function giveUpStatusProvider(): array
+    {
+        return [
+            'transient' => [503, 2],
+            'application error' => [500, 1],
+        ];
     }
 
     public function testFindAssetsReturnsEmptyArrayWhenThePageReferencesNone(): void

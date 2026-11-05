@@ -181,7 +181,8 @@ every record has each url checked once a day rather than hammering its host hour
 leaving a broken site online. Assets are read out of the home page's rendered HTML rather than declared
 anywhere — AssetMapper's filenames are hashed, so this is what proves `asset-map:compile` and the
 stylesheet cache warmer both ran, and in the right order. Requests go ten at a time (`SmokeTestClient::CONCURRENCY`):
-firing every url at once exhausts a shared host's PHP workers, which then answer 503.
+firing every url at once exhausts a shared host's PHP workers, which then answer 503. A url answering 502, 503, 504 or
+nothing gets a second and last try two seconds later (`SmokeTestClient::TRANSIENT_STATUSES`); a 500 or a 404 is reported at once.
 
 A site in maintenance answers 503 on every url by construction, so the command checks nothing and exits
 0. It is deliberately **not** a health-check provider: that one judges quality weekly and persists rows,

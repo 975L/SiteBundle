@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.9
+
+Smoke test tries a transient failure again before reporting it
+
+- `SmokeTestClient::check()`: a url answering 0, 502, 503 or 504 gets a second and last try after two seconds (05/11/2026)
+- `SmokeTestClient::findAssets()`: the same second try on the home page (05/11/2026)
+
 ## v8.38.8
 
 CI tests PHP 8.5 and 8.6, bin/ci.sh replays them locally

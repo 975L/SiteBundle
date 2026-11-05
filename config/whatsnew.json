@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-05",
+        "description": [
+            {
+                "en": "The check that runs after each deployment and every hour tries a page that did not answer once more before raising an alert.",
+                "fr": "La vérification lancée après chaque déploiement et toutes les heures réessaie une page qui n'a pas répondu avant de lever une alerte.",
+                "es": "La comprobación que se ejecuta tras cada despliegue y cada hora vuelve a probar una página que no ha respondido antes de lanzar una alerta."
+            }
+        ]
+    },
+    {
         "date": "2026-11-01",
         "description": [
             {

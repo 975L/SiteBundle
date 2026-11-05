@@ -29,13 +29,32 @@ class SmokeTestClient
     // A deployment purges var/cache/prod, so the very first request rebuilds it and can legitimately be slow - a plain timeout here would report a healthy site as broken
     private const int FIRST_BYTE_TIMEOUT = 60;
 
+    // Answers a php-fpm child or a proxy can give once on a healthy site, 0 being no answer at all. Measured on papa-calin.com: one request of 131 reset by php-fpm right after a deployment, 503 from Apache, 200 on the next try. A 500 or a 404 comes from the application itself and is reported at once
+    private const array TRANSIENT_STATUSES = [0, 502, 503, 504];
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly int $retryDelay = 2,
     ) {
     }
 
-    // [url => status code], in the order given. 0 means no answer at all (DNS, TLS, connection refused): the caller reports it like any other non-200 rather than letting one dead url abort the whole run
+    // [url => status code], in the order given. 0 means no answer at all (DNS, TLS, connection refused): the caller reports it like any other non-200 rather than letting one dead url abort the whole run. Urls answering a transient status get a second and last try after $retryDelay seconds, the second answer being the one reported
     public function check(array $urls): array
+    {
+        $statuses = $this->checkInBatches($urls);
+
+        $transient = array_keys(array_filter($statuses, static fn (int $status): bool => \in_array($status, self::TRANSIENT_STATUSES, true)));
+        if (!$transient) {
+            return $statuses;
+        }
+
+        sleep($this->retryDelay);
+
+        return array_replace($statuses, $this->checkInBatches($transient));
+    }
+
+    // Splits the urls into batches of CONCURRENCY, so a whole run never exhausts the hosting's PHP workers
+    private function checkInBatches(array $urls): array
     {
         $statuses = [];
         foreach (array_chunk($urls, self::CONCURRENCY) as $batch) {
@@ -82,16 +101,7 @@ class SmokeTestClient
     // Distinct absolute urls of every css/js asset the page's markup references, relative ones resolved against $baseUrl. Empty if the page can't be fetched at all - check() is what reports that url as broken, this doesn't need to say it twice
     public function findAssets(string $url, string $baseUrl): array
     {
-        try {
-            $html = $this->httpClient->request('GET', $url, [
-                'headers' => ['User-Agent' => self::USER_AGENT],
-                'timeout' => self::TIMEOUT,
-            ])->getContent();
-        } catch (\Throwable) {
-            return [];
-        }
-
-        if (!preg_match_all(self::ASSET_PATTERN, $html, $matches)) {
+        if (!preg_match_all(self::ASSET_PATTERN, $this->fetchHtml($url), $matches)) {
             return [];
         }
 
@@ -103,5 +113,28 @@ class SmokeTestClient
         }
 
         return array_values(array_unique($assets));
+    }
+
+    // The page's markup, empty if it can't be fetched. A transient status gets the same second and last try as check(), a home page reset once otherwise failing the run on "no asset found"
+    private function fetchHtml(string $url, bool $retry = true): string
+    {
+        $status = 0;
+        try {
+            $response = $this->httpClient->request('GET', $url, [
+                'headers' => ['User-Agent' => self::USER_AGENT],
+                'timeout' => self::TIMEOUT,
+            ]);
+            $status = $response->getStatusCode();
+
+            return $response->getContent();
+        } catch (\Throwable) {
+            if (!$retry || !\in_array($status, self::TRANSIENT_STATUSES, true)) {
+                return '';
+            }
+        }
+
+        sleep($this->retryDelay);
+
+        return $this->fetchHtml($url, false);
     }
 }
