@@ -268,7 +268,22 @@ class SiteCreateCommandTest extends TestCase
 
         $this->callSecurityStep('ensureLoginThrottling');
 
-        $this->assertStringContainsString("            login_throttling: { max_attempts: 5 }\n            lazy: true", file_get_contents($path));
+        $this->assertStringContainsString("            login_throttling: { max_attempts: 5, interval: '15 minutes' }\n            lazy: true", file_get_contents($path));
+    }
+
+    // A line written by an earlier run gets the 15-minute window, a customised one is left alone
+    public function testEnsureLoginThrottlingUpgradesOnlyTheLineAnEarlierRunWrote(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            login_throttling: { max_attempts: 5 }\n            lazy: true\n");
+
+        $this->callSecurityStep('ensureLoginThrottling');
+
+        $this->assertSame("security:\n    firewalls:\n        main:\n            login_throttling: { max_attempts: 5, interval: '15 minutes' }\n            lazy: true\n", file_get_contents($path));
+
+        file_put_contents($path, "security:\n    firewalls:\n        main:\n            login_throttling: { max_attempts: 3 }\n");
+        $this->callSecurityStep('ensureLoginThrottling');
+
+        $this->assertSame("security:\n    firewalls:\n        main:\n            login_throttling: { max_attempts: 3 }\n", file_get_contents($path));
     }
 
     // Config left over from an earlier run, encrypted with a key that no longer exists: the wizard names the slugs instead of letting step 4/7 die on a bare "Decryption failed" from inside the vault

@@ -231,7 +231,23 @@ class SiteCreateCommand extends Command
     // Wires Symfony's native login_throttling (rate-limits /login attempts by username+IP, no custom code needed) onto the "main" firewall, requires the symfony/rate-limiter package
     private function ensureLoginThrottling(SymfonyStyle $io): void
     {
-        $this->addToMainFirewall($io, 'login_throttling', 'login_throttling: { max_attempts: 5 }', 'login_throttling enregistré (nécessite composer require symfony/rate-limiter)');
+        $added = 'login_throttling: { max_attempts: 5, interval: \'15 minutes\' }';
+        $this->upgradeLoginThrottling($io, $added);
+        $this->addToMainFirewall($io, 'login_throttling', $added, 'login_throttling enregistré (nécessite composer require symfony/rate-limiter)');
+    }
+
+    // Replaces the line an earlier run wrote (one-minute window by default), leaving a customised login_throttling untouched
+    private function upgradeLoginThrottling(SymfonyStyle $io, string $added): void
+    {
+        $path = $this->projectDir . '/config/packages/security.yaml';
+        $content = is_file($path) ? file_get_contents($path) : '';
+        $upgraded = preg_replace('/^(\s*)login_throttling: \{ max_attempts: 5 \}[ \t]*$/m', '${1}' . $added, $content, 1, $count);
+        if (0 === $count) {
+            return;
+        }
+
+        file_put_contents($path, $upgraded);
+        $io->text('  ✓ login_throttling passé à 15 minutes sur le firewall "main" dans security.yaml');
     }
 
     // Wires c975l/config-bundle's LoginEntryPoint onto the "main" firewall, so an anonymous visitor asking for "/en/..." reaches the login form in English

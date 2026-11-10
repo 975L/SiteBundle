@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.38.11
+
+Site scaffold counts failed logins over 15 minutes
+
+- `c975l:site:create`: `login_throttling` counts attempts over 15 minutes instead of one (10/11/2026)
+- `c975l:site:create` upgrades the `login_throttling` line an earlier run wrote to the 15-minute window (10/11/2026)
+
 ## v8.38.10
 
 Tutorial films stay out of EasyAdmin's prose
