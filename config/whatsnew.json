@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-11",
+        "description": [
+            {
+                "en": "Before moving to the trash, deleting for good or duplicating, the confirmation now names the page concerned, so you know at a glance which one you are about to act on.",
+                "fr": "Avant une mise à la corbeille, une suppression définitive ou une duplication, la confirmation nomme désormais la page concernée, pour savoir d'un coup d'œil sur quoi vous allez agir.",
+                "es": "Antes de mover a la papelera, eliminar definitivamente o duplicar, la confirmación nombra ahora la página en cuestión, para saber de un vistazo sobre qué va a actuar."
+            }
+        ]
+    },
+    {
         "date": "2026-11-05",
         "description": [
             {

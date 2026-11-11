@@ -663,7 +663,7 @@ class PageCrudController extends AbstractCrudController
         $deletePermanentlyAction = Action::new('deletePermanently', t('action.delete_permanently', [], 'config'), 'fa fa-trash')
             ->linkToUrl(fn (Page $page): string => $this->trashActionUrl('deletePermanently', $page, self::DELETE_PERMANENTLY_CSRF_TOKEN))
             ->displayIf(static fn (Page $page): bool => $page->isDeleted())
-            ->askConfirmation(t('confirm.delete_permanently', [], 'site'))
+            ->askConfirmation(self::titledConfirmation('confirm.delete_permanently'))
             ->asDangerAction();
 
         // Restores a page out of the trash, only shown once already in the trash
@@ -699,7 +699,7 @@ class PageCrudController extends AbstractCrudController
                 ->set('token', $this->csrfTokenManager->getToken(self::DUPLICATE_CSRF_TOKEN)->getValue())
                 ->generateUrl())
             ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
-            ->askConfirmation(t('confirm.duplicate', [], 'site'));
+            ->askConfirmation(self::titledConfirmation('confirm.duplicate'));
 
         // ActionFactory overwrites an ActionGroupDto's cssClass with "btn" - the class goes through addCssClass(), which the factory leaves alone and action_group.html.twig renders separately, so SiteGuidedProjectProvider's ".action-export" step has something to highlight
         $exportGroup = ActionGroup::new('export', t('label.export', [], 'site'), 'fa fa-download')
@@ -754,14 +754,14 @@ class PageCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action
                     ->setIcon('fa fa-box-archive')
-                    ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
+                    ->askConfirmation(self::titledConfirmation('confirm.move_to_trash'))
                     ->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
                 $this->translator->trans('action.move_to_trash', [], 'config'),
             ))
             ->update(Crud::PAGE_DETAIL, Action::DELETE, static fn (Action $action): Action => $action
                 ->setLabel(t('action.move_to_trash', [], 'config'))
                 ->setIcon('fa fa-box-archive')
-                ->askConfirmation(t('confirm.move_to_trash', [], 'site'))
+                ->askConfirmation(self::titledConfirmation('confirm.move_to_trash'))
                 ->displayIf(static fn (Page $page): bool => !$page->isDeleted()))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => EasyAdminActionHelper::toIconOnly(
                 $action->displayIf(static fn (Page $page): bool => !$page->isDeleted()),
@@ -831,6 +831,16 @@ class PageCrudController extends AbstractCrudController
             ->overrideTemplate('crud/new', '@c975LSite/management/page_crud_new.html.twig')
             ->addFormTheme('@c975LSite/management/page_crud_form_theme.html.twig')
         ;
+    }
+
+    // A confirmation naming the row it acts on, EasyAdmin handing the closure that row - one saved without a title is named by its id
+    private static function titledConfirmation(string $key): \Closure
+    {
+        return static function (Page $page) use ($key): TranslatableMessage {
+            $title = (string) $page->getTitle();
+
+            return t($key, ['%title%' => '' !== $title ? $title : '#' . $page->getId()], 'site');
+        };
     }
 
     // "Modifier « Accueil »", "Modifier « Accueil » (EN)" on a language screen

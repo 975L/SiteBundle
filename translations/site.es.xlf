@@ -100,15 +100,15 @@
             </trans-unit>
             <trans-unit id="X4j.TeG">
                 <source>confirm.delete_permanently</source>
-                <target>Esta acción es irreversible y eliminará definitivamente la página y su contenido. ¿Continuar?</target>
+                <target>Esta acción es irreversible y eliminará definitivamente la página «%title%» y su contenido. ¿Continuar?</target>
             </trans-unit>
             <trans-unit id="gtzKxeG">
                 <source>confirm.duplicate</source>
-                <target>Se creará una copia no publicada de esta página y de todo su contenido (bloques, medios). ¿Continuar?</target>
+                <target>Se creará una copia no publicada de la página «%title%» y de todo su contenido (bloques, medios). ¿Continuar?</target>
             </trans-unit>
             <trans-unit id="dm8sVDz">
                 <source>confirm.move_to_trash</source>
-                <target>Esta página se moverá a la papelera: se despublicará, pero su contenido se conserva y podrá restaurarla. ¿Continuar?</target>
+                <target>La página «%title%» se moverá a la papelera: se despublicará, pero su contenido se conserva y podrá restaurarla. ¿Continuar?</target>
             </trans-unit>
             <trans-unit id="AJcGJ1z">
                 <source>confirm.publish_as_replacement</source>

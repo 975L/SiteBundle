@@ -1381,9 +1381,11 @@ class PageCrudControllerTest extends TestCase
         foreach ([Crud::PAGE_INDEX, Crud::PAGE_DETAIL] as $pageName) {
             $confirmation = $actions->getAsDto($pageName)->getAction($pageName, Action::DELETE)->getConfirmationMessage();
 
-            $this->assertNotTrue($confirmation, sprintf('The delete action on "%s" still uses EasyAdmin default confirmation.', $pageName));
-            $this->assertInstanceOf(TranslatableInterface::class, $confirmation);
-            $this->assertSame('confirm.move_to_trash', $confirmation->getMessage());
+            $this->assertInstanceOf(\Closure::class, $confirmation, sprintf('The delete action on "%s" still uses EasyAdmin default confirmation.', $pageName));
+            $message = $confirmation(new Page()->setTitle('item-1'));
+            $this->assertInstanceOf(TranslatableInterface::class, $message);
+            $this->assertSame('confirm.move_to_trash', $message->getMessage());
+            $this->assertSame(['%title%' => 'item-1'], $message->getParameters());
         }
     }
 
@@ -2462,5 +2464,19 @@ class PageCrudControllerTest extends TestCase
         $manager->method('getToken')->willReturnCallback(static fn (string $tokenId): CsrfToken => new CsrfToken($tokenId, 'token'));
 
         return $manager;
+    }
+
+    // A confirmation names the row it acts on, resolved row by row, and a row saved without a title by its id
+    public function testTheDuplicateConfirmationNamesThePage(): void
+    {
+        $confirmation = new \ReflectionMethod(PageCrudController::class, 'titledConfirmation')->invoke(null, 'confirm.duplicate');
+        $untitled = new Page()->setTitle('');
+        new \ReflectionProperty(Page::class, 'id')->setValue($untitled, 7);
+
+        $this->assertSame(['%title%' => 'item-1'], $confirmation(new Page()->setTitle('item-1'))->getParameters());
+        $this->assertSame(['%title%' => 'item-2'], $confirmation(new Page()->setTitle('item-2'))->getParameters());
+        $this->assertSame(['%title%' => '#7'], $confirmation($untitled)->getParameters());
+        $this->assertSame('confirm.duplicate', $confirmation($untitled)->getMessage());
+        $this->assertSame('site', $confirmation($untitled)->getDomain());
     }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.39.0
+
+Trash, delete and duplicate confirmations name the page
+
+- Trash, permanent delete and duplicate confirmations name the page they act on (11/11/2026)
+- `easycorp/easyadmin-bundle` required in ^5.10 (11/11/2026)
+
 ## v8.38.11
 
 Site scaffold counts failed logins over 15 minutes
