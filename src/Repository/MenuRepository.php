@@ -49,7 +49,7 @@ class MenuRepository extends ServiceEntityRepository
         return $menu;
     }
 
-    // The menus owning any of the given Block rows - what MenuBlockEditUrlProvider points the front-end "Edit" hover button at, PageRepository::findByBlockIds() being its Page counterpart. Filtered through EXISTS, never a fetch-join on the ids, which would leave a menu read later in the request holding those blocks alone, and MenuExtension caching it so
+    // The menus owning any of the given Block rows - what MenuBlockEditUrlProvider points the front-end "Edit" hover button at, PageRepository::findByBlockIds() being its Page counterpart. Filtered through EXISTS, never a fetch-join on the ids, which would leave a menu read later in the request holding those blocks alone and MenuExtension caching it so, every block of each menu then joined unfiltered for the caller walking them
     public function findByBlockIds(array $blockIds): array
     {
         if ([] === $blockIds) {
@@ -57,6 +57,8 @@ class MenuRepository extends ServiceEntityRepository
         }
 
         return $this->createQueryBuilder('m')
+            ->addSelect('b')
+            ->leftJoin('m.blocks', 'b')
             ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF m.blocks AND k.id IN (:blockIds))')
             ->setParameter('blockIds', $blockIds)
             ->getQuery()

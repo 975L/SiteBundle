@@ -97,4 +97,37 @@ class PageRepositoryTest extends TestCase
         $this->assertSame([$page], $this->repository->findByBlockIds([$legalBlockId]));
         $this->assertSame($page, $this->repository->findOneByBlockKind('hero'));
     }
+
+    // Each lookup by block, and the one by ids a menu runs for its anchors, hands back its pages with all their blocks read in its own query - the legal pages, forms, edit buttons and anchors walking them would otherwise cost one query per page
+    public function testALookupByBlockReadsEveryBlockOfItsPagesUpFront(): void
+    {
+        $page = new Page()->setTitle('form')->setSlug('form')->setCreation(new \DateTime())->setModification(new \DateTime())->setIsPublished(true)->setIsIndexable(true);
+        $page->addBlock(new Block()->setKind('legal_model')->setPosition(0));
+        $page->addBlock(new Block()->setKind('form')->setPosition(1)->setData(['name' => 'register']));
+        $page->addBlock(new Block()->setKind('hero')->setPosition(2));
+        $this->entityManager->persist($page);
+        $this->entityManager->flush();
+        $blockId = $page->getBlocks()->first()->getId();
+        $pageId = $page->getId();
+
+        $lookups = [
+            fn (): array => $this->repository->findByLegalModels(['']),
+            fn (): array => $this->repository->findByLegalModelsAnyStatus(['']),
+            fn (): array => $this->repository->findByBlockIds([$blockId]),
+            fn (): array => [$this->repository->findOneByBlockKind('hero')],
+            fn (): array => [$this->repository->findOneByFormBlockName('register')],
+            fn (): array => $this->repository->findByIdsWithBlocks([$pageId]),
+        ];
+        foreach ($lookups as $lookup) {
+            $this->entityManager->clear();
+            $pages = $lookup();
+
+            $this->assertCount(1, $pages);
+            $this->assertTrue($pages[0]->getBlocks()->isInitialized());
+            $this->assertCount(3, $pages[0]->getBlocks());
+        }
+
+        // No id, no query: an empty IN () is not valid SQL
+        $this->assertSame([], $this->repository->findByIdsWithBlocks([]));
+    }
 }

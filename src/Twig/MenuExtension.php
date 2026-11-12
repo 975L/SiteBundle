@@ -342,7 +342,14 @@ class MenuExtension
             return;
         }
 
-        foreach ($this->pageRepository->findBy(['id' => array_keys($ids)]) as $page) {
+        // A page reached through an anchor comes with its blocks, findSectionLabel() reading its sections next
+        $anchored = array_keys(array_filter($ids));
+        $plain = array_keys(array_diff_key($ids, array_flip($anchored)));
+        $pages = array_merge(
+            [] === $plain ? [] : $this->pageRepository->findBy(['id' => $plain]),
+            [] === $anchored ? [] : $this->pageRepository->findByIdsWithBlocks($anchored),
+        );
+        foreach ($pages as $page) {
             $this->pageCache[(string) $page->getId()] = $page;
         }
 
@@ -352,13 +359,16 @@ class MenuExtension
         }
     }
 
-    // The ids of every "page:ID" target of the given blocks not already cached, as keys (deduped) - a block of another kind, a "route:" target or an incomplete one contributes nothing
+    // The ids of every "page:ID" target of the given blocks not already cached, as keys (deduped), true when one of its links carries an anchor - a block of another kind, a "route:" target or an incomplete one contributes nothing
+    /** @return array<string, bool> */
     private function collectPageIds(Collection $blocks): array
     {
         $ids = [];
         foreach ($blocks as $block) {
-            // A container's own slots hold links too (a footer's links grouped in a "menu_group"), and one left out here would fall back to an individual find() at render time, which is exactly what this batch exists to avoid - the ids being keys, the union keeps them deduped
-            $ids += $this->collectPageIds($block->getSlots());
+            // A container's own slots hold links too (a footer's links grouped in a "menu_group"), and one left out here would fall back to an individual find() at render time, which is exactly what this batch exists to avoid
+            foreach ($this->collectPageIds($block->getSlots()) as $pageId => $anchored) {
+                $ids[$pageId] = $anchored || ($ids[$pageId] ?? false);
+            }
 
             if ('menu_link' !== $block->getKind()) {
                 continue;
@@ -366,7 +376,7 @@ class MenuExtension
 
             $parsed = self::parseTarget((string) ($block->getData()['target'] ?? ''));
             if ('page' === $parsed['type'] && null !== $parsed['pageId'] && !array_key_exists($parsed['pageId'], $this->pageCache)) {
-                $ids[$parsed['pageId']] = true;
+                $ids[$parsed['pageId']] = null !== $parsed['fragment'] || ($ids[$parsed['pageId']] ?? false);
             }
         }
 

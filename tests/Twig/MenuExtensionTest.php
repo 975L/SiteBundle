@@ -66,6 +66,9 @@ class MenuExtensionTest extends TestCase
         $repository->method('findBy')->willReturnCallback(
             static fn (array $criteria): array => array_values(array_intersect_key($pagesById, array_flip(array_map(strval(...), $criteria['id'] ?? []))))
         );
+        $repository->method('findByIdsWithBlocks')->willReturnCallback(
+            static fn (array $ids): array => array_values(array_intersect_key($pagesById, array_flip(array_map(strval(...), $ids))))
+        );
         $repository->method('findOneBy')->willReturnCallback(
             static fn (array $criteria): ?Page => array_find($pagesById, static fn (Page $page): bool => $page->getSlug() === ($criteria['slug'] ?? null))
         );
@@ -328,7 +331,7 @@ class MenuExtensionTest extends TestCase
         $this->assertSame(Menu::STYLE_BLOCK, $this->createExtension($this->createRegistry([]), [], $menuRepository, $cache)->getMenuStyle(Menu::LOCATION_FOOTER));
     }
 
-    // getMenuBlocks() preloads every "menu_link" block's target Page in one findBy() call, so the per-link getMenuLinkUrl()/getMenuLinkLabel() calls that follow (as a template would make, one pair per link) resolve from memory instead of one find() call each
+    // getMenuBlocks() preloads every "menu_link" block's target Page in one findBy() call, those reached through an anchor in one findByIdsWithBlocks() call, so the per-link getMenuLinkUrl()/getMenuLinkLabel() calls that follow (as a template would make, one pair per link) resolve from memory instead of one find() call each
     public function testGetMenuBlocksPreloadsAllMenuLinkTargetPagesInOneBatchQuery(): void
     {
         $pageA = new Page()->setTitle('About')->setSlug('about')->setIsPublished(true);
@@ -343,8 +346,12 @@ class MenuExtensionTest extends TestCase
         $pageRepository = $this->createMock(PageRepository::class);
         $pageRepository->expects($this->once())
             ->method('findBy')
-            ->with($this->callback(fn (array $criteria) => [] === array_diff(['42', '43'], $criteria['id']) && [] === array_diff($criteria['id'], ['42', '43'])))
-            ->willReturn([$pageA, $pageB]);
+            ->with(['id' => ['42']])
+            ->willReturn([$pageA]);
+        $pageRepository->expects($this->once())
+            ->method('findByIdsWithBlocks')
+            ->with(['43'])
+            ->willReturn([$pageB]);
         $pageRepository->expects($this->never())->method('find');
 
         $extension = new MenuExtension(
@@ -366,6 +373,7 @@ class MenuExtensionTest extends TestCase
         $this->assertSame('/page_display/about', $extension->getMenuLinkUrl('page:42'));
         $this->assertSame('/page_display/contact#services-7', $extension->getMenuLinkUrl('page:43#services-7'));
         $this->assertSame('About', $extension->getMenuLinkLabel('page:42'));
+        $this->assertSame('Contact', $extension->getMenuLinkLabel('page:43#services-7'));
     }
 
     // A footer's links can sit one level down, inside a "menu_group" - one left out of the batch would fall back to an individual find() at render time, which is exactly what the batch exists to avoid

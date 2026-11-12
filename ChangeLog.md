@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.39.2
+
+Pages and menus found by a block read all their blocks at once
+
+- Legal-model, block-kind, form and block-id lookups read every block of their pages and menus in the same query (12/11/2026)
+- Menu links with an anchor read their target page's blocks in one query (`PageRepository::findByIdsWithBlocks()`) (12/11/2026)
+
 ## v8.39.1
 
 Audit fixes: redirects, slugs, caches, imports and docs

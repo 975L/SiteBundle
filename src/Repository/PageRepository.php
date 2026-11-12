@@ -14,6 +14,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -92,6 +93,30 @@ class PageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult())
         ;
+    }
+
+    // The pages of the given ids, each with its blocks and their slots read up front - the pages a menu links to through an anchor, whose sections label the link (see MenuExtension::findSectionLabel())
+    /** @return list<Page> */
+    public function findByIdsWithBlocks(array $ids): array
+    {
+        if ([] === $ids) {
+            return [];
+        }
+
+        $pages = $this->createQueryBuilder('p')
+            ->select('p, b')
+            ->leftJoin('p.blocks', 'b')
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        foreach ($pages as $page) {
+            $this->withSlots($page);
+        }
+
+        return $pages;
     }
 
     // Find one page by slug (published only)
@@ -178,12 +203,11 @@ class PageRepository extends ServiceEntityRepository
         return null;
     }
 
-    // The published pages carrying a block of that kind - filtered through EXISTS and never a fetch-join, which would leave a page already in memory holding that kind's blocks alone, the next render then caching it truncated
+    // The published pages carrying a block of that kind
     /** @return list<Page> */
     private function publishedWithBlockKind(string $kind): array
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.kind = :kind)')
+        return $this->withBlockMatching('k.kind = :kind')
             ->andWhere('p.isPublished = :published')
             ->andWhere('p.isDeleted = :deleted')
             ->setParameter('kind', $kind)
@@ -201,9 +225,7 @@ class PageRepository extends ServiceEntityRepository
             return [];
         }
 
-        // EXISTS rather than a fetch-join filtered on the ids, which would initialise each page's collection with those blocks alone
-        return $this->createQueryBuilder('p')
-            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.id IN (:blockIds))')
+        return $this->withBlockMatching('k.id IN (:blockIds)')
             ->setParameter('blockIds', $blockIds)
             ->getQuery()
             ->getResult()
@@ -236,9 +258,7 @@ class PageRepository extends ServiceEntityRepository
 
     private function findByLegalModelsWithStatus(array $models, bool $publishedOnly): array
     {
-        // EXISTS rather than a fetch-join filtered on the kind, which would leave the page holding its legal block alone for the render that follows
-        $queryBuilder = $this->createQueryBuilder('p')
-            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.kind = :kind)')
+        $queryBuilder = $this->withBlockMatching('k.kind = :kind')
             ->setParameter('kind', 'legal_model')
         ;
 
@@ -270,5 +290,15 @@ class PageRepository extends ServiceEntityRepository
         }
 
         return $result;
+    }
+
+    // The pages owning a block that matches $condition, every one of their blocks read in the same query: the match goes through EXISTS, never a filtered fetch-join that would leave a page in memory holding the matched blocks alone, and the unfiltered join spares the callers walking each page's blocks one query per page
+    private function withBlockMatching(string $condition): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->addSelect('b')
+            ->leftJoin('p.blocks', 'b')
+            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND ' . $condition . ')')
+        ;
     }
 }
