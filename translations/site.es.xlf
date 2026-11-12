@@ -650,6 +650,10 @@
                 <source>description.tutorial_guided_tour</source>
                 <target>Un recorrido por el back-office, pantalla por pantalla, antes de los tutoriales de cada bundle.</target>
             </trans-unit>
+            <trans-unit id="vT9nfCC">
+                <source>flash.page_cannot_replace</source>
+                <target>La página de inicio, una página ya publicada o en la papelera no puede reemplazar a otra: no se publicó nada.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>La página ha sido eliminada definitivamente.</target>

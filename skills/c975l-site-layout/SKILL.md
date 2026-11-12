@@ -236,7 +236,7 @@ Both read `site-hosted-by-*` / `site-made-by-*` from the config, and what they s
 which adds the Matomo origin to it on its own.
 
 Matomo, the cookie banner and the scroll buttons **belong to UiBundle, and its layout renders them** —
-`<twig:c975LUi:Analytics:Matomo/>`, `<twig:c975LUi:Cookie:Consent/>` and
+`<twig:c975LUi:Analytics:Tracker/>`, `<twig:c975LUi:Cookie:Consent/>` and
 `<twig:c975LUi:Scroll:Buttons/>`. Rendered by the layout and not by the footer, so **a site overriding
 `footer` keeps its tracking and its cookie banner**. The first two carry their own enable guard; the
 buttons point at the `id="top"` set on `<body>` and at the `<span id="bottom">` closing it, so a layout

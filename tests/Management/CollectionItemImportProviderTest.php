@@ -148,10 +148,33 @@ class CollectionItemImportProviderTest extends TestCase
 
         $file = $item->getFile();
         $this->assertNotNull($file);
-        $this->assertSame($filesDir . '/files/project-cover.jpg', $file->getPathname());
+        $this->assertSame(realpath($filesDir . '/files/project-cover.jpg'), $file->getPathname());
+        // The archive's copy is left where it is, whatever Vich decides
+        $this->assertFalse($file->isRemoveReplacedFile());
         $this->assertSame('fake-image-bytes', file_get_contents($file->getPathname()));
 
         unlink($file->getPathname());
+        rmdir($filesDir . '/files');
+        rmdir($filesDir);
+    }
+
+    // A manifest naming a file outside its archive (".env.local" two levels up) gets no file at all, the item itself still imported
+    public function testImportIgnoresAPathLeavingTheArchive(): void
+    {
+        $filesDir = $this->createFilesDir('files/project-cover.jpg', 'fake-image-bytes');
+        $persisted = [];
+        $em = $this->createStub(EntityManagerInterface::class);
+        $em->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $provider = new CollectionItemImportProvider($em, $this->createCollectionItemRepository(), $this->createCollectionGroupResolver(new CollectionGroup()->setName('Projects')->setSlug('projects')), $this->createUrlWriter());
+        $result = $provider->import([['collectionGroup' => 'Projects', 'title' => 'Item 1', 'slug' => 'item-1', 'file' => '../../.env.local']], $filesDir);
+
+        $this->assertSame(['created' => 1, 'updated' => 0], $result);
+        $this->assertNull($persisted[0]->getFile());
+
+        unlink($filesDir . '/files/project-cover.jpg');
         rmdir($filesDir . '/files');
         rmdir($filesDir);
     }

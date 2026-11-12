@@ -11,6 +11,7 @@
 namespace c975L\SiteBundle\Repository;
 
 use c975L\SiteBundle\Entity\Menu;
+use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Repository\BlockRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -48,7 +49,7 @@ class MenuRepository extends ServiceEntityRepository
         return $menu;
     }
 
-    // The menus owning any of the given Block rows - what MenuBlockEditUrlProvider points the front-end "Edit" hover button at, PageRepository::findByBlockIds() being its Page counterpart. Only the matched blocks are hydrated into each menu's collection, which is all the caller reads
+    // The menus owning any of the given Block rows - what MenuBlockEditUrlProvider points the front-end "Edit" hover button at, PageRepository::findByBlockIds() being its Page counterpart. Filtered through EXISTS, never a fetch-join on the ids, which would leave a menu read later in the request holding those blocks alone, and MenuExtension caching it so
     public function findByBlockIds(array $blockIds): array
     {
         if ([] === $blockIds) {
@@ -56,9 +57,7 @@ class MenuRepository extends ServiceEntityRepository
         }
 
         return $this->createQueryBuilder('m')
-            ->select('m, b')
-            ->innerJoin('m.blocks', 'b')
-            ->andWhere('b.id IN (:blockIds)')
+            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF m.blocks AND k.id IN (:blockIds))')
             ->setParameter('blockIds', $blockIds)
             ->getQuery()
             ->getResult()

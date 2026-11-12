@@ -1,5 +1,33 @@
 # Changelog
 
+## v8.39.1
+
+Audit fixes: redirects, slugs, caches, imports and docs
+
+- README and `c975l-site-layout` skill name `<twig:c975LUi:Analytics:Tracker>` and the `analytics-matomo-*` keys (11/11/2026)
+- A page saved under a slug removes the redirect or gone row left on its urls (12/11/2026)
+- Renaming or deleting a page redirects or marks gone its url in every translated language (12/11/2026)
+- A slug another page holds gets `-2`, `-3`... on save instead of a 500 (12/11/2026)
+- *Publish as replacement* refused for the home page and a published or trashed copy (12/11/2026)
+- Duplicating or replacing a page keeps title and slug within 100 characters (12/11/2026)
+- Page routes accept a slug starting with `pdf` (12/11/2026)
+- Importing a trashed page takes it out of the trash (12/11/2026)
+- Collection item imports read each file through `ArchivePath::resolve()` with an allowed extension, never deleting the source (12/11/2026)
+- `site_page()` returns a public page alone, the articles slider skips hidden articles and links in the language read (12/11/2026)
+- Articles slider invalidated on an article, its image, its page or the page's title translation (12/11/2026)
+- Legal models invalidated when a page changes, their annexes never listing a members-only page (12/11/2026)
+- Cache listeners invalidate in `postFlush` (12/11/2026)
+- `findByBlockIds()`, `findOneByBlockKind()` and legal-model lookups filter through `EXISTS`, pages and menus keeping all their blocks (12/11/2026)
+- `LinkTargetChoices::linkTargets()` built once per request (12/11/2026)
+- Translation health check errors only for a page translated in no language (12/11/2026)
+- Footer prints the copyright notice when the copyright link is hidden or its page unpublished (12/11/2026)
+- E-mail menus leave out links to members-only pages, `menu_group` links included (`menu_email_blocks()`) (12/11/2026)
+- README documents that menu synchronisation assumes identical page ids (12/11/2026)
+- `Assert\Length` on `Menu::$location`, `Menu::$style`, `Page::$archivedSlug`, `CollectionItem::$filename` and `$mimeType` (12/11/2026)
+- Home page JSON-LD printed from a `{% set %}` capture instead of `|raw` (12/11/2026)
+- `CodeRulesTest` replays ConfigBundle's audit rules (12/11/2026)
+- `c975l/core-bundle` required in ^1.90 (12/11/2026)
+
 ## v8.39.0
 
 Trash, delete and duplicate confirmations name the page

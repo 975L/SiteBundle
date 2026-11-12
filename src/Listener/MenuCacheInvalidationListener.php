@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Listener;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Listener\AbstractBlockCacheInvalidationListener;
+use c975L\UiBundle\Listener\PostFlushTagInvalidationTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -21,18 +22,28 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
+#[AsDoctrineListener(event: Events::postFlush)]
 class MenuCacheInvalidationListener extends AbstractBlockCacheInvalidationListener
 {
+    // The tags are gathered on each event and emptied after the commit, or a concurrent request would cache the old state again
+    use PostFlushTagInvalidationTrait;
+
     public function __construct(
         private readonly TagAwareCacheInterface $cache,
     ) {
+    }
+
+    // The pool the tags are emptied from
+    private function tagCache(): TagAwareCacheInterface
+    {
+        return $this->cache;
     }
 
     // The Menu row is watched for its own layout style (see Menu::$style), which no Block event signals. Every Block kind is watched, not "menu_link"/"menu_group" alone: a footer and the "navbar-brand" menu take any kind and a Block does not know its owner, so a removed tagline stayed cached for good - a page block saved only costs the menus one lookup on the next request
     protected function invalidate(object $entity): void
     {
         if ($entity instanceof Menu || $entity instanceof Block) {
-            $this->cache->invalidateTags(['menus_all']);
+            $this->queueTags(['menus_all']);
         }
     }
 }

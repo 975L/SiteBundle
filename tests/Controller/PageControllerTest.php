@@ -24,6 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -129,6 +130,23 @@ class PageControllerTest extends TestCase
         );
 
         return $twig;
+    }
+
+    // A slug starting with "pdf" ("pdf-a-telecharger") is a page like any other: no route of the bundle lives under /pages/pdf any more
+    public function testEveryPageRouteAcceptsASlugStartingWithPdf(): void
+    {
+        $checked = 0;
+        foreach (new \ReflectionClass(PageController::class)->getMethods() as $method) {
+            foreach ($method->getAttributes(Route::class) as $attribute) {
+                $requirement = $attribute->newInstance()->requirements['page'] ?? null;
+                if (null !== $requirement) {
+                    $this->assertMatchesRegularExpression('#^(' . $requirement . ')$#', 'pdf-a-telecharger', $method->getName());
+                    ++$checked;
+                }
+            }
+        }
+
+        $this->assertSame(4, $checked);
     }
 
     public function testRedirectPagesRedirectsToHome(): void

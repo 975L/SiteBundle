@@ -74,12 +74,14 @@ class CollectionItem implements VichImageResizableInterface, VichMediaNamableInt
     private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $filename = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $size = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $mimeType = null;
 
     #[ORM\Column(nullable: true)]

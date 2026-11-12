@@ -77,6 +77,20 @@ class MenuExtension
         return $this->menuBlocksCache[$location];
     }
 
+    // What an e-mail's menu prints: a group's links taken out of it, and every link left to guests, to members or leading to a page kept for members dropped - an e-mail has no visitor to show them to, and render_block() of a group would print its slots unfiltered from its cached html (see emails/footer.html.twig)
+    /** @return list<Block> */
+    #[AsTwigFunction('menu_email_blocks')]
+    public function getEmailMenuBlocks(string $location): array
+    {
+        $blocks = [];
+        foreach ($this->getMenuBlocks($location) as $block) {
+            array_push($blocks, ...('menu_group' === $block->getKind() ? $block->getSlots()->toArray() : [$block]));
+        }
+
+        return array_values(array_filter($blocks, fn (Block $block): bool => !\in_array($block->getData()['visibility'] ?? 'all', ['guests', 'members'], true)
+            && !$this->isMenuLinkMembersOnly($block->getData()['target'] ?? null)));
+    }
+
     // The layout an admin picked for that menu's items in the back-office (see Menu::STYLE_*), empty string when it was left to the site's theme - only the footer offers the choice, see MenuCrudController. Cached like the blocks are (its own key rather than a second value under theirs, so nothing has to deal with a cache entry saved in the previous shape), invalidated by the same tag
     #[AsTwigFunction('menu_style')]
     public function getMenuStyle(string $location): string

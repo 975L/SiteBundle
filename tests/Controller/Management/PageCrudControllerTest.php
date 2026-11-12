@@ -2479,4 +2479,170 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame('confirm.duplicate', $confirmation($untitled)->getMessage());
         $this->assertSame('site', $confirmation($untitled)->getDomain());
     }
+
+    // --- 12/11/2026 audit: the page wins over redirects, every language redirected, slugs and titles kept unique and within their columns ---
+
+    // A translator answering the writing language and English for every page
+    private function bilingualTranslator(): PageTranslator
+    {
+        $pageTranslator = $this->createStub(PageTranslator::class);
+        $pageTranslator->method('translatedLocales')->willReturn(['fr', 'en']);
+
+        return $pageTranslator;
+    }
+
+    // A redirect repository whose findOneByFromPath() answers from these rows, keyed by path
+    private function redirectsByPath(array $redirects): RedirectRepository
+    {
+        $repository = $this->createStub(RedirectRepository::class);
+        $repository->method('findOneByFromPath')->willReturnCallback(static fn (string $path): ?Redirect => $redirects[$path] ?? null);
+        $repository->method('findByToUrl')->willReturn([]);
+
+        return $repository;
+    }
+
+    // A "gone" row left by a removed page, or a redirect left by a renamed one, would answer 410 or send elsewhere before the router reaches a new page taking the slug back
+    public function testANewPageRemovesTheRedirectsLeftOnItsUrls(): void
+    {
+        $gone = new Redirect()->setFromPath('/pages/promo')->setGone(true);
+        $localized = new Redirect()->setFromPath('/en/pages/promo')->setToUrl('/en/pages/b');
+
+        $removed = [];
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('remove')->willReturnCallback(static function (object $entity) use (&$removed): void {
+            $removed[] = $entity;
+        });
+
+        $controller = $this->createController([
+            'redirectRepository' => $this->redirectsByPath(['/pages/promo' => $gone, '/en/pages/promo' => $localized]),
+            'pageTranslator' => $this->bilingualTranslator(),
+        ]);
+        $controller->persistEntity($manager, new Page()->setTitle('Promo')->setSlug('promo'));
+
+        $this->assertSame([$gone, $localized], $removed);
+    }
+
+    // An unpublished page saved under a slug a redirect holds takes it back as well: the day it is published, its url must reach it
+    public function testAnUpdatedDraftRemovesTheRedirectLeftOnItsUrl(): void
+    {
+        $left = new Redirect()->setFromPath('/pages/a')->setToUrl('/pages/b');
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->method('getUnitOfWork')->willReturn($this->createManagerWithOriginalData(['slug' => 'a', 'title' => 'A', 'isPublished' => false])->getUnitOfWork());
+        $manager->expects($this->once())->method('remove')->with($left);
+
+        $this->createController(['redirectRepository' => $this->redirectsByPath(['/pages/a' => $left])])
+            ->updateEntity($manager, new Page()->setTitle('A')->setSlug('a'));
+    }
+
+    // A renamed page's url is redirected in each language it is translated in, not only in the writing one
+    public function testARenamedPageIsRedirectedInEveryLanguage(): void
+    {
+        $page = new Page()->setTitle('Same Title')->setSlug('new-slug')->setIsPublished(true);
+        $manager = $this->createManagerWithOriginalData(['slug' => 'old-slug', 'title' => 'Same Title', 'isPublished' => true]);
+        $persisted = [];
+        $manager->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $this->createController(['redirectRepository' => $this->redirectsByPath([]), 'pageTranslator' => $this->bilingualTranslator()])
+            ->updateEntity($manager, $page);
+
+        $redirects = array_values(array_filter($persisted, static fn (object $entity): bool => $entity instanceof Redirect));
+        $this->assertSame(
+            ['/pages/old-slug' => '/pages/new-slug', '/en/pages/old-slug' => '/en/pages/new-slug'],
+            array_combine(array_map(static fn (Redirect $r): string => (string) $r->getFromPath(), $redirects), array_map(static fn (Redirect $r): ?string => $r->getToUrl(), $redirects))
+        );
+    }
+
+    // A page removed for good answers 410 in each of its languages
+    public function testDeletePermanentlyLeavesAGoneRowInEveryLanguage(): void
+    {
+        $persisted = [];
+        $manager = $this->createStub(EntityManagerInterface::class);
+        $manager->method('persist')->willReturnCallback(static function (object $entity) use (&$persisted): void {
+            $persisted[] = $entity;
+        });
+
+        $controller = $this->createController(['redirectRepository' => $this->redirectsByPath([]), 'pageTranslator' => $this->bilingualTranslator()]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+            'request_stack' => $this->createRequestStackWithSession(),
+        ]));
+        $controller->deletePermanently($this->createAdminContext(new Page()->setTitle('Old')->setSlug('old-page')), new Request(['token' => 'token']), $manager);
+
+        $this->assertSame(['/pages/old-page', '/en/pages/old-page'], array_map(static fn (Redirect $r): ?string => $r->getFromPath(), $persisted));
+    }
+
+    // A title renamed to one another page's slug already stands for gets a suffix, rather than a unique constraint violation
+    public function testARenamedTitleTakingAnotherPagesSlugGetsASuffix(): void
+    {
+        $other = new Page()->setSlug('contact');
+        new \ReflectionProperty(Page::class, 'id')->setValue($other, 2);
+        $page = new Page()->setTitle('Contact')->setSlug('tarifs');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 1);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturnCallback(static fn (array $criteria): ?Page => 'contact' === $criteria['slug'] ? $other : null);
+
+        $this->createController(['pageRepository' => $pageRepository])
+            ->updateEntity($this->createManagerWithOriginalData(['slug' => 'tarifs', 'title' => 'Tarifs']), $page);
+
+        $this->assertSame('contact-2', $page->getSlug());
+    }
+
+    // The page's own slug is no collision with itself
+    public function testASavedPageKeepsItsOwnSlug(): void
+    {
+        $page = new Page()->setTitle('Contact')->setSlug('contact');
+        new \ReflectionProperty(Page::class, 'id')->setValue($page, 1);
+
+        $pageRepository = $this->createStub(PageRepository::class);
+        $pageRepository->method('findOneBy')->willReturn($page);
+
+        $this->createController(['pageRepository' => $pageRepository])
+            ->updateEntity($this->createManagerWithOriginalData(['slug' => 'contact', 'title' => 'Contact']), $page);
+
+        $this->assertSame('contact', $page->getSlug());
+    }
+
+    // The home page, a page already online or one in the trash replaces nothing: the root would answer 404, or a url be lost with no redirect
+    public function testPublishAsReplacementRefusesACopyThatCannotGiveUpItsPlace(): void
+    {
+        foreach ([new Page()->setSlug('home'), new Page()->setSlug('online')->setIsPublished(true), new Page()->setSlug('binned')->setIsDeleted(true)] as $copy) {
+            $copy->setTitle('Copy')->setReplaces(7);
+            $original = new Page()->setTitle('Original')->setSlug('original')->setIsPublished(true);
+            new \ReflectionProperty(Page::class, 'id')->setValue($original, 7);
+            $pageRepository = $this->createStub(PageRepository::class);
+            $pageRepository->method('find')->willReturn($original);
+
+            $manager = $this->createMock(EntityManagerInterface::class);
+            $manager->expects($this->never())->method('flush');
+
+            $requestStack = $this->createRequestStackWithSession();
+            $controller = $this->createController(['pageRepository' => $pageRepository]);
+            $controller->setContainer($this->createContainer([
+                'security.authorization_checker' => $this->createAuthorizationChecker(true),
+                'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+                'request_stack' => $requestStack,
+            ]));
+
+            $controller->publishAsReplacement($this->createAdminContext($copy), new Request(['token' => 'token']), $manager);
+
+            $this->assertSame('original', $original->getSlug());
+            $this->assertSame(['flash.page_cannot_replace'], $requestStack->getSession()->getFlashBag()->get('danger'));
+        }
+    }
+
+    // A copy of a page whose title and slug are near the 100 characters of their columns still fits them
+    public function testTheCopyOfALongPageFitsItsColumns(): void
+    {
+        $source = new Page()->setTitle(str_repeat('t', 100))->setSlug(str_repeat('s', 100));
+
+        $copy = $this->invokePrivate($this->createController(), 'clonePage', [$source]);
+
+        $this->assertLessThanOrEqual(100, mb_strlen($copy->getTitle()));
+        $this->assertStringEndsWith(' (label.copy_suffix)', $copy->getTitle());
+        $this->assertLessThanOrEqual(100, \strlen($copy->getSlug()));
+    }
 }

@@ -147,7 +147,7 @@ class PageController extends AbstractController
         path: '/pages/{page}',
         name: 'redirect_pages_wrong_methods',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
+            'page' => '[a-zA-Z0-9\-\/]+',
         ],
         methods: ['POST', 'PUT', 'PATCH']
     )]
@@ -163,7 +163,7 @@ class PageController extends AbstractController
         name: 'page_display_localized',
         requirements: [
             '_locale' => '%c975l_config.locales_pattern%',
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
+            'page' => '[a-zA-Z0-9\-\/]+',
         ],
         methods: ['GET']
     )]
@@ -171,7 +171,7 @@ class PageController extends AbstractController
         path: '/pages/{page}',
         name: 'page_display',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
+            'page' => '[a-zA-Z0-9\-\/]+',
         ],
         methods: ['GET']
     )]
@@ -338,7 +338,7 @@ class PageController extends AbstractController
         path: '/pages/{page}/preview',
         name: 'page_preview',
         requirements: [
-            'page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)',
+            'page' => '[a-zA-Z0-9\-\/]+',
         ],
         methods: ['GET'],
         priority: 1

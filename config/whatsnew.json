@@ -1,5 +1,45 @@
 [
     {
+        "date": "2026-11-12",
+        "description": [
+            {
+                "en": "A new page taking back the address of a deleted or renamed one is now reached at once, instead of answering \"gone\" or sending visitors elsewhere.",
+                "fr": "Une nouvelle page qui reprend l'adresse d'une page supprimée ou renommée est désormais atteinte tout de suite, au lieu de répondre « supprimée » ou de renvoyer ailleurs.",
+                "es": "Una página nueva que retoma la dirección de una página eliminada o renombrada se alcanza ahora de inmediato, en lugar de responder «eliminada» o de enviar a otro sitio."
+            },
+            {
+                "en": "Renaming or deleting a page now also redirects, or marks as removed, its addresses in the other languages it is translated in.",
+                "fr": "Renommer ou supprimer une page redirige, ou marque comme supprimées, aussi ses adresses dans les autres langues où elle est traduite.",
+                "es": "Renombrar o eliminar una página redirige, o marca como eliminadas, también sus direcciones en los demás idiomas a los que está traducida."
+            },
+            {
+                "en": "Renaming a page to the title of another one no longer fails: its address gets a number, as for a new page.",
+                "fr": "Renommer une page avec le titre d'une autre n'échoue plus : son adresse reçoit un numéro, comme pour une nouvelle page.",
+                "es": "Renombrar una página con el título de otra ya no falla: su dirección recibe un número, como para una página nueva."
+            },
+            {
+                "en": "\"Publish as replacement\" is no longer offered on the home page nor on a page already online.",
+                "fr": "« Publier en remplacement » n'est plus proposé sur la page d'accueil ni sur une page déjà en ligne.",
+                "es": "«Publicar como reemplazo» ya no se ofrece en la página de inicio ni en una página ya publicada."
+            },
+            {
+                "en": "Importing a page found in the trash now takes it out of the trash.",
+                "fr": "Importer une page qui se trouve à la corbeille la sort désormais de la corbeille.",
+                "es": "Importar una página que está en la papelera la saca ahora de la papelera."
+            },
+            {
+                "en": "The articles slider only shows the articles of a public page, and is refreshed as soon as an article, its image or its page changes.",
+                "fr": "Le carrousel d'articles ne montre plus que les articles d'une page publique, et se met à jour dès qu'un article, son image ou sa page change.",
+                "es": "El carrusel de artículos solo muestra los artículos de una página pública, y se actualiza en cuanto cambia un artículo, su imagen o su página."
+            },
+            {
+                "en": "The translations check now only raises an error for a page translated in none of the site's languages, a page with a text or two missing being a warning.",
+                "fr": "Le contrôle des traductions ne lève plus d'erreur que pour une page traduite dans aucune des langues du site, une page à laquelle il manque un ou deux textes restant un avertissement.",
+                "es": "El control de traducciones solo da error para una página no traducida a ninguno de los idiomas del sitio; a una página a la que le faltan uno o dos textos le corresponde un aviso."
+            }
+        ]
+    },
+    {
         "date": "2026-11-11",
         "description": [
             {

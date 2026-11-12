@@ -114,6 +114,12 @@ class PageCrudController extends AbstractCrudController
     public const DUPLICATE_CSRF_TOKEN = 'page_duplicate';
     public const PUBLISH_AS_REPLACEMENT_CSRF_TOKEN = 'page_publish_as_replacement';
 
+    // Page::$title and Page::$slug are VARCHAR(100): a generated base is cut so its suffix ("-12", " (copy)") still fits
+    private const int TITLE_SLUG_LENGTH = 100;
+
+    // Room left by a slug base for UniqueSlug's "-N" suffix
+    private const int SLUG_SUFFIX_ROOM = 4;
+
     // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
     public const string CONTENT_LOCALE_PARAM = ContentLocaleScreen::PARAM;
 
@@ -635,7 +641,8 @@ class PageCrudController extends AbstractCrudController
             $subActions,
             static fn (ActionGroup $group, Action $subAction): ActionGroup => $group->addAction($subAction),
             ActionGroup::new('publishAsReplacement', t('action.publish_as_replacement', [], 'site'), 'fa fa-exchange-alt')
-                ->displayIf(static fn (Page $page): bool => !$page->isDeleted())
+                // Neither the home page, whose slug no copy can take over, nor a page already online, which has nothing left to replace
+                ->displayIf(static fn (Page $page): bool => !$page->isDeleted() && 'home' !== $page->getSlug() && !$page->isPublished())
                 // ActionFactory overwrites an ActionGroupDto's cssClass with "btn" - the class goes through addCssClass(), which the factory leaves alone and action_group.html.twig renders separately, so SiteGuidedProjectProvider's ".action-publishAsReplacement" step has something to highlight
                 ->addCssClass('action-publishAsReplacement')
                 ->asWarningActionGroup()
@@ -932,19 +939,25 @@ class PageCrudController extends AbstractCrudController
     // What removing a page for good takes, whether from its row button or from the batch action of the trash: its url and those pointing at it left answering 410, then the row and its blocks dropped
     private function removeForGood(EntityManagerInterface $entityManager, Page $page): void
     {
-        // Redirects pointing to this page's slug would otherwise dangle once it's gone. Turned into "gone" rows rather than deleted: their own urls led to content that is now just as removed, so they answer 410 like the page's own url below instead of dropping back to a 404 that says nothing
-        foreach ($this->redirectRepository->findByToUrl('/pages/' . $page->getSlug()) as $redirect) {
-            $redirect->setGone(true)->setToUrl(null);
-        }
-
-        // The page's own url would fall back to a plain 404 once the row is deleted - the 410 the trash served (see PageController::display()) only lasts as long as the page can still be restored. A "gone" Redirect keeps answering 410 for good, which search engines act on far faster. Skipped for "home", served at the site root that RedirectSubscriber leaves alone by design, and whenever a Redirect already covers that path: a target the admin set up deliberately says more than a dead end
-        $fromPath = '/pages/' . $page->getSlug();
-        if ('home' !== $page->getSlug() && null === $this->redirectRepository->findOneByFromPath($fromPath)) {
-            $entityManager->persist(new Redirect()->setFromPath($fromPath)->setGone(true));
+        // Each url of the page, the one of every language it is translated in too, read before the row and its translations go
+        foreach ($this->slugPaths($page, (string) $page->getSlug()) as $path) {
+            $this->markGone($entityManager, $page, $path);
         }
 
         $entityManager->remove($page);
         $entityManager->flush();
+    }
+
+    // Redirects pointing to this url would otherwise dangle once the page is gone: turned into "gone" rows, their own urls having led to content now just as removed. The url itself would fall back to a plain 404 - the 410 the trash served (see PageController::display()) only lasts as long as the page can still be restored - so a "gone" Redirect keeps answering 410 for good, which search engines act on far faster. Skipped for "home", served at the site root that RedirectSubscriber leaves alone by design, and whenever a Redirect already covers that path: a target the admin set up deliberately says more than a dead end
+    private function markGone(EntityManagerInterface $entityManager, Page $page, string $path): void
+    {
+        foreach ($this->redirectRepository->findByToUrl($path) as $redirect) {
+            $redirect->setGone(true)->setToUrl(null);
+        }
+
+        if ('home' !== $page->getSlug() && null === $this->redirectRepository->findOneByFromPath($path)) {
+            $entityManager->persist(new Redirect()->setFromPath($path)->setGone(true));
+        }
     }
 
     // Restores a page out of the trash - keeps its content untouched. If it was archived by publishAsReplacement(), tries to reclaim its real slug (free unless something else has since taken it), otherwise keeps the technical one and warns the admin to rename it manually.
@@ -1012,13 +1025,10 @@ class PageCrudController extends AbstractCrudController
         $now = new \DateTime();
         $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
 
+        $titleSuffix = ' (' . $suffix . ')';
         $copy = new Page()
-            ->setTitle($source->getTitle() . ' (' . $suffix . ')')
-            ->setSlug(UniqueSlug::build(
-                $this->slugger,
-                $source->getSlug() . '-' . $suffix,
-                fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
-            ))
+            ->setTitle(mb_substr($source->getTitle(), 0, self::TITLE_SLUG_LENGTH - mb_strlen($titleSuffix)) . $titleSuffix)
+            ->setSlug($this->uniquePageSlug($source->getSlug() . '-' . $suffix, null))
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
@@ -1059,22 +1069,8 @@ class PageCrudController extends AbstractCrudController
             return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Action::EDIT)->setEntityId($copy->getId())->generateUrl());
         }
 
-        $originalId = $request->query->getInt('replaces') ?: $copy->getReplaces();
-        $original = null !== $originalId ? $this->pageRepository->find($originalId) : null;
-
-        // Already archived by another draft's own publishAsReplacement() (non-null archivedSlug, not yet restored) - its current slug is the mangled "-archived" one, not the live one this copy was meant to take over, so treat it the same as "not found" rather than publishing under it
-        if (null !== $original && null !== $original->getArchivedSlug()) {
-            $original = null;
-        }
-
-        // A page can't replace itself - the dropdown's own displayIf() already hides this option, but the route itself must also refuse it (e.g. a stale/crafted "?replaces=<own id>" link), since $original and $copy would then be the very same entity and the two-flush swap below would leave it both published and deleted at once
-        if (null !== $original && $original->getId() === $copy->getId()) {
-            $original = null;
-        }
-
+        $original = $this->replacementTarget($copy, $request);
         if (null === $original) {
-            $this->addFlash('danger', $this->translator->trans('flash.page_to_replace_not_found', [], 'site'));
-
             return $this->redirect(
                 $this->adminUrlGenerator
                     ->setController(self::class)
@@ -1091,11 +1087,7 @@ class PageCrudController extends AbstractCrudController
         $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug, $originalIsIndexable): void {
             $original
                 ->setArchivedSlug($originalSlug)
-                ->setSlug(UniqueSlug::build(
-                    $this->slugger,
-                    $originalSlug . '-archived',
-                    fn (string $candidate): bool => null !== $this->pageRepository->findOneBy(['slug' => $candidate])
-                ))
+                ->setSlug($this->uniquePageSlug($originalSlug . '-archived', $original))
                 ->setIsPublished(false)
                 ->setIsDeleted(true)
                 ->setModification(new \DateTime());
@@ -1120,6 +1112,28 @@ class PageCrudController extends AbstractCrudController
                 ->setEntityId($copy->getId())
                 ->generateUrl()
         );
+    }
+
+    // The page the copy takes over, or null once the reason it can't has been flashed. The copy itself is checked first: the home page has no slug to give away (the site root would answer 404), a trashed copy would put a deleted page on the live slug, and a published one would lose its own url with no redirect - the button is hidden for them, a stale or crafted link still lands here
+    private function replacementTarget(Page $copy, Request $request): ?Page
+    {
+        if ('home' === $copy->getSlug() || $copy->isDeleted() || $copy->isPublished()) {
+            $this->addFlash('danger', $this->translator->trans('flash.page_cannot_replace', [], 'site'));
+
+            return null;
+        }
+
+        $originalId = $request->query->getInt('replaces') ?: $copy->getReplaces();
+        $original = null !== $originalId ? $this->pageRepository->find($originalId) : null;
+
+        // Already archived by another draft's own publishAsReplacement() (non-null archivedSlug, not yet restored) - its current slug is the mangled "-archived" one, not the live one this copy was meant to take over. And a page can't replace itself (a stale/crafted "?replaces=<own id>" link): the two-flush swap would leave it both published and deleted at once
+        if (null === $original || null !== $original->getArchivedSlug() || $original->getId() === $copy->getId()) {
+            $this->addFlash('danger', $this->translator->trans('flash.page_to_replace_not_found', [], 'site'));
+
+            return null;
+        }
+
+        return $original;
     }
 
     // Clones a block (kind, data, animation, position, hidden), its medias and its slots - used when duplicating a page
@@ -1196,11 +1210,12 @@ class PageCrudController extends AbstractCrudController
         return $page;
     }
 
-    // New page - Builds a unique slug from a base string (slugified), appending -2, -3... on collision
+    // New page - Builds a unique slug from a base string (slugified), appending -2, -3... on collision, then takes its urls back from any redirect left on them
     #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
         $this->slugifyPage($page);
+        $this->releaseSlugPaths($entityManager, $page);
         $page->setCreation(new \DateTime());
         $page->setModification(new \DateTime());
         $this->setUser($page);
@@ -1227,8 +1242,11 @@ class PageCrudController extends AbstractCrudController
 
         // An unpublished page was never served under its old slug, so renaming it leaves no url to redirect from
         if (null !== $originalSlug && $originalIsPublished && $originalSlug !== $page->getSlug()) {
-            $this->redirectSlugChange($entityManager, $originalSlug, $page->getSlug());
+            $this->redirectSlugChange($entityManager, $page, $originalSlug, $page->getSlug());
         }
+
+        // Published or not: the day it goes online, its urls must reach it
+        $this->releaseSlugPaths($entityManager, $page);
 
         $page->setModification(new \DateTime());
         $this->setUser($page);
@@ -1270,35 +1288,65 @@ class PageCrudController extends AbstractCrudController
         return rtrim((string) $this->configService->get('site-url'), '/') . $this->pagePath($page, $locale);
     }
 
-    // Normalizes the slug entered by the user (removes accents, spaces, uppercase...)
+    // Normalizes the slug entered by the user (removes accents, spaces, uppercase...) and appends -2, -3... when another page holds it: the UniqueEntity check ran on the slug as typed, or before a title change recomputed it
     private function slugifyPage(Page $page): void
     {
         $slug = $page->getSlug();
         if (null !== $slug) {
-            $page->setSlug(strtolower($this->slugger->slug($slug)->toString()));
+            $page->setSlug($this->uniquePageSlug($slug, $page));
         }
     }
 
-    // Redirects the old page URL to the new one, reusing an existing redirect if the old slug already had one
-    private function redirectSlugChange(EntityManagerInterface $entityManager, string $oldSlug, string $newSlug): void
+    // A slug no other page holds, its base cut so the suffix still fits the column
+    private function uniquePageSlug(string $base, ?Page $page): string
     {
-        $fromPath = '/pages/' . $oldSlug;
-        $toUrl = '/pages/' . $newSlug;
+        return UniqueSlug::build(
+            $this->slugger,
+            mb_substr(strtolower($this->slugger->slug($base)->toString()), 0, self::TITLE_SLUG_LENGTH - self::SLUG_SUFFIX_ROOM),
+            fn (string $candidate): bool => null !== ($other = $this->pageRepository->findOneBy(['slug' => $candidate])) && $other->getId() !== $page?->getId()
+        );
+    }
 
-        // Removes any existing redirect starting from the new slug, otherwise it would create a redirect loop (e.g. prestations -> prestations-2, then renaming prestations-2 back to prestations)
-        $reverseRedirect = $this->redirectRepository->findOneByFromPath($toUrl);
-        if (null !== $reverseRedirect) {
-            $entityManager->remove($reverseRedirect);
+    // The page's urls for that slug, keyed by language: the writing language's "/pages/{slug}", and "/{locale}/pages/{slug}" for every language it is translated in
+    /** @return array<string, string> */
+    private function slugPaths(Page $page, string $slug): array
+    {
+        $default = $this->siteLocales->getDefaultLocale();
+        $paths = [$default => '/pages/' . $slug];
+        foreach ($this->pageTranslator->translatedLocales($page) as $locale) {
+            if ($locale !== $default) {
+                $paths[$locale] = '/' . $locale . '/pages/' . $slug;
+            }
         }
 
-        $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
-            ?? new Redirect()->setFromPath($fromPath);
+        return $paths;
+    }
 
-        $redirect
-            ->setToUrl($toUrl)
-            ->setPermanent(true);
+    // The page wins over a redirect: one left on its urls by a removed page ("gone") or a renamed one would answer before the router ever reaches it (see RedirectSubscriber), and a redirect from the new slug back would loop (prestations -> prestations-2, then renamed back)
+    private function releaseSlugPaths(EntityManagerInterface $entityManager, Page $page): void
+    {
+        foreach ($this->slugPaths($page, (string) $page->getSlug()) as $path) {
+            $redirect = $this->redirectRepository->findOneByFromPath($path);
+            if (null !== $redirect) {
+                $entityManager->remove($redirect);
+            }
+        }
+    }
 
-        $entityManager->persist($redirect);
+    // Redirects each old url of the page, in every language it is read in, to the new one, reusing an existing redirect if the old slug already had one
+    private function redirectSlugChange(EntityManagerInterface $entityManager, Page $page, string $oldSlug, string $newSlug): void
+    {
+        $toUrls = $this->slugPaths($page, $newSlug);
+        foreach ($this->slugPaths($page, $oldSlug) as $locale => $fromPath) {
+            $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
+                ?? new Redirect()->setFromPath($fromPath);
+
+            $redirect
+                ->setToUrl($toUrls[$locale])
+                ->setPermanent(true);
+
+            $entityManager->persist($redirect);
+        }
     }
 
     // Defines the user for the page

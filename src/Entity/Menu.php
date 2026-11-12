@@ -17,6 +17,7 @@ use c975L\UiBundle\Entity\Trait\HasBlocksTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MenuRepository::class)]
 #[ORM\Table(name: 'site_menu')]
@@ -48,9 +49,11 @@ class Menu implements HasBlocksInterface, \Stringable
     private ?int $id = null;
 
     #[ORM\Column(length: 20, unique: true)]
+    #[Assert\Length(max: 20)]
     private ?string $location = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Length(max: 20)]
     private ?string $style = null;
 
     #[ORM\ManyToMany(targetEntity: Block::class, cascade: ['persist', 'remove'])]

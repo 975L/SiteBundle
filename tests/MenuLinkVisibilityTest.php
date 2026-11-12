@@ -10,7 +10,6 @@
 
 namespace c975L\SiteBundle\Tests;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Twig\Environment;
@@ -96,33 +95,26 @@ class MenuLinkVisibilityTest extends TestCase
         ];
     }
 
-    // An email has no visitor and no body class to hide a link with, so a guests/members link is left out rather than sent to everyone
+    // An email has no visitor and no body class to hide a link with: it prints what menu_email_blocks() kept, a group's links and the members-only pages already sorted out there (see MenuExtensionTest)
     #[DataProvider('emailTemplateProvider')]
-    public function testAnEmailLeavesOutARestrictedLink(string $template): void
+    public function testAnEmailPrintsTheBlocksKeptForAnEmail(string $template): void
     {
-        $blocks = new ArrayCollection([
-            ['data' => ['label' => 'Home']],
-            ['data' => ['label' => 'Everyone', 'visibility' => 'all']],
-            ['data' => ['label' => 'Sign in', 'visibility' => 'guests']],
-            ['data' => ['label' => 'Account', 'visibility' => 'members']],
-        ]);
         $twig = new Environment(new ArrayLoader(['email' => $this->file($template)]));
-        $twig->addFunction(new TwigFunction('menu_blocks', static fn (): ArrayCollection => $blocks));
+        $twig->addFunction(new TwigFunction('menu_email_blocks', static fn (): array => [['data' => ['label' => 'Home']], ['data' => ['label' => 'Everyone']]]));
         $twig->addFunction(new TwigFunction('render_block', static fn (array $block): string => '[' . $block['data']['label'] . ']'));
 
         $html = $twig->render('email');
 
         $this->assertStringContainsString('[Home]', $html);
         $this->assertStringContainsString('[Everyone]', $html);
-        $this->assertStringNotContainsString('[Sign in]', $html);
-        $this->assertStringNotContainsString('[Account]', $html);
+        $this->assertStringNotContainsString('menu_blocks(', $this->file($template));
     }
 
     // A footer whose links are all restricted renders nothing, not an empty list
     public function testAnEmailFooterOfRestrictedLinksOnlyIsNotRendered(): void
     {
         $twig = new Environment(new ArrayLoader(['email' => $this->file('templates/emails/footer.html.twig')]));
-        $twig->addFunction(new TwigFunction('menu_blocks', static fn (): ArrayCollection => new ArrayCollection([['data' => ['visibility' => 'members']]])));
+        $twig->addFunction(new TwigFunction('menu_email_blocks', static fn (): array => []));
         $twig->addFunction(new TwigFunction('render_block', static fn (): string => ''));
 
         $this->assertStringNotContainsString('email-footer', $twig->render('email'));

@@ -66,11 +66,22 @@ class PageExtensionTest extends TestCase
     // A given id delegates to the repository's eager-loading finder
     public function testGetPageDelegatesToRepositoryWhenIdIsGiven(): void
     {
-        $page = new Page();
+        $page = new Page()->setIsPublished(true);
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findOneByIdWithBlocks')->willReturn($page);
 
         $this->assertSame($page, $this->extension($repository)->getPage(42));
+    }
+
+    // The slider's render is shared by every visitor: a draft, a trashed page or one kept for members gives it nothing to show
+    public function testGetPageReturnsAPublicPageAlone(): void
+    {
+        foreach ([new Page(), new Page()->setIsPublished(true)->setIsDeleted(true), new Page()->setIsPublished(true)->setIsMembersOnly(true)] as $page) {
+            $repository = $this->createStub(PageRepository::class);
+            $repository->method('findOneByIdWithBlocks')->willReturn($page);
+
+            $this->assertNull($this->extension($repository, authenticated: true)->getPage(42));
+        }
     }
 
     // Legal pages are resolved by delegating the given legal_model identifiers to the repository
@@ -91,8 +102,19 @@ class PageExtensionTest extends TestCase
         $repository = $this->createStub(PageRepository::class);
         $repository->method('findByLegalModels')->willReturn([$kept, $open]);
 
-        $this->assertSame([$open], $this->extension($repository)->getLegalPages(['france/legal-notice']));
-        $this->assertSame([$kept, $open], $this->extension($repository, authenticated: true)->getLegalPages(['france/legal-notice']));
+        $this->assertSame([$open], $this->extension($repository)->getLegalPages());
+        $this->assertSame([$kept, $open], $this->extension($repository, authenticated: true)->getLegalPages());
+    }
+
+    // The models name their annexes inside a render cached once for everyone: a page kept for members stays out of it, whoever opened it first
+    public function testGetLegalPagesWithModelsAlwaysLeavesMembersOnlyPagesOut(): void
+    {
+        $open = new Page()->setSlug('mentions-legales');
+        $kept = new Page()->setSlug('cgv')->setIsMembersOnly(true);
+        $repository = $this->createStub(PageRepository::class);
+        $repository->method('findByLegalModels')->willReturn([$kept, $open]);
+
+        $this->assertSame([$open], $this->extension($repository, authenticated: true)->getLegalPages(['france/legal-notice']));
     }
 
     // No model given asks for every one the site can carry, in the importer's display order - the installed app's "About" menu

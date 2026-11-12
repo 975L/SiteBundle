@@ -14,10 +14,10 @@ use c975L\ConfigBundle\Management\ImportProviderInterface;
 use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemImageFile;
 use Doctrine\ORM\EntityManagerInterface;
-use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
-// Imports a "site_collection_item" content export (see CollectionItemExportProvider) - matches by collection+slug, CollectionItem's own unique constraint, always overwrites the file like FontImportProvider does. A referenced collection that doesn't exist yet on this environment is created on the fly (by name), same as CollectionItemImportCommand's own auto-creation - so importing a fresh site's content never needs a manual "create the collections first" step
+// Imports a "site_collection_item" content export (see CollectionItemExportProvider) - matches by collection+slug, CollectionItem's own unique constraint, overwrites the file when the archive carries a valid one, like FontImportProvider does. A referenced collection that doesn't exist yet on this environment is created on the fly (by name), same as CollectionItemImportCommand's own auto-creation - so importing a fresh site's content never needs a manual "create the collections first" step
 class CollectionItemImportProvider implements ImportProviderInterface
 {
     public const KIND = 'site_collection_item';
@@ -69,8 +69,10 @@ class CollectionItemImportProvider implements ImportProviderInterface
             ->setPosition($item['position'] ?? 0);
         $this->urlWriter->write($collectionItem, $item['url'] ?? null);
 
-        if (null !== $filesDir && isset($item['file'])) {
-            $collectionItem->setFile(new ReplacingFile($filesDir . '/' . $item['file'], true, true, true));
+        // The manifest is untrusted: a path leaving the extracted folder or a name with no upload's extension is ignored, and the archive's copy left where it is
+        $file = null !== $filesDir ? CollectionItemImageFile::resolve($filesDir, $item['file'] ?? null) : null;
+        if (null !== $file) {
+            $collectionItem->setFile($file);
         }
 
         $this->em->persist($collectionItem);

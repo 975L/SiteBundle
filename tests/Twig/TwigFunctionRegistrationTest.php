@@ -31,6 +31,7 @@ class TwigFunctionRegistrationTest extends TestCase
         return [
             'MenuExtension' => [MenuExtension::class, [
                 'menu_blocks' => 'getMenuBlocks',
+                'menu_email_blocks' => 'getEmailMenuBlocks',
                 'menu_link_is_copyright' => 'isMenuLinkCopyright',
                 'menu_link_label' => 'getMenuLinkLabel',
                 'menu_link_members_only' => 'isMenuLinkMembersOnly',

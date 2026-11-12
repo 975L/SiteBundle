@@ -24,11 +24,11 @@ trait PagePublicUrlGeneratorTestTrait
     {
         $routes = new RouteCollection();
         $routes->add('page_home', new Route('/'));
-        $routes->add('page_display', new Route('/pages/{page}', [], ['page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)']));
+        $routes->add('page_display', new Route('/pages/{page}', [], ['page' => '[a-zA-Z0-9\-\/]+']));
 
         // The same pages in another language, as PageController declares them: the writing language keeps the two routes above, byte for byte
         $routes->add('page_home_localized', new Route('/{_locale}/'));
-        $routes->add('page_display_localized', new Route('/{_locale}/pages/{page}', [], ['page' => '^(?!pdf)([a-zA-Z0-9\-\/]+)']));
+        $routes->add('page_display_localized', new Route('/{_locale}/pages/{page}', [], ['page' => '[a-zA-Z0-9\-\/]+']));
 
         return new UrlGenerator($routes, new RequestContext());
     }

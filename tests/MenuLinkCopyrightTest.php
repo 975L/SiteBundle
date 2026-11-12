@@ -63,6 +63,31 @@ class MenuLinkCopyrightTest extends TestCase
         $this->assertStringContainsString('<span class="menu-label">Copyright</span>', $html);
     }
 
+    // The footer prints the notice itself whenever the copyright link renders nothing: hidden, or its page unpublished - otherwise the site loses both its mention and its edit shortcut
+    #[DataProvider('silentCopyrightLinkProvider')]
+    public function testTheFooterPrintsTheNoticeWhenTheCopyrightLinkRendersNothing(bool $hidden, string $url, string $expected): void
+    {
+        $template = (string) file_get_contents(\dirname(__DIR__) . '/templates/components/General/Footer.html.twig');
+        $this->assertSame(1, preg_match('/\{% set footerItems .*?\|length > 0 %\}/s', $template, $match));
+
+        $twig = new Environment(new ArrayLoader(['footer' => $match[0] . "{{ hasCopyrightLink ? 'link' : 'notice' }}"]));
+        $twig->addFunction(new TwigFunction('menu_link_is_copyright', static fn (): bool => true));
+        $twig->addFunction(new TwigFunction('menu_link_url', static fn (): string => $url));
+        $block = ['hidden' => $hidden, 'data' => ['target' => 'page:42'], 'slots' => []];
+
+        $this->assertSame($expected, $twig->render('footer', ['footerBlocks' => [$block]]));
+    }
+
+    /** @return array<string, array{bool, string, string}> */
+    public static function silentCopyrightLinkProvider(): array
+    {
+        return [
+            'shown' => [false, '/pages/copyright', 'link'],
+            'hidden' => [true, '/pages/copyright', 'notice'],
+            'page unpublished' => [false, '', 'notice'],
+        ];
+    }
+
     // Renders MenuLink.html.twig for a link to the Copyright page, its derived label being the computed notice
     private function render(array $data): string
     {

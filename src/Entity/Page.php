@@ -97,6 +97,7 @@ class Page implements HasBlocksInterface, \Stringable
 
     // The real slug this page held before publishAsReplacement() archived it under a technical one - lets restore() try to reclaim it. Null once restored (or reclaim failed), or for any page never archived this way.
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(max: 100)]
     private ?string $archivedSlug = null;
 
     // Falls back to the site-wide default og-image (see MediaExtension::getSiteMedia) when not set. cascade: remove - this Media is exclusively owned by this Page (not shared), so deleting the Page must also delete its file, same as Block's own medias

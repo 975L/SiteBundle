@@ -30,8 +30,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // Reordering or editing an existing menu item's target/label updates that Block's own position/data column
@@ -42,8 +43,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // Removing a menu item cascade-removes its Block entity (see BlockRemovalListener), not just the join row
@@ -54,8 +56,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // A footer's items can be laid out in a "menu_group", added to the Menu the same cascade way a link is
@@ -66,8 +69,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postPersist(new PostPersistEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // A group carries fields of its own - its direction, its alignment - whose edit is a lifecycle event on nothing else
@@ -78,8 +82,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postUpdate(new PostUpdateEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // The tagline under the site's name is a "text_hook" of the "navbar-brand" menu, and a footer takes any kind: removing one left the menu cached for good
@@ -90,8 +95,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->preRemove(new PreRemoveEventArgs($block, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     // The Menu row carries a field of its own - its layout style, read by MenuExtension::getMenuStyle() - which no Block event would ever signal
@@ -102,8 +108,9 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['menus_all']);
 
-        new MenuCacheInvalidationListener($cache)
-            ->postUpdate(new PostUpdateEventArgs($menu, $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postUpdate(new PostUpdateEventArgs($menu, $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 
     public function testInvalidateIsSkippedForEntitiesThatAreNotBlocks(): void
@@ -111,7 +118,8 @@ class MenuCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        new MenuCacheInvalidationListener($cache)
-            ->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createStub(EntityManagerInterface::class)));
+        $listener = new MenuCacheInvalidationListener($cache);
+        $listener->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createStub(EntityManagerInterface::class)));
+        $listener->postFlush();
     }
 }

@@ -16,8 +16,8 @@ use Symfony\Component\Finder\Finder;
 // What an editor or an admin writes never reaches a page or an e-mail as it was typed
 class RawOutputTest extends TestCase
 {
-    // What may stay raw: the JSON-LD (JsonLdBuilder hex-encodes its tags), and two fragments Twig has already rendered and escaped
-    private const array RAW_ALLOWED = ['siteJsonLd|raw', 'detailHtml|raw', 'bodyHtml|raw'];
+    // What may stay raw: two fragments Twig has already rendered and escaped - the JSON-LD is a {% set %} capture, safe without it
+    private const array RAW_ALLOWED = ['detailHtml|raw', 'bodyHtml|raw'];
 
     public function testNoTemplatePrintsAnythingElseRaw(): void
     {

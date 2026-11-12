@@ -78,4 +78,23 @@ class PageRepositoryTest extends TestCase
 
         $this->assertSame(['astuce'], $slugs);
     }
+
+    // A page already read keeps every block once a lookup by kind or by block id went through it - a filtered fetch-join would leave it holding the matched ones alone, cached so by the render that follows
+    public function testALookupByBlockLeavesThePageWithAllItsBlocks(): void
+    {
+        $this->page('legal', 'legal_model', 'text_section', 'hero');
+        $this->entityManager->clear();
+        $page = $this->repository->findOneBy(['slug' => 'legal']);
+        $legalBlockId = $page->getBlocks()->first()->getId();
+        $this->entityManager->clear();
+
+        $page = $this->repository->findOneBy(['slug' => 'legal']);
+        $this->repository->findByLegalModels(['']);
+        $this->repository->findOneByBlockKind('legal_model');
+        $this->repository->findByBlockIds([$legalBlockId]);
+
+        $this->assertCount(3, $page->getBlocks());
+        $this->assertSame([$page], $this->repository->findByBlockIds([$legalBlockId]));
+        $this->assertSame($page, $this->repository->findOneByBlockKind('hero'));
+    }
 }

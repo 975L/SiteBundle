@@ -183,6 +183,23 @@ class PageImportProviderTest extends TestCase
         $this->assertSame('new', $existingPage->getBlocks()->first()->getData()['content']);
     }
 
+    // A page found in the trash under the slug is written over and comes out of it, rather than counted "updated" while still answering 410
+    public function testImportTakesAnExistingPageOutOfTheTrash(): void
+    {
+        $existingPage = new Page()->setTitle('Old title')->setSlug('about')->setIsDeleted(true);
+        $em = $this->createStub(EntityManagerInterface::class);
+
+        $provider = new PageImportProvider(
+            $em,
+            $this->createPageRepository($existingPage),
+            new BlockDataImporter($em, $this->createStub(FormBlockDependencyRegistry::class), $this->createStub(ValidatorInterface::class)),
+        );
+
+        $provider->import([['title' => 'New title', 'slug' => 'about', 'isPublished' => true, 'blocks' => []]]);
+
+        $this->assertFalse($existingPage->isDeleted());
+    }
+
     public function testImportRebuildsMediaFromTheExtractedZipFile(): void
     {
         $filesDir = sys_get_temp_dir() . '/page_import_test_' . bin2hex(random_bytes(4));

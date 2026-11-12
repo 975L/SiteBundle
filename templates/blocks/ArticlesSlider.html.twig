@@ -1,14 +1,15 @@
 {# Adapter for the dynamic Block system — gathers the "article" blocks of the chosen page and renders them as a clickable slider #}
+{# A public page alone (see PageExtension::getPage()), its hidden articles left out, its link in the language being read when the page is written in it #}
 {% set page = site_page(pageId) %}
 {% if page %}
     {% set slides = [] %}
     {% for articleBlock in page.blocks %}
-        {% if articleBlock.kind == 'article' and articleBlock.media|length > 0 %}
+        {% if articleBlock.kind == 'article' and not articleBlock.hidden and articleBlock.media|length > 0 %}
             {% set slides = slides|merge([{
                 image: articleBlock.media.first,
                 title: articleBlock.data.title|default(''),
                 text: articleBlock.data.hook|default('')|plain_text|slice(0, 160),
-                url: path('page_display', {page: page.slug}) ~ '#article-' ~ articleBlock.data.slug|default('')
+                url: localized_path('page_display', {page: page.slug}, page_languages(page)|keys) ~ '#article-' ~ articleBlock.data.slug|default('')
             }]) %}
         {% endif %}
     {% endfor %}

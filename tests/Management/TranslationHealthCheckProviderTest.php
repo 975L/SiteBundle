@@ -158,6 +158,19 @@ class TranslationHealthCheckProviderTest extends TestCase
         $this->assertSame(['es' => 2], $results[0]['details']['missing']);
     }
 
+    // A bilingual site whose page lacks one text in English is a warning: started, not left untranslated
+    public function testAPageMissingOneTextInItsOnlyOtherLanguageIsAWarning(): void
+    {
+        $results = $this->createProvider(
+            ['en'],
+            ['en' => ['title' => 'Our workshops']],
+            ['en' => ['title' => 'What we do']],
+        )->runChecks();
+
+        $this->assertSame(HealthCheckResult::STATUS_WARNING, $results[0]['status']);
+        $this->assertSame(['en' => 1], $results[0]['details']['missing']);
+    }
+
     // A grid's cards are prose a visitor reads like any other: a page whose grid was translated and whose every card stayed in the writing language is not done
     public function testTheRepeatedTextsOfABlockAreCounted(): void
     {

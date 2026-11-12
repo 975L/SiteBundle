@@ -20,6 +20,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 // Every "page:ID", "page:ID#anchor-blockId" and "route:NAME" a link can point at, as one flat list sorted by label - the target select of a menu link (see MenuLinkType) and the suggestions of a block's link field (see UiBundle's LinkTargetType) alike, both decoded back by MenuExtension::getMenuLinkUrl()
 class LinkTargetChoices implements LinkTargetProviderInterface
 {
+    // Built once per request: the Menu screen asks it again for each link of the menu, every page, block and anchor read anew each time
+    /** @var array<string, string>|null */
+    private ?array $targets = null;
+
     public function __construct(
         private readonly LinkableRouteRegistry $linkableRouteRegistry,
         private readonly PageRepository $pageRepository,
@@ -28,7 +32,15 @@ class LinkTargetChoices implements LinkTargetProviderInterface
     ) {
     }
 
+    // Every target a link can point at, keyed by label
     public function linkTargets(): array
+    {
+        return $this->targets ??= $this->buildTargets();
+    }
+
+    // Pages with their anchors, then the routes the bundles contribute, sorted by label
+    /** @return array<string, string> */
+    private function buildTargets(): array
     {
         // Eager-joins blocks (and their nested slots, walked too - see BlockAnchorCollector) so building each page's anchor choices doesn't trigger one extra query per page/container (getBlocks()/getSlots() would otherwise lazy-load their collection on each access)
         $pages = $this->pageRepository->createQueryBuilder('p')

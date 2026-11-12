@@ -63,6 +63,9 @@ class MenuExtensionTest extends TestCase
         $repository->method('find')->willReturnCallback(
             static fn (mixed $id): ?Page => $pagesById[(string) $id] ?? null
         );
+        $repository->method('findBy')->willReturnCallback(
+            static fn (array $criteria): array => array_values(array_intersect_key($pagesById, array_flip(array_map(strval(...), $criteria['id'] ?? []))))
+        );
         $repository->method('findOneBy')->willReturnCallback(
             static fn (array $criteria): ?Page => array_find($pagesById, static fn (Page $page): bool => $page->getSlug() === ($criteria['slug'] ?? null))
         );
@@ -896,5 +899,34 @@ class MenuExtensionTest extends TestCase
         $this->assertNull($tagsFor($browser));
         $this->assertSame(['menus_all'], $tagsFor($prefixed));
         $this->assertSame(['menus_all'], $tagsFor($writing));
+    }
+
+    // An e-mail has no visitor: a group's links come out of it, and the guests, members and members-only-page links are left out at both levels
+    public function testEmailMenuBlocksFlattenGroupsAndDropWhatAVisitorWouldDecide(): void
+    {
+        $open = new Page()->setTitle('Contact')->setSlug('contact')->setIsPublished(true);
+        $kept = new Page()->setTitle('Club')->setSlug('club')->setIsPublished(true)->setIsMembersOnly(true);
+
+        $link = new Block()->setKind('menu_link')->setData(['target' => 'page:1']);
+        $guests = new Block()->setKind('menu_link')->setData(['target' => 'page:1', 'visibility' => 'guests']);
+        $toKept = new Block()->setKind('menu_link')->setData(['target' => 'page:2']);
+        $inGroup = new Block()->setKind('menu_link')->setData(['target' => 'page:1', 'label' => 'item-1']);
+        $membersInGroup = new Block()->setKind('menu_link')->setData(['target' => 'page:1', 'visibility' => 'members']);
+        $group = new Block()->setKind('menu_group');
+        $group->addSlot($inGroup);
+        $group->addSlot($membersInGroup);
+
+        $menu = new Menu()->setLocation(Menu::LOCATION_EMAIL_FOOTER);
+        foreach ([$link, $guests, $toKept, $group] as $block) {
+            $menu->addBlock($block);
+        }
+
+        $extension = $this->createExtension($this->createRegistry([]), ['1' => $open, '2' => $kept], $this->createMenuRepository($menu));
+
+        // The menu comes back from the cache, as copies: told apart by what they hold
+        $this->assertSame(
+            [['target' => 'page:1'], ['target' => 'page:1', 'label' => 'item-1']],
+            array_map(static fn (Block $block): array => $block->getData(), $extension->getEmailMenuBlocks(Menu::LOCATION_EMAIL_FOOTER))
+        );
     }
 }

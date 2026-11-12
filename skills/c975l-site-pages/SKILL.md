@@ -56,8 +56,12 @@ plus the sitemap fields (indexable, change frequency, priority).
 - **An exported page carries its translations**, always under a `translations` key, empty when it has
   none: the import updates an existing page in place and replaces its translations with the zip's. A zip
   without the key leaves them untouched.
-- Deleting permanently leaves gone rows behind on its own: one for the page's url, one per redirect
-  that pointed at it.
+- Deleting permanently leaves gone rows behind on its own: one for the page's url in each language it
+  is translated in, one per redirect that pointed at it. A renamed page is redirected in each language
+  too, and **a page saved under a slug a redirect or a gone row holds removes that row**: the page wins.
+- A slug another page holds gets `-2`, `-3`... on save, a copy's title and slug are cut to their 100
+  characters, and *Publish as replacement* is refused for the home page and a page already online or
+  in the trash.
 - **The trash's two row actions are GETs**, so each carries a CSRF token in its url
   (`PageCrudController::RESTORE_CSRF_TOKEN`, `PageCrudController::DELETE_PERMANENTLY_CSRF_TOKEN`). An
   override re-declaring either one builds that url too — `linkToCrudAction()` on its own gets the
@@ -138,7 +142,9 @@ the missing blocks read as "the editor removed them", so such a submission is re
 | `menu_group` | navigation | a chromeless wrapper grouping several items on a line of a menu |
 
 The last two belong to menus — see the `c975l-site-menus` skill. `articles_slider` uses the
-`site_page(id)` Twig function to eager-load the target page with its blocks and medias.
+`site_page(id)` Twig function to eager-load the target page with its blocks and medias — a public page
+alone (published, not in the trash, not kept for members), the slider's render being shared by every
+visitor; hidden articles are left out and each link is written in the language being read.
 
 Every kind also carries a **silhouette**, a CSS-drawn miniature of its layout shown by the visual block
 picker (`sass/block-thumbs.scss` → `public/css/block-thumbs.min.css`, contributed to the back office by

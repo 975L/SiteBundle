@@ -178,14 +178,12 @@ class PageRepository extends ServiceEntityRepository
         return null;
     }
 
-    // The published pages carrying a block of that kind, with those blocks
+    // The published pages carrying a block of that kind - filtered through EXISTS and never a fetch-join, which would leave a page already in memory holding that kind's blocks alone, the next render then caching it truncated
     /** @return list<Page> */
     private function publishedWithBlockKind(string $kind): array
     {
         return $this->createQueryBuilder('p')
-            ->select('p, b')
-            ->innerJoin('p.blocks', 'b')
-            ->andWhere('b.kind = :kind')
+            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.kind = :kind)')
             ->andWhere('p.isPublished = :published')
             ->andWhere('p.isDeleted = :deleted')
             ->setParameter('kind', $kind)
@@ -203,10 +201,9 @@ class PageRepository extends ServiceEntityRepository
             return [];
         }
 
+        // EXISTS rather than a fetch-join filtered on the ids, which would initialise each page's collection with those blocks alone
         return $this->createQueryBuilder('p')
-            ->select('p, b')
-            ->innerJoin('p.blocks', 'b')
-            ->andWhere('b.id IN (:blockIds)')
+            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.id IN (:blockIds))')
             ->setParameter('blockIds', $blockIds)
             ->getQuery()
             ->getResult()
@@ -239,10 +236,9 @@ class PageRepository extends ServiceEntityRepository
 
     private function findByLegalModelsWithStatus(array $models, bool $publishedOnly): array
     {
+        // EXISTS rather than a fetch-join filtered on the kind, which would leave the page holding its legal block alone for the render that follows
         $queryBuilder = $this->createQueryBuilder('p')
-            ->select('p, b')
-            ->innerJoin('p.blocks', 'b')
-            ->andWhere('b.kind = :kind')
+            ->andWhere('EXISTS (SELECT k.id FROM ' . Block::class . ' k WHERE k MEMBER OF p.blocks AND k.kind = :kind)')
             ->setParameter('kind', 'legal_model')
         ;
 

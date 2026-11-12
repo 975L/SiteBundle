@@ -650,6 +650,10 @@
                 <source>description.tutorial_guided_tour</source>
                 <target>Le tour du back-office, écran par écran, avant d'ouvrir les tutoriels de chaque bundle.</target>
             </trans-unit>
+            <trans-unit id="vT9nfCC">
+                <source>flash.page_cannot_replace</source>
+                <target>La page d'accueil, une page déjà en ligne ou à la corbeille ne peut pas en remplacer une autre : rien n'a été publié.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>La page a été supprimée définitivement.</target>

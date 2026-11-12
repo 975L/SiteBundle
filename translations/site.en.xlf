@@ -650,6 +650,10 @@
                 <source>description.tutorial_guided_tour</source>
                 <target>A walk through the back office, screen by screen, before the tutorials of each bundle.</target>
             </trans-unit>
+            <trans-unit id="vT9nfCC">
+                <source>flash.page_cannot_replace</source>
+                <target>The home page, a page already online or one in the trash cannot replace another: nothing was published.</target>
+            </trans-unit>
             <trans-unit id="gVKF2E6">
                 <source>flash.page_deleted_permanently</source>
                 <target>The page has been permanently deleted.</target>

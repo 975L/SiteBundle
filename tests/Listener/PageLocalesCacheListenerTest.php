@@ -14,6 +14,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Listener\PageLocalesCacheListener;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Translation;
+use c975L\UiBundle\Service\LegalModelCacheTagProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
@@ -27,7 +28,7 @@ class PageLocalesCacheListenerTest extends TestCase
     {
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($expectsInvalidation ? $this->once() : $this->never())
-            ->method('invalidateTags')->with([PageTranslator::LOCALES_CACHE_TAG]);
+            ->method('invalidateTags')->with([PageTranslator::LOCALES_CACHE_TAG, LegalModelCacheTagProvider::CACHE_TAG]);
 
         return new PageLocalesCacheListener($cache);
     }
@@ -42,20 +43,34 @@ class PageLocalesCacheListenerTest extends TestCase
     {
         $translation = new Translation(PageTranslator::OWNER, 12, 'title', 'en');
 
-        $this->listener(true)->postPersist(new PostPersistEventArgs($translation, $this->entityManager()));
+        $listener = $this->listener(true);
+        $listener->postPersist(new PostPersistEventArgs($translation, $this->entityManager()));
+        $listener->postFlush();
     }
 
     public function testAPageTranslationEditedInvalidates(): void
     {
         $translation = new Translation(PageTranslator::OWNER, 12, 'title', 'en');
 
-        $this->listener(true)->postUpdate(new PostUpdateEventArgs($translation, $this->entityManager()));
+        $listener = $this->listener(true);
+        $listener->postUpdate(new PostUpdateEventArgs($translation, $this->entityManager()));
+        $listener->postFlush();
+    }
+
+    // A page's title, status or audience is what a legal model's "Annexes" list shows
+    public function testAnEditedPageInvalidatesTheLegalModels(): void
+    {
+        $listener = $this->listener(true);
+        $listener->postUpdate(new PostUpdateEventArgs(new Page(), $this->entityManager()));
+        $listener->postFlush();
     }
 
     // A removed page takes its translations along by a DQL delete, which no event reports
     public function testARemovedPageInvalidates(): void
     {
-        $this->listener(true)->preRemove(new PreRemoveEventArgs(new Page(), $this->entityManager()));
+        $listener = $this->listener(true);
+        $listener->preRemove(new PreRemoveEventArgs(new Page(), $this->entityManager()));
+        $listener->postFlush();
     }
 
     // A block's translation says nothing of the languages a page exists in
@@ -63,6 +78,8 @@ class PageLocalesCacheListenerTest extends TestCase
     {
         $translation = new Translation(Translation::OWNER_BLOCK, 3, 'title', 'en');
 
-        $this->listener(false)->postPersist(new PostPersistEventArgs($translation, $this->entityManager()));
+        $listener = $this->listener(false);
+        $listener->postPersist(new PostPersistEventArgs($translation, $this->entityManager()));
+        $listener->postFlush();
     }
 }

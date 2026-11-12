@@ -41,11 +41,13 @@ class PageExtension
         return $this->pageEditUrlResolver->resolveNew($slug);
     }
 
-    // Resolves a Page (with its blocks/medias eager-loaded), used by blocks referencing another page (e.g. articles_slider)
+    // Resolves a Page (with its blocks/medias eager-loaded), used by blocks referencing another page (e.g. articles_slider) - a public one alone: the block's render is cached once for every visitor, so a draft, a trashed page or one kept for members shows nothing rather than its content to anyone
     #[AsTwigFunction('site_page')]
     public function getPage(?int $id): ?Page
     {
-        return null !== $id ? $this->pageRepository->findOneByIdWithBlocks($id) : null;
+        $page = null !== $id ? $this->pageRepository->findOneByIdWithBlocks($id) : null;
+
+        return null !== $page && $page->isPublished() && !$page->isDeleted() && !$page->isMembersOnly() ? $page : null;
     }
 
     // Resolves the published Page carrying a "form" Block pointing at the given Form name (e.g. "register") - used to link a generic/bare route's own cross-references to the real Page instead, see PageRepository::findOneByFormBlockName()
@@ -55,12 +57,12 @@ class PageExtension
         return $this->pageRepository->findOneByFormBlockName($formName);
     }
 
-    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section). None given means every model the site can carry, in DefaultPagesImporter's display order - what the installed app's "About" menu lists (see Navbar.html.twig). A page kept for members is left out for an anonymous visitor, as a menu link to it is (see MenuExtension::pageUrl())
+    // Resolves published pages matching given legal_model identifiers (e.g. 'france/cookies'), used to list related legal pages (e.g. Annexes section). None given means every model the site can carry, in DefaultPagesImporter's display order - what the installed app's "About" menu lists (see Navbar.html.twig). A page kept for members is left out for an anonymous visitor, as a menu link to it is (see MenuExtension::pageUrl()), and always when models are named: that list is a legal model's own, cached once for every visitor
     #[AsTwigFunction('site_legal_pages')]
     public function getLegalPages(?array $models = null): array
     {
         $pages = $this->pageRepository->findByLegalModels($models ?? array_keys($this->defaultPagesImporter->getLegalPageSlugsByModel()));
-        if ($this->authorizationChecker->isGranted('IS_AUTHENTICATED')) {
+        if (null === $models && $this->authorizationChecker->isGranted('IS_AUTHENTICATED')) {
             return $pages;
         }
 

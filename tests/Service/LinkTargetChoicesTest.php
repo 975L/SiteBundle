@@ -37,13 +37,27 @@ class LinkTargetChoicesTest extends TestCase
         );
     }
 
+    // The Menu screen asks once per link: the pages are read once per request
+    public function testTheTargetsAreBuiltOnce(): void
+    {
+        $repository = $this->createMock(PageRepository::class);
+        $repository->expects($this->once())->method('createQueryBuilder')->willReturn($this->queryBuilder([]));
+        $registry = $this->createStub(LinkableRouteRegistry::class);
+        $registry->method('all')->willReturn([]);
+        $choices = new LinkTargetChoices($registry, $repository, $this->createStub(TranslatorInterface::class), new BlockAnchorCollector());
+
+        $choices->linkTargets();
+        $this->assertSame([], $choices->linkTargets());
+    }
+
     // Nothing to link to gives an empty list rather than an error
     public function testNoPageAndNoRouteGivesAnEmptyList(): void
     {
         $this->assertSame([], $this->choices([], [])->linkTargets());
     }
 
-    private function choices(array $pages, array $routes): LinkTargetChoices
+    // A query builder answering these pages
+    private function queryBuilder(array $pages): QueryBuilder
     {
         $query = $this->createStub(Query::class);
         $query->method('getResult')->willReturn($pages);
@@ -53,8 +67,14 @@ class LinkTargetChoicesTest extends TestCase
         $queryBuilder->method('andWhere')->willReturnSelf();
         $queryBuilder->method('setParameter')->willReturnSelf();
         $queryBuilder->method('getQuery')->willReturn($query);
+
+        return $queryBuilder;
+    }
+
+    private function choices(array $pages, array $routes): LinkTargetChoices
+    {
         $repository = $this->createStub(PageRepository::class);
-        $repository->method('createQueryBuilder')->willReturn($queryBuilder);
+        $repository->method('createQueryBuilder')->willReturn($this->queryBuilder($pages));
 
         $registry = $this->createStub(LinkableRouteRegistry::class);
         $registry->method('all')->willReturn($routes);

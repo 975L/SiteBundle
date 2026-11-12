@@ -17,6 +17,7 @@ use c975L\SiteBundle\Service\CollectionItemSourceProvider;
 use c975L\SiteBundle\Service\CollectionItemTranslator;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Listener\AbstractBlockCacheInvalidationListener;
+use c975L\UiBundle\Listener\PostFlushTagInvalidationTrait;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -26,14 +27,25 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
 #[AsDoctrineListener(event: Events::preRemove)]
+#[AsDoctrineListener(event: Events::postFlush)]
 class CollectionCacheInvalidationListener extends AbstractBlockCacheInvalidationListener
 {
+    // The tags are gathered on each event and emptied after the commit, or a concurrent request would cache the old state again
+    use PostFlushTagInvalidationTrait;
+
     public function __construct(
         private readonly TagAwareCacheInterface $cache,
         private readonly CollectionItemRepository $collectionItemRepository,
     ) {
     }
 
+    // The pool the tags are emptied from
+    private function tagCache(): TagAwareCacheInterface
+    {
+        return $this->cache;
+    }
+
+    // The collection an item, a group or an item's translation belongs to
     protected function invalidate(object $entity): void
     {
         // The group itself is watched too: its name is the source's own label, and deleting it cascades to items whose own preRemove would fire after this one anyway
@@ -46,7 +58,7 @@ class CollectionCacheInvalidationListener extends AbstractBlockCacheInvalidation
         };
 
         if (null !== $collectionGroup && null !== $collectionGroup->getId()) {
-            $this->cache->invalidateTags([CollectionItemSourceProvider::CACHE_TAG_PREFIX . $collectionGroup->getId()]);
+            $this->queueTags([CollectionItemSourceProvider::CACHE_TAG_PREFIX . $collectionGroup->getId()]);
         }
     }
 }

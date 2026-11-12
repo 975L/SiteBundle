@@ -46,8 +46,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_4']);
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->postUpdate(new PostUpdateEventArgs($item, $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->postUpdate(new PostUpdateEventArgs($item, $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     // Adding an item to a collection is an INSERT: postUpdate never fires for it, so without this the listings would keep excluding it
@@ -58,8 +59,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_7']);
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->postPersist(new PostPersistEventArgs($item, $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->postPersist(new PostPersistEventArgs($item, $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     public function testPreRemoveInvalidatesTheTagOfTheRemovedItemsCollection(): void
@@ -69,8 +71,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_9']);
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->preRemove(new PreRemoveEventArgs($item, $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->preRemove(new PreRemoveEventArgs($item, $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     // The group's own row carries the source's label, so renaming it changes what every listing built from it says
@@ -79,8 +82,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_11']);
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->postUpdate(new PostUpdateEventArgs($this->createCollectionGroup(11), $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->postUpdate(new PostUpdateEventArgs($this->createCollectionGroup(11), $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     // A language screen writes the item's translation and nothing of the item itself: the collection it belongs to is what goes stale all the same
@@ -94,8 +98,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->once())->method('invalidateTags')->with(['site_collection_5']);
 
-        new CollectionCacheInvalidationListener($cache, $repository)
-            ->postPersist(new PostPersistEventArgs(new Translation(CollectionItemTranslator::OWNER, 3, 'title', 'en'), $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $repository);
+        $listener->postPersist(new PostPersistEventArgs(new Translation(CollectionItemTranslator::OWNER, 3, 'title', 'en'), $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     public function testNothingIsInvalidatedForAnotherEntity(): void
@@ -103,8 +108,9 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->postUpdate(new PostUpdateEventArgs(new \stdClass(), $this->createEntityManager()));
+        $listener->postFlush();
     }
 
     // An item still to be attached to a collection has no tag to be reached by
@@ -113,7 +119,8 @@ class CollectionCacheInvalidationListenerTest extends TestCase
         $cache = $this->createMock(TagAwareCacheInterface::class);
         $cache->expects($this->never())->method('invalidateTags');
 
-        new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class))
-            ->postUpdate(new PostUpdateEventArgs(new CollectionItem(), $this->createEntityManager()));
+        $listener = new CollectionCacheInvalidationListener($cache, $this->createStub(CollectionItemRepository::class));
+        $listener->postUpdate(new PostUpdateEventArgs(new CollectionItem(), $this->createEntityManager()));
+        $listener->postFlush();
     }
 }

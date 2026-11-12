@@ -176,19 +176,22 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
         }
 
         $missing = [];
+        // The languages where nothing at all is written yet, what tells a page never translated from one left with a text or two
+        $untouched = 0;
         foreach ($locales as $locale) {
             $written = $this->written($blockKeys, $blockTranslations, $ownTranslations, $locale);
             $left = array_values(array_diff($expected, $written));
 
             if ([] !== $left) {
                 $missing[$locale] = \count($left);
+                $untouched += \count($left) === \count($expected) ? 1 : 0;
             }
         }
 
         return [
             'url' => $url,
             'label' => $label,
-            'status' => $this->status($missing, $locales),
+            'status' => $this->status($missing, $untouched, \count($locales)),
             'summary' => [] === $missing
                 ? $this->translator->trans('label.page_translation_complete', [], 'site')
                 : $this->translator->trans('label.page_translation_missing', ['%missing%' => implode(', ', array_map(
@@ -205,16 +208,15 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
      * Nothing to translate at all counts as translated: a page carrying only images has no business staying red.
      *
      * @param array<string, int> $missing
-     * @param list<string>       $locales
      */
-    private function status(array $missing, array $locales): string
+    private function status(array $missing, int $untouched, int $locales): string
     {
         if ([] === $missing) {
             return HealthCheckResult::STATUS_OK;
         }
 
         // A language started then left halfway is a warning; none of the declared languages started at all is an error
-        return \count($missing) === \count($locales)
+        return $untouched === $locales
             ? HealthCheckResult::STATUS_ERROR
             : HealthCheckResult::STATUS_WARNING;
     }

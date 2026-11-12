@@ -80,10 +80,11 @@ class PageImportProvider implements ImportProviderInterface
         $this->fillStatus($page, $item);
     }
 
-    // Who may read the page and whether it is referenced, each with the default an export predating it falls back on
+    // Who may read the page and whether it is referenced, each with the default an export predating it falls back on. A page found in the trash under that slug comes out of it: the import writes it over, and it would otherwise stay counted "updated" while answering 410
     private function fillStatus(Page $page, array $item): void
     {
         $page
+            ->setIsDeleted(false)
             ->setIsPublished($item['isPublished'] ?? false)
             // Defaults to true, so an export predating this field doesn't silently drop its pages from the sitemap on import
             ->setIsIndexable($item['isIndexable'] ?? true)

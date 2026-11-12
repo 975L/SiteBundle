@@ -15,6 +15,7 @@ use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Management\CollectionGroupResolver;
 use c975L\SiteBundle\Management\CollectionItemUrlWriter;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemImageFile;
 use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -25,7 +26,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
 
 // One-off migration helper: imports a legacy JSON array of items (e.g. an app's own hand-maintained projects.json) into CollectionItem rows, so an app that used to hand-roll its own JSON-driven list can switch to the "collection" block + this CRUD instead. Expected JSON shape: a plain array of objects, each with "title" (required), and optionally "description", "url", "image" (a path to an existing image file, resolved against --images-dir).
 #[AsCommand(
@@ -210,13 +210,14 @@ class CollectionItemImportCommand extends Command
             return;
         }
 
-        $path = $imagesDir . '/' . ltrim($image, '/');
-        if (!is_file($path)) {
-            $io->warning(sprintf('  Image not found for "%s": %s', $item->getTitle(), $path));
+        // Kept inside --images-dir and to an upload's extensions, as an archive import is (see CollectionItemImageFile)
+        $file = CollectionItemImageFile::resolve($imagesDir, ltrim($image, '/'));
+        if (null === $file) {
+            $io->warning(sprintf('  Image not found for "%s": %s', $item->getTitle(), $image));
 
             return;
         }
 
-        $item->setFile(new ReplacingFile($path));
+        $item->setFile($file);
     }
 }
