@@ -893,7 +893,7 @@ class PageCrudController extends AbstractCrudController
 
         $page->setIsDeleted(true);
         $page->setIsPublished(false);
-        $page->setModification(new \DateTime());
+        $page->setModification(new \DateTimeImmutable());
         $entityManager->flush();
     }
 
@@ -983,7 +983,7 @@ class PageCrudController extends AbstractCrudController
         }
 
         $page->setIsDeleted(false);
-        $page->setModification(new \DateTime());
+        $page->setModification(new \DateTimeImmutable());
         $entityManager->flush();
 
         $this->addFlash('success', $this->translator->trans('flash.page_restored', [], 'site'));
@@ -1022,7 +1022,7 @@ class PageCrudController extends AbstractCrudController
     private function clonePage(Page $source): Page
     {
         $user = $this->currentUser();
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         $suffix = $this->translator->trans('label.copy_suffix', [], 'site');
 
         $titleSuffix = ' (' . $suffix . ')';
@@ -1090,7 +1090,7 @@ class PageCrudController extends AbstractCrudController
                 ->setSlug($this->uniquePageSlug($originalSlug . '-archived', $original))
                 ->setIsPublished(false)
                 ->setIsDeleted(true)
-                ->setModification(new \DateTime());
+                ->setModification(new \DateTimeImmutable());
             $entityManager->flush();
 
             $copy
@@ -1099,7 +1099,7 @@ class PageCrudController extends AbstractCrudController
                 // Taken over along with the slug: the copy becomes the page that url stands for, so it keeps being referenced exactly as the original was. Set here and not in clonePage(), where Page::unreferenceWhenUnpublished() unreferences the copy at its very first flush, being created unpublished - this is the deliberate re-referencing that rule asks for, and without it an indexed url would silently turn noindex the day it's replaced
                 ->setIsIndexable($originalIsIndexable)
                 ->setReplaces(null)
-                ->setModification(new \DateTime());
+                ->setModification(new \DateTimeImmutable());
             $entityManager->flush();
         });
 
@@ -1216,8 +1216,8 @@ class PageCrudController extends AbstractCrudController
     {
         $this->slugifyPage($page);
         $this->releaseSlugPaths($entityManager, $page);
-        $page->setCreation(new \DateTime());
-        $page->setModification(new \DateTime());
+        $page->setCreation(new \DateTimeImmutable());
+        $page->setModification(new \DateTimeImmutable());
         $this->setUser($page);
 
         parent::persistEntity($entityManager, $page);
@@ -1248,7 +1248,7 @@ class PageCrudController extends AbstractCrudController
         // Published or not: the day it goes online, its urls must reach it
         $this->releaseSlugPaths($entityManager, $page);
 
-        $page->setModification(new \DateTime());
+        $page->setModification(new \DateTimeImmutable());
         $this->setUser($page);
 
         parent::updateEntity($entityManager, $page);

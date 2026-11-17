@@ -24,7 +24,7 @@ class PageSocialContentSourceTest extends TestCase
 {
     private function createPage(int $id, string $creation, bool $indexable = true, bool $legal = false): Page
     {
-        $page = new Page()->setTitle('Page ' . $id)->setSlug('page-' . $id)->setSummarySocialNetwork('<p>Résumé</p>')->setCreation(new \DateTime($creation))->setIsIndexable($indexable)->setIsPublished(true);
+        $page = new Page()->setTitle('Page ' . $id)->setSlug('page-' . $id)->setSummarySocialNetwork('<p>Résumé</p>')->setCreation(new \DateTimeImmutable($creation))->setIsIndexable($indexable)->setIsPublished(true);
         $page->setOgImage(new Media()->setFilename('medias/site/media/page-' . $id . '.webp'));
         if ($legal) {
             $page->addBlock(new Block()->setKind('legal_model'));

@@ -42,6 +42,7 @@ class MenuRepositoryTest extends TestCase
         $uiEntities = \dirname(new \ReflectionClass(Block::class)->getFileName());
         $config = ORMSetup::createAttributeMetadataConfig([\dirname(__DIR__, 2) . '/src/Entity', $uiEntities, __DIR__ . '/Entity'], true);
         $config->enableNativeLazyObjects(true);
+        $config->setUseSchemaEditorApi(true);
         $config->setNamingStrategy(new UnderscoreNamingStrategy(\CASE_LOWER, true));
         // The editor a Block names by its interface, the application's User standing behind it
         $resolver = new ResolveTargetEntityListener();

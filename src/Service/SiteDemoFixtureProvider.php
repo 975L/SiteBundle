@@ -98,7 +98,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     // The one page a visitor lands on, laid out as a real home page is - a hero, then one section of each kind - its title hidden behind the hero's own h1
     private function home(?string $image): Page
     {
-        $date = new \DateTime(self::CREATION_HOME);
+        $date = new \DateTimeImmutable(self::CREATION_HOME);
 
         $page = new Page()
             ->setTitle($this->trans('label.site_sample_page_home_title'))
@@ -397,7 +397,7 @@ class SiteDemoFixtureProvider implements DemoFixtureLinkerInterface, DemoFixture
     // A published page with its title staged for translation, and no block yet
     private function emptyPage(string $slug, string $key, string $creation): Page
     {
-        $date = new \DateTime($creation);
+        $date = new \DateTimeImmutable($creation);
 
         $page = new Page()
             ->setTitle($this->trans('label.site_sample_page_' . $key . '_title'))

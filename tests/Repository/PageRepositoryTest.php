@@ -42,6 +42,7 @@ class PageRepositoryTest extends TestCase
         $uiEntities = \dirname(new \ReflectionClass(Block::class)->getFileName());
         $config = ORMSetup::createAttributeMetadataConfig([\dirname(__DIR__, 2) . '/src/Entity', $uiEntities, __DIR__ . '/Entity'], true);
         $config->enableNativeLazyObjects(true);
+        $config->setUseSchemaEditorApi(true);
         $config->setNamingStrategy(new UnderscoreNamingStrategy(\CASE_LOWER, true));
         // The author a Page names by its interface, the application's User standing behind it
         $resolver = new ResolveTargetEntityListener();
@@ -59,7 +60,7 @@ class PageRepositoryTest extends TestCase
     // A published, indexable page holding a block of each kind given
     private function page(string $slug, string ...$kinds): void
     {
-        $page = new Page()->setTitle($slug)->setSlug($slug)->setCreation(new \DateTime())->setModification(new \DateTime())->setIsPublished(true)->setIsIndexable(true);
+        $page = new Page()->setTitle($slug)->setSlug($slug)->setCreation(new \DateTimeImmutable())->setModification(new \DateTimeImmutable())->setIsPublished(true)->setIsIndexable(true);
         foreach ($kinds as $position => $kind) {
             $page->addBlock(new Block()->setKind($kind)->setPosition($position));
         }
@@ -101,7 +102,7 @@ class PageRepositoryTest extends TestCase
     // Each lookup by block, and the one by ids a menu runs for its anchors, hands back its pages with all their blocks read in its own query - the legal pages, forms, edit buttons and anchors walking them would otherwise cost one query per page
     public function testALookupByBlockReadsEveryBlockOfItsPagesUpFront(): void
     {
-        $page = new Page()->setTitle('form')->setSlug('form')->setCreation(new \DateTime())->setModification(new \DateTime())->setIsPublished(true)->setIsIndexable(true);
+        $page = new Page()->setTitle('form')->setSlug('form')->setCreation(new \DateTimeImmutable())->setModification(new \DateTimeImmutable())->setIsPublished(true)->setIsIndexable(true);
         $page->addBlock(new Block()->setKind('legal_model')->setPosition(0));
         $page->addBlock(new Block()->setKind('form')->setPosition(1)->setData(['name' => 'register']));
         $page->addBlock(new Block()->setKind('hero')->setPosition(2));

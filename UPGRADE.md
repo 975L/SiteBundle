@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+**`Page` dates are immutable** (`datetime_immutable`, same SQL column, no migration): `getCreation()` and
+`getModification()` return `\DateTimeImmutable`. Code calling `modify()`, `setTime()`, `add()`... on them
+must use the returned date (`$date = $date->modify('+1 day')`), the call no longer changing the page's own.
+The setters still accept a `\DateTime`.
+
 **`site_page` gains an `is_members_only` column** (`TINYINT(1) DEFAULT 0 NOT NULL`): run
 `doctrine:migrations:diff` then `doctrine:migrations:migrate`, then `c975l:config:load-all` for the new
 `site-pages-members-only` setting. Every existing page stays open to everyone. A private site that

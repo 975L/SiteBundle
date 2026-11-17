@@ -110,7 +110,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
     {
         $counts = ['created' => 0, 'skipped' => 0, 'backfilled' => 0, 'summarised' => 0, 'formBackfilled' => 0];
         $summarised = [];
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
         // Security only guarantees its own UserInterface, Page relates to the c975L one the application's User entity implements
         $user = $this->security->getUser();
         $user = $user instanceof UserInterface ? $user : null;
@@ -181,7 +181,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
 
     // The counters import() must increment for this definition, empty when it contributes nothing
     // @return list<string>
-    private function importDefinition(array $def, \DateTime $now, ?UserInterface $user, ?callable $onPage): array
+    private function importDefinition(array $def, \DateTimeImmutable $now, ?UserInterface $user, ?callable $onPage): array
     {
         // Skips definitions tied to a bundle that isn't installed (e.g. terms of sales without PaymentBundle)
         if (isset($def['requiresClass']) && !class_exists($def['requiresClass'])) {
@@ -301,7 +301,7 @@ class DefaultPagesImporter implements EmailTemplateProviderInterface, FormBlockD
         return (string) ($def['model'] ?? $def['block']['data']['name'] ?? $def['slug']);
     }
 
-    private function buildPage(array $def, \DateTime $now, ?UserInterface $user): Page
+    private function buildPage(array $def, \DateTimeImmutable $now, ?UserInterface $user): Page
     {
         $page = new Page()
             ->setTitle($def['title'])

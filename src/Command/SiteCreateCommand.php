@@ -376,7 +376,7 @@ class SiteCreateCommand extends Command
             }
 
             $config->setValue($value);
-            $config->setModification(new \DateTime());
+            $config->setModification(new \DateTimeImmutable());
             $this->em->persist($config);
             $this->em->flush();
         }
@@ -415,7 +415,7 @@ class SiteCreateCommand extends Command
 
         return match ($kind) {
             Config::TYPE_INT => is_numeric($answer) ? $answer : throw new \RuntimeException('Cette valeur doit être un nombre.'),
-            Config::TYPE_DATE => false !== \DateTime::createFromFormat('Y-m-d', $answer) ? $answer : throw new \RuntimeException('Cette valeur doit être une date au format AAAA-MM-JJ.'),
+            Config::TYPE_DATE => false !== \DateTimeImmutable::createFromFormat('Y-m-d', $answer) ? $answer : throw new \RuntimeException('Cette valeur doit être une date au format AAAA-MM-JJ.'),
             Config::TYPE_JSON => null !== json_decode($answer) ? $answer : throw new \RuntimeException('Cette valeur doit être un JSON valide.'),
             default => $answer,
         };
@@ -481,7 +481,7 @@ class SiteCreateCommand extends Command
     {
         file_put_contents(
             $this->projectDir . '/' . self::LOCK_FILE,
-            sprintf("Site créé le %s via c975l:site:create.\nSupprime ce fichier pour autoriser une relance volontaire de la commande.\n", new \DateTime()->format('Y-m-d H:i:s'))
+            sprintf("Site créé le %s via c975l:site:create.\nSupprime ce fichier pour autoriser une relance volontaire de la commande.\n", new \DateTimeImmutable()->format('Y-m-d H:i:s'))
         );
     }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.40.0
+
+[BC-Break] Page dates stored as immutable dates
+
+- [BC-Break] `Page::getCreation()` and `getModification()` return `\DateTimeImmutable`, the columns being `datetime_immutable` (17/11/2026)
+- Page setters still accept any `\DateTimeInterface`, stored immutable (17/11/2026)
+
 ## v8.39.3
 
 CI replay runs the other PHP versions in parallel

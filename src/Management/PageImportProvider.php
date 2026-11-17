@@ -38,7 +38,7 @@ class PageImportProvider implements ImportProviderInterface
     {
         $created = 0;
         $updated = 0;
-        $now = new \DateTime();
+        $now = new \DateTimeImmutable();
 
         foreach ($items as $item) {
             $this->importPage($item, $now, $filesDir) ? $created++ : $updated++;
@@ -50,7 +50,7 @@ class PageImportProvider implements ImportProviderInterface
     }
 
     // One exported page written over whatever already lives under its slug - returns whether it had to be created
-    private function importPage(array $item, \DateTime $now, ?string $filesDir): bool
+    private function importPage(array $item, \DateTimeImmutable $now, ?string $filesDir): bool
     {
         $page = $this->pageRepository->findOneBy(['slug' => $item['slug']]);
         $isNew = null === $page;
@@ -66,7 +66,7 @@ class PageImportProvider implements ImportProviderInterface
         return $isNew;
     }
 
-    private function fillPage(Page $page, array $item, \DateTime $now): void
+    private function fillPage(Page $page, array $item, \DateTimeImmutable $now): void
     {
         $page
             ->setTitle($item['title'])

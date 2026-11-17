@@ -72,7 +72,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsBuildsAbsoluteUrlsFromPageAttributes(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about')->setPriority(7)->setChangeFrequency('daily');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$page], 'https://example.com');
 
         $urls = $provider->getUrls();
@@ -93,7 +93,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsCarriesTheTitleAndSummaryForLlmsTxt(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about')->setSummarySocialNetwork('Who we are');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
 
         $urls = $this->createProvider([$page])->getUrls();
 
@@ -105,7 +105,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsFallsBackToDefaultPriorityAndChangeFrequency(): void
     {
         $page = new Page()->setTitle('Home')->setSlug('home');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$page]);
 
         $urls = $provider->getUrls();
@@ -118,7 +118,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsKeepsAnExplicitZeroPriority(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about')->setPriority(0);
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
 
         $this->assertSame(0, $this->createProvider([$page])->getUrls()[0]['priority']);
     }
@@ -127,7 +127,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsDeclaresTheHomePageAtTheSiteRoot(): void
     {
         $page = new Page()->setTitle('Home')->setSlug('home');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$page]);
 
         $this->assertSame('https://example.com/', $provider->getUrls()[0]['loc']);
@@ -137,9 +137,9 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsSkipsNonIndexablePages(): void
     {
         $indexable = new Page()->setTitle('About')->setSlug('about');
-        $indexable->setModification(new \DateTime('2026-01-15'));
+        $indexable->setModification(new \DateTimeImmutable('2026-01-15'));
         $excluded = new Page()->setTitle('Créer un compte')->setSlug('creer-un-compte')->setIsIndexable(false);
-        $excluded->setModification(new \DateTime('2026-01-15'));
+        $excluded->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$indexable, $excluded]);
 
         $urls = $provider->getUrls();
@@ -152,7 +152,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsSkipsMembersOnlyPagesUntilTheyAreOpenedAgain(): void
     {
         $page = new Page()->setTitle('Espace membres')->setSlug('espace-membres')->setIsMembersOnly(true);
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$page]);
 
         $this->assertSame([], $provider->getUrls());
@@ -177,7 +177,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testGetUrlsReturnsEmptyArrayWhenSiteUrlIsNotConfigured(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
 
         $this->assertSame([], $this->createProvider([$page], '')->getUrls());
     }
@@ -186,7 +186,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testATranslatedPageIsDeclaredOncePerLanguage(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
         $provider = $this->createProvider([$page], 'https://example.com', ['fr', 'en'], 'fr', ['fr', 'en']);
 
         $urls = $provider->getUrls();
@@ -205,7 +205,7 @@ class SitePageSitemapProviderTest extends TestCase
     public function testASingleLanguageSiteDeclaresOneEntryPerPage(): void
     {
         $page = new Page()->setTitle('About')->setSlug('about');
-        $page->setModification(new \DateTime('2026-01-15'));
+        $page->setModification(new \DateTimeImmutable('2026-01-15'));
 
         $urls = $this->createProvider([$page])->getUrls();
 
