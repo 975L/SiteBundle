@@ -185,7 +185,7 @@ firing every url at once exhausts a shared host's PHP workers, which then answer
 nothing gets a second and last try two seconds later (`SmokeTestClient::TRANSIENT_STATUSES`); a 500 or a 404 is reported at once.
 
 A site in maintenance answers 503 on every url by construction, so the command checks nothing and exits
-0. It is deliberately **not** a health-check provider: that one judges quality weekly and persists rows,
+0 — as it does while a deployment's `var/maintenance` flag exists, at the start or by the time a failure would be reported, unless that flag is older than 30 minutes (a killed deployment's leftover, reported). It is deliberately **not** a health-check provider: that one judges quality weekly and persists rows,
 this one answers "is it broken right now" and has to be able to fail a pipeline. `SiteMaintenanceTaskProvider` also
 schedules it hourly.
 

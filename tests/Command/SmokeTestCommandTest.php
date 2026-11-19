@@ -24,6 +24,21 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class SmokeTestCommandTest extends TestCase
 {
+    private string $projectDir;
+
+    protected function setUp(): void
+    {
+        $this->projectDir = sys_get_temp_dir() . '/c975l-smoke-test-' . bin2hex(random_bytes(4));
+        mkdir($this->projectDir . '/var', 0o777, true);
+    }
+
+    protected function tearDown(): void
+    {
+        @unlink($this->projectDir . '/var/maintenance');
+        rmdir($this->projectDir . '/var');
+        rmdir($this->projectDir);
+    }
+
     public function testItSucceedsWhenEveryPageAndAssetAnswers200(): void
     {
         $tester = $this->tester(
@@ -137,6 +152,66 @@ class SmokeTestCommandTest extends TestCase
         $this->assertStringContainsString('maintenance', $tester->getDisplay());
     }
 
+    // The flag a deployment drops makes Apache answer 503 on every url before the application even boots
+    public function testItSkipsEverythingWhileADeploymentIsRunning(): void
+    {
+        touch($this->projectDir . '/var/maintenance');
+
+        $smokeTestClient = $this->createMock(SmokeTestClient::class);
+        $smokeTestClient->expects($this->never())->method('check');
+
+        $tester = new CommandTester($this->command(['https://example.com/'], $smokeTestClient));
+
+        $this->assertSame(Command::SUCCESS, $tester->execute([]));
+        $this->assertStringContainsString('maintenance', $tester->getDisplay());
+    }
+
+    // A flag left over by a deployment killed before its trap ran is stale: the whole site answering 503 is reported
+    public function testItReportsTheFailuresBehindAStaleDeploymentFlag(): void
+    {
+        touch($this->projectDir . '/var/maintenance', time() - 3600);
+
+        $tester = $this->tester(
+            ['https://example.com/'],
+            ['https://example.com/assets/app.js'],
+            [['https://example.com/' => 503], ['https://example.com/assets/app.js' => 503]]
+        );
+
+        $this->assertSame(Command::FAILURE, $tester->execute([]));
+        $this->assertStringNotContainsString('maintenance', $tester->getDisplay());
+    }
+
+    // The hourly run caught by a deployment starting mid-way: every url left answers 503, which is the deployment, not a broken site
+    public function testItIgnoresTheFailuresOfADeploymentStartedMidRun(): void
+    {
+        $tester = $this->tester(
+            ['https://example.com/', 'https://example.com/pages/contact'],
+            ['https://example.com/assets/app.js'],
+            [
+                ['https://example.com/' => 200, 'https://example.com/pages/contact' => 200],
+                ['https://example.com/assets/app.js' => 503],
+            ],
+            fn () => touch($this->projectDir . '/var/maintenance')
+        );
+
+        $this->assertSame(Command::SUCCESS, $tester->execute([]));
+        $this->assertStringContainsString('déploiement a démarré', $tester->getDisplay());
+    }
+
+    // Same deployment caught before the home page is read: it answers 503 and so no asset at all
+    public function testItIgnoresTheMissingAssetsOfADeploymentStartedMidRun(): void
+    {
+        $tester = $this->tester(
+            ['https://example.com/'],
+            [],
+            [['https://example.com/' => 503]],
+            fn () => touch($this->projectDir . '/var/maintenance')
+        );
+
+        $this->assertSame(Command::SUCCESS, $tester->execute([]));
+        $this->assertStringNotContainsString('Aucun asset css/js', $tester->getDisplay());
+    }
+
     public function testItFailsWhenSiteUrlIsNotConfigured(): void
     {
         $configService = $this->createStub(ConfigServiceInterface::class);
@@ -217,11 +292,18 @@ class SmokeTestCommandTest extends TestCase
         }
     }
 
-    private function tester(array $pageUrls, array $assets, array $checkReturns): CommandTester
+    // $duringCheck runs on every check() call, standing for what happens on the server while the requests are in flight
+    private function tester(array $pageUrls, array $assets, array $checkReturns, ?\Closure $duringCheck = null): CommandTester
     {
         $smokeTestClient = $this->createStub(SmokeTestClient::class);
         $smokeTestClient->method('findAssets')->willReturn($assets);
-        $smokeTestClient->method('check')->willReturnOnConsecutiveCalls(...$checkReturns);
+        $smokeTestClient->method('check')->willReturnCallback(static function () use (&$checkReturns, $duringCheck): array {
+            if (null !== $duringCheck) {
+                $duringCheck();
+            }
+
+            return array_shift($checkReturns);
+        });
 
         return new CommandTester($this->command($pageUrls, $smokeTestClient));
     }
@@ -234,7 +316,7 @@ class SmokeTestCommandTest extends TestCase
 
         $pagePublicUrlResolver = $this->createStub(PagePublicUrlResolver::class);
         if ($pageUrls) {
-            $pagePublicUrlResolver->method('resolve')->willReturnOnConsecutiveCalls(...$pageUrls);
+            $pagePublicUrlResolver->method('resolve')->willReturnOnConsecutiveCalls(...array_values($pageUrls));
         }
 
         if (null === $configService) {
@@ -242,6 +324,6 @@ class SmokeTestCommandTest extends TestCase
             $configService->method('get')->willReturn('https://example.com');
         }
 
-        return new SmokeTestCommand($pageRepository, $pagePublicUrlResolver, $smokeTestClient, $configService, $sitemapProviders);
+        return new SmokeTestCommand($pageRepository, $pagePublicUrlResolver, $smokeTestClient, $configService, $this->projectDir, $sitemapProviders);
     }
 }

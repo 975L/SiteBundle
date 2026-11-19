@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.40.1
+
+Smoke test skipped while a deployment runs
+
+- `c975l:site:smoke-test` exits 0 while the deployment's `var/maintenance` flag exists, at the start or before reporting a failure (19/11/2026)
+- A `var/maintenance` flag older than 30 minutes is ignored and the 503s behind it reported (19/11/2026)
+
 ## v8.40.0
 
 [BC-Break] Page dates stored as immutable dates

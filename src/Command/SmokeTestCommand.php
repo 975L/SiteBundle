@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 
 // Checks every published page, one slice of the titled sitemap-provider urls and home css/js asset answers 200, exiting non-zero on the first failure so a deployment pipeline fails; deliberately not a health check
@@ -37,11 +38,16 @@ class SmokeTestCommand extends Command
     // Sitemap urls checked per run. Every one of them, every hour, had a site declaring each of its records (1800 urls on resistance-haute-savoie.fr) fire thousands of requests an hour from the host's own address, until the hosting's front proxy answered 429 to every site sharing it
     private const int SITEMAP_SLICE_SIZE = 100;
 
+    // Seconds after which a var/maintenance flag is left over by a deployment killed before its trap ran, a whole site answering 503 then being reported rather than skipped
+    private const int DEPLOYMENT_FLAG_MAX_AGE = 1800;
+
     public function __construct(
         private readonly PageRepository $pageRepository,
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly SmokeTestClient $smokeTestClient,
         private readonly ConfigServiceInterface $configService,
+        #[Autowire(param: 'kernel.project_dir')]
+        private readonly string $projectDir,
         /** @var iterable<SitemapProviderInterface> */
         #[AutowireIterator('c975l.sitemap_provider')]
         private readonly iterable $sitemapProviders = [],
@@ -66,8 +72,8 @@ class SmokeTestCommand extends Command
             return Command::FAILURE;
         }
 
-        // A site left in maintenance answers 503 + the maintenance page (inline css only) on every public url, so every check below would fail on a deployment that actually went fine - the site being in maintenance is a deliberate state, not a broken deployment
-        if (true === $this->configService->get('site-maintenance')) {
+        // A site left in maintenance answers 503 + the maintenance page (inline css only) on every public url, so every check below would fail on a deployment that actually went fine - the site being in maintenance is a deliberate state, not a broken deployment. So is the var/maintenance flag a running deployment drops
+        if (true === $this->configService->get('site-maintenance') || $this->isBeingDeployed()) {
             $io->warning('Le site est en mode maintenance, smoke test ignoré (les pages publiques répondent 503 par construction).');
 
             return Command::SUCCESS;
@@ -100,6 +106,10 @@ class SmokeTestCommand extends Command
         if (!$input->getOption('pages-only')) {
             $assets = $this->smokeTestClient->findAssets($siteUrl, $siteUrl);
             if (!$assets) {
+                if ($this->deploymentStarted($io)) {
+                    return Command::SUCCESS;
+                }
+
                 // The pages are listed first: a home page without a single asset is almost always a home page that isn't rendering at all (500, redirect elsewhere), and their status codes say so - "aucun asset trouvé" alone sends someone looking at asset-map:compile while the site is down for another reason
                 $this->listFailures($io, $statuses);
                 $io->error('Aucun asset css/js trouvé dans le HTML de la page d\'accueil.');
@@ -156,11 +166,36 @@ class SmokeTestCommand extends Command
             return Command::SUCCESS;
         }
 
+        if ($this->deploymentStarted($io)) {
+            return Command::SUCCESS;
+        }
+
         $this->listFailures($io, $statuses);
 
         $io->error(sprintf('%d url(s) en échec sur %d vérifiée(s).', \count($failures), \count($statuses)));
 
         return Command::FAILURE;
+    }
+
+    // A deployment started mid-run (the hourly run caught by WebDeploiement.sh's flag, its worker stopped only once this message is handled) turns every remaining url into an Apache 503: that's the deployment, not a broken site
+    private function deploymentStarted(SymfonyStyle $io): bool
+    {
+        if (!$this->isBeingDeployed()) {
+            return false;
+        }
+
+        $io->warning('Un déploiement a démarré pendant le smoke test, échecs ignorés (les pages publiques répondent 503 par construction).');
+
+        return true;
+    }
+
+    // The flag a deployment drops while vendor/ and the container are rewritten, public/.htaccess answering 503 on every url as long as it exists, ignored once stale
+    private function isBeingDeployed(): bool
+    {
+        $flag = $this->projectDir . '/var/maintenance';
+        clearstatcache(true, $flag);
+
+        return is_file($flag) && time() - filemtime($flag) < self::DEPLOYMENT_FLAG_MAX_AGE;
     }
 
     // Every non-200 url, one per line
