@@ -11,6 +11,8 @@
 namespace c975L\SiteBundle\Service;
 
 use c975L\ConfigBundle\Service\HealthCheck;
+use c975L\ConfigBundle\Service\SiteUrlResolver;
+use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 // Scans a page's rendered HTML for resources fetched over plain http:// - exactly what a browser's own "mixed content" warning flags on an https:// page. A lightweight regex over the handful of resource-bearing attributes that matter, not a full DOM parse - no extra dependency needed for this. Never matches <a href>: a plain hyperlink isn't fetched by the browser, so it's never "mixed content"
@@ -21,6 +23,7 @@ class MixedContentClient
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly SiteUrlResolver $siteUrlResolver,
     ) {
     }
 
@@ -28,7 +31,7 @@ class MixedContentClient
     public function findInsecureResources(string $url): array
     {
         // Sent under the probes' own agent, which RateLimitListener lets through: without it, a site checking its own pages in a burst refused them with a 429 and reported each one as an error
-        $html = $this->httpClient->request('GET', $url, ['timeout' => 30, 'headers' => ['User-Agent' => HealthCheck::USER_AGENT]])->getContent();
+        $html = $this->clientFor($url)->request('GET', $url, ['timeout' => 30, 'headers' => ['User-Agent' => HealthCheck::USER_AGENT]])->getContent();
 
         $found = [];
         if (preg_match_all(self::RESOURCE_TAG_PATTERN, $html, $matches)) {
@@ -39,5 +42,13 @@ class MixedContentClient
         }
 
         return array_values(array_unique($found));
+    }
+
+    // The site's own pages read as they are, 127.0.0.1 in local dev, any other host off the private network
+    private function clientFor(string $url): HttpClientInterface
+    {
+        $siteHost = strtolower((string) parse_url((string) $this->siteUrlResolver->siteUrl(), \PHP_URL_HOST));
+
+        return '' !== $siteHost && $siteHost === strtolower((string) parse_url($url, \PHP_URL_HOST)) ? $this->httpClient : new NoPrivateNetworkHttpClient($this->httpClient);
     }
 }

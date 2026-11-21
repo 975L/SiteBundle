@@ -10,6 +10,7 @@
 
 namespace c975L\SiteBundle\Service;
 
+use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -121,6 +122,8 @@ class W3cValidatorClient implements ResetInterface
             'query' => ['uri' => $url, 'output' => 'json', 'profile' => 'css3svg'],
             'headers' => ['User-Agent' => self::USER_AGENT],
             'timeout' => 60,
+            // The page checked, whose host is the only one readStylesheet() reads without the private network guard
+            'user_data' => $url,
         ]);
     }
 
@@ -128,6 +131,7 @@ class W3cValidatorClient implements ResetInterface
     public function readCss(ResponseInterface $response): array
     {
         $result = $response->toArray()['cssvalidation'] ?? [];
+        $pageHost = strtolower((string) parse_url((string) $response->getInfo('user_data'), \PHP_URL_HOST));
 
         $warnings = [];
         $benignWarnings = [];
@@ -152,7 +156,7 @@ class W3cValidatorClient implements ResetInterface
         $benignErrors = [];
         foreach ($result['errors'] ?? [] as $error) {
             $text = self::messageLine($error, 'line', 'Unknown error');
-            if ($this->isBenignCssError($error, $uncheckedSources)) {
+            if ($this->isBenignCssError($error, $uncheckedSources, $pageHost)) {
                 $benignErrors[] = $text;
                 continue;
             }
@@ -171,14 +175,14 @@ class W3cValidatorClient implements ResetInterface
 
     // An error the validator's own profile is not in a position to raise, matched on the machine-readable "type" rather than on wording: a property this profile predates is excused by name only, so a typo stays an error, an unknown unit or a value rejected for it only on a line writing one of the units it predates, and a type verdict is excused only on a stylesheet the validator has just declared it did not resolve the variables of
     /** @param array<string, true> $uncheckedSources stylesheets the validator declared unresolved, keyed by the "source" it reports */
-    private function isBenignCssError(array $error, array $uncheckedSources): bool
+    private function isBenignCssError(array $error, array $uncheckedSources, string $pageHost): bool
     {
         $type = $error['type'] ?? null;
         $source = (string) ($error['source'] ?? '');
 
         return match (true) {
             self::TYPE_PROPERTY_UNKNOWN === $type => $this->isPropertyNewerThanProfile($error['message'] ?? ''),
-            \in_array($type, [self::TYPE_UNKNOWN_DIMENSION, self::TYPE_VALUE], true) => $this->lineHasUnitNewerThanProfile($source, (int) ($error['line'] ?? 0)),
+            \in_array($type, [self::TYPE_UNKNOWN_DIMENSION, self::TYPE_VALUE], true) => $this->lineHasUnitNewerThanProfile($source, (int) ($error['line'] ?? 0), $pageHost),
             default => isset($uncheckedSources[$source]) && \in_array($type, self::CSS_TYPE_VERDICTS, true),
         };
     }
@@ -195,26 +199,30 @@ class W3cValidatorClient implements ResetInterface
     }
 
     // Whether the stylesheet line the validator names writes a unit its profile predates - a sheet that cannot be read excuses nothing
-    private function lineHasUnitNewerThanProfile(string $source, int $line): bool
+    private function lineHasUnitNewerThanProfile(string $source, int $line, string $pageHost): bool
     {
-        $lines = $this->stylesheetLines($source);
+        $lines = $this->stylesheetLines($source, $pageHost);
 
         return isset($lines[$line - 1]) && 1 === preg_match(self::UNITS_NEWER_THAN_PROFILE, $lines[$line - 1]);
     }
 
     // The stylesheet's lines, numbered as the validator numbers them (from 1, so index 0 is line 1)
     /** @return list<string> */
-    private function stylesheetLines(string $source): array
+    private function stylesheetLines(string $source, string $pageHost): array
     {
         if ('' === $source) {
             return [];
         }
 
         if (!isset($this->stylesheets[$source])) {
+            // The page's own host is the site itself, 127.0.0.1 in local dev, read without following a redirect elsewhere: any other one, named by the validator's answer, is read off the private network
+            $ownHost = '' !== $pageHost && $pageHost === strtolower((string) parse_url($source, \PHP_URL_HOST));
+            $httpClient = $ownHost ? $this->httpClient : new NoPrivateNetworkHttpClient($this->httpClient);
             try {
-                $content = $this->httpClient->request('GET', $source, [
+                $content = $httpClient->request('GET', $source, [
                     'headers' => ['User-Agent' => self::USER_AGENT],
                     'timeout' => 10,
+                    ...($ownHost ? ['max_redirects' => 0] : []),
                 ])->getContent();
             } catch (ExceptionInterface) {
                 $content = '';

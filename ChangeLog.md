@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.41.2
+
+Health check reads kept to the site's own host
+
+- `W3cValidatorClient`: a stylesheet on another host than the page's is read off the private network, the page's own never redirected (21/11/2026)
+- `MixedContentClient`: a page on another host than `site-url`'s is read off the private network (21/11/2026)
+
 ## v8.41.1
 
 php-http/discovery plugin allowed

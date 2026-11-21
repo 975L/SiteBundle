@@ -135,9 +135,9 @@ chains, deployment, declared urls) are ConfigBundle's.
 | --- | --- | --- |
 | `pagespeed` | Lighthouse performance / accessibility / best-practices / SEO + console errors | optional `healthcheck-pagespeed-api-key`, the anonymous quota being shared worldwide; a page blocked from indexing is not judged on its SEO score; a page answering an error during the run (a deployment's 503) is skipped, not scored |
 | `w3c-html` | markup, via the W3C Nu checker; both W3C kinds validate four pages at a time and skip a page the validator answers `429` | none |
-| `w3c-css` | stylesheets; the warnings **and the errors** the validator's CSS3 profile predates are counted apart as *benign*, a container query unit (`cqw`, `cqi`…) being excused only on the stylesheet line writing it, a type verdict being excused only on the stylesheet the validator said it did not resolve the variables of | none |
+| `w3c-css` | stylesheets; the warnings **and the errors** the validator's CSS3 profile predates are counted apart as *benign*, a container query unit (`cqw`, `cqi`…) being excused only on the stylesheet line writing it (a sheet on another host than the page's read off the private network), a type verdict being excused only on the stylesheet the validator said it did not resolve the variables of | none |
 | `content-quality` | noindex contradictions, title and description length, `<h1>`, share tags, image `alt`, broken links | none |
-| `mixed-content` | `http://` assets on an `https://` page | none |
+| `mixed-content` | `http://` assets on an `https://` page, a page on another host than `site-url`'s read off the private network | none |
 | `files-site` | that the image every `CollectionItem` names is still under `public/` — read off the disk, not over http | none |
 | `translations` | what is published in one language and not in the others — one row per published page, plus one per menu, each linking to its own Translate screen; returns nothing at all on a site declaring one language | none |
 

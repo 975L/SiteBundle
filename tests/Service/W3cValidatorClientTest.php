@@ -309,4 +309,82 @@ class W3cValidatorClientTest extends TestCase
         $this->assertSame($userAgents[0], $userAgents[1]);
         $this->assertStringContainsString('c975LHealthCheck', $userAgents[0]);
     }
+
+    // A stylesheet the validator names on another host is read off the private network: one there excuses nothing and is never asked, a public one is read
+    public function testAStylesheetOnAnotherHostIsReadOffThePrivateNetwork(): void
+    {
+        $sheets = [];
+        $httpClient = new MockHttpClient(
+            function (string $method, string $url) use (&$sheets): MockResponse {
+                if (str_contains($url, '/css/')) {
+                    $sheets[] = $url;
+
+                    return new MockResponse(".card {\n    border-radius: 2cqw;\n}\n", ['http_code' => 200]);
+                }
+
+                return new MockResponse(json_encode([
+                    'cssvalidation' => [
+                        'errors' => [
+                            ['line' => 2, 'source' => 'http://127.0.0.1/css/internal.css', 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension'],
+                            ['line' => 2, 'source' => 'https://93.184.216.34/css/public.css', 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension'],
+                        ],
+                        'warnings' => [],
+                    ],
+                ]), ['http_code' => 200]);
+            }
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        $this->assertSame(['line 2: Unknown dimension'], $result['errors']);
+        $this->assertCount(1, $result['benignErrors']);
+        $this->assertSame(['https://93.184.216.34/css/public.css'], $sheets);
+    }
+
+    // The page's own host is read as it is, the site running on 127.0.0.1 in local dev
+    public function testAStylesheetOnThePageHostIsReadOnALocalAddress(): void
+    {
+        $httpClient = new MockHttpClient(
+            fn (string $method, string $url) => str_contains($url, '/css/')
+                ? new MockResponse(".card {\n    border-radius: 2cqw;\n}\n", ['http_code' => 200])
+                : new MockResponse(json_encode([
+                    'cssvalidation' => [
+                        'errors' => [['line' => 2, 'source' => 'http://127.0.0.1:8000/css/site.css', 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension']],
+                        'warnings' => [],
+                    ],
+                ]), ['http_code' => 200])
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('http://127.0.0.1:8000/pages/home/');
+
+        $this->assertSame([], $result['errors']);
+        $this->assertCount(1, $result['benignErrors']);
+    }
+
+    // A stylesheet on the page's host is not followed when it redirects elsewhere: it excuses nothing
+    public function testAStylesheetOnThePageHostIsNotFollowedElsewhere(): void
+    {
+        $sheets = [];
+        $httpClient = new MockHttpClient(
+            function (string $method, string $url, array $options) use (&$sheets): MockResponse {
+                if (str_contains($url, '/css/')) {
+                    $sheets[$url] = $options['max_redirects'];
+
+                    return new MockResponse('', ['http_code' => 302, 'redirect_url' => 'http://10.0.0.1/css/internal.css', 'response_headers' => ['location: http://10.0.0.1/css/internal.css']]);
+                }
+
+                return new MockResponse(json_encode([
+                    'cssvalidation' => [
+                        'errors' => [['line' => 2, 'source' => 'https://example.com/css/site.css', 'type' => 'generator.unrecognize', 'message' => 'Unknown dimension']],
+                        'warnings' => [],
+                    ],
+                ]), ['http_code' => 200]);
+            }
+        );
+
+        $result = new W3cValidatorClient($httpClient)->validateCss('https://example.com/pages/home/');
+
+        $this->assertSame(['line 2: Unknown dimension'], $result['errors']);
+        $this->assertSame(['https://example.com/css/site.css' => 0], $sheets);
+    }
 }
