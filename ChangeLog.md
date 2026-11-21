@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.41.1
+
+php-http/discovery plugin allowed
+
+- `php-http/discovery` plugin allowed in `allow-plugins` instead of declared disabled (21/11/2026)
+
 ## v8.41.0
 
 Page tools on the site's MCP endpoint

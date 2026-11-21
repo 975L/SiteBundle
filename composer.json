@@ -64,7 +64,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": false
+            "php-http/discovery": true
         }
     },
     "scripts": {
