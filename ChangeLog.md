@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.40.2
+
+Vich uploader helper alias left to CoreBundle
+
+- `UploaderHelperInterface` alias removed, now declared by c975l/core-bundle ^1.95.1 (21/11/2026)
+
 ## v8.40.1
 
 Smoke test skipped while a deployment runs
