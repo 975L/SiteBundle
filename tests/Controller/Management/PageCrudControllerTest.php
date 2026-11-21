@@ -25,6 +25,7 @@ use c975L\SiteBundle\Form\Type\PageQrCodeType;
 use c975L\SiteBundle\Management\PageExportProvider;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
+use c975L\SiteBundle\Service\PageSlugs;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Entity\Block;
@@ -172,7 +173,6 @@ class PageCrudControllerTest extends TestCase
             $services['pageRepository'],
             $services['adminContextProvider'],
             $services['requestStack'],
-            $services['slugger'],
             $services['connection'],
             $services['tableExporter'],
             $services['contentExporter'],
@@ -185,6 +185,8 @@ class PageCrudControllerTest extends TestCase
             $services['translationCopier'],
             // Built on the very request stack, url generator and languages the test hands over, so a screen opened on a language reads it off the same request
             $services['contentLocaleScreen'] ?? new ContentLocaleScreen($services['requestStack'], $services['adminUrlGenerator'], $services['siteLocales']),
+            // The real one, on the very repositories and languages the test hands over, so the slugs and redirects it writes are those the test asserts on
+            new PageSlugs($services['pageRepository'], $services['redirectRepository'], $services['slugger'], $services['siteLocales'], $services['pageTranslator']),
             // Null as on a site without SocialBundle, but in the tests about the social column
             $services['socialStatuses'] ?? null,
             // Null as on a construction that leaves it out, but in the tests about the share image of a language
@@ -1062,20 +1064,6 @@ class PageCrudControllerTest extends TestCase
         $this->assertSame(302, $response->getStatusCode());
         $this->assertFalse($copy->isPublished());
         $this->assertSame('home-copy-2', $copy->getSlug());
-    }
-
-    // --- uniqueSlug (private) -------------------------------------------------------------------------
-
-    // --- slugifyPage (private) -------------------------------------------------------------------------
-
-    public function testSlugifyPageNormalizesAccentsSpacesAndCase(): void
-    {
-        $controller = $this->createController();
-        $page = new Page()->setTitle('x')->setSlug('Héllo Wörld!');
-
-        $this->invokePrivate($controller, 'slugifyPage', [$page]);
-
-        $this->assertSame('hello-world', $page->getSlug());
     }
 
     // --- pagePath / buildPageUrl (private) ---------------------------------------------------------------

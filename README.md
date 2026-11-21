@@ -25,7 +25,7 @@ Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) 
 - **Users & access** — [moved to ConfigBundle](#users)
 - **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
 - **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
-- **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures) · [AI agent skills](#ai-agent-skills)
+- **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures) · [MCP tools](#mcp-tools) · [AI agent skills](#ai-agent-skills)
 
 ## Features
 
@@ -1442,6 +1442,19 @@ $bots = file(
     {{ parent() }}
 {% endblock %}
 ```
+
+---
+
+## MCP tools
+
+The pages bring their tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\SiteMcpProvider`, under the `site` key of the agent tokens, for an account holding `site-role-editor` as on the back office. Slugs and redirects go through `Service\PageSlugs`, the very service the page CRUD uses. Texts are read and written in the language the site is written in; the menus and the collections stay out of reach.
+
+| Tool | Does |
+| --- | --- |
+| `site_page_list` | The pages whose title holds the `search` words, every page without them, drafts included, the latest modified first, with their public url once published |
+| `site_page_get` | A `page`: title, SEO description, status, public url once published, and the texts of its blocks |
+| `site_page_create` | An unpublished page added with its `title` and an optional `description`, members only when `site-pages-members-only` says so, its slug built as on the back office; composing its blocks and publishing stay a human's |
+| `site_page_edit` | Only the `title` or `description` given of a `page` changed; a new title renames its slug and redirects a published page's old urls, as on the back office |
 
 ---
 

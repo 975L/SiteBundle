@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.41.0
+
+Page tools on the site's MCP endpoint
+
+- `SiteMcpProvider`: an agent lists and reads the pages with their blocks' texts, adds a draft and writes its title and SEO description, with the rights of its token's account (21/11/2026)
+- `PageSlugs`: the page's slug and the redirects a rename leaves, taken out of `PageCrudController` and shared with the agent's tools (21/11/2026)
+- `php-http/discovery` plugin declared disabled in `allow-plugins`, so `composer qa` no longer stops on its prompt (21/11/2026)
+
 ## v8.40.2
 
 Vich uploader helper alias left to CoreBundle

@@ -30,6 +30,7 @@ use c975L\SiteBundle\Management\PageImportProvider;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\PageRepository;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
+use c975L\SiteBundle\Service\PageSlugs;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Contract\SocialContentStatusProviderInterface;
 use c975L\UiBundle\Controller\Management\Trait\SocialStatusCrudTrait;
@@ -46,7 +47,6 @@ use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
 use c975L\UiBundle\Service\MediaTranslator;
 use c975L\UiBundle\Service\QrCodeGenerator;
 use c975L\UiBundle\Service\TranslationCopier;
-use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -91,7 +91,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Intl\Locales;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Translation\TranslatableMessage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
@@ -114,11 +113,8 @@ class PageCrudController extends AbstractCrudController
     public const DUPLICATE_CSRF_TOKEN = 'page_duplicate';
     public const PUBLISH_AS_REPLACEMENT_CSRF_TOKEN = 'page_publish_as_replacement';
 
-    // Page::$title and Page::$slug are VARCHAR(100): a generated base is cut so its suffix ("-12", " (copy)") still fits
-    private const int TITLE_SLUG_LENGTH = 100;
-
-    // Room left by a slug base for UniqueSlug's "-N" suffix
-    private const int SLUG_SUFFIX_ROOM = 4;
+    // Page::$title is VARCHAR(100): a copy's title is cut so its " (copy)" suffix still fits
+    private const int TITLE_LENGTH = 100;
 
     // The query parameter the language selector writes, and the one thing telling an edit screen it writes a translation
     public const string CONTENT_LOCALE_PARAM = ContentLocaleScreen::PARAM;
@@ -141,7 +137,6 @@ class PageCrudController extends AbstractCrudController
         private readonly PageRepository $pageRepository,
         private readonly AdminContextProvider $adminContextProvider,
         private readonly RequestStack $requestStack,
-        private readonly SluggerInterface $slugger,
         private readonly Connection $connection,
         private readonly TableExporter $tableExporter,
         private readonly ContentExporter $contentExporter,
@@ -154,6 +149,7 @@ class PageCrudController extends AbstractCrudController
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
         private readonly TranslationCopier $translationCopier,
         private readonly ContentLocaleScreen $contentLocaleScreen,
+        private readonly PageSlugs $pageSlugs,
         private readonly ?SocialContentStatusProviderInterface $socialStatuses = null,
         // Optional and last for the same reason: a construction that leaves it out offers no share image on the language screens
         private readonly ?MediaTranslator $mediaTranslator = null,
@@ -940,7 +936,7 @@ class PageCrudController extends AbstractCrudController
     private function removeForGood(EntityManagerInterface $entityManager, Page $page): void
     {
         // Each url of the page, the one of every language it is translated in too, read before the row and its translations go
-        foreach ($this->slugPaths($page, (string) $page->getSlug()) as $path) {
+        foreach ($this->pageSlugs->paths($page, (string) $page->getSlug()) as $path) {
             $this->markGone($entityManager, $page, $path);
         }
 
@@ -1027,8 +1023,8 @@ class PageCrudController extends AbstractCrudController
 
         $titleSuffix = ' (' . $suffix . ')';
         $copy = new Page()
-            ->setTitle(mb_substr($source->getTitle(), 0, self::TITLE_SLUG_LENGTH - mb_strlen($titleSuffix)) . $titleSuffix)
-            ->setSlug($this->uniquePageSlug($source->getSlug() . '-' . $suffix, null))
+            ->setTitle(mb_substr($source->getTitle(), 0, self::TITLE_LENGTH - mb_strlen($titleSuffix)) . $titleSuffix)
+            ->setSlug($this->pageSlugs->unique($source->getSlug() . '-' . $suffix, null))
             ->setSummarySocialNetwork($source->getSummarySocialNetwork())
             ->setPriority($source->getPriority())
             ->setChangeFrequency($source->getChangeFrequency())
@@ -1087,7 +1083,7 @@ class PageCrudController extends AbstractCrudController
         $entityManager->wrapInTransaction(function () use ($entityManager, $original, $copy, $originalSlug, $originalIsIndexable): void {
             $original
                 ->setArchivedSlug($originalSlug)
-                ->setSlug($this->uniquePageSlug($originalSlug . '-archived', $original))
+                ->setSlug($this->pageSlugs->unique($originalSlug . '-archived', $original))
                 ->setIsPublished(false)
                 ->setIsDeleted(true)
                 ->setModification(new \DateTimeImmutable());
@@ -1204,7 +1200,7 @@ class PageCrudController extends AbstractCrudController
         $slug = $this->requestStack->getCurrentRequest()?->query->get('slug');
         if (\is_string($slug) && '' !== $slug) {
             $page->setSlug($slug);
-            $this->slugifyPage($page);
+            $this->pageSlugs->normalize($page);
         }
 
         return $page;
@@ -1214,8 +1210,7 @@ class PageCrudController extends AbstractCrudController
     #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
-        $this->slugifyPage($page);
-        $this->releaseSlugPaths($entityManager, $page);
+        $this->pageSlugs->prepareNew($entityManager, $page);
         $page->setCreation(new \DateTimeImmutable());
         $page->setModification(new \DateTimeImmutable());
         $this->setUser($page);
@@ -1227,26 +1222,7 @@ class PageCrudController extends AbstractCrudController
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $page): void
     {
-        $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($page);
-        $originalSlug = $originalData['slug'] ?? null;
-        $originalTitle = $originalData['title'] ?? null;
-        // The state before the save, not what the page becomes in it
-        $originalIsPublished = (bool) ($originalData['isPublished'] ?? false);
-
-        // The home page's slug is fixed (see isHomePage in configureFields), its title can change without affecting it
-        if ('home' !== $originalSlug && null !== $originalTitle && $originalTitle !== $page->getTitle()) {
-            $page->setSlug($page->getTitle());
-        }
-
-        $this->slugifyPage($page);
-
-        // An unpublished page was never served under its old slug, so renaming it leaves no url to redirect from
-        if (null !== $originalSlug && $originalIsPublished && $originalSlug !== $page->getSlug()) {
-            $this->redirectSlugChange($entityManager, $page, $originalSlug, $page->getSlug());
-        }
-
-        // Published or not: the day it goes online, its urls must reach it
-        $this->releaseSlugPaths($entityManager, $page);
+        $this->pageSlugs->prepareUpdate($entityManager, $page);
 
         $page->setModification(new \DateTimeImmutable());
         $this->setUser($page);
@@ -1286,67 +1262,6 @@ class PageCrudController extends AbstractCrudController
     private function buildPageUrl(Page $page, ?string $locale = null): string
     {
         return rtrim((string) $this->configService->get('site-url'), '/') . $this->pagePath($page, $locale);
-    }
-
-    // Normalizes the slug entered by the user (removes accents, spaces, uppercase...) and appends -2, -3... when another page holds it: the UniqueEntity check ran on the slug as typed, or before a title change recomputed it
-    private function slugifyPage(Page $page): void
-    {
-        $slug = $page->getSlug();
-        if (null !== $slug) {
-            $page->setSlug($this->uniquePageSlug($slug, $page));
-        }
-    }
-
-    // A slug no other page holds, its base cut so the suffix still fits the column
-    private function uniquePageSlug(string $base, ?Page $page): string
-    {
-        return UniqueSlug::build(
-            $this->slugger,
-            mb_substr(strtolower($this->slugger->slug($base)->toString()), 0, self::TITLE_SLUG_LENGTH - self::SLUG_SUFFIX_ROOM),
-            fn (string $candidate): bool => null !== ($other = $this->pageRepository->findOneBy(['slug' => $candidate])) && $other->getId() !== $page?->getId()
-        );
-    }
-
-    // The page's urls for that slug, keyed by language: the writing language's "/pages/{slug}", and "/{locale}/pages/{slug}" for every language it is translated in
-    /** @return array<string, string> */
-    private function slugPaths(Page $page, string $slug): array
-    {
-        $default = $this->siteLocales->getDefaultLocale();
-        $paths = [$default => '/pages/' . $slug];
-        foreach ($this->pageTranslator->translatedLocales($page) as $locale) {
-            if ($locale !== $default) {
-                $paths[$locale] = '/' . $locale . '/pages/' . $slug;
-            }
-        }
-
-        return $paths;
-    }
-
-    // The page wins over a redirect: one left on its urls by a removed page ("gone") or a renamed one would answer before the router ever reaches it (see RedirectSubscriber), and a redirect from the new slug back would loop (prestations -> prestations-2, then renamed back)
-    private function releaseSlugPaths(EntityManagerInterface $entityManager, Page $page): void
-    {
-        foreach ($this->slugPaths($page, (string) $page->getSlug()) as $path) {
-            $redirect = $this->redirectRepository->findOneByFromPath($path);
-            if (null !== $redirect) {
-                $entityManager->remove($redirect);
-            }
-        }
-    }
-
-    // Redirects each old url of the page, in every language it is read in, to the new one, reusing an existing redirect if the old slug already had one
-    private function redirectSlugChange(EntityManagerInterface $entityManager, Page $page, string $oldSlug, string $newSlug): void
-    {
-        $toUrls = $this->slugPaths($page, $newSlug);
-        foreach ($this->slugPaths($page, $oldSlug) as $locale => $fromPath) {
-            $redirect = $this->redirectRepository->findOneByFromPath($fromPath)
-                ?? new Redirect()->setFromPath($fromPath);
-
-            $redirect
-                ->setToUrl($toUrls[$locale])
-                ->setPermanent(true);
-
-            $entityManager->persist($redirect);
-        }
     }
 
     // Defines the user for the page

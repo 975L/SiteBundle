@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-21",
+        "description": [
+            {
+                "en": "An AI agent holding an agent token of an account editing the pages can list and read them, add a draft page and write its title and its \"Social networks summary\", also read by search engines; composing its blocks and publishing it stay yours, from the back office.",
+                "fr": "Un agent IA muni d'un jeton d'agent d'un compte qui édite les pages peut les lister et les lire, ajouter une page en brouillon et rédiger son titre et son « Résumé réseaux sociaux », lu aussi par les moteurs de recherche ; composer ses blocs et la publier restent votre affaire, depuis le back-office.",
+                "es": "Un agente de IA con un token de agente de una cuenta que edita las páginas puede listarlas y leerlas, añadir una página como borrador y redactar su título y su «Resumen para redes sociales», leído también por los buscadores; componer sus bloques y publicarla sigue siendo cosa suya, desde el back-office."
+            }
+        ]
+    },
+    {
         "date": "2026-11-12",
         "description": [
             {
