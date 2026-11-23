@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.43.0
+
+New sites keep their members signed in thirty days
+
+- `.markdownlint.json` allows the `p` and `img` elements the centred banner uses (23/11/2026)
+- `c975l:site:create` adds a thirty-day `remember_me` to the `main` firewall (23/11/2026)
+
 ## v8.42.2
 
 README banner centred, showcase film shown

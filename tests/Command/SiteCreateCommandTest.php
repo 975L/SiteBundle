@@ -217,6 +217,17 @@ class SiteCreateCommandTest extends TestCase
         $this->assertSame($yaml, file_get_contents($path));
     }
 
+    // The "Keep me signed in" box of the login form is read by a remember_me lasting thirty days, a site's own left alone
+    public function testEnsureRememberMeAddsItOnce(): void
+    {
+        $path = $this->writeSecurityYaml("security:\n    firewalls:\n        main:\n            lazy: true\n");
+
+        $this->callSecurityStep('ensureRememberMe');
+        $this->callSecurityStep('ensureRememberMe');
+
+        $this->assertSame("security:\n    firewalls:\n        main:\n            remember_me: { secret: '%kernel.secret%', lifetime: 2592000 }\n            lazy: true\n", file_get_contents($path));
+    }
+
     // The skeleton's in-memory provider gives way to App\Entity\User, on the firewall too
     public function testEnsureUserProviderSwapsTheSkeletonsInMemoryOne(): void
     {

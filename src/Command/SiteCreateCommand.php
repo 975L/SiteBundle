@@ -108,6 +108,7 @@ class SiteCreateCommand extends Command
         $this->ensureUserChecker($io);
         $this->ensureLoginThrottling($io);
         $this->ensureLoginEntryPoint($io);
+        $this->ensureRememberMe($io);
         $this->ensureManagementAccessControl($io);
 
         $io->section('2/7 — Configuration par défaut');
@@ -254,6 +255,12 @@ class SiteCreateCommand extends Command
     private function ensureLoginEntryPoint(SymfonyStyle $io): void
     {
         $this->addToMainFirewall($io, 'entry_point', 'entry_point: c975L\\ConfigBundle\\Security\\LoginEntryPoint', 'entry_point enregistré');
+    }
+
+    // Wires Symfony's remember_me onto the "main" firewall for thirty days, read from the "Keep me signed in" box of the scaffolded login form
+    private function ensureRememberMe(SymfonyStyle $io): void
+    {
+        $this->addToMainFirewall($io, 'remember_me', 'remember_me: { secret: \'%kernel.secret%\', lifetime: 2592000 }', 'remember_me enregistré');
     }
 
     // Adds a line under the "main" firewall unless its key is already in the file. Edits the file as plain text rather than through the Yaml component, so existing comments/formatting survive

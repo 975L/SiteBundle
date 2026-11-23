@@ -1182,7 +1182,8 @@ It walks through, in order:
      `email`, what `make:user` would have written, a `User` coming from the scaffold leaving it out;
    - on the `main` firewall, `form_login` and `logout` (the scaffolded `SecurityController`'s
      `app_login` and `app_logout`), without which a fresh skeleton has no way in, then
-     `user_checker`, `login_throttling` and `entry_point` (see ConfigBundle's README);
+     `user_checker`, `login_throttling`, `entry_point` and a thirty-day `remember_me` read from the
+     login form's "Keep me signed in" box (see ConfigBundle's README);
    - `^/management` under `access_control`, for anonymous visitors only.
 2. **Default config** — runs `c975l:config:load-all` internally.
 3. **Vault key** — generates and writes `C975L_VAULT_KEY` to `.env.local` if it isn't defined yet,
