@@ -1,31 +1,67 @@
 # SiteBundle
 
-Symfony bundle that turns the c975L core into a complete website — full layout, database-driven pages, navbar and footer menus, collections, branded emails, per-page SEO and health check.
-
 [![GitHub](https://img.shields.io/github/license/975L/SiteBundle)](https://github.com/975L/SiteBundle/blob/main/LICENSE)
 [![Packagist Version](https://img.shields.io/packagist/v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/612a27f799464950b0c5cfd13577ec20)](https://app.codacy.com/gh/975L/SiteBundle/dashboard)
 
-**[Bundle page](https://bundles.975l.com/en/pages/site-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/site-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Site) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
-
-## Why SiteBundle
-
 ![SiteBundle](.github/images/SiteBundle.svg)
 
-Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) (ConfigBundle + UiBundle, one package) and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
+**Your site gets its pages, menus, SEO and emails, edited from the back office, on top of the c975L core.**
 
----
+**[Bundle page](https://bundles.975l.com/en/pages/site-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/site-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Site) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
 
-> **TL;DR** — Turns the c975L core into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, collections, branded emails, sitemap generation, and the commands to scaffold a whole new site. It also contributes six health check providers to ConfigBundle's Health check page, five of them about a published page and the sixth about the files its collection items declare.
+> **TL;DR** — SiteBundle turns the c975L core into a complete website: pages edited in the back office as blocks or written as templates, navbar and footer menus, collections, branded emails and SEO with a sitemap. It rests on [CoreBundle](https://github.com/975L/CoreBundle), which it pulls in. Require the package and follow the installation steps below.
 
-## Contents
+## What you get
+
+- A full layout with the SEO meta tags, Open Graph image, favicon and canonical url.
+- Pages served from the database as blocks, or from Twig templates.
+- Navbar and footer menus edited in the back office.
+- Collections of items, shown by a block and given detail pages of their own.
+- Several languages, with a translate screen per page and per menu.
+- A sitemap built from the pages and from the other bundles.
+- Branded emails and error pages ready to use.
+- Health checks on the published pages, in the core's health check page.
+
+## Quick start
+
+```bash
+composer require c975l/site-bundle
+```
+
+Then follow the full [installation](#installation) section below, which starts by allowing the contrib recipes.
+
+## For AI agents
+
+- Skills, read straight from `vendor/c975l/site-bundle/skills/` by a coding agent:
+  - [`c975l-site-layout`](skills/c975l-site-layout/SKILL.md) — the layout, its Twig blocks, the theme tokens, error pages and email layouts
+  - [`c975l-site-pages`](skills/c975l-site-pages/SKILL.md) — pages, the block kinds this bundle adds, collections
+  - [`c975l-site-menus`](skills/c975l-site-menus/SKILL.md) — menu locations, links, groups, navbar and footer
+  - [`c975l-site-seo`](skills/c975l-site-seo/SKILL.md) — sitemaps, canonical urls, `hreflang`, health checks, smoke test
+  - [`c975l-site-assets`](skills/c975l-site-assets/SKILL.md) — Stimulus, importmap entries and compiled stylesheets
+- MCP: an AI agent works with the pages and collections through the site's MCP endpoint (CoreBundle's `/api/mcp`), with the rights of its token's account — `site_page_list`, `site_page_get`, `site_page_create`, `site_page_edit`, `site_collection_list`, `site_collection_get`, `site_collection_item_create` and `site_collection_item_edit`. See [MCP tools](#mcp-tools).
+
+## Reference
+
+> **For developers** — Turns the c975L core into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, collections, branded emails, sitemap generation, and the commands to scaffold a whole new site. It also contributes six health check providers to ConfigBundle's Health check page, five of them about a published page and the sixth about the files its collection items declare.
+
+<details>
+<summary>Contents</summary>
 
 - **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [tutorial films](#tutorial-films) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
 - **Users & access** — [moved to ConfigBundle](#users)
 - **SEO & quality** — [SEO and sitemap](#seo) · [Health check](#health-check) · [smoke test](#smoke-test) · [dev profile](#dev-profile)
 - **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
 - **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures) · [MCP tools](#mcp-tools) · [AI agent skills](#ai-agent-skills)
+
+</details>
+
+## Why SiteBundle
+
+Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) (ConfigBundle + UiBundle, one package) and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
+
+---
 
 ## Features
 
