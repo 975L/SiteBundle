@@ -64,6 +64,20 @@ class CollectionItemRepository extends ServiceEntityRepository
         ;
     }
 
+    // How many items each collection holds, in one query, a collection without any left out
+    /** @return array<int, int> collection id => count */
+    public function countByCollectionGroups(): array
+    {
+        $rows = $this->createQueryBuilder('c')
+            ->select('IDENTITY(c.collectionGroup) AS collectionGroup, COUNT(c.id) AS items')
+            ->groupBy('c.collectionGroup')
+            ->getQuery()
+            ->getArrayResult()
+        ;
+
+        return array_map(intval(...), array_column($rows, 'items', 'collectionGroup'));
+    }
+
     // Used both to enforce the collection-scoped slug uniqueness (see CollectionItemCrudController) and to resolve a "collection" block item's detail view (see CollectionItemSourceProvider's "detail" key)
     public function findOneByCollectionGroupAndSlug(CollectionGroup $collectionGroup, string $slug): ?CollectionItem
     {

@@ -1,5 +1,20 @@
 [
     {
+        "date": "2026-11-23",
+        "description": [
+            {
+                "en": "An AI agent holding an agent token of an account editing the pages can now also list the collections, read their items and add or rewrite an item's title, description and link, in the language the site is written in. An item has no draft: what the agent adds or changes shows on the site at once, and its image, its order and deleting it stay yours, from the back office.",
+                "fr": "Un agent IA muni d'un jeton d'agent d'un compte qui édite les pages peut désormais aussi lister les collections, lire leurs éléments, et ajouter un élément ou réécrire son titre, sa description et son lien, dans la langue où le site est rédigé. Un élément n'a pas de brouillon : ce que l'agent ajoute ou change s'affiche aussitôt sur le site, et son image, son ordre et sa suppression restent votre affaire, depuis le back-office.",
+                "es": "Un agente de IA con un token de agente de una cuenta que edita las páginas puede ahora también listar las colecciones, leer sus elementos, y añadir un elemento o reescribir su título, su descripción y su enlace, en el idioma en que está redactado el sitio. Un elemento no tiene borrador: lo que el agente añade o cambia aparece en el sitio de inmediato, y su imagen, su orden y su eliminación siguen siendo cosa suya, desde el back-office."
+            },
+            {
+                "en": "A change an agent makes to a page already published shows on the site at once, a new title moving its address with a redirect.",
+                "fr": "Une modification faite par un agent sur une page déjà publiée s'affiche aussitôt sur le site, un nouveau titre déplaçant son adresse avec une redirection.",
+                "es": "Un cambio que un agente hace en una página ya publicada aparece en el sitio de inmediato, y un título nuevo mueve su dirección con una redirección."
+            }
+        ]
+    },
+    {
         "date": "2026-11-21",
         "description": [
             {

@@ -1,5 +1,15 @@
 # Changelog
 
+## v8.42.0
+
+Collection tools on the site's MCP endpoint
+
+- `SiteCollectionTools`: an agent lists the collections, reads one with its items in order, adds an item and writes its title, description and link, with the rights of its token's account (23/11/2026)
+- `SiteMcpAccess`: the editor check shared by the page and collection tools (23/11/2026)
+- `CollectionItemSlugs`: the item slug kept unique in its collection, taken out of `CollectionItemCrudController` and shared with the agent's tools (23/11/2026)
+- `CollectionItemRepository::countByCollectionGroups()`: the item count of every collection in one query (23/11/2026)
+- `SiteMcpProvider`: instructions and `site_page_edit` say that an edit of a published page shows at once (23/11/2026)
+
 ## v8.41.2
 
 Health check reads kept to the site's own host

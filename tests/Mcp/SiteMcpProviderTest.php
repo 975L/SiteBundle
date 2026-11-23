@@ -15,8 +15,13 @@ use c975L\ConfigBundle\Repository\RedirectRepository;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\ConfigBundle\Service\SiteLocales;
 use c975L\SiteBundle\Entity\Page;
+use c975L\SiteBundle\Mcp\SiteCollectionTools;
+use c975L\SiteBundle\Mcp\SiteMcpAccess;
 use c975L\SiteBundle\Mcp\SiteMcpProvider;
+use c975L\SiteBundle\Repository\CollectionGroupRepository;
+use c975L\SiteBundle\Repository\CollectionItemRepository;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\CollectionItemSlugs;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageSlugs;
 use c975L\SiteBundle\Service\PageTranslator;
@@ -28,17 +33,20 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SiteMcpProviderTest extends TestCase
 {
-    // The tools named under the "site" key, the writing ones flagged
+    // The tools named under the "site" key, the collections' joined, the writing ones flagged, none destroying, a live edit said plainly
     public function testTools(): void
     {
         $tools = iterator_to_array($this->provider()->getMcpTools(), false);
 
         $this->assertSame('site', $this->provider()->getMcpKey());
-        $this->assertSame(['site_page_list', 'site_page_get', 'site_page_create', 'site_page_edit'], array_map(static fn ($tool): string => $tool->name, $tools));
-        $this->assertSame([false, false, true, true], array_map(static fn ($tool): bool => $tool->writes, $tools));
+        $this->assertSame(['site_page_list', 'site_page_get', 'site_page_create', 'site_page_edit', 'site_collection_list', 'site_collection_get', 'site_collection_item_create', 'site_collection_item_edit'], array_map(static fn ($tool): string => $tool->name, $tools));
+        $this->assertSame([false, false, true, true, false, false, true, true], array_map(static fn ($tool): bool => $tool->writes, $tools));
+        $this->assertSame([], array_filter(array_map(static fn ($tool): bool => $tool->destroys, $tools)));
+        $this->assertStringContainsString('already published shows on the site at once', $this->provider()->getMcpInstructions());
     }
 
     // A draft added unpublished with a slug kept unique, members only when the site says so, an empty title refused
@@ -146,11 +154,21 @@ class SiteMcpProviderTest extends TestCase
         $security = $this->createStub(Security::class);
         $security->method('isGranted')->willReturn($granted);
 
+        $access = new SiteMcpAccess($config, $security);
+
         return new SiteMcpProvider(
             $repository,
             $entityManager ?? $this->createStub(EntityManagerInterface::class),
             $config,
-            $security,
+            $access,
+            new SiteCollectionTools(
+                $this->createStub(CollectionGroupRepository::class),
+                $this->createStub(CollectionItemRepository::class),
+                $this->createStub(CollectionItemSlugs::class),
+                $this->createStub(EntityManagerInterface::class),
+                $this->createStub(ValidatorInterface::class),
+                $access,
+            ),
             new MockClock('2026-11-21 10:00'),
             new PageSlugs($repository, $this->createStub(RedirectRepository::class), new AsciiSlugger(), new SiteLocales([], 'fr'), $this->createStub(PageTranslator::class)),
             $this->createStub(PagePublicUrlResolver::class),

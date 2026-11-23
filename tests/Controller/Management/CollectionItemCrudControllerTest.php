@@ -18,6 +18,7 @@ use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemSlugs;
 use c975L\SiteBundle\Service\CollectionItemTranslator;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -35,7 +36,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CollectionItemCrudControllerTest extends TestCase
@@ -70,7 +70,6 @@ class CollectionItemCrudControllerTest extends TestCase
         $actions = $this->createController(
             null,
             $collectionGroupRepository,
-            null,
             $this->createAdminUrlGenerator($urlGenerator),
             $requestStack,
         )->configureActions(
@@ -127,7 +126,6 @@ class CollectionItemCrudControllerTest extends TestCase
     private function createController(
         ?CollectionItemRepository $collectionItemRepository = null,
         ?CollectionGroupRepository $collectionGroupRepository = null,
-        ?SluggerInterface $slugger = null,
         ?AdminUrlGenerator $adminUrlGenerator = null,
         ?RequestStack $requestStack = null,
     ): CollectionItemCrudController {
@@ -138,7 +136,6 @@ class CollectionItemCrudControllerTest extends TestCase
         $translator->method('trans')->willReturnArgument(0);
 
         $given = array_filter([
-            'slugger' => $slugger,
             'collectionItemRepository' => $collectionItemRepository,
             'collectionGroupRepository' => $collectionGroupRepository,
             'adminUrlGenerator' => $adminUrlGenerator,
@@ -146,7 +143,6 @@ class CollectionItemCrudControllerTest extends TestCase
         ]);
 
         $collaborators = $given + [
-            'slugger' => new AsciiSlugger(),
             'collectionItemRepository' => $this->createStub(CollectionItemRepository::class),
             'collectionGroupRepository' => $this->createStub(CollectionGroupRepository::class),
             'adminUrlGenerator' => $this->createAdminUrlGenerator(),
@@ -156,7 +152,7 @@ class CollectionItemCrudControllerTest extends TestCase
         return new CollectionItemCrudController(
             $configService,
             $translator,
-            $collaborators['slugger'],
+            new CollectionItemSlugs($collaborators['collectionItemRepository'], new AsciiSlugger()),
             $collaborators['collectionItemRepository'],
             $collaborators['collectionGroupRepository'],
             $collaborators['adminUrlGenerator'],
@@ -291,76 +287,6 @@ class CollectionItemCrudControllerTest extends TestCase
 
         $this->assertSame($collectionGroup, $item->getCollectionGroup());
         $this->assertSame('hello-world', $item->getSlug());
-    }
-
-    // --- slugifyItem (private) ----------------------------------------------------------------------
-
-    public function testSlugifyItemNormalizesAccentsSpacesAndCase(): void
-    {
-        $controller = $this->createController();
-        $item = new CollectionItem()->setCollectionGroup(new CollectionGroup())->setSlug('Héllo Wörld!');
-
-        $this->invokePrivate($controller, 'slugifyItem', [$item]);
-
-        $this->assertSame('hello-world', $item->getSlug());
-    }
-
-    public function testSlugifyItemDoesNothingWhenSlugIsNull(): void
-    {
-        $controller = $this->createController();
-        $item = new CollectionItem();
-
-        $this->invokePrivate($controller, 'slugifyItem', [$item]);
-
-        $this->assertNull($item->getSlug());
-    }
-
-    // Collision check is scoped to the item's own collection - a same-named slug in another collection never collides
-    public function testSlugifyItemAppendsASuffixOnCollisionWithinTheSameCollectionGroup(): void
-    {
-        $collectionGroup = $this->withId(new CollectionGroup(), 1);
-
-        $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findOneByCollectionGroupAndSlug')->willReturnMap([
-            [$collectionGroup, 'my-item', $this->withId(new CollectionItem(), 1)],
-            [$collectionGroup, 'my-item-2', null],
-        ]);
-
-        $controller = $this->createController($repository);
-        $item = new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('My Item');
-
-        $this->invokePrivate($controller, 'slugifyItem', [$item]);
-
-        $this->assertSame('my-item-2', $item->getSlug());
-    }
-
-    // Re-saving an item with its own unchanged slug must not collide with itself
-    public function testSlugifyItemDoesNotCollideWithItself(): void
-    {
-        $collectionGroup = new CollectionGroup();
-
-        $repository = $this->createStub(CollectionItemRepository::class);
-        $repository->method('findOneByCollectionGroupAndSlug')->willReturn($this->withId(
-            new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('my-item'),
-            5
-        ));
-
-        $controller = $this->createController($repository);
-        $item = $this->withId(new CollectionItem()->setCollectionGroup($collectionGroup)->setSlug('My Item'), 5);
-
-        $this->invokePrivate($controller, 'slugifyItem', [$item]);
-
-        $this->assertSame('my-item', $item->getSlug());
-    }
-
-    public function testSlugifyItemNeverCollidesWhenTheItemHasNoCollectionGroupYet(): void
-    {
-        $controller = $this->createController();
-        $item = new CollectionItem()->setSlug('My Item');
-
-        $this->invokePrivate($controller, 'slugifyItem', [$item]);
-
-        $this->assertSame('my-item', $item->getSlug());
     }
 
     // --- reorder --------------------------------------------------------------------------------------

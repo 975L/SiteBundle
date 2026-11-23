@@ -1447,14 +1447,18 @@ $bots = file(
 
 ## MCP tools
 
-The pages bring their tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\SiteMcpProvider`, under the `site` key of the agent tokens, for an account holding `site-role-editor` as on the back office. Slugs and redirects go through `Service\PageSlugs`, the very service the page CRUD uses. Texts are read and written in the language the site is written in; the menus and the collections stay out of reach.
+The pages and the collections bring their tools to the site's MCP endpoint, `/api/mcp`, which c975l/core-bundle serves and opens (see its README, "Opening the site to AI agents"): `Mcp\SiteMcpProvider`, joined by `Mcp\SiteCollectionTools`, under the `site` key of the agent tokens, for an account holding `site-role-editor` as on the back office (`Mcp\SiteMcpAccess`). Page slugs and redirects go through `Service\PageSlugs`, item slugs through `Service\CollectionItemSlugs`, the very services the CRUDs use, and every item written passes the entity's constraints as the form does. Texts are read and written in the language the site is written in, other languages left to the back office. An edit of a page already published, or of any item, shows on the site at once; collection items have no draft state, so an item added by an agent shows at once too. The menus stay out of reach, and nothing is deleted.
 
 | Tool | Does |
 | --- | --- |
 | `site_page_list` | The pages whose title holds the `search` words, every page without them, drafts included, the latest modified first, with their public url once published |
 | `site_page_get` | A `page`: title, SEO description, status, public url once published, and the texts of its blocks |
 | `site_page_create` | An unpublished page added with its `title` and an optional `description`, members only when `site-pages-members-only` says so, its slug built as on the back office; composing its blocks and publishing stay a human's |
-| `site_page_edit` | Only the `title` or `description` given of a `page` changed; a new title renames its slug and redirects a published page's old urls, as on the back office |
+| `site_page_edit` | Only the `title` or `description` given of a `page` changed, live at once on a published page; a new title renames its slug and redirects a published page's old urls, as on the back office |
+| `site_collection_list` | The collections by name, with how many items each holds |
+| `site_collection_get` | A `collection` with its items in their order, 100 at most: title, slug, description, link and whether it has an image |
+| `site_collection_item_create` | An item added at the end of a `collection` with its `title`, an optional `description` and `url` (an http(s) address or a path of the site, as the form takes it), its slug made from its title; it shows at once, its image added from the back office |
+| `site_collection_item_edit` | Only the `title`, `description` or `url` given of an `item` changed, empty description or url clearing it, live at once; its slug, address, image and place stay |
 
 ---
 

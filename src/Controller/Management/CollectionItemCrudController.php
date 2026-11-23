@@ -17,9 +17,9 @@ use c975L\SiteBundle\Entity\CollectionGroup;
 use c975L\SiteBundle\Entity\CollectionItem;
 use c975L\SiteBundle\Repository\CollectionGroupRepository;
 use c975L\SiteBundle\Repository\CollectionItemRepository;
+use c975L\SiteBundle\Service\CollectionItemSlugs;
 use c975L\SiteBundle\Service\CollectionItemTranslator;
 use c975L\UiBundle\Form\VichImageOptions;
-use c975L\UiBundle\Service\UniqueSlug;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -45,7 +45,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Intl\Locales;
-use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
@@ -57,7 +56,7 @@ class CollectionItemCrudController extends AbstractCrudController
     public function __construct(
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
-        private readonly SluggerInterface $slugger,
+        private readonly CollectionItemSlugs $collectionItemSlugs,
         private readonly CollectionItemRepository $collectionItemRepository,
         private readonly CollectionGroupRepository $collectionGroupRepository,
         private readonly AdminUrlGenerator $adminUrlGenerator,
@@ -297,45 +296,18 @@ class CollectionItemCrudController extends AbstractCrudController
     #[\Override]
     public function persistEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
-        $this->slugifyItem($collectionItem);
+        $this->collectionItemSlugs->apply($collectionItem);
 
         parent::persistEntity($entityManager, $collectionItem);
     }
 
-    // Updated item - re-slugifies in case the slug was hand-edited into something colliding within its own collection
+    // Updated item - re-slugifies (see CollectionItemSlugs) in case the slug was hand-edited into something colliding within its own collection
     #[\Override]
     public function updateEntity(EntityManagerInterface $entityManager, mixed $collectionItem): void
     {
-        $this->slugifyItem($collectionItem);
+        $this->collectionItemSlugs->apply($collectionItem);
 
         parent::updateEntity($entityManager, $collectionItem);
-    }
-
-    // Normalizes the slug (removes accents, spaces, uppercase...) and appends -2, -3... on collision - scoped to the item's own collection, unlike Page::$slug which is unique site-wide
-    private function slugifyItem(CollectionItem $collectionItem): void
-    {
-        $slug = $collectionItem->getSlug();
-        if (null === $slug) {
-            return;
-        }
-
-        $collectionItem->setSlug(UniqueSlug::build(
-            $this->slugger,
-            $slug,
-            fn (string $candidate): bool => $this->slugCollides($collectionItem, $candidate)
-        ));
-    }
-
-    private function slugCollides(CollectionItem $collectionItem, string $candidate): bool
-    {
-        $collectionGroup = $collectionItem->getCollectionGroup();
-        if (null === $collectionGroup) {
-            return false;
-        }
-
-        $existing = $this->collectionItemRepository->findOneByCollectionGroupAndSlug($collectionGroup, $candidate);
-
-        return null !== $existing && $existing->getId() !== $collectionItem->getId();
     }
 
     // The language this item is being written in, when it is not the one the site was written in (see ContentLocaleScreen)

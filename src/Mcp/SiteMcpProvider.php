@@ -10,7 +10,6 @@
 
 namespace c975L\SiteBundle\Mcp;
 
-use c975L\ConfigBundle\Contract\UserInterface;
 use c975L\ConfigBundle\Mcp\McpTool;
 use c975L\ConfigBundle\Mcp\McpToolProviderInterface;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
@@ -22,9 +21,8 @@ use c975L\UiBundle\Service\BlockTextCollector;
 use Doctrine\ORM\EntityManagerInterface;
 use Mcp\Server\Exception\ToolCallException;
 use Psr\Clock\ClockInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
-// The site's pages on the site's MCP endpoint, for an account that edits them on the back office: listed, read with the texts of their blocks, a draft added and its title and description written with the slugs and redirects the back office writes (see PageSlugs), publishing left to a human
+// The site's pages on the site's MCP endpoint, for an account that edits them on the back office: listed, read with the texts of their blocks, a draft added and its title and description written with the slugs and redirects the back office writes (see PageSlugs), publishing left to a human - the collections' tools joined from SiteCollectionTools
 class SiteMcpProvider implements McpToolProviderInterface
 {
     // Pages a list gives at most
@@ -37,7 +35,8 @@ class SiteMcpProvider implements McpToolProviderInterface
         private readonly PageRepository $pageRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly ConfigServiceInterface $configService,
-        private readonly Security $security,
+        private readonly SiteMcpAccess $access,
+        private readonly SiteCollectionTools $collectionTools,
         private readonly ClockInterface $clock,
         private readonly PageSlugs $pageSlugs,
         private readonly PagePublicUrlResolver $pagePublicUrlResolver,
@@ -52,7 +51,7 @@ class SiteMcpProvider implements McpToolProviderInterface
 
     public function getMcpInstructions(): string
     {
-        return 'Pages are the content of the site, made of blocks, read here in the language the site is written in. A page added by an agent is a draft, unpublished: a human composes its blocks and publishes it from the back office.';
+        return 'Pages are the content of the site, made of blocks, read here in the language the site is written in. A page added by an agent is a draft, unpublished: a human composes its blocks and publishes it from the back office. An edit of a page already published shows on the site at once, a new title moving its address with a redirect. Collections hold ready-made items (title, description, link, image) shown by the collection blocks of the pages; items have no draft state, so an item added or edited by an agent shows at once, its image and its order left to the back office.';
     }
 
     public function getMcpTools(): iterable
@@ -60,7 +59,8 @@ class SiteMcpProvider implements McpToolProviderInterface
         yield new McpTool('site_page_list', 'Pages', 'The pages whose title holds the search words, every page without them, drafts included, the latest modified first, with their public url once published.', $this->list(...));
         yield new McpTool('site_page_get', 'Page', 'A page: title, SEO description, status, public url once published, and the texts of its blocks.', $this->get(...));
         yield new McpTool('site_page_create', 'Add a draft page', 'Adds an unpublished page with its title and an optional SEO description, without blocks.', $this->create(...), true);
-        yield new McpTool('site_page_edit', 'Write a page', 'Changes only the title or SEO description given of a page; a new title renames its slug as the back office does, a published page redirecting its old url to the new one.', $this->edit(...), true);
+        yield new McpTool('site_page_edit', 'Write a page', 'Changes only the title or SEO description given of a page; a page already published shows the change at once, a new title renaming its slug as the back office does and redirecting its old url to the new one.', $this->edit(...), true);
+        yield from $this->collectionTools->getMcpTools();
     }
 
     // The pages whose title holds the words, every one without them, the trash left aside
@@ -71,7 +71,7 @@ class SiteMcpProvider implements McpToolProviderInterface
      */
     public function list(?string $search = null): array
     {
-        $this->guard();
+        $this->access->guard('pages');
         $builder = $this->pageRepository->createQueryBuilder('p')
             ->andWhere('p.isDeleted = false')
             ->orderBy('p.modification', \SortDirection::Descending)
@@ -91,7 +91,7 @@ class SiteMcpProvider implements McpToolProviderInterface
      */
     public function get(int $page): array
     {
-        $this->guard();
+        $this->access->guard('pages');
         $found = $this->pageRepository->findOneByIdWithBlocks($page);
         if (!$found instanceof Page || $found->isDeleted()) {
             throw new ToolCallException(sprintf('No page %d.', $page));
@@ -114,13 +114,12 @@ class SiteMcpProvider implements McpToolProviderInterface
      */
     public function create(string $title, ?string $description = null): array
     {
-        $this->guard();
+        $this->access->guard('pages');
         $title = mb_substr(trim($title), 0, self::TITLE_LENGTH);
         if ('' === $title) {
             throw new ToolCallException('The title is empty.');
         }
         $now = $this->clock->now();
-        $user = $this->security->getUser();
         $page = new Page()
             ->setTitle($title)
             ->setSlug($title)
@@ -128,7 +127,7 @@ class SiteMcpProvider implements McpToolProviderInterface
             ->setIsMembersOnly($this->configService->getBool($this->configService->get('site-pages-members-only')))
             ->setCreation($now)
             ->setModification($now)
-            ->setUser($user instanceof UserInterface ? $user : null);
+            ->setUser($this->access->user());
         $this->pageSlugs->prepareNew($this->entityManager, $page);
         if ('' === $page->getSlug()) {
             throw new ToolCallException('The title gives no slug.');
@@ -149,7 +148,7 @@ class SiteMcpProvider implements McpToolProviderInterface
      */
     public function edit(int $page, ?string $title = null, ?string $description = null): array
     {
-        $this->guard();
+        $this->access->guard('pages');
         $found = $this->pageRepository->find($page);
         if (!$found instanceof Page || $found->isDeleted()) {
             throw new ToolCallException(sprintf('No page %d.', $page));
@@ -160,8 +159,8 @@ class SiteMcpProvider implements McpToolProviderInterface
         if (null !== $description) {
             $found->setSummarySocialNetwork('' === trim($description) ? null : trim($description));
         }
-        $user = $this->security->getUser();
-        if ($user instanceof UserInterface) {
+        $user = $this->access->user();
+        if (null !== $user) {
             $found->setUser($user);
         }
         $this->pageSlugs->prepareUpdate($this->entityManager, $found);
@@ -172,14 +171,6 @@ class SiteMcpProvider implements McpToolProviderInterface
         $this->entityManager->flush();
 
         return ['id' => $found->getId(), 'slug' => $found->getSlug()];
-    }
-
-    // The pages are the editor's business, as on the back office
-    private function guard(): void
-    {
-        if (!$this->security->isGranted((string) $this->configService->get('site-role-editor'))) {
-            throw new ToolCallException('This account may not work on the pages.');
-        }
     }
 
     // A page in a list, its public url only once it is published
