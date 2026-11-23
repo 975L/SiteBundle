@@ -5,11 +5,15 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/c975l/site-bundle)](https://packagist.org/packages/c975l/site-bundle)
 [![Codacy Grade](https://app.codacy.com/project/badge/Grade/612a27f799464950b0c5cfd13577ec20)](https://app.codacy.com/gh/975L/SiteBundle/dashboard)
 
-![SiteBundle](.github/images/SiteBundle.svg)
+<p align="center"><img src=".github/images/SiteBundle.svg" alt="SiteBundle"></p>
 
 **Your site gets its pages, menus, SEO and emails, edited from the back office, on top of the c975L core.**
 
 **[Bundle page](https://bundles.975l.com/en/pages/site-bundle) · [Tutorials](https://bundles.975l.com/en/tutoriels/site-bundle) · [Block kinds](https://bundles.975l.com/en/pages/blocks/Site) · [Live demo](https://bundles.975l.com/demo/) · [Demo back-office](https://bundles.975l.com/demo/login)**
+
+[![Watch the SiteBundle film](.github/images/showcase.jpg)](https://youtu.be/1Dd1LzOxC7A)
+
+▶ [Watch the film](https://youtu.be/1Dd1LzOxC7A) · [SiteBundle's page](https://bundles.975l.com/en/pages/site-bundle)
 
 > **TL;DR** — SiteBundle turns the c975L core into a complete website: pages edited in the back office as blocks or written as templates, navbar and footer menus, collections, branded emails and SEO with a sitemap. It rests on [CoreBundle](https://github.com/975L/CoreBundle), which it pulls in. Require the package and follow the installation steps below.
 
@@ -46,8 +50,7 @@ Then follow the full [installation](#installation) section below, which starts b
 
 > **For developers** — Turns the c975L core into a complete website: a base layout with SEO meta tags, pages served either from Twig templates or from the database as UiBundle blocks, navbar/footer menus, collections, branded emails, sitemap generation, and the commands to scaffold a whole new site. It also contributes six health check providers to ConfigBundle's Health check page, five of them about a published page and the sixth about the files its collection items declare.
 
-<details>
-<summary>Contents</summary>
+### Contents
 
 - **Building the site** — [layout](#creating-your-layout) · [pages](#pages) · [menus](#menus) · [themes](#themes) · [collections](#collections) · [tutorial films](#tutorial-films) · [error templates](#error-templates) · [legal models](#legal-models) · [full layout example](#full-layout-example)
 - **Users & access** — [moved to ConfigBundle](#users)
@@ -55,11 +58,17 @@ Then follow the full [installation](#installation) section below, which starts b
 - **Components** — [general components (navbar, footer, credits…)](#general-components) · [Twig extensions](#twig-extensions) · [email templates](#email-templates) · [CSS animations](#css-animations) · [lists](#lists)
 - **Operating** — [commands](#commands) · [create a new site](#create-a-new-site) · [scheduler](#scheduler) · [admin help procedures](#admin-help-procedures) · [MCP tools](#mcp-tools) · [AI agent skills](#ai-agent-skills)
 
-</details>
-
 ## Why SiteBundle
 
 Add SiteBundle on top of [c975L/CoreBundle](https://github.com/975L/CoreBundle) (ConfigBundle + UiBundle, one package) and get a complete website — pages, menus, SEO, EasyAdmin back office. Need a book catalog, an online shop, a photo gallery? Add [BookBundle](https://github.com/975L/BookBundle), [ShopBundle](https://github.com/975L/ShopBundle), [GalleryBundle](https://github.com/975L/GalleryBundle): they rest on the same foundation, alongside SiteBundle, never on top of it.
+
+> [!TIP]
+> If this project **helps you save development time**:
+>
+> - [**star** it on GitHub](https://github.com/975L/SiteBundle) — helps others find it
+> - [**open an issue**](https://github.com/975L/SiteBundle/issues/new) to share how you use it — genuinely useful feedback
+>
+> And if you'd like to support the work directly, the **Sponsor** button at the top of the GitHub page is there for that. Thank you!
 
 ---
 
@@ -1523,13 +1532,3 @@ ln -s ../../vendor/c975l/site-bundle/skills/c975l-site-menus .claude/skills/c975
 ```
 
 `Tests\SkillsTest` keeps them honest: every path, route, config slug, command, class member, Twig function, block kind and component they quote is checked against the sources — and, for a name belonging to another c975L package, against the installed vendor tree — so renaming any of them fails the build rather than leaving an agent confidently wrong.
-
----
-
-> [!TIP]
-> If this project **helps you save development time**:
->
-> - [**star** it on GitHub](https://github.com/975L/SiteBundle) — helps others find it
-> - [**open an issue**](https://github.com/975L/SiteBundle/issues/new) to share how you use it — genuinely useful feedback
->
-> And if you'd like to support the work directly, the **Sponsor** button at the top of the GitHub page is there for that. Thank you!
