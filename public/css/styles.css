@@ -963,12 +963,14 @@ body:not(.has-back-office) .menu-item--back-office {
   .menu:not(.menu--collapsed) .menu-dropdown__summary:hover,
   .menu:not(.menu--collapsed) .menu-dropdown__summary:focus {
     background-color: transparent;
+    text-decoration-color: var(--navbar-active-color);
   }
   .menu:not(.menu--collapsed) .menu-item--primary .menu-link {
     box-shadow: none;
   }
   .menu:not(.menu--collapsed) .menu-item--primary .menu-link:hover, .menu:not(.menu--collapsed) .menu-item--primary .menu-link:focus {
     background-color: var(--navbar-btn-background-hover);
+    text-decoration-color: var(--navbar-btn-color);
   }
   .menu:not(.menu--collapsed) .menu-link:hover .menu-label,
   .menu:not(.menu--collapsed) .menu-link:focus .menu-label,

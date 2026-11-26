@@ -448,12 +448,13 @@ body:not(.has-back-office) .menu-item--back-office {
             color: var(--navbar-text-scrolled);
         }
 
-        // The bar keeps its own background: no wash, the hover reads on the label instead - restated for the pill, whose own hover fill the reset would take away
+        // The bar keeps its own background: no wash, the hover reads on the label instead, underlined in its ink rather than in the link's text colour - restated for the pill, whose own hover fill the reset would take away
         .menu-link:hover,
         .menu-link:focus,
         .menu-dropdown__summary:hover,
         .menu-dropdown__summary:focus {
             background-color: transparent;
+            text-decoration-color: var(--navbar-active-color);
         }
 
         .menu-item--primary .menu-link {
@@ -462,6 +463,7 @@ body:not(.has-back-office) .menu-item--back-office {
             &:hover,
             &:focus {
                 background-color: var(--navbar-btn-background-hover);
+                text-decoration-color: var(--navbar-btn-color);
             }
         }
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.44.1
+
+Navbar hover underline in the colour of its label
+
+- A hovered navbar link underlined in `--navbar-active-color`, the colour of its label, no longer in the navbar's text colour (26/11/2026)
+
 ## v8.44.0
 
 Menus of their own for the parts of a site
