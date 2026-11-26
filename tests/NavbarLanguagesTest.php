@@ -45,7 +45,7 @@ class NavbarLanguagesTest extends TestCase
     // The layout reads a variable a template declares rather than the Page itself, which is what lets a screen showing something else under a Page's url stay out of the menu
     public function testTheLayoutHandsTheNavbarPageOverToTheNavbar(): void
     {
-        $this->assertStringContainsString('<twig:c975LSite:General:Navbar page="{{ navbarPage|default(null) }}" />', $this->template('layout.html.twig'));
+        $this->assertStringContainsString('<twig:c975LSite:General:Navbar page="{{ navbarPage|default(null) }}" :location="menu_location(\'navbar\', menuVariant|default(null))" />', $this->template('layout.html.twig'));
     }
 
     public function testAPageWrittenInSeveralLanguagesOffersThem(): void

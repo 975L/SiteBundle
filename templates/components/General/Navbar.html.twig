@@ -1,4 +1,6 @@
-{# <twig:c975LSite:General:Navbar [page="{{ page }}"]> #}
+{# <twig:c975LSite:General:Navbar [page="{{ page }}"] [location="navbar.members"]> #}
+{# The menu it draws, "navbar" unless the layout hands a variant's own (see menu_location()) #}
+{% set location = location|default('navbar') %}
 {% set logo = site_media('logo') %}
 {# The same logo drawn for a dark page, uploaded on its own site-graphic role (see UiBundle's Media::ROLE_LOGO_ON_DARK). Written beside the other one and hidden by the stylesheet rather than picked here: which of the two is read depends on the visitor's own system when theme-mode is "auto", something no template knows. A site that uploaded none writes one image, exactly as before #}
 {% set logoOnDark = site_media('logo-on-dark') %}
@@ -15,12 +17,12 @@
 {% set navbarPosition = navbarPosition == 'static' ? 'relative' : navbarPosition %}
 
 {# A site that built its own "members" dropdown keeps it, MenuDropdown.html.twig adding the back-office link to it; any other gets the built-in one. A hidden one counts as absent, Blocks.html.twig never drawing it #}
-{% set membersDropdowns = menu_blocks('navbar')|filter(block => block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members') %}
+{% set membersDropdowns = menu_blocks(location)|filter(block => block.kind == 'menu_dropdown' and not block.hidden and (block.data.visibility ?? 'all') == 'members') %}
 {% set hasMembersDropdown = membersDropdowns is not empty %}
 {# Ticked "hide in the installed app" on each of them, the app is left with no account menu at all: the built-in one takes over there, and there alone #}
 {% set membersDropdownIsWebOnly = hasMembersDropdown and membersDropdowns|filter(block => not (block.data.hideInApp ?? false)) is empty %}
 
-{% if menu_blocks('navbar') is not empty %}
+{% if menu_blocks(location) is not empty %}
     {# Empty leaves the --navbar-position default; "fixed" also needs .menu-fixed for its z-index #}
     <nav class="hidden-print menu{{ navbarPosition == 'fixed' ? ' menu-fixed' : '' }}{{ navbarPosition ? ' menu-position-' ~ navbarPosition : '' }}" data-controller="menu menu-active menu-collapse">
         <div class="menu-header">
@@ -70,7 +72,7 @@
         </div>
 
         <div class="menu-items" data-menu-target="items" data-menu-collapse-target="items">
-            <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks('navbar') }}" />
+            <twig:c975LUi:Blocks:Blocks blocks="{{ menu_blocks(location) }}" />
             {% if not hasMembersDropdown or membersDropdownIsWebOnly %}
                 <twig:c975LSite:General:AccountMenu :dropdown="true" :appOnly="membersDropdownIsWebOnly" />
             {% endif %}

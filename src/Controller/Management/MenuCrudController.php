@@ -15,6 +15,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Management\SiteBlockOwnerResolver;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Form\BlockType;
@@ -47,7 +48,7 @@ use function Symfony\Component\Translation\t;
 // Manages the site-wide menus (navbar, footer, email-footer), each owning a single ordered collection of Block rows - see Menu::LOCATION_*. Menu links are the "menu_link" Block kind (MenuLinkType), sortable alongside any other block
 class MenuCrudController extends AbstractCrudController
 {
-    // Public so the screen that translates a menu can name it the same way the index does (see TranslationController::menu())
+    // The bundle's own locations, the variants an app declares joining them in MenuLocations, which every screen naming a menu reads
     public const array LOCATION_LABELS = [
         Menu::LOCATION_NAVBAR => 'label.navbar',
         Menu::LOCATION_NAVBAR_BRAND => 'label.navbar_brand',
@@ -67,6 +68,7 @@ class MenuCrudController extends AbstractCrudController
         private readonly BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder,
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly PageTranslator $pageTranslator,
+        private readonly MenuLocations $menuLocations,
     ) {
     }
 
@@ -150,13 +152,10 @@ class MenuCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $entity = $this->adminContextProvider->getContext()?->getEntity()?->getInstance();
-        $isNavbar = $entity instanceof Menu && Menu::LOCATION_NAVBAR === $entity->getLocation();
-        $isFooter = $entity instanceof Menu && Menu::LOCATION_FOOTER === $entity->getLocation();
-
-        $locationChoices = [];
-        foreach (self::LOCATION_LABELS as $locationSlug => $labelKey) {
-            $locationChoices[$locationSlug] = t($labelKey, [], 'site');
-        }
+        // A variant's navbar or footer (see MenuLocations) is edited as the one it stands in for
+        $base = $entity instanceof Menu ? MenuLocations::base((string) $entity->getLocation()) : null;
+        $isNavbar = Menu::LOCATION_NAVBAR === $base;
+        $isFooter = Menu::LOCATION_FOOTER === $base;
 
         $fields = [
             IdField::new('id')->onlyOnIndex(),
@@ -164,7 +163,7 @@ class MenuCrudController extends AbstractCrudController
             // Never editable: a row's location is set once by create() and fixed for good, only reassignable by deleting and recreating the row - which is also what keeps the DB-level unique constraint on Menu::$location out of reach
             ChoiceField::new('location')
                 ->setLabel(t('label.location', [], 'site'))
-                ->setTranslatableChoices($locationChoices)
+                ->setTranslatableChoices($this->menuLocations->all())
                 ->setFormTypeOption('disabled', true)
                 ->setRequired(true),
         ];
@@ -227,7 +226,7 @@ class MenuCrudController extends AbstractCrudController
         }
 
         $location = $request->request->getString('location');
-        if (!isset(self::LOCATION_LABELS[$location])) {
+        if (!$this->menuLocations->has($location)) {
             throw $this->createNotFoundException();
         }
 
@@ -247,7 +246,7 @@ class MenuCrudController extends AbstractCrudController
         );
     }
 
-    // The locations still to create, as "slug => translated label" - empty once all four exist
+    // The locations still to create, the variants' an app declares included, as "slug => translated label" - empty once all exist
     private function missingLocations(): array
     {
         $usedLocations = $this->menuRepository->createQueryBuilder('m')
@@ -255,11 +254,6 @@ class MenuCrudController extends AbstractCrudController
             ->getQuery()
             ->getSingleColumnResult();
 
-        $missing = [];
-        foreach (array_diff_key(self::LOCATION_LABELS, array_flip($usedLocations)) as $locationSlug => $labelKey) {
-            $missing[$locationSlug] = $this->translator->trans($labelKey, [], 'site');
-        }
-
-        return $missing;
+        return array_diff_key($this->menuLocations->all(), array_flip($usedLocations));
     }
 }

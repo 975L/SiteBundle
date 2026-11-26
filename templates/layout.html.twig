@@ -32,7 +32,8 @@
     <header>
         {% block navigation %}
 {# "navbarPage" rather than "page": a template declares it only where its url is the one the language menu can rewrite, so a screen showing something else under a Page's url - a collection item, a preview - leaves it unset and the component renders nothing #}
-            <twig:c975LSite:General:Navbar page="{{ navbarPage|default(null) }}" />
+{# "menuVariant", set by a template of the app, draws the navbar and footer of that part of the site (see MenuVariantProviderInterface), the site's own wherever it is unset or the variant's menu is empty #}
+            <twig:c975LSite:General:Navbar page="{{ navbarPage|default(null) }}" :location="menu_location('navbar', menuVariant|default(null))" />
         {% endblock %}
     </header>
 {% endblock %}
@@ -46,5 +47,5 @@
 
 {% block footer %}
     {# No site name, matching what a "Copyright"-page menu_link shows instead #}
-    <twig:c975LSite:General:Footer copyright="{{ site_copyright(false) }}" />
+    <twig:c975LSite:General:Footer copyright="{{ site_copyright(false) }}" :location="menu_location('footer', menuVariant|default(null))" />
 {% endblock %}

@@ -1,5 +1,15 @@
 [
     {
+        "date": "2026-11-26",
+        "description": [
+            {
+                "en": "A site whose pages fall into parts of their own, such as a members' area or a catalog, can now give each part its own navigation bar and footer, composed on the Menus screen like the site's. Visitors stay in their part, the logo leading back to the home page, and the site's menus keep showing while a part's menus are empty.",
+                "fr": "Un site dont les pages se répartissent en parties, comme un espace membres ou un catalogue, peut désormais donner à chacune sa propre barre de navigation et son propre pied de page, composés à l'écran Menus comme ceux du site. Le visiteur reste dans sa partie, le logo le ramenant à l'accueil, et les menus du site s'affichent tant que ceux d'une partie sont vides.",
+                "es": "Un sitio cuyas páginas se reparten en partes, como un área de miembros o un catálogo, puede ahora dar a cada una su propia barra de navegación y su propio pie de página, compuestos en la pantalla Menús como los del sitio. El visitante se queda en su parte, el logo lo devuelve a la portada, y los menús del sitio se muestran mientras los de una parte estén vacíos."
+            }
+        ]
+    },
+    {
         "date": "2026-11-23",
         "description": [
             {

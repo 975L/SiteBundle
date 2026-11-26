@@ -94,12 +94,12 @@ class FooterItemsStyleTest extends TestCase
         );
     }
 
-    // The markup side: the class the rules above are written against, and the whitelist keeping anything else from ever naming one of them
+    // The markup side: the class the rules above are written against, and the allowlist keeping anything else from ever naming one of them
     public function testTheTemplateOnlyWritesAClassForAKnownStyle(): void
     {
         $template = (string) file_get_contents(dirname(__DIR__) . '/templates/components/General/Footer.html.twig');
 
-        $this->assertStringContainsString("menu_style('footer') in ['inline', 'block', 'columns']", $template);
+        $this->assertStringContainsString("menu_style(location) in ['inline', 'block', 'columns']", $template);
         $this->assertStringContainsString("class=\"menu-items{{ footerStyle ? ' menu-items--' ~ footerStyle : '' }}\"", $template);
     }
 

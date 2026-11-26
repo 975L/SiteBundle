@@ -200,7 +200,7 @@ class NavbarHeightTest extends TestCase
         // Both branches read it, so it has to be set above the one that only runs on the menu navbar
         $this->assertStringContainsString(
             '{% set showBrandName = showSiteName and siteName is not null %}',
-            substr($template, 0, (int) strpos($template, "{% if menu_blocks('navbar') is not empty %}")),
+            substr($template, 0, (int) strpos($template, '{% if menu_blocks(location) is not empty %}')),
             'Navbar.html.twig sets showBrandName inside a branch, leaving it undefined on the other one.'
         );
     }

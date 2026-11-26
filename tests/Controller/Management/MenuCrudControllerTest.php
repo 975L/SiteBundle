@@ -13,7 +13,9 @@ namespace c975L\SiteBundle\Tests\Controller\Management;
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Entity\Menu;
+use c975L\SiteBundle\Management\MenuVariantProviderInterface;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\SiteBundle\Service\PageTranslator;
 use c975L\UiBundle\Registry\BlockRegistry;
 use c975L\UiBundle\Service\BlockMoveRowAttrBuilder;
@@ -65,6 +67,15 @@ class MenuCrudControllerTest extends TestCase
         return $menuRepository;
     }
 
+    // An app declaring a single variant, "members"
+    private function createVariantProvider(): MenuVariantProviderInterface
+    {
+        $provider = $this->createStub(MenuVariantProviderInterface::class);
+        $provider->method('getMenuVariants')->willReturn(['members' => 'item-1']);
+
+        return $provider;
+    }
+
     private function createAdminContextProvider(?AdminContext $context = null): AdminContextProvider
     {
         $requestStack = new RequestStack();
@@ -111,6 +122,7 @@ class MenuCrudControllerTest extends TestCase
         ?MenuRepository $menuRepository = null,
         ?AdminContextProvider $adminContextProvider = null,
         ?BlockMoveRowAttrBuilder $blockMoveRowAttrBuilder = null,
+        array $variantProviders = [],
     ): MenuCrudController {
         $translator = $this->createStub(TranslatorInterface::class);
         $translator->method('trans')->willReturnArgument(0);
@@ -126,6 +138,7 @@ class MenuCrudControllerTest extends TestCase
             $blockMoveRowAttrBuilder ?? $this->createBlockMoveRowAttrBuilder(),
             $this->createAdminUrlGenerator(),
             $this->createStub(PageTranslator::class),
+            new MenuLocations($translator, $variantProviders),
         );
     }
 
@@ -282,6 +295,33 @@ class MenuCrudControllerTest extends TestCase
         $this->assertSame(BlockRegistry::MENU_NAVBAR_CONTEXT, $blocks->getAsDto()->getFormTypeOptions()['entry_options']['context'] ?? null);
     }
 
+    // A variant's navbar is a navbar: the same restricted picker, and a variant's footer keeps the footer's style choice
+    public function testConfigureFieldsTreatAVariantMenuAsTheOneItStandsIn(): void
+    {
+        $navbar = $this->createController(
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation('navbar.members'))),
+            variantProviders: [$this->createVariantProvider()],
+        );
+        $blocks = $this->findFieldByProperty($navbar->configureFields(Crud::PAGE_EDIT), 'blocks');
+        $this->assertSame(BlockRegistry::MENU_NAVBAR_CONTEXT, $blocks->getAsDto()->getFormTypeOptions()['entry_options']['context'] ?? null);
+
+        $footer = $this->createController(
+            adminContextProvider: $this->createAdminContextProvider($this->createAdminContext(new Menu()->setLocation('footer.members'))),
+            variantProviders: [$this->createVariantProvider()],
+        );
+        $this->assertNotNull($this->findFieldByProperty($footer->configureFields(Crud::PAGE_EDIT), 'style'));
+    }
+
+    // The location field names the variants' menus an app declares after the bundle's own
+    public function testConfigureFieldsLocationOffersTheVariantsMenus(): void
+    {
+        $controller = $this->createController(variantProviders: [$this->createVariantProvider()]);
+        $location = $this->findFieldByProperty($controller->configureFields(Crud::PAGE_EDIT), 'location');
+        $choices = $location->getAsDto()->getCustomOption(ChoiceField::OPTION_CHOICES);
+
+        $this->assertSame(['navbar.members', 'footer.members'], \array_slice(array_keys($choices), -2));
+    }
+
     // Every other location keeps the full picker - a footer legitimately holds text, social links, a logo...
     public function testConfigureFieldsBlocksUseTheFullMenuContextForOtherLocations(): void
     {
@@ -368,6 +408,21 @@ class MenuCrudControllerTest extends TestCase
         ]));
 
         $controller->create($this->createRequest('sidebar'), $this->createStub(EntityManagerInterface::class));
+    }
+
+    // A variant's menu an app declares is created like the bundle's own
+    public function testCreateAcceptsAVariantLocation(): void
+    {
+        $controller = $this->createController(variantProviders: [$this->createVariantProvider()]);
+        $controller->setContainer($this->createContainer([
+            'security.authorization_checker' => $this->createAuthorizationChecker(true),
+            'security.csrf.token_manager' => $this->createCsrfTokenManager(true),
+        ]));
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())->method('persist')->with($this->callback(static fn (Menu $menu): bool => 'navbar.members' === $menu->getLocation()));
+
+        $controller->create($this->createRequest('navbar.members'), $entityManager);
     }
 
     // The whole point of the action: one click creates the row and lands on its edit page, no form in between

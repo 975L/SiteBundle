@@ -1,6 +1,6 @@
 ---
 name: c975l-site-menus
-description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, menu_link, menu_group, menu_dropdown, dropdown menu, hideInApp, menu-item--web-only, menu-app-only, hide in the installed app, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_email_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only, app_logout, sign out order, menu-collapse, menu--collapsed, menu-tools, language pill, burger fold."
+description: "Use this skill when working with the navigation of a Symfony application built on the c975L ecosystem with c975l/site-bundle — the navbar, the footer, the two email menus, menu links and their targets, anchors into a page's sections, the copyright line, the logo and tagline, or exposing another bundle's route as a menu target. Triggers on: Menu entity, MenuVariantProviderInterface, menuVariant, menu_location, MenuLocations, navbar.members, menu variant, space navbar, menu_link, menu_group, menu_dropdown, dropdown menu, hideInApp, menu-item--web-only, menu-app-only, hide in the installed app, account menu, AccountMenu, my_space, has-back-office, menu-item--back-office, nav-simple-account, menu-dropdown, MenuCrudController, menu_blocks, menu_email_blocks, menu_link_url, menu_style, footer-group-flex, navbar, footer, email-header, email-footer, LinkableRouteProviderInterface, site-navbar-position, sticky navbar, navbar-z-index, site-navbar-show-name, navbar-brand, logo-on-dark, dark logo, menu-logo__on-dark, LOCATION_NAVBAR_BRAND, site-tagline, anchor, absolute_urls, translate menu, management_menu_translate, TranslationController, TranslationFormContext, ai_rephrase, translatable label, screen_languages, LocalizedUrlGenerator, linkable route locales, AiSearch:Trigger, menu-ai-search, search magnifier, data-menu-location, data-menu-translation-submit, menu-active, aria-current, active menu item, edit-shortcut, edit-shortcut:open, footer login shortcut, MenuBlockCacheTagProvider, cacheable menu_link, getMenuLinkCacheTags, LinkTargetChoices, LinkTargetProviderInterface, LinkTargetType, menu-app-only, installed app, PWA legal links, site_legal_pages, install button, menu-install, beforeinstallprompt, pwa_enabled, label.about, menu_link_members_only, app_logout, sign out order, menu-collapse, menu--collapsed, menu-tools, language pill, burger fold."
 ---
 
 # c975L SiteBundle — menus and navigation
@@ -10,7 +10,7 @@ description: "Use this skill when working with the navigation of a Symfony appli
 **Package:** `c975l/site-bundle` · **Namespace:** `c975L\SiteBundle\` · **Twig namespace:** `@c975LSite` · **Translation domain:** `site`
 
 **Key source paths** (relative to the package root):
-`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/menu-collapse.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/AccountMenu.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
+`src/Entity/Menu.php`, `src/Controller/Management/MenuCrudController.php`, `src/Management/MenuVariantProviderInterface.php`, `src/Service/MenuLocations.php`, `src/Twig/MenuLocationExtension.php`, `src/Form/Block/MenuLinkType.php`, `src/Form/Block/MenuDropdownType.php`, `src/Service/LinkTargetChoices.php`, `src/Twig/MenuExtension.php`, `src/Service/MenuBlockCacheTagProvider.php`, `assets/js/menu-active.js`, `assets/js/menu-dropdown.js`, `assets/js/menu-collapse.js`, `assets/js/edit-shortcut.js`, `src/Controller/Management/TranslationController.php`, `src/Management/MenuBlockEditUrlProvider.php`, `templates/components/General/Navbar.html.twig`, `templates/components/General/AccountMenu.html.twig`, `templates/management/menu_crud_index.html.twig`, `templates/components/General/Footer.html.twig`, `templates/blocks/`, `sass/_menu.scss`, `sass/_footer.scss`, `config/services.yaml`
 
 **Related skills:** `c975l-site-layout`, `c975l-site-pages`, `c975l-site-seo`, `c975l-site-assets` in this same package. The block system and its contexts are in `c975l/core-bundle`.
 
@@ -41,6 +41,19 @@ independently, so a client keeps different content for emails than for the site.
 to a **relative** url, which `emails/fullLayout.html.twig` rewrites against `site-url` on its way out,
 so an email menu links to the live site — as long as that setting is filled, since an empty one leaves
 the paths relative and the links dead.
+
+## Variants: a navbar and a footer per part of the site
+
+An app whose pages fall into parts with a navigation of their own (a members' area, a
+catalog) implements `MenuVariantProviderInterface::getMenuVariants()` (`key => label`, autoconfigured
+by the interface's own tag). Each key (1 to 13 of `[a-z0-9_-]`) adds `navbar.<key>` and `footer.<key>`
+(`MenuLocations`, the `.` keeping clear of `navbar-brand` and of the characters a cache key refuses):
+create buttons on the Menus index, named "Navigation · <label>", edited as the menu they stand in for.
+
+A template picks its variant with `{% set menuVariant = 'members' %}`; `layout.html.twig` hands
+`menu_location('navbar', menuVariant)` / `menu_location('footer', menuVariant)` to the components'
+`location` prop, which falls back on `navbar`/`footer` for no variant, an unknown one, or a variant menu
+still empty. A site declaring no variant renders exactly as before.
 
 ## menu_link
 
@@ -262,7 +275,7 @@ instead of the page title, unless the link is given a `label` of its own in the 
 ## Twig functions
 
 `menu_blocks(location)`, `menu_link_url()`, `menu_link_label()`, `menu_link_is_copyright()`,
-`menu_style()`.
+`menu_style()`, `menu_location(base, variant)`.
 
 Hovering a **footer** item as an editor raises UiBundle's Edit button, opening the footer's edit screen
 with that row unfolded (`MenuBlockEditUrlProvider`). The navbar is deliberately left out: it is hovered

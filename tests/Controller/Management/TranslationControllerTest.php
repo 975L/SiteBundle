@@ -14,6 +14,7 @@ use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Controller\Management\TranslationController;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
@@ -99,6 +100,7 @@ class TranslationControllerTest extends TestCase
             $configService,
             $translator,
             $this->translationFormContext = new TranslationFormContext(),
+            new MenuLocations($translator),
         );
         $controller->setContainer($this->createContainer($request));
 
@@ -117,10 +119,7 @@ class TranslationControllerTest extends TestCase
         $router->method('generate')->willReturn('/management/page-translate/12/en');
 
         $twig = $this->createStub(Environment::class);
-        $twig->method('render')->willReturnCallback(static fn (string $name, array $context) => json_encode(array_map(
-            static fn (mixed $value) => \is_array($value) ? $value : (string) $value,
-            ['rows' => array_column($context['rows'], 'name')],
-        ), JSON_THROW_ON_ERROR));
+        $twig->method('render')->willReturnCallback(static fn (string $name, array $context) => json_encode(['rows' => array_column($context['rows'], 'name')], JSON_THROW_ON_ERROR));
 
         $container = new Container();
         $container->set('security.authorization_checker', $authorization);

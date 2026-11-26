@@ -86,6 +86,17 @@ class MenuBlockEditUrlProviderTest extends TestCase
         $this->assertSame([10 => '/admin/menu?focusBlock=10'], $provider->getEditUrls([$block]));
     }
 
+    // A variant's footer is a footer, its blocks raising the same button, while a variant's navbar raises none
+    public function testGetEditUrlsTreatsAVariantMenuAsTheOneItStandsIn(): void
+    {
+        $footer = $this->blockWithId(11);
+        $navbar = $this->blockWithId(21);
+
+        $provider = $this->createProvider([$this->menuWithBlocks('footer.members', $footer), $this->menuWithBlocks('navbar.members', $navbar)]);
+
+        $this->assertSame([11 => '/admin/menu?focusBlock=11'], $provider->getEditUrls([$footer, $navbar]));
+    }
+
     // The navbar is hovered just to navigate, so its links get no button - see the provider's own comment
     public function testGetEditUrlsIgnoresNavbarMenu(): void
     {

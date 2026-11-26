@@ -564,6 +564,29 @@ A `menu_link` and a `menu_dropdown` both have a `hideInApp` checkbox, for an ent
 
 In the navbar, the button's label reads `--navbar-btn-color`, its rule restated after the two that paint every navbar label: the three tie at the same specificity, so only source order keeps the button's own ink on top of its filled background (`NavbarRuleScopeTest`).
 
+### Menus of a part of the site (variants)
+
+A site whose pages fall into parts with a navigation of their own — a members' area, a catalog — declares them as **variants**, and each one gets a navbar and a footer of its own, composed on the Menus screen like the site's. Nothing changes for a site declaring none.
+
+```php
+// src/Management/SiteMenuVariants.php — autoconfigured through the interface's own tag
+final class SiteMenuVariants implements MenuVariantProviderInterface
+{
+    public function getMenuVariants(): array
+    {
+        return ['members' => 'Members', 'catalog' => 'Catalog'];
+    }
+}
+```
+
+Each key (1 to 13 lowercase letters, digits, `_` or `-`) adds the locations `navbar.<key>` and `footer.<key>` (`MenuLocations`), offered by the Menus index as create buttons next to the bundle's own, named "Navigation · Members", edited as the navbar or the footer they stand in for (same block picker, same footer style). A template then picks the variant by setting `menuVariant` — set before the layout renders, in the template itself or in the app's `layout.html.twig`:
+
+```twig
+{% set menuVariant = 'members' %}
+```
+
+`layout.html.twig` hands `menu_location('navbar', menuVariant)` and `menu_location('footer', menuVariant)` to the two components (their `location` prop, `navbar`/`footer` by default), which draw the variant's menu once it holds a block and the site's own otherwise: a variant left empty, unset or unknown never leaves a page without its navigation. The logo keeps leading to the home page.
+
 ### Navbar: dropdown menu
 
 The `navbar` takes links and nothing else, except a **`menu_dropdown`**: a title (translatable, like a link's label) whose links unfold under it — "Our services" over a few pages, for instance (a members' one takes the place of the built-in account menu, see [Navbar: account menu](#navbar-account-menu)). Its links are dragged into it like into a `menu_group`, both building their slots with the `menu_slot` context, so a dropdown holds links and never another container. Its **visibility** is a link's own (`all`, `guests`, `members`), applied to the whole dropdown through the same marker class, the menu's html being cached once for everyone.

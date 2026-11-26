@@ -13,6 +13,7 @@ namespace c975L\SiteBundle\Management;
 use c975L\SiteBundle\Controller\Management\MenuCrudController;
 use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\UiBundle\Contract\BlockEditUrlProviderInterface;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Service\BlockFocusUrl;
@@ -37,8 +38,8 @@ class MenuBlockEditUrlProvider implements BlockEditUrlProviderInterface
 
         $urls = [];
         foreach ($this->menuRepository->findByBlockIds($blockIds) as $menu) {
-            // The navbar renders the very same blocks (see Navbar.html.twig) and is deliberately left out: it is hovered on every single visit just to navigate, and a floating button popping over each of its links would be in the way rather than of help. The footer is the menu an editor actually reaches for
-            if (Menu::LOCATION_FOOTER !== $menu->getLocation()) {
+            // The navbar renders the very same blocks (see Navbar.html.twig) and is deliberately left out: it is hovered on every single visit just to navigate, and a floating button popping over each of its links would be in the way rather than of help. The footer, a variant's included (see MenuLocations), is the menu an editor actually reaches for
+            if (Menu::LOCATION_FOOTER !== MenuLocations::base((string) $menu->getLocation())) {
                 continue;
             }
 

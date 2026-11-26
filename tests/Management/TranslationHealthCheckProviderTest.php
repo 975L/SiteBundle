@@ -18,6 +18,7 @@ use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Management\TranslationHealthCheckProvider;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
@@ -101,6 +102,7 @@ class TranslationHealthCheckProviderTest extends TestCase
             $siteUrlResolver,
             $this->createStub(AdminUrlGeneratorInterface::class),
             $translator,
+            new MenuLocations($translator),
         );
     }
 

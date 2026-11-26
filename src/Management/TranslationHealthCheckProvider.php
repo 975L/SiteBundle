@@ -18,6 +18,7 @@ use c975L\SiteBundle\Entity\Menu;
 use c975L\SiteBundle\Entity\Page;
 use c975L\SiteBundle\Repository\MenuRepository;
 use c975L\SiteBundle\Repository\PageRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\SiteBundle\Service\PageEditUrlResolver;
 use c975L\SiteBundle\Service\PagePublicUrlResolver;
 use c975L\SiteBundle\Service\PageTranslator;
@@ -54,6 +55,7 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
         private readonly SiteUrlResolver $siteUrlResolver,
         private readonly AdminUrlGeneratorInterface $adminUrlGenerator,
         private readonly TranslatorInterface $translator,
+        private readonly MenuLocations $menuLocations,
     ) {
     }
 
@@ -141,7 +143,7 @@ class TranslationHealthCheckProvider implements HealthCheckExhaustiveInterface
         // The site root with the menu's own location as a fragment: a menu is read on every page and has no url of its own, and the rows of one kind are told apart by their url (see HealthCheckRunner)
         return $this->row(
             $siteRoot . '#' . (string) $menu->getLocation(),
-            $this->translator->trans(MenuCrudController::LOCATION_LABELS[$menu->getLocation()] ?? 'label.menu', [], 'site'),
+            $this->menuLocations->label((string) $menu->getLocation()),
             $this->adminUrlGenerator->unsetAll()
                 ->setController(MenuCrudController::class)
                 ->setAction(Action::EDIT)

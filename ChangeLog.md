@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.44.0
+
+Menus of their own for the parts of a site
+
+- `MenuVariantProviderInterface`: an app declares the parts of its site, each given a `navbar.<key>` and a `footer.<key>` menu composed on the Menus screen (26/11/2026)
+- `MenuLocations`: the bundle's locations and the variants' in one list, read by the Menus screen, its translation screen and the translation health check (26/11/2026)
+- `menu_location()` and the `location` prop of `Navbar` and `Footer`: a template setting `menuVariant` draws its part's menus, the site's own while they are empty (26/11/2026)
+
 ## v8.43.0
 
 New sites keep their members signed in thirty days

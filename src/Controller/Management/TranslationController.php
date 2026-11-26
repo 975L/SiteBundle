@@ -12,6 +12,7 @@ namespace c975L\SiteBundle\Controller\Management;
 
 use c975L\ConfigBundle\Service\ConfigServiceInterface;
 use c975L\SiteBundle\Repository\MenuRepository;
+use c975L\SiteBundle\Service\MenuLocations;
 use c975L\UiBundle\Entity\Block;
 use c975L\UiBundle\Entity\Translation;
 use c975L\UiBundle\Registry\BlockRegistry;
@@ -36,6 +37,7 @@ class TranslationController extends AbstractController
         private readonly ConfigServiceInterface $configService,
         private readonly TranslatorInterface $translator,
         private readonly TranslationFormContext $translationFormContext,
+        private readonly MenuLocations $menuLocations,
     ) {
     }
 
@@ -55,7 +57,7 @@ class TranslationController extends AbstractController
             $locale,
             $rows,
             [
-                'title' => $this->translator->trans(MenuCrudController::LOCATION_LABELS[$menu->getLocation()] ?? 'label.menu', [], 'site'),
+                'title' => $this->menuLocations->label((string) $menu->getLocation()),
                 'heading' => 'label.menu_translation',
                 'description' => 'description.menu_translation',
                 'route' => 'management_menu_translate',
